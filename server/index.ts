@@ -22,10 +22,12 @@ import premium88Routes from './routes/premium88.js';
 import legalRoutes from './routes/legal.js';
 import questionsRoutes from './routes/questions.js';
 import playbackRoutes from './routes/playback.js';
+import webinarRoutes from './routes/webinar.js';
 import { optionalAuth, requireAdmin, requireAuth } from './middleware/auth.js';
 import { UPLOADS_DIR, ensureUploadsDir } from './services/uploadService.js';
-import { handleStripeWebhook, processDueInstallments, isStripeEnabled } from './services/stripeService.js';
 import { isS3Enabled } from './services/s3Upload.js';
+import { handleStripeWebhook, processDueInstallments, isStripeEnabled } from './services/stripeService.js';
+import { startWebinarReminderScheduler } from './jobs/webinarReminders.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -93,6 +95,7 @@ app.use('/api/tracks', tracksRoutes);
 app.use('/api/checkout', checkoutRoutes);
 app.use('/api/premium-88', premium88Routes);
 app.use('/api/legal', legalRoutes);
+app.use('/api/webinar', webinarRoutes);
 app.use('/api/questions', requireAuth, questionsRoutes);
 app.use('/api/library', optionalAuth, playbackRoutes);
 app.use('/api/upload', requireAuth, uploadRoutes);
@@ -124,4 +127,5 @@ app.listen(PORT, '0.0.0.0', () => {
   };
   runDue();
   setInterval(runDue, 60_000);
+  startWebinarReminderScheduler();
 });

@@ -48,6 +48,13 @@ import {
   updateAccessibilityReportStatus,
   type AccessibilityReportStatus,
 } from '../services/accessibilityReportService.js';
+import {
+  getWebinarConfig,
+  listWebinarRegistrations,
+  saveWebinarConfig,
+  countWebinarRegistrations,
+  getWebinarFunnelStats,
+} from '../services/webinarService.js';
 
 const router = Router();
 
@@ -615,6 +622,35 @@ router.post('/raffles/:id/draw', (req, res) => {
   } catch (err) {
     const status = (err as { status?: number }).status || 500;
     res.status(status).json({ error: (err as Error).message });
+  }
+});
+
+router.get('/webinar', (_req, res) => {
+  try {
+    res.json({
+      config: getWebinarConfig(),
+      registrations: listWebinarRegistrations(300),
+      totalRegistrations: countWebinarRegistrations(),
+      funnel: getWebinarFunnelStats(),
+    });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+});
+
+router.patch('/webinar', (req, res) => {
+  try {
+    const config = saveWebinarConfig(req.body?.config || req.body || {});
+    writeAudit({
+      adminUserId: authUser(req).id,
+      actionType: 'webinar_config_updated',
+      entityType: 'webinar',
+      entityId: 'config',
+      after: { title: config.title, date: config.date },
+    });
+    res.json({ config });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
   }
 });
 

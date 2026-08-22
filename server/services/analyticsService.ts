@@ -56,6 +56,23 @@ export const ALLOWED_EVENTS = [
   'raffle_winner_selected',
   'vod_access_unlocked',
   'vod_access_paused',
+  'webinar_page_view',
+  'webinar_registration_started',
+  'webinar_registration_completed',
+  'webinar_add_to_calendar_clicked',
+  'webinar_whatsapp_group_clicked',
+  'webinar_form_view',
+  'webinar_step_a_started',
+  'webinar_step_a_completed',
+  'webinar_step_b_started',
+  'webinar_step_b_completed',
+  'webinar_fit_section_viewed',
+  'webinar_fit_cta_clicked',
+  'webinar_cta_clicked',
+  'webinar_registration_abandoned',
+  'webinar_thank_you_step_completed',
+  'webinar_exit_intent_shown',
+  'webinar_exit_intent_submitted',
 ] as const;
 
 export type AnalyticsEventName = (typeof ALLOWED_EVENTS)[number];
@@ -82,7 +99,7 @@ export function trackEvent(
   }
 }
 
-function countEvent(event: string) {
+export function countEvent(event: string) {
   return (getDb().prepare(`SELECT COUNT(*) as c FROM analytics_events WHERE event = ?`).get(event) as { c: number })
     .c;
 }

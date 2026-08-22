@@ -104,6 +104,19 @@ export function listAdminNotifications(): AdminNotification[] {
     });
   }
 
+  const newWebinar = count(`SELECT COUNT(*) as c FROM webinar_registrations WHERE status = 'new'`);
+  if (newWebinar > 0) {
+    items.push({
+      id: 'webinar-registrations-new',
+      severity: 'medium',
+      title: 'הרשמות וובינר חדשות',
+      detail: `${newWebinar} נרשמים לוובינר ללא מעקב`,
+      tab: 'webinar',
+      count: newWebinar,
+      createdAt: now,
+    });
+  }
+
   const openA11y = countOpenAccessibilityReports();
   if (openA11y > 0) {
     items.push({

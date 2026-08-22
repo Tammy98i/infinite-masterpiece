@@ -2,7 +2,8 @@
 import { useApp } from '../context/AppContext';
 import { OnboardingCenterView } from './admin/OnboardingCenterView';
 import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/captions';
-import { adminApi, type AdminAnalytics, type AdminAuditLog, type AdminCrmLead, type AdminNotification, type AdminOverview, type AdminPaymentRow, type AdminPremium88Application, type AdminRaffleDashboard, type AdminReadiness, type AdminTrackLead, type AdminTracksDashboard, type AdminUserRow, type CoursePayload } from '../api/admin';
+import { adminApi, type AdminAnalytics, type AdminAuditLog, type AdminCrmLead, type AdminNotification, type AdminOverview, type AdminPaymentRow, type AdminPremium88Application, type AdminRaffleDashboard, type AdminReadiness, type AdminTrackLead, type AdminTracksDashboard, type AdminUserRow, type AdminWebinarDashboard, type CoursePayload } from '../api/admin';
+import { DEFAULT_WEBINAR_CONFIG, type WebinarConfig } from '../constants/webinar';
 import type { LecturerApplication } from '../api/lecturer';
 import type { AccessLevel, Category, Course, Instructor, PublishStatus } from '../types';
 import { trackEvent } from '../utils/analytics';
@@ -23,6 +24,7 @@ type Tab =
   | 'analytics'
   | 'raffles'
   | 'leads'
+  | 'webinar'
   | 'notifications'
   | 'settings'
   | 'legal'
@@ -51,6 +53,7 @@ const NAV_ITEMS: NavItem[] = [
   { id: 'analytics', label: 'אנליטיקות', ready: true },
   { id: 'raffles', label: 'הגרלות', ready: true },
   { id: 'leads', label: 'לידים ופניות', ready: true },
+  { id: 'webinar', label: 'וובינר', ready: true, badge: 'חדש' },
   { id: 'notifications', label: 'התראות', ready: true },
   { id: 'settings', label: 'הגדרות', ready: true },
   { id: 'legal', label: 'משפטי', ready: true },
@@ -78,7 +81,7 @@ const fieldClass =
 const STAFF_DESK_TABS: Record<string, Tab[]> = {
   content: ['overview', 'content', 'categories', 'lecturers', 'founders', 'team', 'notifications', 'audit', 'onboarding'],
   support: ['overview', 'users', 'leads', 'notifications', 'audit', 'team'],
-  sales: ['overview', 'leads', 'tracks', 'payments', 'funnel', 'premium88', 'analytics', 'notifications', 'team'],
+  sales: ['overview', 'leads', 'webinar', 'tracks', 'payments', 'funnel', 'premium88', 'analytics', 'notifications', 'team'],
   legal: ['overview', 'legal', 'settings', 'audit', 'notifications', 'team'],
   finance: ['overview', 'payments', 'tracks', 'analytics', 'notifications', 'audit', 'team'],
   community: ['overview', 'users', 'leads', 'premium88', 'funnel', 'notifications', 'team'],
@@ -260,6 +263,7 @@ export function AdminView() {
             {tab === 'audit' && <AuditLogsPanel />}
             {tab === 'raffles' && <RafflesPanel />}
             {tab === 'leads' && <LeadsPanel />}
+            {tab === 'webinar' && <WebinarPanel />}
             {tab === 'legal' && <LegalPanel />}
             {tab === 'settings' && <ReadinessPanel />}
             {tab === 'onboarding' && <OnboardingCenterView />}
@@ -3364,6 +3368,7 @@ function LeadsPanel() {
           <option value="track">מסלולי כניסה</option>
           <option value="premium88">נבחרת 88</option>
           <option value="lecturer">בקשות מרצים</option>
+          <option value="webinar">וובינר</option>
         </select>
         <input
           value={query}
@@ -3607,6 +3612,361 @@ function LegalPanel() {
             </table>
           </div>
         )}
+      </section>
+    </div>
+  );
+}
+
+function WebinarPanel() {
+  const [data, setData] = useState<AdminWebinarDashboard | null>(null);
+  const [config, setConfig] = useState<WebinarConfig>(DEFAULT_WEBINAR_CONFIG);
+  const [error, setError] = useState('');
+  const [saving, setSaving] = useState(false);
+  const [query, setQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState<'all' | 'partial' | 'complete' | 'waitlist'>('all');
+
+  const load = () =>
+    adminApi
+      .webinar()
+      .then((res) => {
+        setData(res);
+        setConfig(res.config);
+      })
+      .catch((err) => setError(err instanceof Error ? err.message : 'טעינה נכשלה'));
+
+  useEffect(() => {
+    void load();
+  }, []);
+
+  const saveConfig = async () => {
+    setSaving(true);
+    setError('');
+    try {
+      const { config: next } = await adminApi.saveWebinarConfig(config);
+      setConfig(next);
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'שמירה נכשלה');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  const registrations = (data?.registrations || []).filter((row) => {
+    if (statusFilter !== 'all') {
+      if (statusFilter === 'complete' && row.status !== 'complete' && row.status !== 'new') return false;
+      if (statusFilter !== 'complete' && row.status !== statusFilter) return false;
+    }
+    const q = query.trim().toLowerCase();
+    if (!q) return true;
+    return [row.fullName, row.email, row.phone, row.field, row.interest, row.blocker, row.status]
+      .join(' ')
+      .toLowerCase()
+      .includes(q);
+  });
+
+  const statusLabel = (status: string) => {
+    if (status === 'partial') return 'Partial';
+    if (status === 'complete' || status === 'new') return 'Complete';
+    if (status === 'waitlist') return 'Waitlist';
+    return status;
+  };
+
+  const exportCsv = () => {
+    const header = 'name,phone,email,field,interest,blocker,utm_source,status,createdAt';
+    const rows = registrations.map((row) =>
+      [row.fullName, row.phone, row.email, row.field, row.interest, row.blocker, row.utmSource, row.status, row.createdAt]
+        .map((cell) => `"${String(cell).replace(/"/g, '""')}"`)
+        .join(',')
+    );
+    const blob = new Blob([`\uFEFF${header}\n${rows.join('\n')}`], { type: 'text/csv;charset=utf-8' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = 'webinar-registrations.csv';
+    link.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const updateConfig = <K extends keyof WebinarConfig>(key: K, value: WebinarConfig[K]) => {
+    setConfig((prev) => ({ ...prev, [key]: value }));
+  };
+
+  if (error && !data) return <p className="text-sm text-rose-300">{error}</p>;
+
+  return (
+    <div className="grid gap-8 max-w-5xl">
+      <div className="flex flex-wrap items-end justify-between gap-4">
+        <div>
+          <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">וובינר</p>
+          <h2 className="text-2xl font-light">הגדרות ולידים</h2>
+          <p className="text-sm text-white/45 mt-2">
+            {data?.totalRegistrations ?? 0} נרשמים ·{' '}
+            <a href="/webinar" target="_blank" rel="noreferrer" className="text-[#C8A24C] hover:underline">
+              צפייה בדף
+            </a>
+          </p>
+        </div>
+        <button
+          type="button"
+          onClick={() => void saveConfig()}
+          disabled={saving}
+          className="px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 disabled:opacity-60"
+        >
+          {saving ? 'שומר…' : 'שמירת הגדרות'}
+        </button>
+      </div>
+
+      {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+
+      {data?.funnel ? (
+        <section className="grid gap-3 border border-white/10 rounded-2xl p-5">
+          <h3 className="text-lg font-light">משפך וובינר</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+            {[
+              ['צפיות', data.funnel.pageViews],
+              ['טופס ב-view', data.funnel.formViews],
+              ['שלב A', data.funnel.stepACompleted],
+              ['השלמה', data.funnel.completed],
+              ['יומן', data.funnel.calendarClicks],
+              ['וואטסאפ', data.funnel.whatsappClicks],
+              ['Partial', data.funnel.partialLeads],
+              ['Waitlist', data.funnel.waitlistLeads],
+            ].map(([label, value]) => (
+              <div key={String(label)} className="rounded-xl border border-white/10 p-3">
+                <p className="text-white/40 text-xs">{label}</p>
+                <p className="text-xl font-light">{value}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
+      <section className="grid gap-4 border border-white/10 rounded-2xl p-5">
+        <h3 className="text-lg font-light">פרטי הוובינר</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <label className="grid gap-1 text-sm">
+            <span className="text-white/50">כותרת</span>
+            <input value={config.title} onChange={(e) => updateConfig('title', e.target.value)} className={fieldClass} />
+          </label>
+          <label className="grid gap-1 text-sm">
+            <span className="text-white/50">תאריך (DD.MM.YYYY)</span>
+            <input value={config.date} onChange={(e) => updateConfig('date', e.target.value)} className={fieldClass} />
+          </label>
+          <label className="grid gap-1 text-sm">
+            <span className="text-white/50">שעה</span>
+            <input value={config.time} onChange={(e) => updateConfig('time', e.target.value)} className={fieldClass} />
+          </label>
+          <label className="grid gap-1 text-sm">
+            <span className="text-white/50">משך (דקות)</span>
+            <input
+              type="number"
+              value={config.durationMinutes}
+              onChange={(e) => updateConfig('durationMinutes', Number(e.target.value) || 90)}
+              className={fieldClass}
+            />
+          </label>
+          <label className="grid gap-1 text-sm md:col-span-2">
+            <span className="text-white/50">מיקום</span>
+            <input value={config.location} onChange={(e) => updateConfig('location', e.target.value)} className={fieldClass} />
+          </label>
+          <label className="grid gap-1 text-sm">
+            <span className="text-white/50">עלות (תווית)</span>
+            <input value={config.costLabel} onChange={(e) => updateConfig('costLabel', e.target.value)} className={fieldClass} />
+          </label>
+          <label className="grid gap-1 text-sm">
+            <span className="text-white/50">מקומות (תווית)</span>
+            <input value={config.spotsLabel} onChange={(e) => updateConfig('spotsLabel', e.target.value)} className={fieldClass} />
+          </label>
+          <label className="grid gap-1 text-sm md:col-span-2">
+            <span className="text-white/50">קישור קבוצת וואטסאפ (אופציונלי)</span>
+            <input
+              value={config.whatsappGroupUrl}
+              onChange={(e) => updateConfig('whatsappGroupUrl', e.target.value)}
+              className={fieldClass}
+              dir="ltr"
+            />
+          </label>
+          <label className="grid gap-1 text-sm md:col-span-2">
+            <span className="text-white/50">קישור Zoom</span>
+            <input value={config.zoomLink} onChange={(e) => updateConfig('zoomLink', e.target.value)} className={fieldClass} dir="ltr" />
+          </label>
+          <label className="grid gap-1 text-sm">
+            <span className="text-white/50">מקסימום מקומות (0 = ללא הגבלה)</span>
+            <input
+              type="number"
+              value={config.maxSpots}
+              onChange={(e) => updateConfig('maxSpots', Number(e.target.value) || 0)}
+              className={fieldClass}
+            />
+          </label>
+          <label className="flex items-center gap-3 text-sm">
+            <input type="checkbox" checked={config.showRegistrationCount} onChange={(e) => updateConfig('showRegistrationCount', e.target.checked)} className="accent-[#C8A24C]" />
+            <span>הצג מונה נרשמים</span>
+          </label>
+          <label className="flex items-center gap-3 text-sm">
+            <input type="checkbox" checked={config.showSpotsRemaining} onChange={(e) => updateConfig('showSpotsRemaining', e.target.checked)} className="accent-[#C8A24C]" />
+            <span>הצג מקומות שנותרו</span>
+          </label>
+          <label className="flex items-center gap-3 text-sm md:col-span-2">
+            <input type="checkbox" checked={config.abTestEnabled} onChange={(e) => updateConfig('abTestEnabled', e.target.checked)} className="accent-[#C8A24C]" />
+            <span>A/B כותרת (Variant B)</span>
+          </label>
+          <label className="grid gap-1 text-sm md:col-span-2">
+            <span className="text-white/50">כותרת Variant B</span>
+            <input value={config.heroHeadlineVariantB} onChange={(e) => updateConfig('heroHeadlineVariantB', e.target.value)} className={fieldClass} />
+          </label>
+          <label className="grid gap-1 text-sm md:col-span-2">
+            <span className="text-white/50">Social proof (JSON)</span>
+            <textarea
+              value={JSON.stringify(config.socialProofQuotes, null, 2)}
+              onChange={(e) => {
+                try {
+                  const parsed = JSON.parse(e.target.value) as WebinarConfig['socialProofQuotes'];
+                  updateConfig('socialProofQuotes', parsed);
+                } catch {
+                  /* keep editing */
+                }
+              }}
+              rows={6}
+              className={`${fieldClass} font-mono text-xs`}
+              dir="ltr"
+            />
+          </label>
+          <label className="flex items-center gap-3 text-sm md:col-span-2">
+            <input
+              type="checkbox"
+              checked={config.enabled}
+              onChange={(e) => updateConfig('enabled', e.target.checked)}
+              className="accent-[#C8A24C]"
+            />
+            <span>הרשמה פתוחה</span>
+          </label>
+        </div>
+      </section>
+
+      <section className="grid gap-4 border border-white/10 rounded-2xl p-5">
+        <h3 className="text-lg font-light">מובילי הוובינר</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <label className="grid gap-1 text-sm">
+            <span className="text-white/50">שם מוביל ראשי</span>
+            <input
+              value={config.leaderPrimaryName}
+              onChange={(e) => updateConfig('leaderPrimaryName', e.target.value)}
+              className={fieldClass}
+            />
+          </label>
+          <label className="grid gap-1 text-sm">
+            <span className="text-white/50">תפקיד מוביל ראשי</span>
+            <input
+              value={config.leaderPrimaryTitle}
+              onChange={(e) => updateConfig('leaderPrimaryTitle', e.target.value)}
+              className={fieldClass}
+            />
+          </label>
+          <label className="grid gap-1 text-sm md:col-span-2">
+            <span className="text-white/50">תיאור מוביל ראשי</span>
+            <textarea
+              value={config.leaderPrimaryBio}
+              onChange={(e) => updateConfig('leaderPrimaryBio', e.target.value)}
+              rows={3}
+              className={fieldClass}
+            />
+          </label>
+          <label className="grid gap-1 text-sm">
+            <span className="text-white/50">שם מוביל/ה שני/ה</span>
+            <input
+              value={config.leaderSecondaryName}
+              onChange={(e) => updateConfig('leaderSecondaryName', e.target.value)}
+              className={fieldClass}
+            />
+          </label>
+          <label className="grid gap-1 text-sm">
+            <span className="text-white/50">תפקיד מוביל/ה שני/ה</span>
+            <input
+              value={config.leaderSecondaryTitle}
+              onChange={(e) => updateConfig('leaderSecondaryTitle', e.target.value)}
+              className={fieldClass}
+            />
+          </label>
+          <label className="grid gap-1 text-sm md:col-span-2">
+            <span className="text-white/50">תיאור מוביל/ה שני/ה</span>
+            <textarea
+              value={config.leaderSecondaryBio}
+              onChange={(e) => updateConfig('leaderSecondaryBio', e.target.value)}
+              rows={3}
+              className={fieldClass}
+            />
+          </label>
+        </div>
+      </section>
+
+      <section className="grid gap-4 border border-white/10 rounded-2xl p-5">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <h3 className="text-lg font-light">נרשמים לוובינר</h3>
+            <p className="text-sm text-white/45 mt-1">{registrations.length} רשומות</p>
+          </div>
+          <button
+            type="button"
+            onClick={exportCsv}
+            className="px-4 py-2 rounded-full border border-white/15 text-xs min-h-11 hover:border-white/40"
+          >
+            ייצוא CSV
+          </button>
+        </div>
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="חיפוש…"
+          className={fieldClass}
+        />
+        <div className="flex flex-wrap gap-2">
+          {(['all', 'partial', 'complete', 'waitlist'] as const).map((key) => (
+            <button
+              key={key}
+              type="button"
+              onClick={() => setStatusFilter(key)}
+              className={`px-3 py-1.5 rounded-full text-xs border min-h-9 ${
+                statusFilter === key ? 'border-[#C8A24C] text-[#C8A24C]' : 'border-white/15 text-white/60'
+              }`}
+            >
+              {key === 'all' ? 'הכל' : statusLabel(key)}
+            </button>
+          ))}
+        </div>
+        <div className="overflow-x-auto">
+          <table className="w-full text-sm text-right">
+            <thead>
+              <tr className="text-white/50 border-b border-white/10">
+                <th className="py-2 pe-3">תאריך</th>
+                <th className="py-2 pe-3">סטטוס</th>
+                <th className="py-2 pe-3">שם</th>
+                <th className="py-2 pe-3">טלפון</th>
+                <th className="py-2 pe-3">אימייל</th>
+                <th className="py-2 pe-3">תחום</th>
+                <th className="py-2 pe-3">מסקרן / חסם</th>
+              </tr>
+            </thead>
+            <tbody>
+              {registrations.map((row) => (
+                <tr key={row.id} className="border-b border-white/5 align-top">
+                  <td className="py-3 pe-3 whitespace-nowrap">{new Date(row.createdAt).toLocaleString('he-IL')}</td>
+                  <td className="py-3 pe-3 whitespace-nowrap text-white/70">{statusLabel(row.status)}</td>
+                  <td className="py-3 pe-3">{row.fullName}</td>
+                  <td className="py-3 pe-3" dir="ltr">{row.phone}</td>
+                  <td className="py-3 pe-3" dir="ltr">{row.email}</td>
+                  <td className="py-3 pe-3">{row.field}</td>
+                  <td className="py-3 pe-3 text-white/60">
+                    {row.interest}
+                    {row.blocker ? ` · ${row.blocker}` : ''}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {registrations.length === 0 ? <p className="text-sm text-white/40 py-4">אין נרשמים עדיין.</p> : null}
+        </div>
       </section>
     </div>
   );

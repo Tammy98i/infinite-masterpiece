@@ -21,9 +21,12 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const onWebinar = location.pathname.startsWith('/webinar');
+
   const navLinks: Array<{ name: string; to: string; accent?: boolean }> = [
+    { name: 'וובינר', to: '/webinar', accent: true },
     { name: 'תהליך', to: '/journey' },
-    { name: 'צוות המיזם', to: '/premium-88', accent: true },
+    { name: 'צוות המיזם', to: '/premium-88' },
     { name: 'מחירון', to: '/pricing' },
     { name: 'שאלות', to: '/faq' },
   ];
@@ -62,7 +65,9 @@ export function Header() {
                 className={cn(
                   'text-[13px] font-light tracking-wide transition-colors duration-300',
                   link.accent
-                    ? onPremium88
+                    ? onWebinar && link.to === '/webinar'
+                      ? 'text-[#F7E7B5] font-medium'
+                      : onPremium88 && link.to === '/premium-88'
                       ? 'text-[#F7E7B5] font-medium'
                       : 'text-[#C8A24C] hover:text-[#F7E7B5]'
                     : link.to === '/pricing' && onPricing
@@ -78,6 +83,12 @@ export function Header() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">
+            <Link
+              to="/webinar"
+              className="px-5 py-3 rounded-full text-sm font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] hover:opacity-95 transition-opacity min-h-11"
+            >
+              הרשמה לוובינר
+            </Link>
             <Link
               to="/library"
               className="px-6 py-3 rounded-full text-sm font-medium text-white/90 border border-[#C8A24C]/40 hover:border-[#F7E7B5] hover:text-white transition-all duration-300 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#010308]"

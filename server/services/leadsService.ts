@@ -1,6 +1,7 @@
 import { getDb } from '../db/connection.js';
 import { listPremium88Applications } from './premium88Service.js';
 import { listApplications } from './lecturerService.js';
+import { listWebinarRegistrations } from './webinarService.js';
 
 export function listCrmLeads() {
   const trackLeads = (
@@ -46,7 +47,19 @@ export function listCrmLeads() {
     createdAt: row.createdAt,
   }));
 
-  return [...trackLeads, ...premium88, ...lecturers].sort((a, b) =>
+  const webinar = listWebinarRegistrations(150).map((row) => ({
+    id: row.id,
+    source: 'webinar' as const,
+    sourceLabel: 'וובינר',
+    name: row.fullName,
+    phone: row.phone,
+    email: row.email,
+    interest: [row.interest, row.blocker].filter(Boolean).join(' · '),
+    status: row.status,
+    createdAt: row.createdAt,
+  }));
+
+  return [...trackLeads, ...premium88, ...lecturers, ...webinar].sort((a, b) =>
     String(b.createdAt).localeCompare(String(a.createdAt))
   );
 }

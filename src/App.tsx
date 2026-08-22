@@ -18,10 +18,13 @@ import { BridgeShell } from './components/BridgeShell';
 import { UserProvider } from './context/UserContext';
 import { AuthModal } from './components/AuthModal';
 import { captureReferralFromSearch } from './utils/referral';
+import { captureUtmFromSearch } from './utils/utm';
 import { A11yWidget } from './a11y/A11yWidget';
 import { MotionA11yProvider } from './a11y/MotionA11yProvider';
 import { AccessibilityStatement } from './marketing/pages/AccessibilityStatement';
 import { LibraryMembership } from './marketing/pages/LibraryMembership';
+import { WebinarLanding } from './marketing/pages/WebinarLanding';
+import { WebinarThankYou } from './marketing/pages/WebinarThankYou';
 
 const PublicLayoutWrapper = () => (
   <Layout>
@@ -34,6 +37,7 @@ function ScrollManager() {
 
   useEffect(() => {
     captureReferralFromSearch(location.search);
+    captureUtmFromSearch(location.search);
   }, [location.search]);
 
   useEffect(() => {
@@ -110,6 +114,8 @@ export default function App() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/accessibility" element={<AccessibilityStatement />} />
           <Route path="/library-membership" element={<LibraryMembership />} />
+          <Route path="/webinar" element={<WebinarLanding />} />
+          <Route path="/webinar/thank-you" element={<WebinarThankYou />} />
           <Route path="/hesitation" element={<Hesitation />} />
           <Route path="/hesitation-success" element={<HesitationSuccess />} />
         </Route>

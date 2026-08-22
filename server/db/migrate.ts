@@ -279,7 +279,39 @@ export function migrateSchema(db: DatabaseSync) {
       resolved_at TEXT
     );
     CREATE INDEX IF NOT EXISTS idx_a11y_reports_status ON accessibility_reports(status, created_at);
+
+    CREATE TABLE IF NOT EXISTS webinar_registrations (
+      id TEXT PRIMARY KEY,
+      full_name TEXT NOT NULL,
+      phone TEXT NOT NULL,
+      email TEXT NOT NULL,
+      field TEXT DEFAULT '',
+      interest TEXT DEFAULT '',
+      blocker TEXT DEFAULT '',
+      marketing_opt_in INTEGER NOT NULL DEFAULT 0,
+      utm_source TEXT DEFAULT '',
+      utm_medium TEXT DEFAULT '',
+      utm_campaign TEXT DEFAULT '',
+      utm_term TEXT DEFAULT '',
+      utm_content TEXT DEFAULT '',
+      status TEXT NOT NULL DEFAULT 'new',
+      created_at TEXT DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_webinar_reg_created ON webinar_registrations(created_at);
+    CREATE INDEX IF NOT EXISTS idx_webinar_reg_status ON webinar_registrations(status);
   `);
+
+  const webinarRegs = columnNames(db, 'webinar_registrations');
+  if (webinarRegs.size > 0) {
+    if (!webinarRegs.has('ab_variant')) db.exec(`ALTER TABLE webinar_registrations ADD COLUMN ab_variant TEXT DEFAULT ''`);
+    if (!webinarRegs.has('updated_at')) db.exec(`ALTER TABLE webinar_registrations ADD COLUMN updated_at TEXT`);
+    if (!webinarRegs.has('step_completed_at')) db.exec(`ALTER TABLE webinar_registrations ADD COLUMN step_completed_at TEXT`);
+    if (!webinarRegs.has('reminded_24h_at')) db.exec(`ALTER TABLE webinar_registrations ADD COLUMN reminded_24h_at TEXT`);
+    if (!webinarRegs.has('reminded_1h_at')) db.exec(`ALTER TABLE webinar_registrations ADD COLUMN reminded_1h_at TEXT`);
+    if (!webinarRegs.has('confirmation_email_sent_at')) {
+      db.exec(`ALTER TABLE webinar_registrations ADD COLUMN confirmation_email_sent_at TEXT`);
+    }
+  }
 
   migrateCategoriesToSpec(db);
 

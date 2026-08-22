@@ -1,4 +1,5 @@
 import type { AccessLevel, Category, Course, Instructor, PublishStatus, UserRole } from '../types';
+import type { WebinarConfig } from '../constants/webinar';
 import { apiRequest } from './auth';
 import type { LecturerApplication } from './lecturer';
 
@@ -248,6 +249,13 @@ export const adminApi = {
       },
     ),
   leads: () => apiRequest<{ leads: AdminCrmLead[] }>('/api/admin/leads'),
+  webinar: () =>
+    apiRequest<AdminWebinarDashboard>('/api/admin/webinar'),
+  saveWebinarConfig: (config: WebinarConfig) =>
+    apiRequest<{ config: WebinarConfig }>('/api/admin/webinar', {
+      method: 'PATCH',
+      body: JSON.stringify({ config }),
+    }),
   notifications: () =>
     apiRequest<{
       notifications: AdminNotification[];
@@ -364,7 +372,7 @@ export interface AdminAuditLog {
 
 export interface AdminCrmLead {
   id: string;
-  source: 'track' | 'premium88' | 'lecturer';
+  source: 'track' | 'premium88' | 'lecturer' | 'webinar';
   sourceLabel: string;
   name: string;
   phone: string;
@@ -372,6 +380,44 @@ export interface AdminCrmLead {
   interest: string;
   status: string;
   createdAt: string;
+}
+
+export interface AdminWebinarRegistration {
+  id: string;
+  fullName: string;
+  phone: string;
+  email: string;
+  field: string;
+  interest: string;
+  blocker: string;
+  marketingOptIn: boolean;
+  utmSource: string;
+  utmMedium: string;
+  utmCampaign: string;
+  status: string;
+  createdAt: string;
+}
+
+export interface AdminWebinarDashboard {
+  config: WebinarConfig;
+  registrations: AdminWebinarRegistration[];
+  totalRegistrations: number;
+  funnel: {
+    pageViews: number;
+    formViews: number;
+    stepAStarted: number;
+    stepACompleted: number;
+    stepBStarted: number;
+    stepBCompleted: number;
+    completed: number;
+    calendarClicks: number;
+    whatsappClicks: number;
+    fitSectionViews: number;
+    ctaClicks: number;
+    partialLeads: number;
+    completeLeads: number;
+    waitlistLeads: number;
+  };
 }
 
 export interface AdminNotification {

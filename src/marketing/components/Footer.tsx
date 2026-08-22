@@ -16,8 +16,13 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h3 className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-4">שכבת העומק</h3>
+            <h3 className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-4">
+              <Link to="/webinar" className="hover:text-[#F7E7B5] transition-colors">
+                וובינר
+              </Link>
+            </h3>
             <ul className="space-y-3 text-sm text-white/50 font-light">
+              <li><Link to="/webinar" className="hover:text-white transition-colors text-[#C8A24C]/90">הרשמה לוובינר</Link></li>
               <li><a href="/#depth-layer" className="hover:text-white transition-colors">מהי שכבת העומק</a></li>
               <li><Link to="/premium-88" className="hover:text-white transition-colors">צוות המיזם</Link></li>
               <li><Link to="/application?type=88" className="hover:text-white transition-colors">הגשת מועמדות</Link></li>
