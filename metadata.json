@@ -1,0 +1,6 @@
+{
+  "name": "Infinite Masterpiece - קורסים והרצאות אונליין",
+  "description": "פלטפורמת VOD פרימיום בסגנון נטפליקס ומאסטר-קלאס להתפתחות אישית, קורסים והרצאות מפי מיטב המומחים",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

@@ -1,0 +1,185 @@
+@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #c9a227;
+  --color-primary-light: #e8c547;
+  --color-primary-dark: #a68520;
+  --color-primary-muted: #c9a22733;
+  --color-surface: #050505;
+  --color-surface-elevated: #0a0a0a;
+  --font-display: 'Frank Ruhl Libre', serif;
+  --font-body: 'Assistant', sans-serif;
+}
+
+html {
+  scroll-behavior: smooth;
+  direction: rtl;
+  background-color: #010308;
+}
+
+@layer base {
+  body {
+    font-family: var(--font-body);
+    background-color: #010308;
+    color: #ffffff;
+    margin: 0;
+    padding: 0;
+    overflow-x: hidden;
+    direction: rtl;
+  }
+
+  h1, h2, h3, .font-display {
+    font-family: var(--font-display);
+  }
+
+  section[id] {
+    scroll-margin-top: 6rem;
+  }
+}
+
+@layer utilities {
+  .focus-ring {
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505];
+  }
+
+  .skip-link {
+    position: absolute;
+    inset-inline-end: 0.75rem;
+    top: -6rem;
+    z-index: 100;
+    padding: 0.75rem 1rem;
+    border-radius: 9999px;
+    background: #c8a24c;
+    color: #000;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: top 0.15s ease;
+  }
+  .skip-link:focus {
+    top: 0.75rem;
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+  }
+}
+
+/* Keep rail controls visible while keyboard-focusing inside the row */
+.group\/row:focus-within .rail-control {
+  opacity: 1;
+}
+
+.hero-gradient {
+  background: linear-gradient(to top, rgba(5,5,5,1) 0%, rgba(5,5,5,0.6) 50%, rgba(5,5,5,0) 100%);
+}
+
+.card-hover {
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  border-color: rgba(201, 162, 39, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .card-hover:hover {
+    transform: none;
+  }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.glass-active {
+  background: rgba(201, 162, 39, 0.15);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(201, 162, 39, 0.4);
+}
+
+.carousel-scroll {
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.carousel-scroll > * {
+  scroll-snap-align: start;
+}
+
+.carousel-fade-right {
+  mask-image: linear-gradient(to left, transparent, black 24px, black calc(100% - 48px), transparent);
+  -webkit-mask-image: linear-gradient(to left, transparent, black 24px, black calc(100% - 48px), transparent);
+}
+
+.vod-app .carousel-scroll::-webkit-scrollbar {
+  display: block;
+  height: 4px;
+}
+.vod-app .carousel-scroll::-webkit-scrollbar-thumb {
+  background: rgba(201, 162, 39, 0.4);
+  border-radius: 4px;
+}
+.vod-app .carousel-scroll {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(201, 162, 39, 0.4) transparent;
+}
+
+.vod-app ::-webkit-scrollbar {
+  display: none;
+}
+.vod-app * {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.vod-app .carousel-scroll {
+  scrollbar-width: thin;
+}
+
+.onboarding-highlight {
+  position: relative;
+  z-index: 65;
+  outline: 2px solid rgba(201, 162, 39, 0.9);
+  outline-offset: 3px;
+  border-radius: 12px;
+  box-shadow: 0 0 0 4px rgba(201, 162, 39, 0.25);
+}
+
+.bg-noise {
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+  opacity: 0.05;
+  pointer-events: none;
+  z-index: 50;
+}
+
+.text-gold-gradient {
+  background: linear-gradient(to right, #C8A24C, #F7E7B5, #D4AF37);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: #010308;
+}
+::-webkit-scrollbar-thumb {
+  background: #1a1f2e;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #2a3142;
+}

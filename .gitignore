@@ -1,0 +1,15 @@
+node_modules/
+build/
+dist/
+coverage/
+.DS_Store
+._*
+*.log
+.env*
+!.env.example
+!.env.production.example
+server/data/uploads/
+server/data/*.db
+server/data/*.db-*
+.playwright-mcp/
+*.zip
