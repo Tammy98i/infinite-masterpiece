@@ -2128,7 +2128,7 @@ function TeamPersonCard({
             <OpsField label="דסק">
               <select
                 value={selected.staffDesk || ''}
-                disabled={pending}
+                disabled={busy}
                 onChange={(e) => void onPatch(selected.id, { staffDesk: e.target.value })}
                 className={fieldClass}
               >
