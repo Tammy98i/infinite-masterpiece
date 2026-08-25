@@ -625,8 +625,10 @@ function QuestionsPanel() {
         detail={
           selected ? (
             <div className="grid gap-3">
-              <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selected.courseTitle || 'הרצאה'}</h3>
+              <OpsCardTitle>{selected.courseTitle || 'הרצאה'}</OpsCardTitle>
+              <OpsFacts>
               <OpsFact label="סטטוס">{questionStatusHe(selected.status)}</OpsFact>
+              </OpsFacts>
               <p className="text-sm text-white/70 leading-relaxed">{selected.question}</p>
               <p className="text-xs text-white/35">
                 {selected.userName} · {selected.createdAt.replace('T', ' ').slice(0, 16)}
@@ -731,10 +733,9 @@ function MessagesPanel() {
         detail={
           selected ? (
             <div className="grid gap-3">
-              <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selected.subject}</h3>
-              <p className="text-xs text-white/40">
-                מאת {selected.fromAdminName} · {selected.createdAt.replace('T', ' ').slice(0, 16)}
-              </p>
+              <OpsCardTitle sub={`מאת ${selected.fromAdminName} · ${selected.createdAt.replace('T', ' ').slice(0, 16)}`}>
+                {selected.subject}
+              </OpsCardTitle>
               <p className="text-sm text-white/70 leading-relaxed whitespace-pre-wrap">{selected.body}</p>
             </div>
           ) : null
@@ -1491,8 +1492,7 @@ function TeamPanel() {
                   <div className="w-14 h-14 rounded-full bg-white/5 border border-white/10" />
                 )}
                 <div className="min-w-0">
-                  <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selected.name}</h3>
-                  <p className="text-sm text-white/50">{selected.title}</p>
+                  <OpsCardTitle sub={selected.title}>{selected.name}</OpsCardTitle>
                 </div>
               </div>
               {selected.bio ? <p className="text-sm text-white/70 leading-relaxed">{selected.bio}</p> : null}

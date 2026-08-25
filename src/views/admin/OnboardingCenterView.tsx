@@ -2,7 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { adminOnboardingApi } from '../../api/onboarding';
 import type { OnboardingPath, OnboardingStep } from '../../types';
 import { BarChart3 } from 'lucide-react';
-import { OpsCardTitle, OpsDeskStack, OpsEmptyList, OpsFact, OpsListRow, OpsMasterDetail, OpsPageHeader } from '../../components/ops/OpsUi';
+import { OpsCardTitle, OpsDeskStack, OpsEmptyList, OpsFact, OpsFacts, OpsListRow, OpsMasterDetail, OpsPageHeader } from '../../components/ops/OpsUi';
+import { roleLabelHe } from '../../utils/opsLabels';
+
+function stepTypeHe(type?: string | null) {
+  if (type === 'modal') return 'חלון';
+  if (type === 'tooltip') return 'רמז';
+  if (type === 'video') return 'וידאו';
+  return type || '';
+}
 
 export const OnboardingCenterView: React.FC = () => {
   const [paths, setPaths] = useState<OnboardingPath[]>([]);
@@ -106,7 +114,7 @@ export const OnboardingCenterView: React.FC = () => {
                     active={selectedPathId === path.id}
                     onClick={() => setSelectedPathId(path.id)}
                     title={path.name}
-                    meta={`${path.targetRole} · ${path.steps?.length || 0} שלבים`}
+                    meta={`${roleLabelHe(path.targetRole)} · ${path.steps?.length || 0} שלבים`}
                     status={path.isActive ? 'פעיל' : 'כבוי'}
                     statusClass={path.isActive ? 'text-emerald-300' : 'text-white/45'}
                   />
@@ -124,8 +132,10 @@ export const OnboardingCenterView: React.FC = () => {
                   <p className="text-sm text-white/50 mt-1">{selectedPath.description}</p>
                 ) : null}
               </div>
-              <OpsFact label="תפקיד יעד">{selectedPath.targetRole}</OpsFact>
+              <OpsFacts>
+              <OpsFact label="תפקיד יעד">{roleLabelHe(selectedPath.targetRole)}</OpsFact>
               <OpsFact label="שלבים">{selectedPath.steps?.length || 0}</OpsFact>
+              </OpsFacts>
               <button
                 type="button"
                 onClick={() => void togglePathActive(selectedPath)}
@@ -138,7 +148,7 @@ export const OnboardingCenterView: React.FC = () => {
                   const stepId = step.id || step.stepId || '';
                   return (
                     <div key={stepId} className="grid gap-2 border-t border-white/10 pt-3">
-                      <span className="text-xs text-white/40">שלב {step.stepOrder} · {step.type}</span>
+                      <span className="text-xs text-white/40">שלב {step.stepOrder} · {stepTypeHe(step.type)}</span>
                       <input
                         defaultValue={step.title}
                         onBlur={(e) => void updateStepField(step, 'title', e.target.value)}

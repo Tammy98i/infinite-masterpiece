@@ -12,7 +12,7 @@ import { Search } from 'lucide-react';
 import { FileUploadField } from '../components/FileUploadField';
 import { useConfirm } from '../components/ops/ConfirmDialog';
 import { OpsBand, OpsCardActions, OpsCardTitle, OpsDeskStack, OpsEmptyList, OpsFact, OpsFacts, OpsField, OpsListRow, OpsMasterDetail, OpsPageHeader, OpsSection, OpsToolbar, opsCardDanger, opsCardFieldClass, opsCardGhost, opsCardPrimary, opsChipClass, opsFieldClass, opsGhostBtn, opsLabelClass, opsPrimaryBtn } from '../components/ops/OpsUi';
-import { accessLabelHe, formatOpsDate, isPayingPlan, opsStatusHe, planLabelHe, raffleStatusHe, roleLabelHe } from '../utils/opsLabels';
+import { accessLabelHe, entityTypeHe, formatOpsDate, isPayingPlan, opsStatusHe, planLabelHe, raffleStatusHe, roleLabelHe } from '../utils/opsLabels';
 
 type Tab =
   | 'overview'
@@ -966,7 +966,7 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
           detail={
             selectedTotal ? (
               <div className="grid gap-3">
-                <h3 className="text-base font-light text-[#C8A24C] leading-snug">{EVENT_LABEL[selectedTotal.event] || selectedTotal.event}</h3>
+                <OpsCardTitle>{EVENT_LABEL[selectedTotal.event] || selectedTotal.event}</OpsCardTitle>
                 <OpsFacts>
                 <OpsFact label="כמות">{selectedTotal.count}</OpsFact>
                 <OpsFact label="מזהה">
@@ -1004,7 +1004,7 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
           detail={
             selectedRecent ? (
               <div className="grid gap-3">
-                <h3 className="text-base font-light text-[#C8A24C] leading-snug">{EVENT_LABEL[selectedRecent.event] || selectedRecent.event}</h3>
+                <OpsCardTitle>{EVENT_LABEL[selectedRecent.event] || selectedRecent.event}</OpsCardTitle>
                 <OpsFacts>
                 <OpsFact label="זמן">{formatOpsDate(selectedRecent.createdAt)}</OpsFact>
                 {selectedRecent.properties.source ? (
@@ -2731,8 +2731,7 @@ function FoundersPanel() {
                   <div className="w-16 h-16 rounded-full border border-white/10 bg-white/5" />
                 )}
                 <div className="min-w-0">
-                  <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selected.name}</h3>
-                  <p className="text-sm text-white/50">{selected.title}</p>
+                  <OpsCardTitle sub={selected.title}>{selected.name}</OpsCardTitle>
                 </div>
               </div>
               <FileUploadField
@@ -2866,16 +2865,12 @@ function trackLabel(trackType: string) {
 }
 
 function installmentStatusLabel(status: string) {
-  if (status === 'paid') return 'שולם';
-  if (status === 'due') return 'לחיוב';
-  if (status === 'failed') return 'נכשל';
-  if (status === 'scheduled') return 'מתוזמן';
-  return status;
+  return opsStatusHe(status);
 }
 
 function leadPaymentSummary(lead: AdminTrackLead) {
   const current = lead.currentInstallment;
-  if (!current) return lead.plan?.status || lead.status;
+  if (!current) return opsStatusHe(lead.plan?.status || lead.status);
   return `פעימה ${current.number} · ${installmentStatusLabel(current.status)}`;
 }
 
@@ -2944,7 +2939,7 @@ function TracksPanel() {
         setData(next);
         setSelectedId((prev) => {
           if (prev && next.leads.some((lead) => lead.id === prev)) return prev;
-          return next.leads[0]?.id || null;
+          return null;
         });
       })
       .catch((err) => setError(err instanceof Error ? err.message : 'טעינה נכשלה'));
@@ -2981,7 +2976,7 @@ function TracksPanel() {
     return lead.currentInstallment?.status === statusFilter || lead.installments.some((item) => item.status === statusFilter);
   });
 
-  const selected = filtered.find((lead) => lead.id === selectedId) || filtered[0] || null;
+  const selected = filtered.find((lead) => lead.id === selectedId) || null;
 
   const setInstallment = async (installmentId: string, status: 'paid' | 'failed' | 'due') => {
     setPendingId(installmentId);
@@ -3102,7 +3097,7 @@ function TracksPanel() {
                 </OpsFact>
                 <OpsFact label="תוכנית">
                   {selected.plan
-                    ? `${selected.plan.amountBeforeVat.toLocaleString('he-IL')} ₪ לפני מע״מ · ${selected.plan.amountWithVat.toLocaleString('he-IL')} ₪ כולל · ${selected.plan.status}`
+                    ? `${selected.plan.amountBeforeVat.toLocaleString('he-IL')} ₪ לפני מע״מ · ${selected.plan.amountWithVat.toLocaleString('he-IL')} ₪ כולל · ${opsStatusHe(selected.plan.status)}`
                     : 'אין תוכנית'}
                 </OpsFact>
               </OpsFacts>
@@ -3543,13 +3538,13 @@ function AuditLogsPanel() {
         detail={
           selected ? (
             <div className="grid gap-3">
-              <h3 className="text-base font-light text-[#C8A24C] leading-snug">
+              <OpsCardTitle>
                 {AUDIT_ACTION_LABEL[selected.actionType] || selected.actionType}
-              </h3>
+              </OpsCardTitle>
               <OpsFacts>
               <OpsFact label="מי">{selected.adminName || selected.adminEmail || selected.adminUserId}</OpsFact>
               <OpsFact label="ישות">
-                {selected.entityType}
+                {entityTypeHe(selected.entityType)}
                 {selected.entityId ? ` · ${selected.entityId}` : ''}
               </OpsFact>
               <OpsFact label="מתי">{selected.createdAt.replace('T', ' ').slice(0, 16)}</OpsFact>
@@ -3785,7 +3780,7 @@ function RafflesPanel() {
           detail={
             selectedTicket ? (
               <div className="grid gap-3">
-                <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selectedTicket.userName || '—'}</h3>
+                <OpsCardTitle>{selectedTicket.userName || '—'}</OpsCardTitle>
                 <OpsFacts>
                 <OpsFact label="אימייל">
                   <span dir="ltr">{selectedTicket.userEmail || '—'}</span>
@@ -3906,7 +3901,7 @@ function LeadsPanel() {
         detail={
           selected ? (
             <div className="grid gap-3">
-              <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selected.name || '—'}</h3>
+              <OpsCardTitle>{selected.name || '—'}</OpsCardTitle>
               <OpsFacts>
               <OpsFact label="מקור">{selected.sourceLabel}</OpsFact>
               <OpsFact label="טלפון">
@@ -4124,7 +4119,8 @@ function LegalPanel() {
           detail={
             selectedReport ? (
               <div className="grid gap-3">
-                <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selectedReport.fullName}</h3>
+                <OpsCardTitle>{selectedReport.fullName}</OpsCardTitle>
+                <OpsFacts>
                 <OpsFact label="סטטוס">{a11yStatusHe(selectedReport.status)}</OpsFact>
                 <OpsFact label="תאריך">{formatOpsDate(selectedReport.createdAt)}</OpsFact>
                 <OpsFact label="דוא״ל">
@@ -4135,6 +4131,7 @@ function LegalPanel() {
                     <span dir="ltr">{selectedReport.phone}</span>
                   </OpsFact>
                 ) : null}
+                </OpsFacts>
                 <p className="text-sm text-white/70 leading-relaxed whitespace-pre-wrap">{selectedReport.message}</p>
                 {selectedReport.status !== 'resolved' ? (
                   <button
@@ -4506,7 +4503,7 @@ function WebinarPanel() {
           detail={
             selectedReg ? (
               <div className="grid gap-3">
-                <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selectedReg.fullName}</h3>
+                <OpsCardTitle>{selectedReg.fullName}</OpsCardTitle>
                 <OpsFacts>
                 <OpsFact label="סטטוס">{statusLabel(selectedReg.status)}</OpsFact>
                 <OpsFact label="תאריך">{formatOpsDate(selectedReg.createdAt)}</OpsFact>

@@ -76,6 +76,8 @@ export function raffleStatusHe(status?: string | null): string {
 }
 
 export function opsStatusHe(status?: string | null): string {
+  if (!status) return '—';
+  if (status.startsWith('phase_')) return `פעימה ${status.slice(6)}`;
   switch (status) {
     case 'partial':
       return 'חלקי';
@@ -90,10 +92,22 @@ export function opsStatusHe(status?: string | null): string {
       return 'ממתין';
     case 'paid':
       return 'שולם';
+    case 'first_paid':
+      return 'שילמו 8';
     case 'failed':
       return 'נכשל';
     case 'due':
       return 'לחיוב';
+    case 'scheduled':
+      return 'מתוזמן';
+    case 'lead':
+      return 'ליד';
+    case 'active':
+      return 'פעיל';
+    case 'brave_paid':
+      return 'שולם · אמיצים';
+    case 'hesitant_completed':
+      return 'הושלם · הססנים';
     case 'open':
       return 'פתוח';
     case 'drawn':
@@ -104,7 +118,44 @@ export function opsStatusHe(status?: string | null): string {
       return 'אושר';
     case 'rejected':
       return 'נדחה';
+    case 'in_progress':
+      return 'בטיפול';
+    case 'resolved':
+      return 'טופל';
+    case 'blocked':
+      return 'חסום';
+    case 'suspended':
+      return 'מושהה';
+    case 'limited':
+      return 'מוגבל';
     default:
-      return status || '—';
+      return status;
+  }
+}
+
+export function entityTypeHe(type?: string | null): string {
+  switch (type) {
+    case 'user':
+      return 'משתמש';
+    case 'category':
+      return 'קטגוריה';
+    case 'setting':
+      return 'הגדרה';
+    case 'legal':
+      return 'משפטי';
+    case 'accessibility_report':
+      return 'פניית נגישות';
+    case 'premium_88_application':
+      return 'מועמדות 88';
+    case 'team_message':
+      return 'הודעת צוות';
+    case 'raffle':
+      return 'הגרלה';
+    case 'webinar':
+      return 'וובינר';
+    case 'course':
+      return 'הרצאה';
+    default:
+      return type || '—';
   }
 }
