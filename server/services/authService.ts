@@ -1,6 +1,7 @@
 import { randomBytes, randomUUID, scryptSync, timingSafeEqual } from 'crypto';
 import { getDb } from '../db/connection.js';
 import { resolveLecturerReferralId } from './lecturerService.js';
+import { publicMediaUrl } from '../config/env.js';
 
 const SESSION_DAYS = 30;
 
@@ -60,9 +61,10 @@ function rowToUser(row: Record<string, unknown>): AuthUser {
     subscriptionPlan: (row.subscription_plan as DbPlan) || 'none',
     trialEndsAt: row.trial_ends_at ? String(row.trial_ends_at) : undefined,
     interests,
-    avatar:
+    avatar: publicMediaUrl(
       String(row.avatar || '') ||
-      'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80',
+        'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80'
+    ),
     blocked: Boolean(row.blocked),
     isFounder: Boolean(row.is_founder),
     entryTrack: String(row.entry_track || 'none'),

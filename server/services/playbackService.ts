@@ -7,6 +7,7 @@ import {
   canPreviewEpisode,
   canWatchEpisode,
 } from './accessService.js';
+import { publicMediaUrl } from '../config/env.js';
 
 const SESSION_TTL_MS = 2 * 60 * 60 * 1000;
 
@@ -50,13 +51,14 @@ export function createPlaybackSession(episodeId: string, user: AuthUser | null) 
     throw Object.assign(new Error('הפרק דורש גישה מלאה לספרייה'), { status: 403 });
   }
 
+  const playbackUrl = publicMediaUrl(episode.videoUrl);
   const id = randomUUID();
   const expiresAt = Date.now() + SESSION_TTL_MS;
   const session: PlaybackSession = {
     id,
     episodeId: episode.id,
     userId: user?.id || null,
-    playbackUrl: episode.videoUrl,
+    playbackUrl,
     mode: full ? 'full' : 'preview',
     previewSeconds: full ? undefined : PREVIEW_SECONDS,
     expiresAt,
@@ -65,12 +67,15 @@ export function createPlaybackSession(episodeId: string, user: AuthUser | null) 
 
   return {
     sessionId: id,
-    playbackUrl: episode.videoUrl,
+    playbackUrl,
     mode: session.mode,
     previewSeconds: session.previewSeconds,
     expiresAt: new Date(expiresAt).toISOString(),
     courseId: course.id,
     chapterId: episode.id,
-    captionTracks: episode.captionTracks || [],
+    captionTracks: (episode.captionTracks || []).map((track) => ({
+      ...track,
+      src: publicMediaUrl(track.src),
+    })),
   };
 }

@@ -1,4 +1,5 @@
 import { getAuthToken } from '../api/auth';
+import { apiUrl } from '../lib/apiBase';
 
 declare global {
   interface Window {
@@ -18,7 +19,7 @@ export function trackEvent(eventName: string, data?: Record<string, string>) {
   const headers: Record<string, string> = { 'Content-Type': 'application/json' };
   const token = getAuthToken();
   if (token) headers.Authorization = `Bearer ${token}`;
-  void fetch('/api/analytics', {
+  void fetch(apiUrl('/api/analytics'), {
     method: 'POST',
     headers,
     body: JSON.stringify({ event: eventName, properties: data || {} }),

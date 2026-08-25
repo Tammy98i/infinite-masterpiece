@@ -1,6 +1,7 @@
 import type { UserProfile } from '../types';
 import type { PlanId } from '../data/plans';
 import { getStoredReferralLecturerId } from '../utils/referral';
+import { apiUrl } from '../lib/apiBase';
 
 const TOKEN_KEY = 'mc_token';
 
@@ -44,7 +45,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
 
   let res: Response;
   try {
-    res = await fetch(path, { ...options, headers });
+    res = await fetch(apiUrl(path), { ...options, headers });
   } catch {
     throw new Error('לא ניתן להתחבר לשרת. הריצו npm run server ואז נסו שוב.');
   }

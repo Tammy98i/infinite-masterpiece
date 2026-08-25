@@ -5,6 +5,7 @@ import { TRIAL_DAYS } from '../constants/brand';
 import type { PlanId } from '../data/plans';
 import { authApi, getAuthToken, setAuthToken, type AuthUserPayload } from '../api/auth';
 import { isPaidPlan } from '../utils/access';
+import { mediaUrl } from '../lib/apiBase';
 
 const GUEST_USER: UserProfile = {
   id: 'guest',
@@ -26,6 +27,7 @@ function fromPayload(user: AuthUserPayload): UserProfile {
     isFounder: Boolean(user.isFounder),
     staffDesk: user.staffDesk || '',
     staffStatus: user.staffStatus || 'active',
+    avatar: mediaUrl(user.avatar) || user.avatar,
   };
 }
 

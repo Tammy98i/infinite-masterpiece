@@ -15,6 +15,7 @@ export default defineConfig(() => {
       hmr: process.env.DISABLE_HMR !== 'true',
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
       proxy: {
+        // Local only. Production split uses VITE_API_URL — do not proxy 400MB uploads through Vercel.
         '/api': {
           target: `http://localhost:${process.env.API_PORT || 3001}`,
           changeOrigin: true,

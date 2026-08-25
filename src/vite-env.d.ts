@@ -1,6 +1,8 @@
 /// <reference types="vite/client" />
 
 interface ImportMetaEnv {
+  /** Empty in local Vite (proxy). Production split: API origin, no trailing slash. */
+  readonly VITE_API_URL?: string;
   readonly VITE_A11Y_COORDINATOR_NAME?: string;
   readonly VITE_A11Y_CONTACT_EMAIL?: string;
   readonly VITE_A11Y_CONTACT_PHONE?: string;

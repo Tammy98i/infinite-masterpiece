@@ -9,6 +9,7 @@ import {
   type CourseInput,
 } from './catalogService.js';
 import type { Course } from '../../src/types.ts';
+import { publicMediaUrl } from '../config/env.js';
 
 type SqlRow = Record<string, unknown>;
 
@@ -350,7 +351,7 @@ export function lecturerOverview(userId: string, role: string) {
     id: String(row.id),
     title: String(row.title),
     status: String(row.status || 'draft'),
-    coverImage: String(row.cover_image || ''),
+    coverImage: publicMediaUrl(String(row.cover_image || '')),
   }));
 
   return {
@@ -407,7 +408,7 @@ export function getMyLecturerProfile(userId: string, role: string) {
     name: String(row.name || ''),
     title: String(row.title || ''),
     bio: String(row.bio || ''),
-    avatarUrl: String(row.avatar_url || ''),
+    avatarUrl: publicMediaUrl(String(row.avatar_url || '')),
     isFounder: Number(row.is_founder || 0) === 1,
     expertise: (() => {
       try {
