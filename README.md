@@ -59,5 +59,5 @@ Health: `GET /api/health`
 ## הפרדת מוצרים
 
 - **מסלול 8888** → `/pricing` (אמיצים / הססנים)
-- **מנוי ספרייה** → `/library-membership`
+- **מנוי ספרייה** → `/library-membership` (Stripe כשמפתחות מוגדרים; ניסיון חינם מקומי)
 - Paywall: «פתיחת גישה» ≠ «בדיקת התאמה»

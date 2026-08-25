@@ -72,6 +72,12 @@ export function migrateSchema(db: DatabaseSync) {
   if (!users.has('staff_status')) {
     db.exec(`ALTER TABLE users ADD COLUMN staff_status TEXT NOT NULL DEFAULT 'active'`);
   }
+  if (!users.has('stripe_customer_id')) {
+    db.exec(`ALTER TABLE users ADD COLUMN stripe_customer_id TEXT`);
+  }
+  if (!users.has('stripe_subscription_id')) {
+    db.exec(`ALTER TABLE users ADD COLUMN stripe_subscription_id TEXT`);
+  }
 
   const lecturers = columnNames(db, 'lecturers');
   if (lecturers.size > 0 && !lecturers.has('founder_id')) {

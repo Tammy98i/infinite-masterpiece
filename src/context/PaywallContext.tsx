@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { trackEvent } from '../utils/analytics';
 
@@ -127,9 +128,10 @@ export const PaywallProvider: React.FC<{ children: React.ReactNode }> = ({ child
     <PaywallContext.Provider value={{ isOpen, openPaywall, closePaywall }}>
       {children}
 
-      {isOpen && (
+      {isOpen &&
+        createPortal(
         <div
-          className="fixed inset-0 z-[80] flex items-center justify-center p-4"
+          className="fixed inset-0 z-[10000] flex items-center justify-center p-4"
           role="dialog"
           aria-modal="true"
           aria-labelledby="paywall-title"
@@ -181,7 +183,8 @@ export const PaywallProvider: React.FC<{ children: React.ReactNode }> = ({ child
               </button>
             </div>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
     </PaywallContext.Provider>
   );
@@ -204,6 +207,14 @@ function copyBySource(source: string): { title: string; body: string } {
     save_limit: {
       title: 'הרשימה החינמית מלאה',
       body: 'אפשר לשמור עד שלוש הרצאות במסלול החינמי. מנוי ספרייה פותח שמירה בלי הגבלה.',
+    },
+    watch_locked: {
+      title: 'רוצה להמשיך לצפות?',
+      body: 'ההדרכה הזו היא חלק מספריית Infinite Masterpiece למנויים. מנוי לצפייה פותח גישה — לא רכישת קורס בודד. מסלול המיזם המלא נפרד.',
+    },
+    watch_list: {
+      title: 'רוצה להמשיך לצפות?',
+      body: 'הפרק הזה פתוח במנוי לספרייה. מסלול האמיצים / ההססנים הוא נפרד — דרך «בדיקת התאמה».',
     },
     after_free: {
       title: 'הטעימה הסתיימה',

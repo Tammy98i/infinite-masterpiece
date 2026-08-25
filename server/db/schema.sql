@@ -103,7 +103,9 @@ CREATE TABLE IF NOT EXISTS users (
   blocked INTEGER NOT NULL DEFAULT 0,
   is_founder INTEGER NOT NULL DEFAULT 0,
   staff_desk TEXT DEFAULT '',
-  staff_status TEXT NOT NULL DEFAULT 'active'
+  staff_status TEXT NOT NULL DEFAULT 'active',
+  stripe_customer_id TEXT,
+  stripe_subscription_id TEXT
 );
 
 CREATE TABLE IF NOT EXISTS sessions (

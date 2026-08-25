@@ -46,11 +46,11 @@
 - [ ] גישת VOD לפי `currentPaymentPhase` / `programWeek`
 
 ### Stripe — מנוי ספרייה (חדש)
-- [ ] Products: `monthly` + `annual` (מחירים שיווקיים — להחליט)
-- [ ] Checkout session נפרד מ-track checkout (`/api/checkout/library-session`)
-- [ ] Webhook: עדכון `subscription_plan` + `subscription_started`
-- [ ] דף `/library-membership` — מחירים אמיתיים + redirect ל-Stripe
-- [ ] **לא** לערבב CTA של מסלול 8888 באותו checkout
+- [x] Products: `monthly` + `annual` (ברירת מחדל 88 / 888 ₪ לפני מע״מ — לשינוי ב-`.env`)
+- [x] Checkout session נפרד מ-track checkout (`/api/checkout/library-session`)
+- [x] Webhook: עדכון `subscription_plan` + `subscription_started`
+- [x] דף `/library-membership` — מחירים + redirect ל-Stripe כשמפתחות מוגדרים
+- [x] **לא** לערבב CTA של מסלול 8888 באותו checkout
 
 ### Paywall (לפי אפיון)
 - [ ] «פתיחת גישה עכשיו» → `/library-membership`
@@ -114,8 +114,10 @@
 
 - דף **`/library-membership`** — מנוי ספרייה נפרד ממסלול 8888
 - Paywall — 3 כפתורים לפי אפיון (במקום «בחירת מסלול» בלבד)
+- Stripe checkout למנוי ספרייה (`/api/checkout/library-session`) נפרד ממסלול 8888
 - מסמך תוכנית זה + checklist קיים
 
 ## עדיין פתוח (שבוע 2 בקוד)
 
-- Stripe checkout למנוי חודשי/שנתי (כרגע trial + pilot manual)
+- מפתחות Stripe + webhook בסביבת test/live (הקוד למנוי ספרייה ולמסלול 8888 כבר קיים)
+- מיגרציית DB מלאה ל-Postgres

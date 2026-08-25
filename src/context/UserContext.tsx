@@ -5,6 +5,7 @@ import { TRIAL_DAYS } from '../constants/brand';
 import type { PlanId } from '../data/plans';
 import { authApi, getAuthToken, setAuthToken, type AuthUserPayload } from '../api/auth';
 import { isPaidPlan } from '../utils/access';
+import { LIBRARY_CHECKOUT_PENDING_KEY } from '../constants/libraryPlans';
 
 const GUEST_USER: UserProfile = {
   id: 'guest',
@@ -98,7 +99,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setAuthModalOpen(false);
     const pending = pendingPlanRef.current;
     pendingPlanRef.current = null;
-    if (pending) applyPlan(pending, next.id);
+    if (pending === 'free_trial') {
+      applyPlan(pending, next.id);
+    } else if (pending === 'monthly' || pending === 'annual') {
+      sessionStorage.setItem(LIBRARY_CHECKOUT_PENDING_KEY, pending);
+    }
   };
 
   const login = async (email: string, password: string) => {
@@ -130,7 +135,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setAuthModalOpen(true);
       return;
     }
-    applyPlan(plan, user.id);
+    if (plan === 'free_trial') {
+      applyPlan(plan, user.id);
+      return;
+    }
+    sessionStorage.setItem(LIBRARY_CHECKOUT_PENDING_KEY, plan);
   };
 
   const cancelSubscription = () => {
