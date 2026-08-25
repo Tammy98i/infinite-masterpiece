@@ -331,7 +331,7 @@ function LecturerDashboard({
     setTab(id);
     setMobileNavOpen(false);
     if (id === 'upload') setEditing('new');
-    else if (id !== 'videos') setEditing(null);
+    else setEditing(null);
   };
 
   const primaryNav: Array<{ id: Tab; label: string; badge?: number }> = [
