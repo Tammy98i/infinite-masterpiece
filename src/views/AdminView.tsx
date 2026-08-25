@@ -1597,7 +1597,7 @@ const APP_STATUS_LABEL: Record<LecturerApplication['status'], string> = {
 };
 
 function TeamStaffPanel() {
-  const { reloadCatalog } = useApp();
+  const { reloadCatalog, user } = useApp();
   const [users, setUsers] = useState<AdminUserRow[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'lecturer' | 'staff' | 'founder'>('all');
@@ -1635,6 +1635,29 @@ function TeamStaffPanel() {
       if (next.role === 'instructor' || next.isFounder !== undefined) await reloadCatalog();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'הפעולה נכשלה');
+    } finally {
+      setPendingId(null);
+    }
+  };
+
+  const removeUser = async (row: AdminUserRow) => {
+    if (row.id === user.id) return;
+    if (
+      !window.confirm(
+        `להסיר את ${row.email} מהמערכת? החשבון יימחק ולא ניתן לבטל. הרצאות ותשלומים נשמרים.`
+      )
+    ) {
+      return;
+    }
+    setPendingId(row.id);
+    setError('');
+    try {
+      await adminApi.deleteUser(row.id);
+      setSelectedId(null);
+      await load();
+      if (row.role === 'instructor' || row.isFounder) await reloadCatalog();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'ההסרה נכשלה');
     } finally {
       setPendingId(null);
     }
@@ -1813,6 +1836,18 @@ function TeamStaffPanel() {
                   className="px-3 py-2 text-xs border border-white/20 rounded-xl min-h-11"
                 >
                   {selected.blocked ? 'שחרור חסימה' : 'חסימה'}
+                </button>
+                <button
+                  type="button"
+                  disabled={
+                    pendingId === selected.id ||
+                    selected.id === user.id ||
+                    (selected.role === 'admin' && users.filter((row) => row.role === 'admin').length <= 1)
+                  }
+                  onClick={() => void removeUser(selected)}
+                  className="px-3 py-2 text-xs border border-rose-400/40 text-rose-200 rounded-xl min-h-11 disabled:opacity-40"
+                >
+                  הסרה מהמערכת
                 </button>
                 <button
                   type="button"
