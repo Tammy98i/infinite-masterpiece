@@ -14,7 +14,7 @@ import type { CoursePayload } from '../api/admin';
 import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/captions';
 import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
-import { OpsBand, OpsDeskStack, OpsEmptyList, OpsFact, OpsField, OpsListRow, OpsMasterDetail, OpsPageHeader, OpsSection, OpsToolbar, opsChipClass, opsFieldClass, opsGhostBtn, opsPrimaryBtn } from '../components/ops/OpsUi';
+import { OpsBand, OpsCardActions, OpsCardTitle, OpsDeskStack, OpsEmptyList, OpsFact, OpsFacts, OpsField, OpsListRow, OpsMasterDetail, OpsPageHeader, OpsSection, OpsToolbar, opsCardGhost, opsCardPrimary, opsChipClass, opsFieldClass, opsGhostBtn, opsPrimaryBtn } from '../components/ops/OpsUi';
 import { accessLabelHe } from '../utils/opsLabels';
 
 const fieldClass = opsFieldClass;
@@ -625,7 +625,7 @@ function QuestionsPanel() {
         detail={
           selected ? (
             <div className="grid gap-3">
-              <h3 className="text-lg font-light text-[#C8A24C]">{selected.courseTitle || 'הרצאה'}</h3>
+              <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selected.courseTitle || 'הרצאה'}</h3>
               <OpsFact label="סטטוס">{questionStatusHe(selected.status)}</OpsFact>
               <p className="text-sm text-white/70 leading-relaxed">{selected.question}</p>
               <p className="text-xs text-white/35">
@@ -643,12 +643,12 @@ function QuestionsPanel() {
                     className={fieldClass}
                     placeholder="תשובה לצופה"
                   />
-                  <div className="flex flex-wrap gap-2">
+                  <OpsCardActions>
                     <button
                       type="button"
                       disabled={pendingId === selected.id}
                       onClick={() => void reply(selected.id, 'answered')}
-                      className="px-4 py-2 rounded-full bg-[#C8A24C] text-black text-xs min-h-10 disabled:opacity-60"
+                      className={opsCardPrimary}
                     >
                       שליחת תשובה
                     </button>
@@ -656,11 +656,11 @@ function QuestionsPanel() {
                       type="button"
                       disabled={pendingId === selected.id}
                       onClick={() => void reply(selected.id, 'escalated')}
-                      className="px-4 py-2 rounded-full border border-white/20 text-xs min-h-10 disabled:opacity-60"
+                      className={opsCardGhost}
                     >
                       העברה לצוות
                     </button>
-                  </div>
+                  </OpsCardActions>
                 </div>
               ) : null}
             </div>
@@ -731,7 +731,7 @@ function MessagesPanel() {
         detail={
           selected ? (
             <div className="grid gap-3">
-              <h3 className="text-lg font-light text-[#C8A24C]">{selected.subject}</h3>
+              <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selected.subject}</h3>
               <p className="text-xs text-white/40">
                 מאת {selected.fromAdminName} · {selected.createdAt.replace('T', ' ').slice(0, 16)}
               </p>
@@ -819,17 +819,17 @@ function CoursesSeriesPanel({
         detail={
           selected ? (
             <div className="grid gap-3">
-              <h3 className="text-lg font-light text-[#C8A24C]">{selected.title}</h3>
+              <OpsCardTitle>{selected.title}</OpsCardTitle>
+              <OpsFacts>
               <OpsFact label="סטטוס">{STATUS_LABEL[selected.status || 'draft']}</OpsFact>
               <OpsFact label="פרקים">{selected.episodes?.length || 0}</OpsFact>
+              </OpsFacts>
               {canEdit ? (
-                <button
-                  type="button"
-                  onClick={() => onEdit(selected)}
-                  className="px-3 py-1.5 text-xs border border-white/20 rounded-xl min-h-10 w-fit"
-                >
-                  עריכה
-                </button>
+                <OpsCardActions>
+                  <button type="button" onClick={() => onEdit(selected)} className={opsCardGhost}>
+                    עריכה
+                  </button>
+                </OpsCardActions>
               ) : null}
             </div>
           ) : null
@@ -875,9 +875,11 @@ function Founder88Panel({ courses }: { courses: Course[] }) {
         detail={
           selected ? (
             <div className="grid gap-3">
-              <h3 className="text-lg font-light text-[#C8A24C]">{selected.title}</h3>
+              <OpsCardTitle>{selected.title}</OpsCardTitle>
+              <OpsFacts>
               <OpsFact label="גישה">{accessLabelHe(selected.accessLevel)}</OpsFact>
               <OpsFact label="סטטוס">פורסם</OpsFact>
+              </OpsFacts>
             </div>
           ) : null
         }
@@ -1114,30 +1116,24 @@ function VideosPanel({
         detail={
           selected ? (
             <div className="grid gap-3">
-              <h3 className="text-lg font-light text-[#C8A24C]">{selected.title}</h3>
+              <OpsCardTitle>{selected.title}</OpsCardTitle>
+              <OpsFacts>
               <OpsFact label="קטגוריה">{categoryName(selected.categoryId)}</OpsFact>
               <OpsFact label="גישה">{accessLabelHe(selected.accessLevel)}</OpsFact>
               <OpsFact label="סטטוס">{STATUS_LABEL[selected.status || 'draft']}</OpsFact>
-              <div className="flex flex-wrap gap-2 pt-1">
+              </OpsFacts>
+              <OpsCardActions>
                 {selected.status !== 'published' && selected.status !== 'blocked' ? (
-                  <button
-                    type="button"
-                    onClick={() => onEdit(selected)}
-                    className="px-3 py-1.5 text-sm border border-white/20 rounded-xl min-h-10"
-                  >
+                  <button type="button" onClick={() => onEdit(selected)} className={opsCardGhost}>
                     עריכה
                   </button>
                 ) : null}
                 {selected.status === 'draft' ? (
-                  <button
-                    type="button"
-                    onClick={() => onSubmit(selected.id)}
-                    className="px-3 py-1.5 text-sm border border-[#C8A24C]/40 text-[#C8A24C] rounded-xl min-h-10"
-                  >
+                  <button type="button" onClick={() => onSubmit(selected.id)} className={opsCardPrimary}>
                     שליחה לאישור
                   </button>
                 ) : null}
-              </div>
+              </OpsCardActions>
             </div>
           ) : null
         }
@@ -1246,7 +1242,8 @@ function ResourcesPanel({ courses }: { courses: Course[] }) {
         detail={
           selected ? (
             <div className="grid gap-3">
-              <h3 className="text-lg font-light text-[#C8A24C]">{selected.title}</h3>
+              <OpsCardTitle>{selected.title}</OpsCardTitle>
+              <OpsFacts>
               <OpsFact label="קובץ / קישור">
                 <a
                   href={selected.resources}
@@ -1259,6 +1256,7 @@ function ResourcesPanel({ courses }: { courses: Course[] }) {
                 </a>
               </OpsFact>
               <OpsFact label="סטטוס">{STATUS_LABEL[selected.status || 'draft']}</OpsFact>
+              </OpsFacts>
             </div>
           ) : null
         }
@@ -1493,7 +1491,7 @@ function TeamPanel() {
                   <div className="w-14 h-14 rounded-full bg-white/5 border border-white/10" />
                 )}
                 <div className="min-w-0">
-                  <h3 className="text-lg font-light text-[#C8A24C]">{selected.name}</h3>
+                  <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selected.name}</h3>
                   <p className="text-sm text-white/50">{selected.title}</p>
                 </div>
               </div>

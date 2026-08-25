@@ -11,6 +11,18 @@ export const opsPrimaryBtn =
 export const opsGhostBtn =
   'inline-flex items-center justify-center px-5 py-3 rounded-full border border-white/15 text-base text-white min-h-12 hover:border-white/40';
 
+export const opsCardPrimary =
+  'inline-flex items-center justify-center px-3.5 py-2 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer hover:bg-[#F7E7B5] disabled:opacity-60';
+
+export const opsCardGhost =
+  'inline-flex items-center justify-center px-3.5 py-2 rounded-full border border-white/15 text-sm text-white min-h-11 cursor-pointer hover:border-white/40 disabled:opacity-60';
+
+export const opsCardDanger =
+  'inline-flex items-center justify-center px-3.5 py-2 rounded-full border border-rose-400/35 text-sm text-rose-200 min-h-11 cursor-pointer disabled:opacity-40';
+
+export const opsCardFieldClass =
+  'w-full bg-transparent border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11';
+
 export function opsChipClass(on: boolean) {
   return `px-4 py-2 rounded-full text-sm min-h-11 border ${
     on ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/70'
@@ -84,11 +96,28 @@ export function OpsEmptyList({ children }: { children: ReactNode }) {
   return <p className="py-8 px-4 text-sm text-white/40">{children}</p>;
 }
 
+export function OpsCardTitle({ children, sub }: { children: ReactNode; sub?: ReactNode }) {
+  return (
+    <div className="min-w-0">
+      <h3 className="text-base font-light text-[#C8A24C] leading-snug">{children}</h3>
+      {sub ? <p className="text-xs text-white/45 mt-0.5 break-all leading-snug">{sub}</p> : null}
+    </div>
+  );
+}
+
+export function OpsCardActions({ children }: { children: ReactNode }) {
+  return <div className="flex flex-wrap items-center gap-1.5">{children}</div>;
+}
+
+export function OpsFacts({ children }: { children: ReactNode }) {
+  return <div className="grid gap-1">{children}</div>;
+}
+
 export function OpsFact({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <p className="flex justify-between gap-3 text-sm">
+    <p className="flex gap-2 text-sm leading-5">
       <span className="text-white/40 shrink-0">{label}</span>
-      <span className="text-left min-w-0 break-words">{children}</span>
+      <span className="min-w-0 break-words text-white/90">{children}</span>
     </p>
   );
 }
@@ -152,19 +181,19 @@ export function OpsMasterDetail({
           onClick={onCloseDetail}
         />
       ) : null}
-      <div className="grid md:grid-cols-[minmax(0,1fr)_20rem] xl:grid-cols-[minmax(0,1fr)_22rem] gap-5 items-start">
+      <div className="grid md:grid-cols-[minmax(0,1fr)_18rem] xl:grid-cols-[minmax(0,1fr)_20rem] gap-4 items-start">
         <div className="border border-white/10 rounded-2xl overflow-hidden md:max-h-[calc(100vh-12rem)] md:overflow-y-auto">
           {list}
         </div>
         <aside
-          className={`rounded-2xl p-5 md:sticky md:top-20 ${
+          className={`rounded-2xl p-4 md:sticky md:top-20 ${
             hasSelection
               ? 'border border-[#C8A24C]/35 max-md:fixed max-md:inset-y-0 max-md:end-0 max-md:z-40 max-md:w-[min(100%,20rem)] max-md:bg-[#0a0a0a] max-md:overflow-y-auto max-md:rounded-none max-md:border-y-0 max-md:border-s-0'
               : 'border border-white/10 max-md:hidden'
           }`}
         >
           {hasSelection ? (
-            <div className="grid gap-4">
+            <div className="grid gap-3">
               {onCloseDetail ? (
                 <button
                   type="button"

@@ -11,7 +11,7 @@ import { trackEvent } from '../utils/analytics';
 import { Search } from 'lucide-react';
 import { FileUploadField } from '../components/FileUploadField';
 import { useConfirm } from '../components/ops/ConfirmDialog';
-import { OpsBand, OpsDeskStack, OpsEmptyList, OpsFact, OpsField, OpsListRow, OpsMasterDetail, OpsPageHeader, OpsSection, OpsToolbar, opsChipClass, opsFieldClass, opsGhostBtn, opsLabelClass, opsPrimaryBtn } from '../components/ops/OpsUi';
+import { OpsBand, OpsCardActions, OpsCardTitle, OpsDeskStack, OpsEmptyList, OpsFact, OpsFacts, OpsField, OpsListRow, OpsMasterDetail, OpsPageHeader, OpsSection, OpsToolbar, opsCardDanger, opsCardFieldClass, opsCardGhost, opsCardPrimary, opsChipClass, opsFieldClass, opsGhostBtn, opsLabelClass, opsPrimaryBtn } from '../components/ops/OpsUi';
 import { accessLabelHe, formatOpsDate, isPayingPlan, opsStatusHe, planLabelHe, raffleStatusHe, roleLabelHe } from '../utils/opsLabels';
 
 type Tab =
@@ -410,18 +410,22 @@ function NotificationsPanel({
           }
           detail={
             selected ? (
-              <div className="grid gap-4">
-                <h3 className="text-lg font-light text-[#C8A24C]">{selected.title}</h3>
-                <OpsFact label="דחיפות">{NOTIF_SEVERITY_LABEL[selected.severity]}</OpsFact>
-                <OpsFact label="כמות">{selected.count}</OpsFact>
-                <p className="text-sm text-white/70 leading-relaxed">{selected.detail}</p>
-                <button
-                  type="button"
-                  onClick={() => onNavigate(selected.tab as Tab)}
-                  className={`${opsPrimaryBtn} w-fit`}
-                >
-                  מעבר לטיפול
-                </button>
+              <div className="grid gap-3">
+                <OpsCardTitle>{selected.title}</OpsCardTitle>
+                <OpsFacts>
+                  <OpsFact label="דחיפות">{NOTIF_SEVERITY_LABEL[selected.severity]}</OpsFact>
+                  <OpsFact label="כמות">{selected.count}</OpsFact>
+                </OpsFacts>
+                <p className="text-sm text-white/70 leading-snug">{selected.detail}</p>
+                <OpsCardActions>
+                  <button
+                    type="button"
+                    onClick={() => onNavigate(selected.tab as Tab)}
+                    className={opsCardPrimary}
+                  >
+                    מעבר לטיפול
+                  </button>
+                </OpsCardActions>
               </div>
             ) : null
           }
@@ -973,11 +977,13 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
           detail={
             selectedTotal ? (
               <div className="grid gap-3">
-                <h3 className="text-lg font-light text-[#C8A24C]">{EVENT_LABEL[selectedTotal.event] || selectedTotal.event}</h3>
+                <h3 className="text-base font-light text-[#C8A24C] leading-snug">{EVENT_LABEL[selectedTotal.event] || selectedTotal.event}</h3>
+                <OpsFacts>
                 <OpsFact label="כמות">{selectedTotal.count}</OpsFact>
                 <OpsFact label="מזהה">
                   <span dir="ltr">{selectedTotal.event}</span>
                 </OpsFact>
+                </OpsFacts>
               </div>
             ) : null
           }
@@ -1009,7 +1015,8 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
           detail={
             selectedRecent ? (
               <div className="grid gap-3">
-                <h3 className="text-lg font-light text-[#C8A24C]">{EVENT_LABEL[selectedRecent.event] || selectedRecent.event}</h3>
+                <h3 className="text-base font-light text-[#C8A24C] leading-snug">{EVENT_LABEL[selectedRecent.event] || selectedRecent.event}</h3>
+                <OpsFacts>
                 <OpsFact label="זמן">{formatOpsDate(selectedRecent.createdAt)}</OpsFact>
                 {selectedRecent.properties.source ? (
                   <OpsFact label="מקור">{String(selectedRecent.properties.source)}</OpsFact>
@@ -1019,6 +1026,7 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
                     <span dir="ltr">{String(selectedRecent.properties.courseId)}</span>
                   </OpsFact>
                 ) : null}
+                </OpsFacts>
               </div>
             ) : null
           }
@@ -1147,23 +1155,25 @@ function ContentPanel({
         }
         detail={
           selected ? (
-            <div className="grid gap-4">
-              <h3 className="text-lg font-light text-[#C8A24C]">{selected.title}</h3>
-              <OpsFact label="סטטוס">{STATUS_LABEL[selected.status || 'draft']}</OpsFact>
-              <OpsFact label="פרקים">{selected.episodes.length}</OpsFact>
-              <OpsFact label="גישה">{accessLabelHe(selected.accessLevel)}</OpsFact>
-              {instructors.find((i) => i.id === selected.instructorId)?.isFounder ? (
-                <OpsFact label="מייסד">כן</OpsFact>
-              ) : null}
-              <button type="button" onClick={() => setEditing(selected)} className={`${opsPrimaryBtn} w-fit`}>
-                עריכה
-              </button>
-              <div className="flex flex-wrap gap-2">
+            <div className="grid gap-3">
+              <OpsCardTitle>{selected.title}</OpsCardTitle>
+              <OpsFacts>
+                <OpsFact label="סטטוס">{STATUS_LABEL[selected.status || 'draft']}</OpsFact>
+                <OpsFact label="פרקים">{selected.episodes.length}</OpsFact>
+                <OpsFact label="גישה">{accessLabelHe(selected.accessLevel)}</OpsFact>
+                {instructors.find((i) => i.id === selected.instructorId)?.isFounder ? (
+                  <OpsFact label="מייסד">כן</OpsFact>
+                ) : null}
+              </OpsFacts>
+              <OpsCardActions>
+                <button type="button" onClick={() => setEditing(selected)} className={opsCardPrimary}>
+                  עריכה
+                </button>
                 {selected.status !== 'published' ? (
                   <button
                     type="button"
                     onClick={() => void setStatus(selected.id, 'published')}
-                    className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer"
+                    className={opsCardGhost}
                   >
                     פרסום
                   </button>
@@ -1171,7 +1181,7 @@ function ContentPanel({
                   <button
                     type="button"
                     onClick={() => void setStatus(selected.id, 'draft')}
-                    className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer"
+                    className={opsCardGhost}
                   >
                     להסתרה
                   </button>
@@ -1180,12 +1190,12 @@ function ContentPanel({
                   <button
                     type="button"
                     onClick={() => void setStatus(selected.id, 'blocked')}
-                    className="px-3 py-2 rounded-full border border-white/15 text-xs text-rose-300 min-h-11 cursor-pointer"
+                    className={opsCardDanger}
                   >
                     חסימה
                   </button>
                 ) : null}
-              </div>
+              </OpsCardActions>
             </div>
           ) : null
         }
@@ -1701,11 +1711,9 @@ function UsersPanel() {
         }
         detail={
           selected ? (
-          <div className="grid gap-4 text-sm">
-            <div>
-              <h3 className="text-lg font-light text-[#C8A24C]">{selected.name}</h3>
-              <p className="text-white/50 mt-0.5 break-all">{selected.email}</p>
-            </div>
+          <div className="grid gap-3 text-sm">
+            <OpsCardTitle sub={selected.email}>{selected.name}</OpsCardTitle>
+            <OpsFacts>
             <OpsFact label="מסלול">
               {selected.entryTrack === 'brave' ? 'אמיצים' : selected.entryTrack === 'hesitant' ? 'הססנים' : 'ללא'}
             </OpsFact>
@@ -1713,13 +1721,14 @@ function UsersPanel() {
             <OpsFact label="כרטיסי הגרלה">{selected.raffleTicketsCount || 0}</OpsFact>
             <OpsFact label="הצטרפות">{formatOpsDate(selected.createdAt)}</OpsFact>
             <OpsFact label="כניסה אחרונה">{formatOpsDate(selected.lastLoginAt)}</OpsFact>
+            </OpsFacts>
 
             <OpsField label="תפקיד">
               <select
                 value={selected.role}
                 disabled={pendingId === selected.id}
                 onChange={(e) => void patch(selected.id, { role: e.target.value })}
-                className={fieldClass}
+                className={opsCardFieldClass}
               >
                 <option value="student">משתמש</option>
                 <option value="instructor">מרצה</option>
@@ -1731,7 +1740,7 @@ function UsersPanel() {
                 value={selected.subscriptionPlan}
                 disabled={pendingId === selected.id}
                 onChange={(e) => void patch(selected.id, { subscriptionPlan: e.target.value })}
-                className={fieldClass}
+                className={opsCardFieldClass}
               >
                 <option value="none">חינמי</option>
                 <option value="free_trial">ניסיון</option>
@@ -1750,19 +1759,19 @@ function UsersPanel() {
                     currentPaymentPhase: e.target.value === 'brave' ? 1 : selected.currentPaymentPhase || 0,
                   })
                 }
-                className={fieldClass}
+                className={opsCardFieldClass}
               >
                 <option value="none">ללא</option>
                 <option value="brave">אמיצים</option>
                 <option value="hesitant">הססנים</option>
               </select>
             </OpsField>
-            <div className="flex flex-wrap gap-2 pt-1">
+            <OpsCardActions>
               <button
                 type="button"
                 disabled={pendingId === selected.id}
                 onClick={() => void patch(selected.id, { blocked: !selected.blocked })}
-                className={`${opsGhostBtn} text-sm`}
+                className={opsCardGhost}
               >
                 {selected.blocked ? 'שחרור חסימה' : 'חסימה'}
               </button>
@@ -1774,7 +1783,7 @@ function UsersPanel() {
                   (selected.role === 'admin' && users.filter((row) => row.role === 'admin').length <= 1)
                 }
                 onClick={() => void removeUser(selected)}
-                className="inline-flex items-center justify-center px-5 py-3 rounded-full border border-rose-400/40 text-sm text-rose-200 min-h-12 disabled:opacity-40"
+                className={opsCardDanger}
               >
                 הסרה מהמערכת
               </button>
@@ -1791,7 +1800,7 @@ function UsersPanel() {
                     await patch(selected.id, { isFounder: !selected.isFounder });
                   })();
                 }}
-                className={`${opsGhostBtn} text-sm`}
+                className={opsCardGhost}
               >
                 {selected.isFounder ? 'הסרה מהצוות' : 'שיוך לצוות'}
               </button>
@@ -1800,12 +1809,12 @@ function UsersPanel() {
                   type="button"
                   disabled={pendingId === selected.id}
                   onClick={() => void patch(selected.id, { role: 'instructor' })}
-                  className={`${opsPrimaryBtn} text-sm`}
+                  className={opsCardPrimary}
                 >
                   אישור כמרצה
                 </button>
               ) : null}
-            </div>
+            </OpsCardActions>
           </div>
           ) : null
         }
@@ -2112,11 +2121,8 @@ function TeamPersonCard({
   }, [moreOpen, onToggleMore]);
 
   return (
-    <div className="grid gap-4">
-      <div className="min-w-0">
-        <h3 className="text-lg font-light text-[#C8A24C]">{selected.name}</h3>
-        <p className="text-sm text-white/50 mt-0.5 break-all">{selected.email}</p>
-      </div>
+    <div className="grid gap-3">
+      <OpsCardTitle sub={selected.email}>{selected.name}</OpsCardTitle>
 
       <div className="grid gap-2">
         <span className="text-sm text-white/50">תפקיד</span>
@@ -2148,7 +2154,7 @@ function TeamPersonCard({
               value={selected.staffDesk || ''}
               disabled={busy}
               onChange={(e) => void onPatch(selected.id, { staffDesk: e.target.value })}
-              className={fieldClass}
+              className={opsCardFieldClass}
             >
               <option value="">מנהל/ת ראשי/ת</option>
               <option value="content">תוכן</option>
@@ -2448,13 +2454,10 @@ function LecturerApplicationsPanel() {
         detail={
           selected ? (
             <div className="grid gap-3">
-              <div>
-                <h3 className="text-lg font-light text-[#C8A24C]">{selected.fullName}</h3>
-                <p className="text-sm text-white/50 mt-0.5 break-all">
-                  {selected.email}
-                  {selected.phone ? ` · ${selected.phone}` : ''}
-                </p>
-              </div>
+              <OpsCardTitle sub={`${selected.email}${selected.phone ? ` · ${selected.phone}` : ''}`}>
+                {selected.fullName}
+              </OpsCardTitle>
+              <OpsFacts>
               <OpsFact label="סטטוס">{APP_STATUS_LABEL[selected.status]}</OpsFact>
               <OpsFact label="תחום">{selected.field || 'לא צוין'}</OpsFact>
               <OpsFact label="הרצאה מוצעת">{selected.proposedLecture || 'לא צוין'}</OpsFact>
@@ -2466,6 +2469,7 @@ function LecturerApplicationsPanel() {
                   <span className="break-all">{selected.links}</span>
                 </OpsFact>
               ) : null}
+              </OpsFacts>
               {selected.sampleVideo ? (
                 <a
                   href={selected.sampleVideo}
@@ -2487,15 +2491,15 @@ function LecturerApplicationsPanel() {
                       rows={2}
                       value={notes[selected.id] ?? ''}
                       onChange={(e) => setNotes((prev) => ({ ...prev, [selected.id]: e.target.value }))}
-                      className={fieldClass}
+                      className={opsCardFieldClass}
                     />
                   </label>
-                  <div className="flex flex-wrap gap-2">
+                  <OpsCardActions>
                     <button
                       type="button"
                       disabled={pendingId === selected.id}
                       onClick={() => void review(selected.id, 'approved')}
-                      className="px-4 py-2 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 cursor-pointer disabled:opacity-60"
+                      className={opsCardPrimary}
                     >
                       אישור
                     </button>
@@ -2503,7 +2507,7 @@ function LecturerApplicationsPanel() {
                       type="button"
                       disabled={pendingId === selected.id}
                       onClick={() => void review(selected.id, 'more_info')}
-                      className="px-4 py-2 rounded-full border border-white/15 text-sm min-h-11 cursor-pointer disabled:opacity-60"
+                      className={opsCardGhost}
                     >
                       פרטים נוספים
                     </button>
@@ -2511,11 +2515,11 @@ function LecturerApplicationsPanel() {
                       type="button"
                       disabled={pendingId === selected.id}
                       onClick={() => void review(selected.id, 'rejected')}
-                      className="px-4 py-2 rounded-full border border-rose-400/30 text-rose-300 text-sm min-h-11 cursor-pointer disabled:opacity-60"
+                      className={opsCardDanger}
                     >
                       דחייה
                     </button>
-                  </div>
+                  </OpsCardActions>
                 </>
               ) : null}
             </div>
@@ -2726,7 +2730,7 @@ function FoundersPanel() {
         }
         detail={
           selected ? (
-            <div className="grid gap-4">
+            <div className="grid gap-3">
               <div className="flex items-center gap-3">
                 {selected.avatarUrl ? (
                   <img
@@ -2738,7 +2742,7 @@ function FoundersPanel() {
                   <div className="w-16 h-16 rounded-full border border-white/10 bg-white/5" />
                 )}
                 <div className="min-w-0">
-                  <h3 className="text-lg font-light text-[#C8A24C]">{selected.name}</h3>
+                  <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selected.name}</h3>
                   <p className="text-sm text-white/50">{selected.title}</p>
                 </div>
               </div>
@@ -2775,12 +2779,12 @@ function FoundersPanel() {
                   onBlur={(e) => void persistLinks(selected.id, { label: 'אינסטגרם', url: e.currentTarget.value })}
                 />
               </label>
-              <div className="flex gap-2">
+              <OpsCardActions>
                 <button
                   type="button"
                   disabled={selectedIndex <= 0}
                   onClick={() => void move(selectedIndex, -1)}
-                  className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer disabled:opacity-30"
+                  className={opsCardGhost}
                 >
                   למעלה
                 </button>
@@ -2788,11 +2792,11 @@ function FoundersPanel() {
                   type="button"
                   disabled={selectedIndex < 0 || selectedIndex >= founders.length - 1}
                   onClick={() => void move(selectedIndex, 1)}
-                  className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer disabled:opacity-30"
+                  className={opsCardGhost}
                 >
                   למטה
                 </button>
-              </div>
+              </OpsCardActions>
             </div>
           ) : null
         }
@@ -2853,11 +2857,13 @@ function PaymentsPanel() {
         detail={
           selected ? (
             <div className="grid gap-3">
-              <h3 className="text-lg font-light text-[#C8A24C]">{selected.userName}</h3>
+              <OpsCardTitle>{selected.userName}</OpsCardTitle>
+              <OpsFacts>
               <OpsFact label="אימייל">{selected.email}</OpsFact>
               <OpsFact label="מנוי">{PLAN_LABEL[selected.plan] || selected.plan}</OpsFact>
               <OpsFact label="מקור">{selected.source === 'admin' ? 'אדמין' : 'משתמש'}</OpsFact>
               <OpsFact label="מתי">{selected.createdAt.replace('T', ' ').slice(0, 16)}</OpsFact>
+              </OpsFacts>
             </div>
           ) : null
         }
@@ -3088,7 +3094,7 @@ function TracksPanel() {
           selected ? (
             <div className="grid gap-5">
               <div>
-                <h3 className="text-lg font-light text-[#C8A24C]">{selected.name}</h3>
+                <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selected.name}</h3>
                 <p className="text-sm text-white/50 mt-1">
                   {trackLabel(selected.trackType)} · {opsStatusHe(selected.status)}
                 </p>
@@ -3361,13 +3367,13 @@ function CategoriesPanel() {
         }
         detail={
           selected ? (
-            <div className="grid gap-4">
-              <h3 className="text-lg font-light text-[#C8A24C]">{selected.name}</h3>
+            <div className="grid gap-3">
+              <OpsCardTitle>{selected.name}</OpsCardTitle>
               <OpsField label="שם">
                 <input
                   key={`${selected.id}-name`}
                   defaultValue={selected.name}
-                  className={fieldClass}
+                  className={opsCardFieldClass}
                   onBlur={(e) => {
                     if (e.target.value.trim() !== selected.name) void patch(selected.id, { name: e.target.value });
                   }}
@@ -3377,7 +3383,7 @@ function CategoriesPanel() {
                 <input
                   key={`${selected.id}-description`}
                   defaultValue={selected.description}
-                  className={fieldClass}
+                  className={opsCardFieldClass}
                   onBlur={(e) => {
                     if (e.target.value !== selected.description) void patch(selected.id, { description: e.target.value });
                   }}
@@ -3386,7 +3392,7 @@ function CategoriesPanel() {
               <OpsField label="גישה">
                 <select
                   value={selected.accessLevel || 'premium'}
-                  className={fieldClass}
+                  className={opsCardFieldClass}
                   onChange={(e) => void patch(selected.id, { accessLevel: e.target.value as AccessLevel })}
                 >
                   <option value="free">חינמי</option>
@@ -3396,12 +3402,12 @@ function CategoriesPanel() {
                 </select>
               </OpsField>
               <OpsFact label="סדר">{selected.sortOrder ?? 0}</OpsFact>
-              <div className="flex gap-2">
+              <OpsCardActions>
                 <button
                   type="button"
                   disabled={pending}
                   onClick={() => void move(selected.id, -1)}
-                  className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11"
+                  className={opsCardGhost}
                 >
                   למעלה
                 </button>
@@ -3409,11 +3415,11 @@ function CategoriesPanel() {
                   type="button"
                   disabled={pending}
                   onClick={() => void move(selected.id, 1)}
-                  className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11"
+                  className={opsCardGhost}
                 >
                   למטה
                 </button>
-              </div>
+              </OpsCardActions>
             </div>
           ) : null
         }
@@ -3499,31 +3505,28 @@ function Premium88Panel() {
         }
         detail={
           selected ? (
-            <div className="grid gap-4 text-sm">
-              <div>
-                <h3 className="text-lg font-light text-[#C8A24C]">{selected.fullName}</h3>
-                <p className="text-white/45 mt-1">
-                  {selected.phone} · {selected.email}
-                </p>
-              </div>
+            <div className="grid gap-3 text-sm">
+              <OpsCardTitle sub={`${selected.phone} · ${selected.email}`}>{selected.fullName}</OpsCardTitle>
+              <OpsFacts>
               <OpsFact label="תחום">{selected.field || 'לא צוין'}</OpsFact>
               <OpsFact label="שלב עסקי">{selected.businessStage || 'לא צוין'}</OpsFact>
               <OpsFact label="מטרה">{selected.goal || 'לא צוין'}</OpsFact>
               {selected.links ? <OpsFact label="קישורים">{selected.links}</OpsFact> : null}
-              {selected.notes ? <p className="text-white/70 leading-relaxed">{selected.notes}</p> : null}
-              <div className="flex flex-wrap gap-2 pt-2">
+              </OpsFacts>
+              {selected.notes ? <p className="text-white/70 leading-snug">{selected.notes}</p> : null}
+              <OpsCardActions>
                 {(['under_review', 'call_needed', 'approved', 'waitlist', 'rejected'] as const).map((status) => (
                   <button
                     key={status}
                     type="button"
                     disabled={pendingId === selected.id}
                     onClick={() => void review(selected.id, status)}
-                    className="px-3 py-1.5 text-xs border border-white/20 text-white/70 hover:border-[#C8A24C]/50 hover:text-[#C8A24C] disabled:opacity-50 min-h-11"
+                    className={opsCardGhost}
                   >
                     {P88_STATUS_LABEL[status]}
                   </button>
                 ))}
-              </div>
+              </OpsCardActions>
             </div>
           ) : null
         }
@@ -3577,15 +3580,17 @@ function AuditLogsPanel() {
         detail={
           selected ? (
             <div className="grid gap-3">
-              <h3 className="text-lg font-light text-[#C8A24C]">
+              <h3 className="text-base font-light text-[#C8A24C] leading-snug">
                 {AUDIT_ACTION_LABEL[selected.actionType] || selected.actionType}
               </h3>
+              <OpsFacts>
               <OpsFact label="מי">{selected.adminName || selected.adminEmail || selected.adminUserId}</OpsFact>
               <OpsFact label="ישות">
                 {selected.entityType}
                 {selected.entityId ? ` · ${selected.entityId}` : ''}
               </OpsFact>
               <OpsFact label="מתי">{selected.createdAt.replace('T', ' ').slice(0, 16)}</OpsFact>
+              </OpsFacts>
             </div>
           ) : null
         }
@@ -3752,22 +3757,24 @@ function RafflesPanel() {
           }
           detail={
             selectedRaffle ? (
-              <div className="grid gap-4">
-                <h3 className="text-lg font-light text-[#C8A24C]">{selectedRaffle.title}</h3>
+              <div className="grid gap-3">
+                <OpsCardTitle>{selectedRaffle.title}</OpsCardTitle>
+                <OpsFacts>
                 <OpsFact label="סטטוס">{raffleStatusHe(selectedRaffle.status)}</OpsFact>
                 <OpsFact label="כרטיסים">{selectedRaffle.ticketsCount ?? 0}</OpsFact>
                 <OpsFact label="משתתפים">{selectedRaffle.participants ?? 0}</OpsFact>
                 <OpsFact label="זוכה">{selectedRaffle.winnerName || '—'}</OpsFact>
+                </OpsFacts>
                 {selectedRaffle.description ? (
-                  <p className="text-sm text-white/60 leading-relaxed">{selectedRaffle.description}</p>
+                  <p className="text-sm text-white/60 leading-snug">{selectedRaffle.description}</p>
                 ) : null}
                 {selectedRaffle.status === 'open' ? (
-                  <div className="flex flex-wrap gap-2">
+                  <OpsCardActions>
                     <button
                       type="button"
                       disabled={pendingId === selectedRaffle.id}
                       onClick={() => void assign(selectedRaffle.id)}
-                      className="px-3 py-2 text-xs border border-white/20 rounded-full min-h-11"
+                      className={opsCardGhost}
                     >
                       שיוך כרטיסים
                     </button>
@@ -3775,12 +3782,12 @@ function RafflesPanel() {
                       type="button"
                       disabled={pendingId === selectedRaffle.id || !data.termsApproved}
                       onClick={() => void draw(selectedRaffle.id)}
-                      className="px-3 py-2 text-xs bg-[#C8A24C] text-black rounded-full min-h-11 disabled:opacity-50"
+                      className={opsCardPrimary}
                       title={!data.termsApproved ? 'נדרש אישור תקנון הגרלות בהגדרות' : undefined}
                     >
                       הגרלת זוכה
                     </button>
-                  </div>
+                  </OpsCardActions>
                 ) : null}
               </div>
             ) : null
@@ -3815,7 +3822,8 @@ function RafflesPanel() {
           detail={
             selectedTicket ? (
               <div className="grid gap-3">
-                <h3 className="text-lg font-light text-[#C8A24C]">{selectedTicket.userName || '—'}</h3>
+                <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selectedTicket.userName || '—'}</h3>
+                <OpsFacts>
                 <OpsFact label="אימייל">
                   <span dir="ltr">{selectedTicket.userEmail || '—'}</span>
                 </OpsFact>
@@ -3823,6 +3831,7 @@ function RafflesPanel() {
                 <OpsFact label="כמות">{selectedTicket.ticketsCount}</OpsFact>
                 <OpsFact label="הגרלה">{raffleTitle(selectedTicket.raffleId)}</OpsFact>
                 <OpsFact label="סיבה">{selectedTicket.grantedReason || '—'}</OpsFact>
+                </OpsFacts>
               </div>
             ) : null
           }
@@ -3934,7 +3943,8 @@ function LeadsPanel() {
         detail={
           selected ? (
             <div className="grid gap-3">
-              <h3 className="text-lg font-light text-[#C8A24C]">{selected.name || '—'}</h3>
+              <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selected.name || '—'}</h3>
+              <OpsFacts>
               <OpsFact label="מקור">{selected.sourceLabel}</OpsFact>
               <OpsFact label="טלפון">
                 <span dir="ltr">{selected.phone || '—'}</span>
@@ -3945,6 +3955,7 @@ function LeadsPanel() {
               <OpsFact label="עניין">{selected.interest || '—'}</OpsFact>
               <OpsFact label="סטטוס">{opsStatusHe(selected.status)}</OpsFact>
               <OpsFact label="תאריך">{formatOpsDate(selected.createdAt)}</OpsFact>
+              </OpsFacts>
             </div>
           ) : null
         }
@@ -4150,7 +4161,7 @@ function LegalPanel() {
           detail={
             selectedReport ? (
               <div className="grid gap-3">
-                <h3 className="text-lg font-light text-[#C8A24C]">{selectedReport.fullName}</h3>
+                <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selectedReport.fullName}</h3>
                 <OpsFact label="סטטוס">{a11yStatusHe(selectedReport.status)}</OpsFact>
                 <OpsFact label="תאריך">{formatOpsDate(selectedReport.createdAt)}</OpsFact>
                 <OpsFact label="דוא״ל">
@@ -4546,7 +4557,8 @@ function WebinarPanel() {
           detail={
             selectedReg ? (
               <div className="grid gap-3">
-                <h3 className="text-lg font-light text-[#C8A24C]">{selectedReg.fullName}</h3>
+                <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selectedReg.fullName}</h3>
+                <OpsFacts>
                 <OpsFact label="סטטוס">{statusLabel(selectedReg.status)}</OpsFact>
                 <OpsFact label="תאריך">{formatOpsDate(selectedReg.createdAt)}</OpsFact>
                 <OpsFact label="טלפון">
@@ -4559,6 +4571,7 @@ function WebinarPanel() {
                 <OpsFact label="מסקרן">{selectedReg.interest || '—'}</OpsFact>
                 {selectedReg.blocker ? <OpsFact label="חסם">{selectedReg.blocker}</OpsFact> : null}
                 {selectedReg.utmSource ? <OpsFact label="מקור">{selectedReg.utmSource}</OpsFact> : null}
+                </OpsFacts>
               </div>
             ) : null
           }

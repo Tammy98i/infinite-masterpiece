@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { adminOnboardingApi } from '../../api/onboarding';
 import type { OnboardingPath, OnboardingStep } from '../../types';
 import { BarChart3 } from 'lucide-react';
-import { OpsDeskStack, OpsEmptyList, OpsFact, OpsListRow, OpsMasterDetail, OpsPageHeader } from '../../components/ops/OpsUi';
+import { OpsCardTitle, OpsDeskStack, OpsEmptyList, OpsFact, OpsListRow, OpsMasterDetail, OpsPageHeader } from '../../components/ops/OpsUi';
 
 export const OnboardingCenterView: React.FC = () => {
   const [paths, setPaths] = useState<OnboardingPath[]>([]);
@@ -117,9 +117,9 @@ export const OnboardingCenterView: React.FC = () => {
         }
         detail={
           selectedPath ? (
-            <div className="grid gap-4">
+            <div className="grid gap-3">
               <div>
-                <h3 className="text-lg font-light text-[#C8A24C]">{selectedPath.name}</h3>
+                <OpsCardTitle>{selectedPath.name}</OpsCardTitle>
                 {selectedPath.description ? (
                   <p className="text-sm text-white/50 mt-1">{selectedPath.description}</p>
                 ) : null}
@@ -129,7 +129,7 @@ export const OnboardingCenterView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => void togglePathActive(selectedPath)}
-                className="px-4 py-2 rounded-full border border-white/15 text-sm min-h-11 w-fit"
+                className="px-3.5 py-2 rounded-full border border-white/15 text-sm min-h-11 w-fit"
               >
                 {selectedPath.isActive ? 'כיבוי מסלול' : 'הפעלת מסלול'}
               </button>
