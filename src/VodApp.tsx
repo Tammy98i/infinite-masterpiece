@@ -5,6 +5,7 @@ import { Navbar } from './components/Navbar';
 import { OnboardingUI } from './components/onboarding/OnboardingUI';
 import { OnboardingTriggers } from './components/onboarding/OnboardingTriggers';
 import { PaywallProvider } from './context/PaywallContext';
+import { ConfirmProvider } from './components/ops/ConfirmDialog';
 import { PaywallTriggers } from './components/PaywallTriggers';
 import { SITE_TAGLINE } from './constants/brand';
 
@@ -96,6 +97,7 @@ export const VodApp: React.FC = () => {
 
   return (
     <PaywallProvider>
+    <ConfirmProvider>
     <PaywallTriggers />
     <div className="vod-app flex flex-col min-h-screen bg-[#050505] text-white">
       {currentView !== 'watch' && (
@@ -136,6 +138,7 @@ export const VodApp: React.FC = () => {
         </>
       )}
     </div>
+    </ConfirmProvider>
     </PaywallProvider>
   );
 };
