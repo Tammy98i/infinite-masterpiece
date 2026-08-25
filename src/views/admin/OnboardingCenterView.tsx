@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { adminOnboardingApi } from '../../api/onboarding';
 import type { OnboardingPath, OnboardingStep } from '../../types';
-import { BarChart3, BookOpen, ToggleLeft, ToggleRight } from 'lucide-react';
+import { BarChart3 } from 'lucide-react';
+import { OpsEmptyList, OpsFact, OpsListRow, OpsMasterDetail } from '../../components/ops/OpsUi';
 
 export const OnboardingCenterView: React.FC = () => {
   const [paths, setPaths] = useState<OnboardingPath[]>([]);
@@ -21,7 +22,6 @@ export const OnboardingCenterView: React.FC = () => {
       const [p, s] = await Promise.all([adminOnboardingApi.getPaths(), adminOnboardingApi.getStats()]);
       setPaths(p);
       setStats(s);
-      if (!selectedPathId && p.length > 0) setSelectedPathId(p[0].id);
     } catch (e) {
       console.error(e);
     } finally {
@@ -90,85 +90,78 @@ export const OnboardingCenterView: React.FC = () => {
         </div>
       )}
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-4 glass rounded-2xl p-4 border border-white/10">
-          <div className="font-bold text-white mb-4 flex items-center gap-2">
-            <BookOpen className="w-4 h-4 text-primary-light" />
-            מסלולי הדרכה
-          </div>
-          <div className="grid gap-2">
-            {paths.map((path) => (
-              <button
-                key={path.id}
-                onClick={() => setSelectedPathId(path.id)}
-                className={`w-full text-right p-3 rounded-xl border transition-all ${
-                  selectedPathId === path.id
-                    ? 'border-primary/50 bg-primary/10'
-                    : 'border-white/5 bg-white/5 hover:border-white/20'
-                }`}
-              >
-                <div className="font-bold text-sm text-white">{path.name}</div>
-                <div className="text-[10px] text-zinc-500 mt-0.5">{path.targetRole} • {path.steps?.length || 0} שלבים</div>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        <div className="lg:col-span-8 glass rounded-2xl p-5 border border-white/10">
-          {selectedPath ? (
-            <>
-              <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10">
-                <div>
-                  <h3 className="font-black text-lg text-white">{selectedPath.name}</h3>
-                  <p className="text-xs text-zinc-400">{selectedPath.description}</p>
-                </div>
-                <button
-                  onClick={() => togglePathActive(selectedPath)}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/5 text-xs font-bold focus-ring"
-                >
-                  {selectedPath.isActive ? (
-                    <><ToggleRight className="w-4 h-4 text-emerald-400" /> פעיל</>
-                  ) : (
-                    <><ToggleLeft className="w-4 h-4 text-zinc-500" /> כבוי</>
-                  )}
-                </button>
+      <OpsMasterDetail
+        hasSelection={Boolean(selectedPath)}
+        onCloseDetail={() => setSelectedPathId(null)}
+        emptyDetail="בחרו מסלול מהרשימה."
+        list={
+          paths.length === 0 ? (
+            <OpsEmptyList>אין מסלולי הדרכה.</OpsEmptyList>
+          ) : (
+            <ul className="divide-y divide-white/10">
+              {paths.map((path) => (
+                <li key={path.id}>
+                  <OpsListRow
+                    active={selectedPathId === path.id}
+                    onClick={() => setSelectedPathId(path.id)}
+                    title={path.name}
+                    meta={`${path.targetRole} · ${path.steps?.length || 0} שלבים`}
+                    status={path.isActive ? 'פעיל' : 'כבוי'}
+                    statusClass={path.isActive ? 'text-emerald-300' : 'text-white/45'}
+                  />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        detail={
+          selectedPath ? (
+            <div className="grid gap-4">
+              <div>
+                <h3 className="text-lg font-light text-[#C8A24C]">{selectedPath.name}</h3>
+                {selectedPath.description ? (
+                  <p className="text-sm text-white/50 mt-1">{selectedPath.description}</p>
+                ) : null}
               </div>
+              <OpsFact label="תפקיד יעד">{selectedPath.targetRole}</OpsFact>
+              <OpsFact label="שלבים">{selectedPath.steps?.length || 0}</OpsFact>
+              <button
+                type="button"
+                onClick={() => void togglePathActive(selectedPath)}
+                className="px-4 py-2 rounded-full border border-white/15 text-sm min-h-11 w-fit"
+              >
+                {selectedPath.isActive ? 'כיבוי מסלול' : 'הפעלת מסלול'}
+              </button>
               <div className="grid gap-3">
                 {selectedPath.steps?.map((step) => {
                   const stepId = step.id || step.stepId || '';
                   return (
-                    <div key={stepId} className="p-4 rounded-xl bg-white/5 border border-white/5">
-                      <div className="flex items-start justify-between gap-3 mb-2">
-                        <div>
-                          <span className="text-[10px] font-bold text-primary-light">שלב {step.stepOrder}</span>
-                          <input
-                            defaultValue={step.title}
-                            onBlur={(e) => updateStepField(step, 'title', e.target.value)}
-                            className="block w-full bg-transparent font-bold text-white text-sm focus:outline-none border-b border-transparent focus:border-primary/50"
-                          />
-                        </div>
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-zinc-800 text-zinc-400">{step.type}</span>
-                      </div>
+                    <div key={stepId} className="grid gap-2 border-t border-white/10 pt-3">
+                      <span className="text-xs text-white/40">שלב {step.stepOrder} · {step.type}</span>
+                      <input
+                        defaultValue={step.title}
+                        onBlur={(e) => void updateStepField(step, 'title', e.target.value)}
+                        className="w-full bg-transparent text-sm text-white focus:outline-none border-b border-transparent focus:border-[#C8A24C]/50 min-h-11"
+                        aria-label={`כותרת שלב ${step.stepOrder}`}
+                      />
                       <textarea
                         defaultValue={step.description}
-                        onBlur={(e) => updateStepField(step, 'description', e.target.value)}
+                        onBlur={(e) => void updateStepField(step, 'description', e.target.value)}
                         rows={2}
-                        className="w-full bg-zinc-900/50 border border-white/10 rounded-lg p-2 text-xs text-zinc-300 focus:outline-none focus:border-primary/50 mb-2"
+                        className="w-full bg-[#0a0a0a] border border-white/10 rounded-xl p-2 text-xs text-white/70 focus:outline-none focus:border-[#C8A24C]"
+                        aria-label={`תיאור שלב ${step.stepOrder}`}
                       />
-                      <div className="grid grid-cols-2 gap-2 text-[10px] text-zinc-500">
-                        <span>טריגר: {step.triggerEvent || 'אין'}</span>
-                        <span>סלקטור: {step.targetSelector || 'אין'}</span>
-                      </div>
+                      <p className="text-xs text-white/40">
+                        טריגר: {step.triggerEvent || 'אין'} · סלקטור: {step.targetSelector || 'אין'}
+                      </p>
                     </div>
                   );
                 })}
               </div>
-            </>
-          ) : (
-            <div className="text-center py-12 text-zinc-500">בחרו מסלול לעריכה</div>
-          )}
-        </div>
-      </div>
+            </div>
+          ) : null
+        }
+      />
     </div>
   );
 };

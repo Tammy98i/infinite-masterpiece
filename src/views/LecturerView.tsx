@@ -14,7 +14,7 @@ import type { CoursePayload } from '../api/admin';
 import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/captions';
 import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
-import { OpsField, OpsPageHeader, OpsSection, opsFieldClass, opsGhostBtn, opsPrimaryBtn } from '../components/ops/OpsUi';
+import { OpsEmptyList, OpsFact, OpsField, OpsListRow, OpsMasterDetail, OpsPageHeader, OpsSection, opsFieldClass, opsGhostBtn, opsPrimaryBtn } from '../components/ops/OpsUi';
 import { accessLabelHe } from '../utils/opsLabels';
 
 const fieldClass = opsFieldClass;
@@ -548,11 +548,18 @@ function LecturerDashboard({
   );
 }
 
+function questionStatusHe(status: LecturerQuestion['status']) {
+  if (status === 'open') return 'פתוח';
+  if (status === 'escalated') return 'הועבר לצוות';
+  return 'נענה';
+}
+
 function QuestionsPanel() {
   const [questions, setQuestions] = useState<LecturerQuestion[]>([]);
   const [error, setError] = useState('');
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [answers, setAnswers] = useState<Record<string, string>>({});
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const load = () =>
     lecturerApi
@@ -563,6 +570,8 @@ function QuestionsPanel() {
   useEffect(() => {
     void load();
   }, []);
+
+  const selected = questions.find((row) => row.id === selectedId) || null;
 
   const reply = async (id: string, status: 'answered' | 'escalated') => {
     setPendingId(id);
@@ -584,47 +593,69 @@ function QuestionsPanel() {
         hint="רק שאלות על ההרצאות שלכם. בלי נתוני משתמשים רגישים מעבר לשם."
       />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-      <div className="grid gap-3">
-        {questions.length === 0 ? (
-          <p className="text-sm text-white/40 border border-white/10 rounded-2xl p-6">
-            אין שאלות עדיין. משתמשים יכולים לשאול מעמוד ההרצאה.
-          </p>
-        ) : (
-          questions.map((row) => (
-            <article key={row.id} className="border border-white/10 rounded-2xl p-5 grid gap-3">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="text-sm font-light">{row.courseTitle || 'הרצאה'}</p>
-                <span className="text-xs text-white/40">
-                  {row.status === 'open' ? 'פתוח' : row.status === 'escalated' ? 'הועבר לצוות' : 'נענה'}
-                </span>
-              </div>
-              <p className="text-sm text-white/70">{row.question}</p>
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו שאלה מהרשימה."
+        list={
+          questions.length === 0 ? (
+            <OpsEmptyList>אין שאלות עדיין. משתמשים יכולים לשאול מעמוד ההרצאה.</OpsEmptyList>
+          ) : (
+            <ul className="divide-y divide-white/10">
+              {questions.map((row) => (
+                <li key={row.id}>
+                  <OpsListRow
+                    active={selectedId === row.id}
+                    onClick={() => setSelectedId(row.id)}
+                    title={row.courseTitle || 'הרצאה'}
+                    status={questionStatusHe(row.status)}
+                    statusClass={
+                      row.status === 'open'
+                        ? 'text-[#C8A24C]'
+                        : row.status === 'escalated'
+                          ? 'text-white/45'
+                          : 'text-emerald-300'
+                    }
+                  />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        detail={
+          selected ? (
+            <div className="grid gap-3">
+              <h3 className="text-lg font-light text-[#C8A24C]">{selected.courseTitle || 'הרצאה'}</h3>
+              <OpsFact label="סטטוס">{questionStatusHe(selected.status)}</OpsFact>
+              <p className="text-sm text-white/70 leading-relaxed">{selected.question}</p>
               <p className="text-xs text-white/35">
-                {row.userName} · {row.createdAt.replace('T', ' ').slice(0, 16)}
+                {selected.userName} · {selected.createdAt.replace('T', ' ').slice(0, 16)}
               </p>
-              {row.answer ? <p className="text-sm text-[#C8A24C]/90">תשובה: {row.answer}</p> : null}
-              {row.status === 'open' ? (
+              {selected.answer ? (
+                <p className="text-sm text-[#C8A24C]/90">תשובה: {selected.answer}</p>
+              ) : null}
+              {selected.status === 'open' ? (
                 <div className="grid gap-2">
                   <textarea
                     rows={3}
-                    value={answers[row.id] || ''}
-                    onChange={(e) => setAnswers((prev) => ({ ...prev, [row.id]: e.target.value }))}
+                    value={answers[selected.id] || ''}
+                    onChange={(e) => setAnswers((prev) => ({ ...prev, [selected.id]: e.target.value }))}
                     className={fieldClass}
                     placeholder="תשובה לצופה"
                   />
                   <div className="flex flex-wrap gap-2">
                     <button
                       type="button"
-                      disabled={pendingId === row.id}
-                      onClick={() => void reply(row.id, 'answered')}
+                      disabled={pendingId === selected.id}
+                      onClick={() => void reply(selected.id, 'answered')}
                       className="px-4 py-2 rounded-full bg-[#C8A24C] text-black text-xs min-h-10 disabled:opacity-60"
                     >
                       שליחת תשובה
                     </button>
                     <button
                       type="button"
-                      disabled={pendingId === row.id}
-                      onClick={() => void reply(row.id, 'escalated')}
+                      disabled={pendingId === selected.id}
+                      onClick={() => void reply(selected.id, 'escalated')}
                       className="px-4 py-2 rounded-full border border-white/20 text-xs min-h-10 disabled:opacity-60"
                     >
                       העברה לצוות
@@ -632,10 +663,10 @@ function QuestionsPanel() {
                   </div>
                 </div>
               ) : null}
-            </article>
-          ))
-        )}
-      </div>
+            </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -674,45 +705,41 @@ function MessagesPanel() {
     <div className="grid gap-6">
       <OpsPageHeader title="הודעות מהצוות" />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-      <div className="grid gap-6 xl:grid-cols-[1fr_1.1fr]">
-        <div className="border border-white/10 rounded-2xl divide-y divide-white/10">
-          {messages.length === 0 ? (
-            <p className="p-6 text-sm text-white/40">אין הודעות מהצוות.</p>
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו הודעה מהרשימה."
+        list={
+          messages.length === 0 ? (
+            <OpsEmptyList>אין הודעות מהצוות.</OpsEmptyList>
           ) : (
-            messages.map((row) => (
-              <button
-                key={row.id}
-                type="button"
-                onClick={() => void open(row.id)}
-                className={`w-full text-right p-4 hover:bg-white/[0.03] ${
-                  selectedId === row.id ? 'bg-[#C8A24C]/10' : ''
-                }`}
-              >
-                <div className="flex items-center justify-between gap-2">
-                  <span className="text-sm">{row.subject}</span>
-                  {!row.readAt ? <span className="text-[10px] text-[#C8A24C]">חדש</span> : null}
-                </div>
-                <p className="text-xs text-white/40 mt-1">
-                  {row.fromAdminName} · {row.createdAt.replace('T', ' ').slice(0, 16)}
-                </p>
-              </button>
-            ))
-          )}
-        </div>
-        <aside className="border border-white/10 rounded-2xl p-5 min-h-[220px]">
-          {!selected ? (
-            <p className="text-sm text-white/40">בחרו הודעה.</p>
-          ) : (
-            <div className="grid gap-3 text-sm">
-              <h3 className="text-xl font-light">{selected.subject}</h3>
+            <ul className="divide-y divide-white/10">
+              {messages.map((row) => (
+                <li key={row.id}>
+                  <OpsListRow
+                    active={selectedId === row.id}
+                    onClick={() => void open(row.id)}
+                    title={row.subject}
+                    meta={`${row.fromAdminName} · ${row.createdAt.replace('T', ' ').slice(0, 16)}`}
+                    status={!row.readAt ? 'חדש' : undefined}
+                  />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        detail={
+          selected ? (
+            <div className="grid gap-3">
+              <h3 className="text-lg font-light text-[#C8A24C]">{selected.subject}</h3>
               <p className="text-xs text-white/40">
                 מאת {selected.fromAdminName} · {selected.createdAt.replace('T', ' ').slice(0, 16)}
               </p>
-              <p className="text-white/70 leading-relaxed whitespace-pre-wrap">{selected.body}</p>
+              <p className="text-sm text-white/70 leading-relaxed whitespace-pre-wrap">{selected.body}</p>
             </div>
-          )}
-        </aside>
-      </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -726,6 +753,7 @@ function CoursesSeriesPanel({
   categories: { id: string; name: string }[];
   onEdit: (course: Course) => void;
 }) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const groups = categories
     .map((cat) => ({
       ...cat,
@@ -733,6 +761,12 @@ function CoursesSeriesPanel({
     }))
     .filter((group) => group.items.length > 0);
   const uncategorized = courses.filter((course) => !categories.some((cat) => cat.id === course.categoryId));
+  const grouped = [
+    ...groups,
+    ...(uncategorized.length ? [{ id: 'none', name: 'ללא קטגוריה', items: uncategorized }] : []),
+  ];
+  const selected = courses.find((course) => course.id === selectedId) || null;
+  const canEdit = selected && selected.status !== 'published' && selected.status !== 'blocked';
 
   return (
     <div className="grid gap-8">
@@ -740,79 +774,114 @@ function CoursesSeriesPanel({
         title="קורסים / סדרות"
         hint="קיבוץ ההרצאות לפי קטגוריה. יצירת סדרה נפרדת תגיע בהמשך; כרגע מנהלים דרך ההרצאות והקטגוריה."
       />
-      {groups.length === 0 && uncategorized.length === 0 ? (
-        <p className="text-sm text-white/40">עדיין אין תכנים לקיבוץ.</p>
-      ) : null}
-      {[...groups, ...(uncategorized.length ? [{ id: 'none', name: 'ללא קטגוריה', items: uncategorized }] : [])].map(
-        (group) => (
-          <section key={group.id} className="border border-white/10 rounded-2xl p-5">
-            <div className="flex items-center justify-between gap-3 mb-4">
-              <h3 className="text-lg font-light">{group.name}</h3>
-              <span className="text-xs text-white/40">{group.items.length} הרצאות</span>
-            </div>
-            <ul className="grid gap-2">
-              {group.items.map((course) => (
-                <li key={course.id} className="flex flex-wrap items-center justify-between gap-3 py-2 border-b border-white/5 last:border-0">
-                  <div className="min-w-0">
-                    <p className="text-sm truncate">{course.title}</p>
-                    <p className="text-xs text-white/40">
-                      {STATUS_LABEL[course.status || 'draft']} · {course.episodes?.length || 0} פרקים
-                    </p>
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו הרצאה מהרשימה."
+        list={
+          grouped.length === 0 ? (
+            <OpsEmptyList>עדיין אין תכנים לקיבוץ.</OpsEmptyList>
+          ) : (
+            <div>
+              {grouped.map((group) => (
+                <section key={group.id}>
+                  <div className="sticky top-0 z-10 flex items-center justify-between gap-3 px-4 py-3 bg-[#0a0a0a] border-b border-white/10">
+                    <h3 className="text-sm font-light">{group.name}</h3>
+                    <span className="text-xs text-white/40">{group.items.length} הרצאות</span>
                   </div>
-                  {course.status !== 'published' && course.status !== 'blocked' ? (
-                    <button
-                      type="button"
-                      onClick={() => onEdit(course)}
-                      className="px-3 py-1.5 text-xs border border-white/20 rounded-xl min-h-10"
-                    >
-                      עריכה
-                    </button>
-                  ) : null}
-                </li>
+                  <ul className="divide-y divide-white/10">
+                    {group.items.map((course) => (
+                      <li key={course.id}>
+                        <OpsListRow
+                          active={selectedId === course.id}
+                          onClick={() => setSelectedId(course.id)}
+                          title={course.title}
+                          meta={`${course.episodes?.length || 0} פרקים`}
+                          status={STATUS_LABEL[course.status || 'draft']}
+                          statusClass={
+                            course.status === 'published'
+                              ? 'text-emerald-300'
+                              : course.status === 'pending_review'
+                                ? 'text-[#C8A24C]'
+                                : course.status === 'blocked'
+                                  ? 'text-rose-300'
+                                  : 'text-white/45'
+                          }
+                        />
+                      </li>
+                    ))}
+                  </ul>
+                </section>
               ))}
-            </ul>
-          </section>
-        )
-      )}
+            </div>
+          )
+        }
+        detail={
+          selected ? (
+            <div className="grid gap-3">
+              <h3 className="text-lg font-light text-[#C8A24C]">{selected.title}</h3>
+              <OpsFact label="סטטוס">{STATUS_LABEL[selected.status || 'draft']}</OpsFact>
+              <OpsFact label="פרקים">{selected.episodes?.length || 0}</OpsFact>
+              {canEdit ? (
+                <button
+                  type="button"
+                  onClick={() => onEdit(selected)}
+                  className="px-3 py-1.5 text-xs border border-white/20 rounded-xl min-h-10 w-fit"
+                >
+                  עריכה
+                </button>
+              ) : null}
+            </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
 
 function Founder88Panel({ courses }: { courses: Course[] }) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const selected = courses.find((course) => course.id === selectedId) || null;
+
   return (
     <div className="grid gap-6">
       <OpsPageHeader
         title="הרצאות בנבחרת 88"
         hint="הרצאות שפורסמו תחת הפרופיל שלכם. הצגה בעמוד הציבורי נקבעת גם על ידי האדמין."
       />
-      <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
-          <thead className="text-xs text-white/40 border-b border-white/10">
-            <tr>
-              <th className="py-3 px-3 font-normal">הרצאה</th>
-              <th className="py-3 px-3 font-normal">גישה</th>
-              <th className="py-3 px-3 font-normal">סטטוס</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {courses.length === 0 ? (
-              <tr>
-                <td colSpan={3} className="py-8 px-3 text-white/40">
-                  אין עדיין הרצאות מפורסמות להצגה.
-                </td>
-              </tr>
-            ) : (
-              courses.map((course) => (
-                <tr key={course.id}>
-                  <td className="py-3 px-3">{course.title}</td>
-                  <td className="py-3 px-3 text-white/55">{course.accessLevel}</td>
-                  <td className="py-3 px-3 text-emerald-300">פורסם</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו הרצאה מהרשימה."
+        list={
+          courses.length === 0 ? (
+            <OpsEmptyList>אין עדיין הרצאות מפורסמות להצגה.</OpsEmptyList>
+          ) : (
+            <ul className="divide-y divide-white/10">
+              {courses.map((course) => (
+                <li key={course.id}>
+                  <OpsListRow
+                    active={selectedId === course.id}
+                    onClick={() => setSelectedId(course.id)}
+                    title={course.title}
+                    status="פורסם"
+                    statusClass="text-emerald-300"
+                  />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        detail={
+          selected ? (
+            <div className="grid gap-3">
+              <h3 className="text-lg font-light text-[#C8A24C]">{selected.title}</h3>
+              <OpsFact label="גישה">{accessLabelHe(selected.accessLevel)}</OpsFact>
+              <OpsFact label="סטטוס">פורסם</OpsFact>
+            </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -975,6 +1044,7 @@ function VideosPanel({
   onSubmit: (id: string) => void;
   onUpload: () => void;
 }) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const categoryName = (id?: string) => categories.find((c) => c.id === id)?.name || '—';
   const chips = [
     { id: 'all' as const, label: 'הכל', count: counts.all },
@@ -982,6 +1052,7 @@ function VideosPanel({
     { id: 'pending_review' as const, label: 'בבדיקה', count: counts.pending_review },
     { id: 'published' as const, label: 'פורסם', count: counts.published },
   ];
+  const selected = courses.find((course) => course.id === selectedId) || null;
 
   return (
     <div className="grid gap-6">
@@ -1009,82 +1080,68 @@ function VideosPanel({
           </button>
         ))}
       </div>
-      <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
-          <thead className="text-sm text-white/50 border-b border-white/10">
-            <tr>
-              <th className="py-3 px-3 font-normal">הרצאה</th>
-              <th className="py-3 px-3 font-normal">קטגוריה</th>
-              <th className="py-3 px-3 font-normal">גישה</th>
-              <th className="py-3 px-3 font-normal">סטטוס</th>
-              <th className="py-3 px-3 font-normal">פעולות</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {courses.length === 0 ? (
-              <tr>
-                <td colSpan={5} className="py-8 px-3 text-white/50">
-                  אין פריטים להצגה. העלו הרצאה ראשונה.
-                </td>
-              </tr>
-            ) : (
-              courses.map((course) => (
-                <tr key={course.id}>
-                  <td className="py-3 px-3">
-                    <div className="flex items-center gap-3">
-                      {course.coverImage ? (
-                        <img src={course.coverImage} alt="" aria-hidden className="w-14 h-9 rounded object-cover shrink-0" />
-                      ) : (
-                        <div className="w-14 h-9 rounded bg-white/5 border border-white/10 shrink-0" />
-                      )}
-                      <span>{course.title}</span>
-                    </div>
-                  </td>
-                  <td className="py-3 px-3 text-white/70">{categoryName(course.categoryId)}</td>
-                  <td className="py-3 px-3 text-white/70">{accessLabelHe(course.accessLevel)}</td>
-                  <td className="py-3 px-3">
-                    <span className="inline-flex items-center gap-2">
-                      <span
-                        className={`w-2 h-2 rounded-full ${
-                          course.status === 'published'
-                            ? 'bg-emerald-400'
-                            : course.status === 'pending_review'
-                              ? 'bg-[#C8A24C]'
-                              : 'bg-white/40'
-                        }`}
-                        aria-hidden
-                      />
-                      {STATUS_LABEL[course.status || 'draft']}
-                    </span>
-                  </td>
-                  <td className="py-3 px-3">
-                    <div className="flex flex-wrap gap-2">
-                      {course.status !== 'published' && course.status !== 'blocked' ? (
-                        <button
-                          type="button"
-                          onClick={() => onEdit(course)}
-                          className="px-3 py-1.5 text-sm border border-white/20 rounded-xl min-h-10"
-                        >
-                          עריכה
-                        </button>
-                      ) : null}
-                      {course.status === 'draft' ? (
-                        <button
-                          type="button"
-                          onClick={() => onSubmit(course.id)}
-                          className="px-3 py-1.5 text-sm border border-[#C8A24C]/40 text-[#C8A24C] rounded-xl min-h-10"
-                        >
-                          שליחה לאישור
-                        </button>
-                      ) : null}
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו הרצאה מהרשימה."
+        list={
+          courses.length === 0 ? (
+            <OpsEmptyList>אין פריטים להצגה. העלו הרצאה ראשונה.</OpsEmptyList>
+          ) : (
+            <ul className="divide-y divide-white/10">
+              {courses.map((course) => (
+                <li key={course.id}>
+                  <OpsListRow
+                    active={selectedId === course.id}
+                    onClick={() => setSelectedId(course.id)}
+                    title={course.title}
+                    status={STATUS_LABEL[course.status || 'draft']}
+                    statusClass={
+                      course.status === 'published'
+                        ? 'text-emerald-300'
+                        : course.status === 'pending_review'
+                          ? 'text-[#C8A24C]'
+                          : course.status === 'blocked'
+                            ? 'text-rose-300'
+                            : 'text-white/45'
+                    }
+                  />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        detail={
+          selected ? (
+            <div className="grid gap-3">
+              <h3 className="text-lg font-light text-[#C8A24C]">{selected.title}</h3>
+              <OpsFact label="קטגוריה">{categoryName(selected.categoryId)}</OpsFact>
+              <OpsFact label="גישה">{accessLabelHe(selected.accessLevel)}</OpsFact>
+              <OpsFact label="סטטוס">{STATUS_LABEL[selected.status || 'draft']}</OpsFact>
+              <div className="flex flex-wrap gap-2 pt-1">
+                {selected.status !== 'published' && selected.status !== 'blocked' ? (
+                  <button
+                    type="button"
+                    onClick={() => onEdit(selected)}
+                    className="px-3 py-1.5 text-sm border border-white/20 rounded-xl min-h-10"
+                  >
+                    עריכה
+                  </button>
+                ) : null}
+                {selected.status === 'draft' ? (
+                  <button
+                    type="button"
+                    onClick={() => onSubmit(selected.id)}
+                    className="px-3 py-1.5 text-sm border border-[#C8A24C]/40 text-[#C8A24C] rounded-xl min-h-10"
+                  >
+                    שליחה לאישור
+                  </button>
+                ) : null}
+              </div>
+            </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -1145,43 +1202,67 @@ function AnalyticsPanel({ stats }: { stats: LecturerOverview }) {
 }
 
 function ResourcesPanel({ courses }: { courses: Course[] }) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const rows = courses.filter((course) => course.resources);
+  const selected = rows.find((course) => course.id === selectedId) || null;
+
   return (
     <div className="grid gap-6">
       <OpsPageHeader
         title="קבצים נלווים"
         hint="קבצים שצורפו להרצאות שלכם. העלאה חדשה דרך עריכת הרצאה."
       />
-      <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
-          <thead className="text-xs text-white/40 border-b border-white/10">
-            <tr>
-              <th className="py-3 px-3 font-normal">הרצאה</th>
-              <th className="py-3 px-3 font-normal">קובץ / קישור</th>
-              <th className="py-3 px-3 font-normal">סטטוס</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {rows.length === 0 ? (
-              <tr>
-                <td colSpan={3} className="py-8 px-3 text-white/40">
-                  עדיין אין קבצים נלווים.
-                </td>
-              </tr>
-            ) : (
-              rows.map((course) => (
-                <tr key={course.id}>
-                  <td className="py-3 px-3">{course.title}</td>
-                  <td className="py-3 px-3 text-white/55 break-all" dir="ltr">
-                    {course.resources}
-                  </td>
-                  <td className="py-3 px-3">{STATUS_LABEL[course.status || 'draft']}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו שורה מהרשימה."
+        list={
+          rows.length === 0 ? (
+            <OpsEmptyList>עדיין אין קבצים נלווים.</OpsEmptyList>
+          ) : (
+            <ul className="divide-y divide-white/10">
+              {rows.map((course) => (
+                <li key={course.id}>
+                  <OpsListRow
+                    active={selectedId === course.id}
+                    onClick={() => setSelectedId(course.id)}
+                    title={course.title}
+                    status={STATUS_LABEL[course.status || 'draft']}
+                    statusClass={
+                      course.status === 'published'
+                        ? 'text-emerald-300'
+                        : course.status === 'pending_review'
+                          ? 'text-[#C8A24C]'
+                          : course.status === 'blocked'
+                            ? 'text-rose-300'
+                            : 'text-white/45'
+                    }
+                  />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        detail={
+          selected ? (
+            <div className="grid gap-3">
+              <h3 className="text-lg font-light text-[#C8A24C]">{selected.title}</h3>
+              <OpsFact label="קובץ / קישור">
+                <a
+                  href={selected.resources}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="break-all underline decoration-white/20 hover:decoration-[#C8A24C]"
+                  dir="ltr"
+                >
+                  {selected.resources}
+                </a>
+              </OpsFact>
+              <OpsFact label="סטטוס">{STATUS_LABEL[selected.status || 'draft']}</OpsFact>
+            </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -1307,6 +1388,7 @@ function SettingsPanel({ onLibrary }: { onLibrary: () => void }) {
 function TeamPanel() {
   const { reloadCatalog } = useApp();
   const [members, setMembers] = useState<Instructor[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [name, setName] = useState('');
   const [title, setTitle] = useState('יזם');
   const [bio, setBio] = useState('');
@@ -1342,27 +1424,59 @@ function TeamPanel() {
     }
   };
 
+  const selected = members.find((member) => member.id === selectedId) || null;
+
   return (
-    <div className="grid gap-8 max-w-2xl">
+    <div className="grid gap-8">
       <OpsPageHeader
         title="צוות מייסדים"
         hint="נכנסים מחשבון גל. לכל יזם: שם, תפקיד ותמונה. בלי להמציא אנשים."
       />
-      <div className="grid gap-4">
-        {members.map((member) => (
-          <div key={member.id} className="flex items-center gap-3 border border-white/10 rounded-2xl p-4">
-            {member.avatarUrl ? (
-              <img src={member.avatarUrl} alt={member.name ? `תמונת פרופיל: ${member.name}` : 'תמונת חבר צוות'} className="w-12 h-12 rounded-full object-cover" />
-            ) : (
-              <div className="w-12 h-12 rounded-full bg-white/5 border border-white/10" />
-            )}
-            <div>
-              <div className="text-sm">{member.name}</div>
-              <div className="text-xs text-white/40">{member.title}</div>
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו איש צוות מהרשימה."
+        list={
+          members.length === 0 ? (
+            <OpsEmptyList>אין חברי צוות עדיין.</OpsEmptyList>
+          ) : (
+            <ul className="divide-y divide-white/10">
+              {members.map((member) => (
+                <li key={member.id}>
+                  <OpsListRow
+                    active={selectedId === member.id}
+                    onClick={() => setSelectedId(member.id)}
+                    title={member.name}
+                    meta={member.title}
+                  />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        detail={
+          selected ? (
+            <div className="grid gap-3">
+              <div className="flex items-center gap-3">
+                {selected.avatarUrl ? (
+                  <img
+                    src={selected.avatarUrl}
+                    alt={selected.name ? `תמונת פרופיל: ${selected.name}` : 'תמונת חבר צוות'}
+                    className="w-14 h-14 rounded-full object-cover"
+                  />
+                ) : (
+                  <div className="w-14 h-14 rounded-full bg-white/5 border border-white/10" />
+                )}
+                <div className="min-w-0">
+                  <h3 className="text-lg font-light text-[#C8A24C]">{selected.name}</h3>
+                  <p className="text-sm text-white/50">{selected.title}</p>
+                </div>
+              </div>
+              {selected.bio ? <p className="text-sm text-white/70 leading-relaxed">{selected.bio}</p> : null}
             </div>
-          </div>
-        ))}
-      </div>
+          ) : null
+        }
+      />
       <OpsSection title="הוספת יזם">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <OpsField label="שם">

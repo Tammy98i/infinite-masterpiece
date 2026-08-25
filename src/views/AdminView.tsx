@@ -11,8 +11,8 @@ import { trackEvent } from '../utils/analytics';
 import { Search } from 'lucide-react';
 import { FileUploadField } from '../components/FileUploadField';
 import { useConfirm } from '../components/ops/ConfirmDialog';
-import { OpsField, OpsPageHeader, OpsSection, opsFieldClass, opsGhostBtn, opsLabelClass, opsPrimaryBtn } from '../components/ops/OpsUi';
-import { formatOpsDate, isPayingPlan, opsStatusHe, planLabelHe, raffleStatusHe, roleLabelHe } from '../utils/opsLabels';
+import { OpsEmptyList, OpsFact, OpsField, OpsListRow, OpsMasterDetail, OpsPageHeader, OpsSection, opsFieldClass, opsGhostBtn, opsLabelClass, opsPrimaryBtn } from '../components/ops/OpsUi';
+import { accessLabelHe, formatOpsDate, isPayingPlan, opsStatusHe, planLabelHe, raffleStatusHe, roleLabelHe } from '../utils/opsLabels';
 
 type Tab =
   | 'overview'
@@ -334,6 +334,7 @@ function NotificationsPanel({
   embedded?: boolean;
 }) {
   const [items, setItems] = useState<AdminNotification[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [high, setHigh] = useState(0);
   const [error, setError] = useState('');
 
@@ -352,8 +353,10 @@ function NotificationsPanel({
 
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
 
+  const selected = items.find((item) => item.id === selectedId) || null;
+
   return (
-    <div className={embedded ? 'grid gap-4' : 'grid gap-6 max-w-3xl'}>
+    <div className={embedded ? 'grid gap-4' : 'grid gap-6'}>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
           {embedded ? (
@@ -384,47 +387,50 @@ function NotificationsPanel({
           אין פריטים לטיפול כרגע. כשתהיה בקשה, תשלום שנכשל או הרצאה לבדיקה — זה יופיע כאן.
         </div>
       ) : (
-        <ul className="grid gap-3">
-          {items.map((item) => (
-            <li key={item.id} className="border border-white/10 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
-              <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2 mb-1">
-                  <span
-                    className={`inline-flex items-center gap-2 text-sm ${
+        <OpsMasterDetail
+          hasSelection={Boolean(selected)}
+          onCloseDetail={() => setSelectedId(null)}
+          emptyDetail="בחרו פריט מהרשימה."
+          list={
+            <ul className="divide-y divide-white/10">
+              {items.map((item) => (
+                <li key={item.id}>
+                  <OpsListRow
+                    active={selectedId === item.id}
+                    onClick={() => setSelectedId(item.id)}
+                    title={item.title}
+                    meta={`${item.count} · ${NOTIF_SEVERITY_LABEL[item.severity]}`}
+                    status={NOTIF_SEVERITY_LABEL[item.severity]}
+                    statusClass={
                       item.severity === 'high'
                         ? 'text-rose-300'
                         : item.severity === 'medium'
                           ? 'text-[#C8A24C]'
                           : 'text-white/55'
-                    }`}
-                  >
-                    <span
-                      className={`w-2 h-2 rounded-full ${
-                        item.severity === 'high'
-                          ? 'bg-rose-400'
-                          : item.severity === 'medium'
-                            ? 'bg-[#C8A24C]'
-                            : 'bg-white/40'
-                      }`}
-                      aria-hidden
-                    />
-                    {NOTIF_SEVERITY_LABEL[item.severity]}
-                  </span>
-                  <span className="text-sm text-white/45">{item.count}</span>
-                </div>
-                <h3 className="text-base font-light">{item.title}</h3>
-                <p className="text-sm text-white/55 mt-1">{item.detail}</p>
+                    }
+                  />
+                </li>
+              ))}
+            </ul>
+          }
+          detail={
+            selected ? (
+              <div className="grid gap-4">
+                <h3 className="text-lg font-light text-[#C8A24C]">{selected.title}</h3>
+                <OpsFact label="דחיפות">{NOTIF_SEVERITY_LABEL[selected.severity]}</OpsFact>
+                <OpsFact label="כמות">{selected.count}</OpsFact>
+                <p className="text-sm text-white/70 leading-relaxed">{selected.detail}</p>
+                <button
+                  type="button"
+                  onClick={() => onNavigate(selected.tab as Tab)}
+                  className={`${opsPrimaryBtn} w-fit`}
+                >
+                  מעבר לטיפול
+                </button>
               </div>
-              <button
-                type="button"
-                onClick={() => onNavigate(item.tab as Tab)}
-                className="px-4 py-2 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 shrink-0"
-              >
-                מעבר לטיפול
-              </button>
-            </li>
-          ))}
-        </ul>
+            ) : null
+          }
+        />
       )}
     </div>
   );
@@ -866,6 +872,8 @@ const EVENT_LABEL: Record<string, string> = {
 function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
   const [data, setData] = useState<AdminAnalytics | null>(null);
   const [error, setError] = useState('');
+  const [selectedEvent, setSelectedEvent] = useState<string | null>(null);
+  const [selectedRecentId, setSelectedRecentId] = useState<string | null>(null);
 
   useEffect(() => {
     adminApi
@@ -897,6 +905,8 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
     { label: 'הועלו', value: data.lecturers.uploaded },
     { label: 'פורסמו', value: data.lecturers.published },
   ];
+  const selectedTotal = data.totals.find((row) => row.event === selectedEvent) || null;
+  const selectedRecent = data.recent.find((row) => row.id === selectedRecentId) || null;
 
   return (
     <div className="grid gap-10">
@@ -947,45 +957,82 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
       )}
       <section>
         <h2 className="text-lg font-light mb-4">אירועים</h2>
-        {data.totals.length === 0 ? (
-          <p className="text-sm text-white/40">עדיין אין מדידות.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-right">
-              <thead className="text-xs text-white/40 border-b border-white/10">
-                <tr>
-                  <th className="py-3 font-normal">אירוע</th>
-                  <th className="py-3 font-normal">כמות</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-white/10">
+        <OpsMasterDetail
+          hasSelection={Boolean(selectedTotal)}
+          onCloseDetail={() => setSelectedEvent(null)}
+          emptyDetail="בחרו אירוע מהרשימה."
+          list={
+            data.totals.length === 0 ? (
+              <OpsEmptyList>עדיין אין מדידות.</OpsEmptyList>
+            ) : (
+              <ul className="divide-y divide-white/10">
                 {data.totals.map((row) => (
-                  <tr key={row.event}>
-                    <td className="py-3">{EVENT_LABEL[row.event] || row.event}</td>
-                    <td className="py-3 text-white/70">{row.count}</td>
-                  </tr>
+                  <li key={row.event}>
+                    <OpsListRow
+                      active={selectedEvent === row.event}
+                      onClick={() => setSelectedEvent(row.event)}
+                      title={EVENT_LABEL[row.event] || row.event}
+                      status={String(row.count)}
+                    />
+                  </li>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              </ul>
+            )
+          }
+          detail={
+            selectedTotal ? (
+              <div className="grid gap-3">
+                <h3 className="text-lg font-light text-[#C8A24C]">{EVENT_LABEL[selectedTotal.event] || selectedTotal.event}</h3>
+                <OpsFact label="כמות">{selectedTotal.count}</OpsFact>
+                <OpsFact label="מזהה">
+                  <span dir="ltr">{selectedTotal.event}</span>
+                </OpsFact>
+              </div>
+            ) : null
+          }
+        />
       </section>
       <section>
         <h2 className="text-lg font-light mb-4">אחרונים</h2>
-        {data.recent.length === 0 ? (
-          <p className="text-sm text-white/40">אין אירועים עדיין.</p>
-        ) : (
-          <ul className="grid gap-2">
-            {data.recent.slice(0, 40).map((row) => (
-              <li key={row.id} className="text-sm text-white/55 border-b border-white/5 py-2 flex flex-wrap gap-x-3">
-                <span className="text-white">{EVENT_LABEL[row.event] || row.event}</span>
-                {row.properties.source ? <span>מקור: {row.properties.source}</span> : null}
-                {row.properties.courseId ? <span className="text-white/35">{row.properties.courseId}</span> : null}
-                <span className="text-white/30 mr-auto">{row.createdAt.replace('T', ' ').slice(0, 16)}</span>
-              </li>
-            ))}
-          </ul>
-        )}
+        <OpsMasterDetail
+          hasSelection={Boolean(selectedRecent)}
+          onCloseDetail={() => setSelectedRecentId(null)}
+          emptyDetail="בחרו אירוע מהרשימה."
+          list={
+            data.recent.length === 0 ? (
+              <OpsEmptyList>אין אירועים עדיין.</OpsEmptyList>
+            ) : (
+              <ul className="divide-y divide-white/10">
+                {data.recent.slice(0, 40).map((row) => (
+                  <li key={row.id}>
+                    <OpsListRow
+                      active={selectedRecentId === row.id}
+                      onClick={() => setSelectedRecentId(row.id)}
+                      title={EVENT_LABEL[row.event] || row.event}
+                      meta={formatOpsDate(row.createdAt)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+          detail={
+            selectedRecent ? (
+              <div className="grid gap-3">
+                <h3 className="text-lg font-light text-[#C8A24C]">{EVENT_LABEL[selectedRecent.event] || selectedRecent.event}</h3>
+                <OpsFact label="זמן">{formatOpsDate(selectedRecent.createdAt)}</OpsFact>
+                {selectedRecent.properties.source ? (
+                  <OpsFact label="מקור">{String(selectedRecent.properties.source)}</OpsFact>
+                ) : null}
+                {selectedRecent.properties.courseId ? (
+                  <OpsFact label="הרצאה">
+                    <span dir="ltr">{String(selectedRecent.properties.courseId)}</span>
+                  </OpsFact>
+                ) : null}
+              </div>
+            ) : null
+          }
+        />
       </section>
     </div>
   );
@@ -1013,6 +1060,7 @@ function ContentPanel({
 }) {
   const [courses, setCourses] = useState<Course[]>([]);
   const [editing, setEditing] = useState<Course | 'new' | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [pending, setPending] = useState(false);
 
@@ -1048,6 +1096,8 @@ function ContentPanel({
     onSaved();
   };
 
+  const selected = courses.find((course) => course.id === selectedId) || null;
+
   if (editing) {
     const course = editing === 'new' ? null : editing;
     return (
@@ -1075,53 +1125,82 @@ function ContentPanel({
           הרצאה חדשה
         </button>
       </div>
-      {error && <p className="text-sm text-rose-300 mb-4">{error}</p>}
-      <div className="divide-y divide-white/10 border-t border-white/10">
-        {courses.map((course) => (
-          <div key={course.id} className="py-4 flex flex-col sm:flex-row sm:items-center gap-3">
-            <button
-              type="button"
-              onClick={() => setEditing(course)}
-              className="flex-1 text-right cursor-pointer"
-            >
-              <div className="text-white">{course.title}</div>
-              <div className="text-xs text-white/40 mt-1">
-                {STATUS_LABEL[course.status || 'draft']} · {course.episodes.length} פרקים
-                {instructors.find((i) => i.id === course.instructorId)?.isFounder ? ' · מייסד' : ''}
+      {error && <p className="text-sm text-rose-300">{error}</p>}
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו הרצאה מהרשימה."
+        list={
+          courses.length === 0 ? (
+            <OpsEmptyList>אין הרצאות עדיין.</OpsEmptyList>
+          ) : (
+            <ul className="divide-y divide-white/10">
+              {courses.map((course) => (
+                <li key={course.id}>
+                  <OpsListRow
+                    active={selectedId === course.id}
+                    onClick={() => setSelectedId(course.id)}
+                    title={course.title}
+                    meta={`${course.episodes.length} פרקים`}
+                    status={STATUS_LABEL[course.status || 'draft']}
+                    statusClass={
+                      course.status === 'published'
+                        ? 'text-emerald-300'
+                        : course.status === 'blocked'
+                          ? 'text-rose-300'
+                          : 'text-[#C8A24C]'
+                    }
+                  />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        detail={
+          selected ? (
+            <div className="grid gap-4">
+              <h3 className="text-lg font-light text-[#C8A24C]">{selected.title}</h3>
+              <OpsFact label="סטטוס">{STATUS_LABEL[selected.status || 'draft']}</OpsFact>
+              <OpsFact label="פרקים">{selected.episodes.length}</OpsFact>
+              <OpsFact label="גישה">{accessLabelHe(selected.accessLevel)}</OpsFact>
+              {instructors.find((i) => i.id === selected.instructorId)?.isFounder ? (
+                <OpsFact label="מייסד">כן</OpsFact>
+              ) : null}
+              <button type="button" onClick={() => setEditing(selected)} className={`${opsPrimaryBtn} w-fit`}>
+                עריכה
+              </button>
+              <div className="flex flex-wrap gap-2">
+                {selected.status !== 'published' ? (
+                  <button
+                    type="button"
+                    onClick={() => void setStatus(selected.id, 'published')}
+                    className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer"
+                  >
+                    פרסום
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => void setStatus(selected.id, 'draft')}
+                    className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer"
+                  >
+                    להסתרה
+                  </button>
+                )}
+                {selected.status !== 'blocked' ? (
+                  <button
+                    type="button"
+                    onClick={() => void setStatus(selected.id, 'blocked')}
+                    className="px-3 py-2 rounded-full border border-white/15 text-xs text-rose-300 min-h-11 cursor-pointer"
+                  >
+                    חסימה
+                  </button>
+                ) : null}
               </div>
-            </button>
-            <div className="flex flex-wrap gap-2">
-              {course.status !== 'published' && (
-                <button
-                  type="button"
-                  onClick={() => void setStatus(course.id, 'published')}
-                  className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer"
-                >
-                  פרסום
-                </button>
-              )}
-              {course.status === 'published' && (
-                <button
-                  type="button"
-                  onClick={() => void setStatus(course.id, 'draft')}
-                  className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer"
-                >
-                  להסתרה
-                </button>
-              )}
-              {course.status !== 'blocked' && (
-                <button
-                  type="button"
-                  onClick={() => void setStatus(course.id, 'blocked')}
-                  className="px-3 py-2 rounded-full border border-white/15 text-xs text-rose-300 min-h-11 cursor-pointer"
-                >
-                  חסימה
-                </button>
-              )}
             </div>
-          </div>
-        ))}
-      </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -1562,125 +1641,93 @@ function UsersPanel() {
         </button>
       </OpsSection>
 
-      <div className="grid gap-6 xl:grid-cols-[1.4fr_0.8fr]">
-      <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <div className="grid gap-3 p-3">
-          <label className="block">
-            <span className="block text-sm text-white/60 mb-1">חיפוש לפי שם או אימייל</span>
-            <input
-              type="search"
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              placeholder="למשל: דנה או dana@"
-              className={fieldClass}
-            />
-          </label>
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <div className="flex flex-wrap gap-2">
-              {(
-                [
-                  ['all', 'הכל'],
-                  ['active', 'פעיל'],
-                  ['blocked', 'חסום'],
-                  ['lecturer', 'מרצה'],
-                  ['paying', 'משלם'],
-                ] as const
-              ).map(([id, label]) => (
-                <button
-                  key={id}
-                  type="button"
-                  onClick={() => setChip(id)}
-                  className={`px-4 py-2 rounded-full text-sm min-h-11 border ${
-                    chip === id ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/70'
-                  }`}
-                >
-                  {label}
-                </button>
-              ))}
-            </div>
+      <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+        <label className="block flex-1 min-w-0">
+          <span className="block text-sm text-white/60 mb-1">חיפוש לפי שם או אימייל</span>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="למשל: דנה או dana@"
+            className={fieldClass}
+          />
+        </label>
+        <div className="flex flex-wrap items-center gap-2">
+          {(
+            [
+              ['all', 'הכל'],
+              ['active', 'פעיל'],
+              ['blocked', 'חסום'],
+              ['lecturer', 'מרצה'],
+              ['paying', 'משלם'],
+            ] as const
+          ).map(([id, label]) => (
             <button
+              key={id}
               type="button"
-              onClick={exportCsv}
-              className="px-4 py-2 rounded-full border border-white/15 text-sm min-h-11 cursor-pointer hover:border-white/40"
+              onClick={() => setChip(id)}
+              className={`px-4 py-2 rounded-full text-sm min-h-11 border ${
+                chip === id ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/70'
+              }`}
             >
-              ייצוא משתמשים
+              {label}
             </button>
-          </div>
+          ))}
+          <button
+            type="button"
+            onClick={exportCsv}
+            className="px-4 py-2 rounded-full border border-white/15 text-sm min-h-11 cursor-pointer hover:border-white/40"
+          >
+            ייצוא
+          </button>
         </div>
-        <table className="w-full text-sm text-right">
-          <thead className="text-sm text-white/50 border-b border-white/10">
-            <tr>
-              <th className="py-3 px-3 font-normal">שם</th>
-              <th className="py-3 px-3 font-normal">אימייל</th>
-              <th className="py-3 px-3 font-normal">תפקיד</th>
-              <th className="py-3 px-3 font-normal">מנוי</th>
-              <th className="py-3 px-3 font-normal">מסלול</th>
-              <th className="py-3 px-3 font-normal">סטטוס</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {visibleUsers.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="py-8 px-3 text-white/50">
-                  אין משתמשים שתואמים לחיפוש.
-                </td>
-              </tr>
-            ) : (
-              visibleUsers.map((row) => (
-              <tr
-                key={row.id}
-                onClick={() => setSelectedId(row.id)}
-                className={`cursor-pointer ${selectedId === row.id ? 'bg-[#C8A24C]/10' : 'hover:bg-white/[0.03]'}`}
-              >
-                <td className="py-3 px-3">
-                  {row.name}
-                  {row.isFounder ? <span className="text-white/50"> · צוות</span> : null}
-                </td>
-                <td className="py-3 px-3 text-white/70">{row.email}</td>
-                <td className="py-3 px-3 text-white/70">{roleLabelHe(row.role)}</td>
-                <td className="py-3 px-3 text-white/70">{planLabelHe(row.subscriptionPlan)}</td>
-                <td className="py-3 px-3 text-white/70">
-                  {row.entryTrack === 'brave' ? 'אמיצים' : row.entryTrack === 'hesitant' ? 'הססנים' : 'ללא'}
-                </td>
-                <td className="py-3 px-3">
-                  <span className="inline-flex items-center gap-2">
-                    <span className={`w-2 h-2 rounded-full ${row.blocked ? 'bg-rose-400' : 'bg-emerald-400'}`} aria-hidden />
-                    {row.blocked ? 'חסום' : 'פעיל'}
-                  </span>
-                </td>
-              </tr>
-              ))
-            )}
-          </tbody>
-        </table>
       </div>
 
-      <aside className="border border-white/10 rounded-2xl p-5 min-h-[320px]">
-        {!selected ? (
-          <p className="text-sm text-white/40">בחרו משתמש מהטבלה.</p>
-        ) : (
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו משתמש מהרשימה."
+        list={
+          visibleUsers.length === 0 ? (
+            <OpsEmptyList>אין משתמשים שתואמים לחיפוש.</OpsEmptyList>
+          ) : (
+            <ul className="divide-y divide-white/10">
+              {visibleUsers.map((row) => (
+                <li key={row.id}>
+                  <OpsListRow
+                    active={selectedId === row.id}
+                    onClick={() => setSelectedId(row.id)}
+                    title={
+                      <>
+                        {row.name}
+                        {row.isFounder ? <span className="text-white/40"> · מייסד</span> : null}
+                      </>
+                    }
+                    meta={`${roleLabelHe(row.role)} · ${planLabelHe(row.subscriptionPlan)}`}
+                    status={row.blocked ? 'חסום' : 'פעיל'}
+                    statusClass={row.blocked ? 'text-rose-300' : 'text-[#C8A24C]'}
+                  />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        detail={
+          selected ? (
           <div className="grid gap-4 text-sm">
             <div>
-              <h3 className="text-xl font-light">{selected.name}</h3>
-              <p className="text-white/60 mt-1 break-all">{selected.email}</p>
+              <h3 className="text-lg font-light text-[#C8A24C]">{selected.name}</h3>
+              <p className="text-white/50 mt-0.5 break-all">{selected.email}</p>
             </div>
-            <p>תפקיד: {roleLabelHe(selected.role)}</p>
-            <p>מנוי: {planLabelHe(selected.subscriptionPlan)}</p>
-            <p>
-              מסלול:{' '}
-              {selected.entryTrack === 'brave'
-                ? 'אמיצים'
-                : selected.entryTrack === 'hesitant'
-                  ? 'הססנים'
-                  : 'ללא'}
-            </p>
-            <p>פעימה: {selected.currentPaymentPhase || 0}</p>
-            <p>כרטיסי הגרלה: {selected.raffleTicketsCount || 0}</p>
-            <p>הצטרפות: {formatOpsDate(selected.createdAt)}</p>
-            <p>כניסה אחרונה: {formatOpsDate(selected.lastLoginAt)}</p>
+            <OpsFact label="מסלול">
+              {selected.entryTrack === 'brave' ? 'אמיצים' : selected.entryTrack === 'hesitant' ? 'הססנים' : 'ללא'}
+            </OpsFact>
+            <OpsFact label="פעימה">{selected.currentPaymentPhase || 0}</OpsFact>
+            <OpsFact label="כרטיסי הגרלה">{selected.raffleTicketsCount || 0}</OpsFact>
+            <OpsFact label="הצטרפות">{formatOpsDate(selected.createdAt)}</OpsFact>
+            <OpsFact label="כניסה אחרונה">{formatOpsDate(selected.lastLoginAt)}</OpsFact>
 
-            <label className="grid gap-1 text-white/50">
-              שינוי תפקיד
+            <OpsField label="תפקיד">
               <select
                 value={selected.role}
                 disabled={pendingId === selected.id}
@@ -1691,9 +1738,8 @@ function UsersPanel() {
                 <option value="instructor">מרצה</option>
                 <option value="admin">אדמין</option>
               </select>
-            </label>
-            <label className="grid gap-1 text-white/50">
-              מנוי
+            </OpsField>
+            <OpsField label="מנוי">
               <select
                 value={selected.subscriptionPlan}
                 disabled={pendingId === selected.id}
@@ -1706,9 +1752,8 @@ function UsersPanel() {
                 <option value="annual">שנתי</option>
                 <option value="premium_88">נבחרת 88</option>
               </select>
-            </label>
-            <label className="grid gap-1 text-white/50">
-              מסלול כניסה
+            </OpsField>
+            <OpsField label="מסלול כניסה">
               <select
                 value={selected.entryTrack || 'none'}
                 disabled={pendingId === selected.id}
@@ -1724,13 +1769,13 @@ function UsersPanel() {
                 <option value="brave">אמיצים</option>
                 <option value="hesitant">הססנים</option>
               </select>
-            </label>
-            <div className="flex flex-wrap gap-2 pt-2">
+            </OpsField>
+            <div className="flex flex-wrap gap-2 pt-1">
               <button
                 type="button"
                 disabled={pendingId === selected.id}
                 onClick={() => void patch(selected.id, { blocked: !selected.blocked })}
-                className="px-3 py-2 text-xs border border-white/20 rounded-xl min-h-11"
+                className={`${opsGhostBtn} text-sm`}
               >
                 {selected.blocked ? 'שחרור חסימה' : 'חסימה'}
               </button>
@@ -1742,7 +1787,7 @@ function UsersPanel() {
                   (selected.role === 'admin' && users.filter((row) => row.role === 'admin').length <= 1)
                 }
                 onClick={() => void removeUser(selected)}
-                className="px-3 py-2 text-xs border border-rose-400/40 text-rose-200 rounded-xl min-h-11 disabled:opacity-40"
+                className="inline-flex items-center justify-center px-5 py-3 rounded-full border border-rose-400/40 text-sm text-rose-200 min-h-12 disabled:opacity-40"
               >
                 הסרה מהמערכת
               </button>
@@ -1759,7 +1804,7 @@ function UsersPanel() {
                     await patch(selected.id, { isFounder: !selected.isFounder });
                   })();
                 }}
-                className="px-3 py-2 text-sm border border-[#C8A24C]/40 text-[#C8A24C] rounded-xl min-h-11"
+                className={`${opsGhostBtn} text-sm`}
               >
                 {selected.isFounder ? 'הסרה מהצוות' : 'שיוך לצוות'}
               </button>
@@ -1768,16 +1813,16 @@ function UsersPanel() {
                   type="button"
                   disabled={pendingId === selected.id}
                   onClick={() => void patch(selected.id, { role: 'instructor' })}
-                  className="px-3 py-2 text-xs bg-[#C8A24C] text-black rounded-xl min-h-11"
+                  className={`${opsPrimaryBtn} text-sm`}
                 >
                   אישור כמרצה
                 </button>
               ) : null}
             </div>
           </div>
-        )}
-      </aside>
-      </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -1983,65 +2028,39 @@ function TeamStaffPanel() {
         </div>
       </div>
 
-      {selected ? (
-        <button
-          type="button"
-          className="md:hidden fixed inset-0 z-30 bg-black/70"
-          aria-label="סגירת כרטיס"
-          onClick={() => setSelectedId(null)}
-        />
-      ) : null}
-
-      <div className="grid md:grid-cols-[minmax(0,1fr)_19rem] gap-4 items-start">
-        <div className="border border-white/10 rounded-2xl overflow-hidden md:max-h-[calc(100vh-14rem)] md:overflow-y-auto">
-          {rows.length === 0 ? (
-            <p className="py-8 px-4 text-sm text-white/40">
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו אדם מהרשימה."
+        list={
+          rows.length === 0 ? (
+            <OpsEmptyList>
               {chip === 'lecturers' ? 'אין מרצים שתואמים לחיפוש.' : 'אין אנשי צוות שתואמים לחיפוש.'}
-            </p>
+            </OpsEmptyList>
           ) : (
             <ul className="divide-y divide-white/10">
-              {rows.map((row) => {
-                const active = selectedId === row.id;
-                return (
-                  <li key={row.id}>
-                    <button
-                      type="button"
-                      onClick={() => setSelectedId(row.id)}
-                      aria-current={active ? 'true' : undefined}
-                      className={`w-full text-right px-3 py-2.5 min-h-12 border-s-2 ${
-                        active
-                          ? 'bg-[#C8A24C]/10 border-[#C8A24C]'
-                          : 'border-transparent hover:bg-white/[0.03]'
-                      }`}
-                    >
-                      <span className="block text-sm text-white">
+              {rows.map((row) => (
+                <li key={row.id}>
+                  <OpsListRow
+                    active={selectedId === row.id}
+                    onClick={() => setSelectedId(row.id)}
+                    title={
+                      <>
                         {row.name}
                         {row.isFounder ? <span className="text-white/40"> · מייסד</span> : null}
-                      </span>
-                      <span className="block text-xs text-white/50 mt-0.5">
-                        {teamRowRoleLabel(row)} ·{' '}
-                        <span className={teamAccessTone(teamAccessKind(row))}>
-                          {teamAccessLabel(teamAccessKind(row))}
-                        </span>
-                      </span>
-                    </button>
-                  </li>
-                );
-              })}
+                      </>
+                    }
+                    meta={teamRowRoleLabel(row)}
+                    status={teamAccessLabel(teamAccessKind(row))}
+                    statusClass={teamAccessTone(teamAccessKind(row))}
+                  />
+                </li>
+              ))}
             </ul>
-          )}
-        </div>
-
-        <aside
-          className={`rounded-2xl p-4 md:sticky md:top-20 ${
-            selected
-              ? 'border border-[#C8A24C]/35 max-md:fixed max-md:inset-y-0 max-md:end-0 max-md:z-40 max-md:w-[min(100%,20rem)] max-md:bg-[#0a0a0a] max-md:overflow-y-auto max-md:rounded-none max-md:border-y-0 max-md:border-s-0'
-              : 'border border-white/10 max-md:hidden'
-          }`}
-        >
-          {!selected ? (
-            <p className="text-sm text-white/40">בחרו אדם מהרשימה.</p>
-          ) : (
+          )
+        }
+        detail={
+          selected ? (
             <TeamPersonCard
               selected={selected}
               users={users}
@@ -2049,7 +2068,6 @@ function TeamStaffPanel() {
               pending={pendingId === selected.id}
               moreOpen={moreOpen}
               messageOpen={messageOpen}
-              onCloseCard={() => setSelectedId(null)}
               onToggleMore={() => setMoreOpen((open) => !open)}
               onOpenMessage={() => {
                 setMessageOpen(true);
@@ -2059,9 +2077,9 @@ function TeamStaffPanel() {
               onPatch={patch}
               onRemove={() => void removeUser(selected)}
             />
-          )}
-        </aside>
-      </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -2073,7 +2091,6 @@ function TeamPersonCard({
   pending,
   moreOpen,
   messageOpen,
-  onCloseCard,
   onToggleMore,
   onOpenMessage,
   onCloseMessage,
@@ -2086,7 +2103,6 @@ function TeamPersonCard({
   pending: boolean;
   moreOpen: boolean;
   messageOpen: boolean;
-  onCloseCard: () => void;
   onToggleMore: () => void;
   onOpenMessage: () => void;
   onCloseMessage: () => void;
@@ -2112,18 +2128,9 @@ function TeamPersonCard({
 
   return (
     <div className="grid gap-4">
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <h3 className="text-lg font-light text-[#C8A24C]">{selected.name}</h3>
-          <p className="text-sm text-white/50 mt-0.5 break-all">{selected.email}</p>
-        </div>
-        <button
-          type="button"
-          onClick={onCloseCard}
-          className="md:hidden text-sm text-white/50 hover:text-white min-h-11 px-2 shrink-0"
-        >
-          סגירה
-        </button>
+      <div className="min-w-0">
+        <h3 className="text-lg font-light text-[#C8A24C]">{selected.name}</h3>
+        <p className="text-sm text-white/50 mt-0.5 break-all">{selected.email}</p>
       </div>
 
       <div className="grid gap-2">
@@ -2376,6 +2383,7 @@ function TeamMessageComposer({
 
 function LecturerApplicationsPanel() {
   const [applications, setApplications] = useState<LecturerApplication[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [notes, setNotes] = useState<Record<string, string>>({});
   const [pendingId, setPendingId] = useState<string | null>(null);
@@ -2420,109 +2428,115 @@ function LecturerApplicationsPanel() {
       status === 'pending' ? 0 : status === 'more_info' ? 1 : 2;
     return rank(a.status) - rank(b.status);
   });
+  const selected = ordered.find((app) => app.id === selectedId) || null;
 
   return (
     <div className="grid gap-6">
       <OpsPageHeader title="בקשות מרצים" hint="בקשות ממתינות קודם. הערה נשמרת עם האישור או הדחייה." />
       {error && <p className="text-sm text-rose-300">{error}</p>}
-      {ordered.map((app) => (
-        <article key={app.id} className="border border-white/10 rounded-2xl p-5 grid gap-3">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div>
-              <h3 className="text-lg font-medium">{app.fullName}</h3>
-              <p className="text-base text-white/60 mt-1">
-                {app.email}
-                {app.phone ? ` · ${app.phone}` : ''}
-              </p>
-            </div>
-            <span className="text-xs text-[#C8A24C]">{APP_STATUS_LABEL[app.status]}</span>
-          </div>
-          <p className="text-sm text-white/70">
-            <span className="text-white/40">תחום: </span>
-            {app.field || 'לא צוין'}
-          </p>
-          <p className="text-sm text-white/70">
-            <span className="text-white/40">הרצאה מוצעת: </span>
-            {app.proposedLecture || 'לא צוין'}
-          </p>
-          {app.audience ? (
-            <p className="text-sm text-white/55">
-              <span className="text-white/40">קהל: </span>
-              {app.audience}
-            </p>
-          ) : null}
-          {app.valueToUser ? (
-            <p className="text-sm text-white/55">
-              <span className="text-white/40">ערך למשתמש: </span>
-              {app.valueToUser}
-            </p>
-          ) : null}
-          {app.experience ? (
-            <p className="text-sm text-white/55">
-              <span className="text-white/40">ניסיון: </span>
-              {app.experience}
-            </p>
-          ) : null}
-          {app.links ? (
-            <p className="text-sm text-white/55 break-all">
-              <span className="text-white/40">קישורים: </span>
-              {app.links}
-            </p>
-          ) : null}
-          {app.sampleVideo ? (
-            <a
-              href={app.sampleVideo}
-              target="_blank"
-              rel="noreferrer"
-              className="text-sm text-[#C8A24C] hover:text-[#F7E7B5] break-all"
-            >
-              וידאו דוגמה
-            </a>
-          ) : null}
-          {app.adminNote ? (
-            <p className="text-sm text-[#C8A24C]">הערה קודמת: {app.adminNote}</p>
-          ) : null}
-          {(app.status === 'pending' || app.status === 'more_info') && (
-            <>
-              <label className="block">
-                <span className={opsLabelClass}>הערת אדמין (אופציונלי)</span>
-                <textarea
-                  rows={2}
-                  value={notes[app.id] ?? ''}
-                  onChange={(e) => setNotes((prev) => ({ ...prev, [app.id]: e.target.value }))}
-                  className={fieldClass}
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו בקשה מהרשימה."
+        list={
+          <ul className="divide-y divide-white/10">
+            {ordered.map((app) => (
+              <li key={app.id}>
+                <OpsListRow
+                  active={selectedId === app.id}
+                  onClick={() => setSelectedId(app.id)}
+                  title={app.fullName}
+                  meta={app.field || 'תחום לא צוין'}
+                  status={APP_STATUS_LABEL[app.status]}
+                  statusClass={
+                    app.status === 'pending' || app.status === 'more_info'
+                      ? 'text-[#C8A24C]'
+                      : app.status === 'rejected'
+                        ? 'text-rose-300'
+                        : 'text-emerald-300'
+                  }
                 />
-              </label>
-              <div className="flex flex-wrap gap-2">
-                <button
-                  type="button"
-                  disabled={pendingId === app.id}
-                  onClick={() => void review(app.id, 'approved')}
-                  className="px-4 py-2 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 cursor-pointer disabled:opacity-60"
-                >
-                  אישור
-                </button>
-                <button
-                  type="button"
-                  disabled={pendingId === app.id}
-                  onClick={() => void review(app.id, 'more_info')}
-                  className="px-4 py-2 rounded-full border border-white/15 text-sm min-h-11 cursor-pointer disabled:opacity-60"
-                >
-                  פרטים נוספים
-                </button>
-                <button
-                  type="button"
-                  disabled={pendingId === app.id}
-                  onClick={() => void review(app.id, 'rejected')}
-                  className="px-4 py-2 rounded-full border border-rose-400/30 text-rose-300 text-sm min-h-11 cursor-pointer disabled:opacity-60"
-                >
-                  דחייה
-                </button>
+              </li>
+            ))}
+          </ul>
+        }
+        detail={
+          selected ? (
+            <div className="grid gap-3">
+              <div>
+                <h3 className="text-lg font-light text-[#C8A24C]">{selected.fullName}</h3>
+                <p className="text-sm text-white/50 mt-0.5 break-all">
+                  {selected.email}
+                  {selected.phone ? ` · ${selected.phone}` : ''}
+                </p>
               </div>
-            </>
-          )}
-        </article>
-      ))}
+              <OpsFact label="סטטוס">{APP_STATUS_LABEL[selected.status]}</OpsFact>
+              <OpsFact label="תחום">{selected.field || 'לא צוין'}</OpsFact>
+              <OpsFact label="הרצאה מוצעת">{selected.proposedLecture || 'לא צוין'}</OpsFact>
+              {selected.audience ? <OpsFact label="קהל">{selected.audience}</OpsFact> : null}
+              {selected.valueToUser ? <OpsFact label="ערך למשתמש">{selected.valueToUser}</OpsFact> : null}
+              {selected.experience ? <OpsFact label="ניסיון">{selected.experience}</OpsFact> : null}
+              {selected.links ? (
+                <OpsFact label="קישורים">
+                  <span className="break-all">{selected.links}</span>
+                </OpsFact>
+              ) : null}
+              {selected.sampleVideo ? (
+                <a
+                  href={selected.sampleVideo}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="text-sm text-[#C8A24C] hover:text-[#F7E7B5] break-all"
+                >
+                  וידאו דוגמה
+                </a>
+              ) : null}
+              {selected.adminNote ? (
+                <p className="text-sm text-[#C8A24C]">הערה קודמת: {selected.adminNote}</p>
+              ) : null}
+              {selected.status === 'pending' || selected.status === 'more_info' ? (
+                <>
+                  <label className="block">
+                    <span className={opsLabelClass}>הערת אדמין (אופציונלי)</span>
+                    <textarea
+                      rows={2}
+                      value={notes[selected.id] ?? ''}
+                      onChange={(e) => setNotes((prev) => ({ ...prev, [selected.id]: e.target.value }))}
+                      className={fieldClass}
+                    />
+                  </label>
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      disabled={pendingId === selected.id}
+                      onClick={() => void review(selected.id, 'approved')}
+                      className="px-4 py-2 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 cursor-pointer disabled:opacity-60"
+                    >
+                      אישור
+                    </button>
+                    <button
+                      type="button"
+                      disabled={pendingId === selected.id}
+                      onClick={() => void review(selected.id, 'more_info')}
+                      className="px-4 py-2 rounded-full border border-white/15 text-sm min-h-11 cursor-pointer disabled:opacity-60"
+                    >
+                      פרטים נוספים
+                    </button>
+                    <button
+                      type="button"
+                      disabled={pendingId === selected.id}
+                      onClick={() => void review(selected.id, 'rejected')}
+                      className="px-4 py-2 rounded-full border border-rose-400/30 text-rose-300 text-sm min-h-11 cursor-pointer disabled:opacity-60"
+                    >
+                      דחייה
+                    </button>
+                  </div>
+                </>
+              ) : null}
+            </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -2604,6 +2618,7 @@ function FounderAddForm({ onCreated }: { onCreated: (founder: Instructor) => voi
 function FoundersPanel() {
   const { reloadCatalog } = useApp();
   const [founders, setFounders] = useState<Instructor[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [pendingId, setPendingId] = useState<string | null>(null);
   const saveTimers = useRef<Record<string, ReturnType<typeof setTimeout>>>({});
@@ -2694,6 +2709,9 @@ function FoundersPanel() {
 
   if (error && founders.length === 0) return <p className="text-sm text-rose-300">{error}</p>;
 
+  const selected = founders.find((item) => item.id === selectedId) || null;
+  const selectedIndex = selected ? founders.findIndex((item) => item.id === selected.id) : -1;
+
   return (
     <div className="grid gap-6">
       <OpsPageHeader
@@ -2703,35 +2721,60 @@ function FoundersPanel() {
       <FounderAddForm
         onCreated={(founder) => {
           setFounders((prev) => [...prev, founder]);
+          setSelectedId(founder.id);
           void reloadCatalog();
         }}
       />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-      {founders.length === 0 ? <p className="text-sm text-white/40">אין מייסדים מסומנים עדיין.</p> : null}
-      {founders.map((founder, index) => (
-        <div key={founder.id} className="border border-white/10 rounded-2xl p-4 grid gap-4 sm:grid-cols-[auto_1fr_auto] sm:items-start">
-          {founder.avatarUrl ? (
-            <img
-              src={founder.avatarUrl}
-              alt={founder.name ? `תמונת צוות: ${founder.name}` : 'תמונת צוות'}
-              className="w-20 h-20 rounded-full object-cover border border-white/10"
-            />
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו איש צוות מהרשימה."
+        list={
+          founders.length === 0 ? (
+            <OpsEmptyList>אין מייסדים מסומנים עדיין.</OpsEmptyList>
           ) : (
-            <div className="w-20 h-20 rounded-full border border-white/10 bg-white/5" />
-          )}
-          <div>
-            <div>{founder.name}</div>
-            <div className="text-xs text-white/40 mt-1 mb-3">{founder.title}</div>
-            <FileUploadField
-              kind="image"
-              label="תמונת צוות"
-              value={founder.avatarUrl}
-              hidePreview
-              previewAlt={founder.name ? `תמונת צוות: ${founder.name}` : 'תמונת צוות'}
-              disabled={pendingId === founder.id}
-              onChange={(url) => onPhotoChange(founder.id, url)}
-            />
-            <div className="grid gap-3 mt-4">
+            <ul className="divide-y divide-white/10">
+              {founders.map((founder) => (
+                <li key={founder.id}>
+                  <OpsListRow
+                    active={selectedId === founder.id}
+                    onClick={() => setSelectedId(founder.id)}
+                    title={founder.name}
+                    meta={founder.title}
+                  />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        detail={
+          selected ? (
+            <div className="grid gap-4">
+              <div className="flex items-center gap-3">
+                {selected.avatarUrl ? (
+                  <img
+                    src={selected.avatarUrl}
+                    alt={selected.name ? `תמונת צוות: ${selected.name}` : 'תמונת צוות'}
+                    className="w-16 h-16 rounded-full object-cover border border-white/10"
+                  />
+                ) : (
+                  <div className="w-16 h-16 rounded-full border border-white/10 bg-white/5" />
+                )}
+                <div className="min-w-0">
+                  <h3 className="text-lg font-light text-[#C8A24C]">{selected.name}</h3>
+                  <p className="text-sm text-white/50">{selected.title}</p>
+                </div>
+              </div>
+              <FileUploadField
+                kind="image"
+                label="תמונת צוות"
+                value={selected.avatarUrl}
+                hidePreview
+                previewAlt={selected.name ? `תמונת צוות: ${selected.name}` : 'תמונת צוות'}
+                disabled={pendingId === selected.id}
+                onChange={(url) => onPhotoChange(selected.id, url)}
+              />
               <label className="text-xs text-white/40">
                 אתר
                 <input
@@ -2739,9 +2782,9 @@ function FoundersPanel() {
                   dir="ltr"
                   className={`${fieldClass} mt-1 text-left`}
                   placeholder="https://"
-                  value={linkUrl(founder, 'אתר')}
-                  onChange={(e) => setLinkDraft(founder.id, 'אתר', e.target.value)}
-                  onBlur={(e) => void persistLinks(founder.id, { label: 'אתר', url: e.currentTarget.value })}
+                  value={linkUrl(selected, 'אתר')}
+                  onChange={(e) => setLinkDraft(selected.id, 'אתר', e.target.value)}
+                  onBlur={(e) => void persistLinks(selected.id, { label: 'אתר', url: e.currentTarget.value })}
                 />
               </label>
               <label className="text-xs text-white/40">
@@ -2751,33 +2794,33 @@ function FoundersPanel() {
                   dir="ltr"
                   className={`${fieldClass} mt-1 text-left`}
                   placeholder="https://instagram.com/"
-                  value={linkUrl(founder, 'אינסטגרם')}
-                  onChange={(e) => setLinkDraft(founder.id, 'אינסטגרם', e.target.value)}
-                  onBlur={(e) => void persistLinks(founder.id, { label: 'אינסטגרם', url: e.currentTarget.value })}
+                  value={linkUrl(selected, 'אינסטגרם')}
+                  onChange={(e) => setLinkDraft(selected.id, 'אינסטגרם', e.target.value)}
+                  onBlur={(e) => void persistLinks(selected.id, { label: 'אינסטגרם', url: e.currentTarget.value })}
                 />
               </label>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  disabled={selectedIndex <= 0}
+                  onClick={() => void move(selectedIndex, -1)}
+                  className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer disabled:opacity-30"
+                >
+                  למעלה
+                </button>
+                <button
+                  type="button"
+                  disabled={selectedIndex < 0 || selectedIndex >= founders.length - 1}
+                  onClick={() => void move(selectedIndex, 1)}
+                  className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer disabled:opacity-30"
+                >
+                  למטה
+                </button>
+              </div>
             </div>
-          </div>
-          <div className="flex sm:flex-col gap-2">
-            <button
-              type="button"
-              disabled={index === 0}
-              onClick={() => void move(index, -1)}
-              className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer disabled:opacity-30"
-            >
-              למעלה
-            </button>
-            <button
-              type="button"
-              disabled={index === founders.length - 1}
-              onClick={() => void move(index, 1)}
-              className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer disabled:opacity-30"
-            >
-              למטה
-            </button>
-          </div>
-        </div>
-      ))}
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -2793,6 +2836,7 @@ const PLAN_LABEL: Record<string, string> = {
 function PaymentsPanel() {
   const [rows, setRows] = useState<AdminPaymentRow[]>([]);
   const [error, setError] = useState('');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     adminApi
@@ -2802,42 +2846,46 @@ function PaymentsPanel() {
   }, []);
 
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
+  const selected = rows.find((row) => row.id === selectedId) || null;
 
   return (
     <div className="grid gap-6">
-      <OpsPageHeader
-        title="מנויים ותשלומים"
-        hint="שינוי מנוי או תשלום מסלול נרשמים כאן."
-      />
-      {rows.length === 0 ? (
-        <p className="text-base text-white/50">אין רשומות עדיין.</p>
-      ) : (
-        <div className="overflow-x-auto border border-white/10 rounded-2xl">
-          <table className="w-full text-sm text-right">
-            <thead className="text-white/60 border-b border-white/10">
-              <tr>
-                <th className="py-3 px-3 font-normal">מתי</th>
-                <th className="py-3 px-3 font-normal">משתמש</th>
-                <th className="py-3 px-3 font-normal">מסלול</th>
-                <th className="py-3 px-3 font-normal">מקור</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/10">
+      <OpsPageHeader title="מנויים ותשלומים" hint="שינוי מנוי או תשלום מסלול נרשמים כאן." />
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו תשלום מהרשימה."
+        list={
+          rows.length === 0 ? (
+            <OpsEmptyList>אין רשומות עדיין.</OpsEmptyList>
+          ) : (
+            <ul className="divide-y divide-white/10">
               {rows.map((row) => (
-                <tr key={row.id}>
-                  <td className="py-3 px-3 text-white/70">{row.createdAt.replace('T', ' ').slice(0, 16)}</td>
-                  <td className="py-3 px-3">
-                    {row.userName}
-                    <span className="text-white/45"> · {row.email}</span>
-                  </td>
-                  <td className="py-3 px-3">{PLAN_LABEL[row.plan] || row.plan}</td>
-                  <td className="py-3 px-3 text-white/70">{row.source === 'admin' ? 'אדמין' : 'משתמש'}</td>
-                </tr>
+                <li key={row.id}>
+                  <OpsListRow
+                    active={selectedId === row.id}
+                    onClick={() => setSelectedId(row.id)}
+                    title={row.userName}
+                    meta={row.createdAt.replace('T', ' ').slice(0, 16)}
+                    status={PLAN_LABEL[row.plan] || row.plan}
+                  />
+                </li>
               ))}
-            </tbody>
-          </table>
-        </div>
-      )}
+            </ul>
+          )
+        }
+        detail={
+          selected ? (
+            <div className="grid gap-3">
+              <h3 className="text-lg font-light text-[#C8A24C]">{selected.userName}</h3>
+              <OpsFact label="אימייל">{selected.email}</OpsFact>
+              <OpsFact label="מנוי">{PLAN_LABEL[selected.plan] || selected.plan}</OpsFact>
+              <OpsFact label="מקור">{selected.source === 'admin' ? 'אדמין' : 'משתמש'}</OpsFact>
+              <OpsFact label="מתי">{selected.createdAt.replace('T', ' ').slice(0, 16)}</OpsFact>
+            </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -3036,60 +3084,36 @@ function TracksPanel() {
         <p className="text-sm text-white/35 self-center">{filtered.length} מצטרפים</p>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.9fr)]">
-        <div className="overflow-x-auto border border-white/10 rounded-2xl">
-          <table className="w-full text-sm text-right">
-            <thead className="text-xs text-white/40 border-b border-white/10">
-              <tr>
-                <th className="py-3 px-3 font-normal">מתי</th>
-                <th className="py-3 px-3 font-normal">מסלול</th>
-                <th className="py-3 px-3 font-normal">שם</th>
-                <th className="py-3 px-3 font-normal">יצירת קשר</th>
-                <th className="py-3 px-3 font-normal">תשלום</th>
-                <th className="py-3 px-3 font-normal">משתמש</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/10">
-              {filtered.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-6 px-3 text-white/40">
-                    אין מצטרפים לפי הסינון.
-                  </td>
-                </tr>
-              ) : (
-                filtered.map((row) => {
-                  const active = selected?.id === row.id;
-                  return (
-                    <tr
-                      key={row.id}
-                      onClick={() => setSelectedId(row.id)}
-                      className={`cursor-pointer transition-colors ${active ? 'bg-[#C8A24C]/10' : 'hover:bg-white/[0.03]'}`}
-                    >
-                      <td className="py-3 px-3 text-white/55">{row.createdAt.replace('T', ' ').slice(0, 16)}</td>
-                      <td className="py-3 px-3">{trackLabel(row.trackType)}</td>
-                      <td className="py-3 px-3">{row.name}</td>
-                      <td className="py-3 px-3 text-white/55">
-                        {row.phone}
-                        <span className="text-white/35"> · {row.email}</span>
-                      </td>
-                      <td className="py-3 px-3 text-white/70">{leadPaymentSummary(row)}</td>
-                      <td className="py-3 px-3 text-white/55">{row.userId ? row.userName || 'מקושר' : 'אין עדיין'}</td>
-                    </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        <aside className="border border-white/10 rounded-2xl p-5 min-h-[320px]">
-          {!selected ? (
-            <p className="text-sm text-white/40">בחרו מצטרף מהטבלה.</p>
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו מצטרף מהרשימה."
+        list={
+          filtered.length === 0 ? (
+            <OpsEmptyList>אין מצטרפים לפי הסינון.</OpsEmptyList>
           ) : (
+            <ul className="divide-y divide-white/10">
+              {filtered.map((row) => (
+                <li key={row.id}>
+                  <OpsListRow
+                    active={selected?.id === row.id}
+                    onClick={() => setSelectedId(row.id)}
+                    title={row.name}
+                    meta={trackLabel(row.trackType)}
+                    status={leadPaymentSummary(row)}
+                    statusClass="text-white/70"
+                  />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        detail={
+          selected ? (
             <div className="grid gap-5">
               <div>
-                <h3 className="text-xl font-light">{selected.name}</h3>
-                <p className="text-base text-white/60 mt-1">
+                <h3 className="text-lg font-light text-[#C8A24C]">{selected.name}</h3>
+                <p className="text-sm text-white/50 mt-1">
                   {trackLabel(selected.trackType)} · {opsStatusHe(selected.status)}
                 </p>
               </div>
@@ -3193,9 +3217,9 @@ function TracksPanel() {
                 )}
               </div>
             </div>
-          )}
-        </aside>
-      </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -3227,6 +3251,7 @@ const AUDIT_ACTION_LABEL: Record<string, string> = {
 function CategoriesPanel() {
   const { reloadCatalog } = useApp();
   const [rows, setRows] = useState<Category[]>([]);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [pending, setPending] = useState(false);
   const [name, setName] = useState('');
@@ -3297,9 +3322,11 @@ function CategoriesPanel() {
     }
   };
 
+  const selected = rows.find((row) => row.id === selectedId) || null;
+
   return (
     <div className="grid gap-8">
-      <OpsPageHeader title="קטגוריות" hint="שם, תיאור וגישה. הסדר בטבלה הוא הסדר בספרייה." />
+      <OpsPageHeader title="קטגוריות" hint="שם, תיאור וגישה. הסדר ברשימה הוא הסדר בספרייה." />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
       <div className="grid gap-4 max-w-3xl">
@@ -3333,66 +3360,88 @@ function CategoriesPanel() {
         </button>
       </div>
 
-      <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
-          <thead className="text-xs text-white/40 border-b border-white/10">
-            <tr>
-              <th className="py-3 px-3 font-normal">סדר</th>
-              <th className="py-3 px-3 font-normal">שם</th>
-              <th className="py-3 px-3 font-normal">תיאור</th>
-              <th className="py-3 px-3 font-normal">גישה</th>
-              <th className="py-3 px-3 font-normal">פעולות</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {rows.map((row) => (
-              <tr key={row.id}>
-                <td className="py-3 px-3 text-white/45">{row.sortOrder ?? 0}</td>
-                <td className="py-3 px-3">
-                  <input
-                    defaultValue={row.name}
-                    className={fieldClass}
-                    onBlur={(e) => {
-                      if (e.target.value.trim() !== row.name) void patch(row.id, { name: e.target.value });
-                    }}
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו קטגוריה מהרשימה."
+        list={
+          rows.length === 0 ? (
+            <OpsEmptyList>אין קטגוריות עדיין.</OpsEmptyList>
+          ) : (
+            <ul className="divide-y divide-white/10">
+              {rows.map((row) => (
+                <li key={row.id}>
+                  <OpsListRow
+                    active={selectedId === row.id}
+                    onClick={() => setSelectedId(row.id)}
+                    title={row.name}
+                    meta={row.description || undefined}
+                    status={accessLabelHe(row.accessLevel)}
                   />
-                </td>
-                <td className="py-3 px-3">
-                  <input
-                    defaultValue={row.description}
-                    className={fieldClass}
-                    onBlur={(e) => {
-                      if (e.target.value !== row.description) void patch(row.id, { description: e.target.value });
-                    }}
-                  />
-                </td>
-                <td className="py-3 px-3">
-                  <select
-                    value={row.accessLevel || 'premium'}
-                    className={fieldClass}
-                    onChange={(e) => void patch(row.id, { accessLevel: e.target.value as AccessLevel })}
-                  >
-                    <option value="free">חינמי</option>
-                    <option value="premium">פרימיום</option>
-                    <option value="premium_88">נבחרת 88</option>
-                    <option value="admin_only">אדמין בלבד</option>
-                  </select>
-                </td>
-                <td className="py-3 px-3">
-                  <div className="flex gap-2">
-                    <button type="button" disabled={pending} onClick={() => void move(row.id, -1)} className="px-2 py-1 border border-white/15 rounded-lg text-xs">
-                      למעלה
-                    </button>
-                    <button type="button" disabled={pending} onClick={() => void move(row.id, 1)} className="px-2 py-1 border border-white/15 rounded-lg text-xs">
-                      למטה
-                    </button>
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        detail={
+          selected ? (
+            <div className="grid gap-4">
+              <h3 className="text-lg font-light text-[#C8A24C]">{selected.name}</h3>
+              <OpsField label="שם">
+                <input
+                  key={`${selected.id}-name`}
+                  defaultValue={selected.name}
+                  className={fieldClass}
+                  onBlur={(e) => {
+                    if (e.target.value.trim() !== selected.name) void patch(selected.id, { name: e.target.value });
+                  }}
+                />
+              </OpsField>
+              <OpsField label="תיאור">
+                <input
+                  key={`${selected.id}-description`}
+                  defaultValue={selected.description}
+                  className={fieldClass}
+                  onBlur={(e) => {
+                    if (e.target.value !== selected.description) void patch(selected.id, { description: e.target.value });
+                  }}
+                />
+              </OpsField>
+              <OpsField label="גישה">
+                <select
+                  value={selected.accessLevel || 'premium'}
+                  className={fieldClass}
+                  onChange={(e) => void patch(selected.id, { accessLevel: e.target.value as AccessLevel })}
+                >
+                  <option value="free">חינמי</option>
+                  <option value="premium">פרימיום</option>
+                  <option value="premium_88">נבחרת 88</option>
+                  <option value="admin_only">אדמין בלבד</option>
+                </select>
+              </OpsField>
+              <OpsFact label="סדר">{selected.sortOrder ?? 0}</OpsFact>
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  disabled={pending}
+                  onClick={() => void move(selected.id, -1)}
+                  className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11"
+                >
+                  למעלה
+                </button>
+                <button
+                  type="button"
+                  disabled={pending}
+                  onClick={() => void move(selected.id, 1)}
+                  className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11"
+                >
+                  למטה
+                </button>
+              </div>
+            </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -3449,57 +3498,42 @@ function Premium88Panel() {
       />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
-      <div className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
-        <div className="overflow-x-auto border border-white/10 rounded-2xl">
-          <table className="w-full text-sm text-right">
-            <thead className="text-xs text-white/40 border-b border-white/10">
-              <tr>
-                <th className="py-3 px-3 font-normal">מתי</th>
-                <th className="py-3 px-3 font-normal">שם</th>
-                <th className="py-3 px-3 font-normal">תחום</th>
-                <th className="py-3 px-3 font-normal">סטטוס</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/10">
-              {rows.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="py-6 px-3 text-white/40">
-                    אין מועמדויות עדיין.
-                  </td>
-                </tr>
-              ) : (
-                rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    onClick={() => setSelectedId(row.id)}
-                    className={`cursor-pointer ${selectedId === row.id ? 'bg-[#C8A24C]/10' : 'hover:bg-white/[0.03]'}`}
-                  >
-                    <td className="py-3 px-3 text-white/55">{row.createdAt.replace('T', ' ').slice(0, 16)}</td>
-                    <td className="py-3 px-3">{row.fullName}</td>
-                    <td className="py-3 px-3 text-white/55">{row.field}</td>
-                    <td className="py-3 px-3">{P88_STATUS_LABEL[row.status] || row.status}</td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        <aside className="border border-white/10 rounded-2xl p-5">
-          {!selected ? (
-            <p className="text-sm text-white/40">בחרו מועמדות.</p>
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו מועמדות."
+        list={
+          rows.length === 0 ? (
+            <OpsEmptyList>אין מועמדויות עדיין.</OpsEmptyList>
           ) : (
+            <ul className="divide-y divide-white/10">
+              {rows.map((row) => (
+                <li key={row.id}>
+                  <OpsListRow
+                    active={selectedId === row.id}
+                    onClick={() => setSelectedId(row.id)}
+                    title={row.fullName}
+                    meta={row.field || 'ללא תחום'}
+                    status={P88_STATUS_LABEL[row.status] || row.status}
+                  />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        detail={
+          selected ? (
             <div className="grid gap-4 text-sm">
               <div>
-                <h3 className="text-xl font-light">{selected.fullName}</h3>
+                <h3 className="text-lg font-light text-[#C8A24C]">{selected.fullName}</h3>
                 <p className="text-white/45 mt-1">
                   {selected.phone} · {selected.email}
                 </p>
               </div>
-              <p>תחום: {selected.field || 'לא צוין'}</p>
-              <p>שלב עסקי: {selected.businessStage || 'לא צוין'}</p>
-              <p>מטרה: {selected.goal || 'לא צוין'}</p>
-              {selected.links ? <p className="break-all">קישורים: {selected.links}</p> : null}
+              <OpsFact label="תחום">{selected.field || 'לא צוין'}</OpsFact>
+              <OpsFact label="שלב עסקי">{selected.businessStage || 'לא צוין'}</OpsFact>
+              <OpsFact label="מטרה">{selected.goal || 'לא צוין'}</OpsFact>
+              {selected.links ? <OpsFact label="קישורים">{selected.links}</OpsFact> : null}
               {selected.notes ? <p className="text-white/70 leading-relaxed">{selected.notes}</p> : null}
               <div className="flex flex-wrap gap-2 pt-2">
                 {(['under_review', 'call_needed', 'approved', 'waitlist', 'rejected'] as const).map((status) => (
@@ -3508,16 +3542,16 @@ function Premium88Panel() {
                     type="button"
                     disabled={pendingId === selected.id}
                     onClick={() => void review(selected.id, status)}
-                    className="px-3 py-1.5 text-xs border border-white/20 text-white/70 hover:border-[#C8A24C]/50 hover:text-[#C8A24C] disabled:opacity-50"
+                    className="px-3 py-1.5 text-xs border border-white/20 text-white/70 hover:border-[#C8A24C]/50 hover:text-[#C8A24C] disabled:opacity-50 min-h-11"
                   >
                     {P88_STATUS_LABEL[status]}
                   </button>
                 ))}
               </div>
             </div>
-          )}
-        </aside>
-      </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -3525,6 +3559,7 @@ function Premium88Panel() {
 function AuditLogsPanel() {
   const [logs, setLogs] = useState<AdminAuditLog[]>([]);
   const [error, setError] = useState('');
+  const [selectedId, setSelectedId] = useState<string | null>(null);
 
   useEffect(() => {
     adminApi
@@ -3534,43 +3569,51 @@ function AuditLogsPanel() {
   }, []);
 
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
+  const selected = logs.find((row) => row.id === selectedId) || null;
 
   return (
     <div className="grid gap-6">
       <OpsPageHeader title="יומן פעולות" hint="פעולות רגישות באדמין." />
-      <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
-          <thead className="text-xs text-white/40 border-b border-white/10">
-            <tr>
-              <th className="py-3 px-3 font-normal">מתי</th>
-              <th className="py-3 px-3 font-normal">מי</th>
-              <th className="py-3 px-3 font-normal">פעולה</th>
-              <th className="py-3 px-3 font-normal">ישות</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {logs.length === 0 ? (
-              <tr>
-                <td colSpan={4} className="py-6 px-3 text-white/40">
-                  עדיין אין רשומות. שינוי משתמש או קטגוריה ייצור רשומה.
-                </td>
-              </tr>
-            ) : (
-              logs.map((row) => (
-                <tr key={row.id}>
-                  <td className="py-3 px-3 text-white/55">{row.createdAt.replace('T', ' ').slice(0, 16)}</td>
-                  <td className="py-3 px-3">{row.adminName || row.adminEmail || row.adminUserId}</td>
-                  <td className="py-3 px-3">{AUDIT_ACTION_LABEL[row.actionType] || row.actionType}</td>
-                  <td className="py-3 px-3 text-white/55">
-                    {row.entityType}
-                    {row.entityId ? ` · ${row.entityId}` : ''}
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedId(null)}
+        emptyDetail="בחרו פעולה מהרשימה."
+        list={
+          logs.length === 0 ? (
+            <OpsEmptyList>עדיין אין רשומות. שינוי משתמש או קטגוריה ייצור רשומה.</OpsEmptyList>
+          ) : (
+            <ul className="divide-y divide-white/10">
+              {logs.map((row) => (
+                <li key={row.id}>
+                  <OpsListRow
+                    active={selectedId === row.id}
+                    onClick={() => setSelectedId(row.id)}
+                    title={AUDIT_ACTION_LABEL[row.actionType] || row.actionType}
+                    meta={row.adminName || row.adminEmail || row.adminUserId}
+                    status={row.createdAt.replace('T', ' ').slice(0, 16)}
+                    statusClass="text-white/45"
+                  />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        detail={
+          selected ? (
+            <div className="grid gap-3">
+              <h3 className="text-lg font-light text-[#C8A24C]">
+                {AUDIT_ACTION_LABEL[selected.actionType] || selected.actionType}
+              </h3>
+              <OpsFact label="מי">{selected.adminName || selected.adminEmail || selected.adminUserId}</OpsFact>
+              <OpsFact label="ישות">
+                {selected.entityType}
+                {selected.entityId ? ` · ${selected.entityId}` : ''}
+              </OpsFact>
+              <OpsFact label="מתי">{selected.createdAt.replace('T', ' ').slice(0, 16)}</OpsFact>
+            </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -3584,6 +3627,8 @@ function RafflesPanel() {
   const [endsAt, setEndsAt] = useState('');
   const [busy, setBusy] = useState(false);
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [selectedRaffleId, setSelectedRaffleId] = useState<string | null>(null);
+  const [selectedTicketId, setSelectedTicketId] = useState<string | null>(null);
 
   const load = () =>
     adminApi
@@ -3657,6 +3702,13 @@ function RafflesPanel() {
   if (error && !data) return <p className="text-sm text-rose-300">{error}</p>;
   if (!data) return null;
 
+  const selectedRaffle = data.raffles.find((row) => row.id === selectedRaffleId) || null;
+  const tickets = data.tickets.slice(0, 40);
+  const selectedTicket = tickets.find((row) => row.id === selectedTicketId) || null;
+  const raffleTitle = (id?: string) => data.raffles.find((row) => row.id === id)?.title || (id ? id : 'ללא שיוך');
+  const trackLabel = (track?: string) =>
+    track === 'brave' ? 'אמיצים' : track === 'hesitant' ? 'הססנים' : track || '—';
+
   return (
     <div className="grid gap-8">
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
@@ -3698,101 +3750,115 @@ function RafflesPanel() {
         </button>
       </OpsSection>
 
-      <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
-          <thead className="text-xs text-white/40 border-b border-white/10">
-            <tr>
-              <th className="py-3 px-3 font-normal">שם</th>
-              <th className="py-3 px-3 font-normal">סטטוס</th>
-              <th className="py-3 px-3 font-normal">כרטיסים</th>
-              <th className="py-3 px-3 font-normal">משתתפים</th>
-              <th className="py-3 px-3 font-normal">זוכה</th>
-              <th className="py-3 px-3 font-normal">פעולות</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {data.raffles.length === 0 ? (
-              <tr>
-                <td colSpan={6} className="py-6 px-3 text-white/40">
-                  עדיין אין הגרלות.
-                </td>
-              </tr>
+      <OpsSection title="הגרלות">
+        <OpsMasterDetail
+          hasSelection={Boolean(selectedRaffle)}
+          onCloseDetail={() => setSelectedRaffleId(null)}
+          emptyDetail="בחרו הגרלה מהרשימה."
+          list={
+            data.raffles.length === 0 ? (
+              <OpsEmptyList>עדיין אין הגרלות.</OpsEmptyList>
             ) : (
-              data.raffles.map((row) => (
-                <tr key={row.id}>
-                  <td className="py-3 px-3">{row.title}</td>
-                  <td className="py-3 px-3 text-white/70">{raffleStatusHe(row.status)}</td>
-                  <td className="py-3 px-3 text-white/55">{row.ticketsCount ?? 0}</td>
-                  <td className="py-3 px-3 text-white/55">{row.participants ?? 0}</td>
-                  <td className="py-3 px-3 text-white/55">{row.winnerName || '—'}</td>
-                  <td className="py-3 px-3">
-                    <div className="flex flex-wrap gap-2">
-                      {row.status === 'open' ? (
-                        <>
-                          <button
-                            type="button"
-                            disabled={pendingId === row.id}
-                            onClick={() => void assign(row.id)}
-                            className="px-3 py-1.5 text-xs border border-white/20 rounded-xl min-h-10"
-                          >
-                            שיוך כרטיסים
-                          </button>
-                          <button
-                            type="button"
-                            disabled={pendingId === row.id || !data.termsApproved}
-                            onClick={() => void draw(row.id)}
-                            className="px-3 py-1.5 text-xs bg-[#C8A24C] text-black rounded-xl min-h-10 disabled:opacity-50"
-                            title={!data.termsApproved ? 'נדרש אישור תקנון הגרלות בהגדרות' : undefined}
-                          >
-                            הגרלת זוכה
-                          </button>
-                        </>
-                      ) : null}
-                    </div>
-                  </td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+              <ul className="divide-y divide-white/10">
+                {data.raffles.map((row) => (
+                  <li key={row.id}>
+                    <OpsListRow
+                      active={selectedRaffleId === row.id}
+                      onClick={() => setSelectedRaffleId(row.id)}
+                      title={row.title}
+                      meta={`${row.ticketsCount ?? 0} כרטיסים · ${row.participants ?? 0} משתתפים`}
+                      status={raffleStatusHe(row.status)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+          detail={
+            selectedRaffle ? (
+              <div className="grid gap-4">
+                <h3 className="text-lg font-light text-[#C8A24C]">{selectedRaffle.title}</h3>
+                <OpsFact label="סטטוס">{raffleStatusHe(selectedRaffle.status)}</OpsFact>
+                <OpsFact label="כרטיסים">{selectedRaffle.ticketsCount ?? 0}</OpsFact>
+                <OpsFact label="משתתפים">{selectedRaffle.participants ?? 0}</OpsFact>
+                <OpsFact label="זוכה">{selectedRaffle.winnerName || '—'}</OpsFact>
+                {selectedRaffle.description ? (
+                  <p className="text-sm text-white/60 leading-relaxed">{selectedRaffle.description}</p>
+                ) : null}
+                {selectedRaffle.status === 'open' ? (
+                  <div className="flex flex-wrap gap-2">
+                    <button
+                      type="button"
+                      disabled={pendingId === selectedRaffle.id}
+                      onClick={() => void assign(selectedRaffle.id)}
+                      className="px-3 py-2 text-xs border border-white/20 rounded-full min-h-11"
+                    >
+                      שיוך כרטיסים
+                    </button>
+                    <button
+                      type="button"
+                      disabled={pendingId === selectedRaffle.id || !data.termsApproved}
+                      onClick={() => void draw(selectedRaffle.id)}
+                      className="px-3 py-2 text-xs bg-[#C8A24C] text-black rounded-full min-h-11 disabled:opacity-50"
+                      title={!data.termsApproved ? 'נדרש אישור תקנון הגרלות בהגדרות' : undefined}
+                    >
+                      הגרלת זוכה
+                    </button>
+                  </div>
+                ) : null}
+              </div>
+            ) : null
+          }
+        />
+      </OpsSection>
 
-      <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <div className="p-4 text-sm text-white/50">כרטיסים אחרונים</div>
-        <table className="w-full text-sm text-right">
-          <thead className="text-xs text-white/40 border-b border-white/10">
-            <tr>
-              <th className="py-3 px-3 font-normal">משתמש</th>
-              <th className="py-3 px-3 font-normal">מסלול</th>
-              <th className="py-3 px-3 font-normal">כמות</th>
-              <th className="py-3 px-3 font-normal">הגרלה</th>
-              <th className="py-3 px-3 font-normal">סיבה</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {data.tickets.slice(0, 40).map((ticket) => (
-              <tr key={ticket.id}>
-                <td className="py-3 px-3">
-                  {ticket.userName || '—'}
-                  <span className="block text-xs text-white/35">{ticket.userEmail}</span>
-                </td>
-                <td className="py-3 px-3 text-white/55">
-                  {ticket.trackType === 'brave' ? 'אמיצים' : ticket.trackType === 'hesitant' ? 'הססנים' : ticket.trackType || '—'}
-                </td>
-                <td className="py-3 px-3 text-white/55">{ticket.ticketsCount}</td>
-                <td className="py-3 px-3 text-white/55">{ticket.raffleId || 'ללא שיוך'}</td>
-                <td className="py-3 px-3 text-white/45">{ticket.grantedReason || '—'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+      <OpsSection title="כרטיסים אחרונים">
+        <OpsMasterDetail
+          hasSelection={Boolean(selectedTicket)}
+          onCloseDetail={() => setSelectedTicketId(null)}
+          emptyDetail="בחרו כרטיס מהרשימה."
+          list={
+            tickets.length === 0 ? (
+              <OpsEmptyList>אין כרטיסים עדיין.</OpsEmptyList>
+            ) : (
+              <ul className="divide-y divide-white/10">
+                {tickets.map((ticket) => (
+                  <li key={ticket.id}>
+                    <OpsListRow
+                      active={selectedTicketId === ticket.id}
+                      onClick={() => setSelectedTicketId(ticket.id)}
+                      title={ticket.userName || ticket.userEmail || '—'}
+                      meta={`${ticket.ticketsCount} כרטיסים`}
+                      status={trackLabel(ticket.trackType)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+          detail={
+            selectedTicket ? (
+              <div className="grid gap-3">
+                <h3 className="text-lg font-light text-[#C8A24C]">{selectedTicket.userName || '—'}</h3>
+                <OpsFact label="אימייל">
+                  <span dir="ltr">{selectedTicket.userEmail || '—'}</span>
+                </OpsFact>
+                <OpsFact label="מסלול">{trackLabel(selectedTicket.trackType)}</OpsFact>
+                <OpsFact label="כמות">{selectedTicket.ticketsCount}</OpsFact>
+                <OpsFact label="הגרלה">{raffleTitle(selectedTicket.raffleId)}</OpsFact>
+                <OpsFact label="סיבה">{selectedTicket.grantedReason || '—'}</OpsFact>
+              </div>
+            ) : null
+          }
+        />
+      </OpsSection>
     </div>
   );
 }
 
 function LeadsPanel() {
   const [leads, setLeads] = useState<AdminCrmLead[]>([]);
+  const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [source, setSource] = useState<'all' | AdminCrmLead['source']>('all');
   const [query, setQuery] = useState('');
@@ -3813,6 +3879,8 @@ function LeadsPanel() {
       .toLowerCase()
       .includes(q);
   });
+  const leadKey = (row: AdminCrmLead) => `${row.source}-${row.id}`;
+  const selected = filtered.find((row) => leadKey(row) === selectedKey) || null;
 
   const exportCsv = () => {
     const header = 'source,name,phone,email,interest,status,createdAt';
@@ -3861,46 +3929,47 @@ function LeadsPanel() {
         />
       </div>
 
-      <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
-          <thead className="text-xs text-white/40 border-b border-white/10">
-            <tr>
-              <th className="py-3 px-3 font-normal">מקור</th>
-              <th className="py-3 px-3 font-normal">שם</th>
-              <th className="py-3 px-3 font-normal">טלפון</th>
-              <th className="py-3 px-3 font-normal">אימייל</th>
-              <th className="py-3 px-3 font-normal">עניין</th>
-              <th className="py-3 px-3 font-normal">סטטוס</th>
-              <th className="py-3 px-3 font-normal">תאריך</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {filtered.length === 0 ? (
-              <tr>
-                <td colSpan={7} className="py-6 px-3 text-white/40">
-                  אין לידים להצגה.
-                </td>
-              </tr>
-            ) : (
-              filtered.map((row) => (
-                <tr key={`${row.source}-${row.id}`}>
-                  <td className="py-3 px-3 text-white/70">{row.sourceLabel}</td>
-                  <td className="py-3 px-3">{row.name}</td>
-                  <td className="py-3 px-3 text-white/55" dir="ltr">
-                    {row.phone || '—'}
-                  </td>
-                  <td className="py-3 px-3 text-white/55" dir="ltr">
-                    {row.email || '—'}
-                  </td>
-                  <td className="py-3 px-3 text-white/55">{row.interest || '—'}</td>
-                  <td className="py-3 px-3 text-white/70">{opsStatusHe(row.status)}</td>
-                  <td className="py-3 px-3 text-white/45">{row.createdAt.replace('T', ' ').slice(0, 16)}</td>
-                </tr>
-              ))
-            )}
-          </tbody>
-        </table>
-      </div>
+      <OpsMasterDetail
+        hasSelection={Boolean(selected)}
+        onCloseDetail={() => setSelectedKey(null)}
+        emptyDetail="בחרו פנייה מהרשימה."
+        list={
+          filtered.length === 0 ? (
+            <OpsEmptyList>אין לידים להצגה.</OpsEmptyList>
+          ) : (
+            <ul className="divide-y divide-white/10">
+              {filtered.map((row) => (
+                <li key={leadKey(row)}>
+                  <OpsListRow
+                    active={selectedKey === leadKey(row)}
+                    onClick={() => setSelectedKey(leadKey(row))}
+                    title={row.name || row.email || '—'}
+                    meta={row.sourceLabel}
+                    status={opsStatusHe(row.status)}
+                  />
+                </li>
+              ))}
+            </ul>
+          )
+        }
+        detail={
+          selected ? (
+            <div className="grid gap-3">
+              <h3 className="text-lg font-light text-[#C8A24C]">{selected.name || '—'}</h3>
+              <OpsFact label="מקור">{selected.sourceLabel}</OpsFact>
+              <OpsFact label="טלפון">
+                <span dir="ltr">{selected.phone || '—'}</span>
+              </OpsFact>
+              <OpsFact label="אימייל">
+                <span dir="ltr">{selected.email || '—'}</span>
+              </OpsFact>
+              <OpsFact label="עניין">{selected.interest || '—'}</OpsFact>
+              <OpsFact label="סטטוס">{opsStatusHe(selected.status)}</OpsFact>
+              <OpsFact label="תאריך">{formatOpsDate(selected.createdAt)}</OpsFact>
+            </div>
+          ) : null
+        }
+      />
     </div>
   );
 }
@@ -3926,6 +3995,7 @@ function LegalPanel() {
   const [message, setMessage] = useState('');
   const [saving, setSaving] = useState<string | null>(null);
   const [doc, setDoc] = useState<'terms' | 'privacy' | 'raffle'>('terms');
+  const [selectedReportId, setSelectedReportId] = useState<string | null>(null);
 
   const load = () =>
     Promise.all([adminApi.legal(), adminApi.accessibilityReports()])
@@ -3980,8 +4050,12 @@ function LegalPanel() {
     }
   };
 
+  const selectedReport = a11yReports.find((row) => row.id === selectedReportId) || null;
+  const a11yStatusHe = (status: 'open' | 'in_progress' | 'resolved') =>
+    status === 'open' ? 'פתוח' : status === 'in_progress' ? 'בטיפול' : 'נסגר';
+
   return (
-    <div className="grid gap-8 max-w-4xl">
+    <div className="grid gap-8">
       <OpsPageHeader title="משפטי" hint="מסמך אחד בכל פעם. הטקסטים מוצגים בעמודי האתר." />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
       {message ? <p className="text-sm text-[#C8A24C]">{message}</p> : null}
@@ -4066,55 +4140,73 @@ function LegalPanel() {
         <p className="text-base text-white/60">
           פניות מהצהרת הנגישות. טיפול ראשון תוך 14 ימי עסקים.
         </p>
-        {a11yReports.length === 0 ? (
-          <p className="text-base text-white/50">אין פניות רשומות.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-base text-right">
-              <thead>
-                <tr className="text-white/60 border-b border-white/10">
-                  <th className="py-2 pe-3 font-normal">תאריך</th>
-                  <th className="py-2 pe-3 font-normal">שם</th>
-                  <th className="py-2 pe-3 font-normal">דוא&quot;ל</th>
-                  <th className="py-2 pe-3 font-normal">סטטוס</th>
-                  <th className="py-2 font-normal">פעולה</th>
-                </tr>
-              </thead>
-              <tbody>
+        <OpsMasterDetail
+          hasSelection={Boolean(selectedReport)}
+          onCloseDetail={() => setSelectedReportId(null)}
+          emptyDetail="בחרו פנייה מהרשימה."
+          list={
+            a11yReports.length === 0 ? (
+              <OpsEmptyList>אין פניות רשומות.</OpsEmptyList>
+            ) : (
+              <ul className="divide-y divide-white/10">
                 {a11yReports.map((report) => (
-                  <tr key={report.id} className="border-b border-white/5 align-top">
-                    <td className="py-3 pe-3 whitespace-nowrap">{formatOpsDate(report.createdAt)}</td>
-                    <td className="py-3 pe-3">{report.fullName}</td>
-                    <td className="py-3 pe-3" dir="ltr">{report.email}</td>
-                    <td className="py-3 pe-3">
-                      {report.status === 'open' ? 'פתוח' : report.status === 'in_progress' ? 'בטיפול' : 'נסגר'}
-                    </td>
-                    <td className="py-3">
-                      {report.status !== 'resolved' ? (
-                        <button
-                          type="button"
-                          className="px-3 py-2 rounded-full border border-white/20 text-sm min-h-11"
-                          onClick={() => {
-                            void adminApi
-                              .updateAccessibilityReport(report.id, {
-                                status: report.status === 'open' ? 'in_progress' : 'resolved',
-                              })
-                              .then(() => load())
-                              .catch((err) => setError(err instanceof Error ? err.message : 'עדכון נכשל'));
-                          }}
-                        >
-                          {report.status === 'open' ? 'בטיפול' : 'סגור'}
-                        </button>
-                      ) : (
-                        <span className="text-white/50 text-sm">נסגר</span>
-                      )}
-                    </td>
-                  </tr>
+                  <li key={report.id}>
+                    <OpsListRow
+                      active={selectedReportId === report.id}
+                      onClick={() => setSelectedReportId(report.id)}
+                      title={report.fullName}
+                      meta={formatOpsDate(report.createdAt)}
+                      status={a11yStatusHe(report.status)}
+                      statusClass={
+                        report.status === 'resolved'
+                          ? 'text-emerald-300'
+                          : report.status === 'in_progress'
+                            ? 'text-[#C8A24C]'
+                            : 'text-rose-300'
+                      }
+                    />
+                  </li>
                 ))}
-              </tbody>
-            </table>
-          </div>
-        )}
+              </ul>
+            )
+          }
+          detail={
+            selectedReport ? (
+              <div className="grid gap-3">
+                <h3 className="text-lg font-light text-[#C8A24C]">{selectedReport.fullName}</h3>
+                <OpsFact label="סטטוס">{a11yStatusHe(selectedReport.status)}</OpsFact>
+                <OpsFact label="תאריך">{formatOpsDate(selectedReport.createdAt)}</OpsFact>
+                <OpsFact label="דוא״ל">
+                  <span dir="ltr">{selectedReport.email}</span>
+                </OpsFact>
+                {selectedReport.phone ? (
+                  <OpsFact label="טלפון">
+                    <span dir="ltr">{selectedReport.phone}</span>
+                  </OpsFact>
+                ) : null}
+                <p className="text-sm text-white/70 leading-relaxed whitespace-pre-wrap">{selectedReport.message}</p>
+                {selectedReport.status !== 'resolved' ? (
+                  <button
+                    type="button"
+                    className="px-3 py-2 rounded-full border border-white/20 text-sm min-h-11 w-fit"
+                    onClick={() => {
+                      void adminApi
+                        .updateAccessibilityReport(selectedReport.id, {
+                          status: selectedReport.status === 'open' ? 'in_progress' : 'resolved',
+                        })
+                        .then(() => load())
+                        .catch((err) => setError(err instanceof Error ? err.message : 'עדכון נכשל'));
+                    }}
+                  >
+                    {selectedReport.status === 'open' ? 'בטיפול' : 'סגור'}
+                  </button>
+                ) : (
+                  <p className="text-white/50 text-sm">נסגר</p>
+                )}
+              </div>
+            ) : null
+          }
+        />
       </OpsSection>
     </div>
   );
@@ -4128,6 +4220,7 @@ function WebinarPanel() {
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'partial' | 'complete' | 'waitlist'>('all');
   const [showMore, setShowMore] = useState(false);
+  const [selectedRegId, setSelectedRegId] = useState<string | null>(null);
 
   const load = () =>
     adminApi
@@ -4168,6 +4261,7 @@ function WebinarPanel() {
       .toLowerCase()
       .includes(q);
   });
+  const selectedReg = registrations.find((row) => row.id === selectedRegId) || null;
 
   const statusLabel = (status: string) => {
     if (status === 'partial') return 'חלקי';
@@ -4200,7 +4294,7 @@ function WebinarPanel() {
   if (error && !data) return <p className="text-sm text-rose-300">{error}</p>;
 
   return (
-    <div className="grid gap-8 max-w-5xl">
+    <div className="grid gap-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <OpsPageHeader
           title="וובינר"
@@ -4447,38 +4541,49 @@ function WebinarPanel() {
             </button>
           ))}
         </div>
-        <div className="overflow-x-auto">
-          <table className="w-full text-sm text-right">
-            <thead>
-              <tr className="text-white/50 border-b border-white/10">
-                <th className="py-2 pe-3">תאריך</th>
-                <th className="py-2 pe-3">סטטוס</th>
-                <th className="py-2 pe-3">שם</th>
-                <th className="py-2 pe-3">טלפון</th>
-                <th className="py-2 pe-3">אימייל</th>
-                <th className="py-2 pe-3">תחום</th>
-                <th className="py-2 pe-3">מסקרן / חסם</th>
-              </tr>
-            </thead>
-            <tbody>
-              {registrations.map((row) => (
-                <tr key={row.id} className="border-b border-white/5 align-top">
-                  <td className="py-3 pe-3 whitespace-nowrap">{new Date(row.createdAt).toLocaleString('he-IL')}</td>
-                  <td className="py-3 pe-3 whitespace-nowrap text-white/70">{statusLabel(row.status)}</td>
-                  <td className="py-3 pe-3">{row.fullName}</td>
-                  <td className="py-3 pe-3" dir="ltr">{row.phone}</td>
-                  <td className="py-3 pe-3" dir="ltr">{row.email}</td>
-                  <td className="py-3 pe-3">{row.field}</td>
-                  <td className="py-3 pe-3 text-white/60">
-                    {row.interest}
-                    {row.blocker ? ` · ${row.blocker}` : ''}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-          {registrations.length === 0 ? <p className="text-sm text-white/40 py-4">אין נרשמים עדיין.</p> : null}
-        </div>
+        <OpsMasterDetail
+          hasSelection={Boolean(selectedReg)}
+          onCloseDetail={() => setSelectedRegId(null)}
+          emptyDetail="בחרו נרשם מהרשימה."
+          list={
+            registrations.length === 0 ? (
+              <OpsEmptyList>אין נרשמים עדיין.</OpsEmptyList>
+            ) : (
+              <ul className="divide-y divide-white/10">
+                {registrations.map((row) => (
+                  <li key={row.id}>
+                    <OpsListRow
+                      active={selectedRegId === row.id}
+                      onClick={() => setSelectedRegId(row.id)}
+                      title={row.fullName}
+                      meta={row.field || undefined}
+                      status={statusLabel(row.status)}
+                    />
+                  </li>
+                ))}
+              </ul>
+            )
+          }
+          detail={
+            selectedReg ? (
+              <div className="grid gap-3">
+                <h3 className="text-lg font-light text-[#C8A24C]">{selectedReg.fullName}</h3>
+                <OpsFact label="סטטוס">{statusLabel(selectedReg.status)}</OpsFact>
+                <OpsFact label="תאריך">{formatOpsDate(selectedReg.createdAt)}</OpsFact>
+                <OpsFact label="טלפון">
+                  <span dir="ltr">{selectedReg.phone || '—'}</span>
+                </OpsFact>
+                <OpsFact label="אימייל">
+                  <span dir="ltr">{selectedReg.email || '—'}</span>
+                </OpsFact>
+                <OpsFact label="תחום">{selectedReg.field || '—'}</OpsFact>
+                <OpsFact label="מסקרן">{selectedReg.interest || '—'}</OpsFact>
+                {selectedReg.blocker ? <OpsFact label="חסם">{selectedReg.blocker}</OpsFact> : null}
+                {selectedReg.utmSource ? <OpsFact label="מקור">{selectedReg.utmSource}</OpsFact> : null}
+              </div>
+            ) : null
+          }
+        />
       </section>
     </div>
   );
