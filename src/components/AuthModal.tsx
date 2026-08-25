@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { X } from 'lucide-react';
 import { libraryPath } from '../utils/libraryPath';
+import { EmailConfirmationRequiredError } from '../api/supabaseAuth';
 
 export const AuthModal: React.FC = () => {
   const { isAuthModalOpen, setAuthModalOpen, login, register } = useUser();
@@ -13,12 +14,14 @@ export const AuthModal: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [pending, setPending] = useState(false);
+  const [errorKind, setErrorKind] = useState<'error' | 'info'>('error');
 
   if (!isAuthModalOpen) return null;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setErrorKind('error');
     setPending(true);
     try {
       const next =
@@ -30,7 +33,13 @@ export const AuthModal: React.FC = () => {
       else if (next.role === 'instructor') navigate(libraryPath('lecturer'));
       else if (!window.location.pathname.startsWith('/library')) navigate('/library');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'כשל התחברות');
+      if (err instanceof EmailConfirmationRequiredError) {
+        setErrorKind('info');
+        setError(err.message);
+        setMode('login');
+      } else {
+        setError(err instanceof Error ? err.message : 'כשל התחברות');
+      }
     } finally {
       setPending(false);
     }
@@ -75,6 +84,7 @@ export const AuthModal: React.FC = () => {
               <input
                 type="text"
                 required
+                autoComplete="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11"
@@ -84,8 +94,12 @@ export const AuthModal: React.FC = () => {
           <label className="block text-right">
             <span className="block text-xs text-white/45 mb-1">אימייל</span>
             <input
+              id="auth-email"
               type="email"
               required
+              autoComplete="email"
+              inputMode="email"
+              aria-invalid={Boolean(error) && errorKind === 'error'}
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11"
@@ -94,17 +108,27 @@ export const AuthModal: React.FC = () => {
           <label className="block text-right">
             <span className="block text-xs text-white/45 mb-1">סיסמה</span>
             <input
+              id="auth-password"
               type="password"
               required
               minLength={8}
+              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+              aria-invalid={Boolean(error) && errorKind === 'error'}
+              aria-describedby="auth-password-hint"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11"
             />
+            <span id="auth-password-hint" className="mt-1 block text-xs text-white/35">
+              לפחות 8 תווים
+            </span>
           </label>
 
           {error && (
-            <p className="text-sm text-rose-300" role="alert">
+            <p
+              className={`text-sm ${errorKind === 'info' ? 'text-[#F7E7B5]' : 'text-rose-300'}`}
+              role="alert"
+            >
               {error}
             </p>
           )}
@@ -122,6 +146,7 @@ export const AuthModal: React.FC = () => {
           type="button"
           onClick={() => {
             setError('');
+            setErrorKind('error');
             setMode(mode === 'login' ? 'register' : 'login');
           }}
           className="mt-6 w-full text-sm text-white/45 hover:text-white min-h-11 cursor-pointer"

@@ -103,7 +103,8 @@ CREATE TABLE IF NOT EXISTS users (
   blocked INTEGER NOT NULL DEFAULT 0,
   is_founder INTEGER NOT NULL DEFAULT 0,
   staff_desk TEXT DEFAULT '',
-  staff_status TEXT NOT NULL DEFAULT 'active'
+  staff_status TEXT NOT NULL DEFAULT 'active',
+  supabase_user_id TEXT
 );
 
 CREATE TABLE IF NOT EXISTS sessions (
@@ -115,6 +116,7 @@ CREATE TABLE IF NOT EXISTS sessions (
 );
 
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
+CREATE UNIQUE INDEX IF NOT EXISTS idx_users_supabase_user_id ON users(supabase_user_id);
 CREATE INDEX IF NOT EXISTS idx_sessions_user ON sessions(user_id);
 
 CREATE TABLE IF NOT EXISTS categories (

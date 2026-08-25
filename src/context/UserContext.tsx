@@ -4,6 +4,12 @@ import { formatTrialEndDate } from '../utils/recommendations';
 import { TRIAL_DAYS } from '../constants/brand';
 import type { PlanId } from '../data/plans';
 import { authApi, getAuthToken, setAuthToken, type AuthUserPayload } from '../api/auth';
+import {
+  isSupabaseAuthEnabled,
+  supabaseLogin,
+  supabaseRegister,
+  supabaseSignOut,
+} from '../api/supabaseAuth';
 import { isPaidPlan } from '../utils/access';
 
 const GUEST_USER: UserProfile = {
@@ -102,7 +108,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const login = async (email: string, password: string) => {
-    const result = await authApi.login(email, password);
+    const result = isSupabaseAuthEnabled()
+      ? await supabaseLogin(email, password)
+      : await authApi.login(email, password);
     applySession(result.token, result.user);
     const plan = result.user.subscriptionPlan || 'none';
     if (!isPaidPlan(plan) && result.user.role !== 'admin') {
@@ -112,7 +120,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const register = async (name: string, email: string, password: string) => {
-    const result = await authApi.register(name, email, password);
+    const result = isSupabaseAuthEnabled()
+      ? await supabaseRegister(name, email, password)
+      : await authApi.register(name, email, password);
     applySession(result.token, result.user);
     setWelcomeOpen(true);
     return result.user;
@@ -121,6 +131,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const logout = () => {
     pendingPlanRef.current = null;
     void authApi.logout();
+    void supabaseSignOut();
     setUser(GUEST_USER);
   };
 

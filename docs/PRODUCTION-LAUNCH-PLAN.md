@@ -15,6 +15,7 @@
 - [ ] DB: SQLite → Postgres (או managed) + backup יומי
 - [ ] S3/R2: `S3_*` + העברת uploads/וידאו
 - [ ] Secrets: כל משתני `.env.example`
+- [ ] Auth אופציונלי: Supabase (`docs/SUPABASE-AUTH.md`) — בלי מפתחות נשארת התחברות מקומית
 
 ### יום 3–4: תוכן מינימלי
 - [ ] 5–10 הרצאות אמיתיות (וידאו, cover, תיאור)
@@ -119,3 +120,4 @@
 ## עדיין פתוח (שבוע 2 בקוד)
 
 - Stripe checkout למנוי חודשי/שנתי (כרגע trial + pilot manual)
+- מיגרציית DB מלאה ל-Postgres (אחרי חיבור Auth)
