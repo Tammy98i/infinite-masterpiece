@@ -11,7 +11,7 @@ import { trackEvent } from '../utils/analytics';
 import { Search } from 'lucide-react';
 import { FileUploadField } from '../components/FileUploadField';
 import { useConfirm } from '../components/ops/ConfirmDialog';
-import { OpsBand, OpsCardActions, OpsCardTitle, OpsDeskStack, OpsEmptyList, OpsFact, OpsFacts, OpsField, OpsListRow, OpsMasterDetail, OpsPageHeader, OpsSection, OpsToolbar, opsCardDanger, opsCardFieldClass, opsCardGhost, opsCardPrimary, opsChipClass, opsFieldClass, opsGhostBtn, opsLabelClass, opsPrimaryBtn } from '../components/ops/OpsUi';
+import { OpsBand, OpsCardActions, OpsCardTitle, OpsDeskStack, OpsEmptyList, OpsFact, OpsFacts, OpsField, OpsListRow, OpsMasterDetail, OpsPageHeader, OpsSection, OpsToolbar, opsCardDanger, opsCardFieldClass, opsCardGhost, opsCardPrimary, opsChipClass, opsFieldClass, opsGhostBtn, opsLabelClass, opsPrimaryBtn, useOpsSelection } from '../components/ops/OpsUi';
 import { accessLabelHe, entityTypeHe, formatOpsDate, isPayingPlan, opsStatusHe, planLabelHe, raffleStatusHe, roleLabelHe } from '../utils/opsLabels';
 
 type Tab =
@@ -1047,7 +1047,6 @@ function ContentPanel({
 }) {
   const [courses, setCourses] = useState<Course[]>([]);
   const [editing, setEditing] = useState<Course | 'new' | null>(null);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [error, setError] = useState('');
   const [pending, setPending] = useState(false);
 
@@ -1083,6 +1082,7 @@ function ContentPanel({
     onSaved();
   };
 
+  const { selectedId, select, close } = useOpsSelection(courses.map((course) => course.id));
   const selected = courses.find((course) => course.id === selectedId) || null;
 
   if (editing) {
@@ -1114,7 +1114,7 @@ function ContentPanel({
       {error && <p className="text-sm text-rose-300">{error}</p>}
       <OpsMasterDetail
         hasSelection={Boolean(selected)}
-        onCloseDetail={() => setSelectedId(null)}
+        onCloseDetail={close}
         emptyDetail="בחרו הרצאה מהרשימה."
         list={
           courses.length === 0 ? (
@@ -1125,7 +1125,7 @@ function ContentPanel({
                 <li key={course.id}>
                   <OpsListRow
                     active={selectedId === course.id}
-                    onClick={() => setSelectedId(course.id)}
+                    onClick={() => select(course.id)}
                     title={course.title}
                     meta={`${course.episodes.length} פרקים`}
                     status={STATUS_LABEL[course.status || 'draft']}
@@ -1446,7 +1446,6 @@ function UsersPanel() {
   const [newName, setNewName] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [chip, setChip] = useState<'all' | 'active' | 'blocked' | 'lecturer' | 'paying'>('all');
 
@@ -1466,8 +1465,6 @@ function UsersPanel() {
     return () => window.clearTimeout(timer);
   }, [toast]);
 
-  const selected = users.find((row) => row.id === selectedId) || null;
-
   const visibleUsers = users.filter((row) => {
     const haystack = `${row.name} ${row.email}`.toLowerCase();
     if (query.trim() && !haystack.includes(query.trim().toLowerCase())) return false;
@@ -1477,6 +1474,8 @@ function UsersPanel() {
     if (chip === 'paying') return isPayingPlan(row.subscriptionPlan);
     return true;
   });
+  const { selectedId, select, close } = useOpsSelection(visibleUsers.map((row) => row.id));
+  const selected = users.find((row) => row.id === selectedId) || null;
 
   const patch = async (id: string, next: Parameters<typeof adminApi.updateUser>[1]) => {
     const row = users.find((item) => item.id === id);
@@ -1550,7 +1549,7 @@ function UsersPanel() {
     setError('');
     try {
       await adminApi.deleteUser(row.id);
-      setSelectedId(null);
+      close();
       await load();
       if (row.role === 'instructor' || row.isFounder) await reloadCatalog();
       setToast('המשתמש הוסר');
@@ -1671,7 +1670,7 @@ function UsersPanel() {
 
       <OpsMasterDetail
         hasSelection={Boolean(selected)}
-        onCloseDetail={() => setSelectedId(null)}
+        onCloseDetail={close}
         emptyDetail="בחרו משתמש מהרשימה."
         list={
           visibleUsers.length === 0 ? (
@@ -1682,7 +1681,7 @@ function UsersPanel() {
                 <li key={row.id}>
                   <OpsListRow
                     active={selectedId === row.id}
-                    onClick={() => setSelectedId(row.id)}
+                    onClick={() => select(row.id)}
                     title={
                       <>
                         {row.name}
@@ -2928,7 +2927,6 @@ function TracksPanel() {
   const [data, setData] = useState<AdminTracksDashboard | null>(null);
   const [error, setError] = useState('');
   const [pendingId, setPendingId] = useState('');
-  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [trackFilter, setTrackFilter] = useState<'all' | 'brave' | 'hesitant'>('all');
   const [statusFilter, setStatusFilter] = useState<'all' | 'new' | 'due' | 'failed' | 'paid'>('all');
 
@@ -2937,16 +2935,23 @@ function TracksPanel() {
       .tracks()
       .then((next) => {
         setData(next);
-        setSelectedId((prev) => {
-          if (prev && next.leads.some((lead) => lead.id === prev)) return prev;
-          return null;
-        });
       })
       .catch((err) => setError(err instanceof Error ? err.message : 'טעינה נכשלה'));
 
   useEffect(() => {
     void load();
   }, []);
+
+  const filteredLeads = (data?.leads || []).filter((lead) => {
+    if (trackFilter !== 'all' && lead.trackType !== trackFilter) return false;
+    if (statusFilter === 'all') return true;
+    if (statusFilter === 'new') return lead.status === 'new';
+    if (statusFilter === 'paid') {
+      return lead.plan?.status === 'paid' || lead.installments.some((item) => item.status === 'paid');
+    }
+    return lead.currentInstallment?.status === statusFilter || lead.installments.some((item) => item.status === statusFilter);
+  });
+  const { selectedId, select, close } = useOpsSelection(filteredLeads.map((lead) => lead.id));
 
   if (error && !data) return <p className="text-sm text-rose-300">{error}</p>;
   if (!data) return <p className="text-sm text-white/40">טוען...</p>;
@@ -2966,15 +2971,7 @@ function TracksPanel() {
     { label: 'למעקב', value: data.followUp },
   ];
 
-  const filtered = data.leads.filter((lead) => {
-    if (trackFilter !== 'all' && lead.trackType !== trackFilter) return false;
-    if (statusFilter === 'all') return true;
-    if (statusFilter === 'new') return lead.status === 'new';
-    if (statusFilter === 'paid') {
-      return lead.plan?.status === 'paid' || lead.installments.some((item) => item.status === 'paid');
-    }
-    return lead.currentInstallment?.status === statusFilter || lead.installments.some((item) => item.status === statusFilter);
-  });
+  const filtered = filteredLeads;
 
   const selected = filtered.find((lead) => lead.id === selectedId) || null;
 
@@ -3052,7 +3049,7 @@ function TracksPanel() {
 
       <OpsMasterDetail
         hasSelection={Boolean(selected)}
-        onCloseDetail={() => setSelectedId(null)}
+        onCloseDetail={close}
         emptyDetail="בחרו מצטרף מהרשימה."
         list={
           filtered.length === 0 ? (
@@ -3063,7 +3060,7 @@ function TracksPanel() {
                 <li key={row.id}>
                   <OpsListRow
                     active={selected?.id === row.id}
-                    onClick={() => setSelectedId(row.id)}
+                    onClick={() => select(row.id)}
                     title={row.name}
                     meta={trackLabel(row.trackType)}
                     status={leadPaymentSummary(row)}

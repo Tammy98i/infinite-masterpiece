@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 
 export const opsFieldClass =
   'w-full bg-[#0a0a0a] border border-white/10 rounded-xl px-4 py-3 text-base text-white focus:border-[#C8A24C] focus:outline-none min-h-11';
@@ -212,4 +212,29 @@ export function OpsMasterDetail({
       </div>
     </>
   );
+}
+
+export function useOpsSelection(ids: string[]) {
+  const [selectedId, setSelectedId] = useState<string | null>(null);
+  const closedRef = useRef(false);
+  const idsKey = ids.join('\0');
+
+  useEffect(() => {
+    if (closedRef.current) return;
+    const next = idsKey ? idsKey.split('\0') : [];
+    if (selectedId && next.includes(selectedId)) return;
+    setSelectedId(next[0] ?? null);
+  }, [idsKey, selectedId]);
+
+  const select = (id: string) => {
+    closedRef.current = false;
+    setSelectedId(id);
+  };
+
+  const close = () => {
+    closedRef.current = true;
+    setSelectedId(null);
+  };
+
+  return { selectedId, select, close };
 }
