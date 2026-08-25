@@ -743,6 +743,7 @@ const EVENT_LABEL: Record<string, string> = {
   admin_changed_user_role: 'שינוי תפקיד',
   admin_granted_access: 'פתיחת גישה',
   admin_blocked_user: 'חסימת משתמש',
+  admin_deleted_user: 'הסרת משתמש',
   admin_published_video: 'פרסום מאדמין',
   premium_88_page_view: 'צפייה בצוות המיזם',
   premium_88_cta_clicked: 'מועמדות לנבחרת 88',
@@ -1256,7 +1257,7 @@ function CourseForm({
 }
 
 function UsersPanel() {
-  const { reloadCatalog } = useApp();
+  const { reloadCatalog, user } = useApp();
   const [users, setUsers] = useState<AdminUserRow[]>([]);
   const [error, setError] = useState('');
   const [pendingId, setPendingId] = useState<string | null>(null);
@@ -1315,6 +1316,29 @@ function UsersPanel() {
       setError(err instanceof Error ? err.message : 'יצירה נכשלה');
     } finally {
       setCreating(false);
+    }
+  };
+
+  const removeUser = async (row: AdminUserRow) => {
+    if (row.id === user.id) return;
+    if (
+      !window.confirm(
+        `להסיר את ${row.email} מהמערכת? החשבון יימחק ולא ניתן לבטל. הרצאות ותשלומים נשמרים.`
+      )
+    ) {
+      return;
+    }
+    setPendingId(row.id);
+    setError('');
+    try {
+      await adminApi.deleteUser(row.id);
+      setSelectedId(null);
+      await load();
+      if (row.role === 'instructor' || row.isFounder) await reloadCatalog();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'ההסרה נכשלה');
+    } finally {
+      setPendingId(null);
     }
   };
 
@@ -1516,6 +1540,18 @@ function UsersPanel() {
                 className="px-3 py-2 text-xs border border-white/20 rounded-xl min-h-11"
               >
                 {selected.blocked ? 'שחרור חסימה' : 'חסימה'}
+              </button>
+              <button
+                type="button"
+                disabled={
+                  pendingId === selected.id ||
+                  selected.id === user.id ||
+                  (selected.role === 'admin' && users.filter((row) => row.role === 'admin').length <= 1)
+                }
+                onClick={() => void removeUser(selected)}
+                className="px-3 py-2 text-xs border border-rose-400/40 text-rose-200 rounded-xl min-h-11 disabled:opacity-40"
+              >
+                הסרה מהמערכת
               </button>
               <button
                 type="button"

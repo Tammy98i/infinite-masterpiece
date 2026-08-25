@@ -175,6 +175,10 @@ export const adminApi = {
       method: 'PATCH',
       body: JSON.stringify(patch),
     }),
+  deleteUser: (id: string) =>
+    apiRequest<{ ok: true; user: AdminUserRow | undefined }>(`/api/admin/users/${encodeURIComponent(id)}`, {
+      method: 'DELETE',
+    }),
   applications: () => apiRequest<{ applications: LecturerApplication[] }>('/api/admin/applications'),
   reviewApplication: (id: string, action: 'approved' | 'rejected' | 'more_info', adminNote?: string) =>
     apiRequest<{ application: LecturerApplication }>(`/api/admin/applications/${id}`, {
