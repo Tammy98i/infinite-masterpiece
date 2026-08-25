@@ -14,6 +14,7 @@ import { canPreviewEpisode, canWatchEpisode, PREVIEW_SECONDS } from '../utils/ac
 import { usePaywall } from '../context/PaywallContext';
 import { playbackApi } from '../api/playback';
 import { trackEvent } from '../utils/analytics';
+import { mediaUrl } from '../lib/apiBase';
 import { AuthRequiredDialog } from '../components/AuthRequiredDialog';
 import {
   completedChapterCount,
@@ -205,7 +206,7 @@ export const CourseDetailView: React.FC = () => {
       setShowEndOverlay(false);
       try {
         const session = await playbackApi.createSession(ep.id);
-        setPlaybackUrl(session.playbackUrl);
+        setPlaybackUrl(mediaUrl(session.playbackUrl));
         setPlaybackMode(session.mode);
         setCaptionTracks(session.captionTracks || ep.captionTracks || []);
         setPlayerOn(true);
@@ -219,7 +220,7 @@ export const CourseDetailView: React.FC = () => {
       } catch (err) {
         // Seed/offline fallback only when a local URL still exists
         if (ep.videoUrl) {
-          setPlaybackUrl(ep.videoUrl);
+          setPlaybackUrl(mediaUrl(ep.videoUrl));
           setPlaybackMode(canFull ? 'full' : 'preview');
           setCaptionTracks(ep.captionTracks || []);
           setPlayerOn(true);
@@ -504,7 +505,7 @@ export const CourseDetailView: React.FC = () => {
                     <video
                       ref={videoRef}
                       className="w-full h-full object-contain bg-black"
-                      src={playbackUrl}
+                      src={mediaUrl(playbackUrl)}
                       playsInline
                       controls={false}
                       onTimeUpdate={onTimeUpdate}
@@ -517,7 +518,7 @@ export const CourseDetailView: React.FC = () => {
                         <track
                           key={t.src}
                           kind={t.kind || 'subtitles'}
-                          src={t.src}
+                          src={mediaUrl(t.src)}
                           srcLang={t.srclang}
                           label={t.label}
                           default={Boolean(t.default)}

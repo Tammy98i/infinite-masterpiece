@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { uploadFile, type UploadKind } from '../api/upload';
+import { mediaUrl } from '../lib/apiBase';
 
 const ACCEPT: Record<UploadKind, string> = {
   image: 'image/jpeg,image/png,image/webp',
@@ -43,7 +44,7 @@ export function FileUploadField({ kind, label, value, onChange, disabled, hidePr
       <span className="block text-xs text-white/45 mb-1">{label}</span>
       {kind === 'image' && value && !hidePreview ? (
         <img
-          src={value}
+          src={mediaUrl(value)}
           alt={previewAlt || 'תצוגה מקדימה של תמונה שהועלתה'}
           className="w-full max-h-40 object-cover rounded-xl border border-white/10 mb-3"
         />

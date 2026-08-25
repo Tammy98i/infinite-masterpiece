@@ -4,6 +4,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import multer from 'multer';
 import { isS3Enabled, putS3Object, removeLocalCopy } from './s3Upload.js';
+import { publicUploadOrigin } from '../config/env.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -80,7 +81,7 @@ export function uploadMiddleware(kind: UploadKind) {
 }
 
 export function publicUploadUrl(filename: string) {
-  const origin = (process.env.PUBLIC_UPLOAD_ORIGIN || '').replace(/\/$/, '');
+  const origin = publicUploadOrigin();
   const path = `/uploads/${encodeURIComponent(filename)}`;
   return origin ? `${origin}${path}` : path;
 }

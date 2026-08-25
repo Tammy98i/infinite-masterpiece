@@ -6,6 +6,7 @@ import { formatClock } from '../utils/time';
 import { canPreviewEpisode, canWatchEpisode, episodeAccess, hasFullLibraryAccess, PREVIEW_SECONDS } from '../utils/access';
 import { trackEvent } from '../utils/analytics';
 import { playbackApi } from '../api/playback';
+import { mediaUrl } from '../lib/apiBase';
 
 function episodeName(title: string) {
   return title.replace(/^פרק\s+\d+\s*[:·-]\s*/, '');
@@ -80,13 +81,13 @@ export const WatchView: React.FC = () => {
       .createSession(episode.id)
       .then((session) => {
         if (cancelled) return;
-        setPlaybackUrl(session.playbackUrl);
+        setPlaybackUrl(mediaUrl(session.playbackUrl));
         setCaptionTracks(session.captionTracks || episode.captionTracks || []);
       })
       .catch((err) => {
         if (cancelled) return;
         if (episode.videoUrl) {
-          setPlaybackUrl(episode.videoUrl);
+          setPlaybackUrl(mediaUrl(episode.videoUrl));
           setCaptionTracks(episode.captionTracks || []);
         } else {
           setPlaybackError(err instanceof Error ? err.message : 'לא הצלחנו להפעיל את הפרק');
@@ -332,7 +333,7 @@ export const WatchView: React.FC = () => {
       <video
         ref={videoRef}
         data-onboarding="watch-player"
-        src={playbackUrl}
+        src={mediaUrl(playbackUrl)}
         playsInline
         autoPlay
         muted={muted}
@@ -371,7 +372,7 @@ export const WatchView: React.FC = () => {
           <track
             key={t.src}
             kind={t.kind || 'subtitles'}
-            src={t.src}
+            src={mediaUrl(t.src)}
             srcLang={t.srclang}
             label={t.label}
             default={Boolean(t.default)}

@@ -10,7 +10,7 @@
 
 ### יום 1–2: תשתית
 - [ ] Git init + remote + `.gitignore` (כולל `.env`)
-- [ ] Hosting: frontend (Vercel/Cloudflare) + API (Node)
+- [x] Hosting: frontend (Vercel SPA) + API (Node). ראו [`DEPLOY.md`](./DEPLOY.md) — לא Express על Vercel.
 - [ ] Domain + SSL + `APP_URL` production
 - [ ] DB: SQLite → Postgres (או managed) + backup יומי
 - [ ] S3/R2: `S3_*` + העברת uploads/וידאו

@@ -13,6 +13,7 @@
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "tsc --noEmit",
+    "test:hosting": "tsx scripts/verifyHostingSplit.ts",
     "a11y:audit": "python3 .cursor/skills/israeli-accessibility-compliance/scripts/audit_a11y.py --url http://localhost:3000",
     "a11y:smoke": "tsx scripts/a11ySmoke.ts",
     "a11y:generate-captions": "tsx scripts/generateCaptionStubs.ts"

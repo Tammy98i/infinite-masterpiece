@@ -5,7 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import { getDb } from './db/connection.js';
-import { appUrl, corsOrigins, isProduction } from './config/env.js';
+import { appUrl, isCorsOriginAllowed, isProduction, publicUploadOrigin, serveSpa } from './config/env.js';
 import onboardingRoutes from './routes/onboarding.js';
 import adminOnboardingRoutes from './routes/admin-onboarding.js';
 import authRoutes from './routes/auth.js';
@@ -37,16 +37,13 @@ if (isProduction()) {
   app.set('trust proxy', 1);
 }
 
-const origins = corsOrigins();
 app.use(
-  cors(
-    origins === true
-      ? undefined
-      : {
-          origin: origins,
-          credentials: true,
-        }
-  )
+  cors({
+    origin: (origin, callback) => {
+      callback(null, isCorsOriginAllowed(origin));
+    },
+    credentials: true,
+  })
 );
 
 app.post('/api/checkout/webhook', express.raw({ type: 'application/json' }), async (req, res) => {
@@ -64,7 +61,14 @@ app.post('/api/checkout/webhook', express.raw({ type: 'application/json' }), asy
 });
 app.use(express.json());
 ensureUploadsDir();
-app.use('/uploads', express.static(UPLOADS_DIR, { fallthrough: false, index: false }));
+app.use(
+  '/uploads',
+  (_req, res, next) => {
+    res.setHeader('Cross-Origin-Resource-Policy', 'cross-origin');
+    next();
+  },
+  express.static(UPLOADS_DIR, { fallthrough: false, index: false })
+);
 
 getDb();
 
@@ -76,6 +80,8 @@ app.get('/api/health', (_req, res) => {
       service: 'infinite-masterpiece-vod',
       env: process.env.NODE_ENV || 'development',
       appUrl: appUrl(),
+      publicUploadOrigin: publicUploadOrigin() || null,
+      serveSpa: serveSpa(),
       stripe: isStripeEnabled(),
       s3: isS3Enabled(),
     });
@@ -102,7 +108,7 @@ app.use('/api/upload', requireAuth, uploadRoutes);
 app.use('/api/admin/onboarding', requireAdmin, adminOnboardingRoutes);
 app.use('/api/admin', requireAdmin, adminRoutes);
 
-if (isProduction()) {
+if (serveSpa()) {
   const distPath = path.join(__dirname, '..', 'dist');
   if (fs.existsSync(distPath)) {
     app.use(express.static(distPath, { index: false, maxAge: '1h' }));

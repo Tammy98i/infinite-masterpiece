@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto';
 import { getDb } from '../db/connection.js';
 import { captionTracksForEpisode, defaultCaptionTracks } from '../../src/constants/captions.ts';
 import type { AccessLevel, CaptionTrack, Category, Course, Episode, Instructor, PublishStatus } from '../../src/types.ts';
+import { publicMediaUrl } from '../config/env.js';
 
 type SqlRow = Record<string, unknown>;
 
@@ -20,11 +21,14 @@ function episodeFromRow(row: SqlRow): Episode {
     title: String(row.title),
     description: String(row.description || ''),
     duration: Number(row.duration || 0),
-    videoUrl: String(row.video_url || ''),
+    videoUrl: publicMediaUrl(String(row.video_url || '')),
     episodeNumber: Number(row.episode_number || 0),
     accessLevel,
     isFreeSample: accessLevel === 'free',
-    captionTracks: parseJson<CaptionTrack[]>(row.caption_tracks, []),
+    captionTracks: parseJson<CaptionTrack[]>(row.caption_tracks, []).map((track) => ({
+      ...track,
+      src: publicMediaUrl(track.src),
+    })),
   };
 }
 
@@ -36,9 +40,9 @@ function courseFromRow(row: SqlRow, episodes: Episode[]): Course {
     description: String(row.description || ''),
     categoryId: String(row.category_id || ''),
     instructorId: String(row.lecturer_id || ''),
-    coverImage: String(row.cover_image || ''),
-    backdropImage: String(row.backdrop_image || ''),
-    trailerUrl: String(row.trailer_url || ''),
+    coverImage: publicMediaUrl(String(row.cover_image || '')),
+    backdropImage: publicMediaUrl(String(row.backdrop_image || '')),
+    trailerUrl: publicMediaUrl(String(row.trailer_url || '')),
     episodes,
     tags: parseJson<string[]>(row.tags, []),
     level: (String(row.level || 'לכל הרמות') as Course['level']) || 'לכל הרמות',
@@ -53,7 +57,7 @@ function courseFromRow(row: SqlRow, episodes: Episode[]): Course {
     createdAt: String(row.created_at || '').slice(0, 10),
     status: String(row.status || 'draft') as PublishStatus,
     accessLevel: String(row.access_level || 'premium') as AccessLevel,
-    resources: String(row.resources || ''),
+    resources: publicMediaUrl(String(row.resources || '')),
     programWeek: Number(row.program_week || 0),
     questionsEnabled: String(row.status || '') === 'published',
   };
@@ -64,7 +68,7 @@ function lecturerFromRow(row: SqlRow): Instructor {
     id: String(row.id),
     name: String(row.name),
     title: String(row.title || ''),
-    avatarUrl: String(row.avatar_url || ''),
+    avatarUrl: publicMediaUrl(String(row.avatar_url || '')),
     bio: String(row.bio || ''),
     credentials: parseJson<string[]>(row.credentials, []),
     isFounder: Boolean(row.is_founder),
@@ -80,7 +84,7 @@ function categoryFromRow(row: SqlRow): Category {
     name: String(row.name),
     description: String(row.description || ''),
     icon: String(row.icon || ''),
-    coverImage: String(row.cover_image || ''),
+    coverImage: publicMediaUrl(String(row.cover_image || '')),
     sortOrder: Number(row.sort_order || 0),
     accessLevel: (String(row.access_level || 'premium') as AccessLevel) || 'premium',
     leadInstructorIds: parseJson<string[]>(row.lead_instructor_ids, []),

@@ -11,6 +11,7 @@ import { progressApi } from '../api/progress';
 import { listApi } from '../api/list';
 import { libraryPath, parseLibraryPath } from '../utils/libraryPath';
 import { canAddToList, FREE_LIST_LIMIT, hasFullLibraryAccess } from '../utils/access';
+import { withMediaCategory, withMediaCourse, withMediaInstructor } from '../lib/catalogMedia';
 
 interface AppContextType {
   courses: Course[];
@@ -119,9 +120,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setCatalogStatus('loading');
     try {
       const data = await catalogApi.get();
-      setCourses(data.courses);
-      setInstructors(data.instructors);
-      setCategories(data.categories);
+      setCourses(data.courses.map(withMediaCourse));
+      setInstructors(data.instructors.map(withMediaInstructor));
+      setCategories(data.categories.map(withMediaCategory));
       setWeeklyPopularIds(data.weeklyPopularIds || []);
       setCatalogStatus('ready');
     } catch {

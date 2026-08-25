@@ -1,6 +1,7 @@
 import { randomUUID } from 'crypto';
 import { getDb } from '../db/connection.js';
 import { STUDENT_PATH_ID, INSTRUCTOR_PATH_ID, STUDENT_BONUS_ID } from '../db/seed.js';
+import { publicMediaUrl } from '../config/env.js';
 
 export type OnboardingLevel = 'fearful' | 'hesitant' | 'brave';
 export type UserRole = 'student' | 'instructor' | 'admin' | 'support' | 'org_manager';
@@ -27,7 +28,7 @@ function rowToStep(row: Record<string, unknown>) {
     description: row.description as string,
     stepOrder: row.step_order as number,
     type: row.type as string,
-    videoUrl: (row.video_url as string | null) ?? null,
+    videoUrl: row.video_url ? publicMediaUrl(String(row.video_url)) : null,
     screenzEmbed: (row.screenz_embed as string | null) ?? null,
     pageUrl: (row.page_url as string | null) ?? null,
     triggerEvent: (row.trigger_event as string | null) ?? null,
@@ -154,7 +155,7 @@ export function getUserProgress(userId: string) {
         type: s.type,
         triggerEvent: s.trigger_event,
         targetSelector: s.target_selector,
-        videoUrl: s.video_url,
+        videoUrl: s.video_url ? publicMediaUrl(String(s.video_url)) : s.video_url,
         screenzEmbed: s.screenz_embed,
         isRequired: Boolean(s.is_required),
         status: s.status,
