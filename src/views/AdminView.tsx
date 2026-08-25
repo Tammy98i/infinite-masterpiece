@@ -615,7 +615,6 @@ function OverviewPanel({ onNavigate, staffDesk }: { onNavigate: (tab: Tab) => vo
   const [data, setData] = useState<AdminOverview | null>(null);
   const [analytics, setAnalytics] = useState<AdminAnalytics | null>(null);
   const [error, setError] = useState('');
-  const [showMore, setShowMore] = useState(false);
 
   useEffect(() => {
     Promise.all([adminApi.overview(), adminApi.analytics()])
@@ -689,7 +688,7 @@ function OverviewPanel({ onNavigate, staffDesk }: { onNavigate: (tab: Tab) => vo
     <OpsDeskStack>
       <OpsPageHeader
         title="מה צריך ממך עכשיו"
-        hint="ארבעה דברים שדורשים טיפול. השאר מאחורי «עוד נתונים»."
+        hint="טיפול דחוף למעלה. נתונים, משפך ומוכנות בהמשך העמוד."
       />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
@@ -721,106 +720,96 @@ function OverviewPanel({ onNavigate, staffDesk }: { onNavigate: (tab: Tab) => vo
         <NotificationsPanel onNavigate={onNavigate} embedded />
       </section>
 
-      <div>
-        <button
-          type="button"
-          aria-expanded={showMore}
-          onClick={() => setShowMore((open) => !open)}
-          className="px-5 py-3 rounded-full border border-white/15 text-sm min-h-11 hover:border-white/40"
-        >
-          {showMore ? 'הסתרת נתונים נוספים' : 'עוד נתונים'}
-        </button>
-      </div>
+      <OpsSection title="נתונים">
+        <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-6 gap-3">
+          {extraCards.map((card) => (
+            <div key={card.label} className="border border-white/10 rounded-2xl p-3 bg-white/[0.02]">
+              <div className="text-sm text-white/55 mb-1 leading-snug">{card.label}</div>
+              <div className="text-lg font-light text-white">{card.value}</div>
+            </div>
+          ))}
+        </div>
+      </OpsSection>
 
-      {showMore ? (
-        <div className="grid gap-8">
-          <ReadinessPanel />
-          <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-3">
-            {extraCards.map((card) => (
-              <div key={card.label} className="border border-white/10 rounded-2xl p-4 bg-white/[0.02]">
-                <div className="text-sm text-white/55 mb-2 leading-snug">{card.label}</div>
-                <div className="text-xl font-light text-white">{card.value}</div>
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+        <section className="xl:col-span-2 border border-white/10 rounded-3xl p-5">
+          <div className="flex items-center justify-between gap-3 mb-4">
+            <h3 className="text-lg font-light">משפך המרה</h3>
+            <button
+              type="button"
+              onClick={() => onNavigate('funnel')}
+              className="text-sm text-[#C8A24C] hover:text-[#F7E7B5] min-h-11"
+            >
+              פירוט
+            </button>
+          </div>
+          {funnelSteps.length === 0 ? (
+            <p className="text-sm text-white/50">טוען משפך...</p>
+          ) : (
+            <div className="grid gap-3">
+              {funnelSteps.map((step) => (
+                <div key={step.label}>
+                  <div className="flex justify-between text-sm mb-1.5">
+                    <span className="text-white/70">{step.label}</span>
+                    <span className="text-white/55">{step.value}</span>
+                  </div>
+                  <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-l from-[#C8A24C] to-[#5b4b9a]"
+                      style={{ width: `${Math.max(6, (step.value / funnelMax) * 100)}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+              <p className="text-sm text-white/50 mt-1">
+                המרה כוללת: {data.conversionRate}% · ביטולים:{' '}
+                {analytics?.funnel.subscriptionCancelled ?? 0}
+              </p>
+            </div>
+          )}
+        </section>
+        <section className="border border-white/10 rounded-3xl p-5">
+          <h3 className="text-lg font-light mb-4">תוכן מוביל</h3>
+          <div className="grid gap-3">
+            {[
+              { label: 'הכי נצפה', item: data.popularContent },
+              { label: 'קטגוריה חזקה', item: data.strongestCategory },
+              { label: 'מרצה מוביל', item: data.leadingLecturer },
+              { label: 'ממיר הכי טוב', item: data.convertingContent },
+            ].map((card) => (
+              <div key={card.label} className="border-b border-white/5 pb-3 last:border-0 last:pb-0">
+                <div className="text-sm text-white/50 mb-1">{card.label}</div>
+                {card.item ? (
+                  <>
+                    <div className="text-sm text-white font-light">{card.item.name}</div>
+                    <div className="text-sm text-white/50 mt-1">{card.item.views} צפיות</div>
+                  </>
+                ) : (
+                  <div className="text-sm text-white/50">עדיין אין מספיק מדידה</div>
+                )}
               </div>
             ))}
           </div>
-          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-            <section className="xl:col-span-2 border border-white/10 rounded-3xl p-6">
-              <div className="flex items-center justify-between gap-3 mb-5">
-                <h3 className="text-lg font-light">משפך המרה</h3>
-                <button
-                  type="button"
-                  onClick={() => onNavigate('funnel')}
-                  className="text-sm text-[#C8A24C] hover:text-[#F7E7B5] min-h-11"
-                >
-                  פירוט
-                </button>
-              </div>
-              {funnelSteps.length === 0 ? (
-                <p className="text-sm text-white/50">טוען משפך...</p>
-              ) : (
-                <div className="grid gap-4">
-                  {funnelSteps.map((step) => (
-                    <div key={step.label}>
-                      <div className="flex justify-between text-sm mb-1.5">
-                        <span className="text-white/70">{step.label}</span>
-                        <span className="text-white/55">{step.value}</span>
-                      </div>
-                      <div className="h-2 rounded-full bg-white/5 overflow-hidden">
-                        <div
-                          className="h-full rounded-full bg-gradient-to-l from-[#C8A24C] to-[#5b4b9a]"
-                          style={{ width: `${Math.max(6, (step.value / funnelMax) * 100)}%` }}
-                        />
-                      </div>
-                    </div>
-                  ))}
-                  <p className="text-sm text-white/50 mt-2">
-                    המרה כוללת: {data.conversionRate}% · ביטולים:{' '}
-                    {analytics?.funnel.subscriptionCancelled ?? 0}
-                  </p>
-                </div>
-              )}
-            </section>
-            <section className="border border-white/10 rounded-3xl p-6">
-              <h3 className="text-lg font-light mb-5">תוכן מוביל</h3>
-              <div className="grid gap-4">
-                {[
-                  { label: 'הכי נצפה', item: data.popularContent },
-                  { label: 'קטגוריה חזקה', item: data.strongestCategory },
-                  { label: 'מרצה מוביל', item: data.leadingLecturer },
-                  { label: 'ממיר הכי טוב', item: data.convertingContent },
-                ].map((card) => (
-                  <div key={card.label} className="border-b border-white/5 pb-3 last:border-0 last:pb-0">
-                    <div className="text-sm text-white/50 mb-1">{card.label}</div>
-                    {card.item ? (
-                      <>
-                        <div className="text-sm text-white font-light">{card.item.name}</div>
-                        <div className="text-sm text-white/50 mt-1">{card.item.views} צפיות</div>
-                      </>
-                    ) : (
-                      <div className="text-sm text-white/50">עדיין אין מספיק מדידה</div>
-                    )}
-                  </div>
-                ))}
-              </div>
-            </section>
-          </div>
-          <section className="border border-white/10 rounded-3xl p-6">
-            <h3 className="text-lg font-light mb-5">פעילות אחרונה</h3>
-            {!analytics?.recent?.length ? (
-              <p className="text-sm text-white/50">עדיין אין אירועים.</p>
-            ) : (
-              <ul className="grid gap-3">
-                {analytics.recent.slice(0, 8).map((row) => (
-                  <li key={row.id} className="flex items-start justify-between gap-3 text-sm border-b border-white/5 pb-3 last:border-0">
-                    <span className="text-white/75 font-light">{EVENT_LABEL[row.event] || row.event}</span>
-                    <span className="text-sm text-white/45 whitespace-nowrap">{formatOpsDate(row.createdAt)}</span>
-                  </li>
-                ))}
-              </ul>
-            )}
-          </section>
-        </div>
-      ) : null}
+        </section>
+      </div>
+
+      <section className="border border-white/10 rounded-3xl p-5">
+        <h3 className="text-lg font-light mb-4">פעילות אחרונה</h3>
+        {!analytics?.recent?.length ? (
+          <p className="text-sm text-white/50">עדיין אין אירועים.</p>
+        ) : (
+          <ul className="grid gap-3">
+            {analytics.recent.slice(0, 8).map((row) => (
+              <li key={row.id} className="flex items-start justify-between gap-3 text-sm border-b border-white/5 pb-3 last:border-0">
+                <span className="text-white/75 font-light">{EVENT_LABEL[row.event] || row.event}</span>
+                <span className="text-sm text-white/45 whitespace-nowrap">{formatOpsDate(row.createdAt)}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
+
+      <ReadinessPanel />
     </OpsDeskStack>
   );
 }
@@ -3092,56 +3081,33 @@ function TracksPanel() {
         }
         detail={
           selected ? (
-            <div className="grid gap-5">
-              <div>
-                <h3 className="text-base font-light text-[#C8A24C] leading-snug">{selected.name}</h3>
-                <p className="text-sm text-white/50 mt-1">
-                  {trackLabel(selected.trackType)} · {opsStatusHe(selected.status)}
-                </p>
-              </div>
+            <div className="grid gap-3">
+              <OpsCardTitle sub={`${trackLabel(selected.trackType)} · ${opsStatusHe(selected.status)}`}>
+                {selected.name}
+              </OpsCardTitle>
+              <OpsFacts>
+                <OpsFact label="טלפון">{selected.phone || 'לא צוין'}</OpsFact>
+                <OpsFact label="אימייל">{selected.email || 'לא צוין'}</OpsFact>
+                <OpsFact label="תחום">{selected.field || 'לא צוין'}</OpsFact>
+                <OpsFact label="הססנות">{selected.hesitationReason || 'לא צוין'}</OpsFact>
+                <OpsFact label="מוצר">{selected.hasProduct || 'לא צוין'}</OpsFact>
+                <OpsFact label="מכירות">{selected.hasSold || 'לא צוין'}</OpsFact>
+                <OpsFact label="יעד 90">{selected.goal90 || 'לא צוין'}</OpsFact>
+                <OpsFact label="קישורים">{selected.links || 'לא צוין'}</OpsFact>
+                <OpsFact label="הפניה">
+                  {selected.referredByLecturerName || selected.referredByLecturerId || 'אין'}
+                </OpsFact>
+                <OpsFact label="משתמש">
+                  {selected.userId ? selected.userName || selected.userId : 'לא מקושר עדיין'}
+                </OpsFact>
+                <OpsFact label="תוכנית">
+                  {selected.plan
+                    ? `${selected.plan.amountBeforeVat.toLocaleString('he-IL')} ₪ לפני מע״מ · ${selected.plan.amountWithVat.toLocaleString('he-IL')} ₪ כולל · ${selected.plan.status}`
+                    : 'אין תוכנית'}
+                </OpsFact>
+              </OpsFacts>
 
-              <dl className="grid gap-2 text-sm">
-                <div className="flex justify-between gap-3"><dt className="text-white/40">טלפון</dt><dd>{selected.phone}</dd></div>
-                <div className="flex justify-between gap-3"><dt className="text-white/40">אימייל</dt><dd className="text-left break-all">{selected.email}</dd></div>
-                <div className="flex justify-between gap-3"><dt className="text-white/40">תחום</dt><dd>{selected.field || 'לא צוין'}</dd></div>
-                {selected.hesitationReason ? (
-                  <div className="flex justify-between gap-3"><dt className="text-white/40">הססנות</dt><dd className="text-left">{selected.hesitationReason}</dd></div>
-                ) : null}
-                {selected.hasProduct ? (
-                  <div className="flex justify-between gap-3"><dt className="text-white/40">מוצר</dt><dd>{selected.hasProduct}</dd></div>
-                ) : null}
-                {selected.hasSold ? (
-                  <div className="flex justify-between gap-3"><dt className="text-white/40">מכירות</dt><dd>{selected.hasSold}</dd></div>
-                ) : null}
-                {selected.goal90 ? (
-                  <div className="flex justify-between gap-3"><dt className="text-white/40">יעד 90</dt><dd className="text-left">{selected.goal90}</dd></div>
-                ) : null}
-                {selected.links ? (
-                  <div className="flex justify-between gap-3"><dt className="text-white/40">קישורים</dt><dd className="text-left break-all">{selected.links}</dd></div>
-                ) : null}
-                {(selected.referredByLecturerName || selected.referredByLecturerId) && (
-                  <div className="flex justify-between gap-3">
-                    <dt className="text-white/40">הפניה</dt>
-                    <dd>{selected.referredByLecturerName || selected.referredByLecturerId}</dd>
-                  </div>
-                )}
-                <div className="flex justify-between gap-3">
-                  <dt className="text-white/40">משתמש</dt>
-                  <dd>{selected.userId ? selected.userName || selected.userId : 'לא מקושר עדיין'}</dd>
-                </div>
-              </dl>
-
-              {selected.plan ? (
-                <div className="border-t border-white/10 pt-4">
-                  <p className="text-xs text-white/40 mb-2">תוכנית תשלום</p>
-                  <p className="text-sm text-white/70">
-                    {selected.plan.amountBeforeVat.toLocaleString('he-IL')} ₪ לפני מע״מ ·{' '}
-                    {selected.plan.amountWithVat.toLocaleString('he-IL')} ₪ כולל · {selected.plan.status}
-                  </p>
-                </div>
-              ) : null}
-
-              <div className="border-t border-white/10 pt-4 grid gap-3">
+              <div className="grid gap-3">
                 <p className="text-xs text-white/40">פעימות</p>
                 {selected.installments.length === 0 ? (
                   <p className="text-sm text-white/40">אין פעימות.</p>
@@ -3149,25 +3115,22 @@ function TracksPanel() {
                   selected.installments.map((item) => {
                     const canAct = item.status === 'scheduled' || item.status === 'due' || item.status === 'failed';
                     return (
-                      <div key={item.id} className="border border-white/10 rounded-xl p-3 grid gap-2">
-                        <div className="flex items-center justify-between gap-3 text-sm">
-                          <span>
-                            פעימה {item.number} · {item.amountBeforeVat.toLocaleString('he-IL')} ₪
-                          </span>
-                          <span className="text-white/55">{installmentStatusLabel(item.status)}</span>
-                        </div>
+                      <div key={item.id} className="grid gap-1.5 border-t border-white/10 pt-3 first:border-0 first:pt-0">
+                        <OpsFact label={`פעימה ${item.number}`}>
+                          {item.amountBeforeVat.toLocaleString('he-IL')} ₪ · {installmentStatusLabel(item.status)}
+                        </OpsFact>
                         <p className="text-xs text-white/35">
                           {item.dueAt ? `לתאריך ${item.dueAt.replace('T', ' ').slice(0, 16)}` : 'ללא תאריך יעד'}
                           {item.paidAt ? ` · שולם ${item.paidAt.replace('T', ' ').slice(0, 16)}` : ''}
                           {item.paymentSource ? ` · ${item.paymentSource === 'manual' ? 'ידני' : 'Stripe'}` : ''}
                         </p>
                         {canAct ? (
-                          <div className="flex flex-wrap gap-2">
+                          <OpsCardActions>
                             <button
                               type="button"
                               disabled={pendingId === item.id}
                               onClick={() => void setInstallment(item.id, 'paid')}
-                              className="px-3 py-1.5 text-xs border border-[#C8A24C]/50 text-[#C8A24C] hover:bg-[#C8A24C]/10 disabled:opacity-50"
+                              className={opsCardPrimary}
                             >
                               סומן כשולם
                             </button>
@@ -3176,7 +3139,7 @@ function TracksPanel() {
                                 type="button"
                                 disabled={pendingId === item.id}
                                 onClick={() => void setInstallment(item.id, 'failed')}
-                                className="px-3 py-1.5 text-xs border border-white/20 text-white/60 hover:border-rose-300/40 hover:text-rose-200 disabled:opacity-50"
+                                className={opsCardDanger}
                               >
                                 נכשל
                               </button>
@@ -3186,12 +3149,12 @@ function TracksPanel() {
                                 type="button"
                                 disabled={pendingId === item.id}
                                 onClick={() => void setInstallment(item.id, 'due')}
-                                className="px-3 py-1.5 text-xs border border-white/20 text-white/60 hover:border-white/40 disabled:opacity-50"
+                                className={opsCardGhost}
                               >
                                 לחיוב
                               </button>
                             ) : null}
-                          </div>
+                          </OpsCardActions>
                         ) : null}
                       </div>
                     );
@@ -4207,7 +4170,6 @@ function WebinarPanel() {
   const [saving, setSaving] = useState(false);
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'partial' | 'complete' | 'waitlist'>('all');
-  const [showMore, setShowMore] = useState(false);
   const [selectedRegId, setSelectedRegId] = useState<string | null>(null);
 
   const load = () =>
@@ -4285,7 +4247,7 @@ function WebinarPanel() {
     <OpsDeskStack>
       <OpsPageHeader
         title="וובינר"
-        hint={`${data?.totalRegistrations ?? 0} נרשמים. שינויים נשמרים בכפתור הזהוב.`}
+        hint={`${data?.totalRegistrations ?? 0} נרשמים. פרטים, מובילים וכותרת חלופית בעמוד. שינויים נשמרים בכפתור הזהוב.`}
         action={
           <a href="/webinar" target="_blank" rel="noreferrer" className={`${opsGhostBtn} text-sm`}>
             צפייה בדף
@@ -4399,19 +4361,7 @@ function WebinarPanel() {
       </OpsSection>
       </div>
 
-      <div>
-        <button
-          type="button"
-          aria-expanded={showMore}
-          onClick={() => setShowMore((open) => !open)}
-          className="text-base text-white/70 hover:text-white min-h-11"
-        >
-          {showMore ? 'הסתרת הגדרות נוספות' : 'עוד הגדרות'}
-        </button>
-      </div>
-
-      {showMore ? (
-        <>
+      <div className="grid gap-5 xl:grid-cols-2 xl:items-start">
           <OpsSection title="מובילים">
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <OpsField label="שם מוביל ראשי">
@@ -4485,8 +4435,7 @@ function WebinarPanel() {
               />
             </OpsField>
           </OpsSection>
-        </>
-      ) : null}
+      </div>
 
       <button
         type="button"
