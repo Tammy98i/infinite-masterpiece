@@ -14,7 +14,7 @@ import type { CoursePayload } from '../api/admin';
 import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/captions';
 import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
-import { OpsEmptyList, OpsFact, OpsField, OpsListRow, OpsMasterDetail, OpsPageHeader, OpsSection, opsFieldClass, opsGhostBtn, opsPrimaryBtn } from '../components/ops/OpsUi';
+import { OpsBand, OpsDeskStack, OpsEmptyList, OpsFact, OpsField, OpsListRow, OpsMasterDetail, OpsPageHeader, OpsSection, OpsToolbar, opsChipClass, opsFieldClass, opsGhostBtn, opsPrimaryBtn } from '../components/ops/OpsUi';
 import { accessLabelHe } from '../utils/opsLabels';
 
 const fieldClass = opsFieldClass;
@@ -86,13 +86,13 @@ function ReferralCard({
   };
 
   return (
-    <div className="grid gap-4">
+    <OpsDeskStack>
       <OpsPageHeader
         title="הקישור שלכם"
         hint="מי שנכנס דרך הקישור ונרשם או ממלא מסלול כניסה נספר כאן. בלי לערבב עם מועמדות לנבחרת 88."
       />
-      <div className="flex flex-col sm:flex-row gap-3 mb-6">
-        <input readOnly value={referralUrl} className={`${fieldClass} flex-1`} dir="ltr" />
+      <OpsToolbar>
+        <input readOnly value={referralUrl} className={`${fieldClass} flex-1`} dir="ltr" aria-label="קישור הפניה" />
         <button
           type="button"
           onClick={() => void copy()}
@@ -100,7 +100,7 @@ function ReferralCard({
         >
           {copied ? 'הועתק' : 'העתקת קישור'}
         </button>
-      </div>
+      </OpsToolbar>
       <div className="grid grid-cols-2 gap-4">
         <div className="border border-white/10 rounded-2xl p-4">
           <div className="text-xs text-white/40 mb-1">לידים שהגיעו דרככם</div>
@@ -111,7 +111,7 @@ function ReferralCard({
           <div className="text-2xl font-light">{referredUsers}</div>
         </div>
       </div>
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -587,7 +587,7 @@ function QuestionsPanel() {
   };
 
   return (
-    <div className="grid gap-6">
+    <OpsDeskStack>
       <OpsPageHeader
         title="שאלות ותגובות"
         hint="רק שאלות על ההרצאות שלכם. בלי נתוני משתמשים רגישים מעבר לשם."
@@ -667,7 +667,7 @@ function QuestionsPanel() {
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -702,7 +702,7 @@ function MessagesPanel() {
   };
 
   return (
-    <div className="grid gap-6">
+    <OpsDeskStack>
       <OpsPageHeader title="הודעות מהצוות" />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
       <OpsMasterDetail
@@ -740,7 +740,7 @@ function MessagesPanel() {
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -769,7 +769,7 @@ function CoursesSeriesPanel({
   const canEdit = selected && selected.status !== 'published' && selected.status !== 'blocked';
 
   return (
-    <div className="grid gap-8">
+    <OpsDeskStack>
       <OpsPageHeader
         title="קורסים / סדרות"
         hint="קיבוץ ההרצאות לפי קטגוריה. יצירת סדרה נפרדת תגיע בהמשך; כרגע מנהלים דרך ההרצאות והקטגוריה."
@@ -835,7 +835,7 @@ function CoursesSeriesPanel({
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -844,7 +844,7 @@ function Founder88Panel({ courses }: { courses: Course[] }) {
   const selected = courses.find((course) => course.id === selectedId) || null;
 
   return (
-    <div className="grid gap-6">
+    <OpsDeskStack>
       <OpsPageHeader
         title="הרצאות בנבחרת 88"
         hint="הרצאות שפורסמו תחת הפרופיל שלכם. הצגה בעמוד הציבורי נקבעת גם על ידי האדמין."
@@ -882,7 +882,7 @@ function Founder88Panel({ courses }: { courses: Course[] }) {
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -906,38 +906,36 @@ function OverviewHome({
   ];
 
   return (
-    <div className="grid gap-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <h2 className="text-2xl sm:text-3xl font-light mb-2">מה לעשות היום</h2>
-          <p className="text-base text-white/55 font-light max-w-2xl">
-            מעלים הרצאה, שולחים לאישור, ועוקבים אחרי מה שכבר באוויר. פרסום ישיר נשאר בידי האדמין.
-          </p>
-        </div>
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={onUpload}
-            className="px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11"
-          >
-            הוספת הרצאה
-          </button>
-          <button
-            type="button"
-            onClick={onVideos}
-            className="px-5 py-2.5 rounded-full border border-white/15 text-sm min-h-11"
-          >
-            ההרצאות שלי
-          </button>
-          <button
-            type="button"
-            onClick={onReferral}
-            className="px-5 py-2.5 rounded-full border border-white/15 text-sm min-h-11"
-          >
-            הקישור שלי
-          </button>
-        </div>
-      </div>
+    <OpsDeskStack>
+      <OpsPageHeader
+        title="מה לעשות היום"
+        hint="מעלים הרצאה, שולחים לאישור, ועוקבים אחרי מה שכבר באוויר. פרסום ישיר נשאר בידי האדמין."
+        action={
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              onClick={onUpload}
+              className="px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11"
+            >
+              הוספת הרצאה
+            </button>
+            <button
+              type="button"
+              onClick={onVideos}
+              className="px-5 py-2.5 rounded-full border border-white/15 text-sm min-h-11"
+            >
+              ההרצאות שלי
+            </button>
+            <button
+              type="button"
+              onClick={onReferral}
+              className="px-5 py-2.5 rounded-full border border-white/15 text-sm min-h-11"
+            >
+              הקישור שלי
+            </button>
+          </div>
+        }
+      />
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {kpis.map((card) => (
@@ -1019,7 +1017,7 @@ function OverviewHome({
           הרצאות קצרות וממוקדות נצפות עד הסוף יותר. זה מה שמביא שמירות ושדרוגים מהתוכן שלכם.
         </p>
       </div>
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -1055,31 +1053,33 @@ function VideosPanel({
   const selected = courses.find((course) => course.id === selectedId) || null;
 
   return (
-    <div className="grid gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <OpsPageHeader title={title} />
-        <button
-          type="button"
-          onClick={onUpload}
-          className="px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11"
-        >
-          הוספת הרצאה
-        </button>
-      </div>
-      <div className="flex flex-wrap gap-2">
-        {chips.map((chip) => (
+    <OpsDeskStack>
+      <OpsPageHeader
+        title={title}
+        action={
           <button
-            key={chip.id}
             type="button"
-            onClick={() => onFilter(chip.id)}
-            className={`px-4 py-2 rounded-full text-sm min-h-11 border ${
-              filter === chip.id ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/70'
-            }`}
+            onClick={onUpload}
+            className="px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11"
           >
-            {chip.label} ({chip.count})
+            הוספת הרצאה
           </button>
-        ))}
-      </div>
+        }
+      />
+      <OpsToolbar>
+        <div className="flex flex-wrap gap-2">
+          {chips.map((chip) => (
+            <button
+              key={chip.id}
+              type="button"
+              onClick={() => onFilter(chip.id)}
+              className={opsChipClass(filter === chip.id)}
+            >
+              {chip.label} ({chip.count})
+            </button>
+          ))}
+        </div>
+      </OpsToolbar>
       <OpsMasterDetail
         hasSelection={Boolean(selected)}
         onCloseDetail={() => setSelectedId(null)}
@@ -1142,14 +1142,14 @@ function VideosPanel({
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
 function AnalyticsPanel({ stats }: { stats: LecturerOverview }) {
   const maxTop = Math.max(1, ...stats.topContent.map((item) => item.views));
   return (
-    <div className="grid gap-8">
+    <OpsDeskStack>
       <OpsPageHeader
         title="ביצועי התכנים"
         hint="נתונים מצרפיים בלבד על התוכן שלכם. בלי פרטי משתמשים."
@@ -1197,7 +1197,7 @@ function AnalyticsPanel({ stats }: { stats: LecturerOverview }) {
           </ul>
         )}
       </div>
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -1207,7 +1207,7 @@ function ResourcesPanel({ courses }: { courses: Course[] }) {
   const selected = rows.find((course) => course.id === selectedId) || null;
 
   return (
-    <div className="grid gap-6">
+    <OpsDeskStack>
       <OpsPageHeader
         title="קבצים נלווים"
         hint="קבצים שצורפו להרצאות שלכם. העלאה חדשה דרך עריכת הרצאה."
@@ -1263,7 +1263,7 @@ function ResourcesPanel({ courses }: { courses: Course[] }) {
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -1322,7 +1322,7 @@ function ProfileEditorPanel({ isFounderTab }: { isFounderTab: boolean }) {
   if (!profile) return <p className="text-sm text-white/40">טוען פרופיל...</p>;
 
   return (
-    <div className="grid gap-6 max-w-2xl">
+    <OpsDeskStack>
       <OpsPageHeader
         title={isFounderTab ? 'פרופיל מייסד' : 'הפרופיל שלי'}
         hint={
@@ -1356,14 +1356,14 @@ function ProfileEditorPanel({ isFounderTab }: { isFounderTab: boolean }) {
       >
         {pending ? 'שומר...' : 'שמירה'}
       </button>
-    </div>
+    </OpsDeskStack>
   );
 }
 
 function SettingsPanel({ onLibrary }: { onLibrary: () => void }) {
   const { setView } = useApp();
   return (
-    <div className="grid gap-6 max-w-xl">
+    <OpsDeskStack>
       <OpsPageHeader title="הגדרות חשבון" hint="מעבר לפרופיל הכללי או חזרה לספרייה." />
       <div className="border border-white/10 rounded-2xl p-5 grid gap-3">
         <button
@@ -1381,7 +1381,7 @@ function SettingsPanel({ onLibrary }: { onLibrary: () => void }) {
           חזרה לספרייה
         </button>
       </div>
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -1427,11 +1427,36 @@ function TeamPanel() {
   const selected = members.find((member) => member.id === selectedId) || null;
 
   return (
-    <div className="grid gap-8">
+    <OpsDeskStack>
       <OpsPageHeader
         title="צוות מייסדים"
         hint="נכנסים מחשבון גל. לכל יזם: שם, תפקיד ותמונה. בלי להמציא אנשים."
       />
+      <OpsBand title="הוספת יזם">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 items-end">
+          <OpsField label="שם">
+            <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
+          </OpsField>
+          <OpsField label="תפקיד">
+            <input value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
+          </OpsField>
+          <OpsField label="ביו קצר (אופציונלי)" className="sm:col-span-2">
+            <textarea rows={2} value={bio} onChange={(e) => setBio(e.target.value)} className={fieldClass} />
+          </OpsField>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto] gap-3 items-end">
+          <FileUploadField kind="image" label="תמונה" value={avatarUrl} onChange={setAvatarUrl} />
+          {error ? <p className="text-sm text-rose-300 sm:col-span-2">{error}</p> : null}
+          <button
+            type="button"
+            disabled={pending}
+            onClick={() => void save()}
+            className={`${opsPrimaryBtn} w-full sm:w-auto`}
+          >
+            {pending ? 'שומר...' : 'הוספה לצוות'}
+          </button>
+        </div>
+      </OpsBand>
       <OpsMasterDetail
         hasSelection={Boolean(selected)}
         onCloseDetail={() => setSelectedId(null)}
@@ -1477,30 +1502,7 @@ function TeamPanel() {
           ) : null
         }
       />
-      <OpsSection title="הוספת יזם">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <OpsField label="שם">
-            <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
-          </OpsField>
-          <OpsField label="תפקיד">
-            <input value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
-          </OpsField>
-        </div>
-        <OpsField label="ביו קצר (אופציונלי)">
-          <textarea rows={3} value={bio} onChange={(e) => setBio(e.target.value)} className={fieldClass} />
-        </OpsField>
-        <FileUploadField kind="image" label="תמונה" value={avatarUrl} onChange={setAvatarUrl} />
-        {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => void save()}
-          className={`${opsPrimaryBtn} w-fit`}
-        >
-          {pending ? 'שומר...' : 'הוספה לצוות'}
-        </button>
-      </OpsSection>
-    </div>
+    </OpsDeskStack>
   );
 }
 

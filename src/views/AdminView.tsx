@@ -11,7 +11,7 @@ import { trackEvent } from '../utils/analytics';
 import { Search } from 'lucide-react';
 import { FileUploadField } from '../components/FileUploadField';
 import { useConfirm } from '../components/ops/ConfirmDialog';
-import { OpsEmptyList, OpsFact, OpsField, OpsListRow, OpsMasterDetail, OpsPageHeader, OpsSection, opsFieldClass, opsGhostBtn, opsLabelClass, opsPrimaryBtn } from '../components/ops/OpsUi';
+import { OpsBand, OpsDeskStack, OpsEmptyList, OpsFact, OpsField, OpsListRow, OpsMasterDetail, OpsPageHeader, OpsSection, OpsToolbar, opsChipClass, opsFieldClass, opsGhostBtn, opsLabelClass, opsPrimaryBtn } from '../components/ops/OpsUi';
 import { accessLabelHe, formatOpsDate, isPayingPlan, opsStatusHe, planLabelHe, raffleStatusHe, roleLabelHe } from '../utils/opsLabels';
 
 type Tab =
@@ -356,31 +356,26 @@ function NotificationsPanel({
   const selected = items.find((item) => item.id === selectedId) || null;
 
   return (
-    <div className={embedded ? 'grid gap-4' : 'grid gap-6'}>
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          {embedded ? (
-            <>
-              <h3 className="text-lg font-light">תור פעולות</h3>
-              <p className="text-sm text-white/55 mt-1">
-                {high > 0 ? `${high} דחופות לטיפול` : 'מה שהמערכת זיהתה עכשיו'}
-              </p>
-            </>
-          ) : (
-            <OpsPageHeader
-              title="תור פעולות לטיפול"
-              hint={`סיכום אוטומטי מהמערכת.${high > 0 ? ` · ${high} דחופות` : ''}`}
-            />
-          )}
-        </div>
-        <button
-          type="button"
-          onClick={() => void load()}
-          className="px-4 py-2 rounded-full border border-white/15 text-sm min-h-11 hover:border-white/40"
-        >
-          רענון
-        </button>
-      </div>
+    <OpsDeskStack>
+      <OpsPageHeader
+        title={embedded ? 'תור פעולות' : 'תור פעולות לטיפול'}
+        hint={
+          embedded
+            ? high > 0
+              ? `${high} דחופות לטיפול`
+              : 'מה שהמערכת זיהתה עכשיו'
+            : `סיכום אוטומטי מהמערכת.${high > 0 ? ` · ${high} דחופות` : ''}`
+        }
+        action={
+          <button
+            type="button"
+            onClick={() => void load()}
+            className="px-4 py-2 rounded-full border border-white/15 text-sm min-h-11 hover:border-white/40"
+          >
+            רענון
+          </button>
+        }
+      />
 
       {items.length === 0 ? (
         <div className="border border-white/10 rounded-2xl p-8 text-base text-white/55">
@@ -432,7 +427,7 @@ function NotificationsPanel({
           }
         />
       )}
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -486,7 +481,7 @@ function ReadinessPanel() {
     ok ? 'border-[#C8A24C]/40 bg-[#C8A24C]/10' : 'border-white/10 bg-white/[0.03]';
 
   return (
-    <div className="grid gap-6">
+    <OpsDeskStack>
       <OpsPageHeader
         title="הגדרות"
         hint="מפתחות, תמונות ושמות אמיתיים נשארים אצלכם. כאן רואים מה חסר, ומשבצים הרצאות קיימות לשבועות 3 ו־4."
@@ -608,7 +603,7 @@ function ReadinessPanel() {
           יזם נוסף מתווסף בלשונית צוות המיזם, עם שם, תפקיד ותמונה.
         </p>
       </div>
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -687,7 +682,7 @@ function OverviewPanel({ onNavigate, staffDesk }: { onNavigate: (tab: Tab) => vo
   const funnelMax = Math.max(1, ...funnelSteps.map((step) => step.value));
 
   return (
-    <div className="grid gap-8">
+    <OpsDeskStack>
       <OpsPageHeader
         title="מה צריך ממך עכשיו"
         hint="ארבעה דברים שדורשים טיפול. השאר מאחורי «עוד נתונים»."
@@ -822,7 +817,7 @@ function OverviewPanel({ onNavigate, staffDesk }: { onNavigate: (tab: Tab) => vo
           </section>
         </div>
       ) : null}
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -909,7 +904,7 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
   const selectedRecent = data.recent.find((row) => row.id === selectedRecentId) || null;
 
   return (
-    <div className="grid gap-10">
+    <OpsDeskStack>
       <OpsPageHeader
         title={focus === 'funnel' ? 'משפך משתמשים חינמיים' : 'אנליטיקות'}
         hint={
@@ -918,8 +913,7 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
             : 'המרה, צפייה ומרצים — במספרים בלבד.'
         }
       />
-      <section>
-        <h3 className="text-lg font-light mb-4">המרה</h3>
+      <OpsSection title="המרה">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {funnel.map((card) => (
             <div key={card.label} className="border border-white/10 rounded-2xl p-5">
@@ -928,11 +922,10 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
             </div>
           ))}
         </div>
-      </section>
+      </OpsSection>
       {focus === 'funnel' ? null : (
         <>
-      <section>
-        <h2 className="text-lg font-light mb-4">צפייה</h2>
+      <OpsSection title="צפייה">
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {video.map((card) => (
             <div key={card.label} className="border border-white/10 rounded-2xl p-5">
@@ -941,9 +934,8 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
             </div>
           ))}
         </div>
-      </section>
-      <section>
-        <h2 className="text-lg font-light mb-4">מרצים</h2>
+      </OpsSection>
+      <OpsSection title="מרצים">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {lecturers.map((card) => (
             <div key={card.label} className="border border-white/10 rounded-2xl p-5">
@@ -952,11 +944,10 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
             </div>
           ))}
         </div>
-      </section>
+      </OpsSection>
         </>
       )}
-      <section>
-        <h2 className="text-lg font-light mb-4">אירועים</h2>
+      <OpsSection title="אירועים">
         <OpsMasterDetail
           hasSelection={Boolean(selectedTotal)}
           onCloseDetail={() => setSelectedEvent(null)}
@@ -991,9 +982,8 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
             ) : null
           }
         />
-      </section>
-      <section>
-        <h2 className="text-lg font-light mb-4">אחרונים</h2>
+      </OpsSection>
+      <OpsSection title="אחרונים">
         <OpsMasterDetail
           hasSelection={Boolean(selectedRecent)}
           onCloseDetail={() => setSelectedRecentId(null)}
@@ -1033,8 +1023,8 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
             ) : null
           }
         />
-      </section>
-    </div>
+      </OpsSection>
+    </OpsDeskStack>
   );
 }
 
@@ -1114,17 +1104,16 @@ function ContentPanel({
   }
 
   return (
-    <div className="grid gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-3">
-        <OpsPageHeader title="תכני VOD" hint={`${courses.length} הרצאות. בחרו אחת לעריכה, או הוסיפו חדשה.`} />
-        <button
-          type="button"
-          onClick={() => setEditing('new')}
-          className={opsPrimaryBtn}
-        >
-          הרצאה חדשה
-        </button>
-      </div>
+    <OpsDeskStack>
+      <OpsPageHeader
+        title="תכני VOD"
+        hint={`${courses.length} הרצאות. בחרו אחת לעריכה, או הוסיפו חדשה.`}
+        action={
+          <button type="button" onClick={() => setEditing('new')} className={opsPrimaryBtn}>
+            הרצאה חדשה
+          </button>
+        }
+      />
       {error && <p className="text-sm text-rose-300">{error}</p>}
       <OpsMasterDetail
         hasSelection={Boolean(selected)}
@@ -1201,7 +1190,7 @@ function ContentPanel({
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -1598,7 +1587,7 @@ function UsersPanel() {
   };
 
   return (
-    <div className="grid gap-8">
+    <OpsDeskStack>
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
       {toast ? (
         <p className="text-sm text-[#C8A24C]" role="status">
@@ -1607,8 +1596,8 @@ function UsersPanel() {
       ) : null}
 
       <OpsPageHeader title="משתמשים" hint="חיפוש, סינון, ואז פעולה בכרטיס." />
-      <OpsSection title="הוספת משתמש">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl">
+      <OpsBand title="הוספת משתמש">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 items-end">
           <OpsField label="שם">
             <input value={newName} onChange={(e) => setNewName(e.target.value)} className={fieldClass} />
           </OpsField>
@@ -1621,7 +1610,7 @@ function UsersPanel() {
               dir="ltr"
             />
           </OpsField>
-          <OpsField label="סיסמה" className="sm:col-span-2">
+          <OpsField label="סיסמה">
             <input
               type="password"
               value={newPassword}
@@ -1630,18 +1619,18 @@ function UsersPanel() {
               dir="ltr"
             />
           </OpsField>
+          <button
+            type="button"
+            disabled={creating}
+            onClick={() => void createUser()}
+            className={`${opsPrimaryBtn} w-full`}
+          >
+            {creating ? 'יוצר...' : 'יצירת חשבון'}
+          </button>
         </div>
-        <button
-          type="button"
-          disabled={creating}
-          onClick={() => void createUser()}
-          className={`${opsPrimaryBtn} w-full sm:w-auto`}
-        >
-          {creating ? 'יוצר...' : 'יצירת חשבון'}
-        </button>
-      </OpsSection>
+      </OpsBand>
 
-      <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+      <OpsToolbar>
         <label className="block flex-1 min-w-0">
           <span className="block text-sm text-white/60 mb-1">חיפוש לפי שם או אימייל</span>
           <input
@@ -1666,9 +1655,7 @@ function UsersPanel() {
               key={id}
               type="button"
               onClick={() => setChip(id)}
-              className={`px-4 py-2 rounded-full text-sm min-h-11 border ${
-                chip === id ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/70'
-              }`}
+              className={opsChipClass(chip === id)}
             >
               {label}
             </button>
@@ -1681,7 +1668,7 @@ function UsersPanel() {
             ייצוא
           </button>
         </div>
-      </div>
+      </OpsToolbar>
 
       <OpsMasterDetail
         hasSelection={Boolean(selected)}
@@ -1823,7 +1810,7 @@ function UsersPanel() {
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -1987,11 +1974,11 @@ function TeamStaffPanel() {
   };
 
   return (
-    <div className="grid gap-4">
+    <OpsDeskStack>
       <OpsPageHeader title="צוות ומרצים" hint="מי מרצה, מי רואה דסק, ומי חסום." />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
-      <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+      <OpsToolbar>
         <label className="block flex-1 min-w-0">
           <span className="block text-sm text-white/60 mb-1">חיפוש לפי שם או אימייל</span>
           <span className="relative block">
@@ -2018,15 +2005,13 @@ function TeamStaffPanel() {
               role="tab"
               aria-selected={chip === id}
               onClick={() => selectChip(id)}
-              className={`px-4 py-2 rounded-full text-sm min-h-11 border ${
-                chip === id ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/70'
-              }`}
+              className={opsChipClass(chip === id)}
             >
               {label}
             </button>
           ))}
         </div>
-      </div>
+      </OpsToolbar>
 
       <OpsMasterDetail
         hasSelection={Boolean(selected)}
@@ -2080,7 +2065,7 @@ function TeamStaffPanel() {
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -2431,7 +2416,7 @@ function LecturerApplicationsPanel() {
   const selected = ordered.find((app) => app.id === selectedId) || null;
 
   return (
-    <div className="grid gap-6">
+    <OpsDeskStack>
       <OpsPageHeader title="בקשות מרצים" hint="בקשות ממתינות קודם. הערה נשמרת עם האישור או הדחייה." />
       {error && <p className="text-sm text-rose-300">{error}</p>}
       <OpsMasterDetail
@@ -2537,12 +2522,11 @@ function LecturerApplicationsPanel() {
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
 function FounderAddForm({ onCreated }: { onCreated: (founder: Instructor) => void }) {
-  const [open, setOpen] = useState(false);
   const [name, setName] = useState('');
   const [title, setTitle] = useState('יזם');
   const [bio, setBio] = useState('');
@@ -2550,17 +2534,21 @@ function FounderAddForm({ onCreated }: { onCreated: (founder: Instructor) => voi
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
 
+  const reset = () => {
+    setName('');
+    setTitle('יזם');
+    setBio('');
+    setAvatarUrl('');
+    setError('');
+  };
+
   const save = async () => {
     setPending(true);
     setError('');
     try {
       const { founder } = await adminApi.createFounder({ name, title, bio, avatarUrl });
       if (founder) onCreated(founder);
-      setName('');
-      setTitle('יזם');
-      setBio('');
-      setAvatarUrl('');
-      setOpen(false);
+      reset();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'שמירה נכשלה');
     } finally {
@@ -2568,37 +2556,25 @@ function FounderAddForm({ onCreated }: { onCreated: (founder: Instructor) => voi
     }
   };
 
-  if (!open) {
-    return (
-      <button
-        type="button"
-        onClick={() => setOpen(true)}
-        className="px-4 py-2.5 rounded-full border border-[#C8A24C]/40 text-sm text-[#C8A24C] min-h-11 cursor-pointer"
-      >
-        הוספת איש צוות
-      </button>
-    );
-  }
-
   return (
-    <div className="grid gap-4 max-w-3xl">
-      <p className="text-base text-white/60 font-light leading-relaxed">
+    <OpsBand title="הוספת איש צוות">
+      <p className="text-sm text-white/50 font-light">
         לכל יזם: שם, תפקיד ותמונה. ביו אפשר להוסיף אחר כך.
       </p>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 items-end">
         <OpsField label="שם">
           <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
         </OpsField>
         <OpsField label="תפקיד">
           <input value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
         </OpsField>
+        <OpsField label="ביו קצר (אופציונלי)" className="sm:col-span-2">
+          <textarea rows={2} value={bio} onChange={(e) => setBio(e.target.value)} className={fieldClass} />
+        </OpsField>
       </div>
-      <OpsField label="ביו קצר (אופציונלי)">
-        <textarea rows={3} value={bio} onChange={(e) => setBio(e.target.value)} className={fieldClass} />
-      </OpsField>
-      <FileUploadField kind="image" label="תמונה" value={avatarUrl} onChange={setAvatarUrl} />
-      {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-      <div className="flex flex-wrap gap-3">
+      <div className="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-3 items-end">
+        <FileUploadField kind="image" label="תמונה" value={avatarUrl} onChange={setAvatarUrl} />
+        {error ? <p className="text-sm text-rose-300 sm:col-span-3">{error}</p> : null}
         <button
           type="button"
           disabled={pending}
@@ -2607,11 +2583,11 @@ function FounderAddForm({ onCreated }: { onCreated: (founder: Instructor) => voi
         >
           {pending ? 'שומר...' : 'הוספה'}
         </button>
-        <button type="button" onClick={() => setOpen(false)} className={opsGhostBtn}>
+        <button type="button" onClick={reset} className={opsGhostBtn}>
           ביטול
         </button>
       </div>
-    </div>
+    </OpsBand>
   );
 }
 
@@ -2713,7 +2689,7 @@ function FoundersPanel() {
   const selectedIndex = selected ? founders.findIndex((item) => item.id === selected.id) : -1;
 
   return (
-    <div className="grid gap-6">
+    <OpsDeskStack>
       <OpsPageHeader
         title="צוות מייסדים"
         hint="תמונות צוות, קישורים חיצוניים, וסדר ההופעה. יזם חדש: שם, תפקיד ותמונה."
@@ -2821,7 +2797,7 @@ function FoundersPanel() {
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -2849,7 +2825,7 @@ function PaymentsPanel() {
   const selected = rows.find((row) => row.id === selectedId) || null;
 
   return (
-    <div className="grid gap-6">
+    <OpsDeskStack>
       <OpsPageHeader title="מנויים ותשלומים" hint="שינוי מנוי או תשלום מסלול נרשמים כאן." />
       <OpsMasterDetail
         hasSelection={Boolean(selected)}
@@ -2886,7 +2862,7 @@ function PaymentsPanel() {
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -3026,22 +3002,22 @@ function TracksPanel() {
   };
 
   return (
-    <div className="grid gap-8">
-      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <OpsPageHeader
-          title="מסלולי כניסה"
-          hint={`כל מצטרפי האמיצים וההססנים, כולל שאלון ופעימות. סליקה: ${
-            data.billingMode === 'stripe' ? 'Stripe מחובר' : 'פיילוט ידני'
-          }. מועמדות לנבחרת 88 נשארת בלשונית נפרדת.`}
-        />
-        <button
-          type="button"
-          onClick={() => exportJoinersCsv(filtered)}
-          className="self-start border border-white/15 px-4 py-2 text-sm text-white/70 hover:border-[#C8A24C]/50 hover:text-[#C8A24C] transition-colors"
-        >
-          ייצוא CSV
-        </button>
-      </div>
+    <OpsDeskStack>
+      <OpsPageHeader
+        title="מסלולי כניסה"
+        hint={`כל מצטרפי האמיצים וההססנים, כולל שאלון ופעימות. סליקה: ${
+          data.billingMode === 'stripe' ? 'Stripe מחובר' : 'פיילוט ידני'
+        }. מועמדות לנבחרת 88 נשארת בלשונית נפרדת.`}
+        action={
+          <button
+            type="button"
+            onClick={() => exportJoinersCsv(filtered)}
+            className="border border-white/15 px-4 py-2 text-sm text-white/70 hover:border-[#C8A24C]/50 hover:text-[#C8A24C] transition-colors min-h-11"
+          >
+            ייצוא CSV
+          </button>
+        }
+      />
 
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
@@ -3054,13 +3030,13 @@ function TracksPanel() {
         ))}
       </div>
 
-      <div className="flex flex-wrap gap-3">
+      <OpsToolbar>
         <label className="text-sm text-white/50 font-light flex items-center gap-2">
           מסלול
           <select
             value={trackFilter}
             onChange={(e) => setTrackFilter(e.target.value as typeof trackFilter)}
-            className="bg-black border border-white/15 rounded-lg px-3 py-2 text-white"
+            className="bg-black border border-white/15 rounded-lg px-3 py-2 text-white min-h-11"
           >
             <option value="all">הכל</option>
             <option value="brave">אמיצים</option>
@@ -3072,7 +3048,7 @@ function TracksPanel() {
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-            className="bg-black border border-white/15 rounded-lg px-3 py-2 text-white"
+            className="bg-black border border-white/15 rounded-lg px-3 py-2 text-white min-h-11"
           >
             <option value="all">הכל</option>
             <option value="new">ליד חדש</option>
@@ -3082,7 +3058,7 @@ function TracksPanel() {
           </select>
         </label>
         <p className="text-sm text-white/35 self-center">{filtered.length} מצטרפים</p>
-      </div>
+      </OpsToolbar>
 
       <OpsMasterDetail
         hasSelection={Boolean(selected)}
@@ -3220,7 +3196,7 @@ function TracksPanel() {
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -3325,12 +3301,12 @@ function CategoriesPanel() {
   const selected = rows.find((row) => row.id === selectedId) || null;
 
   return (
-    <div className="grid gap-8">
+    <OpsDeskStack>
       <OpsPageHeader title="קטגוריות" hint="שם, תיאור וגישה. הסדר ברשימה הוא הסדר בספרייה." />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
-      <div className="grid gap-4 max-w-3xl">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <OpsBand title="קטגוריה חדשה">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 items-end">
           <OpsField label="שם">
             <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
           </OpsField>
@@ -3349,16 +3325,16 @@ function CategoriesPanel() {
               <option value="admin_only">אדמין בלבד</option>
             </select>
           </OpsField>
+          <button
+            type="button"
+            disabled={pending || !name.trim()}
+            onClick={() => void create()}
+            className={`${opsPrimaryBtn} w-full`}
+          >
+            הוספה
+          </button>
         </div>
-        <button
-          type="button"
-          disabled={pending || !name.trim()}
-          onClick={() => void create()}
-          className={`${opsPrimaryBtn} w-fit`}
-        >
-          הוספה
-        </button>
-      </div>
+      </OpsBand>
 
       <OpsMasterDetail
         hasSelection={Boolean(selected)}
@@ -3442,7 +3418,7 @@ function CategoriesPanel() {
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -3491,7 +3467,7 @@ function Premium88Panel() {
   };
 
   return (
-    <div className="grid gap-8">
+    <OpsDeskStack>
       <OpsPageHeader
         title="נבחרת 88"
         hint="מועמדויות מטופס ההרשמה. נפרד ממסלולי כניסה וממנוי הספרייה."
@@ -3552,7 +3528,7 @@ function Premium88Panel() {
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -3572,7 +3548,7 @@ function AuditLogsPanel() {
   const selected = logs.find((row) => row.id === selectedId) || null;
 
   return (
-    <div className="grid gap-6">
+    <OpsDeskStack>
       <OpsPageHeader title="יומן פעולות" hint="פעולות רגישות באדמין." />
       <OpsMasterDetail
         hasSelection={Boolean(selected)}
@@ -3614,7 +3590,7 @@ function AuditLogsPanel() {
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -3710,25 +3686,17 @@ function RafflesPanel() {
     track === 'brave' ? 'אמיצים' : track === 'hesitant' ? 'הססנים' : track || '—';
 
   return (
-    <div className="grid gap-8">
+    <OpsDeskStack>
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
       <OpsPageHeader
         title="הגרלות"
         hint={`תקנון מאושר: ${data.termsApproved ? 'כן' : 'לא'} · כרטיסים ללא שיוך: ${data.unassignedTickets}`}
       />
 
-      <OpsSection title="הגרלה חדשה">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl">
-          <OpsField label="שם" className="sm:col-span-2">
+      <OpsBand title="הגרלה חדשה">
+        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-3 items-end">
+          <OpsField label="שם" className="xl:col-span-2">
             <input value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
-          </OpsField>
-          <OpsField label="תיאור" className="sm:col-span-2">
-            <textarea
-              rows={3}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              className={fieldClass}
-            />
           </OpsField>
           <OpsField label="תאריך סיום (אופציונלי)">
             <input
@@ -3739,16 +3707,24 @@ function RafflesPanel() {
               dir="ltr"
             />
           </OpsField>
+          <button
+            type="button"
+            disabled={busy || !title.trim()}
+            onClick={() => void create()}
+            className={`${opsPrimaryBtn} w-full`}
+          >
+            {busy ? 'יוצר...' : 'יצירת הגרלה'}
+          </button>
+          <OpsField label="תיאור" className="sm:col-span-2 xl:col-span-4">
+            <textarea
+              rows={2}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className={fieldClass}
+            />
+          </OpsField>
         </div>
-        <button
-          type="button"
-          disabled={busy || !title.trim()}
-          onClick={() => void create()}
-          className={`${opsPrimaryBtn} w-fit`}
-        >
-          {busy ? 'יוצר...' : 'יצירת הגרלה'}
-        </button>
-      </OpsSection>
+      </OpsBand>
 
       <OpsSection title="הגרלות">
         <OpsMasterDetail
@@ -3852,7 +3828,7 @@ function RafflesPanel() {
           }
         />
       </OpsSection>
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -3901,20 +3877,23 @@ function LeadsPanel() {
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
 
   return (
-    <div className="grid gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <OpsPageHeader title="לידים ופניות" hint={`${filtered.length} רשומות מכל המקורות.`} />
-        <button
-          type="button"
-          onClick={exportCsv}
-          className="px-4 py-2 rounded-full border border-white/15 text-xs min-h-11 hover:border-white/40"
-        >
-          ייצוא CSV
-        </button>
-      </div>
+    <OpsDeskStack>
+      <OpsPageHeader
+        title="לידים ופניות"
+        hint={`${filtered.length} רשומות מכל המקורות.`}
+        action={
+          <button
+            type="button"
+            onClick={exportCsv}
+            className="px-4 py-2 rounded-full border border-white/15 text-sm min-h-11 hover:border-white/40"
+          >
+            ייצוא CSV
+          </button>
+        }
+      />
 
-      <div className="flex flex-wrap gap-3">
-        <select value={source} onChange={(e) => setSource(e.target.value as typeof source)} className={fieldClass}>
+      <OpsToolbar>
+        <select value={source} onChange={(e) => setSource(e.target.value as typeof source)} className={`${fieldClass} lg:max-w-xs`}>
           <option value="all">כל המקורות</option>
           <option value="track">מסלולי כניסה</option>
           <option value="premium88">נבחרת 88</option>
@@ -3925,9 +3904,9 @@ function LeadsPanel() {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="חיפוש שם, אימייל, טלפון..."
-          className={`${fieldClass} min-w-[220px]`}
+          className={`${fieldClass} flex-1`}
         />
-      </div>
+      </OpsToolbar>
 
       <OpsMasterDetail
         hasSelection={Boolean(selected)}
@@ -3970,7 +3949,7 @@ function LeadsPanel() {
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -4055,12 +4034,12 @@ function LegalPanel() {
     status === 'open' ? 'פתוח' : status === 'in_progress' ? 'בטיפול' : 'נסגר';
 
   return (
-    <div className="grid gap-8">
+    <OpsDeskStack>
       <OpsPageHeader title="משפטי" hint="מסמך אחד בכל פעם. הטקסטים מוצגים בעמודי האתר." />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
       {message ? <p className="text-sm text-[#C8A24C]">{message}</p> : null}
 
-      <div className="flex flex-wrap gap-2">
+      <OpsToolbar>
         {(
           [
             ['terms', 'תקנון'],
@@ -4072,14 +4051,12 @@ function LegalPanel() {
             key={id}
             type="button"
             onClick={() => setDoc(id)}
-            className={`px-4 py-2 rounded-full text-base min-h-11 border ${
-              doc === id ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/70'
-            }`}
+            className={opsChipClass(doc === id)}
           >
             {label}
           </button>
         ))}
-      </div>
+      </OpsToolbar>
 
       {doc === 'terms' ? (
         <div className="grid gap-4">
@@ -4208,7 +4185,7 @@ function LegalPanel() {
           }
         />
       </OpsSection>
-    </div>
+    </OpsDeskStack>
   );
 }
 
@@ -4294,16 +4271,16 @@ function WebinarPanel() {
   if (error && !data) return <p className="text-sm text-rose-300">{error}</p>;
 
   return (
-    <div className="grid gap-8">
-      <div className="flex flex-wrap items-end justify-between gap-4">
-        <OpsPageHeader
-          title="וובינר"
-          hint={`${data?.totalRegistrations ?? 0} נרשמים. שינויים נשמרים בכפתור הזהוב.`}
-        />
-        <a href="/webinar" target="_blank" rel="noreferrer" className={`${opsGhostBtn} text-sm`}>
-          צפייה בדף
-        </a>
-      </div>
+    <OpsDeskStack>
+      <OpsPageHeader
+        title="וובינר"
+        hint={`${data?.totalRegistrations ?? 0} נרשמים. שינויים נשמרים בכפתור הזהוב.`}
+        action={
+          <a href="/webinar" target="_blank" rel="noreferrer" className={`${opsGhostBtn} text-sm`}>
+            צפייה בדף
+          </a>
+        }
+      />
 
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
@@ -4330,6 +4307,7 @@ function WebinarPanel() {
         </section>
       ) : null}
 
+      <div className="grid gap-5 xl:grid-cols-3 xl:items-start">
       <OpsSection title="פרטים">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <OpsField label="כותרת" className="sm:col-span-2">
@@ -4408,6 +4386,7 @@ function WebinarPanel() {
           </div>
         </div>
       </OpsSection>
+      </div>
 
       <div>
         <button
@@ -4508,39 +4487,39 @@ function WebinarPanel() {
       </button>
 
       <section className="grid gap-4">
-        <div className="flex flex-wrap items-end justify-between gap-3">
-          <div>
-            <h3 className="text-lg font-light">נרשמים לוובינר</h3>
-            <p className="text-sm text-white/45 mt-1">{registrations.length} רשומות</p>
-          </div>
-          <button
-            type="button"
-            onClick={exportCsv}
-            className="px-4 py-2 rounded-full border border-white/15 text-xs min-h-11 hover:border-white/40"
-          >
-            ייצוא CSV
-          </button>
-        </div>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="חיפוש…"
-          className={fieldClass}
+        <OpsPageHeader
+          title="נרשמים לוובינר"
+          hint={`${registrations.length} רשומות`}
+          action={
+            <button
+              type="button"
+              onClick={exportCsv}
+              className="px-4 py-2 rounded-full border border-white/15 text-sm min-h-11 hover:border-white/40"
+            >
+              ייצוא CSV
+            </button>
+          }
         />
-        <div className="flex flex-wrap gap-2">
+        <OpsToolbar>
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="חיפוש…"
+            className={`${fieldClass} flex-1`}
+          />
+          <div className="flex flex-wrap gap-2">
           {(['all', 'partial', 'complete', 'waitlist'] as const).map((key) => (
             <button
               key={key}
               type="button"
               onClick={() => setStatusFilter(key)}
-              className={`px-3 py-1.5 rounded-full text-xs border min-h-9 ${
-                statusFilter === key ? 'border-[#C8A24C] text-[#C8A24C]' : 'border-white/15 text-white/60'
-              }`}
+              className={opsChipClass(statusFilter === key)}
             >
               {key === 'all' ? 'הכל' : statusLabel(key)}
             </button>
           ))}
-        </div>
+          </div>
+        </OpsToolbar>
         <OpsMasterDetail
           hasSelection={Boolean(selectedReg)}
           onCloseDetail={() => setSelectedRegId(null)}
@@ -4585,6 +4564,6 @@ function WebinarPanel() {
           }
         />
       </section>
-    </div>
+    </OpsDeskStack>
   );
 }

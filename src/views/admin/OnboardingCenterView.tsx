@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { adminOnboardingApi } from '../../api/onboarding';
 import type { OnboardingPath, OnboardingStep } from '../../types';
 import { BarChart3 } from 'lucide-react';
-import { OpsEmptyList, OpsFact, OpsListRow, OpsMasterDetail } from '../../components/ops/OpsUi';
+import { OpsDeskStack, OpsEmptyList, OpsFact, OpsListRow, OpsMasterDetail, OpsPageHeader } from '../../components/ops/OpsUi';
 
 export const OnboardingCenterView: React.FC = () => {
   const [paths, setPaths] = useState<OnboardingPath[]>([]);
@@ -52,32 +52,33 @@ export const OnboardingCenterView: React.FC = () => {
   }
 
   return (
-    <div className="grid gap-8">
+    <OpsDeskStack>
+      <OpsPageHeader title="הדרכות" hint="מסלולי קליטה, שלבים, וסטטיסטיקות השלמה." />
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="glass rounded-2xl p-4 border border-white/10">
-            <div className="text-xs text-zinc-500 mb-1">התחילו מסלול</div>
-            <div className="text-2xl font-black text-primary-light">{stats.totalStarted}</div>
+          <div className="rounded-2xl p-4 border border-white/10">
+            <div className="text-xs text-white/45 mb-1">התחילו מסלול</div>
+            <div className="text-2xl font-light text-[#C8A24C]">{stats.totalStarted}</div>
           </div>
-          <div className="glass rounded-2xl p-4 border border-white/10">
-            <div className="text-xs text-zinc-500 mb-1">סיימו מסלול</div>
-            <div className="text-2xl font-black text-emerald-400">{stats.totalCompleted}</div>
+          <div className="rounded-2xl p-4 border border-white/10">
+            <div className="text-xs text-white/45 mb-1">סיימו מסלול</div>
+            <div className="text-2xl font-light text-emerald-300">{stats.totalCompleted}</div>
           </div>
-          <div className="glass rounded-2xl p-4 border border-white/10">
-            <div className="text-xs text-zinc-500 mb-1">אחוז השלמה</div>
-            <div className="text-2xl font-black text-white">{stats.completionRate}%</div>
+          <div className="rounded-2xl p-4 border border-white/10">
+            <div className="text-xs text-white/45 mb-1">אחוז השלמה</div>
+            <div className="text-2xl font-light text-white">{stats.completionRate}%</div>
           </div>
-          <div className="glass rounded-2xl p-4 border border-white/10">
-            <div className="text-xs text-zinc-500 mb-1">בונוסים שנפתחו</div>
-            <div className="text-2xl font-black text-white">{stats.bonusesUnlockedCount}</div>
+          <div className="rounded-2xl p-4 border border-white/10">
+            <div className="text-xs text-white/45 mb-1">בונוסים שנפתחו</div>
+            <div className="text-2xl font-light text-white">{stats.bonusesUnlockedCount}</div>
           </div>
         </div>
       )}
 
       {stats && stats.stepsWithMostSkips.length > 0 && (
-        <div className="glass rounded-2xl p-5 border border-white/10">
-          <div className="flex items-center gap-2 text-sm font-bold text-zinc-300 mb-3">
-            <BarChart3 className="w-4 h-4 text-primary-light" />
+        <div className="rounded-2xl p-5 border border-white/10">
+          <div className="flex items-center gap-2 text-sm text-white/70 mb-3">
+            <BarChart3 className="w-4 h-4 text-[#C8A24C]" />
             שלבים עם הכי הרבה דילוגים
           </div>
           <div className="flex flex-wrap gap-2">
@@ -162,6 +163,6 @@ export const OnboardingCenterView: React.FC = () => {
           ) : null
         }
       />
-    </div>
+    </OpsDeskStack>
   );
 };
