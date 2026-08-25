@@ -18,6 +18,11 @@ export function LibraryMembership() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const hasAccess = hasFullLibraryAccess(user);
+  const alreadyPaid =
+    user.role === 'admin' ||
+    user.subscriptionPlan === 'monthly' ||
+    user.subscriptionPlan === 'annual' ||
+    user.subscriptionPlan === 'premium_88';
   const [status, setStatus] = useState<CheckoutStatus | null>(null);
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<{ kind: 'error' | 'info' | 'success'; text: string } | null>(
@@ -194,7 +199,11 @@ export function LibraryMembership() {
 
       {hasAccess ? (
         <div className="rounded-2xl border border-[#C8A24C]/30 bg-[#C8A24C]/10 p-6 mb-8">
-          <p className="text-white/85">יש לכם כבר גישה פעילה לספרייה.</p>
+          <p className="text-white/85">
+            {alreadyPaid
+              ? 'יש לכם כבר גישה פעילה לספרייה.'
+              : 'הניסיון פעיל. אפשר להמשיך לצפות, או לשדרג למנוי חודשי/שנתי.'}
+          </p>
           <Link
             to="/library"
             className="inline-flex mt-4 px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 items-center"
@@ -210,7 +219,7 @@ export function LibraryMembership() {
           const trialUsed = !isGuest && user.subscriptionPlan !== 'none' && key === 'trial';
           const priceLabel =
             key === 'monthly' ? monthlyLabel : key === 'annual' ? annualLabel : plan.priceLabel;
-          const paidDisabled = hasAccess || trialUsed || pending;
+          const paidDisabled = (key === 'trial' ? hasAccess : alreadyPaid) || trialUsed || pending;
           return (
             <div
               key={key}
