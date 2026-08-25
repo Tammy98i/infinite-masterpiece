@@ -1,4 +1,5 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useApp } from '../context/AppContext';
 import { OnboardingCenterView } from './admin/OnboardingCenterView';
 import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/captions';
@@ -1847,6 +1848,7 @@ function TeamStaffPanel() {
   const [chip, setChip] = useState<TeamListChip>('lecturers');
   const [query, setQuery] = useState('');
   const [moreOpen, setMoreOpen] = useState(false);
+  const [messageOpen, setMessageOpen] = useState(false);
   const [error, setError] = useState('');
   const [pendingId, setPendingId] = useState<string | null>(null);
 
@@ -1862,6 +1864,7 @@ function TeamStaffPanel() {
 
   useEffect(() => {
     setMoreOpen(false);
+    setMessageOpen(false);
   }, [selectedId]);
 
   const rows = users.filter((row) => {
@@ -1933,12 +1936,12 @@ function TeamStaffPanel() {
   };
 
   return (
-    <div className="grid gap-6">
+    <div className="grid gap-4">
       <OpsPageHeader title="צוות ומרצים" hint="מי מרצה, מי רואה דסק, ומי חסום." />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
-      <div className="grid gap-3 max-w-xl">
-        <label className="block">
+      <div className="flex flex-col sm:flex-row sm:items-end gap-3">
+        <label className="block flex-1 min-w-0">
           <span className="block text-sm text-white/60 mb-1">חיפוש לפי שם או אימייל</span>
           <input
             type="search"
@@ -1948,7 +1951,7 @@ function TeamStaffPanel() {
             className={fieldClass}
           />
         </label>
-        <div className="flex flex-wrap gap-2" role="tablist" aria-label="סינון צוות ומרצים">
+        <div className="flex flex-wrap gap-2 shrink-0" role="tablist" aria-label="סינון צוות ומרצים">
           {(
             [
               ['lecturers', 'מרצים'],
@@ -1971,8 +1974,17 @@ function TeamStaffPanel() {
         </div>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
-        <div className="border border-white/10 rounded-2xl overflow-hidden">
+      {selected ? (
+        <button
+          type="button"
+          className="md:hidden fixed inset-0 z-30 bg-black/70"
+          aria-label="סגירת כרטיס"
+          onClick={() => setSelectedId(null)}
+        />
+      ) : null}
+
+      <div className="grid md:grid-cols-[minmax(0,1fr)_19rem] gap-4 items-start">
+        <div className="border border-white/10 rounded-2xl overflow-hidden md:max-h-[calc(100vh-14rem)] md:overflow-y-auto">
           {rows.length === 0 ? (
             <p className="py-8 px-4 text-sm text-white/40">
               {chip === 'lecturers' ? 'אין מרצים שתואמים לחיפוש.' : 'אין אנשי צוות שתואמים לחיפוש.'}
@@ -1987,26 +1999,15 @@ function TeamStaffPanel() {
                       type="button"
                       onClick={() => setSelectedId(row.id)}
                       aria-current={active ? 'true' : undefined}
-                      className={`w-full text-right px-4 py-3 min-h-16 ${
+                      className={`w-full text-right px-3 py-2.5 min-h-12 ${
                         active ? 'bg-[#C8A24C]/10' : 'hover:bg-white/[0.03]'
                       }`}
                     >
-                      <span className="flex items-start gap-3">
-                        <span
-                          className="size-10 rounded-full bg-white/10 text-white/50 flex items-center justify-center text-sm shrink-0"
-                          aria-hidden
-                        >
-                          {(row.name || row.email).slice(0, 1)}
-                        </span>
-                        <span className="min-w-0 flex-1">
-                          <span className="block text-base text-white">
-                            {row.name}
-                            {row.isFounder ? <span className="text-white/40 text-sm"> · מייסד</span> : null}
-                          </span>
-                          <span className="block text-xs text-white/40 mt-0.5 break-all">{row.email}</span>
-                          <span className="block text-sm text-white/60 mt-1">{teamStatusSentence(row)}</span>
-                        </span>
+                      <span className="block text-sm text-white">
+                        {row.name}
+                        {row.isFounder ? <span className="text-white/40"> · מייסד</span> : null}
                       </span>
+                      <span className="block text-xs text-white/50 mt-0.5">{teamStatusSentence(row)}</span>
                     </button>
                   </li>
                 );
@@ -2015,7 +2016,13 @@ function TeamStaffPanel() {
           )}
         </div>
 
-        <aside className="border border-white/10 rounded-2xl p-5 min-h-[320px]">
+        <aside
+          className={`border border-white/10 rounded-2xl p-4 md:sticky md:top-20 ${
+            selected
+              ? 'max-md:fixed max-md:inset-y-0 max-md:end-0 max-md:z-40 max-md:w-[min(100%,20rem)] max-md:bg-[#0a0a0a] max-md:overflow-y-auto max-md:rounded-none max-md:border-y-0 max-md:border-s-0'
+              : 'max-md:hidden'
+          }`}
+        >
           {!selected ? (
             <p className="text-sm text-white/40">בחרו אדם מהרשימה.</p>
           ) : (
@@ -2025,7 +2032,14 @@ function TeamStaffPanel() {
               currentUserId={user.id}
               pending={pendingId === selected.id}
               moreOpen={moreOpen}
+              messageOpen={messageOpen}
+              onCloseCard={() => setSelectedId(null)}
               onToggleMore={() => setMoreOpen((open) => !open)}
+              onOpenMessage={() => {
+                setMessageOpen(true);
+                setMoreOpen(false);
+              }}
+              onCloseMessage={() => setMessageOpen(false)}
               onPatch={patch}
               onRemove={() => void removeUser(selected)}
             />
@@ -2042,7 +2056,11 @@ function TeamPersonCard({
   currentUserId,
   pending,
   moreOpen,
+  messageOpen,
+  onCloseCard,
   onToggleMore,
+  onOpenMessage,
+  onCloseMessage,
   onPatch,
   onRemove,
 }: {
@@ -2051,7 +2069,11 @@ function TeamPersonCard({
   currentUserId: string;
   pending: boolean;
   moreOpen: boolean;
+  messageOpen: boolean;
+  onCloseCard: () => void;
   onToggleMore: () => void;
+  onOpenMessage: () => void;
+  onCloseMessage: () => void;
   onPatch: (id: string, next: Parameters<typeof adminApi.updateUser>[1], confirmMsg?: string) => Promise<void>;
   onRemove: () => void;
 }) {
@@ -2061,91 +2083,79 @@ function TeamPersonCard({
   const lastAdmin = isStaff && users.filter((row) => row.role === 'admin').length <= 1;
   const access = teamAccessKind(selected);
   const busy = pending || isSelf;
+  const moreRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!moreOpen) return;
+    const onDoc = (event: MouseEvent) => {
+      if (moreRef.current && !moreRef.current.contains(event.target as Node)) onToggleMore();
+    };
+    document.addEventListener('mousedown', onDoc);
+    return () => document.removeEventListener('mousedown', onDoc);
+  }, [moreOpen, onToggleMore]);
 
   return (
-    <div className="grid gap-6">
-      <div>
-        <h3 className="text-xl font-light">{selected.name}</h3>
-        <p className="text-white/60 mt-1 break-all">{selected.email}</p>
-        <p className="text-sm text-white/50 mt-2">{teamStatusSentence(selected)}</p>
+    <div className="grid gap-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="text-lg font-light">{selected.name}</h3>
+          <p className="text-sm text-white/50 mt-0.5 break-all">{selected.email}</p>
+        </div>
+        <button
+          type="button"
+          onClick={onCloseCard}
+          className="md:hidden text-sm text-white/50 hover:text-white min-h-11 px-2 shrink-0"
+        >
+          סגירה
+        </button>
       </div>
 
-      <OpsSection title="תפקיד">
-        <div className="grid gap-4">
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <span className="text-base text-white/70">מרצה</span>
-            <div className="flex gap-2" role="radiogroup" aria-label="מרצה">
-              <TeamChoiceChip
-                selected={isLecturer}
-                disabled={busy || (lastAdmin && !isLecturer)}
-                onClick={() => {
-                  if (isLecturer) return;
-                  void onPatch(selected.id, { role: 'instructor', staffDesk: '' }, 'לאשר כמרצה?');
-                }}
-              >
-                כן
-              </TeamChoiceChip>
-              <TeamChoiceChip
-                selected={!isLecturer}
-                disabled={busy}
-                onClick={() => {
-                  if (!isLecturer) return;
-                  void onPatch(selected.id, { role: 'student', staffDesk: '' }, 'להסיר תפקיד מרצה?');
-                }}
-              >
-                לא
-              </TeamChoiceChip>
-            </div>
-          </div>
-
-          <div className="flex flex-wrap items-center justify-between gap-3">
-            <span className="text-base text-white/70">צוות</span>
-            <div className="flex gap-2" role="radiogroup" aria-label="צוות">
-              <TeamChoiceChip
-                selected={isStaff}
-                disabled={busy}
-                onClick={() => {
-                  if (isStaff) return;
-                  void onPatch(selected.id, { role: 'admin' }, 'לשייך כצוות? המשתמש יקבל גישה לדסק.');
-                }}
-              >
-                כן
-              </TeamChoiceChip>
-              <TeamChoiceChip
-                selected={!isStaff}
-                disabled={busy || lastAdmin}
-                onClick={() => {
-                  if (!isStaff) return;
-                  void onPatch(selected.id, { role: 'student', staffDesk: '' }, 'להסיר מתפקיד צוות?');
-                }}
-              >
-                לא
-              </TeamChoiceChip>
-            </div>
-          </div>
-
-          {isStaff ? (
-            <OpsField label="דסק">
-              <select
-                value={selected.staffDesk || ''}
-                disabled={busy}
-                onChange={(e) => void onPatch(selected.id, { staffDesk: e.target.value })}
-                className={fieldClass}
-              >
-                <option value="">מנהל/ת ראשי/ת</option>
-                <option value="content">תוכן</option>
-                <option value="support">תמיכה</option>
-                <option value="sales">מכירות / הצלחה</option>
-                <option value="legal">משפטי</option>
-                <option value="finance">כספים</option>
-                <option value="community">קהילה</option>
-              </select>
-            </OpsField>
-          ) : null}
+      <div className="grid gap-2">
+        <span className="text-sm text-white/50">תפקיד</span>
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="תפקיד">
+          <TeamChoiceChip
+            selected={isLecturer}
+            disabled={busy || lastAdmin}
+            onClick={() => {
+              if (isLecturer) return;
+              void onPatch(selected.id, { role: 'instructor', staffDesk: '' }, 'לאשר כמרצה?');
+            }}
+          >
+            מרצה
+          </TeamChoiceChip>
+          <TeamChoiceChip
+            selected={isStaff}
+            disabled={busy}
+            onClick={() => {
+              if (isStaff) return;
+              void onPatch(selected.id, { role: 'admin' }, 'לשייך כצוות? המשתמש יקבל גישה לדסק.');
+            }}
+          >
+            צוות
+          </TeamChoiceChip>
         </div>
-      </OpsSection>
+        {isStaff ? (
+          <OpsField label="דסק">
+            <select
+              value={selected.staffDesk || ''}
+              disabled={busy}
+              onChange={(e) => void onPatch(selected.id, { staffDesk: e.target.value })}
+              className={fieldClass}
+            >
+              <option value="">מנהל/ת ראשי/ת</option>
+              <option value="content">תוכן</option>
+              <option value="support">תמיכה</option>
+              <option value="sales">מכירות / הצלחה</option>
+              <option value="legal">משפטי</option>
+              <option value="finance">כספים</option>
+              <option value="community">קהילה</option>
+            </select>
+          </OpsField>
+        ) : null}
+      </div>
 
-      <OpsSection title="גישה">
+      <div className="grid gap-2">
+        <span className="text-sm text-white/50">גישה</span>
         <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="גישה">
           <TeamChoiceChip
             selected={access === 'active'}
@@ -2182,50 +2192,75 @@ function TeamPersonCard({
             חסום
           </TeamChoiceChip>
         </div>
-      </OpsSection>
+      </div>
+
+      <div className="flex items-center gap-3 pt-1 border-t border-white/10">
+        <button
+          type="button"
+          disabled={pending}
+          onClick={onOpenMessage}
+          className="text-sm text-white/70 hover:text-white min-h-11 px-1"
+        >
+          הודעה
+        </button>
+        <span className="text-white/20" aria-hidden>
+          |
+        </span>
+        <div className="relative" ref={moreRef}>
+          <button
+            type="button"
+            onClick={onToggleMore}
+            aria-expanded={moreOpen}
+            className="text-sm text-white/70 hover:text-white min-h-11 px-1"
+          >
+            עוד
+          </button>
+          {moreOpen ? (
+            <div className="absolute bottom-full start-0 mb-2 min-w-[13rem] border border-white/15 rounded-xl bg-[#0a0a0a] p-1 shadow-xl z-10">
+              <button
+                type="button"
+                disabled={pending}
+                onClick={() =>
+                  void onPatch(
+                    selected.id,
+                    { isFounder: !selected.isFounder },
+                    selected.isFounder ? 'להסיר דגל מייסד?' : 'לסמן כמייסד?'
+                  )
+                }
+                className="w-full text-right px-3 py-2.5 text-sm text-white/80 hover:bg-white/[0.04] rounded-lg min-h-11 disabled:opacity-40"
+              >
+                {selected.isFounder ? 'הסרת מייסד' : 'סימון מייסד'}
+              </button>
+              <button
+                type="button"
+                disabled={busy || lastAdmin}
+                onClick={() =>
+                  void onPatch(selected.id, { role: 'student', staffDesk: '' }, 'להסיר מתפקיד? האדם ייצא מהרשימה.')
+                }
+                className="w-full text-right px-3 py-2.5 text-sm text-white/80 hover:bg-white/[0.04] rounded-lg min-h-11 disabled:opacity-40"
+              >
+                הסרה מתפקיד
+              </button>
+              <button
+                type="button"
+                disabled={pending || isSelf || lastAdmin}
+                onClick={onRemove}
+                className="w-full text-right px-3 py-2.5 text-sm text-rose-200 hover:bg-rose-500/10 rounded-lg min-h-11 disabled:opacity-40"
+              >
+                הסרה מהמערכת
+              </button>
+            </div>
+          ) : null}
+        </div>
+      </div>
 
       <TeamMessageComposer
         lecturerUserId={selected.id}
         lecturerName={selected.name}
+        open={messageOpen}
         disabled={pending}
+        onClose={onCloseMessage}
       />
-
-      <div>
-        <button
-          type="button"
-          onClick={onToggleMore}
-          aria-expanded={moreOpen}
-          className="text-sm text-white/50 hover:text-white min-h-11 px-1"
-        >
-          {moreOpen ? 'פחות' : 'עוד'}
-        </button>
-        {moreOpen ? (
-          <div className="grid gap-2 mt-3">
-            <button
-              type="button"
-              disabled={pending}
-              onClick={() =>
-                void onPatch(
-                  selected.id,
-                  { isFounder: !selected.isFounder },
-                  selected.isFounder ? 'להסיר דגל מייסד?' : 'לסמן כמייסד?'
-                )
-              }
-              className={`${opsGhostBtn} w-fit text-sm`}
-            >
-              {selected.isFounder ? 'הסרת מייסד' : 'סימון מייסד'}
-            </button>
-            <button
-              type="button"
-              disabled={pending || isSelf || lastAdmin}
-              onClick={onRemove}
-              className="inline-flex items-center justify-center px-5 py-3 rounded-full border border-rose-400/40 text-base text-rose-200 min-h-12 w-fit disabled:opacity-40"
-            >
-              הסרה מהמערכת
-            </button>
-          </div>
-        ) : null}
-      </div>
     </div>
   );
 }
@@ -2233,36 +2268,45 @@ function TeamPersonCard({
 function TeamMessageComposer({
   lecturerUserId,
   lecturerName,
+  open,
   disabled,
+  onClose,
 }: {
   lecturerUserId: string;
   lecturerName: string;
+  open: boolean;
   disabled?: boolean;
+  onClose: () => void;
 }) {
-  const [open, setOpen] = useState(false);
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
-  const [ok, setOk] = useState('');
 
   useEffect(() => {
-    setOpen(false);
     setSubject('');
     setBody('');
     setError('');
-    setOk('');
-  }, [lecturerUserId]);
+  }, [lecturerUserId, open]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        event.preventDefault();
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, onClose]);
 
   const send = async () => {
     setPending(true);
     setError('');
-    setOk('');
     try {
       await adminApi.sendTeamMessage({ lecturerUserId, subject, body });
-      setSubject('');
-      setBody('');
-      setOk('ההודעה נשלחה');
+      onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'שליחה נכשלה');
     } finally {
@@ -2270,55 +2314,47 @@ function TeamMessageComposer({
     }
   };
 
-  if (!open) {
-    return (
-      <button type="button" disabled={disabled} onClick={() => setOpen(true)} className={`${opsGhostBtn} w-fit`}>
-        שליחת הודעה
-      </button>
-    );
-  }
+  if (!open) return null;
 
-  return (
-    <div className="grid gap-3">
-      <p className="text-base text-white/60">הודעה פנימית אל {lecturerName}</p>
-      <OpsField label="נושא">
-        <input
-          value={subject}
-          onChange={(e) => setSubject(e.target.value)}
-          className={fieldClass}
-          disabled={disabled || pending}
-        />
-      </OpsField>
-      <OpsField label="תוכן">
-        <textarea
-          rows={3}
-          value={body}
-          onChange={(e) => setBody(e.target.value)}
-          className={fieldClass}
-          disabled={disabled || pending}
-        />
-      </OpsField>
-      {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-      {ok ? <p className="text-sm text-emerald-300">{ok}</p> : null}
-      <div className="flex flex-wrap gap-2">
-        <button
-          type="button"
-          disabled={disabled || pending || !subject.trim() || !body.trim()}
-          onClick={() => void send()}
-          className={opsPrimaryBtn}
-        >
-          {pending ? 'שולח...' : 'שליחה'}
-        </button>
-        <button
-          type="button"
-          disabled={pending}
-          onClick={() => setOpen(false)}
-          className={opsGhostBtn}
-        >
-          ביטול
-        </button>
+  return createPortal(
+    <div className="fixed inset-0 z-[80] flex items-center justify-center p-4" role="dialog" aria-modal="true" dir="rtl">
+      <button type="button" className="absolute inset-0 bg-black/80" aria-label="סגירה" onClick={onClose} />
+      <div className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-3xl p-6 text-right shadow-2xl grid gap-4">
+        <h3 className="text-xl font-light">הודעה אל {lecturerName}</h3>
+        <OpsField label="נושא">
+          <input
+            value={subject}
+            onChange={(e) => setSubject(e.target.value)}
+            className={fieldClass}
+            disabled={disabled || pending}
+          />
+        </OpsField>
+        <OpsField label="תוכן">
+          <textarea
+            rows={4}
+            value={body}
+            onChange={(e) => setBody(e.target.value)}
+            className={fieldClass}
+            disabled={disabled || pending}
+          />
+        </OpsField>
+        {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            disabled={disabled || pending || !subject.trim() || !body.trim()}
+            onClick={() => void send()}
+            className={opsPrimaryBtn}
+          >
+            {pending ? 'שולח...' : 'שליחה'}
+          </button>
+          <button type="button" disabled={pending} onClick={onClose} className={opsGhostBtn}>
+            ביטול
+          </button>
+        </div>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }
 
