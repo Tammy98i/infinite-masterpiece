@@ -1,5 +1,9 @@
 import type { ViewType } from '../types';
 
+export function isVodLibraryPath(pathname: string) {
+  return pathname === '/library' || pathname.startsWith('/library/');
+}
+
 export function parseLibraryPath(pathname: string): {
   view: ViewType;
   courseId?: string;

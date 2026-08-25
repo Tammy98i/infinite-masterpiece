@@ -1,8 +1,10 @@
 ﻿import React, { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { X } from 'lucide-react';
-import { libraryPath } from '../utils/libraryPath';
+import { isVodLibraryPath, libraryPath } from '../utils/libraryPath';
+import { LIBRARY_CHECKOUT_PENDING_KEY } from '../constants/libraryPlans';
 
 export const AuthModal: React.FC = () => {
   const { isAuthModalOpen, setAuthModalOpen, login, register } = useUser();
@@ -26,9 +28,12 @@ export const AuthModal: React.FC = () => {
       setName('');
       setEmail('');
       setPassword('');
+      const pendingPaid = sessionStorage.getItem(LIBRARY_CHECKOUT_PENDING_KEY);
       if (next.role === 'admin') navigate(libraryPath('admin'));
       else if (next.role === 'instructor') navigate(libraryPath('lecturer'));
-      else if (!window.location.pathname.startsWith('/library')) navigate('/library');
+      else if (pendingPaid === 'monthly' || pendingPaid === 'annual') {
+        /* stay on /library-membership so checkout can continue */
+      } else if (!isVodLibraryPath(window.location.pathname)) navigate('/library');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'כשל התחברות');
     } finally {
@@ -36,8 +41,8 @@ export const AuthModal: React.FC = () => {
     }
   };
 
-  return (
-    <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
+  return createPortal(
+    <div className="fixed inset-0 z-[10000] flex items-center justify-center p-4">
       <button
         type="button"
         className="absolute inset-0 bg-black/75 cursor-pointer"
@@ -75,6 +80,7 @@ export const AuthModal: React.FC = () => {
               <input
                 type="text"
                 required
+                autoComplete="name"
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11"
@@ -86,6 +92,8 @@ export const AuthModal: React.FC = () => {
             <input
               type="email"
               required
+              autoComplete="email"
+              inputMode="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11"
@@ -97,6 +105,7 @@ export const AuthModal: React.FC = () => {
               type="password"
               required
               minLength={8}
+              autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11"
@@ -129,6 +138,7 @@ export const AuthModal: React.FC = () => {
           {mode === 'login' ? 'אין חשבון? הרשמה' : 'כבר רשומים? כניסה'}
         </button>
       </div>
-    </div>
+    </div>,
+    document.body
   );
 };
