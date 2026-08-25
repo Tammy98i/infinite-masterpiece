@@ -8,10 +8,34 @@ import {
   userFromToken,
   type DbPlan,
 } from '../services/authService.js';
+import { syncSupabaseSession, isSupabaseAuthConfigured } from '../services/supabaseAuthService.js';
 import { trackEvent } from '../services/analyticsService.js';
 import { recordPayment } from '../services/paymentService.js';
 
 const router = Router();
+
+router.get('/providers', (_req, res) => {
+  res.json({
+    local: true,
+    supabase: isSupabaseAuthConfigured(),
+  });
+});
+
+router.post('/supabase', async (req, res) => {
+  try {
+    const accessToken = String(req.body?.accessToken || '');
+    const fullName = String(req.body?.fullName || '');
+    if (!accessToken) {
+      res.status(400).json({ error: 'חסר accessToken' });
+      return;
+    }
+    const result = await syncSupabaseSession(accessToken, fullName);
+    res.json(result);
+  } catch (err) {
+    const status = (err as { status?: number }).status || 500;
+    res.status(status).json({ error: (err as Error).message });
+  }
+});
 
 function bearer(req: { headers: { authorization?: string } }) {
   const header = req.headers.authorization || '';

@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
 import { X } from 'lucide-react';
 import { libraryPath } from '../utils/libraryPath';
+import { isSupabaseAuthEnabled } from '../api/supabaseAuth';
 
 export const AuthModal: React.FC = () => {
   const { isAuthModalOpen, setAuthModalOpen, login, register } = useUser();
@@ -13,6 +14,7 @@ export const AuthModal: React.FC = () => {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const [pending, setPending] = useState(false);
+  const viaSupabase = isSupabaseAuthEnabled();
 
   if (!isAuthModalOpen) return null;
 
@@ -64,8 +66,12 @@ export const AuthModal: React.FC = () => {
         </h2>
         <p className="text-sm text-white/50 font-light mb-8">
           {mode === 'login'
-            ? 'התחברו כדי לשמור התקדמות ולפתוח מנוי.'
-            : 'חשבון חינמי. אחר כך אפשר לפתוח גישה מלאה.'}
+            ? viaSupabase
+              ? 'התחברות מאובטחת דרך Supabase.'
+              : 'התחברו כדי לשמור התקדמות ולפתוח מנוי.'
+            : viaSupabase
+              ? 'יצירת חשבון דרך Supabase. ייתכן שיידרש אישור אימייל.'
+              : 'חשבון חינמי. אחר כך אפשר לפתוח גישה מלאה.'}
         </p>
 
         <form onSubmit={(e) => void handleSubmit(e)} className="grid gap-4">
