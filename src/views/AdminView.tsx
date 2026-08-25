@@ -8,6 +8,7 @@ import { DEFAULT_WEBINAR_CONFIG, type WebinarConfig } from '../constants/webinar
 import type { LecturerApplication } from '../api/lecturer';
 import type { AccessLevel, Category, Course, Instructor, PublishStatus } from '../types';
 import { trackEvent } from '../utils/analytics';
+import { Search } from 'lucide-react';
 import { FileUploadField } from '../components/FileUploadField';
 import { useConfirm } from '../components/ops/ConfirmDialog';
 import { OpsField, OpsPageHeader, OpsSection, opsFieldClass, opsGhostBtn, opsLabelClass, opsPrimaryBtn } from '../components/ops/OpsUi';
@@ -1803,14 +1804,19 @@ function teamAccessLabel(kind: TeamAccess): string {
   return 'פעיל';
 }
 
-function teamStatusSentence(row: AdminUserRow): string {
-  const access = teamAccessLabel(teamAccessKind(row));
-  if (row.role === 'instructor') return `מרצה · ${access}`;
+function teamRowRoleLabel(row: AdminUserRow): string {
+  if (row.role === 'instructor') return 'מרצה';
   if (row.role === 'admin') {
     const desk = row.staffDesk ? STAFF_DESK_LABEL[row.staffDesk] || row.staffDesk : 'מנהל/ת ראשי/ת';
-    return `צוות · ${desk} · ${access}`;
+    return `צוות · ${desk}`;
   }
-  return access;
+  return 'משתמש';
+}
+
+function teamAccessTone(kind: TeamAccess): string {
+  if (kind === 'blocked') return 'text-rose-300';
+  if (kind === 'suspended') return 'text-amber-200';
+  return 'text-[#C8A24C]';
 }
 
 function TeamChoiceChip({
@@ -1943,13 +1949,16 @@ function TeamStaffPanel() {
       <div className="flex flex-col sm:flex-row sm:items-end gap-3">
         <label className="block flex-1 min-w-0">
           <span className="block text-sm text-white/60 mb-1">חיפוש לפי שם או אימייל</span>
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder="למשל: דנה או dana@"
-            className={fieldClass}
-          />
+          <span className="relative block">
+            <Search className="absolute start-3 top-1/2 -translate-y-1/2 size-4 text-white/40 pointer-events-none" aria-hidden />
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="למשל: דנה או dana@"
+              className={`${fieldClass} ps-10`}
+            />
+          </span>
         </label>
         <div className="flex flex-wrap gap-2 shrink-0" role="tablist" aria-label="סינון צוות ומרצים">
           {(
@@ -1999,15 +2008,22 @@ function TeamStaffPanel() {
                       type="button"
                       onClick={() => setSelectedId(row.id)}
                       aria-current={active ? 'true' : undefined}
-                      className={`w-full text-right px-3 py-2.5 min-h-12 ${
-                        active ? 'bg-[#C8A24C]/10' : 'hover:bg-white/[0.03]'
+                      className={`w-full text-right px-3 py-2.5 min-h-12 border-s-2 ${
+                        active
+                          ? 'bg-[#C8A24C]/10 border-[#C8A24C]'
+                          : 'border-transparent hover:bg-white/[0.03]'
                       }`}
                     >
                       <span className="block text-sm text-white">
                         {row.name}
                         {row.isFounder ? <span className="text-white/40"> · מייסד</span> : null}
                       </span>
-                      <span className="block text-xs text-white/50 mt-0.5">{teamStatusSentence(row)}</span>
+                      <span className="block text-xs text-white/50 mt-0.5">
+                        {teamRowRoleLabel(row)} ·{' '}
+                        <span className={teamAccessTone(teamAccessKind(row))}>
+                          {teamAccessLabel(teamAccessKind(row))}
+                        </span>
+                      </span>
                     </button>
                   </li>
                 );
@@ -2017,10 +2033,10 @@ function TeamStaffPanel() {
         </div>
 
         <aside
-          className={`border border-white/10 rounded-2xl p-4 md:sticky md:top-20 ${
+          className={`rounded-2xl p-4 md:sticky md:top-20 ${
             selected
-              ? 'max-md:fixed max-md:inset-y-0 max-md:end-0 max-md:z-40 max-md:w-[min(100%,20rem)] max-md:bg-[#0a0a0a] max-md:overflow-y-auto max-md:rounded-none max-md:border-y-0 max-md:border-s-0'
-              : 'max-md:hidden'
+              ? 'border border-[#C8A24C]/35 max-md:fixed max-md:inset-y-0 max-md:end-0 max-md:z-40 max-md:w-[min(100%,20rem)] max-md:bg-[#0a0a0a] max-md:overflow-y-auto max-md:rounded-none max-md:border-y-0 max-md:border-s-0'
+              : 'border border-white/10 max-md:hidden'
           }`}
         >
           {!selected ? (
@@ -2098,7 +2114,7 @@ function TeamPersonCard({
     <div className="grid gap-4">
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <h3 className="text-lg font-light">{selected.name}</h3>
+          <h3 className="text-lg font-light text-[#C8A24C]">{selected.name}</h3>
           <p className="text-sm text-white/50 mt-0.5 break-all">{selected.email}</p>
         </div>
         <button
