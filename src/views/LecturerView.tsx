@@ -14,10 +14,10 @@ import type { CoursePayload } from '../api/admin';
 import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/captions';
 import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
+import { OpsField, OpsPageHeader, OpsSection, opsFieldClass, opsGhostBtn, opsPrimaryBtn } from '../components/ops/OpsUi';
 import { accessLabelHe } from '../utils/opsLabels';
 
-const fieldClass =
-  'w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11';
+const fieldClass = opsFieldClass;
 
 const STATUS_LABEL: Record<string, string> = {
   draft: 'טיוטה',
@@ -86,18 +86,17 @@ function ReferralCard({
   };
 
   return (
-    <div className="border border-[#C8A24C]/25 rounded-3xl p-6 bg-[#C8A24C]/5">
-      <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">הפניות</p>
-      <h2 className="text-xl font-light mb-2">קישור ההפניה שלכם</h2>
-      <p className="text-sm text-white/50 font-light leading-relaxed mb-5">
-        מי שנכנס דרך הקישור ונרשם או ממלא מסלול כניסה נספר כאן. בלי לערבב עם מועמדות לנבחרת 88.
-      </p>
+    <div className="grid gap-4">
+      <OpsPageHeader
+        title="הקישור שלכם"
+        hint="מי שנכנס דרך הקישור ונרשם או ממלא מסלול כניסה נספר כאן. בלי לערבב עם מועמדות לנבחרת 88."
+      />
       <div className="flex flex-col sm:flex-row gap-3 mb-6">
         <input readOnly value={referralUrl} className={`${fieldClass} flex-1`} dir="ltr" />
         <button
           type="button"
           onClick={() => void copy()}
-          className="px-5 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer shrink-0"
+          className={`${opsPrimaryBtn} shrink-0`}
         >
           {copied ? 'הועתק' : 'העתקת קישור'}
         </button>
@@ -192,11 +191,10 @@ function ApplicationPanel({
       <button type="button" onClick={onBack} className="text-sm text-white/45 hover:text-white mb-8 min-h-11 cursor-pointer">
         חזרה לפרופיל
       </button>
-      <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">מרצים</p>
-      <h1 className="text-3xl font-light mb-4">בקשה להיות מרצה</h1>
-      <p className="text-sm text-white/45 font-light mb-8">
-        הבקשה עוברת לאישור אדמין. אחרי אישור נפתח דשבורד להעלאת תוכן לבדיקה.
-      </p>
+      <OpsPageHeader
+        title="בקשה להיות מרצה"
+        hint="הבקשה עוברת לאישור אדמין. אחרי אישור נפתח דשבורד להעלאת תוכן לבדיקה."
+      />
 
       {application?.status === 'pending' && (
         <p className="text-sm text-[#C8A24C] mb-6">הבקשה ממתינה לאישור.</p>
@@ -224,59 +222,56 @@ function ApplicationPanel({
         </p>
       )}
 
-      <form onSubmit={(e) => void submit(e)} className="grid gap-4">
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">שם מלא</span>
-          <input required disabled={locked} value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} className={fieldClass} />
-        </label>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <label className="block">
-            <span className="block text-xs text-white/45 mb-1">טלפון</span>
-            <input required disabled={locked} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={fieldClass} />
+      <form onSubmit={(e) => void submit(e)} className="grid gap-8">
+        <OpsSection title="פרטים">
+          <OpsField label="שם מלא">
+            <input required disabled={locked} value={form.fullName} onChange={(e) => setForm({ ...form, fullName: e.target.value })} className={fieldClass} />
+          </OpsField>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <OpsField label="טלפון">
+              <input required disabled={locked} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={fieldClass} />
+            </OpsField>
+            <OpsField label="אימייל">
+              <input required type="email" disabled={locked} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={fieldClass} />
+            </OpsField>
+          </div>
+          <OpsField label="תחום">
+            <input required disabled={locked} value={form.field} onChange={(e) => setForm({ ...form, field: e.target.value })} className={fieldClass} />
+          </OpsField>
+          <OpsField label="קישורים">
+            <input disabled={locked} value={form.links} onChange={(e) => setForm({ ...form, links: e.target.value })} className={fieldClass} />
+          </OpsField>
+        </OpsSection>
+        <OpsSection title="הרצאה">
+          <OpsField label="הרצאה מוצעת">
+            <textarea required disabled={locked} rows={3} value={form.proposedLecture} onChange={(e) => setForm({ ...form, proposedLecture: e.target.value })} className={fieldClass} />
+          </OpsField>
+          <OpsField label="למי מיועדת">
+            <input disabled={locked} value={form.audience} onChange={(e) => setForm({ ...form, audience: e.target.value })} className={fieldClass} />
+          </OpsField>
+          <OpsField label="ערך למשתמש">
+            <textarea disabled={locked} rows={3} value={form.valueToUser} onChange={(e) => setForm({ ...form, valueToUser: e.target.value })} className={fieldClass} />
+          </OpsField>
+        </OpsSection>
+        <OpsSection title="ניסיון">
+          <OpsField label="ניסיון">
+            <textarea disabled={locked} rows={3} value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value })} className={fieldClass} />
+          </OpsField>
+          <FileUploadField
+            kind="video"
+            label="וידאו דוגמה (אופציונלי)"
+            value={form.sampleVideo}
+            disabled={locked}
+            onChange={(sampleVideo) => setForm({ ...form, sampleVideo })}
+          />
+          <label className="flex items-center gap-3 text-base text-white/70 min-h-11">
+            <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} disabled={locked} />
+            מאשר/ת את תנאי המרצים
           </label>
-          <label className="block">
-            <span className="block text-xs text-white/45 mb-1">אימייל</span>
-            <input required type="email" disabled={locked} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={fieldClass} />
-          </label>
-        </div>
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">תחום</span>
-          <input required disabled={locked} value={form.field} onChange={(e) => setForm({ ...form, field: e.target.value })} className={fieldClass} />
-        </label>
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">לינקים</span>
-          <input disabled={locked} value={form.links} onChange={(e) => setForm({ ...form, links: e.target.value })} className={fieldClass} />
-        </label>
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">הרצאה מוצעת</span>
-          <textarea required disabled={locked} rows={3} value={form.proposedLecture} onChange={(e) => setForm({ ...form, proposedLecture: e.target.value })} className={fieldClass} />
-        </label>
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">למי מיועדת</span>
-          <input disabled={locked} value={form.audience} onChange={(e) => setForm({ ...form, audience: e.target.value })} className={fieldClass} />
-        </label>
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">ערך למשתמש</span>
-          <textarea disabled={locked} rows={3} value={form.valueToUser} onChange={(e) => setForm({ ...form, valueToUser: e.target.value })} className={fieldClass} />
-        </label>
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">ניסיון</span>
-          <textarea disabled={locked} rows={3} value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value })} className={fieldClass} />
-        </label>
-        <FileUploadField
-          kind="video"
-          label="וידאו דוגמה (אופציונלי)"
-          value={form.sampleVideo}
-          disabled={locked}
-          onChange={(sampleVideo) => setForm({ ...form, sampleVideo })}
-        />
-        <label className="flex items-center gap-3 text-sm text-white/55 min-h-11">
-          <input type="checkbox" checked={terms} onChange={(e) => setTerms(e.target.checked)} disabled={locked} />
-          מאשר/ת את תנאי המרצים
-        </label>
+        </OpsSection>
         {error && <p className="text-sm text-rose-300">{error}</p>}
         {!locked && (
-          <button type="submit" disabled={pending} className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60">
+          <button type="submit" disabled={pending} className={`${opsPrimaryBtn} w-full sm:w-auto disabled:opacity-60`}>
             {pending ? 'שולח...' : 'שליחת בקשה'}
           </button>
         )}
@@ -408,9 +403,8 @@ function LecturerDashboard({
       <div className="flex min-h-screen">
         <aside className="hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
           <div className="p-5 border-b border-white/10">
-            <p className="text-[11px] uppercase tracking-[0.28em] text-[#C8A24C] mb-2">מרצה</p>
             <h1 className="text-xl font-light">דשבורד מרצה</h1>
-            <p className="text-xs text-white/40 mt-2 font-light truncate">{user.name}</p>
+            <p className="text-sm text-white/50 mt-2 font-light truncate">{user.name}</p>
             {stats?.isFounder ? (
               <p className="text-[11px] text-[#C8A24C] mt-1">מרצה ומייסד</p>
             ) : (
@@ -420,7 +414,7 @@ function LecturerDashboard({
           {renderSideNav()}
           <div className="p-4 border-t border-white/10 grid gap-2">
             <div className="border border-[#C8A24C]/30 rounded-2xl p-4 text-center">
-              <p className="text-xs text-white/45 mb-3">צריכים עזרה?</p>
+              <p className="text-base text-white/60 mb-3">צריכים עזרה?</p>
               <a
                 href="mailto:support@infinitemasterpiece.local"
                 className="inline-flex px-4 py-2 rounded-full bg-[#C8A24C] text-black text-xs min-h-10 items-center justify-center"
@@ -449,7 +443,7 @@ function LecturerDashboard({
                 מסכים
               </button>
               <div className="min-w-0">
-                <p className="text-[11px] tracking-[0.2em] text-[#C8A24C] uppercase truncate">Infinite Masterpiece</p>
+                <p className="text-sm text-white/50 truncate">Infinite Masterpiece</p>
                 <p className="text-sm text-white/70 font-light truncate">שלום, {user.name}</p>
               </div>
             </div>
@@ -585,11 +579,10 @@ function QuestionsPanel() {
 
   return (
     <div className="grid gap-6">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">שאלות</p>
-        <h2 className="text-2xl font-light">שאלות ותגובות על התכנים שלי</h2>
-        <p className="text-sm text-white/45 mt-2">רק שאלות על ההרצאות שלכם. בלי נתוני משתמשים רגישים מעבר לשם.</p>
-      </div>
+      <OpsPageHeader
+        title="שאלות ותגובות"
+        hint="רק שאלות על ההרצאות שלכם. בלי נתוני משתמשים רגישים מעבר לשם."
+      />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
       <div className="grid gap-3">
         {questions.length === 0 ? (
@@ -679,10 +672,7 @@ function MessagesPanel() {
 
   return (
     <div className="grid gap-6">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">הודעות</p>
-        <h2 className="text-2xl font-light">הודעות מהצוות</h2>
-      </div>
+      <OpsPageHeader title="הודעות מהצוות" />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
       <div className="grid gap-6 xl:grid-cols-[1fr_1.1fr]">
         <div className="border border-white/10 rounded-2xl divide-y divide-white/10">
@@ -746,13 +736,10 @@ function CoursesSeriesPanel({
 
   return (
     <div className="grid gap-8">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">סדרות</p>
-        <h2 className="text-2xl font-light">קורסים / סדרות שלי</h2>
-        <p className="text-sm text-white/45 mt-2">
-          קיבוץ ההרצאות לפי קטגוריה. יצירת סדרה נפרדת תגיע בהמשך; כרגע מנהלים דרך ההרצאות והקטגוריה.
-        </p>
-      </div>
+      <OpsPageHeader
+        title="קורסים / סדרות"
+        hint="קיבוץ ההרצאות לפי קטגוריה. יצירת סדרה נפרדת תגיע בהמשך; כרגע מנהלים דרך ההרצאות והקטגוריה."
+      />
       {groups.length === 0 && uncategorized.length === 0 ? (
         <p className="text-sm text-white/40">עדיין אין תכנים לקיבוץ.</p>
       ) : null}
@@ -794,13 +781,10 @@ function CoursesSeriesPanel({
 function Founder88Panel({ courses }: { courses: Course[] }) {
   return (
     <div className="grid gap-6">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">נבחרת 88</p>
-        <h2 className="text-2xl font-light">הרצאות בעמוד נבחרת 88</h2>
-        <p className="text-sm text-white/45 mt-2">
-          הרצאות שפורסמו תחת הפרופיל שלכם. הצגה בעמוד הציבורי נקבעת גם על ידי האדמין.
-        </p>
-      </div>
+      <OpsPageHeader
+        title="הרצאות בנבחרת 88"
+        hint="הרצאות שפורסמו תחת הפרופיל שלכם. הצגה בעמוד הציבורי נקבעת גם על ידי האדמין."
+      />
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
         <table className="w-full text-sm text-right">
           <thead className="text-xs text-white/40 border-b border-white/10">
@@ -961,7 +945,7 @@ function OverviewHome({
       </div>
 
       <div className="border border-[#C8A24C]/25 rounded-2xl p-5 bg-[#C8A24C]/5">
-        <p className="text-[13px] uppercase tracking-[0.25em] text-[#C8A24C] mb-2">טיפ להצלחה</p>
+        <h3 className="text-lg font-light mb-2">טיפ להצלחה</h3>
         <p className="text-base text-white/70 font-light leading-relaxed">
           הרצאות קצרות וממוקדות נצפות עד הסוף יותר. זה מה שמביא שמירות ושדרוגים מהתוכן שלכם.
         </p>
@@ -1002,10 +986,7 @@ function VideosPanel({
   return (
     <div className="grid gap-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <p className="text-sm tracking-[0.18em] text-[#C8A24C] mb-2">תוכן</p>
-          <h2 className="text-2xl font-light">{title}</h2>
-        </div>
+        <OpsPageHeader title={title} />
         <button
           type="button"
           onClick={onUpload}
@@ -1112,30 +1093,29 @@ function AnalyticsPanel({ stats }: { stats: LecturerOverview }) {
   const maxTop = Math.max(1, ...stats.topContent.map((item) => item.views));
   return (
     <div className="grid gap-8">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">אנליטיקות</p>
-        <h2 className="text-2xl font-light">ביצועי התכנים שלי</h2>
-        <p className="text-sm text-white/45 mt-2">נתונים מצרפיים בלבד על התוכן שלכם. בלי פרטי משתמשים.</p>
-      </div>
+      <OpsPageHeader
+        title="ביצועי התכנים"
+        hint="נתונים מצרפיים בלבד על התוכן שלכם. בלי פרטי משתמשים."
+      />
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {[
           { label: 'צפיות', value: stats.views },
           { label: 'צופים ייחודיים', value: stats.uniqueViewers },
-          { label: 'Completion', value: `${stats.completionRate}%` },
+          { label: 'השלמת צפייה', value: `${stats.completionRate}%` },
           { label: 'זמן ממוצע', value: `${stats.avgWatchMinutes} דק׳` },
           { label: 'שמירות', value: stats.saves },
-          { label: 'Paywall', value: stats.paywallHits },
+          { label: 'ניסיונות לתוכן נעול', value: stats.paywallHits },
           { label: 'שדרוגים', value: stats.upgrades },
           { label: 'שעות צפייה', value: stats.totalWatchHours },
         ].map((card) => (
           <div key={card.label} className="border border-white/10 rounded-2xl p-4">
-            <div className="text-[11px] text-white/40 mb-1">{card.label}</div>
+            <div className="text-base text-white/60 mb-1">{card.label}</div>
             <div className="text-xl font-light">{card.value}</div>
           </div>
         ))}
       </div>
       <div className="border border-white/10 rounded-2xl p-5">
-        <h3 className="text-sm font-light mb-4">Completion לפי תוכן מוביל</h3>
+        <h3 className="text-lg font-light mb-4">השלמת צפייה לפי תוכן מוביל</h3>
         {stats.topContent.length === 0 ? (
           <p className="text-sm text-white/40">אין נתונים עדיין.</p>
         ) : (
@@ -1168,11 +1148,10 @@ function ResourcesPanel({ courses }: { courses: Course[] }) {
   const rows = courses.filter((course) => course.resources);
   return (
     <div className="grid gap-6">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">קבצים</p>
-        <h2 className="text-2xl font-light">קבצים נלווים</h2>
-        <p className="text-sm text-white/45 mt-2">קבצים שצורפו להרצאות שלכם. העלאה חדשה דרך עריכת הרצאה.</p>
-      </div>
+      <OpsPageHeader
+        title="קבצים נלווים"
+        hint="קבצים שצורפו להרצאות שלכם. העלאה חדשה דרך עריכת הרצאה."
+      />
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
         <table className="w-full text-sm text-right">
           <thead className="text-xs text-white/40 border-b border-white/10">
@@ -1263,43 +1242,38 @@ function ProfileEditorPanel({ isFounderTab }: { isFounderTab: boolean }) {
 
   return (
     <div className="grid gap-6 max-w-2xl">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">
-          {isFounderTab ? 'מייסד' : 'פרופיל'}
-        </p>
-        <h2 className="text-2xl font-light">{isFounderTab ? 'פרופיל מייסד' : 'פרופיל מרצה'}</h2>
-        <p className="text-sm text-white/45 mt-2">
-          {profile.isFounder
+      <OpsPageHeader
+        title={isFounderTab ? 'פרופיל מייסד' : 'הפרופיל שלי'}
+        hint={
+          profile.isFounder
             ? 'הפרופיל מוצג גם בהקשר נבחרת 88 לפי הגדרת האדמין.'
-            : 'הפרופיל הציבורי שלכם בספרייה.'}
-        </p>
-      </div>
+            : 'הפרופיל הציבורי שלכם בספרייה.'
+        }
+      />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
       {message ? <p className="text-sm text-emerald-300">{message}</p> : null}
-      <label className="grid gap-1 text-xs text-white/45">
-        שם
-        <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
-      </label>
-      <label className="grid gap-1 text-xs text-white/45">
-        טייטל
-        <input value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
-      </label>
-      <label className="grid gap-1 text-xs text-white/45">
-        ביוגרפיה
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <OpsField label="שם">
+          <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
+        </OpsField>
+        <OpsField label="תפקיד">
+          <input value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
+        </OpsField>
+      </div>
+      <OpsField label="ביוגרפיה">
         <textarea rows={5} value={bio} onChange={(e) => setBio(e.target.value)} className={fieldClass} />
-      </label>
-      <label className="grid gap-1 text-xs text-white/45">
-        תחומי מומחיות (מופרדים בפסיק)
+      </OpsField>
+      <OpsField label="תחומי מומחיות (מופרדים בפסיק)">
         <input value={expertise} onChange={(e) => setExpertise(e.target.value)} className={fieldClass} />
-      </label>
+      </OpsField>
       <FileUploadField kind="image" label="תמונה" value={avatarUrl} onChange={setAvatarUrl} />
       <button
         type="button"
         disabled={pending}
         onClick={() => void save()}
-        className="w-fit px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 disabled:opacity-60"
+        className={`${opsPrimaryBtn} w-fit`}
       >
-        {pending ? 'שומר...' : 'שמירת פרופיל'}
+        {pending ? 'שומר...' : 'שמירה'}
       </button>
     </div>
   );
@@ -1309,10 +1283,7 @@ function SettingsPanel({ onLibrary }: { onLibrary: () => void }) {
   const { setView } = useApp();
   return (
     <div className="grid gap-6 max-w-xl">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">הגדרות</p>
-        <h2 className="text-2xl font-light">הגדרות חשבון</h2>
-      </div>
+      <OpsPageHeader title="הגדרות חשבון" hint="מעבר לפרופיל הכללי או חזרה לספרייה." />
       <div className="border border-white/10 rounded-2xl p-5 grid gap-3">
         <button
           type="button"
@@ -1373,12 +1344,10 @@ function TeamPanel() {
 
   return (
     <div className="grid gap-8 max-w-2xl">
-      <div>
-        <h2 className="text-xl font-light mb-2">הוספת יזם לצוות</h2>
-        <p className="text-sm text-white/50 font-light leading-relaxed">
-          נכנסים מחשבון גל. לכל יזם: שם, תפקיד ותמונה. בלי להמציא אנשים.
-        </p>
-      </div>
+      <OpsPageHeader
+        title="צוות מייסדים"
+        hint="נכנסים מחשבון גל. לכל יזם: שם, תפקיד ותמונה. בלי להמציא אנשים."
+      />
       <div className="grid gap-4">
         {members.map((member) => (
           <div key={member.id} className="flex items-center gap-3 border border-white/10 rounded-2xl p-4">
@@ -1394,30 +1363,29 @@ function TeamPanel() {
           </div>
         ))}
       </div>
-      <div className="border border-[#C8A24C]/25 rounded-3xl p-6 grid gap-4">
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">שם</span>
-          <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
-        </label>
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">תפקיד</span>
-          <input value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
-        </label>
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">ביו קצר (אופציונלי)</span>
+      <OpsSection title="הוספת יזם">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <OpsField label="שם">
+            <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
+          </OpsField>
+          <OpsField label="תפקיד">
+            <input value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
+          </OpsField>
+        </div>
+        <OpsField label="ביו קצר (אופציונלי)">
           <textarea rows={3} value={bio} onChange={(e) => setBio(e.target.value)} className={fieldClass} />
-        </label>
+        </OpsField>
         <FileUploadField kind="image" label="תמונה" value={avatarUrl} onChange={setAvatarUrl} />
         {error ? <p className="text-sm text-rose-300">{error}</p> : null}
         <button
           type="button"
           disabled={pending}
           onClick={() => void save()}
-          className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
+          className={`${opsPrimaryBtn} w-fit`}
         >
           {pending ? 'שומר...' : 'הוספה לצוות'}
         </button>
-      </div>
+      </OpsSection>
     </div>
   );
 }
@@ -1505,10 +1473,11 @@ function LecturerCourseForm({
       <button type="button" onClick={onCancel} className="text-sm text-white/55 text-right cursor-pointer min-h-11">
         חזרה להרצאות
       </button>
-      <div>
-        <p className="text-sm tracking-[0.18em] text-[#C8A24C] mb-2">הוספת הרצאה</p>
-        <h2 className="text-2xl font-light mb-4">{course ? 'עריכת הרצאה' : 'ארבעה צעדים עד שליחה לאישור'}</h2>
-        <ol className="flex flex-wrap gap-2" aria-label="שלבי העלאה">
+      <OpsPageHeader
+        title={course ? 'עריכת הרצאה' : 'הוספת הרצאה'}
+        hint="ארבעה צעדים עד שליחה לאישור."
+      />
+      <ol className="flex flex-wrap gap-2" aria-label="שלבי העלאה">
           {steps.map((label, index) => (
             <li key={label}>
               <button
@@ -1527,24 +1496,19 @@ function LecturerCourseForm({
             </li>
           ))}
         </ol>
-      </div>
 
       {step === 0 ? (
         <div className="grid gap-4">
-          <label className="block">
-            <span className="block text-sm text-white/60 mb-1">שם ההרצאה</span>
+          <OpsField label="שם ההרצאה">
             <input required value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
-          </label>
-          <label className="block">
-            <span className="block text-sm text-white/60 mb-1">כותרת משנה</span>
+          </OpsField>
+          <OpsField label="כותרת משנה">
             <input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} className={fieldClass} />
-          </label>
-          <label className="block">
-            <span className="block text-sm text-white/60 mb-1">תיאור</span>
+          </OpsField>
+          <OpsField label="תיאור">
             <textarea rows={4} value={description} onChange={(e) => setDescription(e.target.value)} className={fieldClass} />
-          </label>
-          <label className="block">
-            <span className="block text-sm text-white/60 mb-1">קטגוריה</span>
+          </OpsField>
+          <OpsField label="קטגוריה">
             <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className={fieldClass}>
               {categories.map((c) => (
                 <option key={c.id} value={c.id}>
@@ -1552,22 +1516,20 @@ function LecturerCourseForm({
                 </option>
               ))}
             </select>
-          </label>
+          </OpsField>
         </div>
       ) : null}
 
       {step === 1 ? (
         <div className="grid gap-4">
-          <label className="block">
-            <span className="block text-sm text-white/60 mb-1">שם הפרק</span>
+          <OpsField label="שם הפרק">
             <input value={episodeTitle} onChange={(e) => setEpisodeTitle(e.target.value)} className={fieldClass} />
-          </label>
-          <label className="block">
-            <span className="block text-sm text-white/60 mb-1">משך בדקות</span>
+          </OpsField>
+          <OpsField label="משך בדקות">
             <input type="number" min={1} value={durationMin} onChange={(e) => setDurationMin(e.target.value)} className={fieldClass} />
-          </label>
+          </OpsField>
           <FileUploadField kind="video" label="קובץ וידאו" value={videoUrl} onChange={setVideoUrl} />
-          <FileUploadField kind="caption" label="כתוביות (WebVTT)" value={captionVttUrl} onChange={setCaptionVttUrl} />
+          <FileUploadField kind="caption" label="כתוביות" value={captionVttUrl} onChange={setCaptionVttUrl} />
         </div>
       ) : null}
 
@@ -1581,14 +1543,13 @@ function LecturerCourseForm({
             previewAlt={title ? `תמונת כיסוי: ${title}` : 'תמונת כיסוי'}
           />
           <FileUploadField kind="resource" label="קבצים נלווים (אופציונלי)" value={resources} onChange={setResources} />
-          <label className="block">
-            <span className="block text-sm text-white/60 mb-1">רמת גישה להרצאה</span>
+          <OpsField label="רמת גישה להרצאה">
             <select value={accessLevel} onChange={(e) => setAccessLevel(e.target.value as AccessLevel)} className={fieldClass}>
               <option value="free">חינמי</option>
               <option value="premium">פרימיום</option>
               <option value="premium_88">נבחרת 88</option>
             </select>
-          </label>
+          </OpsField>
         </div>
       ) : null}
 
@@ -1635,7 +1596,7 @@ function LecturerCourseForm({
           <button
             type="button"
             onClick={() => setStep((prev) => prev - 1)}
-            className="px-6 py-3 rounded-full border border-white/15 text-sm min-h-11"
+            className={opsGhostBtn}
           >
             חזרה
           </button>
@@ -1645,12 +1606,12 @@ function LecturerCourseForm({
             type="button"
             disabled={!canNext}
             onClick={() => setStep((prev) => prev + 1)}
-            className="px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 disabled:opacity-50"
+            className={`${opsPrimaryBtn} disabled:opacity-50`}
           >
             המשך
           </button>
         ) : (
-          <button type="submit" disabled={pending} className="px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60">
+          <button type="submit" disabled={pending} className={`${opsPrimaryBtn} disabled:opacity-60`}>
             {pending ? 'שומר...' : submitAfter ? 'שמירה ושליחה לאישור' : 'שמירת טיוטה'}
           </button>
         )}

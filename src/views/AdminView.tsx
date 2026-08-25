@@ -9,7 +9,8 @@ import type { AccessLevel, Category, Course, Instructor, PublishStatus } from '.
 import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
 import { useConfirm } from '../components/ops/ConfirmDialog';
-import { formatOpsDate, isPayingPlan, planLabelHe, roleLabelHe } from '../utils/opsLabels';
+import { OpsField, OpsPageHeader, OpsSection, opsFieldClass, opsGhostBtn, opsLabelClass, opsPrimaryBtn } from '../components/ops/OpsUi';
+import { formatOpsDate, isPayingPlan, opsStatusHe, planLabelHe, raffleStatusHe, roleLabelHe } from '../utils/opsLabels';
 
 type Tab =
   | 'overview'
@@ -85,8 +86,7 @@ const ACCESS_LABEL: Record<AccessLevel, string> = {
   admin_only: 'אדמין בלבד',
 };
 
-const fieldClass =
-  'w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11';
+const fieldClass = opsFieldClass;
 
 const STAFF_DESK_TABS: Record<string, Tab[]> = {
   content: ['overview', 'content', 'categories', 'lecturers', 'founders', 'team', 'notifications', 'audit', 'onboarding'],
@@ -231,7 +231,6 @@ export function AdminView() {
       <div className="flex min-h-screen">
         <aside className="hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
           <div className="p-5 border-b border-white/10">
-            <p className="text-sm tracking-[0.18em] text-[#C8A24C] mb-2">ניהול</p>
             <h1 className="text-xl font-light">לוח בקרה</h1>
             <p className="text-sm text-white/50 mt-2 font-light truncate">{user.name}</p>
           </div>
@@ -363,14 +362,10 @@ function NotificationsPanel({
               </p>
             </>
           ) : (
-            <>
-              <p className="text-sm tracking-[0.18em] text-[#C8A24C] mb-2">היום</p>
-              <h2 className="text-2xl font-light">תור פעולות לטיפול</h2>
-              <p className="text-sm text-white/55 mt-2">
-                סיכום אוטומטי מהמערכת.
-                {high > 0 ? ` · ${high} דחופות` : ''}
-              </p>
-            </>
+            <OpsPageHeader
+              title="תור פעולות לטיפול"
+              hint={`סיכום אוטומטי מהמערכת.${high > 0 ? ` · ${high} דחופות` : ''}`}
+            />
           )}
         </div>
         <button
@@ -484,12 +479,10 @@ function ReadinessPanel() {
 
   return (
     <div className="grid gap-6">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">מוכנות להשקה</p>
-        <p className="text-sm text-white/45 font-light">
-          מפתחות, תמונות ושמות אמיתיים נשארים אצלכם. כאן רואים מה חסר, ומשבצים הרצאות קיימות לשבועות 3 ו־4.
-        </p>
-      </div>
+      <OpsPageHeader
+        title="הגדרות"
+        hint="מפתחות, תמונות ושמות אמיתיים נשארים אצלכם. כאן רואים מה חסר, ומשבצים הרצאות קיימות לשבועות 3 ו־4."
+      />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -687,13 +680,10 @@ function OverviewPanel({ onNavigate, staffDesk }: { onNavigate: (tab: Tab) => vo
 
   return (
     <div className="grid gap-8">
-      <div>
-        <p className="text-sm tracking-[0.18em] text-[#C8A24C] mb-2">היום</p>
-        <h2 className="text-2xl sm:text-3xl font-light">מה צריך ממך עכשיו</h2>
-        <p className="text-base text-white/55 mt-2 font-light max-w-2xl">
-          ארבעה דברים שדורשים טיפול. השאר מאחורי «עוד נתונים».
-        </p>
-      </div>
+      <OpsPageHeader
+        title="מה צריך ממך עכשיו"
+        hint="ארבעה דברים שדורשים טיפול. השאר מאחורי «עוד נתונים»."
+      />
 
       <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
         {taskCards.map((card) => (
@@ -908,14 +898,20 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
 
   return (
     <div className="grid gap-10">
+      <OpsPageHeader
+        title={focus === 'funnel' ? 'משפך משתמשים חינמיים' : 'אנליטיקות'}
+        hint={
+          focus === 'funnel'
+            ? 'מתוכן נעול עד מנוי. בלי ערבוב עם מועמדות לנבחרת 88.'
+            : 'המרה, צפייה ומרצים — במספרים בלבד.'
+        }
+      />
       <section>
-        <h2 className="text-lg font-light mb-4">
-          {focus === 'funnel' ? 'משפך משתמשים חינמיים' : 'המרה'}
-        </h2>
+        <h3 className="text-lg font-light mb-4">המרה</h3>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {funnel.map((card) => (
             <div key={card.label} className="border border-white/10 rounded-2xl p-5">
-              <div className="text-xs text-white/40 mb-2">{card.label}</div>
+              <div className="text-base text-white/60 mb-2">{card.label}</div>
               <div className="text-2xl font-light">{card.value}</div>
             </div>
           ))}
@@ -928,7 +924,7 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
         <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
           {video.map((card) => (
             <div key={card.label} className="border border-white/10 rounded-2xl p-5">
-              <div className="text-xs text-white/40 mb-2">{card.label}</div>
+              <div className="text-base text-white/60 mb-2">{card.label}</div>
               <div className="text-2xl font-light">{card.value}</div>
             </div>
           ))}
@@ -939,7 +935,7 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           {lecturers.map((card) => (
             <div key={card.label} className="border border-white/10 rounded-2xl p-5">
-              <div className="text-xs text-white/40 mb-2">{card.label}</div>
+              <div className="text-base text-white/60 mb-2">{card.label}</div>
               <div className="text-2xl font-light">{card.value}</div>
             </div>
           ))}
@@ -1066,13 +1062,13 @@ function ContentPanel({
   }
 
   return (
-    <div>
-      <div className="flex items-center justify-between mb-6">
-        <p className="text-sm text-white/45">{courses.length} הרצאות</p>
+    <div className="grid gap-6">
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <OpsPageHeader title="תכני VOD" hint={`${courses.length} הרצאות. בחרו אחת לעריכה, או הוסיפו חדשה.`} />
         <button
           type="button"
           onClick={() => setEditing('new')}
-          className="px-4 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 cursor-pointer hover:bg-[#F7E7B5]"
+          className={opsPrimaryBtn}
         >
           הרצאה חדשה
         </button>
@@ -1190,147 +1186,146 @@ function CourseForm({
           })),
         });
       }}
-      className="grid gap-5 max-w-3xl"
+      className="grid gap-10 max-w-3xl"
     >
-      <button type="button" onClick={onCancel} className="text-sm text-white/45 hover:text-white text-right cursor-pointer">
-        חזרה לרשימה
-      </button>
-      <label className="block">
-        <span className="block text-xs text-white/45 mb-1">שם</span>
-        <input required value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
-      </label>
-      <label className="block">
-        <span className="block text-xs text-white/45 mb-1">כותרת משנה</span>
-        <input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} className={fieldClass} />
-      </label>
-      <label className="block">
-        <span className="block text-xs text-white/45 mb-1">תיאור</span>
-        <textarea
-          rows={4}
-          value={description}
-          onChange={(e) => setDescription(e.target.value)}
-          className={`${fieldClass} min-h-24`}
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <OpsPageHeader
+          title={course ? 'עריכת הרצאה' : 'הרצאה חדשה'}
+          hint="פרטים קודם, אחר כך הפרק והכיסוי. שמירה אחת בסוף."
         />
-      </label>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">קטגוריה</span>
-          <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className={fieldClass}>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">מרצה</span>
-          <select value={instructorId} onChange={(e) => setInstructorId(e.target.value)} className={fieldClass}>
-            {instructors.map((i) => (
-              <option key={i.id} value={i.id}>
-                {i.isFounder ? `${i.name} · מייסד` : i.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">סטטוס</span>
-          <select value={status} onChange={(e) => setStatus(e.target.value as PublishStatus)} className={fieldClass}>
-            {(Object.keys(STATUS_LABEL) as PublishStatus[]).map((key) => (
-              <option key={key} value={key}>
-                {STATUS_LABEL[key]}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">רמת גישה ברירת מחדל</span>
-          <select
-            value={accessLevel}
-            onChange={(e) => setAccessLevel(e.target.value as AccessLevel)}
-            className={fieldClass}
-          >
-            {(Object.keys(ACCESS_LABEL) as AccessLevel[]).map((key) => (
-              <option key={key} value={key}>
-                {ACCESS_LABEL[key]}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">שבוע במסע</span>
-          <select
-            value={programWeek}
-            onChange={(e) => setProgramWeek(Number(e.target.value))}
-            className={fieldClass}
-          >
-            <option value={0}>לא משויך לשבוע</option>
-            <option value={1}>שבוע 1</option>
-            <option value={2}>שבוע 2</option>
-            <option value={3}>שבוע 3</option>
-            <option value={4}>שבוע 4</option>
-          </select>
-        </label>
+        <button type="button" onClick={onCancel} className="text-base text-white/70 hover:text-white min-h-11">
+          חזרה לרשימה
+        </button>
       </div>
-      <FileUploadField
-        kind="image"
-        label="תמונת כיסוי"
-        value={coverImage}
-        onChange={setCoverImage}
-        previewAlt={title ? `תמונת כיסוי: ${title}` : 'תמונת כיסוי'}
-      />
 
-      <div className="pt-4 border-t border-white/10">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm text-white">פרקים</h2>
+      <OpsSection title="פרטים">
+        <OpsField label="שם">
+          <input required value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
+        </OpsField>
+        <OpsField label="כותרת משנה">
+          <input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} className={fieldClass} />
+        </OpsField>
+        <OpsField label="תיאור">
+          <textarea
+            rows={4}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            className={`${fieldClass} min-h-24`}
+          />
+        </OpsField>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <OpsField label="קטגוריה">
+            <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className={fieldClass}>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </OpsField>
+          <OpsField label="מרצה">
+            <select value={instructorId} onChange={(e) => setInstructorId(e.target.value)} className={fieldClass}>
+              {instructors.map((i) => (
+                <option key={i.id} value={i.id}>
+                  {i.isFounder ? `${i.name} · מייסד` : i.name}
+                </option>
+              ))}
+            </select>
+          </OpsField>
+          <OpsField label="סטטוס">
+            <select value={status} onChange={(e) => setStatus(e.target.value as PublishStatus)} className={fieldClass}>
+              {(Object.keys(STATUS_LABEL) as PublishStatus[]).map((key) => (
+                <option key={key} value={key}>
+                  {STATUS_LABEL[key]}
+                </option>
+              ))}
+            </select>
+          </OpsField>
+          <OpsField label="רמת גישה">
+            <select
+              value={accessLevel}
+              onChange={(e) => setAccessLevel(e.target.value as AccessLevel)}
+              className={fieldClass}
+            >
+              {(Object.keys(ACCESS_LABEL) as AccessLevel[]).map((key) => (
+                <option key={key} value={key}>
+                  {ACCESS_LABEL[key]}
+                </option>
+              ))}
+            </select>
+          </OpsField>
+          <OpsField label="שבוע במסע">
+            <select
+              value={programWeek}
+              onChange={(e) => setProgramWeek(Number(e.target.value))}
+              className={fieldClass}
+            >
+              <option value={0}>לא משויך לשבוע</option>
+              <option value={1}>שבוע 1</option>
+              <option value={2}>שבוע 2</option>
+              <option value={3}>שבוע 3</option>
+              <option value={4}>שבוע 4</option>
+            </select>
+          </OpsField>
+        </div>
+      </OpsSection>
+
+      <OpsSection title="פרק ראשון">
+        <div className="flex items-center justify-between">
+          <p className="text-base text-white/60">אפשר להוסיף פרקים נוספים אחרי השמירה.</p>
           <button
             type="button"
             onClick={() => setEpisodes((prev) => [...prev, emptyEpisode()])}
-            className="text-sm text-[#C8A24C] cursor-pointer min-h-11"
+            className="text-base text-[#C8A24C] min-h-11"
           >
             הוספת פרק
           </button>
         </div>
-        <div className="grid gap-4">
+        <div className="grid gap-6">
           {episodes.map((ep, idx) => (
-            <div key={ep.id || idx} className="border border-white/10 rounded-2xl p-4 grid gap-3">
-              <div className="text-xs text-white/35">פרק {idx + 1}</div>
-              <input
-                value={ep.title}
-                onChange={(e) =>
-                  setEpisodes((prev) => prev.map((item, i) => (i === idx ? { ...item, title: e.target.value } : item)))
-                }
-                placeholder="כותרת"
-                className={fieldClass}
-              />
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div key={ep.id || idx} className="grid gap-4">
+              <p className="text-base text-white/70">פרק {idx + 1}</p>
+              <OpsField label="כותרת הפרק">
                 <input
-                  type="number"
-                  value={ep.duration}
+                  value={ep.title}
                   onChange={(e) =>
-                    setEpisodes((prev) =>
-                      prev.map((item, i) => (i === idx ? { ...item, duration: Number(e.target.value) } : item))
-                    )
+                    setEpisodes((prev) => prev.map((item, i) => (i === idx ? { ...item, title: e.target.value } : item)))
                   }
                   className={fieldClass}
                 />
-                <select
-                  value={ep.accessLevel}
-                  onChange={(e) =>
-                    setEpisodes((prev) =>
-                      prev.map((item, i) =>
-                        i === idx ? { ...item, accessLevel: e.target.value as AccessLevel } : item
+              </OpsField>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <OpsField label="משך בשניות">
+                  <input
+                    type="number"
+                    value={ep.duration}
+                    onChange={(e) =>
+                      setEpisodes((prev) =>
+                        prev.map((item, i) => (i === idx ? { ...item, duration: Number(e.target.value) } : item))
                       )
-                    )
-                  }
-                  className={fieldClass}
-                >
-                  {(Object.keys(ACCESS_LABEL) as AccessLevel[]).map((key) => (
-                    <option key={key} value={key}>
-                      {ACCESS_LABEL[key]}
-                    </option>
-                  ))}
-                </select>
+                    }
+                    className={fieldClass}
+                  />
+                </OpsField>
+                <OpsField label="גישה">
+                  <select
+                    value={ep.accessLevel}
+                    onChange={(e) =>
+                      setEpisodes((prev) =>
+                        prev.map((item, i) =>
+                          i === idx ? { ...item, accessLevel: e.target.value as AccessLevel } : item
+                        )
+                      )
+                    }
+                    className={fieldClass}
+                  >
+                    {(Object.keys(ACCESS_LABEL) as AccessLevel[]).map((key) => (
+                      <option key={key} value={key}>
+                        {ACCESS_LABEL[key]}
+                      </option>
+                    ))}
+                  </select>
+                </OpsField>
               </div>
               <FileUploadField
                 kind="video"
@@ -1351,14 +1346,20 @@ function CourseForm({
             </div>
           ))}
         </div>
-      </div>
+      </OpsSection>
 
-      {error && <p className="text-sm text-rose-300">{error}</p>}
-      <button
-        type="submit"
-        disabled={pending}
-        className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer hover:bg-[#F7E7B5] disabled:opacity-60"
-      >
+      <OpsSection title="כיסוי">
+        <FileUploadField
+          kind="image"
+          label="תמונת כיסוי"
+          value={coverImage}
+          onChange={setCoverImage}
+          previewAlt={title ? `תמונת כיסוי: ${title}` : 'תמונת כיסוי'}
+        />
+      </OpsSection>
+
+      {error && <p className="text-base text-rose-300">{error}</p>}
+      <button type="submit" disabled={pending} className={`${opsPrimaryBtn} w-full sm:w-auto`}>
         {pending ? 'שומר...' : 'שמירה'}
       </button>
     </form>
@@ -1524,20 +1525,13 @@ function UsersPanel() {
         </p>
       ) : null}
 
-      <div className="border border-[#C8A24C]/25 rounded-3xl p-6 grid gap-4 max-w-3xl">
-        <div>
-          <h2 className="text-lg font-light mb-1">הוספת משתמש</h2>
-          <p className="text-sm text-white/55 font-light">
-            יצירת חשבון כניסה. אחר כך אפשר לשייך לצוות המיזם או לאשר כמרצה.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <label className="block">
-            <span className="block text-xs text-white/45 mb-1">שם</span>
+      <OpsPageHeader title="משתמשים" hint="חיפוש, סינון, ואז פעולה בכרטיס." />
+      <OpsSection title="הוספת משתמש">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl">
+          <OpsField label="שם">
             <input value={newName} onChange={(e) => setNewName(e.target.value)} className={fieldClass} />
-          </label>
-          <label className="block">
-            <span className="block text-xs text-white/45 mb-1">אימייל</span>
+          </OpsField>
+          <OpsField label="אימייל">
             <input
               type="email"
               value={newEmail}
@@ -1545,9 +1539,8 @@ function UsersPanel() {
               className={fieldClass}
               dir="ltr"
             />
-          </label>
-          <label className="block">
-            <span className="block text-xs text-white/45 mb-1">סיסמה</span>
+          </OpsField>
+          <OpsField label="סיסמה" className="sm:col-span-2">
             <input
               type="password"
               value={newPassword}
@@ -1555,17 +1548,17 @@ function UsersPanel() {
               className={fieldClass}
               dir="ltr"
             />
-          </label>
+          </OpsField>
         </div>
         <button
           type="button"
           disabled={creating}
           onClick={() => void createUser()}
-          className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
+          className={`${opsPrimaryBtn} w-full sm:w-auto`}
         >
           {creating ? 'יוצר...' : 'יצירת חשבון'}
         </button>
-      </div>
+      </OpsSection>
 
       <div className="grid gap-6 xl:grid-cols-[1.4fr_0.8fr]">
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
@@ -1666,9 +1659,8 @@ function UsersPanel() {
         ) : (
           <div className="grid gap-4 text-sm">
             <div>
-              <p className="text-[13px] uppercase tracking-[0.25em] text-[#C8A24C] mb-2">כרטיס משתמש</p>
               <h3 className="text-xl font-light">{selected.name}</h3>
-              <p className="text-white/45 mt-1 break-all">{selected.email}</p>
+              <p className="text-white/60 mt-1 break-all">{selected.email}</p>
             </div>
             <p>תפקיד: {roleLabelHe(selected.role)}</p>
             <p>מנוי: {planLabelHe(selected.subscriptionPlan)}</p>
@@ -1872,13 +1864,10 @@ function TeamStaffPanel() {
 
   return (
     <div className="grid gap-6">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">צוות ומרצים</p>
-        <h2 className="text-2xl font-light">שליטה בהרשאות פנימיות</h2>
-        <p className="text-sm text-white/45 mt-2">
-          אדמין קובע מי מרצה, מי צוות, איזה דסק, ומי חסום או מושהה. מייסד נשאר דגל נפרד.
-        </p>
-      </div>
+      <OpsPageHeader
+        title="צוות ומרצים"
+        hint="מי מרצה, מי צוות, איזה דסק, ומי חסום או מושהה. מייסד נשאר דגל נפרד."
+      />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
       <div className="flex flex-wrap gap-2">
@@ -1961,9 +1950,8 @@ function TeamStaffPanel() {
           ) : (
             <div className="grid gap-4 text-sm">
               <div>
-                <p className="text-[13px] uppercase tracking-[0.25em] text-[#C8A24C] mb-2">כרטיס צוות</p>
                 <h3 className="text-xl font-light">{selected.name}</h3>
-                <p className="text-white/45 mt-1 break-all">{selected.email}</p>
+                <p className="text-white/60 mt-1 break-all">{selected.email}</p>
               </div>
 
               <label className="grid gap-1 text-white/50">
@@ -2141,7 +2129,7 @@ function TeamMessageComposer({
 
   return (
     <div className="border-t border-white/10 pt-4 grid gap-3">
-      <p className="text-xs text-white/45">הודעה פנימית אל {lecturerName}</p>
+      <p className="text-base text-white/60">הודעה פנימית אל {lecturerName}</p>
       <input
         value={subject}
         onChange={(e) => setSubject(e.target.value)}
@@ -2203,9 +2191,12 @@ function LecturerApplicationsPanel() {
   if (error && applications.length === 0) return <p className="text-sm text-rose-300">{error}</p>;
   if (applications.length === 0) {
     return (
-      <p className="text-sm text-white/40">
-        אין בקשות כרגע. אפשר לאשר משתמש כלשונית משתמשים, בלי טופס בקשה.
-      </p>
+      <div className="grid gap-4">
+        <OpsPageHeader
+          title="בקשות מרצים"
+          hint="אין בקשות כרגע. אפשר לאשר משתמש בלשונית משתמשים, בלי טופס בקשה."
+        />
+      </div>
     );
   }
 
@@ -2216,14 +2207,15 @@ function LecturerApplicationsPanel() {
   });
 
   return (
-    <div className="grid gap-4">
+    <div className="grid gap-6">
+      <OpsPageHeader title="בקשות מרצים" hint="בקשות ממתינות קודם. הערה נשמרת עם האישור או הדחייה." />
       {error && <p className="text-sm text-rose-300">{error}</p>}
       {ordered.map((app) => (
         <article key={app.id} className="border border-white/10 rounded-2xl p-5 grid gap-3">
           <div className="flex flex-wrap items-start justify-between gap-3">
             <div>
               <h3 className="text-lg font-medium">{app.fullName}</h3>
-              <p className="text-xs text-white/45 mt-1">
+              <p className="text-base text-white/60 mt-1">
                 {app.email}
                 {app.phone ? ` · ${app.phone}` : ''}
               </p>
@@ -2278,7 +2270,7 @@ function LecturerApplicationsPanel() {
           {(app.status === 'pending' || app.status === 'more_info') && (
             <>
               <label className="block">
-                <span className="block text-xs text-white/45 mb-1">הערת אדמין (אופציונלי)</span>
+                <span className={opsLabelClass}>הערת אדמין (אופציונלי)</span>
                 <textarea
                   rows={2}
                   value={notes[app.id] ?? ''}
@@ -2360,22 +2352,21 @@ function FounderAddForm({ onCreated }: { onCreated: (founder: Instructor) => voi
   }
 
   return (
-    <div className="border border-[#C8A24C]/25 rounded-3xl p-6 grid gap-4">
-      <p className="text-sm text-white/50 font-light leading-relaxed">
+    <div className="grid gap-4 max-w-3xl">
+      <p className="text-base text-white/60 font-light leading-relaxed">
         לכל יזם: שם, תפקיד ותמונה. ביו אפשר להוסיף אחר כך.
       </p>
-      <label className="block">
-        <span className="block text-xs text-white/45 mb-1">שם</span>
-        <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
-      </label>
-      <label className="block">
-        <span className="block text-xs text-white/45 mb-1">תפקיד</span>
-        <input value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
-      </label>
-      <label className="block">
-        <span className="block text-xs text-white/45 mb-1">ביו קצר (אופציונלי)</span>
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <OpsField label="שם">
+          <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
+        </OpsField>
+        <OpsField label="תפקיד">
+          <input value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
+        </OpsField>
+      </div>
+      <OpsField label="ביו קצר (אופציונלי)">
         <textarea rows={3} value={bio} onChange={(e) => setBio(e.target.value)} className={fieldClass} />
-      </label>
+      </OpsField>
       <FileUploadField kind="image" label="תמונה" value={avatarUrl} onChange={setAvatarUrl} />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
       <div className="flex flex-wrap gap-3">
@@ -2383,15 +2374,11 @@ function FounderAddForm({ onCreated }: { onCreated: (founder: Instructor) => voi
           type="button"
           disabled={pending}
           onClick={() => void save()}
-          className="px-5 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
+          className={opsPrimaryBtn}
         >
           {pending ? 'שומר...' : 'הוספה'}
         </button>
-        <button
-          type="button"
-          onClick={() => setOpen(false)}
-          className="px-5 py-3 rounded-full border border-white/15 text-sm min-h-11 cursor-pointer"
-        >
+        <button type="button" onClick={() => setOpen(false)} className={opsGhostBtn}>
           ביטול
         </button>
       </div>
@@ -2493,10 +2480,11 @@ function FoundersPanel() {
   if (error && founders.length === 0) return <p className="text-sm text-rose-300">{error}</p>;
 
   return (
-    <div className="grid gap-4">
-      <p className="text-sm text-white/45 font-light mb-2">
-        כאן מעלים תמונות צוות, מוסיפים קישורים חיצוניים, וקובעים את סדר ההופעה בצוות המיזם. יזם חדש: שם, תפקיד ותמונה.
-      </p>
+    <div className="grid gap-6">
+      <OpsPageHeader
+        title="צוות מייסדים"
+        hint="תמונות צוות, קישורים חיצוניים, וסדר ההופעה. יזם חדש: שם, תפקיד ותמונה."
+      />
       <FounderAddForm
         onCreated={(founder) => {
           setFounders((prev) => [...prev, founder]);
@@ -2599,39 +2587,42 @@ function PaymentsPanel() {
   }, []);
 
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
-  if (rows.length === 0) {
-    return (
-      <p className="text-sm text-white/40">
-        אין רשומות עדיין. שינוי מנוי או תשלום מסלול נרשמים כאן.
-      </p>
-    );
-  }
 
   return (
-    <div className="overflow-x-auto">
-      <table className="w-full text-sm text-right">
-        <thead className="text-xs text-white/40 border-b border-white/10">
-          <tr>
-            <th className="py-3 font-normal">מתי</th>
-            <th className="py-3 font-normal">משתמש</th>
-            <th className="py-3 font-normal">מסלול</th>
-            <th className="py-3 font-normal">מקור</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y divide-white/10">
-          {rows.map((row) => (
-            <tr key={row.id}>
-              <td className="py-3 text-white/55">{row.createdAt.replace('T', ' ').slice(0, 16)}</td>
-              <td className="py-3">
-                {row.userName}
-                <span className="text-white/35"> · {row.email}</span>
-              </td>
-              <td className="py-3">{PLAN_LABEL[row.plan] || row.plan}</td>
-              <td className="py-3 text-white/55">{row.source === 'admin' ? 'אדמין' : 'משתמש'}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+    <div className="grid gap-6">
+      <OpsPageHeader
+        title="מנויים ותשלומים"
+        hint="שינוי מנוי או תשלום מסלול נרשמים כאן."
+      />
+      {rows.length === 0 ? (
+        <p className="text-base text-white/50">אין רשומות עדיין.</p>
+      ) : (
+        <div className="overflow-x-auto border border-white/10 rounded-2xl">
+          <table className="w-full text-sm text-right">
+            <thead className="text-white/60 border-b border-white/10">
+              <tr>
+                <th className="py-3 px-3 font-normal">מתי</th>
+                <th className="py-3 px-3 font-normal">משתמש</th>
+                <th className="py-3 px-3 font-normal">מסלול</th>
+                <th className="py-3 px-3 font-normal">מקור</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-white/10">
+              {rows.map((row) => (
+                <tr key={row.id}>
+                  <td className="py-3 px-3 text-white/70">{row.createdAt.replace('T', ' ').slice(0, 16)}</td>
+                  <td className="py-3 px-3">
+                    {row.userName}
+                    <span className="text-white/45"> · {row.email}</span>
+                  </td>
+                  <td className="py-3 px-3">{PLAN_LABEL[row.plan] || row.plan}</td>
+                  <td className="py-3 px-3 text-white/70">{row.source === 'admin' ? 'אדמין' : 'משתמש'}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
   );
 }
@@ -2774,10 +2765,12 @@ function TracksPanel() {
   return (
     <div className="grid gap-8">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <p className="text-sm text-white/45 font-light max-w-3xl">
-          כל מצטרפי מסלול האמיצים וההססנים, כולל שאלון, תוכנית תשלום ופעימות. סליקה:{' '}
-          {data.billingMode === 'stripe' ? 'Stripe מחובר' : 'פיילוט ידני'}. מועמדות לנבחרת 88 נשארת בלשונית נפרדת.
-        </p>
+        <OpsPageHeader
+          title="מסלולי כניסה"
+          hint={`כל מצטרפי האמיצים וההססנים, כולל שאלון ופעימות. סליקה: ${
+            data.billingMode === 'stripe' ? 'Stripe מחובר' : 'פיילוט ידני'
+          }. מועמדות לנבחרת 88 נשארת בלשונית נפרדת.`}
+        />
         <button
           type="button"
           onClick={() => exportJoinersCsv(filtered)}
@@ -2880,10 +2873,9 @@ function TracksPanel() {
           ) : (
             <div className="grid gap-5">
               <div>
-                <p className="text-[13px] uppercase tracking-[0.25em] text-[#C8A24C] mb-2">כרטיס מצטרף</p>
                 <h3 className="text-xl font-light">{selected.name}</h3>
-                <p className="text-sm text-white/45 mt-1">
-                  {trackLabel(selected.trackType)} · {selected.status}
+                <p className="text-base text-white/60 mt-1">
+                  {trackLabel(selected.trackType)} · {opsStatusHe(selected.status)}
                 </p>
               </div>
 
@@ -3092,39 +3084,35 @@ function CategoriesPanel() {
 
   return (
     <div className="grid gap-8">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">קטגוריות</p>
-        <h2 className="text-2xl font-light">ניהול קטגוריות VOD</h2>
-      </div>
+      <OpsPageHeader title="קטגוריות" hint="שם, תיאור וגישה. הסדר בטבלה הוא הסדר בספרייה." />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
-      <div className="border border-white/10 rounded-3xl p-5 grid gap-3 md:grid-cols-[1fr_1fr_auto_auto] items-end">
-        <label className="text-sm text-white/50 font-light grid gap-1">
-          שם
-          <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
-        </label>
-        <label className="text-sm text-white/50 font-light grid gap-1">
-          תיאור
-          <input value={description} onChange={(e) => setDescription(e.target.value)} className={fieldClass} />
-        </label>
-        <label className="text-sm text-white/50 font-light grid gap-1">
-          גישה
-          <select
-            value={accessLevel}
-            onChange={(e) => setAccessLevel(e.target.value as AccessLevel)}
-            className={fieldClass}
-          >
-            <option value="free">חינמי</option>
-            <option value="premium">פרימיום</option>
-            <option value="premium_88">נבחרת 88</option>
-            <option value="admin_only">אדמין בלבד</option>
-          </select>
-        </label>
+      <div className="grid gap-4 max-w-3xl">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <OpsField label="שם">
+            <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
+          </OpsField>
+          <OpsField label="תיאור">
+            <input value={description} onChange={(e) => setDescription(e.target.value)} className={fieldClass} />
+          </OpsField>
+          <OpsField label="גישה">
+            <select
+              value={accessLevel}
+              onChange={(e) => setAccessLevel(e.target.value as AccessLevel)}
+              className={fieldClass}
+            >
+              <option value="free">חינמי</option>
+              <option value="premium">פרימיום</option>
+              <option value="premium_88">נבחרת 88</option>
+              <option value="admin_only">אדמין בלבד</option>
+            </select>
+          </OpsField>
+        </div>
         <button
           type="button"
           disabled={pending || !name.trim()}
           onClick={() => void create()}
-          className="px-4 py-3 rounded-xl bg-[#C8A24C] text-black text-sm min-h-11 disabled:opacity-50"
+          className={`${opsPrimaryBtn} w-fit`}
         >
           הוספה
         </button>
@@ -3240,13 +3228,10 @@ function Premium88Panel() {
 
   return (
     <div className="grid gap-8">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">נבחרת 88</p>
-        <h2 className="text-2xl font-light">מועמדויות</h2>
-        <p className="text-sm text-white/45 mt-2 font-light">
-          מועמדויות מטופס `/application?type=88`. נפרד ממסלולי כניסה וממנוי הספרייה.
-        </p>
-      </div>
+      <OpsPageHeader
+        title="נבחרת 88"
+        hint="מועמדויות מטופס ההרשמה. נפרד ממסלולי כניסה וממנוי הספרייה."
+      />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
       <div className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
@@ -3337,10 +3322,7 @@ function AuditLogsPanel() {
 
   return (
     <div className="grid gap-6">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">יומן פעולות</p>
-        <h2 className="text-2xl font-light">פעולות רגישות באדמין</h2>
-      </div>
+      <OpsPageHeader title="יומן פעולות" hint="פעולות רגישות באדמין." />
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
         <table className="w-full text-sm text-right">
           <thead className="text-xs text-white/40 border-b border-white/10">
@@ -3463,48 +3445,43 @@ function RafflesPanel() {
   return (
     <div className="grid gap-8">
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">הגרלות</p>
-        <h2 className="text-2xl font-light">ניהול הגרלות וכרטיסים</h2>
-        <p className="text-sm text-white/45 mt-2">
-          תקנון מאושר: {data.termsApproved ? 'כן' : 'לא'} · כרטיסים ללא שיוך: {data.unassignedTickets}
-        </p>
-      </div>
+      <OpsPageHeader
+        title="הגרלות"
+        hint={`תקנון מאושר: ${data.termsApproved ? 'כן' : 'לא'} · כרטיסים ללא שיוך: ${data.unassignedTickets}`}
+      />
 
-      <div className="border border-[#C8A24C]/25 rounded-3xl p-6 grid gap-4 max-w-3xl">
-        <h3 className="text-lg font-light">הגרלה חדשה</h3>
-        <label className="grid gap-1 text-xs text-white/45">
-          שם
-          <input value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
-        </label>
-        <label className="grid gap-1 text-xs text-white/45">
-          תיאור
-          <textarea
-            rows={3}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className={fieldClass}
-          />
-        </label>
-        <label className="grid gap-1 text-xs text-white/45">
-          תאריך סיום (אופציונלי)
-          <input
-            type="datetime-local"
-            value={endsAt}
-            onChange={(e) => setEndsAt(e.target.value)}
-            className={fieldClass}
-            dir="ltr"
-          />
-        </label>
+      <OpsSection title="הגרלה חדשה">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-3xl">
+          <OpsField label="שם" className="sm:col-span-2">
+            <input value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
+          </OpsField>
+          <OpsField label="תיאור" className="sm:col-span-2">
+            <textarea
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className={fieldClass}
+            />
+          </OpsField>
+          <OpsField label="תאריך סיום (אופציונלי)">
+            <input
+              type="datetime-local"
+              value={endsAt}
+              onChange={(e) => setEndsAt(e.target.value)}
+              className={fieldClass}
+              dir="ltr"
+            />
+          </OpsField>
+        </div>
         <button
           type="button"
           disabled={busy || !title.trim()}
           onClick={() => void create()}
-          className="w-fit px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 disabled:opacity-60"
+          className={`${opsPrimaryBtn} w-fit`}
         >
           {busy ? 'יוצר...' : 'יצירת הגרלה'}
         </button>
-      </div>
+      </OpsSection>
 
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
         <table className="w-full text-sm text-right">
@@ -3529,7 +3506,7 @@ function RafflesPanel() {
               data.raffles.map((row) => (
                 <tr key={row.id}>
                   <td className="py-3 px-3">{row.title}</td>
-                  <td className="py-3 px-3 text-white/55">{row.status}</td>
+                  <td className="py-3 px-3 text-white/70">{raffleStatusHe(row.status)}</td>
                   <td className="py-3 px-3 text-white/55">{row.ticketsCount ?? 0}</td>
                   <td className="py-3 px-3 text-white/55">{row.participants ?? 0}</td>
                   <td className="py-3 px-3 text-white/55">{row.winnerName || '—'}</td>
@@ -3643,11 +3620,7 @@ function LeadsPanel() {
   return (
     <div className="grid gap-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">לידים ופניות</p>
-          <h2 className="text-2xl font-light">CRM מאוחד</h2>
-          <p className="text-sm text-white/45 mt-2">{filtered.length} רשומות</p>
-        </div>
+        <OpsPageHeader title="לידים ופניות" hint={`${filtered.length} רשומות מכל המקורות.`} />
         <button
           type="button"
           onClick={exportCsv}
@@ -3705,7 +3678,7 @@ function LeadsPanel() {
                     {row.email || '—'}
                   </td>
                   <td className="py-3 px-3 text-white/55">{row.interest || '—'}</td>
-                  <td className="py-3 px-3 text-white/55">{row.status || '—'}</td>
+                  <td className="py-3 px-3 text-white/70">{opsStatusHe(row.status)}</td>
                   <td className="py-3 px-3 text-white/45">{row.createdAt.replace('T', ' ').slice(0, 16)}</td>
                 </tr>
               ))
@@ -3737,6 +3710,7 @@ function LegalPanel() {
   const [error, setError] = useState('');
   const [message, setMessage] = useState('');
   const [saving, setSaving] = useState<string | null>(null);
+  const [doc, setDoc] = useState<'terms' | 'privacy' | 'raffle'>('terms');
 
   const load = () =>
     Promise.all([adminApi.legal(), adminApi.accessibilityReports()])
@@ -3793,99 +3767,118 @@ function LegalPanel() {
 
   return (
     <div className="grid gap-8 max-w-4xl">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">משפטי</p>
-        <h2 className="text-2xl font-light">תקנון, פרטיות והגרלות</h2>
-        <p className="text-sm text-white/45 mt-2">הטקסטים מוצגים בעמודי האתר הציבוריים.</p>
-      </div>
+      <OpsPageHeader title="משפטי" hint="מסמך אחד בכל פעם. הטקסטים מוצגים בעמודי האתר." />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-      {message ? <p className="text-sm text-emerald-300">{message}</p> : null}
+      {message ? <p className="text-sm text-[#C8A24C]">{message}</p> : null}
 
-      <section className="grid gap-3 border border-white/10 rounded-2xl p-5">
-        <h3 className="text-lg font-light">תקנון האתר</h3>
-        <textarea rows={10} value={terms} onChange={(e) => setTerms(e.target.value)} className={fieldClass} />
-        <button
-          type="button"
-          disabled={saving === 'legal_terms'}
-          onClick={() => void save('legal_terms', terms)}
-          className="w-fit px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 disabled:opacity-60"
-        >
-          {saving === 'legal_terms' ? 'שומר...' : 'שמירת תקנון'}
-        </button>
-      </section>
-
-      <section className="grid gap-3 border border-white/10 rounded-2xl p-5">
-        <h3 className="text-lg font-light">מדיניות פרטיות</h3>
-        <textarea rows={10} value={privacy} onChange={(e) => setPrivacy(e.target.value)} className={fieldClass} />
-        <button
-          type="button"
-          disabled={saving === 'legal_privacy'}
-          onClick={() => void save('legal_privacy', privacy)}
-          className="w-fit px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 disabled:opacity-60"
-        >
-          {saving === 'legal_privacy' ? 'שומר...' : 'שמירת פרטיות'}
-        </button>
-      </section>
-
-      <section className="grid gap-3 border border-white/10 rounded-2xl p-5">
-        <h3 className="text-lg font-light">תקנון הגרלות</h3>
-        <textarea rows={8} value={raffle} onChange={(e) => setRaffle(e.target.value)} className={fieldClass} />
-        <div className="flex flex-wrap gap-2">
+      <div className="flex flex-wrap gap-2">
+        {(
+          [
+            ['terms', 'תקנון'],
+            ['privacy', 'פרטיות'],
+            ['raffle', 'הגרלות'],
+          ] as const
+        ).map(([id, label]) => (
           <button
+            key={id}
             type="button"
-            disabled={saving === 'legal_raffle'}
-            onClick={() => void save('legal_raffle', raffle)}
-            className="w-fit px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 disabled:opacity-60"
+            onClick={() => setDoc(id)}
+            className={`px-4 py-2 rounded-full text-base min-h-11 border ${
+              doc === id ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/70'
+            }`}
           >
-            {saving === 'legal_raffle' ? 'שומר...' : 'שמירת תקנון הגרלות'}
+            {label}
           </button>
+        ))}
+      </div>
+
+      {doc === 'terms' ? (
+        <div className="grid gap-4">
+          <textarea rows={12} value={terms} onChange={(e) => setTerms(e.target.value)} className={fieldClass} />
           <button
             type="button"
-            disabled={saving === 'raffle_terms_approved'}
-            onClick={() => void toggleRaffleApproval()}
-            className="w-fit px-5 py-2.5 rounded-full border border-white/20 text-sm min-h-11 disabled:opacity-60"
+            disabled={saving === 'legal_terms'}
+            onClick={() => void save('legal_terms', terms)}
+            className={`${opsPrimaryBtn} w-fit`}
           >
-            {raffleTermsApproved ? 'ביטול אישור משפטי' : 'אישור משפטי להגרלות'}
+            {saving === 'legal_terms' ? 'שומר...' : 'שמירת תקנון'}
           </button>
         </div>
-        <p className="text-xs text-white/40">
-          סטטוס אישור: {raffleTermsApproved ? 'מאושר · ניתן להגריל זוכה' : 'לא מאושר · הגרלת זוכה חסומה'}
-        </p>
-      </section>
+      ) : null}
 
-      <section className="grid gap-4 border border-white/10 rounded-2xl p-5">
-        <div>
-          <h3 className="text-lg font-light">פניות נגישות</h3>
-          <p className="text-sm text-white/45 mt-1">
-            פניות מהצהרת הנגישות. יש לטפל תוך {14} ימי עסקים (עד 60 יום לפי דין).
+      {doc === 'privacy' ? (
+        <div className="grid gap-4">
+          <textarea rows={12} value={privacy} onChange={(e) => setPrivacy(e.target.value)} className={fieldClass} />
+          <button
+            type="button"
+            disabled={saving === 'legal_privacy'}
+            onClick={() => void save('legal_privacy', privacy)}
+            className={`${opsPrimaryBtn} w-fit`}
+          >
+            {saving === 'legal_privacy' ? 'שומר...' : 'שמירת פרטיות'}
+          </button>
+        </div>
+      ) : null}
+
+      {doc === 'raffle' ? (
+        <div className="grid gap-4">
+          <textarea rows={12} value={raffle} onChange={(e) => setRaffle(e.target.value)} className={fieldClass} />
+          <div className="flex flex-wrap gap-2">
+            <button
+              type="button"
+              disabled={saving === 'legal_raffle'}
+              onClick={() => void save('legal_raffle', raffle)}
+              className={`${opsPrimaryBtn} w-fit`}
+            >
+              {saving === 'legal_raffle' ? 'שומר...' : 'שמירת תקנון הגרלות'}
+            </button>
+            <button
+              type="button"
+              disabled={saving === 'raffle_terms_approved'}
+              onClick={() => void toggleRaffleApproval()}
+              className="px-5 py-3 rounded-full border border-white/20 text-base min-h-12 disabled:opacity-60"
+            >
+              {raffleTermsApproved ? 'ביטול אישור משפטי' : 'אישור משפטי להגרלות'}
+            </button>
+          </div>
+          <p className="text-base text-white/60">
+            סטטוס: {raffleTermsApproved ? 'מאושר · ניתן להגריל זוכה' : 'לא מאושר · הגרלת זוכה חסומה'}
           </p>
         </div>
+      ) : null}
+
+      <OpsSection title="פניות נגישות">
+        <p className="text-base text-white/60">
+          פניות מהצהרת הנגישות. טיפול ראשון תוך 14 ימי עסקים.
+        </p>
         {a11yReports.length === 0 ? (
-          <p className="text-sm text-white/40">אין פניות רשומות.</p>
+          <p className="text-base text-white/50">אין פניות רשומות.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-right">
+            <table className="w-full text-base text-right">
               <thead>
-                <tr className="text-white/50 border-b border-white/10">
-                  <th className="py-2 pe-3">תאריך</th>
-                  <th className="py-2 pe-3">שם</th>
-                  <th className="py-2 pe-3">דוא&quot;ל</th>
-                  <th className="py-2 pe-3">סטטוס</th>
-                  <th className="py-2">פעולה</th>
+                <tr className="text-white/60 border-b border-white/10">
+                  <th className="py-2 pe-3 font-normal">תאריך</th>
+                  <th className="py-2 pe-3 font-normal">שם</th>
+                  <th className="py-2 pe-3 font-normal">דוא&quot;ל</th>
+                  <th className="py-2 pe-3 font-normal">סטטוס</th>
+                  <th className="py-2 font-normal">פעולה</th>
                 </tr>
               </thead>
               <tbody>
                 {a11yReports.map((report) => (
                   <tr key={report.id} className="border-b border-white/5 align-top">
-                    <td className="py-3 pe-3 whitespace-nowrap">{new Date(report.createdAt).toLocaleDateString('he-IL')}</td>
+                    <td className="py-3 pe-3 whitespace-nowrap">{formatOpsDate(report.createdAt)}</td>
                     <td className="py-3 pe-3">{report.fullName}</td>
                     <td className="py-3 pe-3" dir="ltr">{report.email}</td>
-                    <td className="py-3 pe-3">{report.status}</td>
+                    <td className="py-3 pe-3">
+                      {report.status === 'open' ? 'פתוח' : report.status === 'in_progress' ? 'בטיפול' : 'נסגר'}
+                    </td>
                     <td className="py-3">
                       {report.status !== 'resolved' ? (
                         <button
                           type="button"
-                          className="px-3 py-1.5 rounded-full border border-white/20 text-xs min-h-9"
+                          className="px-3 py-2 rounded-full border border-white/20 text-sm min-h-11"
                           onClick={() => {
                             void adminApi
                               .updateAccessibilityReport(report.id, {
@@ -3898,7 +3891,7 @@ function LegalPanel() {
                           {report.status === 'open' ? 'בטיפול' : 'סגור'}
                         </button>
                       ) : (
-                        <span className="text-white/40 text-xs">נסגר</span>
+                        <span className="text-white/50 text-sm">נסגר</span>
                       )}
                     </td>
                   </tr>
@@ -3907,7 +3900,7 @@ function LegalPanel() {
             </table>
           </div>
         )}
-      </section>
+      </OpsSection>
     </div>
   );
 }
@@ -3919,6 +3912,7 @@ function WebinarPanel() {
   const [saving, setSaving] = useState(false);
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'partial' | 'complete' | 'waitlist'>('all');
+  const [showMore, setShowMore] = useState(false);
 
   const load = () =>
     adminApi
@@ -3961,9 +3955,10 @@ function WebinarPanel() {
   });
 
   const statusLabel = (status: string) => {
-    if (status === 'partial') return 'Partial';
-    if (status === 'complete' || status === 'new') return 'Complete';
-    if (status === 'waitlist') return 'Waitlist';
+    if (status === 'partial') return 'חלקי';
+    if (status === 'complete' || status === 'new') return 'הושלם';
+    if (status === 'waitlist') return 'רשימת המתנה';
+    if (status === 'all') return 'הכל';
     return status;
   };
 
@@ -3992,211 +3987,218 @@ function WebinarPanel() {
   return (
     <div className="grid gap-8 max-w-5xl">
       <div className="flex flex-wrap items-end justify-between gap-4">
-        <div>
-          <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">וובינר</p>
-          <h2 className="text-2xl font-light">הגדרות ולידים</h2>
-          <p className="text-sm text-white/45 mt-2">
-            {data?.totalRegistrations ?? 0} נרשמים ·{' '}
-            <a href="/webinar" target="_blank" rel="noreferrer" className="text-[#C8A24C] hover:underline">
-              צפייה בדף
-            </a>
-          </p>
-        </div>
-        <button
-          type="button"
-          onClick={() => void saveConfig()}
-          disabled={saving}
-          className="px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 disabled:opacity-60"
-        >
-          {saving ? 'שומר…' : 'שמירת הגדרות'}
-        </button>
+        <OpsPageHeader
+          title="וובינר"
+          hint={`${data?.totalRegistrations ?? 0} נרשמים. שינויים נשמרים בכפתור הזהוב.`}
+        />
+        <a href="/webinar" target="_blank" rel="noreferrer" className={`${opsGhostBtn} text-sm`}>
+          צפייה בדף
+        </a>
       </div>
 
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
       {data?.funnel ? (
-        <section className="grid gap-3 border border-white/10 rounded-2xl p-5">
-          <h3 className="text-lg font-light">משפך וובינר</h3>
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
+        <section className="grid gap-3">
+          <h3 className="text-lg font-light">משפך</h3>
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
             {[
               ['צפיות', data.funnel.pageViews],
-              ['טופס ב-view', data.funnel.formViews],
-              ['שלב A', data.funnel.stepACompleted],
+              ['טופס נצפה', data.funnel.formViews],
+              ['שלב ראשון', data.funnel.stepACompleted],
               ['השלמה', data.funnel.completed],
               ['יומן', data.funnel.calendarClicks],
               ['וואטסאפ', data.funnel.whatsappClicks],
-              ['Partial', data.funnel.partialLeads],
-              ['Waitlist', data.funnel.waitlistLeads],
+              ['חלקי', data.funnel.partialLeads],
+              ['רשימת המתנה', data.funnel.waitlistLeads],
             ].map(([label, value]) => (
               <div key={String(label)} className="rounded-xl border border-white/10 p-3">
-                <p className="text-white/40 text-xs">{label}</p>
-                <p className="text-xl font-light">{value}</p>
+                <p className="text-white/60 text-base">{label}</p>
+                <p className="text-xl font-light tabular-nums">{value}</p>
               </div>
             ))}
           </div>
         </section>
       ) : null}
 
-      <section className="grid gap-4 border border-white/10 rounded-2xl p-5">
-        <h3 className="text-lg font-light">פרטי הוובינר</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <label className="grid gap-1 text-sm">
-            <span className="text-white/50">כותרת</span>
+      <OpsSection title="פרטים">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <OpsField label="כותרת" className="sm:col-span-2">
             <input value={config.title} onChange={(e) => updateConfig('title', e.target.value)} className={fieldClass} />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-white/50">תאריך (DD.MM.YYYY)</span>
+          </OpsField>
+          <OpsField label="תאריך">
             <input value={config.date} onChange={(e) => updateConfig('date', e.target.value)} className={fieldClass} />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-white/50">שעה</span>
+          </OpsField>
+          <OpsField label="שעה">
             <input value={config.time} onChange={(e) => updateConfig('time', e.target.value)} className={fieldClass} />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-white/50">משך (דקות)</span>
+          </OpsField>
+          <OpsField label="משך בדקות">
             <input
               type="number"
               value={config.durationMinutes}
               onChange={(e) => updateConfig('durationMinutes', Number(e.target.value) || 90)}
               className={fieldClass}
             />
-          </label>
-          <label className="grid gap-1 text-sm md:col-span-2">
-            <span className="text-white/50">מיקום</span>
+          </OpsField>
+          <OpsField label="מיקום">
             <input value={config.location} onChange={(e) => updateConfig('location', e.target.value)} className={fieldClass} />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-white/50">עלות (תווית)</span>
+          </OpsField>
+          <OpsField label="תווית עלות">
             <input value={config.costLabel} onChange={(e) => updateConfig('costLabel', e.target.value)} className={fieldClass} />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-white/50">מקומות (תווית)</span>
+          </OpsField>
+          <OpsField label="תווית מקומות">
             <input value={config.spotsLabel} onChange={(e) => updateConfig('spotsLabel', e.target.value)} className={fieldClass} />
-          </label>
-          <label className="grid gap-1 text-sm md:col-span-2">
-            <span className="text-white/50">קישור קבוצת וואטסאפ (אופציונלי)</span>
+          </OpsField>
+        </div>
+      </OpsSection>
+
+      <OpsSection title="קישורים">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <OpsField label="קבוצת וואטסאפ (אופציונלי)" className="sm:col-span-2">
             <input
               value={config.whatsappGroupUrl}
               onChange={(e) => updateConfig('whatsappGroupUrl', e.target.value)}
               className={fieldClass}
               dir="ltr"
             />
-          </label>
-          <label className="grid gap-1 text-sm md:col-span-2">
-            <span className="text-white/50">קישור Zoom</span>
+          </OpsField>
+          <OpsField label="קישור זום" className="sm:col-span-2">
             <input value={config.zoomLink} onChange={(e) => updateConfig('zoomLink', e.target.value)} className={fieldClass} dir="ltr" />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-white/50">מקסימום מקומות (0 = ללא הגבלה)</span>
+          </OpsField>
+        </div>
+      </OpsSection>
+
+      <OpsSection title="הרשמה">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <OpsField label="מקסימום מקומות (0 = בלי הגבלה)">
             <input
               type="number"
               value={config.maxSpots}
               onChange={(e) => updateConfig('maxSpots', Number(e.target.value) || 0)}
               className={fieldClass}
             />
-          </label>
-          <label className="flex items-center gap-3 text-sm">
-            <input type="checkbox" checked={config.showRegistrationCount} onChange={(e) => updateConfig('showRegistrationCount', e.target.checked)} className="accent-[#C8A24C]" />
-            <span>הצג מונה נרשמים</span>
-          </label>
-          <label className="flex items-center gap-3 text-sm">
-            <input type="checkbox" checked={config.showSpotsRemaining} onChange={(e) => updateConfig('showSpotsRemaining', e.target.checked)} className="accent-[#C8A24C]" />
-            <span>הצג מקומות שנותרו</span>
-          </label>
-          <label className="flex items-center gap-3 text-sm md:col-span-2">
-            <input type="checkbox" checked={config.abTestEnabled} onChange={(e) => updateConfig('abTestEnabled', e.target.checked)} className="accent-[#C8A24C]" />
-            <span>A/B כותרת (Variant B)</span>
-          </label>
-          <label className="grid gap-1 text-sm md:col-span-2">
-            <span className="text-white/50">כותרת Variant B</span>
-            <input value={config.heroHeadlineVariantB} onChange={(e) => updateConfig('heroHeadlineVariantB', e.target.value)} className={fieldClass} />
-          </label>
-          <label className="grid gap-1 text-sm md:col-span-2">
-            <span className="text-white/50">Social proof (JSON)</span>
-            <textarea
-              value={JSON.stringify(config.socialProofQuotes, null, 2)}
-              onChange={(e) => {
-                try {
-                  const parsed = JSON.parse(e.target.value) as WebinarConfig['socialProofQuotes'];
-                  updateConfig('socialProofQuotes', parsed);
-                } catch {
-                  /* keep editing */
-                }
-              }}
-              rows={6}
-              className={`${fieldClass} font-mono text-xs`}
-              dir="ltr"
-            />
-          </label>
-          <label className="flex items-center gap-3 text-sm md:col-span-2">
-            <input
-              type="checkbox"
-              checked={config.enabled}
-              onChange={(e) => updateConfig('enabled', e.target.checked)}
-              className="accent-[#C8A24C]"
-            />
-            <span>הרשמה פתוחה</span>
-          </label>
+          </OpsField>
+          <div className="grid gap-3 content-end">
+            <label className="flex items-center gap-3 text-base min-h-11">
+              <input type="checkbox" checked={config.showRegistrationCount} onChange={(e) => updateConfig('showRegistrationCount', e.target.checked)} className="accent-[#C8A24C]" />
+              <span>הצגת מונה נרשמים</span>
+            </label>
+            <label className="flex items-center gap-3 text-base min-h-11">
+              <input type="checkbox" checked={config.showSpotsRemaining} onChange={(e) => updateConfig('showSpotsRemaining', e.target.checked)} className="accent-[#C8A24C]" />
+              <span>הצגת מקומות שנותרו</span>
+            </label>
+            <label className="flex items-center gap-3 text-base min-h-11">
+              <input
+                type="checkbox"
+                checked={config.enabled}
+                onChange={(e) => updateConfig('enabled', e.target.checked)}
+                className="accent-[#C8A24C]"
+              />
+              <span>הרשמה פתוחה</span>
+            </label>
+          </div>
         </div>
-      </section>
+      </OpsSection>
 
-      <section className="grid gap-4 border border-white/10 rounded-2xl p-5">
-        <h3 className="text-lg font-light">מובילי הוובינר</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <label className="grid gap-1 text-sm">
-            <span className="text-white/50">שם מוביל ראשי</span>
-            <input
-              value={config.leaderPrimaryName}
-              onChange={(e) => updateConfig('leaderPrimaryName', e.target.value)}
-              className={fieldClass}
-            />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-white/50">תפקיד מוביל ראשי</span>
-            <input
-              value={config.leaderPrimaryTitle}
-              onChange={(e) => updateConfig('leaderPrimaryTitle', e.target.value)}
-              className={fieldClass}
-            />
-          </label>
-          <label className="grid gap-1 text-sm md:col-span-2">
-            <span className="text-white/50">תיאור מוביל ראשי</span>
-            <textarea
-              value={config.leaderPrimaryBio}
-              onChange={(e) => updateConfig('leaderPrimaryBio', e.target.value)}
-              rows={3}
-              className={fieldClass}
-            />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-white/50">שם מוביל/ה שני/ה</span>
-            <input
-              value={config.leaderSecondaryName}
-              onChange={(e) => updateConfig('leaderSecondaryName', e.target.value)}
-              className={fieldClass}
-            />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-white/50">תפקיד מוביל/ה שני/ה</span>
-            <input
-              value={config.leaderSecondaryTitle}
-              onChange={(e) => updateConfig('leaderSecondaryTitle', e.target.value)}
-              className={fieldClass}
-            />
-          </label>
-          <label className="grid gap-1 text-sm md:col-span-2">
-            <span className="text-white/50">תיאור מוביל/ה שני/ה</span>
-            <textarea
-              value={config.leaderSecondaryBio}
-              onChange={(e) => updateConfig('leaderSecondaryBio', e.target.value)}
-              rows={3}
-              className={fieldClass}
-            />
-          </label>
-        </div>
-      </section>
+      <div>
+        <button
+          type="button"
+          aria-expanded={showMore}
+          onClick={() => setShowMore((open) => !open)}
+          className="text-base text-white/70 hover:text-white min-h-11"
+        >
+          {showMore ? 'הסתרת הגדרות נוספות' : 'עוד הגדרות'}
+        </button>
+      </div>
 
-      <section className="grid gap-4 border border-white/10 rounded-2xl p-5">
+      {showMore ? (
+        <>
+          <OpsSection title="מובילים">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <OpsField label="שם מוביל ראשי">
+                <input
+                  value={config.leaderPrimaryName}
+                  onChange={(e) => updateConfig('leaderPrimaryName', e.target.value)}
+                  className={fieldClass}
+                />
+              </OpsField>
+              <OpsField label="תפקיד מוביל ראשי">
+                <input
+                  value={config.leaderPrimaryTitle}
+                  onChange={(e) => updateConfig('leaderPrimaryTitle', e.target.value)}
+                  className={fieldClass}
+                />
+              </OpsField>
+              <OpsField label="תיאור מוביל ראשי" className="sm:col-span-2">
+                <textarea
+                  value={config.leaderPrimaryBio}
+                  onChange={(e) => updateConfig('leaderPrimaryBio', e.target.value)}
+                  rows={3}
+                  className={fieldClass}
+                />
+              </OpsField>
+              <OpsField label="שם מוביל/ה שני/ה">
+                <input
+                  value={config.leaderSecondaryName}
+                  onChange={(e) => updateConfig('leaderSecondaryName', e.target.value)}
+                  className={fieldClass}
+                />
+              </OpsField>
+              <OpsField label="תפקיד מוביל/ה שני/ה">
+                <input
+                  value={config.leaderSecondaryTitle}
+                  onChange={(e) => updateConfig('leaderSecondaryTitle', e.target.value)}
+                  className={fieldClass}
+                />
+              </OpsField>
+              <OpsField label="תיאור מוביל/ה שני/ה" className="sm:col-span-2">
+                <textarea
+                  value={config.leaderSecondaryBio}
+                  onChange={(e) => updateConfig('leaderSecondaryBio', e.target.value)}
+                  rows={3}
+                  className={fieldClass}
+                />
+              </OpsField>
+            </div>
+          </OpsSection>
+          <OpsSection title="כותרת חלופית והמלצות">
+            <label className="flex items-center gap-3 text-base min-h-11">
+              <input type="checkbox" checked={config.abTestEnabled} onChange={(e) => updateConfig('abTestEnabled', e.target.checked)} className="accent-[#C8A24C]" />
+              <span>הפעלת כותרת חלופית</span>
+            </label>
+            <OpsField label="כותרת חלופית">
+              <input value={config.heroHeadlineVariantB} onChange={(e) => updateConfig('heroHeadlineVariantB', e.target.value)} className={fieldClass} />
+            </OpsField>
+            <OpsField label="ציטוטי המלצה (מבנה נתונים)">
+              <textarea
+                value={JSON.stringify(config.socialProofQuotes, null, 2)}
+                onChange={(e) => {
+                  try {
+                    const parsed = JSON.parse(e.target.value) as WebinarConfig['socialProofQuotes'];
+                    updateConfig('socialProofQuotes', parsed);
+                  } catch {
+                    /* keep editing */
+                  }
+                }}
+                rows={6}
+                className={`${fieldClass} font-mono text-sm`}
+                dir="ltr"
+              />
+            </OpsField>
+          </OpsSection>
+        </>
+      ) : null}
+
+      <button
+        type="button"
+        onClick={() => void saveConfig()}
+        disabled={saving}
+        className={`${opsPrimaryBtn} w-fit`}
+      >
+        {saving ? 'שומר…' : 'שמירה'}
+      </button>
+
+      <section className="grid gap-4">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <h3 className="text-lg font-light">נרשמים לוובינר</h3>

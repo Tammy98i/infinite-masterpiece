@@ -59,3 +59,52 @@ export function formatOpsDate(iso?: string | null): string {
 export function isPayingPlan(plan?: string | null): boolean {
   return plan === 'monthly' || plan === 'annual' || plan === 'premium_88';
 }
+
+export function raffleStatusHe(status?: string | null): string {
+  switch (status) {
+    case 'open':
+      return 'פתוחה';
+    case 'drawn':
+      return 'הוגרל זוכה';
+    case 'draft':
+      return 'טיוטה';
+    case 'closed':
+      return 'סגורה';
+    default:
+      return status || '—';
+  }
+}
+
+export function opsStatusHe(status?: string | null): string {
+  switch (status) {
+    case 'partial':
+      return 'חלקי';
+    case 'complete':
+    case 'completed':
+      return 'הושלם';
+    case 'waitlist':
+      return 'רשימת המתנה';
+    case 'new':
+      return 'חדש';
+    case 'pending':
+      return 'ממתין';
+    case 'paid':
+      return 'שולם';
+    case 'failed':
+      return 'נכשל';
+    case 'due':
+      return 'לחיוב';
+    case 'open':
+      return 'פתוח';
+    case 'drawn':
+      return 'הוגרל';
+    case 'closed':
+      return 'סגור';
+    case 'approved':
+      return 'אושר';
+    case 'rejected':
+      return 'נדחה';
+    default:
+      return status || '—';
+  }
+}
