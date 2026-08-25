@@ -49,6 +49,7 @@ Health: `GET /api/health`
 - [`docs/PRODUCTION-LAUNCH-PLAN.md`](docs/PRODUCTION-LAUNCH-PLAN.md) — 3 שבועות
 - [`docs/PRODUCTION-A11Y-CHECKLIST.md`](docs/PRODUCTION-A11Y-CHECKLIST.md)
 - [`docs/A11Y-OPERATIONS.md`](docs/A11Y-OPERATIONS.md)
+- [`docs/SUPABASE-AUTH.md`](docs/SUPABASE-AUTH.md) — התחברות אופציונלית דרך Supabase
 
 ## מבנה
 
