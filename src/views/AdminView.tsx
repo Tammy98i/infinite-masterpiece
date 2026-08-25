@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useMemo, useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { OnboardingCenterView } from './admin/OnboardingCenterView';
 import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/captions';
@@ -8,6 +8,8 @@ import type { LecturerApplication } from '../api/lecturer';
 import type { AccessLevel, Category, Course, Instructor, PublishStatus } from '../types';
 import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
+import { useConfirm } from '../components/ops/ConfirmDialog';
+import { formatOpsDate, isPayingPlan, planLabelHe, roleLabelHe } from '../utils/opsLabels';
 
 type Tab =
   | 'overview'
@@ -39,26 +41,34 @@ type NavItem = {
 };
 
 const NAV_ITEMS: NavItem[] = [
-  { id: 'overview', label: 'סקירה', ready: true },
+  { id: 'overview', label: 'מה צריך ממך עכשיו', ready: true },
   { id: 'users', label: 'משתמשים', ready: true },
   { id: 'payments', label: 'מנויים ותשלומים', ready: true },
-  { id: 'tracks', label: 'מסלולי כניסה', ready: true, badge: 'חדש' },
+  { id: 'tracks', label: 'מסלולי כניסה', ready: true },
   { id: 'content', label: 'תכני VOD', ready: true },
   { id: 'categories', label: 'קטגוריות', ready: true },
   { id: 'founders', label: 'צוות מייסדים', ready: true },
-  { id: 'team', label: 'צוות ומרצים', ready: true, badge: 'חדש' },
+  { id: 'team', label: 'צוות ומרצים', ready: true },
   { id: 'lecturers', label: 'בקשות מרצים', ready: true },
   { id: 'premium88', label: 'נבחרת 88', ready: true },
   { id: 'funnel', label: 'משפך חינמיים', ready: true },
   { id: 'analytics', label: 'אנליטיקות', ready: true },
   { id: 'raffles', label: 'הגרלות', ready: true },
   { id: 'leads', label: 'לידים ופניות', ready: true },
-  { id: 'webinar', label: 'וובינר', ready: true, badge: 'חדש' },
-  { id: 'notifications', label: 'התראות', ready: true },
+  { id: 'webinar', label: 'וובינר', ready: true },
+  { id: 'notifications', label: 'תור פעולות', ready: true },
   { id: 'settings', label: 'הגדרות', ready: true },
   { id: 'legal', label: 'משפטי', ready: true },
   { id: 'audit', label: 'יומן פעולות', ready: true },
   { id: 'onboarding', label: 'הדרכות', ready: true },
+];
+
+const NAV_GROUPS: { id: string; label: string; tabIds: Tab[] }[] = [
+  { id: 'today', label: 'היום', tabIds: ['overview'] },
+  { id: 'people', label: 'אנשים', tabIds: ['users', 'team', 'lecturers'] },
+  { id: 'money', label: 'כסף', tabIds: ['payments', 'tracks', 'raffles'] },
+  { id: 'content', label: 'תוכן', tabIds: ['content', 'categories', 'founders'] },
+  { id: 'site', label: 'אתר', tabIds: ['webinar', 'leads', 'funnel', 'premium88', 'analytics', 'notifications', 'settings', 'legal', 'audit', 'onboarding'] },
 ];
 
 const STATUS_LABEL: Record<PublishStatus, string> = {
@@ -111,10 +121,21 @@ export function AdminView() {
   const { user, isAdmin, setView, categories, instructors, reloadCatalog } = useApp();
   const [tab, setTab] = useState<Tab>('overview');
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [openGroups, setOpenGroups] = useState<Record<string, boolean>>({ today: true });
 
   const staffDesk = user.staffDesk || '';
   const allowedTabs = staffDesk && STAFF_DESK_TABS[staffDesk] ? STAFF_DESK_TABS[staffDesk] : null;
   const visibleNav = allowedTabs ? NAV_ITEMS.filter((item) => allowedTabs.includes(item.id)) : NAV_ITEMS;
+  const navGroups = useMemo(
+    () =>
+      NAV_GROUPS.map((group) => ({
+        ...group,
+        items: group.tabIds
+          .map((id) => visibleNav.find((item) => item.id === id))
+          .filter((item): item is NavItem => Boolean(item)),
+      })).filter((group) => group.items.length > 0),
+    [visibleNav]
+  );
 
   useEffect(() => {
     if (isAdmin) trackEvent('admin_opened_dashboard');
@@ -125,6 +146,13 @@ export function AdminView() {
       setTab(allowedTabs[0] || 'overview');
     }
   }, [allowedTabs, tab]);
+
+  useEffect(() => {
+    const group = NAV_GROUPS.find((item) => item.tabIds.includes(tab));
+    if (group) {
+      setOpenGroups((prev) => ({ ...prev, [group.id]: true }));
+    }
+  }, [tab]);
 
   if (!isAdmin) {
     return (
@@ -161,31 +189,53 @@ export function AdminView() {
         className={`w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm min-h-11 text-right transition-colors ${
           active
             ? 'bg-[#C8A24C]/15 text-[#F7E7B5] border border-[#C8A24C]/40'
-            : 'text-white/60 hover:text-white hover:bg-white/[0.04] border border-transparent'
+            : 'text-white/70 hover:text-white hover:bg-white/[0.04] border border-transparent'
         }`}
       >
         <span className="font-light">{item.label}</span>
         {item.badge ? (
-          <span className="text-[10px] tracking-wide text-[#C8A24C] border border-[#C8A24C]/40 rounded-full px-2 py-0.5">
+          <span className="text-xs tracking-wide text-[#C8A24C] border border-[#C8A24C]/40 rounded-full px-2 py-0.5">
             {item.badge}
           </span>
         ) : !item.ready ? (
-          <span className="text-[10px] text-white/30">בקרוב</span>
+          <span className="text-xs text-white/40">בקרוב</span>
         ) : null}
       </button>
     );
   };
 
+  const renderGroupedNav = () => (
+    <nav className="p-3 grid gap-3 content-start">
+      {navGroups.map((group) => {
+        const expanded = openGroups[group.id] !== false && (openGroups[group.id] || group.items.some((item) => item.id === tab) || group.id === 'today');
+        return (
+          <div key={group.id}>
+            <button
+              type="button"
+              aria-expanded={expanded}
+              onClick={() => setOpenGroups((prev) => ({ ...prev, [group.id]: !expanded }))}
+              className="w-full flex items-center justify-between px-3 py-2 text-sm text-white/55 min-h-11 hover:text-white"
+            >
+              <span>{group.label}</span>
+              <span aria-hidden className="text-white/35">{expanded ? '▾' : '◂'}</span>
+            </button>
+            {expanded ? <div className="grid gap-1">{group.items.map(navButton)}</div> : null}
+          </div>
+        );
+      })}
+    </nav>
+  );
+
   return (
-    <div className="min-h-screen bg-[#050505] text-white text-right">
+    <div className="min-h-screen bg-[#050505] text-white text-right" dir="rtl">
       <div className="flex min-h-screen">
         <aside className="hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
           <div className="p-5 border-b border-white/10">
-            <p className="text-[11px] uppercase tracking-[0.28em] text-[#C8A24C] mb-2">ניהול</p>
+            <p className="text-sm tracking-[0.18em] text-[#C8A24C] mb-2">ניהול</p>
             <h1 className="text-xl font-light">לוח בקרה</h1>
-            <p className="text-xs text-white/40 mt-2 font-light truncate">{user.name}</p>
+            <p className="text-sm text-white/50 mt-2 font-light truncate">{user.name}</p>
           </div>
-          <nav className="flex-1 p-3 grid gap-1 content-start">{visibleNav.map(navButton)}</nav>
+          <div className="flex-1">{renderGroupedNav()}</div>
           <div className="p-4 border-t border-white/10">
             <button
               type="button"
@@ -204,15 +254,16 @@ export function AdminView() {
                 type="button"
                 className="lg:hidden px-3 py-2 rounded-xl border border-white/15 text-sm min-h-11"
                 onClick={() => setMobileNavOpen((open) => !open)}
+                aria-expanded={mobileNavOpen}
               >
-                תפריט
+                מסכים
               </button>
               <div className="min-w-0">
                 <p className="text-sm text-white/70 font-light truncate">
                   שלום, {user.name.split(' ')[0] || 'אדמין'}
                 </p>
-                <p className="text-xs text-white/35">
-                  {staffDesk ? `צוות · ${STAFF_DESK_LABEL[staffDesk] || staffDesk}` : 'Super Admin'}
+                <p className="text-sm text-white/50">
+                  {staffDesk ? `צוות · ${STAFF_DESK_LABEL[staffDesk] || staffDesk}` : 'מנהל/ת ראשי/ת'}
                 </p>
               </div>
             </div>
@@ -226,23 +277,16 @@ export function AdminView() {
           </header>
 
           {mobileNavOpen ? (
-            <div className="lg:hidden border-b border-white/10 bg-[#080808] p-3 grid gap-1">
-              {visibleNav.map(navButton)}
-            </div>
+            <div className="lg:hidden border-b border-white/10 bg-[#080808]">{renderGroupedNav()}</div>
           ) : null}
 
           <main className="px-4 sm:px-6 lg:px-8 py-8 pb-24 max-w-7xl">
             {staffDesk ? (
-              <p className="text-xs text-[#C8A24C]/80 mb-4">
+              <p className="text-sm text-[#C8A24C]/90 mb-4">
                 מצב צוות מוגבל: {STAFF_DESK_LABEL[staffDesk] || staffDesk}. גישה מלאה רק לאדמין ראשי.
               </p>
             ) : null}
-            {tab === 'overview' && (
-              <div className="grid gap-10">
-                <ReadinessPanel />
-                <OverviewPanel onNavigate={goTab} />
-              </div>
-            )}
+            {tab === 'overview' && <OverviewPanel onNavigate={goTab} staffDesk={staffDesk} />}
             {tab === 'content' && (
               <ContentPanel
                 categories={categories}
@@ -281,7 +325,13 @@ const NOTIF_SEVERITY_LABEL: Record<AdminNotification['severity'], string> = {
   low: 'מידע',
 };
 
-function NotificationsPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
+function NotificationsPanel({
+  onNavigate,
+  embedded = false,
+}: {
+  onNavigate: (tab: Tab) => void;
+  embedded?: boolean;
+}) {
   const [items, setItems] = useState<AdminNotification[]>([]);
   const [high, setHigh] = useState(0);
   const [error, setError] = useState('');
@@ -302,28 +352,39 @@ function NotificationsPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) 
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
 
   return (
-    <div className="grid gap-6 max-w-3xl">
+    <div className={embedded ? 'grid gap-4' : 'grid gap-6 max-w-3xl'}>
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">התראות</p>
-          <h2 className="text-2xl font-light">תור פעולות לטיפול</h2>
-          <p className="text-sm text-white/45 mt-2">
-            סיכום אוטומטי מהמערכת. שליחה במייל או וואטסאפ תגיע בשלב הבא.
-            {high > 0 ? ` · ${high} דחופות` : ''}
-          </p>
+          {embedded ? (
+            <>
+              <h3 className="text-lg font-light">תור פעולות</h3>
+              <p className="text-sm text-white/55 mt-1">
+                {high > 0 ? `${high} דחופות לטיפול` : 'מה שהמערכת זיהתה עכשיו'}
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-sm tracking-[0.18em] text-[#C8A24C] mb-2">היום</p>
+              <h2 className="text-2xl font-light">תור פעולות לטיפול</h2>
+              <p className="text-sm text-white/55 mt-2">
+                סיכום אוטומטי מהמערכת.
+                {high > 0 ? ` · ${high} דחופות` : ''}
+              </p>
+            </>
+          )}
         </div>
         <button
           type="button"
           onClick={() => void load()}
-          className="px-4 py-2 rounded-full border border-white/15 text-xs min-h-11 hover:border-white/40"
+          className="px-4 py-2 rounded-full border border-white/15 text-sm min-h-11 hover:border-white/40"
         >
           רענון
         </button>
       </div>
 
       {items.length === 0 ? (
-        <div className="border border-white/10 rounded-2xl p-8 text-sm text-white/45">
-          אין פריטים לטיפול כרגע. המערכת תציג כאן פעימות לחיוב, בקשות ממתינות, לידים חדשים ועוד.
+        <div className="border border-white/10 rounded-2xl p-8 text-base text-white/55">
+          אין פריטים לטיפול כרגע. כשתהיה בקשה, תשלום שנכשל או הרצאה לבדיקה — זה יופיע כאן.
         </div>
       ) : (
         <ul className="grid gap-3">
@@ -332,25 +393,35 @@ function NotificationsPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) 
               <div className="min-w-0">
                 <div className="flex flex-wrap items-center gap-2 mb-1">
                   <span
-                    className={`text-[11px] ${
+                    className={`inline-flex items-center gap-2 text-sm ${
                       item.severity === 'high'
                         ? 'text-rose-300'
                         : item.severity === 'medium'
                           ? 'text-[#C8A24C]'
-                          : 'text-white/40'
+                          : 'text-white/55'
                     }`}
                   >
+                    <span
+                      className={`w-2 h-2 rounded-full ${
+                        item.severity === 'high'
+                          ? 'bg-rose-400'
+                          : item.severity === 'medium'
+                            ? 'bg-[#C8A24C]'
+                            : 'bg-white/40'
+                      }`}
+                      aria-hidden
+                    />
                     {NOTIF_SEVERITY_LABEL[item.severity]}
                   </span>
-                  <span className="text-[11px] text-white/30">{item.count}</span>
+                  <span className="text-sm text-white/45">{item.count}</span>
                 </div>
                 <h3 className="text-base font-light">{item.title}</h3>
-                <p className="text-sm text-white/50 mt-1">{item.detail}</p>
+                <p className="text-sm text-white/55 mt-1">{item.detail}</p>
               </div>
               <button
                 type="button"
                 onClick={() => onNavigate(item.tab as Tab)}
-                className="px-4 py-2 rounded-full bg-[#C8A24C] text-black text-xs min-h-11 shrink-0"
+                className="px-4 py-2 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 shrink-0"
               >
                 מעבר לטיפול
               </button>
@@ -540,10 +611,11 @@ function ReadinessPanel() {
   );
 }
 
-function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
+function OverviewPanel({ onNavigate, staffDesk }: { onNavigate: (tab: Tab) => void; staffDesk: string }) {
   const [data, setData] = useState<AdminOverview | null>(null);
   const [analytics, setAnalytics] = useState<AdminAnalytics | null>(null);
   const [error, setError] = useState('');
+  const [showMore, setShowMore] = useState(false);
 
   useEffect(() => {
     Promise.all([adminApi.overview(), adminApi.analytics()])
@@ -555,9 +627,40 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
   }, []);
 
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-white/40">טוען...</p>;
+  if (!data) return <p className="text-sm text-white/50">טוען...</p>;
 
-  const cards = [
+  const taskCards = [
+    {
+      id: 'pending',
+      label: 'הרצאות ממתינות לאישור',
+      value: data.pending,
+      tab: 'content' as Tab,
+    },
+    {
+      id: 'apps',
+      label: 'בקשות מרצים',
+      value: data.applicationsPending,
+      tab: 'lecturers' as Tab,
+    },
+    {
+      id: 'failed',
+      label: 'תשלומים שנכשלו',
+      value: data.failedPayments ?? 0,
+      tab: 'tracks' as Tab,
+    },
+    {
+      id: 'due',
+      label: 'לחיוב עכשיו',
+      value: data.dueInstallments ?? 0,
+      tab: 'tracks' as Tab,
+    },
+  ].filter((card) => {
+    if (!staffDesk) return true;
+    const allowed = STAFF_DESK_TABS[staffDesk];
+    return !allowed || allowed.includes(card.tab);
+  });
+
+  const extraCards = [
     { label: 'סך משתמשים', value: data.users },
     { label: 'חינמיים', value: data.free },
     { label: 'משלמים', value: data.paying },
@@ -565,20 +668,16 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
     { label: 'הססנים', value: data.hesitantUsers ?? 0 },
     { label: 'נבחרת 88', value: data.premium88 ?? 0 },
     { label: 'מרצים', value: data.lecturers },
-    { label: 'בקשות מרצים', value: data.applicationsPending },
     { label: 'הרצאות באוויר', value: data.published },
     { label: 'צפיות החודש', value: data.viewsMonth },
     { label: 'זמן צפייה', value: `${data.watchTimeHours} שע׳` },
     { label: 'המרה', value: `${data.conversionRate}%` },
-    { label: 'Paywall', value: data.paywallHits },
-    { label: 'תשלומים שנכשלו', value: data.failedPayments ?? 0 },
-    { label: 'לחיוב עכשיו', value: data.dueInstallments ?? 0 },
-    { label: 'ממתינות לאישור', value: data.pending },
+    { label: 'ניסיונות לצפייה נעולה', value: data.paywallHits },
   ];
 
   const funnelSteps = analytics
     ? [
-        { label: 'Paywall', value: analytics.funnel.paywallOpened },
+        { label: 'תוכן נעול', value: analytics.funnel.paywallOpened },
         { label: 'שדרוג', value: analytics.funnel.upgradeClicked },
         { label: 'ניסיון', value: analytics.funnel.trialStarted },
         { label: 'מנוי', value: analytics.funnel.subscriptionStarted },
@@ -586,135 +685,145 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
     : [];
   const funnelMax = Math.max(1, ...funnelSteps.map((step) => step.value));
 
-  const actions = [
-    { label: 'משתמשים', hint: 'ניהול הרשאות וגישה', tab: 'users' as Tab },
-    {
-      label: 'תשלומים שנכשלו',
-      hint: `${data.failedPayments ?? 0} דורשים טיפול`,
-      tab: 'tracks' as Tab,
-    },
-    { label: 'מסלולי כניסה', hint: 'אמיצים והססנים', tab: 'tracks' as Tab },
-    { label: 'תכני VOD', hint: 'העלאה ופרסום', tab: 'content' as Tab },
-    { label: 'בקשות מרצים', hint: `${data.applicationsPending} ממתינות`, tab: 'lecturers' as Tab },
-  ];
-
   return (
     <div className="grid gap-8">
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">תמונת מצב</p>
-        <h2 className="text-2xl font-light">מה קורה במערכת עכשיו</h2>
+        <p className="text-sm tracking-[0.18em] text-[#C8A24C] mb-2">היום</p>
+        <h2 className="text-2xl sm:text-3xl font-light">מה צריך ממך עכשיו</h2>
+        <p className="text-base text-white/55 mt-2 font-light max-w-2xl">
+          ארבעה דברים שדורשים טיפול. השאר מאחורי «עוד נתונים».
+        </p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3">
-        {cards.map((card) => (
-          <div key={card.label} className="border border-white/10 rounded-2xl p-4 bg-white/[0.02]">
-            <div className="text-[11px] text-white/40 mb-2 leading-snug">{card.label}</div>
-            <div className="text-xl font-light text-white">{card.value}</div>
-          </div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+        {taskCards.map((card) => (
+          <button
+            key={card.id}
+            type="button"
+            onClick={() => onNavigate(card.tab)}
+            className={`text-right rounded-3xl border p-5 min-h-[140px] transition-colors ${
+              card.value > 0
+                ? 'border-[#C8A24C]/40 bg-[#C8A24C]/8 hover:border-[#C8A24C]'
+                : 'border-white/10 bg-white/[0.02] hover:border-white/25'
+            }`}
+          >
+            <div className="flex items-center gap-2 mb-3">
+              <span
+                className={`w-2.5 h-2.5 rounded-full ${card.value > 0 ? 'bg-[#C8A24C]' : 'bg-white/30'}`}
+                aria-hidden
+              />
+              <span className="text-sm text-white/65">{card.label}</span>
+            </div>
+            <div className="text-4xl font-light tabular-nums">{card.value}</div>
+            <div className="text-sm text-white/50 mt-3">{card.value > 0 ? 'לטיפול' : 'הכול בסדר'}</div>
+          </button>
         ))}
       </div>
 
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <section className="xl:col-span-2 border border-white/10 rounded-3xl p-6">
-          <div className="flex items-center justify-between gap-3 mb-5">
-            <h3 className="text-lg font-light">משפך המרה</h3>
-            <button
-              type="button"
-              onClick={() => onNavigate('funnel')}
-              className="text-xs text-[#C8A24C] hover:text-[#F7E7B5]"
-            >
-              פירוט
-            </button>
-          </div>
-          {funnelSteps.length === 0 ? (
-            <p className="text-sm text-white/40">טוען משפך...</p>
-          ) : (
-            <div className="grid gap-4">
-              {funnelSteps.map((step) => (
-                <div key={step.label}>
-                  <div className="flex justify-between text-sm mb-1.5">
-                    <span className="text-white/70">{step.label}</span>
-                    <span className="text-white/45">{step.value}</span>
-                  </div>
-                  <div className="h-2 rounded-full bg-white/5 overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-l from-[#C8A24C] to-[#5b4b9a]"
-                      style={{ width: `${Math.max(6, (step.value / funnelMax) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-              <p className="text-xs text-white/35 mt-2">
-                Conversion כולל: {data.conversionRate}% · ביטולים:{' '}
-                {analytics?.funnel.subscriptionCancelled ?? 0}
-              </p>
-            </div>
-          )}
-        </section>
+      <section className="border border-white/10 rounded-3xl p-6">
+        <NotificationsPanel onNavigate={onNavigate} embedded />
+      </section>
 
-        <section className="border border-white/10 rounded-3xl p-6">
-          <h3 className="text-lg font-light mb-5">תוכן מוביל</h3>
-          <div className="grid gap-4">
-            {[
-              { label: 'הכי נצפה', item: data.popularContent },
-              { label: 'קטגוריה חזקה', item: data.strongestCategory },
-              { label: 'מרצה מוביל', item: data.leadingLecturer },
-              { label: 'ממיר הכי טוב', item: data.convertingContent },
-            ].map((card) => (
-              <div key={card.label} className="border-b border-white/5 pb-3 last:border-0 last:pb-0">
-                <div className="text-[11px] text-white/35 mb-1">{card.label}</div>
-                {card.item ? (
-                  <>
-                    <div className="text-sm text-white font-light">{card.item.name}</div>
-                    <div className="text-xs text-white/35 mt-1">{card.item.views} צפיות</div>
-                  </>
-                ) : (
-                  <div className="text-sm text-white/35">עדיין אין מספיק מדידה</div>
-                )}
+      <div>
+        <button
+          type="button"
+          aria-expanded={showMore}
+          onClick={() => setShowMore((open) => !open)}
+          className="px-5 py-3 rounded-full border border-white/15 text-sm min-h-11 hover:border-white/40"
+        >
+          {showMore ? 'הסתרת נתונים נוספים' : 'עוד נתונים'}
+        </button>
+      </div>
+
+      {showMore ? (
+        <div className="grid gap-8">
+          <ReadinessPanel />
+          <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-6 gap-3">
+            {extraCards.map((card) => (
+              <div key={card.label} className="border border-white/10 rounded-2xl p-4 bg-white/[0.02]">
+                <div className="text-sm text-white/55 mb-2 leading-snug">{card.label}</div>
+                <div className="text-xl font-light text-white">{card.value}</div>
               </div>
             ))}
           </div>
-        </section>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <section className="border border-white/10 rounded-3xl p-6">
-          <h3 className="text-lg font-light mb-5">פעילות אחרונה</h3>
-          {!analytics?.recent?.length ? (
-            <p className="text-sm text-white/40">עדיין אין אירועים.</p>
-          ) : (
-            <ul className="grid gap-3">
-              {analytics.recent.slice(0, 8).map((row) => (
-                <li key={row.id} className="flex items-start justify-between gap-3 text-sm border-b border-white/5 pb-3 last:border-0">
-                  <span className="text-white/75 font-light">
-                    {EVENT_LABEL[row.event] || row.event}
-                  </span>
-                  <span className="text-xs text-white/35 whitespace-nowrap">
-                    {row.createdAt.replace('T', ' ').slice(0, 16)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        <section className="border border-white/10 rounded-3xl p-6">
-          <h3 className="text-lg font-light mb-5">פעולות מהירות</h3>
-          <div className="grid sm:grid-cols-2 gap-3">
-            {actions.map((action) => (
-              <button
-                key={action.label}
-                type="button"
-                onClick={() => onNavigate(action.tab)}
-                className="text-right border border-white/10 rounded-2xl p-4 hover:border-[#C8A24C]/40 transition-colors min-h-11"
-              >
-                <div className="text-sm text-white mb-1">{action.label}</div>
-                <div className="text-xs text-white/40 font-light">{action.hint}</div>
-              </button>
-            ))}
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            <section className="xl:col-span-2 border border-white/10 rounded-3xl p-6">
+              <div className="flex items-center justify-between gap-3 mb-5">
+                <h3 className="text-lg font-light">משפך המרה</h3>
+                <button
+                  type="button"
+                  onClick={() => onNavigate('funnel')}
+                  className="text-sm text-[#C8A24C] hover:text-[#F7E7B5] min-h-11"
+                >
+                  פירוט
+                </button>
+              </div>
+              {funnelSteps.length === 0 ? (
+                <p className="text-sm text-white/50">טוען משפך...</p>
+              ) : (
+                <div className="grid gap-4">
+                  {funnelSteps.map((step) => (
+                    <div key={step.label}>
+                      <div className="flex justify-between text-sm mb-1.5">
+                        <span className="text-white/70">{step.label}</span>
+                        <span className="text-white/55">{step.value}</span>
+                      </div>
+                      <div className="h-2 rounded-full bg-white/5 overflow-hidden">
+                        <div
+                          className="h-full rounded-full bg-gradient-to-l from-[#C8A24C] to-[#5b4b9a]"
+                          style={{ width: `${Math.max(6, (step.value / funnelMax) * 100)}%` }}
+                        />
+                      </div>
+                    </div>
+                  ))}
+                  <p className="text-sm text-white/50 mt-2">
+                    המרה כוללת: {data.conversionRate}% · ביטולים:{' '}
+                    {analytics?.funnel.subscriptionCancelled ?? 0}
+                  </p>
+                </div>
+              )}
+            </section>
+            <section className="border border-white/10 rounded-3xl p-6">
+              <h3 className="text-lg font-light mb-5">תוכן מוביל</h3>
+              <div className="grid gap-4">
+                {[
+                  { label: 'הכי נצפה', item: data.popularContent },
+                  { label: 'קטגוריה חזקה', item: data.strongestCategory },
+                  { label: 'מרצה מוביל', item: data.leadingLecturer },
+                  { label: 'ממיר הכי טוב', item: data.convertingContent },
+                ].map((card) => (
+                  <div key={card.label} className="border-b border-white/5 pb-3 last:border-0 last:pb-0">
+                    <div className="text-sm text-white/50 mb-1">{card.label}</div>
+                    {card.item ? (
+                      <>
+                        <div className="text-sm text-white font-light">{card.item.name}</div>
+                        <div className="text-sm text-white/50 mt-1">{card.item.views} צפיות</div>
+                      </>
+                    ) : (
+                      <div className="text-sm text-white/50">עדיין אין מספיק מדידה</div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </section>
           </div>
-        </section>
-      </div>
+          <section className="border border-white/10 rounded-3xl p-6">
+            <h3 className="text-lg font-light mb-5">פעילות אחרונה</h3>
+            {!analytics?.recent?.length ? (
+              <p className="text-sm text-white/50">עדיין אין אירועים.</p>
+            ) : (
+              <ul className="grid gap-3">
+                {analytics.recent.slice(0, 8).map((row) => (
+                  <li key={row.id} className="flex items-start justify-between gap-3 text-sm border-b border-white/5 pb-3 last:border-0">
+                    <span className="text-white/75 font-light">{EVENT_LABEL[row.event] || row.event}</span>
+                    <span className="text-sm text-white/45 whitespace-nowrap">{formatOpsDate(row.createdAt)}</span>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
+      ) : null}
     </div>
   );
 }
@@ -727,7 +836,7 @@ const EVENT_LABEL: Record<string, string> = {
   video_completed: 'סיום פרק',
   video_paused: 'השהיה',
   video_resumed: 'המשך צפייה',
-  paywall_opened: 'פתיחת Paywall',
+  paywall_opened: 'ניסיון לצפות בתוכן נעול',
   upgrade_clicked: 'לחיצה לשדרוג',
   trial_started: 'תחילת ניסיון',
   subscription_started: 'תחילת מנוי',
@@ -777,7 +886,7 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
   if (!data) return <p className="text-sm text-white/40">טוען...</p>;
 
   const funnel = [
-    { label: 'Paywall', value: data.funnel.paywallOpened },
+    { label: 'תוכן נעול', value: data.funnel.paywallOpened },
     { label: 'שדרוג', value: data.funnel.upgradeClicked },
     { label: 'ניסיון', value: data.funnel.trialStarted },
     { label: 'מנוי', value: data.funnel.subscriptionStarted },
@@ -1258,14 +1367,18 @@ function CourseForm({
 
 function UsersPanel() {
   const { reloadCatalog, user } = useApp();
+  const confirm = useConfirm();
   const [users, setUsers] = useState<AdminUserRow[]>([]);
   const [error, setError] = useState('');
+  const [toast, setToast] = useState('');
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [newName, setNewName] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const [chip, setChip] = useState<'all' | 'active' | 'blocked' | 'lecturer' | 'paying'>('all');
 
   const load = () =>
     adminApi
@@ -1277,18 +1390,51 @@ function UsersPanel() {
     void load();
   }, []);
 
+  useEffect(() => {
+    if (!toast) return;
+    const timer = window.setTimeout(() => setToast(''), 2800);
+    return () => window.clearTimeout(timer);
+  }, [toast]);
+
   const selected = users.find((row) => row.id === selectedId) || null;
+
+  const visibleUsers = users.filter((row) => {
+    const haystack = `${row.name} ${row.email}`.toLowerCase();
+    if (query.trim() && !haystack.includes(query.trim().toLowerCase())) return false;
+    if (chip === 'active') return !row.blocked;
+    if (chip === 'blocked') return Boolean(row.blocked);
+    if (chip === 'lecturer') return row.role === 'instructor';
+    if (chip === 'paying') return isPayingPlan(row.subscriptionPlan);
+    return true;
+  });
 
   const patch = async (id: string, next: Parameters<typeof adminApi.updateUser>[1]) => {
     const row = users.find((item) => item.id === id);
     if (next.blocked === true && row && !row.blocked) {
-      if (!window.confirm('לחסום את המשתמש?')) return;
+      const ok = await confirm({
+        title: 'לחסום את המשתמש?',
+        body: 'החשבון יישאר במערכת אבל לא יוכל להיכנס עד שחרור החסימה.',
+        confirmLabel: 'חסימה',
+        danger: true,
+      });
+      if (!ok) return;
     }
     if (next.role && row && next.role !== row.role) {
-      if (!window.confirm('לשנות תפקיד למשתמש?')) return;
+      const ok = await confirm({
+        title: 'לשנות תפקיד למשתמש?',
+        body: `התפקיד ישתנה ל־${roleLabelHe(next.role)}.`,
+        confirmLabel: 'שינוי תפקיד',
+      });
+      if (!ok) return;
     }
     if (next.subscriptionPlan === 'none' && row && row.subscriptionPlan !== 'none') {
-      if (!window.confirm('לבטל מנוי למשתמש?')) return;
+      const ok = await confirm({
+        title: 'לבטל מנוי למשתמש?',
+        body: 'הגישה לתוכן פרימיום תיסגר. אפשר לפתוח שוב אחר כך.',
+        confirmLabel: 'ביטול מנוי',
+        danger: true,
+      });
+      if (!ok) return;
     }
     setPendingId(id);
     setError('');
@@ -1296,6 +1442,7 @@ function UsersPanel() {
       await adminApi.updateUser(id, next);
       await load();
       if (next.role === 'instructor' || next.isFounder !== undefined) await reloadCatalog();
+      setToast('הפעולה בוצעה');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'הפעולה נכשלה');
     } finally {
@@ -1312,6 +1459,7 @@ function UsersPanel() {
       setNewEmail('');
       setNewPassword('');
       await load();
+      setToast('החשבון נוצר');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'יצירה נכשלה');
     } finally {
@@ -1321,13 +1469,13 @@ function UsersPanel() {
 
   const removeUser = async (row: AdminUserRow) => {
     if (row.id === user.id) return;
-    if (
-      !window.confirm(
-        `להסיר את ${row.email} מהמערכת? החשבון יימחק ולא ניתן לבטל. הרצאות ותשלומים נשמרים.`
-      )
-    ) {
-      return;
-    }
+    const ok = await confirm({
+      title: `להסיר את ${row.name || row.email} מהמערכת?`,
+      body: 'החשבון יימחק ולא ניתן לבטל. הרצאות ותשלומים נשמרים.',
+      confirmLabel: 'הסרה מהמערכת',
+      danger: true,
+    });
+    if (!ok) return;
     setPendingId(row.id);
     setError('');
     try {
@@ -1335,6 +1483,7 @@ function UsersPanel() {
       setSelectedId(null);
       await load();
       if (row.role === 'instructor' || row.isFounder) await reloadCatalog();
+      setToast('המשתמש הוסר');
     } catch (err) {
       setError(err instanceof Error ? err.message : 'ההסרה נכשלה');
     } finally {
@@ -1369,11 +1518,16 @@ function UsersPanel() {
   return (
     <div className="grid gap-8">
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+      {toast ? (
+        <p className="text-sm text-[#C8A24C]" role="status">
+          {toast}
+        </p>
+      ) : null}
 
       <div className="border border-[#C8A24C]/25 rounded-3xl p-6 grid gap-4 max-w-3xl">
         <div>
           <h2 className="text-lg font-light mb-1">הוספת משתמש</h2>
-          <p className="text-sm text-white/45 font-light">
+          <p className="text-sm text-white/55 font-light">
             יצירת חשבון כניסה. אחר כך אפשר לשייך לצוות המיזם או לאשר כמרצה.
           </p>
         </div>
@@ -1415,17 +1569,51 @@ function UsersPanel() {
 
       <div className="grid gap-6 xl:grid-cols-[1.4fr_0.8fr]">
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <div className="flex justify-end mb-4 p-3">
-          <button
-            type="button"
-            onClick={exportCsv}
-            className="px-4 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer hover:border-white/40"
-          >
-            ייצוא משתמשים
-          </button>
+        <div className="grid gap-3 p-3">
+          <label className="block">
+            <span className="block text-sm text-white/60 mb-1">חיפוש לפי שם או אימייל</span>
+            <input
+              type="search"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              placeholder="למשל: דנה או dana@"
+              className={fieldClass}
+            />
+          </label>
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap gap-2">
+              {(
+                [
+                  ['all', 'הכל'],
+                  ['active', 'פעיל'],
+                  ['blocked', 'חסום'],
+                  ['lecturer', 'מרצה'],
+                  ['paying', 'משלם'],
+                ] as const
+              ).map(([id, label]) => (
+                <button
+                  key={id}
+                  type="button"
+                  onClick={() => setChip(id)}
+                  className={`px-4 py-2 rounded-full text-sm min-h-11 border ${
+                    chip === id ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/70'
+                  }`}
+                >
+                  {label}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              onClick={exportCsv}
+              className="px-4 py-2 rounded-full border border-white/15 text-sm min-h-11 cursor-pointer hover:border-white/40"
+            >
+              ייצוא משתמשים
+            </button>
+          </div>
         </div>
         <table className="w-full text-sm text-right">
-          <thead className="text-xs text-white/40 border-b border-white/10">
+          <thead className="text-sm text-white/50 border-b border-white/10">
             <tr>
               <th className="py-3 px-3 font-normal">שם</th>
               <th className="py-3 px-3 font-normal">אימייל</th>
@@ -1436,7 +1624,14 @@ function UsersPanel() {
             </tr>
           </thead>
           <tbody className="divide-y divide-white/10">
-            {users.map((row) => (
+            {visibleUsers.length === 0 ? (
+              <tr>
+                <td colSpan={6} className="py-8 px-3 text-white/50">
+                  אין משתמשים שתואמים לחיפוש.
+                </td>
+              </tr>
+            ) : (
+              visibleUsers.map((row) => (
               <tr
                 key={row.id}
                 onClick={() => setSelectedId(row.id)}
@@ -1444,19 +1639,23 @@ function UsersPanel() {
               >
                 <td className="py-3 px-3">
                   {row.name}
-                  {row.isFounder ? <span className="text-white/35"> · צוות</span> : null}
+                  {row.isFounder ? <span className="text-white/50"> · צוות</span> : null}
                 </td>
-                <td className="py-3 px-3 text-white/55">{row.email}</td>
+                <td className="py-3 px-3 text-white/70">{row.email}</td>
+                <td className="py-3 px-3 text-white/70">{roleLabelHe(row.role)}</td>
+                <td className="py-3 px-3 text-white/70">{planLabelHe(row.subscriptionPlan)}</td>
                 <td className="py-3 px-3 text-white/70">
-                  {row.role === 'admin' ? 'אדמין' : row.role === 'instructor' ? 'מרצה' : 'משתמש'}
-                </td>
-                <td className="py-3 px-3 text-white/55">{row.subscriptionPlan}</td>
-                <td className="py-3 px-3 text-white/55">
                   {row.entryTrack === 'brave' ? 'אמיצים' : row.entryTrack === 'hesitant' ? 'הססנים' : 'ללא'}
                 </td>
-                <td className="py-3 px-3">{row.blocked ? 'חסום' : 'פעיל'}</td>
+                <td className="py-3 px-3">
+                  <span className="inline-flex items-center gap-2">
+                    <span className={`w-2 h-2 rounded-full ${row.blocked ? 'bg-rose-400' : 'bg-emerald-400'}`} aria-hidden />
+                    {row.blocked ? 'חסום' : 'פעיל'}
+                  </span>
+                </td>
               </tr>
-            ))}
+              ))
+            )}
           </tbody>
         </table>
       </div>
@@ -1471,8 +1670,8 @@ function UsersPanel() {
               <h3 className="text-xl font-light">{selected.name}</h3>
               <p className="text-white/45 mt-1 break-all">{selected.email}</p>
             </div>
-            <p>תפקיד: {selected.role === 'admin' ? 'אדמין' : selected.role === 'instructor' ? 'מרצה' : 'משתמש'}</p>
-            <p>מנוי: {selected.subscriptionPlan}</p>
+            <p>תפקיד: {roleLabelHe(selected.role)}</p>
+            <p>מנוי: {planLabelHe(selected.subscriptionPlan)}</p>
             <p>
               מסלול:{' '}
               {selected.entryTrack === 'brave'
@@ -1483,8 +1682,8 @@ function UsersPanel() {
             </p>
             <p>פעימה: {selected.currentPaymentPhase || 0}</p>
             <p>כרטיסי הגרלה: {selected.raffleTicketsCount || 0}</p>
-            <p>הצטרפות: {selected.createdAt.replace('T', ' ').slice(0, 16)}</p>
-            <p>כניסה אחרונה: {selected.lastLoginAt?.replace('T', ' ').slice(0, 16) || 'אין'}</p>
+            <p>הצטרפות: {formatOpsDate(selected.createdAt)}</p>
+            <p>כניסה אחרונה: {formatOpsDate(selected.lastLoginAt)}</p>
 
             <label className="grid gap-1 text-white/50">
               שינוי תפקיד
@@ -1557,16 +1756,16 @@ function UsersPanel() {
                 type="button"
                 disabled={pendingId === selected.id}
                 onClick={() => {
-                  if (
-                    !window.confirm(
-                      selected.isFounder ? 'להסיר את המשתמש מצוות המיזם?' : 'לשייך את המשתמש לצוות המיזם?'
-                    )
-                  ) {
-                    return;
-                  }
-                  void patch(selected.id, { isFounder: !selected.isFounder });
+                  void (async () => {
+                    const ok = await confirm({
+                      title: selected.isFounder ? 'להסיר את המשתמש מצוות המיזם?' : 'לשייך את המשתמש לצוות המיזם?',
+                      confirmLabel: selected.isFounder ? 'הסרה מהצוות' : 'שיוך לצוות',
+                    });
+                    if (!ok) return;
+                    await patch(selected.id, { isFounder: !selected.isFounder });
+                  })();
                 }}
-                className="px-3 py-2 text-xs border border-[#C8A24C]/40 text-[#C8A24C] rounded-xl min-h-11"
+                className="px-3 py-2 text-sm border border-[#C8A24C]/40 text-[#C8A24C] rounded-xl min-h-11"
               >
                 {selected.isFounder ? 'הסרה מהצוות' : 'שיוך לצוות'}
               </button>
@@ -1598,6 +1797,7 @@ const APP_STATUS_LABEL: Record<LecturerApplication['status'], string> = {
 
 function TeamStaffPanel() {
   const { reloadCatalog, user } = useApp();
+  const confirm = useConfirm();
   const [users, setUsers] = useState<AdminUserRow[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [filter, setFilter] = useState<'all' | 'lecturer' | 'staff' | 'founder'>('all');
@@ -1626,7 +1826,14 @@ function TeamStaffPanel() {
   const selected = users.find((row) => row.id === selectedId) || null;
 
   const patch = async (id: string, next: Parameters<typeof adminApi.updateUser>[1], confirmMsg?: string) => {
-    if (confirmMsg && !window.confirm(confirmMsg)) return;
+    if (confirmMsg) {
+      const ok = await confirm({
+        title: confirmMsg,
+        confirmLabel: 'אישור',
+        danger: confirmMsg.includes('חסום') || confirmMsg.includes('השהות') || confirmMsg.includes('הסיר'),
+      });
+      if (!ok) return;
+    }
     setPendingId(id);
     setError('');
     try {
@@ -1642,13 +1849,13 @@ function TeamStaffPanel() {
 
   const removeUser = async (row: AdminUserRow) => {
     if (row.id === user.id) return;
-    if (
-      !window.confirm(
-        `להסיר את ${row.email} מהמערכת? החשבון יימחק ולא ניתן לבטל. הרצאות ותשלומים נשמרים.`
-      )
-    ) {
-      return;
-    }
+    const ok = await confirm({
+      title: `להסיר את ${row.name || row.email} מהמערכת?`,
+      body: 'החשבון יימחק ולא ניתן לבטל. הרצאות ותשלומים נשמרים.',
+      confirmLabel: 'הסרה מהמערכת',
+      danger: true,
+    });
+    if (!ok) return;
     setPendingId(row.id);
     setError('');
     try {
@@ -1792,7 +1999,7 @@ function TeamStaffPanel() {
                   }
                   className={fieldClass}
                 >
-                  <option value="">ללא (סופר אדמין אם תפקיד אדמין)</option>
+                  <option value="">ללא (מנהל/ת ראשי/ת אם תפקיד אדמין)</option>
                   <option value="content">תוכן</option>
                   <option value="support">תמיכה</option>
                   <option value="sales">מכירות / הצלחה</option>
@@ -2988,6 +3195,7 @@ function CategoriesPanel() {
 }
 
 function Premium88Panel() {
+  const confirm = useConfirm();
   const [rows, setRows] = useState<AdminPremium88Application[]>([]);
   const [error, setError] = useState('');
   const [pendingId, setPendingId] = useState('');
@@ -3012,7 +3220,12 @@ function Premium88Panel() {
   const selected = rows.find((row) => row.id === selectedId) || null;
 
   const review = async (id: string, status: string) => {
-    if (!window.confirm('לאשר את שינוי הסטטוס?')) return;
+    const ok = await confirm({
+      title: 'לאשר את שינוי הסטטוס?',
+      body: 'המועמדות תעודכן מיד.',
+      confirmLabel: 'שינוי סטטוס',
+    });
+    if (!ok) return;
     setPendingId(id);
     setError('');
     try {
@@ -3166,6 +3379,7 @@ function AuditLogsPanel() {
 }
 
 function RafflesPanel() {
+  const confirm = useConfirm();
   const [data, setData] = useState<AdminRaffleDashboard | null>(null);
   const [error, setError] = useState('');
   const [title, setTitle] = useState('');
@@ -3205,7 +3419,11 @@ function RafflesPanel() {
   };
 
   const assign = async (id: string) => {
-    if (!window.confirm('לשייך את כל הכרטיסים הפתוחים להגרלה הזו?')) return;
+    const ok = await confirm({
+      title: 'לשייך את כל הכרטיסים הפתוחים להגרלה הזו?',
+      confirmLabel: 'שיוך כרטיסים',
+    });
+    if (!ok) return;
     setPendingId(id);
     setError('');
     try {
@@ -3219,7 +3437,13 @@ function RafflesPanel() {
   };
 
   const draw = async (id: string) => {
-    if (!window.confirm('להגריל זוכה עכשיו? לא ניתן לבטל.')) return;
+    const ok = await confirm({
+      title: 'להגריל זוכה עכשיו?',
+      body: 'לא ניתן לבטל אחרי ההגרלה.',
+      confirmLabel: 'הגרלת זוכה',
+      danger: true,
+    });
+    if (!ok) return;
     setPendingId(id);
     setError('');
     try {
@@ -3494,6 +3718,7 @@ function LeadsPanel() {
 }
 
 function LegalPanel() {
+  const confirm = useConfirm();
   const [terms, setTerms] = useState('');
   const [privacy, setPrivacy] = useState('');
   const [raffle, setRaffle] = useState('');
@@ -3544,15 +3769,14 @@ function LegalPanel() {
   };
 
   const toggleRaffleApproval = async () => {
-    if (
-      !window.confirm(
-        raffleTermsApproved
-          ? 'לבטל אישור תקנון הגרלות?'
-          : 'לאשר שהתקנון המשפטי להגרלות מוכן לפרסום?'
-      )
-    ) {
-      return;
-    }
+    const ok = await confirm({
+      title: raffleTermsApproved
+        ? 'לבטל אישור תקנון הגרלות?'
+        : 'לאשר שהתקנון המשפטי להגרלות מוכן לפרסום?',
+      confirmLabel: raffleTermsApproved ? 'ביטול אישור' : 'אישור תקנון',
+      danger: raffleTermsApproved,
+    });
+    if (!ok) return;
     setSaving('raffle_terms_approved');
     setError('');
     setMessage('');

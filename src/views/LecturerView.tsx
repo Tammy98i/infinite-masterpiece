@@ -14,6 +14,7 @@ import type { CoursePayload } from '../api/admin';
 import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/captions';
 import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
+import { accessLabelHe } from '../utils/opsLabels';
 
 const fieldClass =
   'w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11';
@@ -297,12 +298,10 @@ function LecturerDashboard({
     | 'videos'
     | 'courses'
     | 'upload'
-    | 'drafts'
-    | 'pending'
     | 'analytics'
-    | 'questions'
     | 'resources'
     | 'profile'
+    | 'referral'
     | 'messages'
     | 'settings'
     | 'founder'
@@ -311,6 +310,8 @@ function LecturerDashboard({
 
   const [tab, setTab] = useState<Tab>('overview');
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [moreOpen, setMoreOpen] = useState(false);
+  const [videoFilter, setVideoFilter] = useState<'all' | 'draft' | 'pending_review' | 'published'>('all');
   const [stats, setStats] = useState<LecturerOverview | null>(null);
   const [courses, setCourses] = useState<Course[]>([]);
   const [editing, setEditing] = useState<Course | 'new' | null>(null);
@@ -330,20 +331,21 @@ function LecturerDashboard({
     setTab(id);
     setMobileNavOpen(false);
     if (id === 'upload') setEditing('new');
-    else if (id !== 'videos' && id !== 'drafts' && id !== 'pending') setEditing(null);
+    else if (id !== 'videos') setEditing(null);
   };
 
-  const navItems: Array<{ id: Tab; label: string; badge?: number; ready?: boolean; founderOnly?: boolean }> = [
-    { id: 'overview', label: 'סקירה כללית' },
-    { id: 'videos', label: 'ההרצאות שלי' },
-    { id: 'courses', label: 'קורסים / סדרות שלי' },
-    { id: 'upload', label: 'העלאת תוכן' },
-    { id: 'drafts', label: 'טיוטות', badge: stats?.drafts },
-    { id: 'pending', label: 'ממתין לאישור', badge: stats?.pending },
+  const primaryNav: Array<{ id: Tab; label: string; badge?: number }> = [
+    { id: 'overview', label: 'היום' },
+    { id: 'videos', label: 'ההרצאות שלי', badge: stats?.pending },
+    { id: 'upload', label: 'הוספת הרצאה' },
+    { id: 'profile', label: 'הפרופיל שלי' },
+    { id: 'referral', label: 'הקישור שלי' },
+  ];
+
+  const moreNav: Array<{ id: Tab; label: string; founderOnly?: boolean }> = [
+    { id: 'courses', label: 'קורסים / סדרות' },
     { id: 'analytics', label: 'אנליטיקות' },
-    { id: 'questions', label: 'שאלות ותגובות' },
     { id: 'resources', label: 'קבצים נלווים' },
-    { id: 'profile', label: 'פרופיל מרצה' },
     { id: 'messages', label: 'הודעות מהצוות' },
     { id: 'settings', label: 'הגדרות חשבון' },
     ...(stats?.isFounder
@@ -355,7 +357,9 @@ function LecturerDashboard({
       : []),
   ];
 
-  const navButton = (item: (typeof navItems)[number]) => {
+  const moreActive = moreNav.some((item) => item.id === tab);
+
+  const navButton = (item: { id: Tab; label: string; badge?: number }) => {
     const active = tab === item.id;
     return (
       <button
@@ -365,20 +369,36 @@ function LecturerDashboard({
         className={`w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm min-h-11 text-right transition-colors ${
           active
             ? 'bg-[#C8A24C]/15 text-[#F7E7B5] border border-[#C8A24C]/40'
-            : 'text-white/60 hover:text-white hover:bg-white/[0.04] border border-transparent'
+            : 'text-white/70 hover:text-white hover:bg-white/[0.04] border border-transparent'
         }`}
       >
         <span className="font-light">{item.label}</span>
         {item.badge && item.badge > 0 ? (
-          <span className="text-[10px] text-[#C8A24C] border border-[#C8A24C]/40 rounded-full px-2 py-0.5">
+          <span className="text-sm text-[#C8A24C] border border-[#C8A24C]/40 rounded-full px-2 py-0.5">
             {item.badge}
           </span>
-        ) : item.ready === false ? (
-          <span className="text-[10px] text-white/30">בקרוב</span>
         ) : null}
       </button>
     );
   };
+
+  const renderSideNav = () => (
+    <nav className="flex-1 p-3 grid gap-1 content-start">
+      {primaryNav.map(navButton)}
+      <div className="pt-2 mt-1 border-t border-white/10">
+        <button
+          type="button"
+          aria-expanded={moreOpen || moreActive}
+          onClick={() => setMoreOpen((open) => !open)}
+          className="w-full flex items-center justify-between px-3 py-2 text-sm text-white/55 min-h-11 hover:text-white"
+        >
+          <span>עוד</span>
+          <span aria-hidden>{moreOpen || moreActive ? '▾' : '◂'}</span>
+        </button>
+        {moreOpen || moreActive ? <div className="grid gap-1">{moreNav.map(navButton)}</div> : null}
+      </div>
+    </nav>
+  );
 
   const filteredCourses = (status?: string) =>
     status ? courses.filter((course) => course.status === status) : courses;
@@ -397,7 +417,7 @@ function LecturerDashboard({
               <p className="text-[11px] text-white/35 mt-1">מרצה</p>
             )}
           </div>
-          <nav className="flex-1 p-3 grid gap-1 content-start">{navItems.map(navButton)}</nav>
+          {renderSideNav()}
           <div className="p-4 border-t border-white/10 grid gap-2">
             <div className="border border-[#C8A24C]/30 rounded-2xl p-4 text-center">
               <p className="text-xs text-white/45 mb-3">צריכים עזרה?</p>
@@ -426,7 +446,7 @@ function LecturerDashboard({
                 className="lg:hidden px-3 py-2 rounded-xl border border-white/15 text-sm min-h-11"
                 onClick={() => setMobileNavOpen((open) => !open)}
               >
-                תפריט
+                מסכים
               </button>
               <div className="min-w-0">
                 <p className="text-[11px] tracking-[0.2em] text-[#C8A24C] uppercase truncate">Infinite Masterpiece</p>
@@ -443,7 +463,7 @@ function LecturerDashboard({
           </header>
 
           {mobileNavOpen ? (
-            <div className="lg:hidden border-b border-white/10 bg-[#080808] p-3 grid gap-1">{navItems.map(navButton)}</div>
+            <div className="lg:hidden border-b border-white/10 bg-[#080808]">{renderSideNav()}</div>
           ) : null}
 
           <main className="px-4 sm:px-6 lg:px-8 py-8 pb-24 max-w-7xl">
@@ -454,22 +474,23 @@ function LecturerDashboard({
                 stats={stats}
                 onUpload={() => goTab('upload')}
                 onVideos={() => goTab('videos')}
+                onReferral={() => goTab('referral')}
               />
             ) : null}
 
-            {(tab === 'videos' || tab === 'drafts' || tab === 'pending') && !editing ? (
+            {tab === 'videos' && !editing ? (
               <VideosPanel
-                title={
-                  tab === 'drafts' ? 'טיוטות' : tab === 'pending' ? 'ממתין לאישור' : 'ההרצאות שלי'
-                }
-                courses={
-                  tab === 'drafts'
-                    ? filteredCourses('draft')
-                    : tab === 'pending'
-                      ? filteredCourses('pending_review')
-                      : courses
-                }
+                title="ההרצאות שלי"
+                courses={videoFilter === 'all' ? courses : filteredCourses(videoFilter)}
                 categories={categories}
+                filter={videoFilter}
+                onFilter={setVideoFilter}
+                counts={{
+                  all: courses.length,
+                  draft: courses.filter((c) => c.status === 'draft').length,
+                  pending_review: courses.filter((c) => c.status === 'pending_review').length,
+                  published: courses.filter((c) => c.status === 'published').length,
+                }}
                 onEdit={(course) => {
                   setEditing(course);
                   setTab('upload');
@@ -482,6 +503,17 @@ function LecturerDashboard({
                 }
                 onUpload={() => goTab('upload')}
               />
+            ) : null}
+
+            {tab === 'referral' && stats?.lecturerId ? (
+              <ReferralCard
+                lecturerId={stats.lecturerId}
+                referredLeads={stats.referredLeads}
+                referredUsers={stats.referredUsers}
+              />
+            ) : null}
+            {tab === 'referral' && !stats?.lecturerId ? (
+              <p className="text-base text-white/55">הקישור ייפתח אחרי שהפרופיל יאושר במערכת.</p>
             ) : null}
 
             {(tab === 'upload' || editing) && (
@@ -513,7 +545,6 @@ function LecturerDashboard({
             {tab === 'founder88' && stats?.isFounder ? (
               <Founder88Panel courses={courses.filter((c) => c.status === 'published')} />
             ) : null}
-            {tab === 'questions' ? <QuestionsPanel /> : null}
             {tab === 'messages' ? <MessagesPanel /> : null}
             {tab === 'team' && stats?.isFounder ? <TeamPanel /> : null}
           </main>
@@ -806,10 +837,12 @@ function OverviewHome({
   stats,
   onUpload,
   onVideos,
+  onReferral,
 }: {
   stats: LecturerOverview;
   onUpload: () => void;
   onVideos: () => void;
+  onReferral: () => void;
 }) {
   const maxDay = Math.max(1, ...stats.viewsByDay.map((d) => d.views));
   const kpis = [
@@ -817,21 +850,15 @@ function OverviewHome({
     { label: 'פורסמו', value: stats.published },
     { label: 'ממתינות לאישור', value: stats.pending },
     { label: 'סך צפיות', value: stats.views },
-    { label: 'צופים ייחודיים', value: stats.uniqueViewers },
-    { label: 'זמן צפייה (שעות)', value: stats.totalWatchHours },
-    { label: 'Completion Rate', value: `${stats.completionRate}%` },
-    { label: 'שמירות לרשימה', value: stats.saves },
-    { label: 'Paywall מהתוכן', value: stats.paywallHits },
-    { label: 'שדרוגים מיוחסים', value: stats.upgrades },
   ];
 
   return (
     <div className="grid gap-8">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <h2 className="text-2xl sm:text-3xl font-light mb-2">ברוך הבא לדשבורד המרצה שלך</h2>
-          <p className="text-sm text-white/45 font-light max-w-2xl">
-            כאן מנהלים רק את התכנים שלכם: סטטוס, צפיות ושליחה לאישור. פרסום ישיר נשאר בידי האדמין.
+          <h2 className="text-2xl sm:text-3xl font-light mb-2">מה לעשות היום</h2>
+          <p className="text-base text-white/55 font-light max-w-2xl">
+            מעלים הרצאה, שולחים לאישור, ועוקבים אחרי מה שכבר באוויר. פרסום ישיר נשאר בידי האדמין.
           </p>
         </div>
         <div className="flex flex-wrap gap-2">
@@ -840,7 +867,7 @@ function OverviewHome({
             onClick={onUpload}
             className="px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11"
           >
-            העלאת תוכן
+            הוספת הרצאה
           </button>
           <button
             type="button"
@@ -849,21 +876,20 @@ function OverviewHome({
           >
             ההרצאות שלי
           </button>
+          <button
+            type="button"
+            onClick={onReferral}
+            className="px-5 py-2.5 rounded-full border border-white/15 text-sm min-h-11"
+          >
+            הקישור שלי
+          </button>
         </div>
       </div>
 
-      {stats.lecturerId ? (
-        <ReferralCard
-          lecturerId={stats.lecturerId}
-          referredLeads={stats.referredLeads}
-          referredUsers={stats.referredUsers}
-        />
-      ) : null}
-
-      <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         {kpis.map((card) => (
           <div key={card.label} className="border border-white/10 rounded-2xl p-4 bg-[#0A0A0A]">
-            <div className="text-[11px] text-white/40 mb-2">{card.label}</div>
+            <div className="text-sm text-white/55 mb-2">{card.label}</div>
             <div className="text-2xl font-light tabular-nums">{card.value}</div>
           </div>
         ))}
@@ -936,8 +962,8 @@ function OverviewHome({
 
       <div className="border border-[#C8A24C]/25 rounded-2xl p-5 bg-[#C8A24C]/5">
         <p className="text-[13px] uppercase tracking-[0.25em] text-[#C8A24C] mb-2">טיפ להצלחה</p>
-        <p className="text-sm text-white/70 font-light leading-relaxed">
-          שמרו על הרצאות ממוקדות. Completion Rate גבוה מגדיל שמירות ושדרוגים מהתוכן שלכם.
+        <p className="text-base text-white/70 font-light leading-relaxed">
+          הרצאות קצרות וממוקדות נצפות עד הסוף יותר. זה מה שמביא שמירות ושדרוגים מהתוכן שלכם.
         </p>
       </div>
     </div>
@@ -948,6 +974,9 @@ function VideosPanel({
   title,
   courses,
   categories,
+  filter,
+  onFilter,
+  counts,
   onEdit,
   onSubmit,
   onUpload,
@@ -955,17 +984,26 @@ function VideosPanel({
   title: string;
   courses: Course[];
   categories: { id: string; name: string }[];
+  filter: 'all' | 'draft' | 'pending_review' | 'published';
+  onFilter: (next: 'all' | 'draft' | 'pending_review' | 'published') => void;
+  counts: { all: number; draft: number; pending_review: number; published: number };
   onEdit: (course: Course) => void;
   onSubmit: (id: string) => void;
   onUpload: () => void;
 }) {
   const categoryName = (id?: string) => categories.find((c) => c.id === id)?.name || '—';
+  const chips = [
+    { id: 'all' as const, label: 'הכל', count: counts.all },
+    { id: 'draft' as const, label: 'טיוטה', count: counts.draft },
+    { id: 'pending_review' as const, label: 'בבדיקה', count: counts.pending_review },
+    { id: 'published' as const, label: 'פורסם', count: counts.published },
+  ];
 
   return (
     <div className="grid gap-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">תוכן</p>
+          <p className="text-sm tracking-[0.18em] text-[#C8A24C] mb-2">תוכן</p>
           <h2 className="text-2xl font-light">{title}</h2>
         </div>
         <button
@@ -973,12 +1011,26 @@ function VideosPanel({
           onClick={onUpload}
           className="px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11"
         >
-          העלאת תוכן
+          הוספת הרצאה
         </button>
+      </div>
+      <div className="flex flex-wrap gap-2">
+        {chips.map((chip) => (
+          <button
+            key={chip.id}
+            type="button"
+            onClick={() => onFilter(chip.id)}
+            className={`px-4 py-2 rounded-full text-sm min-h-11 border ${
+              filter === chip.id ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/70'
+            }`}
+          >
+            {chip.label} ({chip.count})
+          </button>
+        ))}
       </div>
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
         <table className="w-full text-sm text-right">
-          <thead className="text-xs text-white/40 border-b border-white/10">
+          <thead className="text-sm text-white/50 border-b border-white/10">
             <tr>
               <th className="py-3 px-3 font-normal">הרצאה</th>
               <th className="py-3 px-3 font-normal">קטגוריה</th>
@@ -990,7 +1042,7 @@ function VideosPanel({
           <tbody className="divide-y divide-white/10">
             {courses.length === 0 ? (
               <tr>
-                <td colSpan={5} className="py-8 px-3 text-white/40">
+                <td colSpan={5} className="py-8 px-3 text-white/50">
                   אין פריטים להצגה. העלו הרצאה ראשונה.
                 </td>
               </tr>
@@ -1007,16 +1059,30 @@ function VideosPanel({
                       <span>{course.title}</span>
                     </div>
                   </td>
-                  <td className="py-3 px-3 text-white/55">{categoryName(course.categoryId)}</td>
-                  <td className="py-3 px-3 text-white/55">{course.accessLevel}</td>
-                  <td className="py-3 px-3">{STATUS_LABEL[course.status || 'draft']}</td>
+                  <td className="py-3 px-3 text-white/70">{categoryName(course.categoryId)}</td>
+                  <td className="py-3 px-3 text-white/70">{accessLabelHe(course.accessLevel)}</td>
+                  <td className="py-3 px-3">
+                    <span className="inline-flex items-center gap-2">
+                      <span
+                        className={`w-2 h-2 rounded-full ${
+                          course.status === 'published'
+                            ? 'bg-emerald-400'
+                            : course.status === 'pending_review'
+                              ? 'bg-[#C8A24C]'
+                              : 'bg-white/40'
+                        }`}
+                        aria-hidden
+                      />
+                      {STATUS_LABEL[course.status || 'draft']}
+                    </span>
+                  </td>
                   <td className="py-3 px-3">
                     <div className="flex flex-wrap gap-2">
                       {course.status !== 'published' && course.status !== 'blocked' ? (
                         <button
                           type="button"
                           onClick={() => onEdit(course)}
-                          className="px-3 py-1.5 text-xs border border-white/20 rounded-xl min-h-10"
+                          className="px-3 py-1.5 text-sm border border-white/20 rounded-xl min-h-10"
                         >
                           עריכה
                         </button>
@@ -1025,7 +1091,7 @@ function VideosPanel({
                         <button
                           type="button"
                           onClick={() => onSubmit(course.id)}
-                          className="px-3 py-1.5 text-xs border border-[#C8A24C]/40 text-[#C8A24C] rounded-xl min-h-10"
+                          className="px-3 py-1.5 text-sm border border-[#C8A24C]/40 text-[#C8A24C] rounded-xl min-h-10"
                         >
                           שליחה לאישור
                         </button>
@@ -1382,9 +1448,16 @@ function LecturerCourseForm({
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
   const [submitAfter, setSubmitAfter] = useState(true);
+  const [step, setStep] = useState(0);
+  const steps = ['שם', 'סרטון', 'תמונה', 'שליחה לאישור'];
 
   const save = async (e: FormEvent) => {
     e.preventDefault();
+    if (!title.trim()) {
+      setError('נא למלא שם הרצאה');
+      setStep(0);
+      return;
+    }
     setPending(true);
     setError('');
     const payload: CoursePayload = {
@@ -1421,73 +1494,167 @@ function LecturerCourseForm({
     }
   };
 
+  const canNext =
+    (step === 0 && title.trim().length > 0) ||
+    (step === 1 && Boolean(videoUrl)) ||
+    step === 2 ||
+    step === 3;
+
   return (
-    <form onSubmit={(e) => void save(e)} className="grid gap-4 max-w-2xl">
-      <button type="button" onClick={onCancel} className="text-sm text-white/45 text-right cursor-pointer">
-        חזרה
+    <form onSubmit={(e) => void save(e)} className="grid gap-6 max-w-2xl">
+      <button type="button" onClick={onCancel} className="text-sm text-white/55 text-right cursor-pointer min-h-11">
+        חזרה להרצאות
       </button>
-      <label className="block">
-        <span className="block text-xs text-white/45 mb-1">שם ההרצאה</span>
-        <input required value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
-      </label>
-      <label className="block">
-        <span className="block text-xs text-white/45 mb-1">כותרת משנה</span>
-        <input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} className={fieldClass} />
-      </label>
-      <label className="block">
-        <span className="block text-xs text-white/45 mb-1">תיאור</span>
-        <textarea rows={4} value={description} onChange={(e) => setDescription(e.target.value)} className={fieldClass} />
-      </label>
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">קטגוריה</span>
-          <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className={fieldClass}>
-            {categories.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.name}
-              </option>
-            ))}
-          </select>
-        </label>
-        <label className="block">
-          <span className="block text-xs text-white/45 mb-1">רמת גישה</span>
-          <select value={accessLevel} onChange={(e) => setAccessLevel(e.target.value as AccessLevel)} className={fieldClass}>
-            <option value="free">חינמי</option>
-            <option value="premium">פרימיום</option>
-            <option value="premium_88">נבחרת 88</option>
-          </select>
-        </label>
+      <div>
+        <p className="text-sm tracking-[0.18em] text-[#C8A24C] mb-2">הוספת הרצאה</p>
+        <h2 className="text-2xl font-light mb-4">{course ? 'עריכת הרצאה' : 'ארבעה צעדים עד שליחה לאישור'}</h2>
+        <ol className="flex flex-wrap gap-2" aria-label="שלבי העלאה">
+          {steps.map((label, index) => (
+            <li key={label}>
+              <button
+                type="button"
+                onClick={() => setStep(index)}
+                className={`px-4 py-2 rounded-full text-sm min-h-11 border ${
+                  step === index
+                    ? 'bg-[#C8A24C] text-black border-[#C8A24C]'
+                    : index < step
+                      ? 'border-[#C8A24C]/40 text-[#F7E7B5]'
+                      : 'border-white/15 text-white/55'
+                }`}
+              >
+                {index + 1}. {label}
+              </button>
+            </li>
+          ))}
+        </ol>
       </div>
-      <FileUploadField
-        kind="image"
-        label="תמונת כיסוי"
-        value={coverImage}
-        onChange={setCoverImage}
-        previewAlt={title ? `תמונת כיסוי: ${title}` : 'תמונת כיסוי'}
-      />
-      <FileUploadField kind="resource" label="קבצים נלווים" value={resources} onChange={setResources} />
-      <label className="block">
-        <span className="block text-xs text-white/45 mb-1">שם הפרק</span>
-        <input value={episodeTitle} onChange={(e) => setEpisodeTitle(e.target.value)} className={fieldClass} />
-      </label>
-      <label className="block">
-        <span className="block text-xs text-white/45 mb-1">משך בדקות</span>
-        <input type="number" min={1} value={durationMin} onChange={(e) => setDurationMin(e.target.value)} className={fieldClass} />
-      </label>
-      <FileUploadField kind="video" label="קובץ וידאו" value={videoUrl} onChange={setVideoUrl} />
-      <FileUploadField kind="caption" label="כתוביות (WebVTT)" value={captionVttUrl} onChange={setCaptionVttUrl} />
-      <label className="flex items-center gap-3 text-sm text-white/55 min-h-11">
-        <input type="checkbox" checked={freeSample} onChange={(e) => setFreeSample(e.target.checked)} />
-        פרק ראשון כטעימה חינמית
-      </label>
-      <label className="flex items-center gap-3 text-sm text-white/55 min-h-11">
-        <input type="checkbox" checked={submitAfter} onChange={(e) => setSubmitAfter(e.target.checked)} />
-        שליחה לאישור אדמין אחרי שמירה
-      </label>
+
+      {step === 0 ? (
+        <div className="grid gap-4">
+          <label className="block">
+            <span className="block text-sm text-white/60 mb-1">שם ההרצאה</span>
+            <input required value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
+          </label>
+          <label className="block">
+            <span className="block text-sm text-white/60 mb-1">כותרת משנה</span>
+            <input value={subtitle} onChange={(e) => setSubtitle(e.target.value)} className={fieldClass} />
+          </label>
+          <label className="block">
+            <span className="block text-sm text-white/60 mb-1">תיאור</span>
+            <textarea rows={4} value={description} onChange={(e) => setDescription(e.target.value)} className={fieldClass} />
+          </label>
+          <label className="block">
+            <span className="block text-sm text-white/60 mb-1">קטגוריה</span>
+            <select value={categoryId} onChange={(e) => setCategoryId(e.target.value)} className={fieldClass}>
+              {categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {c.name}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
+      ) : null}
+
+      {step === 1 ? (
+        <div className="grid gap-4">
+          <label className="block">
+            <span className="block text-sm text-white/60 mb-1">שם הפרק</span>
+            <input value={episodeTitle} onChange={(e) => setEpisodeTitle(e.target.value)} className={fieldClass} />
+          </label>
+          <label className="block">
+            <span className="block text-sm text-white/60 mb-1">משך בדקות</span>
+            <input type="number" min={1} value={durationMin} onChange={(e) => setDurationMin(e.target.value)} className={fieldClass} />
+          </label>
+          <FileUploadField kind="video" label="קובץ וידאו" value={videoUrl} onChange={setVideoUrl} />
+          <FileUploadField kind="caption" label="כתוביות (WebVTT)" value={captionVttUrl} onChange={setCaptionVttUrl} />
+        </div>
+      ) : null}
+
+      {step === 2 ? (
+        <div className="grid gap-4">
+          <FileUploadField
+            kind="image"
+            label="תמונת כיסוי"
+            value={coverImage}
+            onChange={setCoverImage}
+            previewAlt={title ? `תמונת כיסוי: ${title}` : 'תמונת כיסוי'}
+          />
+          <FileUploadField kind="resource" label="קבצים נלווים (אופציונלי)" value={resources} onChange={setResources} />
+          <label className="block">
+            <span className="block text-sm text-white/60 mb-1">רמת גישה להרצאה</span>
+            <select value={accessLevel} onChange={(e) => setAccessLevel(e.target.value as AccessLevel)} className={fieldClass}>
+              <option value="free">חינמי</option>
+              <option value="premium">פרימיום</option>
+              <option value="premium_88">נבחרת 88</option>
+            </select>
+          </label>
+        </div>
+      ) : null}
+
+      {step === 3 ? (
+        <div className="grid gap-5">
+          <div>
+            <p className="text-base text-white mb-3">האם הפרק הראשון פתוח לכולם?</p>
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => setFreeSample(true)}
+                className={`px-5 py-3 rounded-full text-sm min-h-11 border ${
+                  freeSample ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/70'
+                }`}
+              >
+                כן, טעימה חינמית
+              </button>
+              <button
+                type="button"
+                onClick={() => setFreeSample(false)}
+                className={`px-5 py-3 rounded-full text-sm min-h-11 border ${
+                  !freeSample ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/70'
+                }`}
+              >
+                לא, רק למנויים
+              </button>
+            </div>
+          </div>
+          <label className="flex items-center gap-3 text-base text-white/70 min-h-11">
+            <input type="checkbox" checked={submitAfter} onChange={(e) => setSubmitAfter(e.target.checked)} />
+            שליחה לאישור אדמין אחרי שמירה
+          </label>
+          <p className="text-sm text-white/50">
+            {title || 'בלי שם עדיין'}
+            {videoUrl ? ' · יש סרטון' : ' · חסר סרטון'}
+            {coverImage ? ' · יש תמונה' : ' · בלי תמונת כיסוי'}
+          </p>
+        </div>
+      ) : null}
+
       {error && <p className="text-sm text-rose-300">{error}</p>}
-      <button type="submit" disabled={pending} className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60">
-        {pending ? 'שומר...' : 'שמירה'}
-      </button>
+      <div className="flex flex-wrap gap-3">
+        {step > 0 ? (
+          <button
+            type="button"
+            onClick={() => setStep((prev) => prev - 1)}
+            className="px-6 py-3 rounded-full border border-white/15 text-sm min-h-11"
+          >
+            חזרה
+          </button>
+        ) : null}
+        {step < 3 ? (
+          <button
+            type="button"
+            disabled={!canNext}
+            onClick={() => setStep((prev) => prev + 1)}
+            className="px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 disabled:opacity-50"
+          >
+            המשך
+          </button>
+        ) : (
+          <button type="submit" disabled={pending} className="px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60">
+            {pending ? 'שומר...' : submitAfter ? 'שמירה ושליחה לאישור' : 'שמירת טיוטה'}
+          </button>
+        )}
+      </div>
     </form>
   );
 }
