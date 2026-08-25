@@ -1787,12 +1787,66 @@ const APP_STATUS_LABEL: Record<LecturerApplication['status'], string> = {
   more_info: 'פרטים נוספים',
 };
 
+type TeamListChip = 'lecturers' | 'staff';
+type TeamAccess = 'active' | 'suspended' | 'blocked';
+
+function teamAccessKind(row: AdminUserRow): TeamAccess {
+  if (row.blocked) return 'blocked';
+  if (row.staffStatus === 'suspended') return 'suspended';
+  return 'active';
+}
+
+function teamAccessLabel(kind: TeamAccess): string {
+  if (kind === 'blocked') return 'חסום';
+  if (kind === 'suspended') return 'מושהה';
+  return 'פעיל';
+}
+
+function teamStatusSentence(row: AdminUserRow): string {
+  const access = teamAccessLabel(teamAccessKind(row));
+  if (row.role === 'instructor') return `מרצה · ${access}`;
+  if (row.role === 'admin') {
+    const desk = row.staffDesk ? STAFF_DESK_LABEL[row.staffDesk] || row.staffDesk : 'מנהל/ת ראשי/ת';
+    return `צוות · ${desk} · ${access}`;
+  }
+  return access;
+}
+
+function TeamChoiceChip({
+  selected,
+  onClick,
+  disabled,
+  children,
+}: {
+  selected: boolean;
+  onClick: () => void;
+  disabled?: boolean;
+  children: string;
+}) {
+  return (
+    <button
+      type="button"
+      role="radio"
+      aria-checked={selected}
+      disabled={disabled}
+      onClick={onClick}
+      className={`px-4 py-2 rounded-full text-sm min-h-11 border disabled:opacity-40 ${
+        selected ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/70'
+      }`}
+    >
+      {children}
+    </button>
+  );
+}
+
 function TeamStaffPanel() {
   const { reloadCatalog, user } = useApp();
   const confirm = useConfirm();
   const [users, setUsers] = useState<AdminUserRow[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [filter, setFilter] = useState<'all' | 'lecturer' | 'staff' | 'founder'>('all');
+  const [chip, setChip] = useState<TeamListChip>('lecturers');
+  const [query, setQuery] = useState('');
+  const [moreOpen, setMoreOpen] = useState(false);
   const [error, setError] = useState('');
   const [pendingId, setPendingId] = useState<string | null>(null);
 
@@ -1806,13 +1860,16 @@ function TeamStaffPanel() {
     void load();
   }, []);
 
+  useEffect(() => {
+    setMoreOpen(false);
+  }, [selectedId]);
+
   const rows = users.filter((row) => {
-    const isStaff = row.role === 'admin' || Boolean(row.staffDesk);
-    const isLecturer = row.role === 'instructor';
-    if (filter === 'lecturer') return isLecturer;
-    if (filter === 'staff') return isStaff;
-    if (filter === 'founder') return Boolean(row.isFounder);
-    return isStaff || isLecturer || Boolean(row.isFounder);
+    const matchesChip = chip === 'lecturers' ? row.role === 'instructor' : row.role === 'admin';
+    if (!matchesChip) return false;
+    const haystack = `${row.name} ${row.email}`.toLowerCase();
+    if (query.trim() && !haystack.includes(query.trim().toLowerCase())) return false;
+    return true;
   });
 
   const selected = users.find((row) => row.id === selectedId) || null;
@@ -1831,6 +1888,9 @@ function TeamStaffPanel() {
     try {
       await adminApi.updateUser(id, next);
       await load();
+      if (next.role === 'instructor') setChip('lecturers');
+      else if (next.role === 'admin') setChip('staff');
+      else if (next.role === 'student') setSelectedId(null);
       if (next.role === 'instructor' || next.isFounder !== undefined) await reloadCatalog();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'הפעולה נכשלה');
@@ -1862,235 +1922,309 @@ function TeamStaffPanel() {
     }
   };
 
+  const selectChip = (next: TeamListChip) => {
+    setChip(next);
+    setSelectedId((current) => {
+      const row = users.find((item) => item.id === current);
+      if (!row) return null;
+      const matches = next === 'lecturers' ? row.role === 'instructor' : row.role === 'admin';
+      return matches ? current : null;
+    });
+  };
+
   return (
     <div className="grid gap-6">
-      <OpsPageHeader
-        title="צוות ומרצים"
-        hint="מי מרצה, מי צוות, איזה דסק, ומי חסום או מושהה. מייסד נשאר דגל נפרד."
-      />
+      <OpsPageHeader title="צוות ומרצים" hint="מי מרצה, מי רואה דסק, ומי חסום." />
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
-      <div className="flex flex-wrap gap-2">
-        {(
-          [
-            ['all', 'הכל'],
-            ['lecturer', 'מרצים'],
-            ['staff', 'צוות'],
-            ['founder', 'מייסדים'],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => setFilter(id)}
-            className={`px-4 py-2 rounded-full text-xs min-h-10 border ${
-              filter === id ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/55'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
+      <div className="grid gap-3 max-w-xl">
+        <label className="block">
+          <span className="block text-sm text-white/60 mb-1">חיפוש לפי שם או אימייל</span>
+          <input
+            type="search"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="למשל: דנה או dana@"
+            className={fieldClass}
+          />
+        </label>
+        <div className="flex flex-wrap gap-2" role="tablist" aria-label="סינון צוות ומרצים">
+          {(
+            [
+              ['lecturers', 'מרצים'],
+              ['staff', 'צוות'],
+            ] as const
+          ).map(([id, label]) => (
+            <button
+              key={id}
+              type="button"
+              role="tab"
+              aria-selected={chip === id}
+              onClick={() => selectChip(id)}
+              className={`px-4 py-2 rounded-full text-sm min-h-11 border ${
+                chip === id ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/70'
+              }`}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
 
       <div className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
-        <div className="overflow-x-auto border border-white/10 rounded-2xl">
-          <table className="w-full text-sm text-right">
-            <thead className="text-xs text-white/40 border-b border-white/10">
-              <tr>
-                <th className="py-3 px-3 font-normal">שם</th>
-                <th className="py-3 px-3 font-normal">תפקיד</th>
-                <th className="py-3 px-3 font-normal">דסק</th>
-                <th className="py-3 px-3 font-normal">סטטוס</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/10">
-              {rows.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="py-6 px-3 text-white/40">
-                    אין רשומות בסינון הנוכחי.
-                  </td>
-                </tr>
-              ) : (
-                rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    onClick={() => setSelectedId(row.id)}
-                    className={`cursor-pointer ${selectedId === row.id ? 'bg-[#C8A24C]/10' : 'hover:bg-white/[0.03]'}`}
-                  >
-                    <td className="py-3 px-3">
-                      {row.name}
-                      {row.isFounder ? <span className="text-white/35"> · מייסד</span> : null}
-                      <span className="block text-xs text-white/35">{row.email}</span>
-                    </td>
-                    <td className="py-3 px-3 text-white/60">
-                      {row.role === 'admin' ? 'אדמין' : row.role === 'instructor' ? 'מרצה' : 'משתמש'}
-                    </td>
-                    <td className="py-3 px-3 text-white/55">
-                      {row.staffDesk ? STAFF_DESK_LABEL[row.staffDesk] || row.staffDesk : '—'}
-                    </td>
-                    <td className="py-3 px-3 text-white/55">
-                      {row.blocked
-                        ? 'חסום'
-                        : row.staffStatus === 'suspended'
-                          ? 'מושהה'
-                          : row.staffStatus === 'limited'
-                            ? 'מוגבל'
-                            : 'פעיל'}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+        <div className="border border-white/10 rounded-2xl overflow-hidden">
+          {rows.length === 0 ? (
+            <p className="py-8 px-4 text-sm text-white/40">
+              {chip === 'lecturers' ? 'אין מרצים שתואמים לחיפוש.' : 'אין אנשי צוות שתואמים לחיפוש.'}
+            </p>
+          ) : (
+            <ul className="divide-y divide-white/10">
+              {rows.map((row) => {
+                const active = selectedId === row.id;
+                return (
+                  <li key={row.id}>
+                    <button
+                      type="button"
+                      onClick={() => setSelectedId(row.id)}
+                      aria-current={active ? 'true' : undefined}
+                      className={`w-full text-right px-4 py-3 min-h-16 ${
+                        active ? 'bg-[#C8A24C]/10' : 'hover:bg-white/[0.03]'
+                      }`}
+                    >
+                      <span className="flex items-start gap-3">
+                        <span
+                          className="size-10 rounded-full bg-white/10 text-white/50 flex items-center justify-center text-sm shrink-0"
+                          aria-hidden
+                        >
+                          {(row.name || row.email).slice(0, 1)}
+                        </span>
+                        <span className="min-w-0 flex-1">
+                          <span className="block text-base text-white">
+                            {row.name}
+                            {row.isFounder ? <span className="text-white/40 text-sm"> · מייסד</span> : null}
+                          </span>
+                          <span className="block text-xs text-white/40 mt-0.5 break-all">{row.email}</span>
+                          <span className="block text-sm text-white/60 mt-1">{teamStatusSentence(row)}</span>
+                        </span>
+                      </span>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
+          )}
         </div>
 
         <aside className="border border-white/10 rounded-2xl p-5 min-h-[320px]">
           {!selected ? (
-            <p className="text-sm text-white/40">בחרו איש צוות או מרצה.</p>
+            <p className="text-sm text-white/40">בחרו אדם מהרשימה.</p>
           ) : (
-            <div className="grid gap-4 text-sm">
-              <div>
-                <h3 className="text-xl font-light">{selected.name}</h3>
-                <p className="text-white/60 mt-1 break-all">{selected.email}</p>
-              </div>
-
-              <label className="grid gap-1 text-white/50">
-                תפקיד מערכת
-                <select
-                  value={selected.role}
-                  disabled={pendingId === selected.id}
-                  onChange={(e) =>
-                    void patch(selected.id, { role: e.target.value }, 'לשנות תפקיד למשתמש?')
-                  }
-                  className={fieldClass}
-                >
-                  <option value="student">משתמש</option>
-                  <option value="instructor">מרצה</option>
-                  <option value="admin">אדמין / צוות</option>
-                </select>
-              </label>
-
-              <label className="grid gap-1 text-white/50">
-                דסק צוות
-                <select
-                  value={selected.staffDesk || ''}
-                  disabled={pendingId === selected.id}
-                  onChange={(e) =>
-                    void patch(
-                      selected.id,
-                      {
-                        staffDesk: e.target.value,
-                        role: e.target.value ? 'admin' : selected.role,
-                      },
-                      e.target.value ? 'לשייך לדסק צוות? המשתמש יקבל גישה מוגבלת לאדמין.' : undefined
-                    )
-                  }
-                  className={fieldClass}
-                >
-                  <option value="">ללא (מנהל/ת ראשי/ת אם תפקיד אדמין)</option>
-                  <option value="content">תוכן</option>
-                  <option value="support">תמיכה</option>
-                  <option value="sales">מכירות / הצלחה</option>
-                  <option value="legal">משפטי</option>
-                  <option value="finance">כספים</option>
-                  <option value="community">קהילה</option>
-                </select>
-              </label>
-
-              <label className="grid gap-1 text-white/50">
-                סטטוס גישה
-                <select
-                  value={selected.staffStatus || 'active'}
-                  disabled={pendingId === selected.id}
-                  onChange={(e) =>
-                    void patch(
-                      selected.id,
-                      { staffStatus: e.target.value },
-                      e.target.value === 'suspended' ? 'להשהות גישה ולנתק סשנים פעילים?' : undefined
-                    )
-                  }
-                  className={fieldClass}
-                >
-                  <option value="active">פעיל</option>
-                  <option value="limited">גישה מוגבלת</option>
-                  <option value="suspended">מושהה</option>
-                </select>
-              </label>
-
-              <div className="flex flex-wrap gap-2 pt-2">
-                <button
-                  type="button"
-                  disabled={pendingId === selected.id}
-                  onClick={() =>
-                    void patch(
-                      selected.id,
-                      { blocked: !selected.blocked },
-                      selected.blocked ? undefined : 'לחסום את המשתמש ולנתק סשנים?'
-                    )
-                  }
-                  className="px-3 py-2 text-xs border border-white/20 rounded-xl min-h-11"
-                >
-                  {selected.blocked ? 'שחרור חסימה' : 'חסימה'}
-                </button>
-                <button
-                  type="button"
-                  disabled={
-                    pendingId === selected.id ||
-                    selected.id === user.id ||
-                    (selected.role === 'admin' && users.filter((row) => row.role === 'admin').length <= 1)
-                  }
-                  onClick={() => void removeUser(selected)}
-                  className="px-3 py-2 text-xs border border-rose-400/40 text-rose-200 rounded-xl min-h-11 disabled:opacity-40"
-                >
-                  הסרה מהמערכת
-                </button>
-                <button
-                  type="button"
-                  disabled={pendingId === selected.id}
-                  onClick={() =>
-                    void patch(
-                      selected.id,
-                      { isFounder: !selected.isFounder },
-                      selected.isFounder ? 'להסיר דגל מייסד?' : 'לסמן כמייסד?'
-                    )
-                  }
-                  className="px-3 py-2 text-xs border border-[#C8A24C]/40 text-[#C8A24C] rounded-xl min-h-11"
-                >
-                  {selected.isFounder ? 'הסרת מייסד' : 'סימון מייסד'}
-                </button>
-                {selected.role !== 'instructor' ? (
-                  <button
-                    type="button"
-                    disabled={pendingId === selected.id}
-                    onClick={() => void patch(selected.id, { role: 'instructor' }, 'לאשר כמרצה?')}
-                    className="px-3 py-2 text-xs bg-[#C8A24C] text-black rounded-xl min-h-11"
-                  >
-                    אישור כמרצה
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    disabled={pendingId === selected.id}
-                    onClick={() =>
-                      void patch(selected.id, { role: 'student', staffDesk: '' }, 'להסיר תפקיד מרצה?')
-                    }
-                    className="px-3 py-2 text-xs border border-white/20 rounded-xl min-h-11"
-                  >
-                    הסרת תפקיד מרצה
-                  </button>
-                )}
-              </div>
-
-              {(selected.role === 'instructor' || selected.role === 'admin') && (
-                <TeamMessageComposer
-                  lecturerUserId={selected.id}
-                  lecturerName={selected.name}
-                  disabled={pendingId === selected.id}
-                />
-              )}
-            </div>
+            <TeamPersonCard
+              selected={selected}
+              users={users}
+              currentUserId={user.id}
+              pending={pendingId === selected.id}
+              moreOpen={moreOpen}
+              onToggleMore={() => setMoreOpen((open) => !open)}
+              onPatch={patch}
+              onRemove={() => void removeUser(selected)}
+            />
           )}
         </aside>
+      </div>
+    </div>
+  );
+}
+
+function TeamPersonCard({
+  selected,
+  users,
+  currentUserId,
+  pending,
+  moreOpen,
+  onToggleMore,
+  onPatch,
+  onRemove,
+}: {
+  selected: AdminUserRow;
+  users: AdminUserRow[];
+  currentUserId: string;
+  pending: boolean;
+  moreOpen: boolean;
+  onToggleMore: () => void;
+  onPatch: (id: string, next: Parameters<typeof adminApi.updateUser>[1], confirmMsg?: string) => Promise<void>;
+  onRemove: () => void;
+}) {
+  const isSelf = selected.id === currentUserId;
+  const isLecturer = selected.role === 'instructor';
+  const isStaff = selected.role === 'admin';
+  const lastAdmin = isStaff && users.filter((row) => row.role === 'admin').length <= 1;
+  const access = teamAccessKind(selected);
+  const busy = pending || isSelf;
+
+  return (
+    <div className="grid gap-6">
+      <div>
+        <h3 className="text-xl font-light">{selected.name}</h3>
+        <p className="text-white/60 mt-1 break-all">{selected.email}</p>
+        <p className="text-sm text-white/50 mt-2">{teamStatusSentence(selected)}</p>
+      </div>
+
+      <OpsSection title="תפקיד">
+        <div className="grid gap-4">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span className="text-base text-white/70">מרצה</span>
+            <div className="flex gap-2" role="radiogroup" aria-label="מרצה">
+              <TeamChoiceChip
+                selected={isLecturer}
+                disabled={busy || (lastAdmin && !isLecturer)}
+                onClick={() => {
+                  if (isLecturer) return;
+                  void onPatch(selected.id, { role: 'instructor', staffDesk: '' }, 'לאשר כמרצה?');
+                }}
+              >
+                כן
+              </TeamChoiceChip>
+              <TeamChoiceChip
+                selected={!isLecturer}
+                disabled={busy}
+                onClick={() => {
+                  if (!isLecturer) return;
+                  void onPatch(selected.id, { role: 'student', staffDesk: '' }, 'להסיר תפקיד מרצה?');
+                }}
+              >
+                לא
+              </TeamChoiceChip>
+            </div>
+          </div>
+
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <span className="text-base text-white/70">צוות</span>
+            <div className="flex gap-2" role="radiogroup" aria-label="צוות">
+              <TeamChoiceChip
+                selected={isStaff}
+                disabled={busy}
+                onClick={() => {
+                  if (isStaff) return;
+                  void onPatch(selected.id, { role: 'admin' }, 'לשייך כצוות? המשתמש יקבל גישה לדסק.');
+                }}
+              >
+                כן
+              </TeamChoiceChip>
+              <TeamChoiceChip
+                selected={!isStaff}
+                disabled={busy || lastAdmin}
+                onClick={() => {
+                  if (!isStaff) return;
+                  void onPatch(selected.id, { role: 'student', staffDesk: '' }, 'להסיר מתפקיד צוות?');
+                }}
+              >
+                לא
+              </TeamChoiceChip>
+            </div>
+          </div>
+
+          {isStaff ? (
+            <OpsField label="דסק">
+              <select
+                value={selected.staffDesk || ''}
+                disabled={pending}
+                onChange={(e) => void onPatch(selected.id, { staffDesk: e.target.value })}
+                className={fieldClass}
+              >
+                <option value="">מנהל/ת ראשי/ת</option>
+                <option value="content">תוכן</option>
+                <option value="support">תמיכה</option>
+                <option value="sales">מכירות / הצלחה</option>
+                <option value="legal">משפטי</option>
+                <option value="finance">כספים</option>
+                <option value="community">קהילה</option>
+              </select>
+            </OpsField>
+          ) : null}
+        </div>
+      </OpsSection>
+
+      <OpsSection title="גישה">
+        <div className="flex flex-wrap gap-2" role="radiogroup" aria-label="גישה">
+          <TeamChoiceChip
+            selected={access === 'active'}
+            disabled={busy}
+            onClick={() => {
+              if (access === 'active') return;
+              void onPatch(selected.id, { blocked: false, staffStatus: 'active' });
+            }}
+          >
+            פעיל
+          </TeamChoiceChip>
+          <TeamChoiceChip
+            selected={access === 'suspended'}
+            disabled={busy}
+            onClick={() => {
+              if (access === 'suspended') return;
+              void onPatch(
+                selected.id,
+                { blocked: false, staffStatus: 'suspended' },
+                'להשהות גישה ולנתק סשנים פעילים?'
+              );
+            }}
+          >
+            מושהה
+          </TeamChoiceChip>
+          <TeamChoiceChip
+            selected={access === 'blocked'}
+            disabled={busy}
+            onClick={() => {
+              if (access === 'blocked') return;
+              void onPatch(selected.id, { blocked: true }, 'לחסום את המשתמש ולנתק סשנים?');
+            }}
+          >
+            חסום
+          </TeamChoiceChip>
+        </div>
+      </OpsSection>
+
+      <TeamMessageComposer
+        lecturerUserId={selected.id}
+        lecturerName={selected.name}
+        disabled={pending}
+      />
+
+      <div>
+        <button
+          type="button"
+          onClick={onToggleMore}
+          aria-expanded={moreOpen}
+          className="text-sm text-white/50 hover:text-white min-h-11 px-1"
+        >
+          {moreOpen ? 'פחות' : 'עוד'}
+        </button>
+        {moreOpen ? (
+          <div className="grid gap-2 mt-3">
+            <button
+              type="button"
+              disabled={pending}
+              onClick={() =>
+                void onPatch(
+                  selected.id,
+                  { isFounder: !selected.isFounder },
+                  selected.isFounder ? 'להסיר דגל מייסד?' : 'לסמן כמייסד?'
+                )
+              }
+              className={`${opsGhostBtn} w-fit text-sm`}
+            >
+              {selected.isFounder ? 'הסרת מייסד' : 'סימון מייסד'}
+            </button>
+            <button
+              type="button"
+              disabled={pending || isSelf || lastAdmin}
+              onClick={onRemove}
+              className="inline-flex items-center justify-center px-5 py-3 rounded-full border border-rose-400/40 text-base text-rose-200 min-h-12 w-fit disabled:opacity-40"
+            >
+              הסרה מהמערכת
+            </button>
+          </div>
+        ) : null}
       </div>
     </div>
   );
@@ -2105,11 +2239,20 @@ function TeamMessageComposer({
   lecturerName: string;
   disabled?: boolean;
 }) {
+  const [open, setOpen] = useState(false);
   const [subject, setSubject] = useState('');
   const [body, setBody] = useState('');
   const [pending, setPending] = useState(false);
   const [error, setError] = useState('');
   const [ok, setOk] = useState('');
+
+  useEffect(() => {
+    setOpen(false);
+    setSubject('');
+    setBody('');
+    setError('');
+    setOk('');
+  }, [lecturerUserId]);
 
   const send = async () => {
     setPending(true);
@@ -2127,34 +2270,54 @@ function TeamMessageComposer({
     }
   };
 
-  return (
-    <div className="border-t border-white/10 pt-4 grid gap-3">
-      <p className="text-base text-white/60">הודעה פנימית אל {lecturerName}</p>
-      <input
-        value={subject}
-        onChange={(e) => setSubject(e.target.value)}
-        placeholder="נושא"
-        className={fieldClass}
-        disabled={disabled || pending}
-      />
-      <textarea
-        rows={3}
-        value={body}
-        onChange={(e) => setBody(e.target.value)}
-        placeholder="תוכן ההודעה"
-        className={fieldClass}
-        disabled={disabled || pending}
-      />
-      {error ? <p className="text-xs text-rose-300">{error}</p> : null}
-      {ok ? <p className="text-xs text-emerald-300">{ok}</p> : null}
-      <button
-        type="button"
-        disabled={disabled || pending || !subject.trim() || !body.trim()}
-        onClick={() => void send()}
-        className="w-fit px-4 py-2 rounded-full bg-[#C8A24C] text-black text-xs min-h-10 disabled:opacity-60"
-      >
-        {pending ? 'שולח...' : 'שליחת הודעה'}
+  if (!open) {
+    return (
+      <button type="button" disabled={disabled} onClick={() => setOpen(true)} className={`${opsGhostBtn} w-fit`}>
+        שליחת הודעה
       </button>
+    );
+  }
+
+  return (
+    <div className="grid gap-3">
+      <p className="text-base text-white/60">הודעה פנימית אל {lecturerName}</p>
+      <OpsField label="נושא">
+        <input
+          value={subject}
+          onChange={(e) => setSubject(e.target.value)}
+          className={fieldClass}
+          disabled={disabled || pending}
+        />
+      </OpsField>
+      <OpsField label="תוכן">
+        <textarea
+          rows={3}
+          value={body}
+          onChange={(e) => setBody(e.target.value)}
+          className={fieldClass}
+          disabled={disabled || pending}
+        />
+      </OpsField>
+      {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+      {ok ? <p className="text-sm text-emerald-300">{ok}</p> : null}
+      <div className="flex flex-wrap gap-2">
+        <button
+          type="button"
+          disabled={disabled || pending || !subject.trim() || !body.trim()}
+          onClick={() => void send()}
+          className={opsPrimaryBtn}
+        >
+          {pending ? 'שולח...' : 'שליחה'}
+        </button>
+        <button
+          type="button"
+          disabled={pending}
+          onClick={() => setOpen(false)}
+          className={opsGhostBtn}
+        >
+          ביטול
+        </button>
+      </div>
     </div>
   );
 }
