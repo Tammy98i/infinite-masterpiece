@@ -39,9 +39,33 @@ export function saveWebinarConfig(input: Partial<WebinarConfig>) {
 }
 
 export function seedWebinarConfigIfMissing() {
-  if (!getSetting(CONFIG_KEY)) {
+  const raw = getSetting(CONFIG_KEY);
+  if (!raw) {
     setSetting(CONFIG_KEY, JSON.stringify(DEFAULT_WEBINAR_CONFIG));
+    return;
   }
+
+  const current = parseConfig(raw);
+  const next = { ...current };
+  let changed = false;
+
+  if (current.durationMinutes === 90) {
+    next.durationMinutes = DEFAULT_WEBINAR_CONFIG.durationMinutes;
+    changed = true;
+  }
+  if (current.heroSubheadline.includes('וובינר פתיחה ליוצרים')) {
+    next.heroSubheadline = DEFAULT_WEBINAR_CONFIG.heroSubheadline;
+    changed = true;
+  }
+  if (current.leaderPrimaryTitle === 'Founder & Vision Lead') {
+    next.leaderPrimaryTitle = DEFAULT_WEBINAR_CONFIG.leaderPrimaryTitle;
+    next.leaderPrimaryBio = DEFAULT_WEBINAR_CONFIG.leaderPrimaryBio;
+    next.leaderSecondaryTitle = DEFAULT_WEBINAR_CONFIG.leaderSecondaryTitle;
+    next.leaderSecondaryBio = DEFAULT_WEBINAR_CONFIG.leaderSecondaryBio;
+    changed = true;
+  }
+
+  if (changed) setSetting(CONFIG_KEY, JSON.stringify(next));
 }
 
 function countByStatus(status: string) {

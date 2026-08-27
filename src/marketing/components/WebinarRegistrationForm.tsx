@@ -1,5 +1,5 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { webinarApi } from '../../api/webinar';
 import type { WebinarPublicPayload } from '../../constants/webinar';
 import { WEBINAR_BLOCKER_OPTIONS, WEBINAR_INTEREST_OPTIONS } from '../../constants/webinar';
@@ -13,39 +13,26 @@ type Props = {
   payload: WebinarPublicPayload;
   formId?: string;
   compact?: boolean;
-  initialStep?: 'a' | 'b';
-  registrationId?: string;
-  onStepChange?: (step: 'a' | 'b') => void;
   onComplete?: (registrationId: string) => void;
 };
+
+const fieldClass =
+  'w-full bg-[#010308]/60 border border-[#C8A24C]/25 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#C8A24C] focus:ring-1 focus:ring-[#C8A24C]/40 min-h-11';
 
 export function WebinarRegistrationForm({
   payload,
   formId = 'webinar-register',
   compact,
-  initialStep = 'a',
-  registrationId: initialRegistrationId,
-  onStepChange,
   onComplete,
 }: Props) {
   const { config, registrationCount, spotsRemaining, isWaitlist, abVariant } = payload;
   const navigate = useNavigate();
-  const [step, setStep] = useState<'a' | 'b'>(initialStep);
-  const [registrationId, setRegistrationId] = useState(initialRegistrationId || '');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const startedRef = useRef(false);
   const formViewTracked = useRef(false);
   const rootRef = useRef<HTMLFormElement>(null);
   const [prefillEmail] = useState(() => consumeWebinarExitEmailPrefill());
-
-  useEffect(() => {
-    if (initialRegistrationId) setRegistrationId(initialRegistrationId);
-  }, [initialRegistrationId]);
-
-  useEffect(() => {
-    onStepChange?.(step);
-  }, [step, onStepChange]);
 
   useEffect(() => {
     const node = rootRef.current;
@@ -64,17 +51,18 @@ export function WebinarRegistrationForm({
     return () => observer.disconnect();
   }, [formId]);
 
-  const fieldClass =
-    'w-full bg-[#010308]/60 border border-[#C8A24C]/25 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#C8A24C] focus:ring-1 focus:ring-[#C8A24C]/40 min-h-11';
+  const markStarted = () => {
+    if (startedRef.current) return;
+    startedRef.current = true;
+    trackEvent('webinar_form_started', { source: formId });
+    trackEvent('webinar_step_a_started', { source: formId });
+  };
 
-  const handleStepA = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setSubmitting(true);
-    if (!startedRef.current) {
-      startedRef.current = true;
-      trackEvent('webinar_step_a_started', { source: formId });
-    }
+    markStarted();
 
     const data = new FormData(e.currentTarget);
     const utm = getStoredUtm();
@@ -88,39 +76,27 @@ export function WebinarRegistrationForm({
         abVariant,
         ...utmAsRecord(utm),
       });
-      setRegistrationId(registration.id);
-      if (registration.isWaitlist || registration.status === 'waitlist') {
-        navigate(
-          `/webinar/thank-you?id=${encodeURIComponent(registration.id)}&name=${encodeURIComponent(registration.fullName)}&waitlist=1`
-        );
-        return;
-      }
-      setStep('b');
-      trackEvent('webinar_step_b_started', { source: formId, registrationId: registration.id });
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'שליחה נכשלה');
-    } finally {
-      setSubmitting(false);
-    }
-  };
 
-  const handleStepB = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    setError('');
-    setSubmitting(true);
-    const data = new FormData(e.currentTarget);
-    try {
-      const { registration } = await webinarApi.register({
+      const waitlisted = registration.isWaitlist || registration.status === 'waitlist';
+      await webinarApi.register({
         step: 'b',
-        registrationId,
+        registrationId: registration.id,
         field: String(data.get('field') || ''),
         interest: String(data.get('interest') || ''),
         blocker: String(data.get('blocker') || ''),
       });
+
+      trackEvent('webinar_form_submitted', { source: formId, registrationId: registration.id });
       onComplete?.(registration.id);
-      navigate(
-        `/webinar/thank-you?id=${encodeURIComponent(registration.id)}&name=${encodeURIComponent(registration.fullName)}&date=${encodeURIComponent(config.date)}&time=${encodeURIComponent(config.time)}`
-      );
+
+      const params = new URLSearchParams({
+        id: registration.id,
+        name: registration.fullName,
+        date: config.date,
+        time: config.time,
+      });
+      if (waitlisted) params.set('waitlist', '1');
+      navigate(`/webinar/thank-you?${params.toString()}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'שליחה נכשלה');
     } finally {
@@ -128,72 +104,22 @@ export function WebinarRegistrationForm({
     }
   };
 
-  if (step === 'b' && registrationId) {
-    return (
-      <form ref={rootRef} id={formId} onSubmit={handleStepB} className="space-y-4 text-right">
-        {!compact ? (
-          <div className="mb-2">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-2">שלב 2 מתוך 2</p>
-            <h2 className="text-xl font-light text-white mb-1">עוד 3 שאלות קצרות</h2>
-            <p className="text-xs text-white/40 font-light">כדי שנוכל להתאים את הוובינר אליך</p>
-          </div>
-        ) : null}
-
-        <div>
-          <label htmlFor={`${formId}-field`} className="text-xs text-white/60 mb-1 block">
-            תחום יצירה / עיסוק *
-          </label>
-          <input required id={`${formId}-field`} name="field" type="text" className={fieldClass} />
-        </div>
-        <div>
-          <label htmlFor={`${formId}-interest`} className="text-xs text-white/60 mb-1 block">
-            מה הכי מסקרן אותך? *
-          </label>
-          <select required id={`${formId}-interest`} name="interest" className={fieldClass} defaultValue="">
-            <option value="" disabled>
-              בחר/י
-            </option>
-            {WEBINAR_INTEREST_OPTIONS.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor={`${formId}-blocker`} className="text-xs text-white/60 mb-1 block">
-            מה הכי תוקע אותך היום?
-          </label>
-          <select id={`${formId}-blocker`} name="blocker" className={fieldClass} defaultValue="">
-            <option value="">לא חובה</option>
-            {WEBINAR_BLOCKER_OPTIONS.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </div>
-        {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-sm font-semibold min-h-11 hover:opacity-95 disabled:opacity-50"
-        >
-          {submitting ? 'שולח…' : 'סיום ההרשמה'}
-        </button>
-      </form>
-    );
-  }
-
   return (
-    <form ref={rootRef} id={formId} onSubmit={handleStepA} className="space-y-4 text-right" aria-labelledby={`${formId}-title`}>
+    <form
+      ref={rootRef}
+      id={formId}
+      onSubmit={handleSubmit}
+      onFocus={markStarted}
+      className="space-y-4 text-right"
+      aria-labelledby={`${formId}-title`}
+    >
       {!compact ? (
         <div className="mb-2">
           <p id={`${formId}-title`} className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-2">
-            הרשמה לוובינר · שלב 1 מתוך 2
+            {isWaitlist ? 'רשימת המתנה' : 'הרשמה לוובינר'}
           </p>
           <h2 className="text-xl font-light text-white mb-1">
-            {isWaitlist ? 'הצטרפ/י לרשימת המתנה' : `שריינו מקום — ${config.spotsLabel}`}
+            {isWaitlist ? 'הצטרפ/י לרשימת המתנה' : 'שריינו מקום לוובינר ההשקה'}
           </h2>
           <p className="text-xs text-white/40 font-light mb-3">{config.title}</p>
           <WebinarUrgencyStrip
@@ -209,13 +135,13 @@ export function WebinarRegistrationForm({
           <label htmlFor={`${formId}-fullName`} className="text-xs text-white/60 mb-1 block">
             שם מלא *
           </label>
-          <input required id={`${formId}-fullName`} name="fullName" type="text" className={fieldClass} />
+          <input required id={`${formId}-fullName`} name="fullName" type="text" autoComplete="name" className={fieldClass} />
         </div>
         <div>
           <label htmlFor={`${formId}-phone`} className="text-xs text-white/60 mb-1 block">
             טלפון *
           </label>
-          <input required id={`${formId}-phone`} name="phone" type="tel" className={fieldClass} />
+          <input required id={`${formId}-phone`} name="phone" type="tel" autoComplete="tel" className={fieldClass} />
         </div>
       </div>
 
@@ -223,24 +149,86 @@ export function WebinarRegistrationForm({
         <label htmlFor={`${formId}-email`} className="text-xs text-white/60 mb-1 block">
           אימייל *
         </label>
-        <input required id={`${formId}-email`} name="email" type="email" className={fieldClass} defaultValue={prefillEmail} />
+        <input
+          required
+          id={`${formId}-email`}
+          name="email"
+          type="email"
+          autoComplete="email"
+          className={fieldClass}
+          defaultValue={prefillEmail}
+        />
+      </div>
+
+      <div>
+        <label htmlFor={`${formId}-field`} className="text-xs text-white/60 mb-1 block">
+          תחום יצירה / עיסוק *
+        </label>
+        <input required id={`${formId}-field`} name="field" type="text" className={fieldClass} />
+      </div>
+
+      <div>
+        <label htmlFor={`${formId}-interest`} className="text-xs text-white/60 mb-1 block">
+          איפה את/ה נמצא/ת היום? *
+        </label>
+        <select required id={`${formId}-interest`} name="interest" className={`${fieldClass} cursor-pointer`} defaultValue="">
+          <option value="" disabled>
+            בחר/י
+          </option>
+          {WEBINAR_INTEREST_OPTIONS.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
+      </div>
+
+      <div>
+        <label htmlFor={`${formId}-blocker`} className="text-xs text-white/60 mb-1 block">
+          מה צוואר הבקבוק המרכזי שלך? *
+        </label>
+        <select required id={`${formId}-blocker`} name="blocker" className={`${fieldClass} cursor-pointer`} defaultValue="">
+          <option value="" disabled>
+            בחר/י
+          </option>
+          {WEBINAR_BLOCKER_OPTIONS.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
       </div>
 
       <label className="flex items-start gap-3 text-xs text-white/45 leading-relaxed cursor-pointer">
-        <input type="checkbox" name="marketingOptIn" className="mt-1 accent-[#C8A24C] min-w-4 min-h-4" />
-        <span>אני מאשר/ת קבלת עדכונים על הוובינר (ניתן לבטל בכל עת).</span>
+        <input type="checkbox" name="marketingOptIn" className="mt-1 accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer" />
+        <span>אישור קבלת עדכונים על הוובינר (ניתן לבטל בכל עת).</span>
+      </label>
+
+      <label className="flex items-start gap-3 text-xs text-white/45 leading-relaxed cursor-pointer">
+        <input required type="checkbox" name="termsAccepted" className="mt-1 accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer" />
+        <span>
+          אישור{' '}
+          <Link to="/terms" className="text-[#C8A24C] hover:text-[#F7E7B5] underline-offset-2 hover:underline">
+            תנאי שימוש
+          </Link>{' '}
+          ו
+          <Link to="/privacy" className="text-[#C8A24C] hover:text-[#F7E7B5] underline-offset-2 hover:underline">
+            מדיניות פרטיות
+          </Link>
+          .
+        </span>
       </label>
 
       <WebinarTrustStrip config={config} />
 
-      {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+      {error ? <p className="text-sm text-rose-300" role="alert">{error}</p> : null}
 
       <button
         type="submit"
         disabled={submitting || !config.enabled}
-        className="w-full py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-sm font-semibold min-h-11 hover:opacity-95 disabled:opacity-50"
+        className="w-full py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-sm font-semibold min-h-11 cursor-pointer hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-200"
       >
-        {submitting ? 'שולח…' : isWaitlist ? 'הצטרפות לרשימת המתנה' : 'שריינו לי מקום — המשך'}
+        {submitting ? 'שולח…' : isWaitlist ? 'הצטרפות לרשימת המתנה' : 'כן, אני רוצה מקום בוובינר'}
       </button>
     </form>
   );

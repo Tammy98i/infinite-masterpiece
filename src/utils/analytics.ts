@@ -10,6 +10,8 @@ declare global {
 
 const MARKETING_EVENTS: Record<string, { ga?: string; meta?: string }> = {
   webinar_page_view: { ga: 'page_view', meta: 'PageView' },
+  webinar_form_started: { ga: 'generate_lead', meta: 'Lead' },
+  webinar_form_submitted: { ga: 'generate_lead', meta: 'CompleteRegistration' },
   webinar_step_a_completed: { ga: 'generate_lead', meta: 'Lead' },
   webinar_registration_completed: { ga: 'generate_lead', meta: 'CompleteRegistration' },
 };

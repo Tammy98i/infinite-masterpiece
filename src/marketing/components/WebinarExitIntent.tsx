@@ -48,8 +48,12 @@ export function WebinarExitIntent({ enabled = true }: Props) {
           הזינ/י אימייל ונעביר אותך להשלמת הרשמה מהירה.
         </p>
         <div className="space-y-3">
-          <input
+        <label htmlFor="webinar-exit-email" className="sr-only">
+          אימייל
+        </label>
+        <input
             type="email"
+            id="webinar-exit-email"
             required
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -59,12 +63,12 @@ export function WebinarExitIntent({ enabled = true }: Props) {
           <button
             type="button"
             onClick={handleSave}
-            className="w-full py-3 rounded-full bg-[#C8A24C] text-black font-semibold min-h-11"
+            className="w-full py-3 rounded-full bg-[#C8A24C] text-black font-semibold min-h-11 cursor-pointer"
           >
             המשך להרשמה
           </button>
         </div>
-        <button type="button" onClick={() => setOpen(false)} className="mt-4 text-xs text-white/40 hover:text-white">
+        <button type="button" onClick={() => setOpen(false)} className="mt-4 text-xs text-white/40 hover:text-white cursor-pointer min-h-11">
           סגירה
         </button>
       </div>

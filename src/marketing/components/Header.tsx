@@ -4,6 +4,13 @@ import { Menu, X, Infinity as InfinityIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { AccountMenu } from '../../components/AccountMenu';
+import { scrollToWebinarForm, trackWebinarCta } from '../../utils/analytics';
+
+const WEBINAR_NAV = [
+  { name: 'על היצירה', to: '/webinar#about-creation' },
+  { name: 'הפיילוט', to: '/webinar#pilot' },
+  { name: 'שאלות נפוצות', to: '/webinar#webinar-faq' },
+];
 
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
@@ -12,6 +19,8 @@ export function Header() {
   const onPremium88 = location.pathname === '/premium-88';
   const onPricing = location.pathname === '/pricing';
   const onJourney = location.pathname === '/journey';
+  const onWebinarLanding = location.pathname === '/webinar';
+  const onWebinar = location.pathname.startsWith('/webinar');
 
   useEffect(() => {
     const handleScroll = () => {
@@ -21,15 +30,23 @@ export function Header() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
-  const onWebinar = location.pathname.startsWith('/webinar');
-
-  const navLinks: Array<{ name: string; to: string; accent?: boolean }> = [
+  const defaultNavLinks: Array<{ name: string; to: string; accent?: boolean }> = [
     { name: 'וובינר', to: '/webinar', accent: true },
     { name: 'תהליך', to: '/journey' },
     { name: 'צוות המיזם', to: '/premium-88' },
     { name: 'מחירון', to: '/pricing' },
     { name: 'שאלות', to: '/faq' },
   ];
+  const navLinks = onWebinarLanding ? WEBINAR_NAV : defaultNavLinks;
+
+  const goToWebinarForm = () => {
+    trackWebinarCta('header');
+    if (onWebinarLanding) {
+      scrollToWebinarForm();
+      return;
+    }
+    window.location.assign('/webinar#webinar-register-hero');
+  };
 
   return (
     <header
@@ -64,7 +81,9 @@ export function Header() {
                 to={link.to}
                 className={cn(
                   'text-[13px] font-light tracking-wide transition-colors duration-300',
-                  link.accent
+                  onWebinarLanding
+                    ? 'text-white/60 hover:text-white'
+                    : 'accent' in link && link.accent
                     ? onWebinar && link.to === '/webinar'
                       ? 'text-[#F7E7B5] font-medium'
                       : onPremium88 && link.to === '/premium-88'
@@ -83,19 +102,31 @@ export function Header() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">
-            <Link
-              to="/webinar"
-              className="px-5 py-3 rounded-full text-sm font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] hover:opacity-95 transition-opacity min-h-11"
-            >
-              הרשמה לוובינר
-            </Link>
-            <Link
-              to="/library"
-              className="px-6 py-3 rounded-full text-sm font-medium text-white/90 border border-[#C8A24C]/40 hover:border-[#F7E7B5] hover:text-white transition-all duration-300 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#010308]"
-              aria-label="כניסה לספרייה אינסופית. קורסים והרצאות אונליין"
-            >
-              ספרייה
-            </Link>
+            {onWebinarLanding ? (
+              <button
+                type="button"
+                onClick={goToWebinarForm}
+                className="px-5 py-3 rounded-full text-sm font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] hover:opacity-95 transition-opacity min-h-11 cursor-pointer"
+              >
+                שריינו מקום בוובינר
+              </button>
+            ) : (
+              <Link
+                to="/webinar"
+                className="px-5 py-3 rounded-full text-sm font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] hover:opacity-95 transition-opacity min-h-11"
+              >
+                הרשמה לוובינר
+              </Link>
+            )}
+            {!onWebinarLanding ? (
+              <Link
+                to="/library"
+                className="px-6 py-3 rounded-full text-sm font-medium text-white/90 border border-[#C8A24C]/40 hover:border-[#F7E7B5] hover:text-white transition-all duration-300 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#010308]"
+                aria-label="כניסה לספרייה אינסופית. קורסים והרצאות אונליין"
+              >
+                ספרייה
+              </Link>
+            ) : null}
             <AccountMenu />
           </div>
 
@@ -103,7 +134,7 @@ export function Header() {
             <AccountMenu />
             <button
               type="button"
-              className="p-2 text-white/60 hover:text-white transition-colors min-h-11 min-w-11 flex items-center justify-center"
+              className="p-2 text-white/60 hover:text-white transition-colors min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               aria-label="תפריט ניווט"
               aria-expanded={mobileMenuOpen}
@@ -131,7 +162,7 @@ export function Header() {
                   to={link.to}
                   className={cn(
                     'text-lg font-light',
-                    link.accent ? 'text-[#F7E7B5]' : 'text-white/70 hover:text-white'
+                    'accent' in link && link.accent ? 'text-[#F7E7B5]' : 'text-white/70 hover:text-white'
                   )}
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -139,13 +170,26 @@ export function Header() {
                 </Link>
               ))}
               <div className="pt-6 border-t border-white/[0.05] flex flex-col gap-4">
-                <Link
-                  to="/library"
-                  onClick={() => setMobileMenuOpen(false)}
-                  className="block w-full text-center px-8 py-4 rounded-full text-base font-medium text-white border border-[#C8A24C]/40 min-h-11"
-                >
-                  ספרייה
-                </Link>
+                {onWebinarLanding ? (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      goToWebinarForm();
+                    }}
+                    className="block w-full text-center px-8 py-4 rounded-full text-base font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] min-h-11 cursor-pointer"
+                  >
+                    שריינו מקום בוובינר
+                  </button>
+                ) : (
+                  <Link
+                    to="/library"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block w-full text-center px-8 py-4 rounded-full text-base font-medium text-white border border-[#C8A24C]/40 min-h-11"
+                  >
+                    ספרייה
+                  </Link>
+                )}
               </div>
             </nav>
           </motion.div>

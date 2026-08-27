@@ -41,30 +41,45 @@ export function WebinarQualifyForm({ registrationId, onComplete }: Props) {
   return (
     <form onSubmit={handleSubmit} className="space-y-3 text-right">
       <p className="text-sm text-white/70 font-light mb-2">עזר/י לנו להתאים את הוובינר אליך</p>
-      <input required name="field" placeholder="תחום יצירה / עיסוק" className={fieldClass} />
-      <select required name="interest" className={fieldClass} defaultValue="">
-        <option value="" disabled>
-          מה הכי מסקרן אותך?
-        </option>
-        {WEBINAR_INTEREST_OPTIONS.map((item) => (
-          <option key={item} value={item}>
-            {item}
+      <div>
+        <label htmlFor="qualify-field" className="text-xs text-white/60 mb-1 block">
+          תחום יצירה / עיסוק *
+        </label>
+        <input required id="qualify-field" name="field" className={fieldClass} />
+      </div>
+      <div>
+        <label htmlFor="qualify-interest" className="text-xs text-white/60 mb-1 block">
+          איפה את/ה נמצא/ת היום? *
+        </label>
+        <select required id="qualify-interest" name="interest" className={`${fieldClass} cursor-pointer`} defaultValue="">
+          <option value="" disabled>
+            בחר/י
           </option>
-        ))}
-      </select>
-      <select name="blocker" className={fieldClass} defaultValue="">
-        <option value="">מה הכי תוקע אותך? (אופציונלי)</option>
-        {WEBINAR_BLOCKER_OPTIONS.map((item) => (
-          <option key={item} value={item}>
-            {item}
-          </option>
-        ))}
-      </select>
-      {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+          {WEBINAR_INTEREST_OPTIONS.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
+      </div>
+      <div>
+        <label htmlFor="qualify-blocker" className="text-xs text-white/60 mb-1 block">
+          מה צוואר הבקבוק המרכזי שלך?
+        </label>
+        <select id="qualify-blocker" name="blocker" className={`${fieldClass} cursor-pointer`} defaultValue="">
+          <option value="">לא חובה</option>
+          {WEBINAR_BLOCKER_OPTIONS.map((item) => (
+            <option key={item} value={item}>
+              {item}
+            </option>
+          ))}
+        </select>
+      </div>
+      {error ? <p className="text-sm text-rose-300" role="alert">{error}</p> : null}
       <button
         type="submit"
         disabled={submitting}
-        className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm font-semibold min-h-11 disabled:opacity-50"
+        className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm font-semibold min-h-11 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {submitting ? 'שולח…' : 'שמירת התשובות'}
       </button>

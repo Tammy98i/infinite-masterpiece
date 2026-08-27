@@ -51,7 +51,7 @@ export function WebinarSectionCta({
         onClick();
       }}
       data-section={section}
-      className="mt-8 px-8 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-semibold min-h-11 hover:bg-[#F7E7B5] transition-colors"
+      className="mt-8 px-8 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-semibold min-h-11 cursor-pointer hover:bg-[#F7E7B5] transition-colors duration-200"
     >
       {label}
     </button>

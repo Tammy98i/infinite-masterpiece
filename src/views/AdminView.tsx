@@ -3762,7 +3762,7 @@ function WebinarPanel() {
             <input
               type="number"
               value={config.durationMinutes}
-              onChange={(e) => updateConfig('durationMinutes', Number(e.target.value) || 90)}
+              onChange={(e) => updateConfig('durationMinutes', Number(e.target.value) || 150)}
               className={fieldClass}
             />
           </label>
