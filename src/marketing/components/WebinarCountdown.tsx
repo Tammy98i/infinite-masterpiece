@@ -21,7 +21,12 @@ export function WebinarCountdown({ date, time, className = '' }: Props) {
     const tick = () => {
       const diff = target.getTime() - Date.now();
       if (diff <= 0) {
-        setLabel('היום!');
+        const now = new Date();
+        const isSameDay =
+          now.getFullYear() === target.getFullYear() &&
+          now.getMonth() === target.getMonth() &&
+          now.getDate() === target.getDate();
+        setLabel(isSameDay ? 'היום!' : '');
         return;
       }
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
