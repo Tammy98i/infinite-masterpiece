@@ -1,8 +1,9 @@
 import {
+  listPartialFollowupCandidates,
   listWebinarReminderCandidates,
   markWebinarReminderSent,
 } from '../services/webinarService.js';
-import { sendWebinarReminderEmail } from '../services/webinarEmailService.js';
+import { sendWebinarPartialEmail, sendWebinarReminderEmail } from '../services/webinarEmailService.js';
 
 export async function processWebinarReminders() {
   for (const kind of ['24h', '1h'] as const) {
@@ -23,6 +24,21 @@ export async function processWebinarReminders() {
       } catch {
         /* best effort */
       }
+    }
+  }
+
+  for (const candidate of listPartialFollowupCandidates()) {
+    try {
+      const result = await sendWebinarPartialEmail({
+        fullName: candidate.fullName,
+        email: candidate.email,
+        registrationId: candidate.id,
+      });
+      if (result.sent) {
+        markWebinarReminderSent(candidate.id, 'partial');
+      }
+    } catch {
+      /* best effort */
     }
   }
 }

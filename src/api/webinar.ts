@@ -2,7 +2,7 @@ import type { WebinarPublicPayload } from '../constants/webinar';
 import { apiRequest } from './auth';
 
 export type WebinarRegistrationPayload = {
-  step?: 'a' | 'b';
+  step?: 'a' | 'b' | 'lead';
   registrationId?: string;
   fullName?: string;
   phone?: string;
@@ -24,7 +24,7 @@ export type WebinarRegistrationResult = {
   fullName: string;
   email: string;
   status: string;
-  step: 'a' | 'b';
+  step: 'a' | 'b' | 'lead';
   isWaitlist?: boolean;
   createdAt: string;
   config: WebinarPublicPayload['config'];

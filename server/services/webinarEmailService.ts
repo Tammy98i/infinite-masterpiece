@@ -1,5 +1,6 @@
 import { getWebinarConfig } from './webinarService.js';
 import { getDb } from '../db/connection.js';
+import { appUrl } from '../config/env.js';
 
 type ConfirmationInput = {
   fullName: string;
@@ -68,6 +69,23 @@ export async function sendWebinarConfirmationEmail(input: ConfirmationInput) {
       .prepare(`UPDATE webinar_registrations SET confirmation_email_sent_at = ? WHERE id = ?`)
       .run(new Date().toISOString(), input.registrationId);
   }
+  return { sent, reason: sent ? 'resend' : 'failed' };
+}
+
+export async function sendWebinarPartialEmail(input: ConfirmationInput) {
+  if (!emailEnabled()) return { sent: false, reason: 'disabled' };
+  const config = getWebinarConfig();
+  const url = `${appUrl()}/webinar`;
+  const subject = `עוד רגע לסיום ההרשמה — ${config.title}`;
+  const html = `
+    <div dir="rtl" style="font-family:Arial,sans-serif;line-height:1.6;color:#111">
+      <p>שלום${input.fullName ? ` ${input.fullName}` : ''},</p>
+      <p>הפרטים שלכם נשמרו לוובינר Infinite Masterpiece. להשלמת ההרשמה:</p>
+      <p><a href="${url}">סיום הרשמה לוובינר</a></p>
+      <p>${config.date} · ${config.time} · ${config.location}</p>
+    </div>
+  `;
+  const sent = await sendViaResend(input.email, subject, html);
   return { sent, reason: sent ? 'resend' : 'failed' };
 }
 

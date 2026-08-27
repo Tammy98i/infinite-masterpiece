@@ -3731,6 +3731,7 @@ function WebinarPanel() {
               ['יומן', data.funnel.calendarClicks],
               ['וואטסאפ', data.funnel.whatsappClicks],
               ['Partial', data.funnel.partialLeads],
+              ['Email leads', data.funnel.emailLeads],
               ['Waitlist', data.funnel.waitlistLeads],
             ].map(([label, value]) => (
               <div key={String(label)} className="rounded-xl border border-white/10 p-3">

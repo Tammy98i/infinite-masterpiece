@@ -2,14 +2,11 @@ import { useEffect, useRef, useState, type HTMLAttributes, type ReactNode } from
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
 import {
-  Calendar,
   Check,
   ChevronDown,
-  Clock,
   Compass,
   Handshake,
   Infinity,
-  MapPin,
   Megaphone,
   Network,
   Radio,
@@ -50,7 +47,7 @@ import { BRAVE_PRICE_BEFORE_VAT, HESITANT_TOTAL_BEFORE_VAT } from '../../data/en
 import { WebinarRegistrationForm } from '../components/WebinarRegistrationForm';
 import { WebinarStickyCta } from '../components/WebinarStickyCta';
 import { WebinarExitIntent } from '../components/WebinarExitIntent';
-import { WebinarSocialProof, WebinarSectionCta } from '../components/WebinarSocialProof';
+import { WebinarSocialProof, WebinarSectionCta, WebinarTrustStrip } from '../components/WebinarSocialProof';
 import { WebinarCountdown } from '../components/WebinarCountdown';
 import { trackEvent, trackWebinarCta, scrollToWebinarForm, scrollToWebinarFit } from '../../utils/analytics';
 import { captureUtmFromSearch } from '../../utils/utm';
@@ -67,24 +64,6 @@ function FaqItem({ q, a, ...props }: { q: string; a: string } & HTMLAttributes<H
       </summary>
       <p className="mt-4 text-sm text-white/50 font-light leading-relaxed">{a}</p>
     </details>
-  );
-}
-
-function DetailTile({
-  icon: Icon,
-  label,
-  value,
-}: {
-  icon: typeof Calendar;
-  label: string;
-  value: string;
-}) {
-  return (
-    <div className="rounded-2xl border border-[#C8A24C]/20 bg-[#C8A24C]/5 px-4 py-5 text-center">
-      <Icon className="w-5 h-5 text-[#C8A24C] mx-auto mb-3" strokeWidth={1.5} aria-hidden />
-      <p className="text-[11px] uppercase tracking-wider text-white/40 mb-1">{label}</p>
-      <p className="text-sm text-white/85 font-light">{value}</p>
-    </div>
   );
 }
 
@@ -188,11 +167,10 @@ export function WebinarLanding() {
   };
 
   return (
-    <div className="w-full pb-24 lg:pb-0">
+    <div className="w-full pb-28">
       <section className="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2560&auto=format&fit=crop')] bg-cover bg-center opacity-30" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#010308] via-[#010308]/78 to-[#010308]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#010308] via-[#010308]/90 to-[#010308]" />
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[min(900px,90vw)] h-[320px] bg-[radial-gradient(ellipse_at_center,rgba(200,162,76,0.22),transparent_70%)]" />
         </div>
 
@@ -204,6 +182,15 @@ export function WebinarLanding() {
               animate={{ opacity: 1, y: 0 }}
               className="order-1 rounded-3xl border border-[#C8A24C]/30 bg-[#010308]/80 backdrop-blur-xl p-6 shadow-2xl shadow-black/40"
             >
+              <p className="xl:hidden text-lg text-white font-light leading-snug mb-4">
+                {headlineParts.line1}
+                {headlineParts.line2 ? (
+                  <>
+                    {' '}
+                    <span className="text-gold-gradient font-medium">{headlineParts.line2}</span>
+                  </>
+                ) : null}
+              </p>
               <HostFaces />
               <WebinarRegistrationForm payload={payload} formId="webinar-register-hero" />
             </motion.aside>
@@ -230,22 +217,16 @@ export function WebinarLanding() {
               <p className="text-lg md:text-xl text-white/50 font-light leading-relaxed max-w-2xl mb-5">
                 {config.heroSubheadline}
               </p>
-              <p className="text-base md:text-lg text-[#F7E7B5] font-medium mb-8">{WEBINAR_PUNCHLINE}</p>
-
-              <div className="grid grid-cols-3 gap-3 mb-4 max-w-xl">
-                <DetailTile icon={Calendar} label="מתי" value={config.date} />
-                <DetailTile icon={Clock} label="שעה" value={config.time} />
-                <DetailTile icon={MapPin} label="איפה" value={config.location} />
-              </div>
+              <p className="text-base md:text-lg text-[#F7E7B5] font-medium mb-6">{WEBINAR_PUNCHLINE}</p>
               <p className="text-sm text-white/45 font-light mb-8">
-                כ־{config.durationMinutes} דקות · {WEBINAR_AUDIENCE_LABEL}
+                {config.location} · כ־{config.durationMinutes} דקות · {WEBINAR_AUDIENCE_LABEL}
               </p>
 
               <div className="flex flex-col items-start gap-3">
                 <button
                   type="button"
                   onClick={() => scrollToForm('hero')}
-                  className="px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+                  className="hidden xl:inline-flex px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
                 >
                   שריינו לי מקום בוובינר
                 </button>
@@ -288,7 +269,8 @@ export function WebinarLanding() {
       {config.socialProofQuotes.length ? (
         <section className="py-12 border-t border-white/[0.04]">
           <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
-            <SectionLabel>למה אנשים נרשמים</SectionLabel>
+            <SectionLabel>למה נרשמים</SectionLabel>
+            <p className="text-xs text-white/35 font-light mb-4">קולות לפני הערב. לא הבטחת תוצאה.</p>
             <WebinarSocialProof quotes={config.socialProofQuotes} />
           </div>
         </section>
@@ -603,7 +585,7 @@ export function WebinarLanding() {
               <Link
                 to="/application?track=brave"
                 onClick={() => trackEvent('brave_track_interest_clicked', { source: 'webinar' })}
-                className="mt-auto inline-flex justify-center items-center w-full py-4 rounded-full text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+                className="mt-auto inline-flex justify-center items-center w-full py-4 rounded-full text-[#F7E7B5] border border-[#C8A24C]/50 hover:border-[#F7E7B5] font-medium min-h-11 cursor-pointer transition-colors duration-200"
               >
                 אני רוצה להיכנס כאמיץ/ה
               </Link>
@@ -643,20 +625,25 @@ export function WebinarLanding() {
 
       <section id="webinar-register-bottom" className="relative py-20 md:py-28 border-t border-white/[0.04] overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=2560&auto=format&fit=crop')] bg-cover bg-center opacity-20" />
-          <div className="absolute inset-0 bg-gradient-to-b from-[#010308] via-[#010308]/85 to-[#010308]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#010308] via-[#010308]/90 to-[#010308]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(200,162,76,0.16),transparent_70%)]" />
         </div>
-        <div className="relative z-10 max-w-[720px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-right mb-8">
-            <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4">
-              זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.
-            </p>
-            <p className="text-sm text-[#C8A24C] font-light">מחכים לך בוובינר — גל, תמי וגלב.</p>
+        <div className="relative z-10 max-w-[720px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
+          <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4">
+            זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.
+          </p>
+          <p className="text-sm text-[#C8A24C] font-light mb-8">מחכים לך בוובינר — גל, תמי וגלב.</p>
+          <button
+            type="button"
+            onClick={() => scrollToForm('bottom')}
+            className="w-full sm:w-auto px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+          >
+            שריינו לי מקום בוובינר
+          </button>
+          <div className="mt-4">
+            <WebinarTrustStrip config={config} />
           </div>
-          <div className="rounded-3xl border border-[#C8A24C]/30 bg-[#010308]/80 backdrop-blur-xl p-6 md:p-8">
-            <WebinarRegistrationForm payload={payload} formId="webinar-register-bottom" />
-          </div>
-          <p className="flex flex-wrap items-center justify-center gap-4 text-center text-xs text-[#C8A24C]/80 font-light mt-8">
+          <p className="flex flex-wrap items-center justify-start gap-4 text-xs text-[#C8A24C]/80 font-light mt-8">
             <Link to="/terms" className="hover:text-[#F7E7B5] min-h-11 inline-flex items-center">
               תנאי שימוש
             </Link>

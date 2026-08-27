@@ -415,6 +415,7 @@ export interface AdminWebinarDashboard {
     fitSectionViews: number;
     ctaClicks: number;
     partialLeads: number;
+    emailLeads: number;
     completeLeads: number;
     waitlistLeads: number;
   };

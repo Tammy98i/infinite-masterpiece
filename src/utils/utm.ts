@@ -42,10 +42,10 @@ export function getStoredUtm(): UtmParams {
 
 export function utmAsRecord(params: UtmParams): Record<string, string> {
   const out: Record<string, string> = {};
-  if (params.utmSource) out.utm_source = params.utmSource;
-  if (params.utmMedium) out.utm_medium = params.utmMedium;
-  if (params.utmCampaign) out.utm_campaign = params.utmCampaign;
-  if (params.utmTerm) out.utm_term = params.utmTerm;
-  if (params.utmContent) out.utm_content = params.utmContent;
+  if (params.utmSource) out.utmSource = params.utmSource;
+  if (params.utmMedium) out.utmMedium = params.utmMedium;
+  if (params.utmCampaign) out.utmCampaign = params.utmCampaign;
+  if (params.utmTerm) out.utmTerm = params.utmTerm;
+  if (params.utmContent) out.utmContent = params.utmContent;
   return out;
 }

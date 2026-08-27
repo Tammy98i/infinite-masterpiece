@@ -61,7 +61,7 @@ export function seedWebinarConfigIfMissing() {
     next.spotsLabel = DEFAULT_WEBINAR_CONFIG.spotsLabel;
     changed = true;
   }
-  if (current.socialProofQuotes.some((item) => item.author.includes('יוצר/ת') || item.author === 'מאמן/ת')) {
+  if (current.socialProofQuotes.some((item) => item.author.includes('יוצר/ת') || item.author === 'מאמן/ת' || item.quote.includes('בלי לחכות לעוד קורס') || item.quote.includes('שינתה לי את הראש'))) {
     next.socialProofQuotes = DEFAULT_WEBINAR_CONFIG.socialProofQuotes;
     changed = true;
   }
@@ -125,7 +125,7 @@ export function getWebinarPublicPayload(abVariantInput?: string): WebinarPublicP
 }
 
 export interface WebinarRegistrationInput {
-  step?: 'a' | 'b';
+  step?: 'a' | 'b' | 'lead';
   registrationId?: string;
   fullName?: string;
   phone?: string;
@@ -152,6 +152,65 @@ function validateEmail(email: string) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     throw Object.assign(new Error('כתובת אימייל לא תקינה'), { status: 400 });
   }
+}
+
+export function registerWebinarLead(input: WebinarRegistrationInput) {
+  const config = getWebinarConfig();
+  if (!config.enabled) {
+    throw Object.assign(new Error('ההרשמה לוובינר סגורה כרגע'), { status: 403 });
+  }
+
+  const email = String(input.email || '').trim().toLowerCase();
+  if (!email) {
+    throw Object.assign(new Error('נא למלא אימייל'), { status: 400 });
+  }
+  validateEmail(email);
+
+  const existing = getDb()
+    .prepare(`SELECT id, full_name, status FROM webinar_registrations WHERE email = ? ORDER BY created_at DESC LIMIT 1`)
+    .get(email) as { id: string; full_name: string; status: string } | undefined;
+
+  if (existing) {
+    return {
+      id: existing.id,
+      fullName: existing.full_name,
+      email,
+      status: existing.status,
+      step: 'lead' as const,
+      createdAt: new Date().toISOString(),
+      config,
+    };
+  }
+
+  const now = new Date().toISOString();
+  const id = randomUUID();
+  const utm = {
+    source: String(input.utmSource || '').trim(),
+    medium: String(input.utmMedium || '').trim(),
+    campaign: String(input.utmCampaign || '').trim(),
+    term: String(input.utmTerm || '').trim(),
+    content: String(input.utmContent || '').trim(),
+  };
+  getDb()
+    .prepare(
+      `INSERT INTO webinar_registrations (
+        id, full_name, phone, email, field, interest, blocker, marketing_opt_in,
+        utm_source, utm_medium, utm_campaign, utm_term, utm_content, status, ab_variant, created_at, updated_at
+      ) VALUES (?, '', '', ?, '', '', '', 0, ?, ?, ?, ?, ?, 'lead', '', ?, ?)`
+    )
+    .run(id, email, utm.source, utm.medium, utm.campaign, utm.term, utm.content, now, now);
+
+  trackEvent('webinar_exit_intent_submitted', { properties: { registrationId: id, source: 'lead' } });
+
+  return {
+    id,
+    fullName: '',
+    email,
+    status: 'lead',
+    step: 'lead' as const,
+    createdAt: now,
+    config,
+  };
 }
 
 export function registerWebinarStepA(input: WebinarRegistrationInput) {
@@ -310,6 +369,7 @@ export function registerWebinarStepB(input: WebinarRegistrationInput) {
 }
 
 export function createWebinarRegistration(input: WebinarRegistrationInput) {
+  if (input.step === 'lead') return registerWebinarLead(input);
   const step = input.step === 'b' ? 'b' : 'a';
   if (step === 'b') return registerWebinarStepB(input);
   return registerWebinarStepA(input);
@@ -360,9 +420,39 @@ export function getWebinarFunnelStats() {
     fitSectionViews: countEvent('webinar_fit_section_viewed'),
     ctaClicks: countEvent('webinar_cta_clicked'),
     partialLeads: countByStatus('partial'),
+    emailLeads: countByStatus('lead'),
     completeLeads: countCompleteWebinarRegistrations(),
     waitlistLeads: countByStatus('waitlist'),
   };
+}
+
+export function listPartialFollowupCandidates() {
+  const rows = getDb()
+    .prepare(
+      `SELECT id, full_name, email, status, updated_at, created_at FROM webinar_registrations
+       WHERE status IN ('partial','lead') AND (reminded_partial_at IS NULL OR reminded_partial_at = '')`
+    )
+    .all() as Array<{
+    id: string;
+    full_name: string;
+    email: string;
+    status: string;
+    updated_at: string;
+    created_at: string;
+  }>;
+
+  const cutoff = Date.now() - 45 * 60 * 1000;
+  return rows
+    .filter((row) => {
+      const stamp = Date.parse(row.updated_at || row.created_at);
+      return Number.isFinite(stamp) && stamp <= cutoff;
+    })
+    .map((row) => ({
+      id: row.id,
+      fullName: row.full_name,
+      email: row.email,
+      status: row.status,
+    }));
 }
 
 export function listWebinarReminderCandidates(kind: '24h' | '1h') {
@@ -395,8 +485,9 @@ export function listWebinarReminderCandidates(kind: '24h' | '1h') {
   }));
 }
 
-export function markWebinarReminderSent(id: string, kind: '24h' | '1h') {
-  const column = kind === '24h' ? 'reminded_24h_at' : 'reminded_1h_at';
+export function markWebinarReminderSent(id: string, kind: '24h' | '1h' | 'partial') {
+  const column =
+    kind === '24h' ? 'reminded_24h_at' : kind === '1h' ? 'reminded_1h_at' : 'reminded_partial_at';
   getDb()
     .prepare(`UPDATE webinar_registrations SET ${column} = ? WHERE id = ?`)
     .run(new Date().toISOString(), id);

@@ -70,8 +70,8 @@ export function WebinarThankYou() {
           </h1>
           <p className="text-white/55 font-light leading-relaxed mb-6">
             {isWaitlist
-              ? 'הפרטים שלך נקלטו לרשימת ההמתנה. נעדכן כשיתפנה מקום — במייל ובוואטסאפ אם השארת פרטים.'
-              : `הפרטים שלך נקלטו. נשלח אליך אישור במייל עם פרטי הוובינר וקישור הצטרפות. שמר/י את התאריך: ${date} · ${time}.`}
+              ? 'הפרטים שלך נקלטו לרשימת ההמתנה. נעדכן כשיתפנה מקום.'
+              : `הפרטים שלך נקלטו. שמרו את התאריך ביומן: ${date} · ${time}. קישור Zoom יישלח לפני הערב.`}
           </p>
 
           <label className="flex items-start gap-3 rounded-2xl border border-[#C8A24C]/25 bg-[#010308]/40 px-5 py-4 text-sm text-[#F7E7B5] font-light leading-relaxed mb-8 cursor-pointer text-right">
@@ -125,19 +125,19 @@ export function WebinarThankYou() {
             </button>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-            <Link
-              to="/pricing"
-              onClick={() => trackEvent('pilot_cta_clicked', { source: 'thank_you' })}
-              className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 text-sm text-white/70 min-h-11 cursor-pointer hover:text-[#F7E7B5] hover:border-[#C8A24C]/40 transition-colors duration-200"
-            >
-              בדיקת התאמה לפיילוט
-            </Link>
+          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
             <Link
               to="/"
               className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 text-sm text-white/75 hover:text-white min-h-11 cursor-pointer transition-colors duration-200"
             >
               חזרה לאתר
+            </Link>
+            <Link
+              to="/pricing"
+              onClick={() => trackEvent('pilot_cta_clicked', { source: 'thank_you' })}
+              className="text-xs text-white/35 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
+            >
+              מידע על הפיילוט
             </Link>
           </div>
 
