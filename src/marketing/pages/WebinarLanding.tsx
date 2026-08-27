@@ -110,7 +110,7 @@ function HostFaces() {
             <img
               key={host.name}
               src={host.src}
-              alt=""
+              alt={host.name}
               className="w-9 h-9 rounded-full border border-[#C8A24C]/50 object-cover object-top bg-[#0b1020]"
             />
           ) : (
@@ -249,13 +249,16 @@ export function WebinarLanding() {
                 >
                   שריינו לי מקום בוובינר
                 </button>
-                <button
-                  type="button"
-                  onClick={scrollToWebinarFit}
-                  className="text-sm text-white/45 hover:text-[#F7E7B5] min-h-11 cursor-pointer transition-colors duration-200"
+                <a
+                  href="#webinar-fit"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    scrollToWebinarFit();
+                  }}
+                  className="text-sm text-white/45 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
                 >
                   רוצה להבין אם זה מתאים לי?
-                </button>
+                </a>
               </div>
             </motion.div>
           </div>

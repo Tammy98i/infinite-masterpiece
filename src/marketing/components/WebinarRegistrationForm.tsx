@@ -281,7 +281,6 @@ export function WebinarRegistrationForm({
       >
         {submitting ? 'שולח…' : isWaitlist ? 'הצטרפות לרשימת המתנה' : 'כן, אני רוצה מקום בוובינר'}
       </button>
-      <p className="text-center text-[11px] text-white/35 font-light">בלי כרטיס אשראי · לא מבטיחים הכנסה</p>
     </form>
   );
 }
