@@ -49,8 +49,8 @@ export function seedWebinarConfigIfMissing() {
   const next = { ...current };
   let changed = false;
 
-  if (current.durationMinutes === 90) {
-    next.durationMinutes = DEFAULT_WEBINAR_CONFIG.durationMinutes;
+  if (current.location === 'אונליין (Zoom)') {
+    next.location = DEFAULT_WEBINAR_CONFIG.location;
     changed = true;
   }
   if (current.heroSubheadline.includes('וובינר פתיחה ליוצרים')) {
