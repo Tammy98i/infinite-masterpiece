@@ -62,9 +62,7 @@ export function WebinarUrgencyStrip({
       ) : null}
       {config.showSpotsRemaining && spotsRemaining !== null ? (
         <span>{spotsRemaining > 0 ? `${spotsRemaining} מקומות נותרו` : 'רשימת המתנה'}</span>
-      ) : (
-        <span>{config.spotsLabel}</span>
-      )}
+      ) : null}
       <WebinarCountdown date={config.date} time={config.time} />
     </div>
   );

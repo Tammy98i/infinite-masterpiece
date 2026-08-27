@@ -27,6 +27,8 @@ export function WebinarRegistrationForm({
 }: Props) {
   const { config, registrationCount, spotsRemaining, isWaitlist, abVariant } = payload;
   const navigate = useNavigate();
+  const [step, setStep] = useState<'a' | 'b'>('a');
+  const [registrationId, setRegistrationId] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const startedRef = useRef(false);
@@ -58,7 +60,18 @@ export function WebinarRegistrationForm({
     trackEvent('webinar_step_a_started', { source: formId });
   };
 
-  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+  const goToThankYou = (id: string, fullName: string, waitlisted?: boolean) => {
+    const params = new URLSearchParams({
+      id,
+      name: fullName,
+      date: config.date,
+      time: config.time,
+    });
+    if (waitlisted) params.set('waitlist', '1');
+    navigate(`/webinar/thank-you?${params.toString()}`);
+  };
+
+  const handleStepA = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setSubmitting(true);
@@ -76,27 +89,15 @@ export function WebinarRegistrationForm({
         abVariant,
         ...utmAsRecord(utm),
       });
-
-      const waitlisted = registration.isWaitlist || registration.status === 'waitlist';
-      await webinarApi.register({
-        step: 'b',
-        registrationId: registration.id,
-        field: String(data.get('field') || ''),
-        interest: String(data.get('interest') || ''),
-        blocker: String(data.get('blocker') || ''),
-      });
-
-      trackEvent('webinar_form_submitted', { source: formId, registrationId: registration.id });
-      onComplete?.(registration.id);
-
-      const params = new URLSearchParams({
-        id: registration.id,
-        name: registration.fullName,
-        date: config.date,
-        time: config.time,
-      });
-      if (waitlisted) params.set('waitlist', '1');
-      navigate(`/webinar/thank-you?${params.toString()}`);
+      setRegistrationId(registration.id);
+      if (registration.isWaitlist || registration.status === 'waitlist') {
+        trackEvent('webinar_form_submitted', { source: formId, registrationId: registration.id });
+        onComplete?.(registration.id);
+        goToThankYou(registration.id, registration.fullName, true);
+        return;
+      }
+      setStep('b');
+      trackEvent('webinar_step_b_started', { source: formId, registrationId: registration.id });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'שליחה נכשלה');
     } finally {
@@ -104,11 +105,97 @@ export function WebinarRegistrationForm({
     }
   };
 
+  const handleStepB = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setError('');
+    setSubmitting(true);
+    const data = new FormData(e.currentTarget);
+    try {
+      const { registration } = await webinarApi.register({
+        step: 'b',
+        registrationId,
+        field: String(data.get('field') || ''),
+        interest: String(data.get('interest') || ''),
+        blocker: String(data.get('blocker') || ''),
+      });
+      trackEvent('webinar_form_submitted', { source: formId, registrationId: registration.id });
+      onComplete?.(registration.id);
+      goToThankYou(registration.id, registration.fullName);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'שליחה נכשלה');
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
+  if (step === 'b' && registrationId) {
+    return (
+      <form ref={rootRef} id={formId} onSubmit={handleStepB} className="space-y-4 text-right">
+        {!compact ? (
+          <div className="mb-2">
+            <p className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-2">שלב 2 מתוך 2</p>
+            <h2 className="text-xl font-light text-white mb-1">עוד 20 שניות</h2>
+            <p className="text-xs text-white/40 font-light">כדי שנתאים את הערב אליך. המקום כבר נשמר.</p>
+          </div>
+        ) : null}
+
+        <div>
+          <label htmlFor={`${formId}-field`} className="text-xs text-white/60 mb-1 block">
+            תחום יצירה / עיסוק *
+          </label>
+          <input required id={`${formId}-field`} name="field" type="text" className={fieldClass} />
+        </div>
+        <div>
+          <label htmlFor={`${formId}-interest`} className="text-xs text-white/60 mb-1 block">
+            איפה את/ה נמצא/ת היום? *
+          </label>
+          <select required id={`${formId}-interest`} name="interest" className={`${fieldClass} cursor-pointer`} defaultValue="">
+            <option value="" disabled>
+              בחר/י
+            </option>
+            {WEBINAR_INTEREST_OPTIONS.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label htmlFor={`${formId}-blocker`} className="text-xs text-white/60 mb-1 block">
+            מה צוואר הבקבוק המרכזי שלך? *
+          </label>
+          <select required id={`${formId}-blocker`} name="blocker" className={`${fieldClass} cursor-pointer`} defaultValue="">
+            <option value="" disabled>
+              בחר/י
+            </option>
+            {WEBINAR_BLOCKER_OPTIONS.map((item) => (
+              <option key={item} value={item}>
+                {item}
+              </option>
+            ))}
+          </select>
+        </div>
+        {error ? (
+          <p className="text-sm text-rose-300" role="alert">
+            {error}
+          </p>
+        ) : null}
+        <button
+          type="submit"
+          disabled={submitting}
+          className="w-full py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-sm font-semibold min-h-11 cursor-pointer hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-200"
+        >
+          {submitting ? 'שולח…' : 'סיום ההרשמה'}
+        </button>
+      </form>
+    );
+  }
+
   return (
     <form
       ref={rootRef}
       id={formId}
-      onSubmit={handleSubmit}
+      onSubmit={handleStepA}
       onFocus={markStarted}
       className="space-y-4 text-right"
       aria-labelledby={`${formId}-title`}
@@ -116,12 +203,11 @@ export function WebinarRegistrationForm({
       {!compact ? (
         <div className="mb-2">
           <p id={`${formId}-title`} className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-2">
-            {isWaitlist ? 'רשימת המתנה' : 'הרשמה לוובינר'}
+            {isWaitlist ? 'רשימת המתנה' : 'הרשמה לוובינר · שלב 1 מתוך 2'}
           </p>
           <h2 className="text-xl font-light text-white mb-1">
             {isWaitlist ? 'הצטרפ/י לרשימת המתנה' : 'שריינו מקום לוובינר ההשקה'}
           </h2>
-          <p className="text-xs text-white/40 font-light mb-3">{config.title}</p>
           <WebinarUrgencyStrip
             config={config}
             registrationCount={registrationCount}
@@ -160,45 +246,6 @@ export function WebinarRegistrationForm({
         />
       </div>
 
-      <div>
-        <label htmlFor={`${formId}-field`} className="text-xs text-white/60 mb-1 block">
-          תחום יצירה / עיסוק *
-        </label>
-        <input required id={`${formId}-field`} name="field" type="text" className={fieldClass} />
-      </div>
-
-      <div>
-        <label htmlFor={`${formId}-interest`} className="text-xs text-white/60 mb-1 block">
-          איפה את/ה נמצא/ת היום? *
-        </label>
-        <select required id={`${formId}-interest`} name="interest" className={`${fieldClass} cursor-pointer`} defaultValue="">
-          <option value="" disabled>
-            בחר/י
-          </option>
-          {WEBINAR_INTEREST_OPTIONS.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div>
-        <label htmlFor={`${formId}-blocker`} className="text-xs text-white/60 mb-1 block">
-          מה צוואר הבקבוק המרכזי שלך? *
-        </label>
-        <select required id={`${formId}-blocker`} name="blocker" className={`${fieldClass} cursor-pointer`} defaultValue="">
-          <option value="" disabled>
-            בחר/י
-          </option>
-          {WEBINAR_BLOCKER_OPTIONS.map((item) => (
-            <option key={item} value={item}>
-              {item}
-            </option>
-          ))}
-        </select>
-      </div>
-
       <label className="flex items-start gap-3 text-xs text-white/45 leading-relaxed cursor-pointer">
         <input type="checkbox" name="marketingOptIn" className="mt-1 accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer" />
         <span>אישור קבלת עדכונים על הוובינר (ניתן לבטל בכל עת).</span>
@@ -221,7 +268,11 @@ export function WebinarRegistrationForm({
 
       <WebinarTrustStrip config={config} />
 
-      {error ? <p className="text-sm text-rose-300" role="alert">{error}</p> : null}
+      {error ? (
+        <p className="text-sm text-rose-300" role="alert">
+          {error}
+        </p>
+      ) : null}
 
       <button
         type="submit"
@@ -230,6 +281,7 @@ export function WebinarRegistrationForm({
       >
         {submitting ? 'שולח…' : isWaitlist ? 'הצטרפות לרשימת המתנה' : 'כן, אני רוצה מקום בוובינר'}
       </button>
+      <p className="text-center text-[11px] text-white/35 font-light">בלי כרטיס אשראי · לא מבטיחים הכנסה</p>
     </form>
   );
 }

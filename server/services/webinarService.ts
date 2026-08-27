@@ -57,6 +57,14 @@ export function seedWebinarConfigIfMissing() {
     next.heroSubheadline = DEFAULT_WEBINAR_CONFIG.heroSubheadline;
     changed = true;
   }
+  if (current.spotsLabel === 'מקומות מוגבלים' && current.maxSpots === 0) {
+    next.spotsLabel = DEFAULT_WEBINAR_CONFIG.spotsLabel;
+    changed = true;
+  }
+  if (current.socialProofQuotes.some((item) => item.author.includes('יוצר/ת') || item.author === 'מאמן/ת')) {
+    next.socialProofQuotes = DEFAULT_WEBINAR_CONFIG.socialProofQuotes;
+    changed = true;
+  }
   if (current.leaderPrimaryTitle === 'Founder & Vision Lead') {
     next.leaderPrimaryTitle = DEFAULT_WEBINAR_CONFIG.leaderPrimaryTitle;
     next.leaderPrimaryBio = DEFAULT_WEBINAR_CONFIG.leaderPrimaryBio;

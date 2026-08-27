@@ -18,7 +18,6 @@ import {
   Sparkles,
   Tag,
   Target,
-  Timer,
   Users,
   X,
 } from 'lucide-react';
@@ -52,6 +51,7 @@ import { WebinarRegistrationForm } from '../components/WebinarRegistrationForm';
 import { WebinarStickyCta } from '../components/WebinarStickyCta';
 import { WebinarExitIntent } from '../components/WebinarExitIntent';
 import { WebinarSocialProof, WebinarSectionCta } from '../components/WebinarSocialProof';
+import { WebinarCountdown } from '../components/WebinarCountdown';
 import { trackEvent, trackWebinarCta, scrollToWebinarForm, scrollToWebinarFit } from '../../utils/analytics';
 import { captureUtmFromSearch } from '../../utils/utm';
 
@@ -94,6 +94,39 @@ function SectionLabel({ children }: { children: ReactNode }) {
 
 function SectionTitle({ children }: { children: ReactNode }) {
   return <h2 className="text-3xl md:text-5xl font-light text-white mb-6 leading-tight">{children}</h2>;
+}
+
+function HostFaces() {
+  const hosts = [
+    { name: 'גל', src: '/team/gal.png' },
+    { name: 'תמי', src: '/team/tami.png' },
+    { name: 'גלב', src: '' },
+  ];
+  return (
+    <div className="flex items-center gap-3 mb-5">
+      <div className="flex -space-x-3 space-x-reverse">
+        {hosts.map((host) =>
+          host.src ? (
+            <img
+              key={host.name}
+              src={host.src}
+              alt=""
+              className="w-9 h-9 rounded-full border border-[#C8A24C]/50 object-cover object-top bg-[#0b1020]"
+            />
+          ) : (
+            <span
+              key={host.name}
+              className="w-9 h-9 rounded-full border border-[#C8A24C]/50 bg-[#0b1020] text-[#F7E7B5] text-[11px] flex items-center justify-center"
+              aria-hidden
+            >
+              ג
+            </span>
+          )
+        )}
+      </div>
+      <p className="text-xs text-white/50 font-light">גל, תמי וגלב · בלייב</p>
+    </div>
+  );
 }
 
 function GoldCard({
@@ -171,6 +204,7 @@ export function WebinarLanding() {
               animate={{ opacity: 1, y: 0 }}
               className="order-1 rounded-3xl border border-[#C8A24C]/30 bg-[#010308]/80 backdrop-blur-xl p-6 shadow-2xl shadow-black/40"
             >
+              <HostFaces />
               <WebinarRegistrationForm payload={payload} formId="webinar-register-hero" />
             </motion.aside>
 
@@ -180,9 +214,10 @@ export function WebinarLanding() {
               transition={{ delay: 0.08 }}
               className="order-2 text-right"
             >
-              <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/[0.03] border border-[#C8A24C]/20 mb-8">
+              <div className="inline-flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-1.5 rounded-full bg-white/[0.03] border border-[#C8A24C]/20 mb-8">
                 <span className="w-2 h-2 rounded-full bg-[#C8A24C]" aria-hidden />
-                <span className="text-[11px] tracking-[0.2em] text-white/60 uppercase">Live · Lesson · Pilot</span>
+                <span className="text-[11px] text-white/70">ערב חי · {config.date} · {config.time}</span>
+                <WebinarCountdown date={config.date} time={config.time} />
               </div>
 
               <h1 className="text-4xl md:text-6xl xl:text-7xl font-light tracking-tight leading-[1.05] mb-6">
@@ -195,17 +230,18 @@ export function WebinarLanding() {
               <p className="text-lg md:text-xl text-white/50 font-light leading-relaxed max-w-2xl mb-5">
                 {config.heroSubheadline}
               </p>
-              <p className="text-base md:text-lg text-[#F7E7B5] font-medium mb-10">{WEBINAR_PUNCHLINE}</p>
+              <p className="text-base md:text-lg text-[#F7E7B5] font-medium mb-8">{WEBINAR_PUNCHLINE}</p>
 
-              <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3 mb-10 max-w-4xl">
+              <div className="grid grid-cols-3 gap-3 mb-4 max-w-xl">
                 <DetailTile icon={Calendar} label="מתי" value={config.date} />
                 <DetailTile icon={Clock} label="שעה" value={config.time} />
-                <DetailTile icon={Timer} label="משך" value={`כ־${config.durationMinutes} דקות`} />
                 <DetailTile icon={MapPin} label="איפה" value={config.location} />
-                <DetailTile icon={Users} label="למי" value={WEBINAR_AUDIENCE_LABEL} />
               </div>
+              <p className="text-sm text-white/45 font-light mb-8">
+                כ־{config.durationMinutes} דקות · {WEBINAR_AUDIENCE_LABEL}
+              </p>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col items-start gap-3">
                 <button
                   type="button"
                   onClick={() => scrollToForm('hero')}
@@ -216,7 +252,7 @@ export function WebinarLanding() {
                 <button
                   type="button"
                   onClick={scrollToWebinarFit}
-                  className="px-10 py-4 rounded-full border border-white/15 text-white/70 hover:text-white hover:border-[#C8A24C]/40 text-center min-h-11 cursor-pointer transition-colors duration-200"
+                  className="text-sm text-white/45 hover:text-[#F7E7B5] min-h-11 cursor-pointer transition-colors duration-200"
                 >
                   רוצה להבין אם זה מתאים לי?
                 </button>
@@ -315,11 +351,11 @@ export function WebinarLanding() {
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
           <SectionLabel>150 דקות</SectionLabel>
           <SectionTitle>150 דקות. מסע אחד שלם.</SectionTitle>
-          <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">
-            הוובינר בנוי כמסע חי: פתיחה, שיעור מכירות, משימת ביצוע, צוות, מיזם, שקיפות, מסלולי הצטרפות ו־Q&A.
+          <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-8">
+            הוובינר בנוי כמסע חי: שיעור מכירות, משימת ביצוע, צוות, שקיפות והזמנה לפיילוט.
           </p>
-          <ol className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
-            {WEBINAR_TIMELINE.map((item, index) => (
+          <ol className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            {WEBINAR_TIMELINE.slice(0, 4).map((item, index) => (
               <li key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.02] p-5">
                 <p className="text-[11px] text-[#C8A24C] mb-3">{String(index + 1).padStart(2, '0')}</p>
                 <h3 className="text-white text-base mb-2">{item.title}</h3>
@@ -327,6 +363,17 @@ export function WebinarLanding() {
               </li>
             ))}
           </ol>
+          <p className="text-sm text-white/40 font-light mb-2">גם בערב:</p>
+          <ul className="flex flex-wrap gap-2 mb-4">
+            {WEBINAR_TIMELINE.slice(4).map((item) => (
+              <li
+                key={item.title}
+                className="rounded-full border border-[#C8A24C]/25 bg-[#C8A24C]/5 px-4 py-2 text-xs text-[#F7E7B5]"
+              >
+                {item.title}
+              </li>
+            ))}
+          </ul>
           <WebinarSectionCta label="שריינו לי מקום בוובינר" section="timeline" onClick={() => scrollToForm('timeline')} />
         </div>
       </section>
@@ -339,13 +386,20 @@ export function WebinarLanding() {
             בוובינר נלמד מכירות בגישה הוליסטית ואתית: לא לחץ, לא מניפולציה, לא הבטחות שווא — אלא אבחון, התאמה, בהירות,
             ערך וצעד הבא.
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            {WEBINAR_SALES_PRINCIPLES.map((item) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+            {WEBINAR_SALES_PRINCIPLES.slice(0, 4).map((item) => (
               <GoldCard key={item} className="p-5">
                 <p className="text-white text-sm leading-relaxed">{item}</p>
               </GoldCard>
             ))}
           </div>
+          <ul className="flex flex-wrap gap-2">
+            {WEBINAR_SALES_PRINCIPLES.slice(4).map((item) => (
+              <li key={item} className="rounded-full border border-white/10 px-4 py-2 text-xs text-white/50">
+                {item}
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
 
@@ -534,6 +588,9 @@ export function WebinarLanding() {
         <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
           <SectionLabel>הצטרפות לפיילוט</SectionLabel>
           <SectionTitle>שני מסלולי כניסה לפיילוט. אותו יעד. שתי רמות מחויבות.</SectionTitle>
+          <p className="text-sm text-[#F7E7B5]/80 font-light leading-relaxed max-w-3xl mb-8">
+            לא נדרש הערב. בסוף הוובינר תהיה הזמנה להיכנס לפיילוט — רק למי שמתאים ורוצה להמשיך.
+          </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <article className="rounded-3xl border border-[#C8A24C]/40 bg-[#C8A24C]/[0.07] p-6 md:p-8 flex flex-col">
               <h3 className="text-2xl text-white mb-2">מסלול האמיצים</h3>
@@ -611,7 +668,11 @@ export function WebinarLanding() {
       </section>
 
       <WebinarExitIntent />
-      <WebinarStickyCta />
+      <WebinarStickyCta
+        date={config.date}
+        time={config.time}
+        registrationCount={payload.registrationCount}
+      />
     </div>
   );
 }

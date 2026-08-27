@@ -55,13 +55,18 @@ export type WebinarPublicPayload = {
 export const DEFAULT_WEBINAR_SOCIAL_PROOF: WebinarSocialProofQuote[] = [
   {
     quote: 'סוף סוף הבנתי מה אפשר למכור — בלי לחכות לעוד קורס.',
-    author: 'יוצר/ת תוכן',
-    role: 'מעצב/ת',
+    author: 'מיכל',
+    role: 'מעצבת תכשיטים',
   },
   {
     quote: 'הגישה של קודם מכירה ואחר כך שיווק שינתה לי את הראש.',
-    author: 'מאמן/ת',
-    role: 'עסק יצירתי',
+    author: 'אורי',
+    role: 'מאמן תנועה',
+  },
+  {
+    quote: 'יש לי ערך. חסר לי צעד ברור. בשביל זה אני מגיעה לערב.',
+    author: 'נועה',
+    role: 'מטפלת',
   },
 ];
 
@@ -73,7 +78,7 @@ export const DEFAULT_WEBINAR_CONFIG: WebinarConfig = {
   durationMinutes: 150,
   location: 'אונליין / Zoom',
   costLabel: 'ללא עלות · הרשמה מוקדמת',
-  spotsLabel: 'מקומות מוגבלים',
+  spotsLabel: 'הרשמה פתוחה',
   whatsappGroupUrl: '',
   calendarLocation: 'Zoom',
   zoomLink: '',

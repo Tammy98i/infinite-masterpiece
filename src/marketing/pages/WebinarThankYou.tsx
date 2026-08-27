@@ -15,6 +15,7 @@ export function WebinarThankYou() {
   const isWaitlist = params.get('waitlist') === '1';
   const [payload, setPayload] = useState<Awaited<ReturnType<typeof webinarApi.config>> | null>(null);
   const [copied, setCopied] = useState(false);
+  const [personPicked, setPersonPicked] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -70,11 +71,33 @@ export function WebinarThankYou() {
           <p className="text-white/55 font-light leading-relaxed mb-6">
             {isWaitlist
               ? 'הפרטים שלך נקלטו לרשימת ההמתנה. נעדכן כשיתפנה מקום — במייל ובוואטסאפ אם השארת פרטים.'
-              : `הפרטים שלך נקלטו. נשלח אליך אישור במייל/וואטסאפ עם פרטי הוובינר וקישור הצטרפות. שמר/י את התאריך: ${date} · ${time}.`}
+              : `הפרטים שלך נקלטו. נשלח אליך אישור במייל עם פרטי הוובינר וקישור הצטרפות. שמר/י את התאריך: ${date} · ${time}.`}
           </p>
-          <p className="rounded-2xl border border-[#C8A24C]/25 bg-[#010308]/40 px-5 py-4 text-sm text-[#F7E7B5] font-light leading-relaxed mb-8">
-            עד אז — בחר/י אדם אחד שעשוי להתאים להצעה שלך. בוובינר נבצע פעולה אמיתית.
-          </p>
+
+          <label className="flex items-start gap-3 rounded-2xl border border-[#C8A24C]/25 bg-[#010308]/40 px-5 py-4 text-sm text-[#F7E7B5] font-light leading-relaxed mb-8 cursor-pointer text-right">
+            <input
+              type="checkbox"
+              checked={personPicked}
+              onChange={(e) => setPersonPicked(e.target.checked)}
+              className="mt-1 accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer"
+            />
+            <span>בחר/י אדם אחד שעשוי להתאים להצעה שלך. בוובינר נבצע פעולה אמיתית.</span>
+          </label>
+
+          {config.whatsappGroupUrl ? (
+            <a
+              href={config.whatsappGroupUrl}
+              target="_blank"
+              rel="noreferrer"
+              onClick={markWhatsapp}
+              className="mb-4 inline-flex items-center justify-center gap-2 w-full rounded-full bg-[#C8A24C] text-black px-5 py-3 text-sm font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+            >
+              <MessageCircle className="w-4 h-4" aria-hidden />
+              הצטרפות לקבוצת עדכונים שקטה
+            </a>
+          ) : (
+            <p className="mb-4 text-xs text-white/40 font-light">קישור לקבוצת עדכונים שקטה יישלח באישור המייל.</p>
+          )}
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
             {googleUrl ? (
@@ -100,25 +123,13 @@ export function WebinarThankYou() {
               <CalendarPlus className="w-4 h-4 text-[#C8A24C]" aria-hidden />
               קובץ יומן
             </button>
-            {config.whatsappGroupUrl ? (
-              <a
-                href={config.whatsappGroupUrl}
-                target="_blank"
-                rel="noreferrer"
-                onClick={markWhatsapp}
-                className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C8A24C] text-black px-5 py-3 text-sm font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200 sm:col-span-2"
-              >
-                <MessageCircle className="w-4 h-4" aria-hidden />
-                הצטרפות לקבוצת עדכונים שקטה
-              </a>
-            ) : null}
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
             <Link
               to="/pricing"
               onClick={() => trackEvent('pilot_cta_clicked', { source: 'thank_you' })}
-              className="inline-flex items-center justify-center rounded-full border border-[#C8A24C]/40 px-6 py-3 text-sm text-[#F7E7B5] min-h-11 cursor-pointer hover:border-[#F7E7B5] transition-colors duration-200"
+              className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 text-sm text-white/70 min-h-11 cursor-pointer hover:text-[#F7E7B5] hover:border-[#C8A24C]/40 transition-colors duration-200"
             >
               בדיקת התאמה לפיילוט
             </Link>

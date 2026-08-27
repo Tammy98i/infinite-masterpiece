@@ -4,31 +4,36 @@ export function WebinarSocialProof({ quotes }: { quotes: WebinarSocialProofQuote
   if (!quotes.length) return null;
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
       {quotes.slice(0, 3).map((item) => (
         <blockquote
           key={`${item.author}-${item.quote.slice(0, 20)}`}
           className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-right"
         >
-          <p className="text-sm text-white/65 font-light leading-relaxed mb-3">«{item.quote}»</p>
-          <footer className="text-xs text-[#C8A24C]">
-            {item.author}
-            {item.role ? <span className="text-white/35"> · {item.role}</span> : null}
-          </footer>
+          <div className="flex items-center gap-3 mb-3">
+            <span
+              className="w-9 h-9 rounded-full border border-[#C8A24C]/40 bg-[#C8A24C]/10 text-[#F7E7B5] text-sm flex items-center justify-center shrink-0"
+              aria-hidden
+            >
+              {item.author.slice(0, 1)}
+            </span>
+            <footer className="text-xs text-[#C8A24C]">
+              {item.author}
+              {item.role ? <span className="block text-white/35 mt-0.5">{item.role}</span> : null}
+            </footer>
+          </div>
+          <p className="text-sm text-white/65 font-light leading-relaxed">«{item.quote}»</p>
         </blockquote>
       ))}
     </div>
   );
 }
 
-export function WebinarTrustStrip({ config }: { config: { date: string; time: string; costLabel: string; durationMinutes: number } }) {
+export function WebinarTrustStrip({ config }: { config: { durationMinutes: number } }) {
   return (
-    <div className="rounded-xl border border-[#C8A24C]/15 bg-[#C8A24C]/5 px-4 py-3 text-xs text-white/55 font-light leading-relaxed">
-      <p>
-        {config.date} · {config.time} · {config.costLabel} · {config.durationMinutes} דק׳ · ללא התחייבות
-      </p>
-      <p className="text-white/35 mt-1">30 שניות · נשלח קישור לפני הוובינר</p>
-    </div>
+    <p className="text-[11px] text-white/40 font-light leading-relaxed">
+      בלי כרטיס אשראי · כ־{config.durationMinutes} דקות בלייב · לא מבטיחים הכנסה
+    </p>
   );
 }
 
