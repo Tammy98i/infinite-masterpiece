@@ -2,11 +2,17 @@
 
 איור לפני ביצוע. לא קוד במוצר. לא מחירים. לא CTA לספרייה.
 
-**לפתוח וללחוץ:** [`webinar-ux/cx-sketch.html`](webinar-ux/cx-sketch.html)
-
-התמונות `cx-*.png` הן כיוון ויזואלי. **הקופי בסקיצה הוא של Infinite Masterpiece.** ששת מקטעי הנחיתה לא משתנים — רק מקצרים חיכוך.
+הקופי בדף נשאר של Infinite Masterpiece. ששת מקטעי הנחיתה לא משתנים — רק מקצרים חיכוך.
 
 ממשיך את [`WEBINAR-UX-SKETCH.md`](./WEBINAR-UX-SKETCH.md).
+
+![סקיצת נחיתה: טופס אחד בלי שלב 2](webinar-ux/cx-page.png)
+
+![סקיצת תודה: כפתור יומן אחד](webinar-ux/cx-thanks.png)
+
+![סקיצת ערב האירוע: כניסה, לא טופס](webinar-ux/cx-night.png)
+
+![סקיצת מובייל](webinar-ux/cx-phone.png)
 
 ## מה משתנה
 
