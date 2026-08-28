@@ -1,8 +1,12 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { webinarApi } from '../../api/webinar';
-import type { WebinarPublicPayload } from '../../constants/webinar';
-import { WEBINAR_BLOCKER_OPTIONS, WEBINAR_INTEREST_OPTIONS } from '../../constants/webinar';
+import {
+  WEBINAR_BLOCKER_OPTIONS,
+  WEBINAR_INTEREST_OPTIONS,
+  type WebinarPublicPayload,
+} from '../../constants/webinar';
+import { WEBINAR_REGISTER_ID } from '../../constants/webinarPage';
 import { trackEvent } from '../../utils/analytics';
 import { getStoredUtm, utmAsRecord } from '../../utils/utm';
 import { isIsraeliMobile } from '../../utils/phone';
@@ -42,7 +46,7 @@ export function WebinarRegistrationForm({
   const [prefillEmail, setPrefillEmail] = useState(() => consumeWebinarExitEmailPrefill());
 
   useEffect(() => {
-    if (resumedRef.current) return;
+    if (formId !== `${WEBINAR_REGISTER_ID}-form` || resumedRef.current) return;
     const fromQuery = searchParams.get('resume')?.trim() || '';
     let fromSession = '';
     try {

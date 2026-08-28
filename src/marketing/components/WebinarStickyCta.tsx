@@ -13,19 +13,26 @@ export function WebinarStickyCta({ date, time, registrationCount = 0 }: Props) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const target = document.getElementById('webinar-register');
-    if (!target) {
+    const targets = ['webinar-register', 'webinar-register-bottom-card']
+      .map((id) => document.getElementById(id))
+      .filter((node): node is HTMLElement => Boolean(node));
+    if (targets.length === 0) {
       setVisible(true);
       return;
     }
 
+    const visibleIds = new Set<string>();
     const observer = new IntersectionObserver(
       (entries) => {
-        setVisible(!entries.some((entry) => entry.isIntersecting));
+        for (const entry of entries) {
+          if (entry.isIntersecting) visibleIds.add(entry.target.id);
+          else visibleIds.delete(entry.target.id);
+        }
+        setVisible(visibleIds.size === 0);
       },
       { threshold: 0.1 }
     );
-    observer.observe(target);
+    targets.forEach((node) => observer.observe(node));
     return () => observer.disconnect();
   }, []);
 

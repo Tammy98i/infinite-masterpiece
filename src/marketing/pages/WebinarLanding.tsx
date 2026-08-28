@@ -51,7 +51,7 @@ import {
 import { WebinarRegistrationForm } from '../components/WebinarRegistrationForm';
 import { WebinarStickyCta } from '../components/WebinarStickyCta';
 import { WebinarExitIntent } from '../components/WebinarExitIntent';
-import { WebinarSocialProof, WebinarSectionCta, WebinarTrustStrip } from '../components/WebinarSocialProof';
+import { WebinarSocialProof, WebinarSectionCta } from '../components/WebinarSocialProof';
 import { WebinarCountdown } from '../components/WebinarCountdown';
 import { trackEvent, trackWebinarCta, scrollToWebinarForm, scrollToWebinarFit } from '../../utils/analytics';
 import { captureUtmFromSearch } from '../../utils/utm';
@@ -621,16 +621,17 @@ export function WebinarLanding() {
             זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.
           </p>
           <p className="text-sm text-[#C8A24C] font-light mb-8">מחכים לך בוובינר. גל, תמי וגלב.</p>
-          <button
-            type="button"
-            onClick={() => scrollToForm('bottom')}
-            className="w-full sm:w-auto mx-auto px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+          <aside
+            id="webinar-register-bottom-card"
+            aria-label="הרשמה לוובינר"
+            className={`${REGISTER_CARD_CLASS} mx-auto w-full max-w-[380px] text-start scroll-mt-24`}
           >
-            {WEBINAR_CTA_PRIMARY}
-          </button>
-          <div className="mt-4">
-            <WebinarTrustStrip config={config} />
-          </div>
+            <WebinarRegisterCard
+              payload={payload}
+              formId={`${WEBINAR_REGISTER_ID}-bottom`}
+              headlineParts={headlineParts}
+            />
+          </aside>
           <p className="flex flex-wrap items-center justify-center gap-4 text-xs text-[#C8A24C]/80 font-light mt-8">
             <Link to="/terms" className="hover:text-[#F7E7B5] min-h-11 inline-flex items-center">
               תנאי שימוש
