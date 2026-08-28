@@ -47,7 +47,6 @@ import {
   WEBINAR_TRANSPARENCY_POINTS,
   WEBINAR_VALUE_CHAIN,
 } from '../../constants/webinarPage';
-import { BRAVE_PRICE_BEFORE_VAT, HESITANT_TOTAL_BEFORE_VAT } from '../../data/entryTracks';
 import { WebinarRegistrationForm } from '../components/WebinarRegistrationForm';
 import { WebinarStickyCta } from '../components/WebinarStickyCta';
 import { WebinarExitIntent } from '../components/WebinarExitIntent';
@@ -573,30 +572,52 @@ export function WebinarLanding() {
             לא נדרש הערב. בסוף הוובינר תהיה הזמנה להיכנס לפיילוט. רק למי שמתאים ורוצה להמשיך.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <article className="rounded-3xl border border-[#C8A24C]/40 bg-[#C8A24C]/[0.07] p-6 md:p-8 flex flex-col">
-              <h3 className="text-2xl text-white mb-2">מסלול האמיצים</h3>
-              <p className="text-sm text-white/50 font-light mb-6">תשלום אחד מראש. למי שכבר החליט/ה ורוצה לסגור את ההתחייבות בפעולה אחת.</p>
-              <p className="text-3xl text-white font-accent font-semibold tabular-nums mb-1">{BRAVE_PRICE_BEFORE_VAT.toLocaleString('he-IL')} ₪</p>
-              <p className="text-xs text-white/40 mb-8">לפני מע״מ</p>
+            <article className="rounded-3xl border border-[#C8A24C]/30 bg-[#010308]/80 backdrop-blur-xl p-6 shadow-2xl shadow-black/40 flex flex-col text-center">
+              <p className="text-[11px] text-[#C8A24C] mb-3">כניסה בפעולה אחת</p>
+              <h3 className="font-heading text-2xl text-white mb-3">מסלול האמיצים</h3>
+              <p className="text-sm text-white/55 font-light leading-relaxed mb-6">
+                תשלום אחד מראש. למי שכבר החליט/ה ורוצה לסגור את ההתחייבות בפעולה אחת.
+              </p>
+              <ul className="grid gap-3 mb-8 text-sm text-white/65 font-light">
+                <li className="flex items-start justify-center gap-2">
+                  <Check className="w-4 h-4 text-[#C8A24C] shrink-0 mt-0.5" strokeWidth={1.5} aria-hidden />
+                  <span>גישה מלאה לפיילוט ולספרייה</span>
+                </li>
+                <li className="flex items-start justify-center gap-2">
+                  <Check className="w-4 h-4 text-[#C8A24C] shrink-0 mt-0.5" strokeWidth={1.5} aria-hidden />
+                  <span>שני כרטיסי כניסה לכל הגרלה</span>
+                </li>
+              </ul>
               <Link
                 to="/application?track=brave"
                 onClick={() => trackEvent('brave_track_interest_clicked', { source: 'webinar' })}
-                className="mt-auto inline-flex justify-center items-center w-full py-4 rounded-full text-[#F7E7B5] border border-[#C8A24C]/50 hover:border-[#F7E7B5] font-medium min-h-11 cursor-pointer transition-colors duration-200"
+                className="mt-auto inline-flex justify-center items-center w-full py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
               >
                 אני רוצה להיכנס כאמיץ/ה
               </Link>
             </article>
-            <article className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8 flex flex-col">
-              <h3 className="text-2xl text-white mb-2">מסלול ההססנים</h3>
-              <p className="text-sm text-white/50 font-light mb-6">מחויבות מדורגת. למי שרוצה להתחיל בצעד קטן ולהמשיך לפי אבני הדרך.</p>
-              <p className="text-3xl text-white font-accent font-semibold tabular-nums mb-1">8 ₪, 80 ₪, 800 ₪ ו8,000 ₪</p>
-              <p className="text-xs text-white/40 mb-8">סה״כ {HESITANT_TOTAL_BEFORE_VAT.toLocaleString('he-IL')} ₪ לפני מע״מ</p>
+            <article className="rounded-3xl border border-[#C8A24C]/30 bg-[#010308]/80 backdrop-blur-xl p-6 shadow-2xl shadow-black/40 flex flex-col text-center">
+              <p className="text-[11px] text-[#C8A24C] mb-3">כניסה שלב שלב</p>
+              <h3 className="font-heading text-2xl text-white mb-3">מסלול ההססנים</h3>
+              <p className="text-sm text-white/55 font-light leading-relaxed mb-6">
+                מחויבות מדורגת. למי שרוצה להתחיל בצעד קטן ולהמשיך לפי אבני הדרך. אותו יעד. לא הנחה ולא מסלול חלקי.
+              </p>
+              <ul className="grid gap-3 mb-8 text-sm text-white/65 font-light">
+                <li className="flex items-start justify-center gap-2">
+                  <Check className="w-4 h-4 text-[#C8A24C] shrink-0 mt-0.5" strokeWidth={1.5} aria-hidden />
+                  <span>גישה מלאה לפיילוט ולספרייה מההתחלה</span>
+                </li>
+                <li className="flex items-start justify-center gap-2">
+                  <Check className="w-4 h-4 text-[#C8A24C] shrink-0 mt-0.5" strokeWidth={1.5} aria-hidden />
+                  <span>כרטיס כניסה אחד לכל הגרלה</span>
+                </li>
+              </ul>
               <Link
                 to="/hesitation"
                 onClick={() => trackEvent('hesitant_track_interest_clicked', { source: 'webinar' })}
-                className="mt-auto inline-flex justify-center items-center w-full py-4 rounded-full text-white border border-[#C8A24C]/40 hover:border-[#F7E7B5] hover:text-[#F7E7B5] font-medium min-h-11 cursor-pointer transition-colors duration-200"
+                className="mt-auto inline-flex justify-center items-center w-full py-4 rounded-full text-[#F7E7B5] border border-[#C8A24C]/50 hover:border-[#F7E7B5] font-medium min-h-11 cursor-pointer transition-colors duration-200"
               >
-                אני רוצה להתחיל בשמונה שקלים
+                אני רוצה להיכנס שלב שלב
               </Link>
             </article>
           </div>
