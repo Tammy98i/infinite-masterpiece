@@ -26,6 +26,7 @@ import { AccessibilityStatement } from './marketing/pages/AccessibilityStatement
 import { LibraryMembership } from './marketing/pages/LibraryMembership';
 import { WebinarLanding } from './marketing/pages/WebinarLanding';
 import { WebinarThankYou } from './marketing/pages/WebinarThankYou';
+import { AuthCallback } from './marketing/pages/AuthCallback';
 
 const PublicLayoutWrapper = () => {
   const location = useLocation();
@@ -137,6 +138,7 @@ export default function App() {
           <Route path="/library-membership" element={<LibraryMembership />} />
           <Route path="/webinar" element={<WebinarLanding />} />
           <Route path="/webinar/thank-you" element={<WebinarThankYou />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/hesitation" element={<Hesitation />} />
           <Route path="/hesitation-success" element={<HesitationSuccess />} />
         </Route>

@@ -34,6 +34,25 @@ export function setAuthToken(value: string | null) {
   else localStorage.removeItem(TOKEN_KEY);
 }
 
+function errorMessageFromBody(data: unknown, status: number) {
+  const payload = data as {
+    error?: string | { message?: string; code?: string };
+    protection?: { vercel_auth_enabled?: boolean };
+  };
+  const nested =
+    typeof payload.error === 'object' && payload.error
+      ? payload.error.message || payload.error.code
+      : payload.error;
+  if (status === 401 && (payload.protection?.vercel_auth_enabled || nested === 'Protected deployment')) {
+    return 'הפריוויו של Vercel מוגן, ואין שם שרת התחברות. התחברו מקומית עם npm run dev, או חברו API (ראה docs/SUPABASE-AUTH.md).';
+  }
+  if (typeof nested === 'string' && nested.trim()) return nested;
+  if (status === 404 || status === 405) {
+    return 'שרת ההתחברות לא זמין בכתובת הזו. מקומית הריצו npm run dev.';
+  }
+  return 'הבקשה נכשלה';
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',
@@ -50,7 +69,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {
-    throw new Error((data as { error?: string }).error || 'הבקשה נכשלה');
+    throw new Error(errorMessageFromBody(data, res.status));
   }
   return data as T;
 }

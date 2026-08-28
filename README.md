@@ -13,7 +13,8 @@ npm run dev
 - אתר: http://localhost:3000  
 - API: http://localhost:3001 (proxy דרך Vite)
 
-**חשבונות דמו** (אחרי seed): ראו `server/db/catalogSeed.ts`
+**חשבונות דמו** (אחרי seed): ראו `server/db/catalogSeed.ts`  
+התחברות Google / Supabase: [`docs/SUPABASE-AUTH.md`](docs/SUPABASE-AUTH.md)
 
 ## בדיקות
 

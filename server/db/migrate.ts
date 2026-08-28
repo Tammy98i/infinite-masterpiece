@@ -72,6 +72,12 @@ export function migrateSchema(db: DatabaseSync) {
   if (!users.has('staff_status')) {
     db.exec(`ALTER TABLE users ADD COLUMN staff_status TEXT NOT NULL DEFAULT 'active'`);
   }
+  if (!users.has('supabase_user_id')) {
+    db.exec(`ALTER TABLE users ADD COLUMN supabase_user_id TEXT`);
+  }
+  db.exec(
+    `CREATE UNIQUE INDEX IF NOT EXISTS idx_users_supabase_user_id ON users(supabase_user_id) WHERE supabase_user_id IS NOT NULL`
+  );
 
   const lecturers = columnNames(db, 'lecturers');
   if (lecturers.size > 0 && !lecturers.has('founder_id')) {

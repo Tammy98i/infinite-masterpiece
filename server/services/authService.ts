@@ -83,7 +83,7 @@ function rowToUser(row: Record<string, unknown>): AuthUser {
   };
 }
 
-function createSession(userId: string) {
+export function createSession(userId: string) {
   const db = getDb();
   const token = randomBytes(32).toString('hex');
   const expires = new Date();

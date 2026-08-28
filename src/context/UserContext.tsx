@@ -5,6 +5,14 @@ import { TRIAL_DAYS } from '../constants/brand';
 import type { PlanId } from '../data/plans';
 import { authApi, getAuthToken, setAuthToken, type AuthUserPayload } from '../api/auth';
 import { isPaidPlan } from '../utils/access';
+import {
+  isSupabaseAuthEnabled,
+  supabaseCompleteOAuthFromUrl,
+  supabaseLogin,
+  supabaseRegister,
+  supabaseSignOut,
+  supabaseStartGoogleOAuth,
+} from '../api/supabaseAuth';
 
 const GUEST_USER: UserProfile = {
   id: 'guest',
@@ -36,6 +44,9 @@ interface UserContextType {
   isWelcomeOpen: boolean;
   login: (email: string, password: string) => Promise<AuthUserPayload>;
   register: (name: string, email: string, password: string) => Promise<AuthUserPayload>;
+  loginWithGoogle: () => Promise<void>;
+  completeOAuthLogin: () => Promise<AuthUserPayload>;
+  supabaseAuthEnabled: boolean;
   logout: () => void;
   startTrialOrSubscribe: (plan: PlanId) => void;
   cancelSubscription: () => void;
@@ -102,7 +113,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const login = async (email: string, password: string) => {
-    const result = await authApi.login(email, password);
+    const result = isSupabaseAuthEnabled()
+      ? await supabaseLogin(email, password)
+      : await authApi.login(email, password);
     applySession(result.token, result.user);
     const plan = result.user.subscriptionPlan || 'none';
     if (!isPaidPlan(plan) && result.user.role !== 'admin') {
@@ -112,15 +125,32 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const register = async (name: string, email: string, password: string) => {
-    const result = await authApi.register(name, email, password);
+    const result = isSupabaseAuthEnabled()
+      ? await supabaseRegister(name, email, password)
+      : await authApi.register(name, email, password);
     applySession(result.token, result.user);
     setWelcomeOpen(true);
+    return result.user;
+  };
+
+  const loginWithGoogle = async () => {
+    await supabaseStartGoogleOAuth();
+  };
+
+  const completeOAuthLogin = async () => {
+    const result = await supabaseCompleteOAuthFromUrl();
+    applySession(result.token, result.user);
+    const plan = result.user.subscriptionPlan || 'none';
+    if (!isPaidPlan(plan) && result.user.role !== 'admin') {
+      sessionStorage.setItem('mc_paywall_login', '1');
+    }
     return result.user;
   };
 
   const logout = () => {
     pendingPlanRef.current = null;
     void authApi.logout();
+    void supabaseSignOut();
     setUser(GUEST_USER);
   };
 
@@ -185,6 +215,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isWelcomeOpen,
         login,
         register,
+        loginWithGoogle,
+        completeOAuthLogin,
+        supabaseAuthEnabled: isSupabaseAuthEnabled(),
         logout,
         startTrialOrSubscribe,
         cancelSubscription,
