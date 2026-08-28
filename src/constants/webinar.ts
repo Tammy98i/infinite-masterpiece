@@ -79,7 +79,7 @@ export const DEFAULT_WEBINAR_CONFIG: WebinarConfig = {
   location: 'אונליין / Zoom',
   costLabel: 'ללא עלות · הרשמה מוקדמת',
   spotsLabel: 'הרשמה פתוחה',
-  whatsappGroupUrl: '',
+  whatsappGroupUrl: 'https://chat.whatsapp.com/EfdlOMLCGS70nvDoe6LTcT',
   calendarLocation: 'Zoom',
   zoomLink: '',
   leaderPrimaryName: 'גל אברמוביץ׳',

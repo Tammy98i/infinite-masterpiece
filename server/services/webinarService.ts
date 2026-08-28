@@ -74,6 +74,10 @@ export function seedWebinarConfigIfMissing() {
     next.leaderSecondaryBio = DEFAULT_WEBINAR_CONFIG.leaderSecondaryBio;
     changed = true;
   }
+  if (!current.whatsappGroupUrl.trim()) {
+    next.whatsappGroupUrl = DEFAULT_WEBINAR_CONFIG.whatsappGroupUrl;
+    changed = true;
+  }
 
   if (changed) setSetting(CONFIG_KEY, JSON.stringify(next));
 }
