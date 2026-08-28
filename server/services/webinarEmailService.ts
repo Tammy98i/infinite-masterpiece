@@ -3,8 +3,8 @@ import { getWebinarConfig } from './webinarService.js';
 import { getDb } from '../db/connection.js';
 import { appUrl } from '../config/env.js';
 
-/** Works immediately. After the domain is verified in Resend, set EMAIL_FROM to that address. */
-export const RESEND_ONBOARDING_FROM = 'Infinite Masterpiece <onboarding@resend.dev>';
+/** After the domain is verified in Resend. Override with EMAIL_FROM if needed. */
+export const RESEND_DEFAULT_FROM = 'Infinite Masterpiece <noreply@infinite-masterpiece.co.il>';
 
 type ConfirmationInput = {
   fullName: string;
@@ -13,7 +13,7 @@ type ConfirmationInput = {
 };
 
 export function webinarEmailFrom() {
-  return process.env.EMAIL_FROM?.trim() || RESEND_ONBOARDING_FROM;
+  return process.env.EMAIL_FROM?.trim() || RESEND_DEFAULT_FROM;
 }
 
 export function isWebinarEmailEnabled() {
