@@ -38,7 +38,7 @@ export function Header() {
     { name: 'מחירון', to: '/pricing' },
     { name: 'שאלות', to: '/faq' },
   ];
-  const navLinks = onWebinarLanding ? WEBINAR_NAV : defaultNavLinks;
+  const navLinks = onWebinar ? WEBINAR_NAV : defaultNavLinks;
 
   const goToWebinarForm = () => {
     trackWebinarCta('header');
@@ -82,7 +82,7 @@ export function Header() {
                 to={link.to}
                 className={cn(
                   'text-[13px] font-light tracking-wide transition-colors duration-300',
-                  onWebinarLanding
+                  onWebinar
                     ? 'text-white/60 hover:text-white'
                     : 'accent' in link && link.accent
                     ? onWebinar && link.to === '/webinar'
@@ -113,13 +113,13 @@ export function Header() {
               </button>
             ) : (
               <Link
-                to="/webinar"
+                to={onWebinar ? `/webinar#${WEBINAR_REGISTER_ID}` : '/webinar'}
                 className="px-5 py-3 rounded-full text-sm font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] hover:opacity-95 transition-opacity min-h-11"
               >
                 {WEBINAR_CTA_HEADER}
               </Link>
             )}
-            {!onWebinarLanding ? (
+            {!onWebinar ? (
               <Link
                 to="/library"
                 className="px-5 py-3 rounded-full text-sm font-medium text-white/55 hover:text-[#C8A24C] transition-colors duration-500 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#010308]"
@@ -171,7 +171,7 @@ export function Header() {
                 </Link>
               ))}
               <div className="pt-6 border-t border-white/[0.05] flex flex-col gap-4">
-                {onWebinarLanding ? (
+                {onWebinar ? (
                   <button
                     type="button"
                     onClick={() => {
