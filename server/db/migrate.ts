@@ -314,6 +314,9 @@ export function migrateSchema(db: DatabaseSync) {
     if (!webinarRegs.has('reminded_partial_at')) {
       db.exec(`ALTER TABLE webinar_registrations ADD COLUMN reminded_partial_at TEXT`);
     }
+    if (!webinarRegs.has('person_picked_at')) {
+      db.exec(`ALTER TABLE webinar_registrations ADD COLUMN person_picked_at TEXT`);
+    }
   }
 
   migrateCategoriesToSpec(db);

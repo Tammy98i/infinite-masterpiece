@@ -232,6 +232,7 @@ export function getWebinarResume(id: string) {
     throw Object.assign(new Error('הרשמה לא נמצאה'), { status: 404 });
   }
   const status = String(row.status || '');
+  const personPicked = Boolean(String(row.person_picked_at || '').trim());
   if (status === 'complete' || status === 'new') {
     return {
       id: registrationId,
@@ -239,6 +240,7 @@ export function getWebinarResume(id: string) {
       step: 'done' as const,
       email: String(row.email || ''),
       fullName: String(row.full_name || ''),
+      personPicked,
     };
   }
   return {
@@ -247,7 +249,35 @@ export function getWebinarResume(id: string) {
     step: status === 'lead' ? ('a' as const) : ('b' as const),
     email: String(row.email || ''),
     fullName: String(row.full_name || ''),
+    personPicked,
   };
+}
+
+const REGISTRATION_ID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+export function setWebinarPersonPicked(registrationId: string, picked: boolean) {
+  const id = String(registrationId || '').trim();
+  if (!REGISTRATION_ID_RE.test(id)) {
+    throw Object.assign(new Error('מזהה הרשמה לא תקין'), { status: 400 });
+  }
+  const row = getRegistrationById(id);
+  if (!row) {
+    throw Object.assign(new Error('הרשמה לא נמצאה'), { status: 404 });
+  }
+
+  const now = new Date().toISOString();
+  getDb()
+    .prepare(`UPDATE webinar_registrations SET person_picked_at = ?, updated_at = ? WHERE id = ?`)
+    .run(picked ? now : null, now, id);
+
+  if (picked) {
+    trackEvent('webinar_thank_you_step_completed', {
+      properties: { step: 'person', registrationId: id },
+    });
+  }
+
+  return { id, personPicked: picked };
 }
 
 function validateEmail(email: string) {
@@ -485,7 +515,8 @@ export function listWebinarRegistrations(limit = 200) {
     getDb()
       .prepare(
         `SELECT id, full_name, phone, email, field, interest, blocker, marketing_opt_in,
-                utm_source, utm_medium, utm_campaign, status, ab_variant, created_at, updated_at, step_completed_at
+                utm_source, utm_medium, utm_campaign, status, ab_variant, created_at, updated_at,
+                step_completed_at, person_picked_at
          FROM webinar_registrations
          ORDER BY created_at DESC
          LIMIT ?`
@@ -508,6 +539,7 @@ export function listWebinarRegistrations(limit = 200) {
     createdAt: String(row.created_at || ''),
     updatedAt: String(row.updated_at || ''),
     stepCompletedAt: String(row.step_completed_at || ''),
+    personPickedAt: String(row.person_picked_at || ''),
   }));
 }
 
@@ -528,6 +560,14 @@ export function getWebinarFunnelStats() {
     emailLeads: countByStatus('lead'),
     completeLeads: countCompleteWebinarRegistrations(),
     waitlistLeads: countByStatus('waitlist'),
+    personPicked: (
+      getDb()
+        .prepare(
+          `SELECT COUNT(*) as c FROM webinar_registrations
+           WHERE person_picked_at IS NOT NULL AND person_picked_at != ''`
+        )
+        .get() as { c: number }
+    ).c,
   };
 }
 
@@ -562,11 +602,9 @@ export function listPartialFollowupCandidates() {
 
 export function listWebinarReminderCandidates(kind: '24h' | '1h') {
   const config = getWebinarConfig();
-  const [day, month, year] = config.date.split('.').map((part) => Number(part.trim()));
-  const [hours, minutes] = config.time.split(':').map((part) => Number(part.trim()));
-  if (!day || !month || !year) return [];
+  const webinarAt = parseIsraeliDateTime(config.date, config.time);
+  if (!webinarAt) return [];
 
-  const webinarAt = new Date(year, month - 1, day, hours || 0, minutes || 0, 0);
   const now = Date.now();
   const diffMs = webinarAt.getTime() - now;
   const diffHours = diffMs / (1000 * 60 * 60);

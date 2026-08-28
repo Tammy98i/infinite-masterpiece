@@ -401,6 +401,7 @@ export interface AdminWebinarRegistration {
   utmCampaign: string;
   status: string;
   createdAt: string;
+  personPickedAt?: string;
 }
 
 export interface AdminWebinarDashboard {
@@ -423,6 +424,7 @@ export interface AdminWebinarDashboard {
     emailLeads: number;
     completeLeads: number;
     waitlistLeads: number;
+    personPicked: number;
   };
   readiness: {
     ready: boolean;

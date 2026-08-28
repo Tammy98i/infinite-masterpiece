@@ -52,6 +52,15 @@ export const webinarApi = {
         step: 'a' | 'b' | 'done';
         email: string;
         fullName: string;
+        personPicked?: boolean;
       };
     }>(`/api/webinar/resume/${encodeURIComponent(id)}`),
+  personPicked: (registrationId: string, picked: boolean) =>
+    apiRequest<{
+      ok: boolean;
+      registration: { id: string; personPicked: boolean };
+    }>('/api/webinar/person-picked', {
+      method: 'POST',
+      body: JSON.stringify({ registrationId, picked }),
+    }),
 };

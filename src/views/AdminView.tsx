@@ -3690,9 +3690,20 @@ function WebinarPanel() {
   };
 
   const exportCsv = () => {
-    const header = 'name,phone,email,field,interest,blocker,utm_source,status,createdAt';
+    const header = 'name,phone,email,field,interest,blocker,utm_source,status,personPickedAt,createdAt';
     const rows = registrations.map((row) =>
-      [row.fullName, row.phone, row.email, row.field, row.interest, row.blocker, row.utmSource, row.status, row.createdAt]
+      [
+        row.fullName,
+        row.phone,
+        row.email,
+        row.field,
+        row.interest,
+        row.blocker,
+        row.utmSource,
+        row.status,
+        row.personPickedAt || '',
+        row.createdAt,
+      ]
         .map((cell) => `"${String(cell).replace(/"/g, '""')}"`)
         .join(',')
     );
@@ -3796,6 +3807,7 @@ function WebinarPanel() {
               ['Partial', data.funnel.partialLeads],
               ['Email leads', data.funnel.emailLeads],
               ['Waitlist', data.funnel.waitlistLeads],
+              ['בחרו אדם', data.funnel.personPicked],
             ].map(([label, value]) => (
               <div key={String(label)} className="rounded-xl border border-white/10 p-3">
                 <p className="text-white/40 text-xs">{label}</p>
@@ -4010,6 +4022,7 @@ function WebinarPanel() {
                 <th className="py-2 pe-3">אימייל</th>
                 <th className="py-2 pe-3">תחום</th>
                 <th className="py-2 pe-3">מסקרן / חסם</th>
+                <th className="py-2 pe-3">אדם</th>
               </tr>
             </thead>
             <tbody>
@@ -4024,6 +4037,9 @@ function WebinarPanel() {
                   <td className="py-3 pe-3 text-white/60">
                     {row.interest}
                     {row.blocker ? ` · ${row.blocker}` : ''}
+                  </td>
+                  <td className="py-3 pe-3 whitespace-nowrap text-white/70">
+                    {row.personPickedAt ? 'כן' : ''}
                   </td>
                 </tr>
               ))}

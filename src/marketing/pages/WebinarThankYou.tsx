@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { CalendarPlus, MessageCircle, Share2, UserRound } from 'lucide-react';
+import { CalendarPlus, MessageCircle, Share2, UserRound, Video } from 'lucide-react';
 import { webinarApi } from '../../api/webinar';
 import { DEFAULT_WEBINAR_CONFIG } from '../../constants/webinar';
 import { buildGoogleCalendarUrl, buildShareUrl, downloadIcs } from '../../utils/webinarTime';
@@ -9,6 +9,7 @@ import { trackEvent } from '../../utils/analytics';
 
 export function WebinarThankYou() {
   const [params] = useSearchParams();
+  const registrationId = params.get('id')?.trim() || '';
   const name = params.get('name') || '';
   const firstName = name.trim().split(/\s+/)[0] || '';
   const date = params.get('date') || DEFAULT_WEBINAR_CONFIG.date;
@@ -21,11 +22,19 @@ export function WebinarThankYou() {
   useEffect(() => {
     window.scrollTo(0, 0);
     webinarApi.config().then(setPayload).catch(() => null);
-  }, []);
+    if (!registrationId) return;
+    webinarApi
+      .resume(registrationId)
+      .then(({ registration }) => {
+        setPersonPicked(Boolean(registration.personPicked));
+      })
+      .catch(() => undefined);
+  }, [registrationId]);
 
   const config = payload?.config || DEFAULT_WEBINAR_CONFIG;
   const calendarConfig = useMemo(() => ({ ...config, date, time }), [config, date, time]);
   const googleUrl = buildGoogleCalendarUrl(calendarConfig);
+  const zoomLink = config.zoomLink.trim();
 
   const markCalendar = (provider: string) => {
     trackEvent('add_to_calendar_clicked', { provider });
@@ -37,6 +46,15 @@ export function WebinarThankYou() {
     trackEvent('whatsapp_group_clicked');
     trackEvent('webinar_whatsapp_group_clicked');
     trackEvent('webinar_thank_you_step_completed', { step: 'whatsapp' });
+  };
+
+  const persistPersonPicked = (picked: boolean) => {
+    setPersonPicked(picked);
+    if (picked) {
+      trackEvent('webinar_thank_you_step_completed', { step: 'person' });
+    }
+    if (!registrationId) return;
+    webinarApi.personPicked(registrationId, picked).catch(() => undefined);
   };
 
   const share = async () => {
@@ -87,7 +105,8 @@ export function WebinarThankYou() {
                     הוספה ליומן
                   </p>
                   <p className="text-xs text-white/45 font-light mb-3">
-                    {date} · {time}. קישור Zoom יישלח לפני הערב.
+                    {date} · {time}.
+                    {zoomLink ? ' קישור Zoom למטה.' : ' קישור Zoom יישלח לפני הערב.'}
                   </p>
                   <div className="flex flex-col sm:flex-row gap-2">
                     {googleUrl ? (
@@ -112,6 +131,17 @@ export function WebinarThankYou() {
                       קובץ יומן
                     </button>
                   </div>
+                  {zoomLink ? (
+                    <a
+                      href={zoomLink}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="mt-3 inline-flex items-center justify-center gap-2 rounded-full border border-[#C8A24C]/40 px-4 py-2 text-sm text-[#F7E7B5] min-h-11 cursor-pointer hover:bg-[#C8A24C]/10 transition-colors duration-200"
+                    >
+                      <Video className="w-4 h-4" aria-hidden />
+                      קישור Zoom
+                    </a>
+                  ) : null}
                 </div>
               </div>
             </li>
@@ -154,18 +184,14 @@ export function WebinarThankYou() {
                     <UserRound className="w-4 h-4 text-[#C8A24C]" aria-hidden />
                     אדם אחד
                   </span>
-                  <span className="block text-xs text-white/45 font-light mb-3">
+                  <span id="webinar-person-hint" className="block text-xs text-white/45 font-light mb-3">
                     בחר/י אדם אחד שעשוי להתאים להצעה שלך. בוובינר נבצע פעולה אמיתית.
                   </span>
                   <input
                     type="checkbox"
                     checked={personPicked}
-                    onChange={(e) => {
-                      setPersonPicked(e.target.checked);
-                      if (e.target.checked) {
-                        trackEvent('webinar_thank_you_step_completed', { step: 'person' });
-                      }
-                    }}
+                    aria-describedby="webinar-person-hint"
+                    onChange={(e) => persistPersonPicked(e.target.checked)}
                     className="accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer"
                   />
                   <span className="mr-2 text-sm text-[#F7E7B5]">בחרתי אדם</span>

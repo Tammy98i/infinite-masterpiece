@@ -26,7 +26,6 @@ import {
 } from '../../constants/webinarPage';
 import { WebinarRegistrationForm } from '../components/WebinarRegistrationForm';
 import { WebinarStickyCta } from '../components/WebinarStickyCta';
-import { WebinarExitIntent } from '../components/WebinarExitIntent';
 import { WebinarSectionCta } from '../components/WebinarSocialProof';
 import { WebinarCountdown } from '../components/WebinarCountdown';
 import { trackEvent, trackWebinarCta, scrollToWebinarForm, scrollToWebinarFit } from '../../utils/analytics';
@@ -391,7 +390,6 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <WebinarExitIntent />
       <WebinarStickyCta
         date={config.date}
         time={config.time}

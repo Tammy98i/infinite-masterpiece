@@ -12,7 +12,6 @@ import { getStoredUtm, utmAsRecord } from '../../utils/utm';
 import { isIsraeliMobile } from '../../utils/phone';
 import { WebinarTrustStrip } from './WebinarSocialProof';
 import { WebinarUrgencyStrip } from './WebinarCountdown';
-import { consumeWebinarExitEmailPrefill } from './WebinarExitIntent';
 
 const RESUME_KEY = 'webinar_registration_id';
 
@@ -43,7 +42,7 @@ export function WebinarRegistrationForm({
   const formViewTracked = useRef(false);
   const resumedRef = useRef(false);
   const rootRef = useRef<HTMLFormElement>(null);
-  const [prefillEmail, setPrefillEmail] = useState(() => consumeWebinarExitEmailPrefill());
+  const [prefillEmail, setPrefillEmail] = useState('');
 
   useEffect(() => {
     if (formId !== `${WEBINAR_REGISTER_ID}-form` || resumedRef.current) return;

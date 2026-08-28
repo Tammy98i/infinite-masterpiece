@@ -3,6 +3,7 @@ import {
   createWebinarRegistration,
   getWebinarPublicPayload,
   getWebinarResume,
+  setWebinarPersonPicked,
 } from '../services/webinarService.js';
 
 const router = Router();
@@ -29,6 +30,17 @@ router.post('/register', (req, res) => {
   try {
     const result = createWebinarRegistration(req.body || {});
     res.json({ ok: true, registration: result });
+  } catch (err) {
+    const status = (err as { status?: number }).status || 500;
+    res.status(status).json({ error: (err as Error).message });
+  }
+});
+
+router.post('/person-picked', (req, res) => {
+  try {
+    const registrationId = String(req.body?.registrationId || '');
+    const picked = Boolean(req.body?.picked);
+    res.json({ ok: true, registration: setWebinarPersonPicked(registrationId, picked) });
   } catch (err) {
     const status = (err as { status?: number }).status || 500;
     res.status(status).json({ error: (err as Error).message });
