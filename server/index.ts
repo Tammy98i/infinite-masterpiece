@@ -28,6 +28,7 @@ import { UPLOADS_DIR, ensureUploadsDir } from './services/uploadService.js';
 import { isS3Enabled } from './services/s3Upload.js';
 import { handleStripeWebhook, processDueInstallments, isStripeEnabled } from './services/stripeService.js';
 import { startWebinarReminderScheduler } from './jobs/webinarReminders.js';
+import { isWebinarEmailEnabled } from './services/webinarEmailService.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const app = express();
@@ -78,6 +79,7 @@ app.get('/api/health', (_req, res) => {
       appUrl: appUrl(),
       stripe: isStripeEnabled(),
       s3: isS3Enabled(),
+      resend: isWebinarEmailEnabled(),
     });
   } catch (err) {
     res.status(503).json({ status: 'error', message: (err as Error).message });
