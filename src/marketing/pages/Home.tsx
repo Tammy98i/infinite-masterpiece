@@ -50,7 +50,7 @@ export function Home() {
                 <span className="text-white block text-[32px] sm:text-[40px] md:text-[64px] lg:text-[76px]">
                   יש לך יצירה.
                 </span>
-                <span className="text-gold-gradient font-medium block whitespace-nowrap text-[clamp(1.5rem,calc((100vw-3rem)/11),4.5rem)]">
+                <span className="text-gold-gradient font-medium block whitespace-nowrap text-[clamp(1.25rem,calc((100vw-2rem)/13.2),4.5rem)]">
                   עכשיו בונים לה מערכת הכנסה.
                 </span>
               </h1>
