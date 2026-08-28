@@ -5,7 +5,7 @@
 1. **התחברות לאתר** — Google / אימייל דרך **Authentication → Sign In / Providers**.
 2. **OAuth Server** — האתר שלנו כספק זהות לאפליקציות אחרות. דף האישור: `/oauth/consent`.
 
-בלי מפתחות נשארת ההתחברות המקומית (`admin@infinitemasterpiece.local` / `Masterpiece88` עם `npm run dev`).
+בלי מפתחות שרת נשארת גם כניסת הדמו בפריוו (`admin@infinitemasterpiece.local` / `Masterpiece88`).
 
 ## מה חובר בקוד
 
@@ -19,7 +19,11 @@
 
 ### 1. מפתחות
 
-פרויקט: `bjhxluqeyjdioebtuvob`.
+פרויקט: `bjhxluqeyjdioebtuvob`. ה-URL וה-anon הציבוריים מחוברים בקוד (`src/lib/supabasePublic.ts`), כך שכפתור Google מופיע גם בלי משתני Vercel.
+
+טבלת `public.profiles` כבר נוצרה בפרויקט.
+
+Google ב-Providers עדיין **כבוי** בפרויקט — בלי Client ID/Secret מ-Google Cloud הכפתור יופיע אבל ההתחברות תיעצר.
 
 **Project Settings → API**: Project URL + `anon` `public`.
 

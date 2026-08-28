@@ -1,8 +1,9 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { apiUrl } from './apiBase';
+import { SUPABASE_ANON_KEY, SUPABASE_PROJECT_URL } from './supabasePublic';
 
-const buildUrl = import.meta.env.VITE_SUPABASE_URL?.trim() || '';
-const buildAnon = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() || '';
+const buildUrl = import.meta.env.VITE_SUPABASE_URL?.trim() || SUPABASE_PROJECT_URL;
+const buildAnon = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() || SUPABASE_ANON_KEY;
 
 let runtimeUrl = '';
 let runtimeAnon = '';

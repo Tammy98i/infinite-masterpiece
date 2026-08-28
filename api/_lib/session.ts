@@ -1,3 +1,5 @@
+import { SUPABASE_ANON_KEY, SUPABASE_PROJECT_URL } from '../../src/lib/supabasePublic';
+
 export const FOUNDER_ADMIN_EMAILS = ['tam98iiy@gmail.com'];
 
 export type SessionUser = {
@@ -31,8 +33,10 @@ function adminEmails() {
 }
 
 export function supabaseEnv() {
-  const url = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '').trim().replace(/\/$/, '');
-  const anonKey = (process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '').trim();
+  const url = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || SUPABASE_PROJECT_URL)
+    .trim()
+    .replace(/\/$/, '');
+  const anonKey = (process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || SUPABASE_ANON_KEY).trim();
   return { url, anonKey };
 }
 
