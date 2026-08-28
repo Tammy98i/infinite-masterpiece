@@ -93,6 +93,6 @@ curl http://localhost:3001/api/auth/providers
 
 ## Vercel
 
-`vercel.json` מגיש את ה-SPA. `api/auth/providers`, `supabase`, `me`, `logout` רצים כפונקציות Serverless (בלי SQLite). קטלוג הספרייה נופל לתוכן הסטטי אם אין Express.
+`vercel.json` מגיש את ה-SPA. `api/auth/login` + `providers` / `supabase` / `me` / `logout` רצים כפונקציות. בלי מפתחות Supabase, חשבונות הדמו (`admin@infinitemasterpiece.local` / `Masterpiece88`) נכנסים בפריוו לבד — גם אם Deployment Protection חוסם את `/api`.
 
-Deployment Protection על Preview מחזיר 401 על `/api`. כבו זאת לפריוויו, או הגדירו `VITE_*` ב-build — אז Google עובד בסשן דפדפן גם בלי הפונקציות.
+קטלוג הספרייה נופל לתוכן הסטטי אם אין Express. Google עדיין דורש את המפתחות בסעיף 1.

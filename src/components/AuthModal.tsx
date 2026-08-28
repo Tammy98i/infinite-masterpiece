@@ -176,6 +176,12 @@ export const AuthModal: React.FC = () => {
           </button>
         </form>
 
+        {mode === 'login' ? (
+          <p className="mt-4 text-[11px] text-white/35">
+            בפריוו בלי שרת: חשבונות הדמו עובדים כאן (אותו אימייל וסיסמה כמו ב־npm run dev).
+          </p>
+        ) : null}
+
         <button
           type="button"
           onClick={() => {

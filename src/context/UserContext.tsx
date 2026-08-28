@@ -15,6 +15,8 @@ import {
   supabaseStartGoogleOAuth,
 } from '../api/supabaseAuth';
 import { loadSupabaseConfig } from '../lib/supabase';
+import { previewLogin, previewRegister, previewSessionFromToken, isPreviewToken, isDemoEmail } from '../lib/previewAuth';
+import { isApiUnavailableMessage } from '../lib/supabaseUser';
 
 const GUEST_USER: UserProfile = {
   id: 'guest',
@@ -78,8 +80,14 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (cancelled) return;
       setSupabaseAuthEnabled(isSupabaseAuthEnabled());
 
-      const restored = await restoreSupabaseBrowserSession();
+      const restored = (await restoreSupabaseBrowserSession()) || previewSessionFromToken(getAuthToken());
       if (cancelled) return;
+
+      if (isPreviewToken(getAuthToken()) && restored) {
+        setUser(fromPayload(restored.user));
+        if (!cancelled) setReady(true);
+        return;
+      }
 
       if (getAuthToken()) {
         try {
@@ -128,24 +136,46 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const login = async (email: string, password: string) => {
-    const result = isSupabaseAuthEnabled()
-      ? await supabaseLogin(email, password)
-      : await authApi.login(email, password);
-    applySession(result.token, result.user);
-    const plan = result.user.subscriptionPlan || 'none';
-    if (!isPaidPlan(plan) && result.user.role !== 'admin') {
-      sessionStorage.setItem('mc_paywall_login', '1');
+    try {
+      const result = isSupabaseAuthEnabled()
+        ? await supabaseLogin(email, password)
+        : await authApi.login(email, password);
+      applySession(result.token, result.user);
+      const plan = result.user.subscriptionPlan || 'none';
+      if (!isPaidPlan(plan) && result.user.role !== 'admin') {
+        sessionStorage.setItem('mc_paywall_login', '1');
+      }
+      return result.user;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '';
+      const canPreview = isApiUnavailableMessage(message) || isDemoEmail(email);
+      if (!canPreview) throw err;
+      const result = previewLogin(email, password);
+      applySession(result.token, result.user);
+      const plan = result.user.subscriptionPlan || 'none';
+      if (!isPaidPlan(plan) && result.user.role !== 'admin') {
+        sessionStorage.setItem('mc_paywall_login', '1');
+      }
+      return result.user;
     }
-    return result.user;
   };
 
   const register = async (name: string, email: string, password: string) => {
-    const result = isSupabaseAuthEnabled()
-      ? await supabaseRegister(name, email, password)
-      : await authApi.register(name, email, password);
-    applySession(result.token, result.user);
-    setWelcomeOpen(true);
-    return result.user;
+    try {
+      const result = isSupabaseAuthEnabled()
+        ? await supabaseRegister(name, email, password)
+        : await authApi.register(name, email, password);
+      applySession(result.token, result.user);
+      setWelcomeOpen(true);
+      return result.user;
+    } catch (err) {
+      const message = err instanceof Error ? err.message : '';
+      if (!isApiUnavailableMessage(message)) throw err;
+      const result = previewRegister(name, email, password);
+      applySession(result.token, result.user);
+      setWelcomeOpen(true);
+      return result.user;
+    }
   };
 
   const loginWithGoogle = async (nextPath?: string) => {
@@ -166,6 +196,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     pendingPlanRef.current = null;
     void authApi.logout();
     void supabaseSignOut();
+    setAuthToken(null);
     setUser(GUEST_USER);
   };
 
@@ -194,6 +225,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const refreshUser = useCallback(async () => {
+    if (isPreviewToken(getAuthToken())) {
+      const restored = previewSessionFromToken(getAuthToken());
+      if (restored) {
+        setUser(fromPayload(restored.user));
+        return;
+      }
+      setAuthToken(null);
+      setUser(GUEST_USER);
+      return;
+    }
     if (!getAuthToken()) {
       const restored = await restoreSupabaseBrowserSession();
       if (restored) {
