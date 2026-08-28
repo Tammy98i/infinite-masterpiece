@@ -2,13 +2,14 @@
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useUser } from '../context/UserContext';
-import { Search, Mic, Shield, Menu, X, Infinity as InfinityIcon, Compass, Bookmark, User } from 'lucide-react';
+import { Search, Mic, Shield, Menu, X, Compass, Bookmark, User } from 'lucide-react';
 import { AccountMenu } from './AccountMenu';
 import { trackEvent } from '../utils/analytics';
 import { searchSuggestions } from '../utils/searchCatalog';
 import { formatClock } from '../utils/time';
 import { getCardAccessState } from '../utils/libraryHome';
 import { useWatchAccess } from '../utils/useWatchAccess';
+import { SiteLogo } from './SiteLogo';
 
 export const Navbar: React.FC = () => {
   const {
@@ -83,15 +84,10 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setView('home')}
-                className="flex items-center gap-4 group focus-ring rounded-xl"
+                className="flex items-center min-h-11 focus-ring rounded-xl"
                 aria-label="Infinite Masterpiece"
               >
-                <InfinityIcon className="w-8 h-8 text-[#F7E7B5] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
-                <span className="hidden sm:block font-light text-[15px] tracking-[0.25em] text-white/90 leading-tight uppercase">
-                  Infinite
-                  <br />
-                  <span className="font-medium">Masterpiece</span>
-                </span>
+                <SiteLogo alt="" className="h-8 sm:h-9" />
               </button>
             </div>
 

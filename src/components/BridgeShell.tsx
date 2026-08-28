@@ -1,15 +1,12 @@
-import { Infinity as InfinityIcon } from 'lucide-react';
+import { SiteLogo } from './SiteLogo';
 
 export function BridgeShell() {
   return (
     <div className="min-h-screen bg-[#010308] text-white">
       <header className="h-20 px-4 sm:px-8 flex items-center justify-between border-b border-white/[0.04]">
         <div className="flex items-center gap-3">
-          <InfinityIcon className="w-7 h-7 text-[#F7E7B5]" strokeWidth={1} />
-          <span className="text-[13px] tracking-[0.2em] uppercase text-white/80 font-light">
-            Infinite Masterpiece
-          </span>
-          <span className="text-white/30 text-sm">· ספרייה</span>
+          <SiteLogo alt="" className="h-8" />
+          <span className="text-white/30 text-sm">ספרייה</span>
         </div>
         <span className="text-[12px] text-white/40">טוען…</span>
       </header>
