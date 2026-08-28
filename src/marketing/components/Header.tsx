@@ -116,7 +116,7 @@ export function Header() {
                 to="/webinar"
                 className="px-5 py-3 rounded-full text-sm font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] hover:opacity-95 transition-opacity min-h-11"
               >
-                הרשמה לוובינר
+                {WEBINAR_CTA_HEADER}
               </Link>
             )}
             {!onWebinarLanding ? (
