@@ -71,7 +71,7 @@ export function WebinarThankYou() {
           <p className="text-white/55 font-light leading-relaxed mb-6">
             {isWaitlist
               ? 'הפרטים שלך נקלטו לרשימת ההמתנה. נעדכן כשיתפנה מקום.'
-              : `הפרטים שלך נקלטו. שמרו את התאריך ביומן: ${date} · ${time}. קישור Zoom יישלח לפני הערב.`}
+              : `הפרטים שלך נקלטו. שמרו את התאריך ביומן: ${date}, ${time}. קישור Zoom יישלח לפני הערב.`}
           </p>
 
           <label className="flex items-start gap-3 rounded-2xl border border-[#C8A24C]/25 bg-[#010308]/40 px-5 py-4 text-sm text-[#F7E7B5] font-light leading-relaxed mb-8 cursor-pointer text-right">

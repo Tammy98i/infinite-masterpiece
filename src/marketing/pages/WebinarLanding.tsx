@@ -107,7 +107,7 @@ function HostFaces() {
           )
         )}
       </div>
-      <p className="text-xs text-white/50 font-light">גל, תמי וגלב · בלייב</p>
+      <p className="text-xs text-white/50 font-light">גל, תמי וגלב בלייב</p>
     </div>
   );
 }
@@ -207,7 +207,7 @@ export function WebinarLanding() {
             >
               <div className="inline-flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-1.5 rounded-full bg-white/[0.03] border border-[#C8A24C]/20 mb-8">
                 <span className="w-2 h-2 rounded-full bg-[#C8A24C]" aria-hidden />
-                <span className="text-[11px] text-white/70">ערב חי · {config.date} · {config.time}</span>
+                <span className="text-[11px] text-white/70">ערב חי, {config.date}, {config.time}</span>
                 <WebinarCountdown date={config.date} time={config.time} />
               </div>
 
@@ -223,7 +223,7 @@ export function WebinarLanding() {
               </p>
               <p className="text-base md:text-lg text-[#F7E7B5] font-medium mb-6">{WEBINAR_PUNCHLINE}</p>
               <p className="text-sm text-white/45 font-light mb-8">
-                {config.location} · כ־{config.durationMinutes} דקות · {WEBINAR_AUDIENCE_LABEL}
+                {config.location}, {config.durationMinutes} דקות, {WEBINAR_AUDIENCE_LABEL}
               </p>
 
               <div className="flex flex-col items-start gap-3">
@@ -454,7 +454,7 @@ export function WebinarLanding() {
           <SectionLabel>הצוות</SectionLabel>
           <SectionTitle>הצוות אינו תפאורה. הוא המערכת.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-12">
-            גל, תמי, גלב ו־20 שותפים בונים יחד את האקו־סיסטם. שיווק, תוכן, קהילה, פרויקט, מכירות, טכנולוגיה ושירות.
+            גל, תמי, גלב ועוד 20 שותפים בונים יחד את האקוסיסטם. שיווק, תוכן, קהילה, פרויקט, מכירות, טכנולוגיה ושירות.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
@@ -507,9 +507,9 @@ export function WebinarLanding() {
       <section id="about-creation" className="py-20 md:py-28 bg-white/[0.01] border-t border-white/[0.04]">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
           <SectionLabel>היצירה</SectionLabel>
-          <SectionTitle>לא קורס. אקו־סיסטם.</SectionTitle>
+          <SectionTitle>לא קורס. אקוסיסטם.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">
-            Infinite Masterpiece היא מערכת שנבנית כדי לעזור ליוצרים להפוך כישרון למערכת עסקית. היא מחברת בין שידורי־על,
+            Infinite Masterpiece היא מערכת שנבנית כדי לעזור ליוצרים להפוך כישרון למערכת עסקית. היא מחברת בין שידורי על,
             קהילה, Pods, Captains, ספריית אינסוף, משימות, מדידה, נבחרת 88 ופלטפורמת VOD. כדי שהמשתתפים לא רק ידעו יותר,
             אלא יעשו יותר.
           </p>
@@ -597,14 +597,14 @@ export function WebinarLanding() {
             <article className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8 flex flex-col">
               <h3 className="text-2xl text-white mb-2">מסלול ההססנים</h3>
               <p className="text-sm text-white/50 font-light mb-6">מחויבות מדורגת. למי שרוצה להתחיל בצעד קטן ולהמשיך לפי אבני הדרך.</p>
-              <p className="text-3xl text-white font-light mb-1">8 ₪ → 80 ₪ → 800 ₪ → 8,000 ₪</p>
+              <p className="text-3xl text-white font-light mb-1">8 ₪, 80 ₪, 800 ₪ ו8,000 ₪</p>
               <p className="text-xs text-white/40 mb-8">סה״כ {HESITANT_TOTAL_BEFORE_VAT.toLocaleString('he-IL')} ₪ לפני מע״מ</p>
               <Link
                 to="/hesitation"
                 onClick={() => trackEvent('hesitant_track_interest_clicked', { source: 'webinar' })}
                 className="mt-auto inline-flex justify-center items-center w-full py-4 rounded-full text-white border border-[#C8A24C]/40 hover:border-[#F7E7B5] hover:text-[#F7E7B5] font-medium min-h-11 cursor-pointer transition-colors duration-200"
               >
-                אני רוצה להתחיל ב־8 ₪
+                אני רוצה להתחיל בשמונה שקלים
               </Link>
             </article>
           </div>

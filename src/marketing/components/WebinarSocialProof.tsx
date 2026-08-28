@@ -32,7 +32,7 @@ export function WebinarSocialProof({ quotes }: { quotes: WebinarSocialProofQuote
 export function WebinarTrustStrip({ config }: { config: { durationMinutes: number } }) {
   return (
     <p className="text-[11px] text-white/40 font-light leading-relaxed">
-      בלי כרטיס אשראי · כ־{config.durationMinutes} דקות בלייב · לא מבטיחים הכנסה
+      בלי כרטיס אשראי. {config.durationMinutes} דקות בלייב. לא מבטיחים הכנסה
     </p>
   );
 }

@@ -36,7 +36,7 @@ export function WebinarStickyCta({ date, time, registrationCount = 0 }: Props) {
       <div className="max-w-[1100px] mx-auto flex items-center gap-3">
         <div className="min-w-0 flex-1 text-right">
           <p className="text-xs text-white/70 truncate">
-            {date} · {time}
+            {date}, {time}
           </p>
           <div className="flex items-center gap-3 min-w-0">
             <WebinarCountdown date={date} time={time} className="truncate" />

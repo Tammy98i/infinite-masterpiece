@@ -83,6 +83,10 @@ export function seedWebinarConfigIfMissing() {
     next.whatsappGroupUrl = DEFAULT_WEBINAR_CONFIG.whatsappGroupUrl;
     changed = true;
   }
+  if (current.costLabel.includes('·') || current.costLabel.includes('—') || current.costLabel.includes('–')) {
+    next.costLabel = DEFAULT_WEBINAR_CONFIG.costLabel;
+    changed = true;
+  }
 
   if (changed) setSetting(CONFIG_KEY, JSON.stringify(next));
 }

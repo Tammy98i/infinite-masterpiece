@@ -260,10 +260,10 @@ export function WebinarRegistrationForm({
       {!compact ? (
         <div className="mb-2">
           <p id={`${formId}-title`} className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-2">
-            {isWaitlist ? 'רשימת המתנה' : 'הרשמה לוובינר · שלב 1 מתוך 2'}
+            {isWaitlist ? 'רשימת המתנה' : 'הרשמה לוובינר, שלב 1 מתוך 2'}
           </p>
           <h2 className="text-xl font-light text-white mb-1">
-            {isWaitlist ? 'הצטרפ/י לרשימת המתנה' : 'המקום נשמר ב־20 שניות'}
+            {isWaitlist ? 'הצטרפ/י לרשימת המתנה' : 'המקום נשמר תוך 20 שניות'}
           </h2>
           <WebinarUrgencyStrip
             config={config}

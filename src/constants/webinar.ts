@@ -77,7 +77,7 @@ export const DEFAULT_WEBINAR_CONFIG: WebinarConfig = {
   time: '20:00',
   durationMinutes: 150,
   location: 'אונליין / Zoom',
-  costLabel: 'ללא עלות · הרשמה מוקדמת',
+  costLabel: 'ללא עלות. הרשמה מוקדמת',
   spotsLabel: 'הרשמה פתוחה',
   whatsappGroupUrl: 'https://chat.whatsapp.com/EfdlOMLCGS70nvDoe6LTcT',
   calendarLocation: 'Zoom',
@@ -108,7 +108,7 @@ export const WEBINAR_FAQ = [
   },
   {
     q: 'כמה זמן זה נמשך?',
-    a: 'כ־150 דקות בלייב, כולל שיעור מכירות, משימת ביצוע, הצוות והזמנה לפיילוט.',
+    a: '150 דקות בלייב, כולל שיעור מכירות, משימת ביצוע, הצוות והזמנה לפיילוט.',
   },
   {
     q: 'זה בעברית?',
