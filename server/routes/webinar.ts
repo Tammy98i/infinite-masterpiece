@@ -3,6 +3,7 @@ import {
   createWebinarRegistration,
   getWebinarPublicPayload,
   getWebinarResume,
+  lookupWebinarRegistration,
   setWebinarPersonPicked,
 } from '../services/webinarService.js';
 
@@ -30,6 +31,15 @@ router.post('/register', (req, res) => {
   try {
     const result = createWebinarRegistration(req.body || {});
     res.json({ ok: true, registration: result });
+  } catch (err) {
+    const status = (err as { status?: number }).status || 500;
+    res.status(status).json({ error: (err as Error).message });
+  }
+});
+
+router.post('/lookup', (req, res) => {
+  try {
+    res.json({ ok: true, registration: lookupWebinarRegistration(String(req.body?.email || '')) });
   } catch (err) {
     const status = (err as { status?: number }).status || 500;
     res.status(status).json({ error: (err as Error).message });

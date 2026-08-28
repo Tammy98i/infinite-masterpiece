@@ -26,8 +26,17 @@ export type WebinarRegistrationResult = {
   status: string;
   step: 'a' | 'b' | 'lead';
   isWaitlist?: boolean;
+  alreadyRegistered?: boolean;
   createdAt: string;
   config: WebinarPublicPayload['config'];
+};
+
+export type WebinarLookupResult = {
+  id: string;
+  fullName: string;
+  email: string;
+  status: string;
+  isWaitlist?: boolean;
 };
 
 export const webinarApi = {
@@ -62,5 +71,13 @@ export const webinarApi = {
     }>('/api/webinar/person-picked', {
       method: 'POST',
       body: JSON.stringify({ registrationId, picked }),
+    }),
+  lookup: (email: string) =>
+    apiRequest<{
+      ok: boolean;
+      registration: WebinarLookupResult;
+    }>('/api/webinar/lookup', {
+      method: 'POST',
+      body: JSON.stringify({ email }),
     }),
 };

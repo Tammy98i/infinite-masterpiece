@@ -31,8 +31,16 @@ function jerusalemWallToUtc(year: number, month: number, day: number, hours: num
 export function parseIsraeliDateTime(date: string, time: string) {
   const [day, month, year] = date.split('.').map((part) => Number(part.trim()));
   const [hours, minutes] = time.split(':').map((part) => Number(part.trim()));
-  if (!day || !month || !year || Number.isNaN(hours) || Number.isNaN(minutes)) return null;
+  if (!day || !month || !year || !Number.isFinite(hours) || !Number.isFinite(minutes)) return null;
   return jerusalemWallToUtc(year, month, day, hours, minutes);
+}
+
+export function isWebinarEventWindow(date: string, time: string, durationMinutes: number, now = Date.now()) {
+  const start = parseIsraeliDateTime(date, time);
+  if (!start) return false;
+  const dayStart = parseIsraeliDateTime(date, '00:00') ?? start;
+  const end = start.getTime() + Math.max(durationMinutes, 1) * 60_000;
+  return now >= dayStart.getTime() && now <= end;
 }
 
 function formatGoogleUtc(d: Date) {

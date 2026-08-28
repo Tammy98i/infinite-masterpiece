@@ -12,6 +12,17 @@ export const WEBINAR_CTA_HEADER = 'אני מגיע/ה לערב החי';
 export const WEBINAR_CTA_FIT = 'כן. זה מתאים לי. אני מגיע/ה';
 export const WEBINAR_CTA_FAQ = 'נשארה שאלה? אני מגיע/ה ונענה בלייב';
 export const WEBINAR_CTA_FIT_LINK = 'רוצה לדעת אם זה בשבילך?';
+export const WEBINAR_CTA_ENTER = 'כניסה לערב החי';
+export const WEBINAR_CTA_NOT_REGISTERED = 'עדיין לא נרשמת? הרשמה למטה';
+export const WEBINAR_CTA_ZOOM_WHATSAPP = 'הקישור בוואטסאפ';
+
+export function webinarLiveEnter(zoomLink: string, whatsappGroupUrl: string) {
+  const zoom = zoomLink.trim();
+  if (zoom) return { href: zoom, label: WEBINAR_CTA_ENTER };
+  const whatsapp = whatsappGroupUrl.trim();
+  if (whatsapp) return { href: whatsapp, label: WEBINAR_CTA_ZOOM_WHATSAPP };
+  return { href: '', label: WEBINAR_CTA_ZOOM_WHATSAPP };
+}
 
 export const WEBINAR_DIFFERENCE_POINTS = [
   {

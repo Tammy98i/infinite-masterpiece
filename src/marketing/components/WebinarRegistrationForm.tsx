@@ -1,11 +1,7 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { webinarApi } from '../../api/webinar';
-import {
-  WEBINAR_BLOCKER_OPTIONS,
-  WEBINAR_INTEREST_OPTIONS,
-  type WebinarPublicPayload,
-} from '../../constants/webinar';
+import type { WebinarPublicPayload } from '../../constants/webinar';
 import { WEBINAR_REGISTER_ID } from '../../constants/webinarPage';
 import { trackEvent } from '../../utils/analytics';
 import { getStoredUtm, utmAsRecord } from '../../utils/utm';
@@ -34,15 +30,30 @@ export function WebinarRegistrationForm({
   const { config, registrationCount, spotsRemaining, isWaitlist, abVariant } = payload;
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [step, setStep] = useState<'a' | 'b'>('a');
-  const [registrationId, setRegistrationId] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
+  const [lookingUp, setLookingUp] = useState(false);
   const startedRef = useRef(false);
   const formViewTracked = useRef(false);
   const resumedRef = useRef(false);
   const rootRef = useRef<HTMLFormElement>(null);
   const [prefillEmail, setPrefillEmail] = useState('');
+
+  const goToThankYou = (id: string, fullName: string, waitlisted?: boolean) => {
+    try {
+      sessionStorage.removeItem(RESUME_KEY);
+    } catch {
+      /* ignore */
+    }
+    const params = new URLSearchParams({
+      id,
+      name: fullName,
+      date: config.date,
+      time: config.time,
+    });
+    if (waitlisted) params.set('waitlist', '1');
+    navigate(`/webinar/thank-you?${params.toString()}`);
+  };
 
   useEffect(() => {
     if (formId !== `${WEBINAR_REGISTER_ID}-form` || resumedRef.current) return;
@@ -59,21 +70,16 @@ export function WebinarRegistrationForm({
     webinarApi
       .resume(resumeId)
       .then(({ registration }) => {
-        if (registration.step === 'done') {
+        if (registration.step === 'done' || registration.step === 'b') {
           goToThankYou(registration.id, registration.fullName);
           return;
         }
-        setRegistrationId(registration.id);
         try {
           sessionStorage.setItem(RESUME_KEY, registration.id);
         } catch {
           /* ignore */
         }
         if (registration.email) setPrefillEmail(registration.email);
-        if (registration.step === 'b') {
-          setStep('b');
-          trackEvent('webinar_step_b_started', { source: 'resume', registrationId: registration.id });
-        }
       })
       .catch(() => {
         resumedRef.current = false;
@@ -104,23 +110,13 @@ export function WebinarRegistrationForm({
     trackEvent('webinar_step_a_started', { source: formId });
   };
 
-  const goToThankYou = (id: string, fullName: string, waitlisted?: boolean) => {
-    try {
-      sessionStorage.removeItem(RESUME_KEY);
-    } catch {
-      /* ignore */
-    }
-    const params = new URLSearchParams({
-      id,
-      name: fullName,
-      date: config.date,
-      time: config.time,
-    });
-    if (waitlisted) params.set('waitlist', '1');
-    navigate(`/webinar/thank-you?${params.toString()}`);
+  const finishRegistration = (id: string, fullName: string, waitlisted?: boolean) => {
+    trackEvent('webinar_form_submitted', { source: formId, registrationId: id });
+    onComplete?.(id);
+    goToThankYou(id, fullName, waitlisted);
   };
 
-  const handleStepA = async (e: FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setSubmitting(true);
@@ -140,24 +136,15 @@ export function WebinarRegistrationForm({
         fullName: String(data.get('fullName') || ''),
         phone,
         email: String(data.get('email') || ''),
-        marketingOptIn: data.get('marketingOptIn') === 'on',
+        marketingOptIn: data.get('marketingOptIn') !== 'off',
         abVariant,
         ...utmAsRecord(utm),
       });
-      setRegistrationId(registration.id);
-      try {
-        sessionStorage.setItem(RESUME_KEY, registration.id);
-      } catch {
-        /* ignore */
-      }
-      if (registration.isWaitlist || registration.status === 'waitlist') {
-        trackEvent('webinar_form_submitted', { source: formId, registrationId: registration.id });
-        onComplete?.(registration.id);
-        goToThankYou(registration.id, registration.fullName, true);
-        return;
-      }
-      setStep('b');
-      trackEvent('webinar_step_b_started', { source: formId, registrationId: registration.id });
+      finishRegistration(
+        registration.id,
+        registration.fullName,
+        registration.isWaitlist || registration.status === 'waitlist'
+      );
     } catch (err) {
       setError(err instanceof Error ? err.message : 'שליחה נכשלה');
     } finally {
@@ -165,97 +152,31 @@ export function WebinarRegistrationForm({
     }
   };
 
-  const handleStepB = async (e: FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+  const handleAlreadyRegistered = async () => {
+    const email = prefillEmail.trim();
+    if (!email) {
+      setError('נא להזין את האימייל שבו נרשמת');
+      return;
+    }
     setError('');
-    setSubmitting(true);
-    const data = new FormData(e.currentTarget);
+    setLookingUp(true);
     try {
-      const { registration } = await webinarApi.register({
-        step: 'b',
-        registrationId,
-        field: String(data.get('field') || ''),
-        interest: String(data.get('interest') || ''),
-        blocker: String(data.get('blocker') || ''),
-      });
-      trackEvent('webinar_form_submitted', { source: formId, registrationId: registration.id });
-      onComplete?.(registration.id);
-      goToThankYou(registration.id, registration.fullName);
+      const { registration } = await webinarApi.lookup(email);
+      finishRegistration(registration.id, registration.fullName, registration.isWaitlist || registration.status === 'waitlist');
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'שליחה נכשלה');
+      setError(err instanceof Error ? err.message : 'לא מצאנו הרשמה למייל הזה');
     } finally {
-      setSubmitting(false);
+      setLookingUp(false);
     }
   };
 
-  if (step === 'b' && registrationId) {
-    return (
-      <form ref={rootRef} id={formId} onSubmit={handleStepB} className="space-y-4 text-right">
-        {!compact ? (
-          <div className="mb-2">
-            <p className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-2">שלב 2 מתוך 2</p>
-            <h2 className="text-xl font-light text-white mb-1">כדי שנתאים את הערב אליך</h2>
-            <p className="text-xs text-white/40 font-light">המקום כבר נשמר. עוד כמה פרטים.</p>
-          </div>
-        ) : null}
-
-        <div>
-          <label htmlFor={`${formId}-field`} className="text-xs text-white/60 mb-1 block text-right">
-            תחום יצירה / עיסוק *
-          </label>
-          <input required id={`${formId}-field`} name="field" type="text" className={fieldClass} />
-        </div>
-        <div>
-          <label htmlFor={`${formId}-interest`} className="text-xs text-white/60 mb-1 block text-right">
-            איפה את/ה נמצא/ת היום? *
-          </label>
-          <select required id={`${formId}-interest`} name="interest" className={`${fieldClass} cursor-pointer`} defaultValue="">
-            <option value="" disabled>
-              בחר/י
-            </option>
-            {WEBINAR_INTEREST_OPTIONS.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <label htmlFor={`${formId}-blocker`} className="text-xs text-white/60 mb-1 block text-right">
-            מה צוואר הבקבוק המרכזי שלך? *
-          </label>
-          <select required id={`${formId}-blocker`} name="blocker" className={`${fieldClass} cursor-pointer`} defaultValue="">
-            <option value="" disabled>
-              בחר/י
-            </option>
-            {WEBINAR_BLOCKER_OPTIONS.map((item) => (
-              <option key={item} value={item}>
-                {item}
-              </option>
-            ))}
-          </select>
-        </div>
-        {error ? (
-          <p className="text-sm text-rose-300" role="alert">
-            {error}
-          </p>
-        ) : null}
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-sm font-semibold min-h-11 cursor-pointer hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-200"
-        >
-          {submitting ? 'שולח…' : 'סיום ההרשמה'}
-        </button>
-      </form>
-    );
-  }
+  const busy = submitting || lookingUp;
 
   return (
     <form
       ref={rootRef}
       id={formId}
-      onSubmit={handleStepA}
+      onSubmit={handleSubmit}
       onFocus={markStarted}
       className="space-y-4 text-right"
       aria-labelledby={`${formId}-title`}
@@ -263,7 +184,7 @@ export function WebinarRegistrationForm({
       {!compact ? (
         <div className="mb-2">
           <p id={`${formId}-title`} className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-2">
-            {isWaitlist ? 'רשימת המתנה' : 'הרשמה לוובינר, שלב 1 מתוך 2'}
+            {isWaitlist ? 'רשימת המתנה' : 'הרשמה לוובינר'}
           </p>
           <h2 className="text-xl font-light text-white mb-1">
             {isWaitlist ? 'הצטרפ/י לרשימת המתנה' : 'נרשמים לערב החי'}
@@ -294,10 +215,14 @@ export function WebinarRegistrationForm({
             type="tel"
             inputMode="tel"
             autoComplete="tel"
-            placeholder="0500000000"
+            placeholder="05XXXXXXXX"
             dir="ltr"
             className={`${fieldClass} text-left`}
+            aria-describedby={`${formId}-phone-hint`}
           />
+          <p id={`${formId}-phone-hint`} className="mt-1 text-[11px] text-white/35 font-light">
+            נייד ישראלי, 05 או 9725
+          </p>
         </div>
       </div>
 
@@ -319,12 +244,12 @@ export function WebinarRegistrationForm({
       </div>
 
       <label className="flex items-start gap-3 text-xs text-white/45 leading-relaxed cursor-pointer">
-        <input type="checkbox" name="marketingOptIn" className="mt-1 accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer" />
-        <span>אישור קבלת עדכונים על הוובינר (ניתן לבטל בכל עת).</span>
-      </label>
-
-      <label className="flex items-start gap-3 text-xs text-white/45 leading-relaxed cursor-pointer">
-        <input required type="checkbox" name="termsAccepted" className="mt-1 accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer" />
+        <input
+          required
+          type="checkbox"
+          name="termsAccepted"
+          className="mt-1 accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer"
+        />
         <span>
           אישור{' '}
           <Link to="/terms" className="text-[#C8A24C] hover:text-[#F7E7B5] underline-offset-2 hover:underline">
@@ -334,7 +259,7 @@ export function WebinarRegistrationForm({
           <Link to="/privacy" className="text-[#C8A24C] hover:text-[#F7E7B5] underline-offset-2 hover:underline">
             מדיניות פרטיות
           </Link>
-          .
+          . עדכוני הוובינר נשלחים כברירת מחדל, עם אפשרות לבטל בכל עת.
         </span>
       </label>
 
@@ -348,11 +273,22 @@ export function WebinarRegistrationForm({
 
       <button
         type="submit"
-        disabled={submitting || !config.enabled}
+        disabled={busy || !config.enabled}
         className="w-full py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-sm font-semibold min-h-11 cursor-pointer hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-200"
       >
         {submitting ? 'שולח…' : isWaitlist ? 'הצטרפות לרשימת המתנה' : 'כן. אני מגיע/ה לערב החי'}
       </button>
+
+      <p className="text-center">
+        <button
+          type="button"
+          disabled={busy}
+          onClick={() => void handleAlreadyRegistered()}
+          className="text-xs text-white/45 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer disabled:opacity-50 transition-colors duration-200"
+        >
+          {lookingUp ? 'בודקים…' : 'כבר נרשמתי'}
+        </button>
+      </p>
     </form>
   );
 }

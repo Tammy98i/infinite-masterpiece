@@ -108,14 +108,24 @@ export function WebinarThankYou() {
                     {date} · {time}.
                     {zoomLink ? ' קישור Zoom למטה.' : ' קישור Zoom יישלח לפני הערב.'}
                   </p>
-                  <div className="flex flex-col sm:flex-row gap-2">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      markCalendar('ics');
+                      downloadIcs(calendarConfig);
+                    }}
+                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] px-5 py-3 text-sm font-semibold text-black min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+                  >
+                    הוספה ליומן
+                  </button>
+                  <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-white/40">
                     {googleUrl ? (
                       <a
                         href={googleUrl}
                         target="_blank"
                         rel="noreferrer"
                         onClick={() => markCalendar('google')}
-                        className="inline-flex items-center justify-center gap-2 rounded-full border border-[#C8A24C]/40 px-4 py-2 text-sm text-white min-h-11 cursor-pointer hover:bg-[#C8A24C]/10 transition-colors duration-200"
+                        className="hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
                       >
                         Google
                       </a>
@@ -126,17 +136,17 @@ export function WebinarThankYou() {
                         markCalendar('ics');
                         downloadIcs(calendarConfig);
                       }}
-                      className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-white min-h-11 cursor-pointer hover:border-[#C8A24C]/40 transition-colors duration-200"
+                      className="hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
                     >
-                      קובץ יומן
+                      Apple / Outlook
                     </button>
-                  </div>
+                  </p>
                   {zoomLink ? (
                     <a
                       href={zoomLink}
                       target="_blank"
                       rel="noreferrer"
-                      className="mt-3 inline-flex items-center justify-center gap-2 rounded-full border border-[#C8A24C]/40 px-4 py-2 text-sm text-[#F7E7B5] min-h-11 cursor-pointer hover:bg-[#C8A24C]/10 transition-colors duration-200"
+                      className="mt-2 inline-flex items-center gap-2 text-[11px] text-white/40 hover:text-[#F7E7B5] min-h-11 cursor-pointer transition-colors duration-200"
                     >
                       <Video className="w-4 h-4" aria-hidden />
                       קישור Zoom
@@ -185,7 +195,7 @@ export function WebinarThankYou() {
                     אדם אחד
                   </span>
                   <span id="webinar-person-hint" className="block text-xs text-white/45 font-light mb-3">
-                    בחר/י אדם אחד שעשוי להתאים להצעה שלך. בוובינר נבצע פעולה אמיתית.
+                    שם, וואטסאפ, ומשפט אחד על מה שאת/ה מציע/ה.
                   </span>
                   <input
                     type="checkbox"

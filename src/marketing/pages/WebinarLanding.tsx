@@ -14,6 +14,7 @@ import {
   WEBINAR_BOTTLENECKS,
   WEBINAR_CTA_FIT,
   WEBINAR_CTA_FIT_LINK,
+  WEBINAR_CTA_NOT_REGISTERED,
   WEBINAR_CTA_PRIMARY,
   WEBINAR_FIT_NO,
   WEBINAR_FIT_YES,
@@ -23,6 +24,7 @@ import {
   WEBINAR_REGISTER_ID,
   WEBINAR_TASK_STEPS,
   WEBINAR_TRACKS_FINE_PRINT,
+  webinarLiveEnter,
 } from '../../constants/webinarPage';
 import { WebinarRegistrationForm } from '../components/WebinarRegistrationForm';
 import { WebinarStickyCta } from '../components/WebinarStickyCta';
@@ -30,6 +32,7 @@ import { WebinarSectionCta } from '../components/WebinarSocialProof';
 import { WebinarCountdown } from '../components/WebinarCountdown';
 import { trackEvent, trackWebinarCta, scrollToWebinarForm, scrollToWebinarFit } from '../../utils/analytics';
 import { captureUtmFromSearch } from '../../utils/utm';
+import { isWebinarEventWindow } from '../../utils/webinarTime';
 import { TeamPhoto } from '../../components/TeamPhoto';
 
 const bottleneckIcons = [Tag, Handshake, Megaphone, Network, Target];
@@ -120,6 +123,7 @@ export function WebinarLanding() {
   }));
   const fitRef = useRef<HTMLElement>(null);
   const fitTracked = useRef(false);
+  const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     captureUtmFromSearch(window.location.search);
@@ -128,6 +132,11 @@ export function WebinarLanding() {
       .config()
       .then((res) => setPayload(res))
       .catch(() => undefined);
+  }, []);
+
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 60_000);
+    return () => window.clearInterval(id);
   }, []);
 
   useEffect(() => {
@@ -148,6 +157,8 @@ export function WebinarLanding() {
 
   const { config, activeHeadline } = payload;
   const headlineParts = splitHeroHeadline(activeHeadline);
+  const eventNight = isWebinarEventWindow(config.date, config.time, config.durationMinutes, now);
+  const liveEnter = webinarLiveEnter(config.zoomLink, config.whatsappGroupUrl);
 
   const scrollToForm = (section = 'hero') => {
     trackWebinarCta(section);
@@ -191,9 +202,11 @@ export function WebinarLanding() {
               className="text-center flex flex-col items-center"
             >
               <div className="inline-flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-1.5 rounded-full bg-white/[0.03] border border-[#C8A24C]/20 mb-8">
-                <span className="w-2 h-2 rounded-full bg-[#C8A24C]" aria-hidden />
-                <span className="text-[11px] text-white/70">ערב חי, {config.date}, {config.time}</span>
-                <WebinarCountdown date={config.date} time={config.time} />
+                <span className={`w-2 h-2 rounded-full ${eventNight ? 'bg-emerald-400' : 'bg-[#C8A24C]'}`} aria-hidden />
+                <span className="text-[11px] text-white/70">
+                  {eventNight ? 'הערב החי עכשיו' : 'ערב חי'}, {config.date}, {config.time}
+                </span>
+                {eventNight ? null : <WebinarCountdown date={config.date} time={config.time} />}
               </div>
 
               <h1 className="text-4xl md:text-6xl xl:text-7xl font-heading tracking-tight leading-[1.15] mb-6">
@@ -212,23 +225,51 @@ export function WebinarLanding() {
               </p>
 
               <div className="flex flex-col items-center gap-3">
-                <button
-                  type="button"
-                  onClick={() => scrollToForm('hero')}
-                  className="inline-flex px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
-                >
-                  {WEBINAR_CTA_PRIMARY}
-                </button>
-                <a
-                  href="#webinar-fit"
-                  onClick={(event) => {
-                    event.preventDefault();
-                    scrollToWebinarFit();
-                  }}
-                  className="text-sm text-white/45 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
-                >
-                  {WEBINAR_CTA_FIT_LINK}
-                </a>
+                {eventNight ? (
+                  liveEnter.href ? (
+                    <a
+                      href={liveEnter.href}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={() => trackWebinarCta('hero_enter')}
+                      className="inline-flex px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+                    >
+                      {liveEnter.label}
+                    </a>
+                  ) : (
+                    <p className="text-sm text-[#F7E7B5] font-medium min-h-11 inline-flex items-center">
+                      {liveEnter.label}
+                    </p>
+                  )
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => scrollToForm('hero')}
+                    className="inline-flex px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+                  >
+                    {WEBINAR_CTA_PRIMARY}
+                  </button>
+                )}
+                {eventNight ? (
+                  <button
+                    type="button"
+                    onClick={() => scrollToForm('hero_unregistered')}
+                    className="text-sm text-white/45 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
+                  >
+                    {WEBINAR_CTA_NOT_REGISTERED}
+                  </button>
+                ) : (
+                  <a
+                    href="#webinar-fit"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      scrollToWebinarFit();
+                    }}
+                    className="text-sm text-white/45 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
+                  >
+                    {WEBINAR_CTA_FIT_LINK}
+                  </a>
+                )}
               </div>
             </motion.div>
           </div>
@@ -394,6 +435,9 @@ export function WebinarLanding() {
         date={config.date}
         time={config.time}
         registrationCount={payload.registrationCount}
+        eventNight={eventNight}
+        zoomLink={config.zoomLink}
+        whatsappGroupUrl={config.whatsappGroupUrl}
       />
     </div>
   );

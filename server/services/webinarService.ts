@@ -233,23 +233,39 @@ export function getWebinarResume(id: string) {
   }
   const status = String(row.status || '');
   const personPicked = Boolean(String(row.person_picked_at || '').trim());
-  if (status === 'complete' || status === 'new') {
-    return {
-      id: registrationId,
-      status,
-      step: 'done' as const,
-      email: String(row.email || ''),
-      fullName: String(row.full_name || ''),
-      personPicked,
-    };
-  }
+  const done = status === 'complete' || status === 'new' || status === 'waitlist' || status === 'partial';
   return {
     id: registrationId,
     status,
-    step: status === 'lead' ? ('a' as const) : ('b' as const),
+    step: done ? ('done' as const) : ('a' as const),
     email: String(row.email || ''),
     fullName: String(row.full_name || ''),
     personPicked,
+  };
+}
+
+export function lookupWebinarRegistration(emailInput: string) {
+  const email = String(emailInput || '').trim().toLowerCase();
+  if (!email) {
+    throw Object.assign(new Error('נא להזין אימייל'), { status: 400 });
+  }
+  validateEmail(email);
+  const row = getDb()
+    .prepare(`SELECT * FROM webinar_registrations WHERE email = ? ORDER BY created_at DESC LIMIT 1`)
+    .get(email) as Record<string, unknown> | undefined;
+  if (!row) {
+    throw Object.assign(new Error('לא מצאנו הרשמה למייל הזה'), { status: 404 });
+  }
+  const status = String(row.status || '');
+  if (status === 'lead') {
+    throw Object.assign(new Error('לא מצאנו הרשמה למייל הזה'), { status: 404 });
+  }
+  return {
+    id: String(row.id),
+    fullName: String(row.full_name || ''),
+    email: String(row.email || ''),
+    status,
+    isWaitlist: status === 'waitlist',
   };
 }
 
@@ -364,27 +380,51 @@ export function registerWebinarStepA(input: WebinarRegistrationInput) {
 
   const completeCount = countCompleteWebinarRegistrations();
   const isWaitlist = config.maxSpots > 0 && completeCount >= config.maxSpots;
-  const status = isWaitlist ? 'waitlist' : 'partial';
   const now = new Date().toISOString();
   const abVariant = resolveAbVariant(input.abVariant);
 
   const existing = getDb()
-    .prepare(`SELECT id FROM webinar_registrations WHERE email = ? ORDER BY created_at DESC LIMIT 1`)
-    .get(email) as { id: string } | undefined;
+    .prepare(`SELECT id, status FROM webinar_registrations WHERE email = ? ORDER BY created_at DESC LIMIT 1`)
+    .get(email) as { id: string; status: string } | undefined;
 
   if (existing) {
+    const current = existing.status || '';
+    if (current === 'complete' || current === 'new' || current === 'waitlist') {
+      getDb()
+        .prepare(
+          `UPDATE webinar_registrations SET full_name = ?, phone = ?, updated_at = ? WHERE id = ?`
+        )
+        .run(fullName, phone, now, existing.id);
+      return {
+        id: existing.id,
+        fullName,
+        email,
+        status: current,
+        step: 'a' as const,
+        isWaitlist: current === 'waitlist',
+        alreadyRegistered: true,
+        createdAt: now,
+        config,
+      };
+    }
+
+    const nextStatus = isWaitlist ? 'waitlist' : 'complete';
     getDb()
       .prepare(
-        `UPDATE webinar_registrations SET full_name = ?, phone = ?, status = ?, updated_at = ?, ab_variant = COALESCE(NULLIF(ab_variant,''), ?)
+        `UPDATE webinar_registrations SET full_name = ?, phone = ?, status = ?, step_completed_at = ?, updated_at = ?,
+         ab_variant = COALESCE(NULLIF(ab_variant,''), ?), marketing_opt_in = ?
          WHERE id = ?`
       )
-      .run(fullName, phone, status, now, abVariant, existing.id);
-    trackEvent('webinar_step_a_completed', { properties: { registrationId: existing.id, status } });
+      .run(fullName, phone, nextStatus, now, now, abVariant, input.marketingOptIn ? 1 : 0, existing.id);
+    trackEvent('webinar_step_a_completed', { properties: { registrationId: existing.id, status: nextStatus } });
+    if (nextStatus === 'complete') {
+      finalizeWebinarComplete(existing.id, fullName, phone, email);
+    }
     return {
       id: existing.id,
       fullName,
       email,
-      status,
+      status: nextStatus,
       step: 'a' as const,
       isWaitlist,
       createdAt: now,
@@ -392,13 +432,15 @@ export function registerWebinarStepA(input: WebinarRegistrationInput) {
     };
   }
 
+  const status = isWaitlist ? 'waitlist' : 'complete';
   const id = randomUUID();
   getDb()
     .prepare(
       `INSERT INTO webinar_registrations (
         id, full_name, phone, email, field, interest, blocker, marketing_opt_in,
-        utm_source, utm_medium, utm_campaign, utm_term, utm_content, status, ab_variant, created_at, updated_at
-      ) VALUES (?, ?, ?, ?, '', '', '', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
+        utm_source, utm_medium, utm_campaign, utm_term, utm_content, status, ab_variant,
+        created_at, updated_at, step_completed_at
+      ) VALUES (?, ?, ?, ?, '', '', '', ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`
     )
     .run(
       id,
@@ -414,10 +456,14 @@ export function registerWebinarStepA(input: WebinarRegistrationInput) {
       status,
       abVariant,
       now,
+      now,
       now
     );
 
   trackEvent('webinar_step_a_completed', { properties: { registrationId: id, status } });
+  if (status === 'complete') {
+    finalizeWebinarComplete(id, fullName, phone, email);
+  }
 
   return {
     id,
@@ -429,6 +475,21 @@ export function registerWebinarStepA(input: WebinarRegistrationInput) {
     createdAt: now,
     config,
   };
+}
+
+function finalizeWebinarComplete(id: string, fullName: string, phone: string, email: string) {
+  trackEvent('webinar_registration_completed', { properties: { registrationId: id } });
+  void sendWebinarConfirmationEmail({ fullName, email, registrationId: id }).catch(() => undefined);
+  void postWebinarWebhook({
+    id,
+    fullName,
+    phone,
+    email,
+    field: '',
+    interest: '',
+    blocker: '',
+    status: 'complete',
+  }).catch(() => undefined);
 }
 
 export function registerWebinarStepB(input: WebinarRegistrationInput) {
