@@ -6,6 +6,8 @@ import {
   type WebinarPublicPayload,
 } from '../../src/constants/webinar.ts';
 import { getSetting, setSetting } from './settingsService.js';
+import { parseIsraeliDateTime } from '../../src/utils/webinarTime.ts';
+import { isIsraeliMobile } from '../../src/utils/phone.ts';
 import { countEvent, trackEvent } from './analyticsService.js';
 import { sendWebinarConfirmationEmail } from './webinarEmailService.js';
 import { postWebinarWebhook } from './webinarWebhookService.js';
@@ -148,6 +150,88 @@ function getRegistrationById(id: string) {
     .get(id) as Record<string, unknown> | undefined;
 }
 
+export type WebinarLaunchCheck = {
+  id: 'date' | 'whatsapp' | 'zoom' | 'email';
+  ok: boolean;
+  required: boolean;
+  label: string;
+  hint: string;
+};
+
+export function getWebinarLaunchReadiness() {
+  const config = getWebinarConfig();
+  const start = parseIsraeliDateTime(config.date, config.time);
+  const dateInFuture = Boolean(start && start.getTime() > Date.now());
+  const hasWhatsapp = Boolean(config.whatsappGroupUrl.trim());
+  const hasZoom = Boolean(config.zoomLink.trim());
+  const emailEnabled = Boolean(process.env.RESEND_API_KEY || process.env.SMTP_HOST);
+
+  const items: WebinarLaunchCheck[] = [
+    {
+      id: 'date',
+      ok: dateInFuture,
+      required: true,
+      label: 'תאריך ושעה בעתיד',
+      hint: dateInFuture ? `${config.date} · ${config.time}` : `התאריך השמור ${config.date} כבר עבר — עדכנו באדמין.`,
+    },
+    {
+      id: 'whatsapp',
+      ok: hasWhatsapp,
+      required: true,
+      label: 'קבוצת וואטסאפ שקטה',
+      hint: hasWhatsapp ? 'מוגדר' : 'בלי קישור, דף התודה לא יכול לפתוח קבוצה.',
+    },
+    {
+      id: 'zoom',
+      ok: hasZoom,
+      required: false,
+      label: 'קישור Zoom',
+      hint: hasZoom ? 'מוגדר' : 'אפשר להשאיר ריק — יישלח לנרשמים לפני הערב.',
+    },
+    {
+      id: 'email',
+      ok: emailEnabled,
+      required: true,
+      label: 'שליחת מייל',
+      hint: emailEnabled ? 'Resend/SMTP פעיל' : 'חסר RESEND_API_KEY או SMTP_HOST בשרת.',
+    },
+  ];
+
+  return {
+    ready: items.filter((item) => item.required).every((item) => item.ok),
+    items,
+    emailEnabled,
+  };
+}
+
+export function getWebinarResume(id: string) {
+  const registrationId = String(id || '').trim();
+  if (!registrationId) {
+    throw Object.assign(new Error('חסר מזהה הרשמה'), { status: 400 });
+  }
+  const row = getRegistrationById(registrationId);
+  if (!row) {
+    throw Object.assign(new Error('הרשמה לא נמצאה'), { status: 404 });
+  }
+  const status = String(row.status || '');
+  if (status === 'complete' || status === 'new') {
+    return {
+      id: registrationId,
+      status,
+      step: 'done' as const,
+      email: String(row.email || ''),
+      fullName: String(row.full_name || ''),
+    };
+  }
+  return {
+    id: registrationId,
+    status,
+    step: status === 'lead' ? ('a' as const) : ('b' as const),
+    email: String(row.email || ''),
+    fullName: String(row.full_name || ''),
+  };
+}
+
 function validateEmail(email: string) {
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     throw Object.assign(new Error('כתובת אימייל לא תקינה'), { status: 400 });
@@ -226,6 +310,9 @@ export function registerWebinarStepA(input: WebinarRegistrationInput) {
     throw Object.assign(new Error('נא למלא שם, טלפון ואימייל'), { status: 400 });
   }
   validateEmail(email);
+  if (!isIsraeliMobile(phone)) {
+    throw Object.assign(new Error('נא להזין מספר נייד ישראלי'), { status: 400 });
+  }
 
   const completeCount = countCompleteWebinarRegistrations();
   const isWaitlist = config.maxSpots > 0 && completeCount >= config.maxSpots;

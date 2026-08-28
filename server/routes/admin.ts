@@ -50,6 +50,7 @@ import {
 } from '../services/accessibilityReportService.js';
 import {
   getWebinarConfig,
+  getWebinarLaunchReadiness,
   listWebinarRegistrations,
   saveWebinarConfig,
   countWebinarRegistrations,
@@ -632,6 +633,7 @@ router.get('/webinar', (_req, res) => {
       registrations: listWebinarRegistrations(300),
       totalRegistrations: countWebinarRegistrations(),
       funnel: getWebinarFunnelStats(),
+      readiness: getWebinarLaunchReadiness(),
     });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });

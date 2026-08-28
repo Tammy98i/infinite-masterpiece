@@ -3719,6 +3719,30 @@ function WebinarPanel() {
 
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
+      {data?.readiness ? (
+        <section className="grid gap-3 border border-[#C8A24C]/25 rounded-2xl p-5 bg-[#C8A24C]/5">
+          <h3 className="text-lg font-light">מוכנות משפך הוובינר</h3>
+          <p className="text-sm text-white/50">
+            {data.readiness.ready
+              ? 'המשפך מוכן לפרסום: תאריך, וואטסאפ ומייל מוגדרים.'
+              : 'לפני פרסום — מלאו את הפריטים החסרים. בלי זה דף התודה והתזכורות חלשים.'}
+          </p>
+          <ul className="grid gap-2">
+            {data.readiness.items.map((item) => (
+              <li key={item.id} className="flex items-start gap-3 text-sm">
+                <span className={item.ok ? 'text-[#F7E7B5]' : 'text-rose-300'}>
+                  {item.ok ? 'מוכן' : item.required ? 'חסר' : 'אופציונלי'}
+                </span>
+                <span>
+                  <span className="text-white">{item.label}</span>
+                  <span className="block text-xs text-white/40 font-light">{item.hint}</span>
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
+      ) : null}
+
       {data?.funnel ? (
         <section className="grid gap-3 border border-white/10 rounded-2xl p-5">
           <h3 className="text-lg font-light">משפך וובינר</h3>
@@ -3780,7 +3804,7 @@ function WebinarPanel() {
             <input value={config.spotsLabel} onChange={(e) => updateConfig('spotsLabel', e.target.value)} className={fieldClass} />
           </label>
           <label className="grid gap-1 text-sm md:col-span-2">
-            <span className="text-white/50">קישור קבוצת וואטסאפ (אופציונלי)</span>
+            <span className="text-white/50">קישור קבוצת וואטסאפ שקטה</span>
             <input
               value={config.whatsappGroupUrl}
               onChange={(e) => updateConfig('whatsappGroupUrl', e.target.value)}
@@ -3789,7 +3813,7 @@ function WebinarPanel() {
             />
           </label>
           <label className="grid gap-1 text-sm md:col-span-2">
-            <span className="text-white/50">קישור Zoom</span>
+            <span className="text-white/50">קישור Zoom (אפשר למלא קרוב לערב)</span>
             <input value={config.zoomLink} onChange={(e) => updateConfig('zoomLink', e.target.value)} className={fieldClass} dir="ltr" />
           </label>
           <label className="grid gap-1 text-sm">

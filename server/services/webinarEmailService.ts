@@ -75,7 +75,7 @@ export async function sendWebinarConfirmationEmail(input: ConfirmationInput) {
 export async function sendWebinarPartialEmail(input: ConfirmationInput) {
   if (!emailEnabled()) return { sent: false, reason: 'disabled' };
   const config = getWebinarConfig();
-  const url = `${appUrl()}/webinar`;
+  const url = `${appUrl()}/webinar?resume=${encodeURIComponent(input.registrationId)}`;
   const subject = `עוד רגע לסיום ההרשמה — ${config.title}`;
   const html = `
     <div dir="rtl" style="font-family:Arial,sans-serif;line-height:1.6;color:#111">

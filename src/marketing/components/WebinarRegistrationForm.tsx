@@ -1,13 +1,16 @@
 import { FormEvent, useEffect, useRef, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { webinarApi } from '../../api/webinar';
 import type { WebinarPublicPayload } from '../../constants/webinar';
 import { WEBINAR_BLOCKER_OPTIONS, WEBINAR_INTEREST_OPTIONS } from '../../constants/webinar';
 import { trackEvent } from '../../utils/analytics';
 import { getStoredUtm, utmAsRecord } from '../../utils/utm';
+import { isIsraeliMobile } from '../../utils/phone';
 import { WebinarTrustStrip } from './WebinarSocialProof';
 import { WebinarUrgencyStrip } from './WebinarCountdown';
 import { consumeWebinarExitEmailPrefill } from './WebinarExitIntent';
+
+const RESUME_KEY = 'webinar_registration_id';
 
 type Props = {
   payload: WebinarPublicPayload;
@@ -27,14 +30,52 @@ export function WebinarRegistrationForm({
 }: Props) {
   const { config, registrationCount, spotsRemaining, isWaitlist, abVariant } = payload;
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [step, setStep] = useState<'a' | 'b'>('a');
   const [registrationId, setRegistrationId] = useState('');
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const startedRef = useRef(false);
   const formViewTracked = useRef(false);
+  const resumedRef = useRef(false);
   const rootRef = useRef<HTMLFormElement>(null);
-  const [prefillEmail] = useState(() => consumeWebinarExitEmailPrefill());
+  const [prefillEmail, setPrefillEmail] = useState(() => consumeWebinarExitEmailPrefill());
+
+  useEffect(() => {
+    if (formId !== 'webinar-register-hero' || resumedRef.current) return;
+    const fromQuery = searchParams.get('resume')?.trim() || '';
+    let fromSession = '';
+    try {
+      fromSession = sessionStorage.getItem(RESUME_KEY)?.trim() || '';
+    } catch {
+      fromSession = '';
+    }
+    const resumeId = fromQuery || fromSession;
+    if (!resumeId) return;
+    resumedRef.current = true;
+    webinarApi
+      .resume(resumeId)
+      .then(({ registration }) => {
+        if (registration.step === 'done') {
+          goToThankYou(registration.id, registration.fullName);
+          return;
+        }
+        setRegistrationId(registration.id);
+        try {
+          sessionStorage.setItem(RESUME_KEY, registration.id);
+        } catch {
+          /* ignore */
+        }
+        if (registration.email) setPrefillEmail(registration.email);
+        if (registration.step === 'b') {
+          setStep('b');
+          trackEvent('webinar_step_b_started', { source: 'resume', registrationId: registration.id });
+        }
+      })
+      .catch(() => {
+        resumedRef.current = false;
+      });
+  }, [formId, searchParams]);
 
   useEffect(() => {
     const node = rootRef.current;
@@ -61,6 +102,11 @@ export function WebinarRegistrationForm({
   };
 
   const goToThankYou = (id: string, fullName: string, waitlisted?: boolean) => {
+    try {
+      sessionStorage.removeItem(RESUME_KEY);
+    } catch {
+      /* ignore */
+    }
     const params = new URLSearchParams({
       id,
       name: fullName,
@@ -78,18 +124,29 @@ export function WebinarRegistrationForm({
     markStarted();
 
     const data = new FormData(e.currentTarget);
+    const phone = String(data.get('phone') || '');
+    if (!isIsraeliMobile(phone)) {
+      setError('נא להזין מספר נייד ישראלי');
+      setSubmitting(false);
+      return;
+    }
     const utm = getStoredUtm();
     try {
       const { registration } = await webinarApi.register({
         step: 'a',
         fullName: String(data.get('fullName') || ''),
-        phone: String(data.get('phone') || ''),
+        phone,
         email: String(data.get('email') || ''),
         marketingOptIn: data.get('marketingOptIn') === 'on',
         abVariant,
         ...utmAsRecord(utm),
       });
       setRegistrationId(registration.id);
+      try {
+        sessionStorage.setItem(RESUME_KEY, registration.id);
+      } catch {
+        /* ignore */
+      }
       if (registration.isWaitlist || registration.status === 'waitlist') {
         trackEvent('webinar_form_submitted', { source: formId, registrationId: registration.id });
         onComplete?.(registration.id);
@@ -227,7 +284,16 @@ export function WebinarRegistrationForm({
           <label htmlFor={`${formId}-phone`} className="text-xs text-white/60 mb-1 block">
             טלפון *
           </label>
-          <input required id={`${formId}-phone`} name="phone" type="tel" autoComplete="tel" className={fieldClass} />
+          <input
+            required
+            id={`${formId}-phone`}
+            name="phone"
+            type="tel"
+            inputMode="tel"
+            autoComplete="tel"
+            placeholder="0500000000"
+            className={fieldClass}
+          />
         </div>
       </div>
 
@@ -242,7 +308,8 @@ export function WebinarRegistrationForm({
           type="email"
           autoComplete="email"
           className={fieldClass}
-          defaultValue={prefillEmail}
+          value={prefillEmail}
+          onChange={(event) => setPrefillEmail(event.target.value)}
         />
       </div>
 

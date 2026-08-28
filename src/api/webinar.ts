@@ -43,4 +43,15 @@ export const webinarApi = {
       method: 'POST',
       body: JSON.stringify(payload),
     }),
+  resume: (id: string) =>
+    apiRequest<{
+      ok: boolean;
+      registration: {
+        id: string;
+        status: string;
+        step: 'a' | 'b' | 'done';
+        email: string;
+        fullName: string;
+      };
+    }>(`/api/webinar/resume/${encodeURIComponent(id)}`),
 };

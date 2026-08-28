@@ -419,6 +419,17 @@ export interface AdminWebinarDashboard {
     completeLeads: number;
     waitlistLeads: number;
   };
+  readiness: {
+    ready: boolean;
+    emailEnabled: boolean;
+    items: Array<{
+      id: string;
+      ok: boolean;
+      required: boolean;
+      label: string;
+      hint: string;
+    }>;
+  };
 }
 
 export interface AdminNotification {
