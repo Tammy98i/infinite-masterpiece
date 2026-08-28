@@ -126,8 +126,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({
 
       <div className={`relative ${rank ? 'ml-10 sm:ml-14' : ''}`}>
         <div
-          className={`relative overflow-hidden rounded-xl border transition-colors duration-200 ${
-            isHovered ? 'border-[#C8A24C]' : 'border-white/10'
+          className={`relative overflow-hidden rounded-2xl border transition-[border-color,box-shadow] duration-200 ${
+            isHovered
+              ? 'border-[#C8A24C] shadow-[0_0_24px_rgba(200,162,76,0.35)]'
+              : 'border-white/10'
           }`}
         >
           <button

@@ -3,14 +3,15 @@ import { useApp } from '../context/AppContext';
 import { Clock, ArrowRight, Play } from 'lucide-react';
 import { formatClock } from '../utils/time';
 import { useWatchAccess } from '../utils/useWatchAccess';
-import { EmptyState } from '../components/LibraryStates';
+import { StartHereRail } from '../components/StartHereRail';
+import { pickStartHereCourses } from '../utils/libraryHome';
 
 function formatWhen(ts: number) {
   return new Date(ts).toLocaleDateString('he-IL', { day: 'numeric', month: 'short' });
 }
 
 export const HistoryView: React.FC = () => {
-  const { getWatchHistory, setView } = useApp();
+  const { getWatchHistory, setView, courses, user } = useApp();
   const { goWatch } = useWatchAccess();
   const items = getWatchHistory();
 
@@ -35,12 +36,7 @@ export const HistoryView: React.FC = () => {
       </div>
 
       {items.length === 0 ? (
-        <EmptyState
-          title="עדיין אין צפיות"
-          body="כשמתחילים הרצאה, היא תופיע כאן עם נקודת ההמשך."
-          actionLabel="לספרייה"
-          onAction={() => setView('home')}
-        />
+        <StartHereRail {...pickStartHereCourses(courses, user)} />
       ) : (
         <div className="divide-y divide-white/10">
           {items.map(({ course, episode, progress }) => {

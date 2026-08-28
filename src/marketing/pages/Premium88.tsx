@@ -41,7 +41,7 @@ export function Premium88() {
         <Link
           to="/application?type=88"
           onClick={() => trackEvent('premium_88_cta_clicked')}
-          className="inline-flex justify-center py-4 px-10 rounded-full text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] hover:shadow-[0_0_30px_rgba(200,162,76,0.3)] transition-all duration-300 font-bold text-lg min-h-11"
+          className="btn-gold text-black py-4 px-10 text-lg"
         >
           הגשת מועמדות לנבחרת 88
         </Link>

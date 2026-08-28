@@ -85,7 +85,7 @@ export function Journey() {
           <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-6">
             <Link
               to="/pricing"
-              className="w-full sm:w-auto px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-sm font-bold min-h-11 inline-flex items-center justify-center gap-2"
+              className="btn-gold text-black w-full sm:w-auto px-10 py-4 text-sm"
             >
               <span>להצטרפות</span>
               <ArrowLeft className="w-4 h-4" />

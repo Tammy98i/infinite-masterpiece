@@ -7,11 +7,13 @@ import { HeroBanner } from '../components/HeroBanner';
 import { LibraryPlanBanner } from '../components/LibraryPlanBanner';
 import { TopicsGrid } from '../components/TopicsGrid';
 import { LecturersRow } from '../components/LecturersRow';
+import { StartHereRail } from '../components/StartHereRail';
 import { RailSkeleton, SectionError } from '../components/LibraryStates';
 import {
   dedupeCourses,
   isCourseNew,
   isTenMinuteCourse,
+  pickStartHereCourses,
   pickWeeklyPopular,
 } from '../utils/libraryHome';
 import { getRecommendedWithReasons } from '../utils/recommendations';
@@ -127,7 +129,7 @@ export const HomeView: React.FC = () => {
           }
         />
       ) : (
-        <div className="min-h-[620px] md:h-[78vh] bg-zinc-900 animate-pulse" aria-busy="true" />
+        <div className="min-h-[480px] md:h-[78vh] bg-zinc-900 animate-pulse" aria-busy="true" />
       )}
 
       <div className="relative z-10 -mt-16 md:-mt-24">
@@ -141,7 +143,11 @@ export const HomeView: React.FC = () => {
         )}
 
         <div id="rail-continue">
-          <ContinueWatchingRow />
+          {continueList.length > 0 ? (
+            <ContinueWatchingRow />
+          ) : (
+            <StartHereRail {...pickStartHereCourses(courses, user)} />
+          )}
         </div>
 
         {isLoading ? (

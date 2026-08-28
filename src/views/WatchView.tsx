@@ -1,11 +1,11 @@
 ﻿import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { usePaywall } from '../context/PaywallContext';
 import { ArrowRight, Lock, Maximize, Minimize, Pause, Play, Volume2, VolumeX } from 'lucide-react';
 import { formatClock } from '../utils/time';
 import { canPreviewEpisode, canWatchEpisode, episodeAccess, hasFullLibraryAccess, PREVIEW_SECONDS } from '../utils/access';
 import { trackEvent } from '../utils/analytics';
 import { playbackApi } from '../api/playback';
+import { AccessEndCard } from '../components/AccessEndCard';
 import { PlayerSkeleton } from '../components/LibraryStates';
 import { useA11yPrefs } from '../a11y/prefs';
 
@@ -35,9 +35,7 @@ export const WatchView: React.FC = () => {
     watchProgress,
     user,
   } = useApp();
-  const { isOpen: paywallOpen, openPaywall } = usePaywall();
   const { muteMedia } = useA11yPrefs();
-  const skipPaywallClose = useRef(true);
 
   const course = courses.find((c) => c.id === selectedCourseId);
   const episodeIndex = course?.episodes.findIndex((e) => e.id === selectedEpisodeId) ?? -1;
@@ -57,6 +55,7 @@ export const WatchView: React.FC = () => {
   const [showEpisodes, setShowEpisodes] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [showEndOverlay, setShowEndOverlay] = useState(false);
+  const [previewEnded, setPreviewEnded] = useState(false);
   const [playbackUrl, setPlaybackUrl] = useState('');
   const [playbackError, setPlaybackError] = useState('');
   const [captionTracks, setCaptionTracks] = useState<
@@ -82,6 +81,7 @@ export const WatchView: React.FC = () => {
 
   useEffect(() => {
     marks.current = { started: false, p25: false, p50: false, p75: false, completed: false };
+    setPreviewEnded(false);
   }, [episode?.id]);
 
   useEffect(() => {
@@ -128,7 +128,7 @@ export const WatchView: React.FC = () => {
       video.currentTime = PREVIEW_SECONDS;
       video.pause();
       setIsPlaying(false);
-      openPaywall('preview_limit');
+      setPreviewEnded(true);
       return;
     }
     if (savedProg && savedProg.currentTime > 5 && !savedProg.completed) {
@@ -168,21 +168,6 @@ export const WatchView: React.FC = () => {
   }, [captionsOn]);
 
   useEffect(() => {
-    if (!locked || !episode) return;
-    skipPaywallClose.current = true;
-    openPaywall('watch_locked');
-  }, [locked, episode?.id, openPaywall]);
-
-  useEffect(() => {
-    if (paywallOpen) {
-      skipPaywallClose.current = false;
-      return;
-    }
-    if (!locked || skipPaywallClose.current || !course) return;
-    setView('course', { courseId: course.id });
-  }, [paywallOpen, locked, course?.id, setView]);
-
-  useEffect(() => {
     const onFs = () => setIsFullscreen(Boolean(document.fullscreenElement));
     document.addEventListener('fullscreenchange', onFs);
     return () => document.removeEventListener('fullscreenchange', onFs);
@@ -190,12 +175,8 @@ export const WatchView: React.FC = () => {
 
   const playEpisode = (epId: string) => {
     if (!course) return;
-    const target = course.episodes.find((e) => e.id === epId);
-    if (!canWatchEpisode(target, user, course) && !canPreviewEpisode(target, user, course)) {
-      openPaywall('watch_list');
-      return;
-    }
     setShowEpisodes(false);
+    setPreviewEnded(false);
     setView('watch', { courseId: course.id, episodeId: epId });
   };
 
@@ -236,7 +217,7 @@ export const WatchView: React.FC = () => {
       video.currentTime = PREVIEW_SECONDS;
       video.pause();
       setIsPlaying(false);
-      openPaywall('preview_limit');
+      setPreviewEnded(true);
       return;
     }
     setCurrentTime(video.currentTime);
@@ -275,7 +256,7 @@ export const WatchView: React.FC = () => {
       !hasFullLibraryAccess(user) &&
       user.role !== 'admin'
     ) {
-      openPaywall('after_free');
+      setPreviewEnded(true);
     }
   };
 
@@ -338,7 +319,8 @@ export const WatchView: React.FC = () => {
     );
   }
 
-  const chromeOn = showChrome || showEndOverlay || showEpisodes;
+  const showAccessCard = locked || previewEnded;
+  const chromeOn = (showChrome || showEndOverlay || showEpisodes) && !showAccessCard;
 
   return (
     <div
@@ -560,17 +542,7 @@ export const WatchView: React.FC = () => {
             </p>
             <button
               type="button"
-              onClick={() => {
-                if (nextLocked) {
-                  openPaywall({
-                    source: 'locked_card',
-                    courseId: course.id,
-                    courseTitle: episodeName(nextEpisode.title),
-                  });
-                  return;
-                }
-                playEpisode(nextEpisode.id);
-              }}
+              onClick={() => playEpisode(nextEpisode.id)}
               className="px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11"
             >
               {nextLocked ? 'פתיחת גישה' : 'לפרק הבא'}
@@ -625,17 +597,7 @@ export const WatchView: React.FC = () => {
             {nextEpisode ? (
               <button
                 type="button"
-                onClick={() => {
-                  if (nextLocked) {
-                    openPaywall({
-                      source: 'locked_card',
-                      courseId: course.id,
-                      courseTitle: episodeName(nextEpisode.title),
-                    });
-                    return;
-                  }
-                  playEpisode(nextEpisode.id);
-                }}
+                onClick={() => playEpisode(nextEpisode.id)}
                 className="text-sm text-white/70 hover:text-white min-h-11 cursor-pointer"
               >
                 {nextLocked ? 'פתיחת גישה' : 'הבא'}
@@ -648,7 +610,7 @@ export const WatchView: React.FC = () => {
         </div>
       </div>
 
-      {(muted || muteMedia) && playbackUrl && !locked ? (
+      {(muted || muteMedia) && playbackUrl && !locked && !showAccessCard ? (
         <button
           type="button"
           onClick={() => {
@@ -658,6 +620,14 @@ export const WatchView: React.FC = () => {
         >
           {muteMedia ? 'השמע מושתק בהגדרות הנגישות' : 'מושתק. לחצו להפעלת שמע'}
         </button>
+      ) : null}
+
+      {showAccessCard ? (
+        <AccessEndCard
+          source={locked ? 'watch_locked' : 'preview_limit'}
+          courseTitle={course.title}
+          onDismiss={() => setView('course', { courseId: course.id })}
+        />
       ) : null}
     </div>
   );

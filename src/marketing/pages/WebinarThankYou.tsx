@@ -166,7 +166,7 @@ export function WebinarThankYou() {
               target="_blank"
               rel="noreferrer"
               onClick={() => trackEvent('webinar_cta_clicked', { section: 'thank_you_enter' })}
-              className="mb-8 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] px-5 py-3 text-sm font-semibold text-black min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+              className="btn-gold text-black mb-8 w-full px-5 py-3 text-sm"
             >
               {liveEnter.label}
             </a>
@@ -206,7 +206,7 @@ export function WebinarThankYou() {
                       markCalendar('ics');
                       downloadIcs(calendarConfig);
                     }}
-                    className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] px-5 py-3 text-sm font-semibold text-black min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+                    className="btn-gold text-black w-full px-5 py-3 text-sm"
                   >
                     {localSteps.calendar ? 'נוסף ליומן' : 'הוספה ליומן'}
                   </button>

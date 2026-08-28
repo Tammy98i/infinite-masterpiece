@@ -189,7 +189,7 @@ export function Hesitation() {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full py-5 rounded-[20px] bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-lg font-bold shadow-[0_0_30px_rgba(212,175,55,0.2)] hover:shadow-[0_0_50px_rgba(212,175,55,0.4)] transition-all duration-500 disabled:opacity-70 disabled:cursor-not-allowed group relative overflow-hidden min-h-11"
+              className="btn-gold text-black w-full py-5 text-lg"
             >
               {isSubmitting ? (
                 <div className="flex items-center justify-center gap-3">

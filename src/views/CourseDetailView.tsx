@@ -17,6 +17,7 @@ import { usePaywall } from '../context/PaywallContext';
 import { playbackApi } from '../api/playback';
 import { trackEvent } from '../utils/analytics';
 import { AuthRequiredDialog } from '../components/AuthRequiredDialog';
+import { AccessEndCard } from '../components/AccessEndCard';
 import {
   completedChapterCount,
   episodeDisplayName,
@@ -67,6 +68,7 @@ export const CourseDetailView: React.FC = () => {
   const [playbackUrl, setPlaybackUrl] = useState('');
   const [playbackMode, setPlaybackMode] = useState<'full' | 'preview'>('full');
   const [showEndOverlay, setShowEndOverlay] = useState(false);
+  const [previewEnded, setPreviewEnded] = useState(false);
   const [sessionLoading, setSessionLoading] = useState(false);
   const [captionTracks, setCaptionTracks] = useState<
     Array<{ src: string; label: string; srclang: string; kind?: 'subtitles' | 'captions'; default?: boolean }>
@@ -146,6 +148,7 @@ export const CourseDetailView: React.FC = () => {
     setPlayerError(false);
     setPlaybackUrl('');
     setShowEndOverlay(false);
+    setPreviewEnded(false);
     progressMarks.current = { p25: false, p50: false, p75: false, completed: false };
   }, [course?.id, chapterFromUrl]);
 
@@ -206,6 +209,7 @@ export const CourseDetailView: React.FC = () => {
       setSessionLoading(true);
       setPlayerError(false);
       setShowEndOverlay(false);
+      setPreviewEnded(false);
       try {
         const session = await playbackApi.createSession(ep.id);
         setPlaybackUrl(session.playbackUrl);
@@ -325,7 +329,7 @@ export const CourseDetailView: React.FC = () => {
     if (playbackMode === 'preview' && video.currentTime >= PREVIEW_SECONDS) {
       video.pause();
       setIsPlaying(false);
-      openPaywall('preview_limit');
+      setPreviewEnded(true);
       return;
     }
 
@@ -541,6 +545,12 @@ export const CourseDetailView: React.FC = () => {
                         ניסיון נוסף
                       </button>
                     </div>
+                  ) : previewEnded ? (
+                    <AccessEndCard
+                      source="preview_limit"
+                      courseTitle={course.title}
+                      onDismiss={() => setPreviewEnded(false)}
+                    />
                   ) : showEndOverlay ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/80 p-6 text-center">
                       <p className="text-base text-white">הפרק הסתיים</p>

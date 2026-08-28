@@ -70,7 +70,7 @@ export function Login() {
           <div>
             <button
               type="submit"
-              className="group relative w-full flex justify-center py-4 px-4 border border-transparent rounded-[16px] text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] hover:shadow-[0_0_30px_rgba(200,162,76,0.3)] transition-all duration-300 font-bold"
+              className="btn-gold text-black w-full py-4 px-4"
             >
               <span className="absolute left-0 inset-y-0 flex items-center pl-4">
                 <Lock className="h-5 w-5 text-black/50 group-hover:text-black/80 transition-colors" />

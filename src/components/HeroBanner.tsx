@@ -59,7 +59,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
 
   return (
     <section
-      className="relative w-full min-h-[620px] md:h-[78vh] flex items-end overflow-hidden pt-24 pb-28 md:pb-36"
+      className="relative w-full min-h-[480px] md:h-[78vh] flex items-end overflow-hidden pt-24 pb-24 md:pb-36"
       aria-label={continueWatching ? `המשך צפייה: ${course.title}` : `מומלץ: ${course.title}`}
     >
       <div className="absolute inset-0 select-none overflow-hidden">
@@ -75,8 +75,8 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           decoding="async"
           className="w-full h-full object-cover object-center scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#010308] via-[#010308]/50 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-l from-[#010308]/90 via-[#010308]/40 to-transparent w-full md:w-[65%] ms-auto" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#010308] via-[#010308]/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-l from-[#010308]/90 via-[#010308]/55 to-transparent w-full md:w-[65%] ms-auto" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-8 w-full z-10 text-right md:max-w-2xl md:ms-0 md:me-auto">
@@ -117,7 +117,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           <button
             type="button"
             onClick={handlePlayClick}
-            className="inline-flex items-center gap-2.5 px-8 py-3 rounded-full bg-[#C8A24C] text-black font-semibold text-sm hover:bg-[#F7E7B5] transition-colors min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="btn-gold text-black inline-flex items-center gap-2.5 px-8 py-3 text-sm"
           >
             <Play className="w-4 h-4 fill-black" />
             <span>{primaryLabel}</span>

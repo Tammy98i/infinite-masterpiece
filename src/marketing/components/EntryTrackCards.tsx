@@ -25,7 +25,7 @@ export function EntryTrackCards() {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="grid grid-cols-2 gap-4 text-center items-stretch">
-        <article className="flex flex-col rounded-2xl border border-[#C8A24C]/40 bg-[#C8A24C]/[0.07] p-5 sm:p-6">
+        <article className="glass-card flex flex-col p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3 min-h-8 mb-3">
             <h3 className="text-lg sm:text-xl font-heading text-white">מסלול האמיצים</h3>
             <span className="shrink-0 px-2.5 py-1 rounded-full bg-[#C8A24C] text-black text-[10px] font-semibold tracking-wide">
@@ -49,13 +49,13 @@ export function EntryTrackCards() {
           <Link
             to="/application?track=brave"
             onClick={() => trackEvent('brave_track_clicked')}
-            className="mt-auto inline-flex justify-center items-center w-full py-3 px-4 rounded-full text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] font-bold text-sm min-h-11"
+            className="btn-gold text-black mt-auto w-full text-sm"
           >
             אני בוחר/ת באומץ
           </Link>
         </article>
 
-        <article className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-6">
+        <article className="glass-card flex flex-col p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3 min-h-8 mb-3">
             <h3 className="text-lg sm:text-xl font-heading text-white">מסלול ההססנים</h3>
             <span className="shrink-0 px-2.5 py-1 text-[10px] opacity-0 pointer-events-none" aria-hidden>

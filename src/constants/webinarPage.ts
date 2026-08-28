@@ -16,6 +16,7 @@ export const WEBINAR_CTA_ENTER = 'כניסה לערב החי';
 export const WEBINAR_CTA_NOT_REGISTERED = 'עדיין לא נרשמת? הרשמה למטה';
 export const WEBINAR_CTA_ZOOM_WHATSAPP = 'הקישור בוואטסאפ';
 export const WEBINAR_CTA_ENDED = 'הערב החי הסתיים';
+export const WEBINAR_CTA_NEXT_CYCLE = 'בדיקת התאמה למחזור הבא';
 export const WEBINAR_ENDED_NOTE = 'אם תהיה הקלטה, נעדכן. תודה שהגעתם.';
 
 export function webinarLiveEnter(zoomLink: string, whatsappGroupUrl: string) {

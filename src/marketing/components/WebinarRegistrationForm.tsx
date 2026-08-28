@@ -274,7 +274,7 @@ export function WebinarRegistrationForm({
       <button
         type="submit"
         disabled={busy || !config.enabled}
-        className="w-full py-4 sm:py-5 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-base font-semibold min-h-11 cursor-pointer hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-200"
+        className="btn-gold text-black w-full py-4 sm:py-5 text-base"
       >
         {submitting ? 'שולח…' : isWaitlist ? 'הצטרפות לרשימת המתנה' : 'כן. אני מגיע/ה לערב החי'}
       </button>

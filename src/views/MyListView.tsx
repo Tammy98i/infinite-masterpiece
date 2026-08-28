@@ -3,7 +3,8 @@ import { useApp } from '../context/AppContext';
 import { CourseCard } from '../components/CourseCard';
 import { Bookmark, ArrowRight } from 'lucide-react';
 import { FREE_LIST_LIMIT, hasFullLibraryAccess } from '../utils/access';
-import { EmptyState } from '../components/LibraryStates';
+import { StartHereRail } from '../components/StartHereRail';
+import { pickStartHereCourses } from '../utils/libraryHome';
 
 export const MyListView: React.FC = () => {
   const { myList, courses, setView, user } = useApp();
@@ -48,12 +49,7 @@ export const MyListView: React.FC = () => {
           ))}
         </div>
       ) : (
-        <EmptyState
-          title="הרשימה עדיין ריקה"
-          body="כשנתקלים בהרצאה שרוצים לשמור, לוחצים על סימנייה. היא תופיע כאן."
-          actionLabel="לספרייה"
-          onAction={() => setView('home')}
-        />
+        <StartHereRail {...pickStartHereCourses(courses, user)} />
       )}
     </div>
   );

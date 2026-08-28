@@ -80,7 +80,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
       aria-label={`${title} — רשימת הרצאות`}
     >
       <div className="flex items-center gap-3 px-4 sm:px-8 mb-5">
-        <h2 className="text-base sm:text-lg font-semibold text-white tracking-tight">{title}</h2>
+        <h2 className="text-lg sm:text-xl font-semibold text-white tracking-tight">{title}</h2>
         {onSeeAll && (
           <button
             type="button"

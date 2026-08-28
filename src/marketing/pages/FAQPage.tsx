@@ -64,7 +64,7 @@ export function FAQPage() {
           {faqs.map((faq, idx) => (
             <div 
               key={idx}
-              className="bg-white/[0.01] border border-white/[0.03] rounded-[24px] overflow-hidden transition-colors hover:border-white/[0.08]"
+              className="glass-card overflow-hidden transition-colors hover:border-[#C8A24C]/50"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === idx ? null : idx)}

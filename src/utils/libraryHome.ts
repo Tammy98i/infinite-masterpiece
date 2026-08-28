@@ -139,3 +139,29 @@ export function pickWeeklyPopular(
     .sort((a, b) => b.reviewCount - a.reviewCount || b.rating - a.rating)
     .slice(0, limit);
 }
+
+export function pickStartHereCourses(
+  courses: Course[],
+  user: Pick<UserProfile, 'role' | 'subscriptionPlan' | 'entryTrack' | 'currentPaymentPhase'>
+) {
+  const used = new Set<string>();
+  const take = (pred: (course: Course) => boolean) => {
+    const found = courses.find((course) => !used.has(course.id) && pred(course));
+    if (found) used.add(found.id);
+    return found;
+  };
+
+  const tenMinute = take(isTenMinuteCourse);
+  const taste = take((course) => {
+    const state = getCardAccessState(course, user);
+    return state === 'open' || state === 'preview';
+  });
+  let newest = take((course) => isCourseNew(course) || Boolean(course.isNew));
+  if (!newest) {
+    newest = [...courses]
+      .filter((course) => !used.has(course.id))
+      .sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt))[0];
+  }
+
+  return { tenMinute, taste, newest };
+}

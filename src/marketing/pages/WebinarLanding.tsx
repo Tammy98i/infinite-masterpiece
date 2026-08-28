@@ -15,6 +15,7 @@ import {
   WEBINAR_CTA_ENDED,
   WEBINAR_CTA_FIT,
   WEBINAR_CTA_FIT_LINK,
+  WEBINAR_CTA_NEXT_CYCLE,
   WEBINAR_CTA_NOT_REGISTERED,
   WEBINAR_CTA_PRIMARY,
   WEBINAR_ENDED_NOTE,
@@ -41,7 +42,7 @@ const bottleneckIcons = [Tag, Handshake, Megaphone, Network, Target];
 
 function FaqItem({ q, a, ...props }: { q: string; a: string } & HTMLAttributes<HTMLDetailsElement>) {
   return (
-    <details {...props} className="group rounded-2xl border border-white/10 bg-white/[0.02] p-5">
+    <details {...props} className="group glass-card p-5">
       <summary className="flex items-center justify-between gap-4 cursor-pointer list-none text-white font-light min-h-11">
         <span>{q}</span>
         <ChevronDown className="w-4 h-4 text-[#C8A24C] group-open:rotate-180 transition-transform duration-200 shrink-0" />
@@ -60,7 +61,7 @@ function SectionTitle({ children }: { children: ReactNode }) {
 }
 
 const REGISTER_CARD_CLASS =
-  'rounded-3xl border border-[#C8A24C]/30 bg-[#010308]/80 backdrop-blur-xl shadow-2xl shadow-black/40 p-5 sm:p-8 lg:p-10';
+  'glass-card shadow-2xl shadow-black/40 p-5 sm:p-8 lg:p-10';
 
 function HostFaces() {
   const hosts = [
@@ -77,7 +78,7 @@ function HostFaces() {
               src={host.src}
               name={host.name}
               alt={host.name}
-              className="w-9 h-9 sm:w-11 sm:h-11 rounded-full border border-[#C8A24C]/50 text-[11px] sm:text-sm"
+              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-[#C8A24C] text-sm sm:text-base"
             />
           </span>
         ))}
@@ -211,9 +212,9 @@ export function WebinarLanding() {
               animate={{ opacity: 1, y: 0 }}
               className="text-center flex flex-col items-center"
             >
-              <div className="inline-flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-1.5 rounded-full bg-white/[0.03] border border-[#C8A24C]/20 mb-8">
+              <div className="inline-flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-1.5 rounded-full border border-[#C8A24C]/50 bg-[#C8A24C]/15 mb-8">
                 <span className={`w-2 h-2 rounded-full ${eventNight ? 'bg-emerald-400' : 'bg-[#C8A24C]'}`} aria-hidden />
-                <span className="text-[11px] text-white/70">
+                <span className="text-[11px] text-[#F7E7B5] font-medium">
                   {eventNight ? 'הערב החי עכשיו' : eventEnded ? WEBINAR_CTA_ENDED : 'ערב חי'}, {config.date}, {config.time}
                 </span>
                 {eventNight || eventEnded ? null : <WebinarCountdown date={config.date} time={config.time} />}
@@ -237,15 +238,12 @@ export function WebinarLanding() {
               <div className="flex flex-col items-center gap-3">
                 {eventEnded ? (
                   <>
-                    <p className="text-base text-[#F7E7B5] font-medium min-h-11 inline-flex items-center">
+                    <p className="text-base text-white/85 font-medium min-h-11 inline-flex items-center">
                       {WEBINAR_CTA_ENDED}
                     </p>
-                    <p className="text-sm text-white/45 font-light max-w-md">{WEBINAR_ENDED_NOTE}</p>
-                    <Link
-                      to="/"
-                      className="text-sm text-white/45 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
-                    >
-                      חזרה לאתר
+                    <p className="text-sm text-white/80 font-medium max-w-md">{WEBINAR_ENDED_NOTE}</p>
+                    <Link to="/pricing" className="btn-gold text-black">
+                      {WEBINAR_CTA_NEXT_CYCLE}
                     </Link>
                   </>
                 ) : eventNight ? (
@@ -255,7 +253,7 @@ export function WebinarLanding() {
                       target="_blank"
                       rel="noreferrer"
                       onClick={() => trackWebinarCta('hero_enter')}
-                      className="inline-flex px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+                      className="btn-gold text-black px-10 py-4"
                     >
                       {liveEnter.label}
                     </a>
@@ -268,7 +266,7 @@ export function WebinarLanding() {
                   <button
                     type="button"
                     onClick={() => scrollToForm('hero')}
-                    className="inline-flex px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+                    className="btn-gold text-black px-10 py-4"
                   >
                     {WEBINAR_CTA_PRIMARY}
                   </button>
@@ -314,7 +312,7 @@ export function WebinarLanding() {
               return (
                 <div
                   key={item.title}
-                  className="rounded-3xl border border-[#C8A24C]/20 bg-[#C8A24C]/5 p-5"
+                  className="glass-card p-5"
                 >
                   <Icon className="w-6 h-6 text-[#C8A24C] mb-4" strokeWidth={1.5} aria-hidden />
                   <h3 className="text-white mb-2">{item.title}</h3>
@@ -335,7 +333,7 @@ export function WebinarLanding() {
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
             {hosts.map((leader) => (
-              <article key={leader.name} className="rounded-3xl border border-white/10 overflow-hidden bg-white/[0.02]">
+              <article key={leader.name} className="glass-card overflow-hidden">
                 <div className="aspect-[4/3] overflow-hidden bg-[#0b1020]">
                   <TeamPhoto
                     src={leader.image}
@@ -354,7 +352,7 @@ export function WebinarLanding() {
           </div>
           <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {WEBINAR_TASK_STEPS.map((item, index) => (
-              <li key={item.title} className="rounded-3xl border border-[#C8A24C]/20 bg-[#C8A24C]/5 p-5">
+              <li key={item.title} className="glass-card p-5">
                 <p className="text-[11px] text-[#C8A24C] mb-3">{String(index + 1).padStart(2, '0')}</p>
                 <h3 className="text-white mb-2">{item.title}</h3>
                 <p className="text-sm text-white/50 font-light leading-relaxed">{item.text}</p>
@@ -375,7 +373,7 @@ export function WebinarLanding() {
             <SectionTitle>הוובינר הזה מתאים לך אם…</SectionTitle>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_80px_1fr] gap-6 items-stretch">
-            <div className="rounded-3xl border border-[#C8A24C]/25 bg-[#C8A24C]/5 p-6 text-right">
+            <div className="glass-card p-6 text-right">
               <h3 className="text-lg text-white mb-4 font-light text-center">מתאים אם…</h3>
               <ul className="space-y-3">
                 {WEBINAR_FIT_YES.map((item) => (

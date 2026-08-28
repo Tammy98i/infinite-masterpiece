@@ -6,8 +6,8 @@ import { motion, AnimatePresence } from 'motion/react';
 import { AccountMenu } from '../../components/AccountMenu';
 import { scrollToWebinarForm, trackWebinarCta } from '../../utils/analytics';
 import {
-  WEBINAR_CTA_ENDED,
   WEBINAR_CTA_HEADER,
+  WEBINAR_CTA_NEXT_CYCLE,
   WEBINAR_REGISTER_ID,
 } from '../../constants/webinarPage';
 import { useWebinarPhase } from '../hooks/useWebinarPhase';
@@ -29,15 +29,14 @@ export function Header() {
   const onWebinar = location.pathname.startsWith('/webinar');
   const { phase, liveEnter } = useWebinarPhase();
 
-  const headerCtaClass =
-    'px-5 py-3 rounded-full text-sm font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] hover:opacity-95 transition-opacity min-h-11 cursor-pointer';
+  const headerCtaClass = 'btn-gold text-black text-sm px-5 py-3';
 
   const headerCta = () => {
     if (phase === 'ended') {
       if (onWebinar) return null;
       return (
-        <Link to="/webinar" className="px-5 py-3 text-sm text-white/85 hover:text-[#F7E7B5] min-h-11 inline-flex items-center transition-colors duration-200">
-          {WEBINAR_CTA_ENDED}
+        <Link to="/pricing" className={headerCtaClass}>
+          {WEBINAR_CTA_NEXT_CYCLE}
         </Link>
       );
     }
@@ -70,13 +69,12 @@ export function Header() {
 
   const mobileHeaderCta = () => {
     const close = () => setMobileMenuOpen(false);
-    const mobileClass =
-      'block w-full text-center px-8 py-4 rounded-full text-base font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] min-h-11 cursor-pointer';
+    const mobileClass = 'btn-gold text-black text-base block w-full text-center px-8 py-4';
     if (phase === 'ended') {
       if (onWebinar) return null;
       return (
-        <Link to="/webinar" onClick={close} className="block w-full text-center px-8 py-4 text-base text-white/85 min-h-11">
-          {WEBINAR_CTA_ENDED}
+        <Link to="/pricing" onClick={close} className={mobileClass}>
+          {WEBINAR_CTA_NEXT_CYCLE}
         </Link>
       );
     }

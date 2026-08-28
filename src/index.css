@@ -337,3 +337,57 @@ html.a11y-contrast-high .sky-readable .text-white\/50,
 html.a11y-contrast-high .sky-readable .text-white\/55 {
   color: #ffffff;
 }
+
+.btn-gold {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0.75rem 1.75rem;
+  border: 0;
+  border-radius: 9999px;
+  background: linear-gradient(90deg, #c8a24c, #f7e7b5, #d4af37);
+  color: #111;
+  font-weight: 700;
+  box-shadow: 0 8px 28px rgba(200, 162, 76, 0.28);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn-gold:hover {
+  opacity: 0.95;
+}
+
+.btn-gold:focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 2px;
+}
+
+.btn-gold:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.sky-readable .btn-gold,
+.sky-readable a.btn-gold {
+  color: #111;
+  text-shadow: none;
+}
+
+.glass-card {
+  background: rgb(1 3 8 / 0.64);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(200, 162, 76, 0.28);
+  border-radius: 1.5rem;
+}
+
+.section-block {
+  padding-block: 5.5rem;
+}
+
+@media (min-width: 768px) {
+  .section-block {
+    padding-block: 8rem;
+  }
+}

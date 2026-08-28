@@ -60,8 +60,7 @@ export function WebinarStickyCta({
 
   if (!visible) return null;
 
-  const ctaClass =
-    'shrink-0 sm:min-w-[240px] text-center py-3 px-5 sm:px-6 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-sm font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200';
+  const ctaClass = 'btn-gold text-black shrink-0 sm:min-w-[240px] text-center py-3 px-5 sm:px-6 text-sm';
 
   return (
     <div className="fixed bottom-0 inset-x-0 z-40 border-t border-[#C8A24C]/20 bg-[#010308]/95 backdrop-blur-xl px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">

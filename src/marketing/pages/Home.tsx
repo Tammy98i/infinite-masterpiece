@@ -14,7 +14,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { EntryTrackCards } from '../components/EntryTrackCards';
-import { WEBINAR_CTA_ENDED, WEBINAR_CTA_HEADER } from '../../constants/webinarPage';
+import { WEBINAR_CTA_ENDED, WEBINAR_CTA_HEADER, WEBINAR_CTA_NEXT_CYCLE } from '../../constants/webinarPage';
 import { useWebinarPhase } from '../hooks/useWebinarPhase';
 
 const MotionDiv = motion.div;
@@ -23,11 +23,11 @@ const MOTION = { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const };
 
 export function Home() {
   const { phase } = useWebinarPhase();
-  const homeCta = phase === 'ended' ? WEBINAR_CTA_ENDED : WEBINAR_CTA_HEADER;
+  const homeCta = phase === 'ended' ? WEBINAR_CTA_NEXT_CYCLE : WEBINAR_CTA_HEADER;
   return (
     <div className="w-full">
       {/* 1. HERO */}
-      <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
+      <section className="relative min-h-0 md:min-h-screen flex items-center pt-20 pb-8 md:pt-20 md:pb-16 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/30 via-transparent to-[#010308]/40" />
         </div>
@@ -46,34 +46,36 @@ export function Home() {
                 </span>
               </div>
 
-              <h1 className="text-[56px] md:text-[84px] font-heading tracking-tight leading-[1.15] mb-8">
+              <h1 className="text-[32px] sm:text-[40px] md:text-[84px] font-heading tracking-tight leading-[1.15] mb-4 md:mb-8">
                 <span className="text-white block">יש לך יצירה.</span>
-                <span className="text-gold-gradient font-medium block">
-                  עכשיו בונים לה
-                  <br />
-                  מערכת הכנסה.
-                </span>
+                <span className="text-gold-gradient font-medium block">עכשיו בונים לה מערכת הכנסה.</span>
               </h1>
 
-              <p className="text-[18px] md:text-[22px] text-white/50 mb-12 max-w-xl leading-relaxed font-light">
+              <p className="text-[16px] md:text-[22px] text-white/50 mb-6 md:mb-12 max-w-xl leading-relaxed font-light">
                 הבעיה היא לא שאין לך כישרון. הבעיה היא שאין סביב הכישרון שלך מערכת עסקית. אנו הופכים יצירה
                 לעסק, השפעה וחופש.
               </p>
 
               <div className="flex flex-col items-center gap-4 w-full sm:w-auto">
                 <Link
-                  to="/webinar"
-                  className="w-full sm:w-auto px-12 py-5 rounded-[22px] bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-lg font-bold transition-transform duration-500 hover:-translate-y-1 motion-reduce:hover:translate-y-0 flex items-center justify-center gap-3 group min-h-11"
+                  to={phase === 'ended' ? '/pricing' : '/webinar'}
+                  className="btn-gold text-black text-lg w-full sm:w-auto px-12 py-5 rounded-[22px] flex items-center justify-center gap-3 group"
                 >
                   <span>{homeCta}</span>
                   <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-500" />
                 </Link>
-                <a
-                  href="/#pricing"
-                  className="text-white/45 hover:text-[#C8A24C] transition-colors duration-500 text-sm font-light min-h-11 inline-flex items-center"
-                >
-                  למסלול האמיצים והססנים
-                </a>
+                {phase === 'ended' ? (
+                  <p className="text-white/70 text-sm font-medium min-h-11 inline-flex items-center">
+                    {WEBINAR_CTA_ENDED}
+                  </p>
+                ) : (
+                  <a
+                    href="/#pricing"
+                    className="text-white/45 hover:text-[#C8A24C] transition-colors duration-500 text-sm font-light min-h-11 inline-flex items-center"
+                  >
+                    למסלול האמיצים והססנים
+                  </a>
+                )}
                 <Link
                   to="/library"
                   className="text-white/30 hover:text-[#C8A24C] transition-colors duration-500 text-sm font-light min-h-11 inline-flex items-center"
@@ -92,7 +94,7 @@ export function Home() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: '-80px' }}
         transition={MOTION}
-        className="py-24 md:py-32 relative"
+        className="section-block relative"
         id="what-is-it"
       >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -116,7 +118,7 @@ export function Home() {
             ].map((item, idx) => (
               <div
                 key={idx}
-                className="flex flex-col items-center justify-start gap-6 p-8 rounded-[24px] bg-white/[0.01] hover:bg-white/[0.03] border border-white/[0.02] transition-colors duration-500"
+                className="glass-card flex flex-col items-center justify-start gap-6 p-8 hover:border-[#C8A24C]/50 transition-colors duration-500"
               >
                 <item.icon className="w-8 h-8 text-[#C8A24C] opacity-70" strokeWidth={1} />
                 <p className="text-white/60 text-[15px] whitespace-pre-line leading-relaxed text-center font-light">
@@ -144,7 +146,7 @@ export function Home() {
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true, margin: '-80px' }}
         transition={MOTION}
-        className="py-24 md:py-32 relative z-10"
+        className="section-block relative z-10"
         id="depth-layer"
       >
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -170,7 +172,7 @@ export function Home() {
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
             <Link
               to="/application?type=88"
-              className="w-full sm:w-auto py-3.5 px-8 rounded-full text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] font-bold text-sm min-h-11"
+              className="btn-gold text-black w-full sm:w-auto py-3.5 px-8 text-sm"
             >
               הגשת מועמדות
             </Link>
@@ -187,7 +189,7 @@ export function Home() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: '-80px' }}
         transition={MOTION}
-        className="py-24 md:py-32 relative"
+        className="section-block relative"
         id="infinite-library"
       >
         <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#010308]/15 to-transparent pointer-events-none" />
@@ -216,7 +218,7 @@ export function Home() {
             ].map((feature, idx) => (
               <div
                 key={idx}
-                className="relative bg-white/[0.01] border border-white/[0.03] rounded-[24px] p-8 hover:bg-white/[0.03] hover:border-white/[0.08] transition-all duration-500 group"
+                className="glass-card relative p-8 hover:border-[#C8A24C]/50 transition-all duration-500 group"
               >
                 <feature.icon
                   className="w-8 h-8 text-white/30 group-hover:text-[#C8A24C] transition-colors duration-500 mb-6"
@@ -247,7 +249,7 @@ export function Home() {
         viewport={{ once: true, margin: '-80px' }}
         transition={MOTION}
         id="pricing"
-        className="py-24 md:py-32 relative"
+        className="section-block relative"
       >
         <div className="max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#C8A24C]/10 border border-[#C8A24C]/20 mb-8">
@@ -272,7 +274,7 @@ export function Home() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: '-80px' }}
         transition={MOTION}
-        className="py-24 md:py-32 relative border-t border-white/[0.02]"
+        className="section-block relative border-t border-white/[0.02]"
         id="who-is-it-for"
       >
         <div className="max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">
@@ -290,7 +292,7 @@ export function Home() {
 
           <Link
             to="/hesitation"
-            className="inline-flex flex-col items-center justify-center px-12 py-6 rounded-[24px] bg-white/[0.02] text-white border border-[#C8A24C]/30 hover:bg-white/[0.05] hover:border-[#C8A24C]/60 transition-all duration-500 text-lg shadow-[0_0_20px_rgba(200,162,76,0.05)] hover:shadow-[0_0_40px_rgba(200,162,76,0.15)] group"
+            className="glass-card inline-flex flex-col items-center justify-center px-12 py-6 text-white hover:border-[#C8A24C]/60 transition-all duration-500 text-lg group"
           >
             <span className="font-medium mb-1">אני מתחיל/ה ב־8 ₪</span>
             <span className="text-sm text-white/40 group-hover:text-[#C8A24C] transition-colors">
