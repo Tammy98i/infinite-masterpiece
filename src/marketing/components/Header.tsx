@@ -148,19 +148,17 @@ export function Header() {
       role="banner"
       aria-label="כותרת האתר"
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 h-20 flex items-center transition-colors duration-500',
+        'fixed top-0 inset-x-0 z-50 h-20 transition-colors duration-500',
         isScrolled
           ? 'bg-[#010308]/60 backdrop-blur-2xl border-b border-white/[0.03]'
           : 'bg-transparent border-b border-transparent'
       )}
     >
-      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between">
-          
-          <Link to="/" className="flex items-center gap-4 group">
+      <div className="mx-auto grid h-full w-full max-w-[1400px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-6 lg:px-8">
+          <Link to="/" className="flex items-center gap-3 sm:gap-4 group shrink-0 min-h-11">
             <InfinityIcon className="w-8 h-8 text-[#F7E7B5] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
             <div className="flex flex-col">
-              <span className="font-light text-[15px] tracking-[0.25em] text-white/90 leading-tight uppercase">
+              <span className="font-light text-[13px] sm:text-[15px] tracking-[0.25em] text-white/90 leading-tight uppercase">
                 Infinite
                 <br/>
                 <span className="font-medium">Masterpiece</span>
@@ -168,8 +166,7 @@ export function Header() {
             </div>
           </Link>
 
-          {/* Desktop Nav */}
-          <nav className="hidden lg:flex items-center gap-10" aria-label="ניווט ראשי">
+          <nav className="hidden lg:flex items-center justify-center gap-6 xl:gap-10 min-w-0" aria-label="ניווט ראשי">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -196,33 +193,33 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="hidden lg:flex items-center gap-3">
-            {headerCta()}
-            {!onWebinar ? (
-              <Link
-                to="/library"
-                className="px-5 py-3 rounded-full text-sm font-medium text-white/55 hover:text-[#C8A24C] transition-colors duration-500 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#010308]"
-                aria-label="כניסה לספרייה אינסופית. קורסים והרצאות אונליין"
+          <div className="flex items-center justify-end gap-2 sm:gap-3 shrink-0">
+            <div className="hidden lg:flex items-center gap-3">
+              {headerCta()}
+              {!onWebinar ? (
+                <Link
+                  to="/library"
+                  className="px-5 py-3 rounded-full text-sm font-medium text-white/55 hover:text-[#C8A24C] transition-colors duration-500 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#010308]"
+                  aria-label="כניסה לספרייה אינסופית. קורסים והרצאות אונליין"
+                >
+                  ספרייה
+                </Link>
+              ) : null}
+              {!onWebinar ? <AccountMenu /> : null}
+            </div>
+            <div className="flex items-center gap-2 lg:hidden">
+              {!onWebinar ? <AccountMenu /> : null}
+              <button
+                type="button"
+                className="p-2 text-white/60 hover:text-white transition-colors min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                aria-label="תפריט ניווט"
+                aria-expanded={mobileMenuOpen}
               >
-                ספרייה
-              </Link>
-            ) : null}
-            {!onWebinar ? <AccountMenu /> : null}
+                {mobileMenuOpen ? <X className="w-6 h-6" strokeWidth={1.5} /> : <Menu className="w-6 h-6" strokeWidth={1.5} />}
+              </button>
+            </div>
           </div>
-
-          <div className="flex items-center gap-2 lg:hidden">
-            {!onWebinar ? <AccountMenu /> : null}
-            <button
-              type="button"
-              className="p-2 text-white/60 hover:text-white transition-colors min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              aria-label="תפריט ניווט"
-              aria-expanded={mobileMenuOpen}
-            >
-              {mobileMenuOpen ? <X className="w-6 h-6" strokeWidth={1.5} /> : <Menu className="w-6 h-6" strokeWidth={1.5} />}
-            </button>
-          </div>
-        </div>
       </div>
 
       {/* Mobile Nav */}

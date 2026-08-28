@@ -75,7 +75,7 @@ export const Navbar: React.FC = () => {
             : 'bg-gradient-to-b from-black/80 via-black/40 to-transparent'
         }`}
       >
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-4">
+        <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between gap-3 sm:gap-4">
           
           {/* Right Section: Logo & Main Nav */}
           <div className="flex items-center gap-8">
