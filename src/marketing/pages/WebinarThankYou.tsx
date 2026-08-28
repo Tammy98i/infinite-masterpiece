@@ -1,11 +1,56 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { CalendarPlus, MessageCircle, Share2, UserRound, Video } from 'lucide-react';
+import { CalendarPlus, Check, MessageCircle, Share2, UserRound, Video } from 'lucide-react';
 import { webinarApi } from '../../api/webinar';
 import { DEFAULT_WEBINAR_CONFIG } from '../../constants/webinar';
-import { buildGoogleCalendarUrl, buildShareUrl, downloadIcs } from '../../utils/webinarTime';
+import {
+  WEBINAR_CTA_ENDED,
+  WEBINAR_ENDED_NOTE,
+  webinarLiveEnter,
+} from '../../constants/webinarPage';
+import { buildGoogleCalendarUrl, buildShareUrl, downloadIcs, getWebinarPhase } from '../../utils/webinarTime';
 import { trackEvent } from '../../utils/analytics';
+
+type LocalSteps = { calendar: boolean; whatsapp: boolean };
+
+function stepsKey(id: string) {
+  return `webinar-ty:${id}`;
+}
+
+function loadLocalSteps(id: string): LocalSteps {
+  if (!id) return { calendar: false, whatsapp: false };
+  try {
+    const raw = localStorage.getItem(stepsKey(id));
+    if (!raw) return { calendar: false, whatsapp: false };
+    const parsed = JSON.parse(raw) as Partial<LocalSteps>;
+    return { calendar: Boolean(parsed.calendar), whatsapp: Boolean(parsed.whatsapp) };
+  } catch {
+    return { calendar: false, whatsapp: false };
+  }
+}
+
+function saveLocalSteps(id: string, steps: LocalSteps) {
+  if (!id) return;
+  try {
+    localStorage.setItem(stepsKey(id), JSON.stringify(steps));
+  } catch {
+    /* ignore */
+  }
+}
+
+function StepIndex({ done, n }: { done: boolean; n: number }) {
+  return (
+    <span
+      className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm ${
+        done ? 'bg-[#C8A24C] text-black' : 'border border-[#C8A24C]/50 text-[#F7E7B5]'
+      }`}
+      aria-hidden
+    >
+      {done ? <Check className="w-4 h-4" strokeWidth={2.5} /> : n}
+    </span>
+  );
+}
 
 export function WebinarThankYou() {
   const [params] = useSearchParams();
@@ -18,11 +63,14 @@ export function WebinarThankYou() {
   const [payload, setPayload] = useState<Awaited<ReturnType<typeof webinarApi.config>> | null>(null);
   const [copied, setCopied] = useState(false);
   const [personPicked, setPersonPicked] = useState(false);
+  const [localSteps, setLocalSteps] = useState<LocalSteps>(() => loadLocalSteps(registrationId));
+  const [now, setNow] = useState(() => Date.now());
 
   useEffect(() => {
     window.scrollTo(0, 0);
     webinarApi.config().then(setPayload).catch(() => null);
     if (!registrationId) return;
+    setLocalSteps(loadLocalSteps(registrationId));
     webinarApi
       .resume(registrationId)
       .then(({ registration }) => {
@@ -31,21 +79,40 @@ export function WebinarThankYou() {
       .catch(() => undefined);
   }, [registrationId]);
 
+  useEffect(() => {
+    const id = window.setInterval(() => setNow(Date.now()), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
+
   const config = payload?.config || DEFAULT_WEBINAR_CONFIG;
   const calendarConfig = useMemo(() => ({ ...config, date, time }), [config, date, time]);
   const googleUrl = buildGoogleCalendarUrl(calendarConfig);
   const zoomLink = config.zoomLink.trim();
+  const liveEnter = webinarLiveEnter(config.zoomLink, config.whatsappGroupUrl);
+  const phase = payload
+    ? getWebinarPhase(config.date, config.time, config.durationMinutes, now)
+    : 'upcoming';
+
+  const markLocal = (step: keyof LocalSteps) => {
+    setLocalSteps((prev) => {
+      const next = { ...prev, [step]: true };
+      saveLocalSteps(registrationId, next);
+      return next;
+    });
+  };
 
   const markCalendar = (provider: string) => {
     trackEvent('add_to_calendar_clicked', { provider });
     trackEvent('webinar_add_to_calendar_clicked', { provider });
     trackEvent('webinar_thank_you_step_completed', { step: 'calendar' });
+    markLocal('calendar');
   };
 
   const markWhatsapp = () => {
     trackEvent('whatsapp_group_clicked');
     trackEvent('webinar_whatsapp_group_clicked');
     trackEvent('webinar_thank_you_step_completed', { step: 'whatsapp' });
+    markLocal('whatsapp');
   };
 
   const persistPersonPicked = (picked: boolean) => {
@@ -87,22 +154,47 @@ export function WebinarThankYou() {
           <h1 className="text-3xl md:text-4xl font-light text-white mb-4">
             {firstName ? `תודה, ${firstName}.` : 'נרשמת.'}
           </h1>
-          <p className="text-white/55 font-light leading-relaxed mb-8">
+          <p className="text-white/55 font-light leading-relaxed mb-6">
             {isWaitlist
               ? 'הפרטים שלך נקלטו לרשימת ההמתנה. נעדכן כשיתפנה מקום.'
               : `נרשמת בהצלחה. שלושה צעדים לפני הערב: יומן, וואטסאפ, ואדם אחד. ${date}, ${time}.`}
           </p>
 
+          {phase === 'live' && liveEnter.href ? (
+            <a
+              href={liveEnter.href}
+              target="_blank"
+              rel="noreferrer"
+              onClick={() => trackEvent('webinar_cta_clicked', { section: 'thank_you_enter' })}
+              className="mb-8 inline-flex w-full items-center justify-center rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] px-5 py-3 text-sm font-semibold text-black min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+            >
+              {liveEnter.label}
+            </a>
+          ) : null}
+
+          {phase === 'ended' ? (
+            <p className="mb-8 text-sm text-white/50 font-light">
+              {WEBINAR_CTA_ENDED}. {WEBINAR_ENDED_NOTE}
+            </p>
+          ) : null}
+
           <ol className="space-y-4 text-right mb-8">
-            <li className="rounded-2xl border border-[#C8A24C]/25 bg-[#010308]/40 px-5 py-4">
+            <li
+              className={`rounded-2xl border px-5 py-4 ${
+                localSteps.calendar
+                  ? 'border-[#C8A24C]/50 bg-[#C8A24C]/10'
+                  : 'border-[#C8A24C]/25 bg-[#010308]/40'
+              }`}
+            >
               <div className="flex items-start gap-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#C8A24C]/50 text-sm text-[#F7E7B5]">
-                  1
-                </span>
+                <StepIndex done={localSteps.calendar} n={1} />
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-2 text-white mb-1">
                     <CalendarPlus className="w-4 h-4 text-[#C8A24C]" aria-hidden />
                     הוספה ליומן
+                    {localSteps.calendar ? (
+                      <span className="text-[11px] text-[#F7E7B5]">בוצע</span>
+                    ) : null}
                   </p>
                   <p className="text-xs text-white/45 font-light mb-3">
                     {date} · {time}.
@@ -116,7 +208,7 @@ export function WebinarThankYou() {
                     }}
                     className="inline-flex w-full items-center justify-center gap-2 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] px-5 py-3 text-sm font-semibold text-black min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
                   >
-                    הוספה ליומן
+                    {localSteps.calendar ? 'נוסף ליומן' : 'הוספה ליומן'}
                   </button>
                   <p className="mt-2 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-white/40">
                     {googleUrl ? (
@@ -156,15 +248,22 @@ export function WebinarThankYou() {
               </div>
             </li>
 
-            <li className="rounded-2xl border border-[#C8A24C]/25 bg-[#010308]/40 px-5 py-4">
+            <li
+              className={`rounded-2xl border px-5 py-4 ${
+                localSteps.whatsapp
+                  ? 'border-[#C8A24C]/50 bg-[#C8A24C]/10'
+                  : 'border-[#C8A24C]/25 bg-[#010308]/40'
+              }`}
+            >
               <div className="flex items-start gap-3">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#C8A24C]/50 text-sm text-[#F7E7B5]">
-                  2
-                </span>
+                <StepIndex done={localSteps.whatsapp} n={2} />
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-2 text-white mb-1">
                     <MessageCircle className="w-4 h-4 text-[#C8A24C]" aria-hidden />
                     קבוצת עדכונים שקטה
+                    {localSteps.whatsapp ? (
+                      <span className="text-[11px] text-[#F7E7B5]">בוצע</span>
+                    ) : null}
                   </p>
                   <p className="text-xs text-white/45 font-light mb-3">נעדכן רק כשיש משהו שחשוב לדעת.</p>
                   {config.whatsappGroupUrl ? (
@@ -175,7 +274,7 @@ export function WebinarThankYou() {
                       onClick={markWhatsapp}
                       className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C8A24C] text-black px-5 py-2 text-sm font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
                     >
-                      הצטרפות עכשיו
+                      {localSteps.whatsapp ? 'הצטרפת' : 'הצטרפות עכשיו'}
                     </a>
                   ) : (
                     <p className="text-xs text-white/40 font-light">הקישור יישלח באישור המייל.</p>
@@ -184,35 +283,42 @@ export function WebinarThankYou() {
               </div>
             </li>
 
-            <li className="rounded-2xl border border-[#C8A24C]/25 bg-[#010308]/40 px-5 py-4">
-              <label className="flex items-start gap-3 cursor-pointer">
-                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#C8A24C]/50 text-sm text-[#F7E7B5]">
-                  3
-                </span>
-                <span className="min-w-0 flex-1">
-                  <span className="flex items-center gap-2 text-white mb-1">
+            <li
+              className={`rounded-2xl border px-5 py-4 ${
+                personPicked
+                  ? 'border-[#C8A24C]/50 bg-[#C8A24C]/10'
+                  : 'border-[#C8A24C]/25 bg-[#010308]/40'
+              }`}
+            >
+              <div className="flex items-start gap-3">
+                <StepIndex done={personPicked} n={3} />
+                <div className="min-w-0 flex-1">
+                  <p className="flex items-center gap-2 text-white mb-1">
                     <UserRound className="w-4 h-4 text-[#C8A24C]" aria-hidden />
                     אדם אחד
-                  </span>
-                  <span id="webinar-person-hint" className="block text-xs text-white/45 font-light mb-3">
-                    שם, וואטסאפ, ומשפט אחד על מה שאת/ה מציע/ה.
-                  </span>
-                  <input
-                    type="checkbox"
-                    checked={personPicked}
-                    aria-describedby="webinar-person-hint"
-                    onChange={(e) => persistPersonPicked(e.target.checked)}
-                    className="accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer"
-                  />
-                  <span className="mr-2 text-sm text-[#F7E7B5]">בחרתי אדם</span>
-                </span>
-              </label>
+                    {personPicked ? <span className="text-[11px] text-[#F7E7B5]">בוצע</span> : null}
+                  </p>
+                  <p id="webinar-person-hint" className="text-xs text-white/45 font-light mb-3">
+                    שם, וואטסאפ, ומשפט אחד על מה שאת/ה מציע/ה. זה אדם להצעה שלך, לא הזמנת חבר לוובינר.
+                  </p>
+                  <label className="inline-flex items-center gap-2 cursor-pointer min-h-11">
+                    <input
+                      type="checkbox"
+                      checked={personPicked}
+                      aria-describedby="webinar-person-hint"
+                      onChange={(e) => persistPersonPicked(e.target.checked)}
+                      className="accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer"
+                    />
+                    <span className="text-sm text-[#F7E7B5]">בחרתי אדם</span>
+                  </label>
+                </div>
+              </div>
             </li>
           </ol>
 
           <Link
             to="/"
-            className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 text-sm text-white/75 hover:text-white min-h-11 cursor-pointer transition-colors duration-200 mb-4"
+            className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 text-sm text-white/75 hover:text-white min-h-11 cursor-pointer transition-colors duration-200 mb-3"
           >
             חזרה לאתר
           </Link>
@@ -220,10 +326,10 @@ export function WebinarThankYou() {
           <button
             type="button"
             onClick={() => void share()}
-            className="flex mx-auto items-center gap-2 text-[#C8A24C] hover:text-[#F7E7B5] min-h-11 cursor-pointer transition-colors duration-200"
+            className="flex mx-auto items-center gap-2 text-[11px] text-white/35 hover:text-white/55 min-h-11 cursor-pointer transition-colors duration-200"
           >
-            <Share2 className="w-4 h-4" aria-hidden />
-            {copied ? 'הקישור הועתק' : 'הבא/י חבר/ה לוובינר'}
+            <Share2 className="w-3.5 h-3.5" aria-hidden />
+            {copied ? 'הקישור הועתק' : 'להזמין מישהו לערב'}
           </button>
         </motion.div>
       </div>

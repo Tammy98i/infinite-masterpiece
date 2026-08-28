@@ -12,10 +12,12 @@ import {
 import {
   WEBINAR_AUDIENCE_LABEL,
   WEBINAR_BOTTLENECKS,
+  WEBINAR_CTA_ENDED,
   WEBINAR_CTA_FIT,
   WEBINAR_CTA_FIT_LINK,
   WEBINAR_CTA_NOT_REGISTERED,
   WEBINAR_CTA_PRIMARY,
+  WEBINAR_ENDED_NOTE,
   WEBINAR_FIT_NO,
   WEBINAR_FIT_YES,
   WEBINAR_GLEB,
@@ -32,7 +34,7 @@ import { WebinarSectionCta } from '../components/WebinarSocialProof';
 import { WebinarCountdown } from '../components/WebinarCountdown';
 import { trackEvent, trackWebinarCta, scrollToWebinarForm, scrollToWebinarFit } from '../../utils/analytics';
 import { captureUtmFromSearch } from '../../utils/utm';
-import { isWebinarEventWindow } from '../../utils/webinarTime';
+import { getWebinarPhase } from '../../utils/webinarTime';
 import { TeamPhoto } from '../../components/TeamPhoto';
 
 const bottleneckIcons = [Tag, Handshake, Megaphone, Network, Target];
@@ -124,14 +126,18 @@ export function WebinarLanding() {
   const fitRef = useRef<HTMLElement>(null);
   const fitTracked = useRef(false);
   const [now, setNow] = useState(() => Date.now());
+  const [configReady, setConfigReady] = useState(false);
 
   useEffect(() => {
     captureUtmFromSearch(window.location.search);
     trackEvent('webinar_page_view');
     webinarApi
       .config()
-      .then((res) => setPayload(res))
-      .catch(() => undefined);
+      .then((res) => {
+        setPayload(res);
+        setConfigReady(true);
+      })
+      .catch(() => setConfigReady(true));
   }, []);
 
   useEffect(() => {
@@ -157,7 +163,11 @@ export function WebinarLanding() {
 
   const { config, activeHeadline } = payload;
   const headlineParts = splitHeroHeadline(activeHeadline);
-  const eventNight = isWebinarEventWindow(config.date, config.time, config.durationMinutes, now);
+  const eventPhase = configReady
+    ? getWebinarPhase(config.date, config.time, config.durationMinutes, now)
+    : 'upcoming';
+  const eventNight = eventPhase === 'live';
+  const eventEnded = eventPhase === 'ended';
   const liveEnter = webinarLiveEnter(config.zoomLink, config.whatsappGroupUrl);
 
   const scrollToForm = (section = 'hero') => {
@@ -204,9 +214,9 @@ export function WebinarLanding() {
               <div className="inline-flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-1.5 rounded-full bg-white/[0.03] border border-[#C8A24C]/20 mb-8">
                 <span className={`w-2 h-2 rounded-full ${eventNight ? 'bg-emerald-400' : 'bg-[#C8A24C]'}`} aria-hidden />
                 <span className="text-[11px] text-white/70">
-                  {eventNight ? 'הערב החי עכשיו' : 'ערב חי'}, {config.date}, {config.time}
+                  {eventNight ? 'הערב החי עכשיו' : eventEnded ? WEBINAR_CTA_ENDED : 'ערב חי'}, {config.date}, {config.time}
                 </span>
-                {eventNight ? null : <WebinarCountdown date={config.date} time={config.time} />}
+                {eventNight || eventEnded ? null : <WebinarCountdown date={config.date} time={config.time} />}
               </div>
 
               <h1 className="text-4xl md:text-6xl xl:text-7xl font-heading tracking-tight leading-[1.15] mb-6">
@@ -225,7 +235,20 @@ export function WebinarLanding() {
               </p>
 
               <div className="flex flex-col items-center gap-3">
-                {eventNight ? (
+                {eventEnded ? (
+                  <>
+                    <p className="text-base text-[#F7E7B5] font-medium min-h-11 inline-flex items-center">
+                      {WEBINAR_CTA_ENDED}
+                    </p>
+                    <p className="text-sm text-white/45 font-light max-w-md">{WEBINAR_ENDED_NOTE}</p>
+                    <Link
+                      to="/"
+                      className="text-sm text-white/45 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
+                    >
+                      חזרה לאתר
+                    </Link>
+                  </>
+                ) : eventNight ? (
                   liveEnter.href ? (
                     <a
                       href={liveEnter.href}
@@ -250,7 +273,7 @@ export function WebinarLanding() {
                     {WEBINAR_CTA_PRIMARY}
                   </button>
                 )}
-                {eventNight ? (
+                {eventEnded ? null : eventNight ? (
                   <button
                     type="button"
                     onClick={() => scrollToForm('hero_unregistered')}
@@ -378,7 +401,9 @@ export function WebinarLanding() {
               </ul>
             </div>
           </div>
-          <WebinarSectionCta label={WEBINAR_CTA_FIT} section="fit" onClick={() => scrollToForm('fit')} />
+          {eventEnded ? null : (
+            <WebinarSectionCta label={WEBINAR_CTA_FIT} section="fit" onClick={() => scrollToForm('fit')} />
+          )}
         </div>
       </section>
 
@@ -431,14 +456,16 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <WebinarStickyCta
-        date={config.date}
-        time={config.time}
-        registrationCount={payload.registrationCount}
-        eventNight={eventNight}
-        zoomLink={config.zoomLink}
-        whatsappGroupUrl={config.whatsappGroupUrl}
-      />
+      {eventEnded ? null : (
+        <WebinarStickyCta
+          date={config.date}
+          time={config.time}
+          registrationCount={payload.registrationCount}
+          eventNight={eventNight}
+          zoomLink={config.zoomLink}
+          whatsappGroupUrl={config.whatsappGroupUrl}
+        />
+      )}
     </div>
   );
 }

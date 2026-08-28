@@ -33,10 +33,22 @@ function escapeHtml(value: string) {
     .replace(/"/g, '&quot;');
 }
 
+function thankYouUrl(registrationId: string) {
+  return `${appUrl()}/webinar/thank-you?id=${encodeURIComponent(registrationId)}`;
+}
+
+function enterUrl(config: WebinarConfig) {
+  const zoom = config.zoomLink.trim();
+  if (zoom) return { href: zoom, label: 'כניסה לערב החי' };
+  const whatsapp = config.whatsappGroupUrl.trim();
+  if (whatsapp) return { href: whatsapp, label: 'הקישור בוואטסאפ' };
+  return { href: '', label: '' };
+}
+
 function nextStepsHtml(config: WebinarConfig, registrationId: string) {
   const zoom = config.zoomLink.trim();
   const whatsapp = config.whatsappGroupUrl.trim();
-  const thankYou = `${appUrl()}/webinar/thank-you?id=${encodeURIComponent(registrationId)}`;
+  const thankYou = thankYouUrl(registrationId);
   return `
       <p style="margin:16px 0 8px"><strong>שלושה צעדים לפני הערב:</strong></p>
       <ol>
@@ -46,7 +58,7 @@ function nextStepsHtml(config: WebinarConfig, registrationId: string) {
             ? `<a href="${escapeHtml(whatsapp)}">קבוצת עדכונים שקטה בוואטסאפ</a>`
             : 'קבוצת וואטסאפ — הקישור יישלח לפני הערב'
         }</li>
-        <li>בחרו אדם אחד שעשוי להתאים להצעה שלכם</li>
+        <li>בחרו אדם אחד להצעה שלכם. שם, וואטסאפ, ומשפט אחד.</li>
       </ol>
       ${
         zoom
@@ -113,13 +125,13 @@ export async function sendWebinarConfirmationEmail(input: ConfirmationInput) {
 export async function sendWebinarPartialEmail(input: ConfirmationInput) {
   if (!isWebinarEmailEnabled()) return { sent: false, reason: 'disabled' };
   const config = getWebinarConfig();
-  const url = `${appUrl()}/webinar?resume=${encodeURIComponent(input.registrationId)}`;
-  const subject = `עוד רגע לסיום ההרשמה. ${config.title}`;
+  const url = thankYouUrl(input.registrationId);
+  const subject = `ההרשמה ממתינה לכם. ${config.title}`;
   const html = `
     <div dir="rtl" style="font-family:Arial,sans-serif;line-height:1.7;color:#111;max-width:560px">
       <p>שלום${input.fullName ? ` ${escapeHtml(input.fullName)}` : ''},</p>
-      <p>הפרטים שלכם נשמרו לוובינר Infinite Masterpiece. להשלמת ההרשמה:</p>
-      <p><a href="${escapeHtml(url)}">סיום הרשמה לוובינר</a></p>
+      <p>הפרטים שלכם נשמרו לוובינר Infinite Masterpiece. דף הצעדים שלכם: יומן, וואטסאפ, ואדם אחד.</p>
+      <p><a href="${escapeHtml(url)}">דף הצעדים שלכם</a></p>
       <p>${escapeHtml(config.date)}, ${escapeHtml(config.time)}, ${escapeHtml(config.location)}</p>
     </div>
   `;
@@ -131,15 +143,22 @@ export async function sendWebinarReminderEmail(input: ConfirmationInput, kind: '
   if (!isWebinarEmailEnabled()) return { sent: false, reason: 'disabled' };
   const config = getWebinarConfig();
   const subject = kind === '24h' ? `מחר: ${config.title}` : `עוד שעה: ${config.title}`;
+  const enter = enterUrl(config);
+  const thankYou = thankYouUrl(input.registrationId);
   const lead =
     kind === '24h'
       ? `תזכורת: הוובינר של Infinite Masterpiece מחר. ${escapeHtml(config.date)}, ${escapeHtml(config.time)}.`
       : `עוד שעה מתחילים. ${escapeHtml(config.date)}, ${escapeHtml(config.time)}.`;
+  const enterBlock =
+    kind === '1h' && enter.href
+      ? `<p style="margin:20px 0"><a href="${escapeHtml(enter.href)}" style="display:inline-block;background:#C8A24C;color:#111;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:600">${escapeHtml(enter.label)}</a></p>`
+      : '';
   const html = `
     <div dir="rtl" style="font-family:Arial,sans-serif;line-height:1.7;color:#111;max-width:560px">
       <p>שלום ${escapeHtml(input.fullName)},</p>
       <p>${lead}</p>
-      ${nextStepsHtml(config, input.registrationId)}
+      ${enterBlock}
+      ${kind === '24h' ? nextStepsHtml(config, input.registrationId) : `<p><a href="${escapeHtml(thankYou)}">דף הצעדים שלכם</a></p>`}
     </div>
   `;
   const result = await sendViaResend(input.email, subject, html);

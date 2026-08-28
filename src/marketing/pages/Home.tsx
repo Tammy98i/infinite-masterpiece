@@ -14,13 +14,16 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { EntryTrackCards } from '../components/EntryTrackCards';
-import { WEBINAR_CTA_HEADER } from '../../constants/webinarPage';
+import { WEBINAR_CTA_ENDED, WEBINAR_CTA_HEADER } from '../../constants/webinarPage';
+import { useWebinarPhase } from '../hooks/useWebinarPhase';
 
 const MotionDiv = motion.div;
 const MotionSection = motion.section;
 const MOTION = { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const };
 
 export function Home() {
+  const { phase } = useWebinarPhase();
+  const homeCta = phase === 'ended' ? WEBINAR_CTA_ENDED : WEBINAR_CTA_HEADER;
   return (
     <div className="w-full">
       {/* 1. HERO */}
@@ -64,7 +67,7 @@ export function Home() {
                   to="/webinar"
                   className="w-full sm:w-auto px-12 py-5 rounded-[22px] bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-lg font-bold transition-transform duration-500 hover:-translate-y-1 motion-reduce:hover:translate-y-0 flex items-center justify-center gap-3 group min-h-11"
                 >
-                  <span>{WEBINAR_CTA_HEADER}</span>
+                  <span>{homeCta}</span>
                   <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-500" />
                 </Link>
                 <a

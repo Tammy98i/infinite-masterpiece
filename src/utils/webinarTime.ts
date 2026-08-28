@@ -43,6 +43,19 @@ export function isWebinarEventWindow(date: string, time: string, durationMinutes
   return now >= dayStart.getTime() && now <= end;
 }
 
+export function getWebinarPhase(
+  date: string,
+  time: string,
+  durationMinutes: number,
+  now = Date.now()
+): 'upcoming' | 'live' | 'ended' {
+  if (isWebinarEventWindow(date, time, durationMinutes, now)) return 'live';
+  const start = parseIsraeliDateTime(date, time);
+  if (!start) return 'upcoming';
+  const end = start.getTime() + Math.max(durationMinutes, 1) * 60_000;
+  return now > end ? 'ended' : 'upcoming';
+}
+
 function formatGoogleUtc(d: Date) {
   const pad = (n: number) => String(n).padStart(2, '0');
   return `${d.getUTCFullYear()}${pad(d.getUTCMonth() + 1)}${pad(d.getUTCDate())}T${pad(d.getUTCHours())}${pad(d.getUTCMinutes())}00Z`;

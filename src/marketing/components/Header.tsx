@@ -5,7 +5,12 @@ import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { AccountMenu } from '../../components/AccountMenu';
 import { scrollToWebinarForm, trackWebinarCta } from '../../utils/analytics';
-import { WEBINAR_CTA_HEADER, WEBINAR_REGISTER_ID } from '../../constants/webinarPage';
+import {
+  WEBINAR_CTA_ENDED,
+  WEBINAR_CTA_HEADER,
+  WEBINAR_REGISTER_ID,
+} from '../../constants/webinarPage';
+import { useWebinarPhase } from '../hooks/useWebinarPhase';
 
 const WEBINAR_NAV = [
   { name: 'הצוות', to: '/webinar#hosts' },
@@ -22,6 +27,102 @@ export function Header() {
   const onJourney = location.pathname === '/journey';
   const onWebinarLanding = location.pathname === '/webinar';
   const onWebinar = location.pathname.startsWith('/webinar');
+  const { phase, liveEnter } = useWebinarPhase();
+
+  const headerCtaClass =
+    'px-5 py-3 rounded-full text-sm font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] hover:opacity-95 transition-opacity min-h-11 cursor-pointer';
+
+  const headerCta = () => {
+    if (phase === 'ended') {
+      if (onWebinarLanding) {
+        return (
+          <span className="px-5 py-3 text-sm text-white/50 min-h-11 inline-flex items-center">{WEBINAR_CTA_ENDED}</span>
+        );
+      }
+      return (
+        <Link to="/webinar" className="px-5 py-3 text-sm text-white/55 hover:text-[#F7E7B5] min-h-11 inline-flex items-center transition-colors duration-200">
+          {WEBINAR_CTA_ENDED}
+        </Link>
+      );
+    }
+    if (phase === 'live' && liveEnter.href) {
+      return (
+        <a
+          href={liveEnter.href}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => trackWebinarCta('header_enter')}
+          className={headerCtaClass}
+        >
+          {liveEnter.label}
+        </a>
+      );
+    }
+    if (onWebinarLanding) {
+      return (
+        <button type="button" onClick={goToWebinarForm} className={headerCtaClass}>
+          {WEBINAR_CTA_HEADER}
+        </button>
+      );
+    }
+    return (
+      <Link to={onWebinar ? `/webinar#${WEBINAR_REGISTER_ID}` : '/webinar'} className={headerCtaClass}>
+        {WEBINAR_CTA_HEADER}
+      </Link>
+    );
+  };
+
+  const mobileHeaderCta = () => {
+    const close = () => setMobileMenuOpen(false);
+    const mobileClass =
+      'block w-full text-center px-8 py-4 rounded-full text-base font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] min-h-11 cursor-pointer';
+    if (phase === 'ended') {
+      return onWebinar ? (
+        <p className="text-center text-white/50 text-sm min-h-11 inline-flex items-center justify-center w-full">
+          {WEBINAR_CTA_ENDED}
+        </p>
+      ) : (
+        <Link to="/webinar" onClick={close} className="block w-full text-center px-8 py-4 text-base text-white/55 min-h-11">
+          {WEBINAR_CTA_ENDED}
+        </Link>
+      );
+    }
+    if (phase === 'live' && liveEnter.href) {
+      return (
+        <a
+          href={liveEnter.href}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => {
+            close();
+            trackWebinarCta('header_enter');
+          }}
+          className={mobileClass}
+        >
+          {liveEnter.label}
+        </a>
+      );
+    }
+    if (onWebinar) {
+      return (
+        <button
+          type="button"
+          onClick={() => {
+            close();
+            goToWebinarForm();
+          }}
+          className={mobileClass}
+        >
+          {WEBINAR_CTA_HEADER}
+        </button>
+      );
+    }
+    return (
+      <Link to="/webinar" onClick={close} className={mobileClass}>
+        {WEBINAR_CTA_HEADER}
+      </Link>
+    );
+  };
 
   useEffect(() => {
     const handleScroll = () => {
@@ -103,22 +204,7 @@ export function Header() {
           </nav>
 
           <div className="hidden lg:flex items-center gap-3">
-            {onWebinarLanding ? (
-              <button
-                type="button"
-                onClick={goToWebinarForm}
-                className="px-5 py-3 rounded-full text-sm font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] hover:opacity-95 transition-opacity min-h-11 cursor-pointer"
-              >
-                {WEBINAR_CTA_HEADER}
-              </button>
-            ) : (
-              <Link
-                to={onWebinar ? `/webinar#${WEBINAR_REGISTER_ID}` : '/webinar'}
-                className="px-5 py-3 rounded-full text-sm font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] hover:opacity-95 transition-opacity min-h-11"
-              >
-                {WEBINAR_CTA_HEADER}
-              </Link>
-            )}
+            {headerCta()}
             {!onWebinar ? (
               <Link
                 to="/library"
@@ -171,35 +257,16 @@ export function Header() {
                 </Link>
               ))}
               <div className="pt-6 border-t border-white/[0.05] flex flex-col gap-4">
-                {onWebinar ? (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setMobileMenuOpen(false);
-                      goToWebinarForm();
-                    }}
-                    className="block w-full text-center px-8 py-4 rounded-full text-base font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] min-h-11 cursor-pointer"
+                {mobileHeaderCta()}
+                {!onWebinar ? (
+                  <Link
+                    to="/library"
+                    onClick={() => setMobileMenuOpen(false)}
+                    className="block w-full text-center px-8 py-3 text-sm text-white/50 hover:text-[#C8A24C] min-h-11"
                   >
-                    {WEBINAR_CTA_HEADER}
-                  </button>
-                ) : (
-                  <>
-                    <Link
-                      to="/webinar"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block w-full text-center px-8 py-4 rounded-full text-base font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] min-h-11"
-                    >
-                      {WEBINAR_CTA_HEADER}
-                    </Link>
-                    <Link
-                      to="/library"
-                      onClick={() => setMobileMenuOpen(false)}
-                      className="block w-full text-center px-8 py-3 text-sm text-white/50 hover:text-[#C8A24C] min-h-11"
-                    >
-                      כבר בפנים? כניסה לספרייה
-                    </Link>
-                  </>
-                )}
+                    כבר בפנים? כניסה לספרייה
+                  </Link>
+                ) : null}
               </div>
             </nav>
           </motion.div>
