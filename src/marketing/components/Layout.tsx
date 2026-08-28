@@ -21,7 +21,7 @@ export function Layout({ children }: LayoutProps) {
             height={1024}
             className="absolute inset-0 h-full w-full object-cover object-center"
           />
-          <div className="absolute inset-0 bg-[#010308]/50" />
+          <div className="absolute inset-0 bg-[#010308]/35" />
         </div>
       ) : (
         <>
