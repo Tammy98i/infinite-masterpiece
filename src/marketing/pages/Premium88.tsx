@@ -10,7 +10,7 @@ export function Premium88() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-[#010308] text-white selection:bg-[#C8A24C]/30">
+    <div className="min-h-screen text-white selection:bg-[#C8A24C]/30">
       <section className="relative pt-32 pb-16 lg:pt-40 lg:pb-20">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-6 font-semibold">

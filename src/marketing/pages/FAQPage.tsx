@@ -48,8 +48,7 @@ export function FAQPage() {
   return (
     <div className="min-h-screen relative pt-32 pb-48">
       {/* Background */}
-      <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518066000714-58c45f1a2c0a?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-[0.03] mix-blend-screen" />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#010308] via-transparent to-[#010308]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/25 via-transparent to-[#010308]/35" />
 
       <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         

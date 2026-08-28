@@ -46,7 +46,7 @@ export function FounderPage() {
   const founder = staticFounder || (instructor ? instructorToFounder(instructor) : undefined);
 
   if (!staticFounder && !loaded) {
-    return <div className="min-h-screen bg-[#010308]" />;
+    return <div className="min-h-screen" />;
   }
 
   if (!founder) {
@@ -56,7 +56,7 @@ export function FounderPage() {
   const paragraphs = founder.description.split(/\n\n+/).filter(Boolean);
 
   return (
-    <div className="min-h-screen bg-[#010308] text-white selection:bg-[#C8A24C]/30">
+    <div className="min-h-screen text-white selection:bg-[#C8A24C]/30">
       <section className="pt-28 pb-20 lg:pt-36 lg:pb-28">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link

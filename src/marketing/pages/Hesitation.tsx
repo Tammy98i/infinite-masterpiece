@@ -64,7 +64,7 @@ export function Hesitation() {
 
   return (
     <div className="min-h-screen relative pt-24 pb-32">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#010308] via-transparent to-[#010308]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/25 via-transparent to-[#010308]/35" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[40vw] h-[40vw] bg-[#C8A24C]/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6">

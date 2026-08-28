@@ -14,7 +14,7 @@ export function HesitationSuccess() {
 
   return (
     <div className="min-h-screen relative pt-32 pb-32 flex items-center justify-center">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#010308] via-transparent to-[#010308]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/25 via-transparent to-[#010308]/35" />
 
       <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 text-center">
         <motion.div

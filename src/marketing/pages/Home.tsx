@@ -28,10 +28,8 @@ export function Home() {
     <div className="w-full">
       {/* 1. HERO */}
       <section className="relative min-h-screen flex items-center pt-20 overflow-hidden">
-        <div className="absolute top-0 left-0 w-full lg:w-[45%] h-full z-0 lg:z-10 opacity-30 lg:opacity-100 pointer-events-none">
-          <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1419242902214-272b3f66ce7a?q=80&w=2564&auto=format&fit=crop')] bg-cover bg-center object-cover" />
-          <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#010308]/50 to-[#010308] hidden lg:block" />
-          <div className="absolute inset-0 bg-gradient-to-t from-[#010308] via-transparent to-[#010308]" />
+        <div className="absolute inset-0 pointer-events-none" aria-hidden>
+          <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/30 via-transparent to-[#010308]/40" />
         </div>
 
         <div className="relative z-20 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full flex justify-center">
@@ -189,11 +187,10 @@ export function Home() {
         whileInView={{ opacity: 1 }}
         viewport={{ once: true, margin: '-80px' }}
         transition={MOTION}
-        className="py-24 md:py-32 relative bg-[#010308]"
+        className="py-24 md:py-32 relative"
         id="infinite-library"
       >
-        <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518066000714-58c45f1a2c0a?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-[0.03] mix-blend-screen" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#010308] via-transparent to-[#010308]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#010308]/15 to-transparent pointer-events-none" />
 
         <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="mb-24">
