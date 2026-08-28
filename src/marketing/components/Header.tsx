@@ -5,6 +5,7 @@ import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { AccountMenu } from '../../components/AccountMenu';
 import { scrollToWebinarForm, trackWebinarCta } from '../../utils/analytics';
+import { WEBINAR_CTA_HEADER } from '../../constants/webinarPage';
 
 const WEBINAR_NAV = [
   { name: 'על היצירה', to: '/webinar#about-creation' },
@@ -108,7 +109,7 @@ export function Header() {
                 onClick={goToWebinarForm}
                 className="px-5 py-3 rounded-full text-sm font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] hover:opacity-95 transition-opacity min-h-11 cursor-pointer"
               >
-                שריינו מקום בוובינר
+                {WEBINAR_CTA_HEADER}
               </button>
             ) : (
               <Link
@@ -179,7 +180,7 @@ export function Header() {
                     }}
                     className="block w-full text-center px-8 py-4 rounded-full text-base font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] min-h-11 cursor-pointer"
                   >
-                    שריינו מקום בוובינר
+                    {WEBINAR_CTA_HEADER}
                   </button>
                 ) : (
                   <Link

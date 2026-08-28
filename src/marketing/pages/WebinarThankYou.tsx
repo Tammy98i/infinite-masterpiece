@@ -66,7 +66,7 @@ export function WebinarThankYou() {
             {isWaitlist ? 'נרשמת לרשימת המתנה' : 'נרשמת לוובינר'}
           </p>
           <h1 className="text-3xl md:text-4xl font-light text-white mb-4">
-            {name ? `${name}, ` : ''}נרשמת לוובינר. עכשיו מתחיל החלק החשוב.
+            {name ? `${name}, ` : ''}נרשמת. עכשיו שני צעדים: וואטסאפ ויומן.
           </h1>
           <p className="text-white/55 font-light leading-relaxed mb-6">
             {isWaitlist

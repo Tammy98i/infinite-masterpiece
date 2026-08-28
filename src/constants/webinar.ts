@@ -1,10 +1,10 @@
 export const WEBINAR_BLOCKER_OPTIONS = ['הצעה', 'מכירה', 'שיווק', 'תפעול', 'מדידה'] as const;
 
 export const WEBINAR_INTEREST_OPTIONS = [
-  'יש לי כישרון — עדיין אין עסק',
+  'יש לי כישרון. עדיין אין עסק',
   'כבר מוכר/ת מדי פעם',
-  'יש עסק פעיל — רוצה יציבות',
-  'יש עסק יציב — רוצה סקייל',
+  'יש עסק פעיל. רוצה יציבות',
+  'יש עסק יציב. רוצה סקייל',
   'אני כאן כדי ללמוד מכירות',
 ] as const;
 
@@ -54,7 +54,7 @@ export type WebinarPublicPayload = {
 
 export const DEFAULT_WEBINAR_SOCIAL_PROOF: WebinarSocialProofQuote[] = [
   {
-    quote: 'אם הערב ייגמר עם פעולה אחת אמיתית — זה כבר שווה לי להגיע.',
+    quote: 'אם הערב ייגמר עם פעולה אחת אמיתית, זה כבר שווה לי להגיע.',
     author: 'מיכל',
     role: 'מעצבת תכשיטים',
   },
@@ -72,7 +72,7 @@ export const DEFAULT_WEBINAR_SOCIAL_PROOF: WebinarSocialProofQuote[] = [
 
 export const DEFAULT_WEBINAR_CONFIG: WebinarConfig = {
   enabled: true,
-  title: 'וובינר פתיחה — Infinite Masterpiece',
+  title: 'וובינר פתיחה. Infinite Masterpiece',
   date: '26.05.2026',
   time: '20:00',
   durationMinutes: 150,
@@ -85,15 +85,15 @@ export const DEFAULT_WEBINAR_CONFIG: WebinarConfig = {
   leaderPrimaryName: 'גל אברמוביץ׳',
   leaderPrimaryTitle: 'Founder / Vision / Strategy / Teaching / Sales',
   leaderPrimaryBio:
-    'מוביל את החזון, השפה, השיטה והמסגרת העסקית של Infinite Masterpiece — מהרעיון הגדול ועד הפיילוט הראשון.',
+    'מוביל את החזון, השפה, השיטה והמסגרת העסקית של Infinite Masterpiece. מהרעיון הגדול ועד הפיילוט הראשון.',
   leaderSecondaryName: 'תמי אליאן',
   leaderSecondaryTitle: 'CTO בפועל / אתרים / פלטפורמות / Mobile / Funnel',
   leaderSecondaryBio:
     'מובילה את הצד הטכנולוגי והמוצרי של המיזם: אתר, VOD, דאשבורדים, משפכים, מדידה ואפליקציה.',
-  heroHeadline: 'יש לך יצירה. עכשיו בונים לה מערכת הכנסה.',
-  heroHeadlineVariantB: 'יש לך יצירה. עכשיו בונים לה מערכת הכנסה.',
+  heroHeadline: 'הכישרון כבר יש. הערב שולחים פעולה אמיתית.',
+  heroHeadlineVariantB: 'הכישרון כבר יש. הערב שולחים פעולה אמיתית.',
   heroSubheadline:
-    'וובינר השקה חי של Infinite Masterpiece ליוצרים, אמנים ואנשים יצירתיים שרוצים לסגור את הפער בין כישרון להכנסה — דרך שיעור מכירות הוליסטי, ביצוע בזמן אמת והצצה לפיילוט הראשון.',
+    'ערב חי ליוצרים שרוצים לסגור את הפער בין כישרון להכנסה. שיעור מכירות, משימת ביצוע בזמן אמת, והזמנה לפיילוט של 33 ימים. בלי כרטיס אשראי.',
   abTestEnabled: false,
   showRegistrationCount: true,
   maxSpots: 0,
@@ -104,7 +104,7 @@ export const DEFAULT_WEBINAR_CONFIG: WebinarConfig = {
 export const WEBINAR_FAQ = [
   {
     q: 'האם הערב בתשלום?',
-    a: 'לא. ההרשמה לוובינר ללא עלות, ובלי כרטיס אשראי. מסלולי הפיילוט מוצגים בסוף — ורק למי שמתאים ורוצה להמשיך.',
+    a: 'לא. ההרשמה לוובינר ללא עלות, ובלי כרטיס אשראי. מסלולי הפיילוט מוצגים בסוף. רק למי שמתאים ורוצה להמשיך.',
   },
   {
     q: 'כמה זמן זה נמשך?',
@@ -128,15 +128,15 @@ export const WEBINAR_FAQ = [
   },
   {
     q: 'האם חייבים להגיע בלייב?',
-    a: 'מומלץ מאוד, כי חלק מרכזי מהוובינר הוא משימת ביצוע חיה.',
+    a: 'כן. חלק מרכזי מהערב הוא משימת ביצוע חיה. בלי זה מפספסים את הליבה.',
   },
   {
     q: 'האם תהיה הקלטה?',
-    a: 'הוובינר מיועד להשתתפות חיה. אם תישלח הקלטה לנרשמים — נעדכן מראש.',
+    a: 'הוובינר מיועד להשתתפות חיה. אם תישלח הקלטה לנרשמים, נעדכן מראש.',
   },
   {
     q: 'למי זה מתאים?',
-    a: 'ליוצרים, אמנים, מומחים ובעלי עסקים יצירתיים שרוצים להפוך כישרון, ידע או יצירה למערכת הכנסה.',
+    a: 'ליוצרים, אמנים, מומחים ובעלי עסקים יצירתיים שרוצים להפוך כישרון, ידע או יצירה למערכת הכנסה. אם יש לך ערך וחסר לך צעד ברור, זה הערב.',
   },
   {
     q: 'האם מובטחת הכנסה?',

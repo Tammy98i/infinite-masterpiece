@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { trackWebinarCta, scrollToWebinarForm } from '../../utils/analytics';
 import { WebinarCountdown } from './WebinarCountdown';
+import { WEBINAR_CTA_PRIMARY, WEBINAR_CTA_SHORT } from '../../constants/webinarPage';
 
 type Props = {
   date: string;
@@ -52,8 +53,8 @@ export function WebinarStickyCta({ date, time, registrationCount = 0 }: Props) {
           }}
           className="shrink-0 sm:min-w-[240px] text-center py-3 px-5 sm:px-6 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-sm font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
         >
-          <span className="sm:hidden">שריינו מקום</span>
-          <span className="hidden sm:inline">שריינו לי מקום בוובינר</span>
+          <span className="sm:hidden">{WEBINAR_CTA_SHORT}</span>
+          <span className="hidden sm:inline">{WEBINAR_CTA_PRIMARY}</span>
         </button>
       </div>
     </div>

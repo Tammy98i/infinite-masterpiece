@@ -28,6 +28,10 @@ import {
 import {
   WEBINAR_AUDIENCE_LABEL,
   WEBINAR_BOTTLENECKS,
+  WEBINAR_CTA_FAQ,
+  WEBINAR_CTA_FIT,
+  WEBINAR_CTA_FIT_LINK,
+  WEBINAR_CTA_PRIMARY,
   WEBINAR_DIFFERENCE_POINTS,
   WEBINAR_ECOSYSTEM,
   WEBINAR_FIT_NO,
@@ -228,7 +232,7 @@ export function WebinarLanding() {
                   onClick={() => scrollToForm('hero')}
                   className="hidden xl:inline-flex px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
                 >
-                  שריינו לי מקום בוובינר
+                  {WEBINAR_CTA_PRIMARY}
                 </button>
                 <a
                   href="#webinar-fit"
@@ -238,7 +242,7 @@ export function WebinarLanding() {
                   }}
                   className="text-sm text-white/45 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
                 >
-                  רוצה להבין אם זה מתאים לי?
+                  {WEBINAR_CTA_FIT_LINK}
                 </a>
               </div>
             </motion.div>
@@ -249,9 +253,9 @@ export function WebinarLanding() {
       <section id="why-different" className="py-20 md:py-28 border-t border-white/[0.04]">
         <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
           <SectionLabel>למה זה שונה</SectionLabel>
-          <SectionTitle>הערב הזה הוא ניסוי חי.</SectionTitle>
+          <SectionTitle>הערב הזה הוא ניסוי חי. לא עוד שידור השראה.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-4">
-            אנחנו לא רק מציגים מוצר. אנחנו בונים אותו מולכם, מלמדים, מבצעים ומקשיבים.
+            לא מציגים מוצר מהצד. בונים אותו מולכם, מלמדים, מבצעים ומקשיבים. בסוף הערב יש פעולה שנשלחה, לא רעיון במחברת.
           </p>
           <p className="text-lg text-[#F7E7B5] font-medium leading-relaxed max-w-3xl mb-10">{WEBINAR_HOLDING_LINE}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -262,7 +266,7 @@ export function WebinarLanding() {
               </GoldCard>
             ))}
           </div>
-          <WebinarSectionCta label="שריינו לי מקום בוובינר" section="difference" onClick={() => scrollToForm('difference')} />
+          <WebinarSectionCta label={WEBINAR_CTA_PRIMARY} section="difference" onClick={() => scrollToForm('difference')} />
         </div>
       </section>
 
@@ -285,8 +289,8 @@ export function WebinarLanding() {
             <span className="text-white/40">הבעיה היא שאין סביבו מערכת.</span>
           </SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">
-            הרבה יוצרים יודעים ליצור, ללמד, להדריך, להופיע, לעצב, לטפל או להעביר ערך. אבל כשצריך להפוך את הערך הזה
-            להצעה, שיחה, מכירה, תמחור, מערכת שיווק ופרנסה יציבה — שם הרבה אנשים נתקעים.
+            הרבה יוצרים יודעים ליצור, ללמד, להדריך, להופיע, לעצב, לטפל או להעביר ערך. כשצריך להפוך את הערך הזה
+            להצעה, שיחה, מכירה, תמחור ומערכת שיווק, שם הרבה אנשים נתקעים. הערב הזה נבנה בדיוק בשביל הנקודה הזו.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
             {WEBINAR_BOTTLENECKS.map((item, index) => {
@@ -308,7 +312,7 @@ export function WebinarLanding() {
           <SectionLabel>למה עכשיו</SectionLabel>
           <SectionTitle>היצירה היא כבר שוק. השאלה היא אם יש לך מערכת.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-4">
-            הכלכלה היצירתית גדלה, הביקוש לתוכן, ידע, מדיה, עיצוב, חוויה, יצירה וטכנולוגיה רק מתרחב — אבל ליוצר הבודד
+            הכלכלה היצירתית גדלה. הביקוש לתוכן, ידע, מדיה, עיצוב, חוויה, יצירה וטכנולוגיה רק מתרחב. ליוצר הבודד
             אין אוטומטית מנגנון שממיר את הביקוש הזה להכנסה יציבה.
           </p>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">
@@ -337,7 +341,7 @@ export function WebinarLanding() {
           <SectionLabel>150 דקות</SectionLabel>
           <SectionTitle>150 דקות. מסע אחד שלם.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-8">
-            הוובינר בנוי כמסע חי: שיעור מכירות, משימת ביצוע, צוות, שקיפות והזמנה לפיילוט.
+            הוובינר בנוי כמסע חי: שיעור מכירות, משימת ביצוע, צוות, שקיפות והזמנה לפיילוט. לא יושבים ומקשיבים. מבצעים.
           </p>
           <ol className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
             {WEBINAR_TIMELINE.slice(0, 4).map((item, index) => (
@@ -359,7 +363,7 @@ export function WebinarLanding() {
               </li>
             ))}
           </ul>
-          <WebinarSectionCta label="שריינו לי מקום בוובינר" section="timeline" onClick={() => scrollToForm('timeline')} />
+          <WebinarSectionCta label={WEBINAR_CTA_PRIMARY} section="timeline" onClick={() => scrollToForm('timeline')} />
         </div>
       </section>
 
@@ -368,8 +372,8 @@ export function WebinarLanding() {
           <SectionLabel>שיעור המכירות</SectionLabel>
           <SectionTitle>מכירות בלי לאבד את עצמך.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">
-            בוובינר נלמד מכירות בגישה הוליסטית ואתית: לא לחץ, לא מניפולציה, לא הבטחות שווא — אלא אבחון, התאמה, בהירות,
-            ערך וצעד הבא.
+            בוובינר נלמד מכירות בגישה הוליסטית ואתית. לא לחץ, לא מניפולציה, לא הבטחות שווא. אבחון, התאמה, בהירות,
+            ערך וצעד הבא שאפשר לקחת הערב.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
             {WEBINAR_SALES_PRINCIPLES.slice(0, 4).map((item) => (
@@ -393,7 +397,7 @@ export function WebinarLanding() {
           <SectionLabel>משימת ביצוע</SectionLabel>
           <SectionTitle>לא באים רק ללמוד. באים לבצע.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-4">
-            במהלך הוובינר תהיה משימת ביצוע חיה: תנסחו הצעה, תבחרו אדם אחד מתאים, תשלחו פעולה אמיתית — ותתעדו מה קרה.
+            במהלך הוובינר תהיה משימת ביצוע חיה. תנסחו הצעה, תבחרו אדם אחד מתאים, תשלחו פעולה אמיתית, ותתעדו מה קרה.
           </p>
           <p className="text-white/70 font-medium mb-10">לא טיוטה יפה. לא מחשבה לעתיד. אות אמיתי שנשלח לעולם.</p>
           <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -441,7 +445,7 @@ export function WebinarLanding() {
               </ul>
             </div>
           </div>
-          <WebinarSectionCta label="כן, זה מתאים לי — הרשמה" section="fit" onClick={() => scrollToForm('fit')} />
+          <WebinarSectionCta label={WEBINAR_CTA_FIT} section="fit" onClick={() => scrollToForm('fit')} />
         </div>
       </section>
 
@@ -450,7 +454,7 @@ export function WebinarLanding() {
           <SectionLabel>הצוות</SectionLabel>
           <SectionTitle>הצוות אינו תפאורה. הוא המערכת.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-12">
-            גל, תמי, גלב ו־20 שותפים בונים יחד את האקו־סיסטם — שיווק, תוכן, קהילה, פרויקט, מכירות, טכנולוגיה ושירות.
+            גל, תמי, גלב ו־20 שותפים בונים יחד את האקו־סיסטם. שיווק, תוכן, קהילה, פרויקט, מכירות, טכנולוגיה ושירות.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {[
@@ -506,7 +510,7 @@ export function WebinarLanding() {
           <SectionTitle>לא קורס. אקו־סיסטם.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">
             Infinite Masterpiece היא מערכת שנבנית כדי לעזור ליוצרים להפוך כישרון למערכת עסקית. היא מחברת בין שידורי־על,
-            קהילה, Pods, Captains, ספריית אינסוף, משימות, מדידה, נבחרת 88 ופלטפורמת VOD — כדי שהמשתתפים לא רק ידעו יותר,
+            קהילה, Pods, Captains, ספריית אינסוף, משימות, מדידה, נבחרת 88 ופלטפורמת VOD. כדי שהמשתתפים לא רק ידעו יותר,
             אלא יעשו יותר.
           </p>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -529,7 +533,7 @@ export function WebinarLanding() {
           <SectionLabel>הפיילוט</SectionLabel>
           <SectionTitle>הפיילוט הראשון: 33 ימים של ניסוי, למידה וביצוע.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">
-            המטרה של הפיילוט אינה “להוכיח שאנחנו צודקים”. המטרה היא לגלות מה עובד, מה נשבר, מה צריך לתקן — ולבנות Proof
+            המטרה של הפיילוט אינה “להוכיח שאנחנו צודקים”. המטרה היא לגלות מה עובד, מה נשבר, מה צריך לתקן, ולבנות Proof
             אמיתי לפני הסקייל.
           </p>
           <ol className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-8">
@@ -553,9 +557,9 @@ export function WebinarLanding() {
       <section id="transparency" className="py-20 md:py-28 bg-white/[0.01] border-t border-white/[0.04]">
         <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
           <SectionLabel>שקיפות</SectionLabel>
-          <SectionTitle>אין אותיות קטנות — הכול בפרצוף.</SectionTitle>
+          <SectionTitle>אין אותיות קטנות. הכול בפרצוף.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">
-            בוובינר נציג גם את עקרונות האחריות, הביטולים, הפרטיות, התקנון וההחזרים — בשפה שאפשר להבין. המטרה היא לבנות
+            בוובינר נציג גם את עקרונות האחריות, הביטולים, הפרטיות, התקנון וההחזרים, בשפה שאפשר להבין. המטרה היא לבנות
             חברה שאנשים גאים לקנות ממנה: שקופה, אחראית, ישרה ומדויקת.
           </p>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -574,7 +578,7 @@ export function WebinarLanding() {
           <SectionLabel>הצטרפות לפיילוט</SectionLabel>
           <SectionTitle>שני מסלולי כניסה לפיילוט. אותו יעד. שתי רמות מחויבות.</SectionTitle>
           <p className="text-sm text-[#F7E7B5]/80 font-light leading-relaxed max-w-3xl mb-8">
-            לא נדרש הערב. בסוף הוובינר תהיה הזמנה להיכנס לפיילוט — רק למי שמתאים ורוצה להמשיך.
+            לא נדרש הערב. בסוף הוובינר תהיה הזמנה להיכנס לפיילוט. רק למי שמתאים ורוצה להמשיך.
           </p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <article className="rounded-3xl border border-[#C8A24C]/40 bg-[#C8A24C]/[0.07] p-6 md:p-8 flex flex-col">
@@ -619,7 +623,7 @@ export function WebinarLanding() {
               <FaqItem key={item.q} q={item.q} a={item.a} />
             ))}
           </div>
-          <WebinarSectionCta label="נשארה שאלה? הרשמו ונענה בלייב" section="faq" onClick={() => scrollToForm('faq')} />
+          <WebinarSectionCta label={WEBINAR_CTA_FAQ} section="faq" onClick={() => scrollToForm('faq')} />
         </div>
       </section>
 
@@ -632,13 +636,13 @@ export function WebinarLanding() {
           <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4">
             זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.
           </p>
-          <p className="text-sm text-[#C8A24C] font-light mb-8">מחכים לך בוובינר — גל, תמי וגלב.</p>
+          <p className="text-sm text-[#C8A24C] font-light mb-8">מחכים לך בוובינר. גל, תמי וגלב.</p>
           <button
             type="button"
             onClick={() => scrollToForm('bottom')}
             className="w-full sm:w-auto px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
           >
-            שריינו לי מקום בוובינר
+            {WEBINAR_CTA_PRIMARY}
           </button>
           <div className="mt-4">
             <WebinarTrustStrip config={config} />

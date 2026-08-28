@@ -263,7 +263,7 @@ export function WebinarRegistrationForm({
             {isWaitlist ? 'רשימת המתנה' : 'הרשמה לוובינר · שלב 1 מתוך 2'}
           </p>
           <h2 className="text-xl font-light text-white mb-1">
-            {isWaitlist ? 'הצטרפ/י לרשימת המתנה' : 'שריינו מקום לוובינר ההשקה'}
+            {isWaitlist ? 'הצטרפ/י לרשימת המתנה' : 'המקום נשמר ב־20 שניות'}
           </h2>
           <WebinarUrgencyStrip
             config={config}
@@ -346,7 +346,7 @@ export function WebinarRegistrationForm({
         disabled={submitting || !config.enabled}
         className="w-full py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-sm font-semibold min-h-11 cursor-pointer hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-200"
       >
-        {submitting ? 'שולח…' : isWaitlist ? 'הצטרפות לרשימת המתנה' : 'כן, אני רוצה מקום בוובינר'}
+        {submitting ? 'שולח…' : isWaitlist ? 'הצטרפות לרשימת המתנה' : 'כן. אני מגיע/ה לערב החי'}
       </button>
     </form>
   );

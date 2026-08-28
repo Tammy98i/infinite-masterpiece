@@ -86,7 +86,7 @@ export function WebinarExitIntent({ enabled = true }: Props) {
     <div className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="webinar-exit-title">
       <div className="w-full max-w-md rounded-3xl border border-[#C8A24C]/30 bg-[#010308] p-6 text-right shadow-2xl">
         <h2 id="webinar-exit-title" className="text-xl text-white font-light mb-2">
-          לפני שיוצאים — השאירו אימייל
+          לפני שיוצאים. השאירו אימייל.
         </h2>
         <p className="text-sm text-white/50 font-light mb-4">
           נשמור את הכתובת ונעביר אתכם להשלמת הרשמה. בלי כרטיס אשראי.
@@ -115,7 +115,7 @@ export function WebinarExitIntent({ enabled = true }: Props) {
             disabled={submitting}
             className="w-full py-3 rounded-full bg-[#C8A24C] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-200"
           >
-            {submitting ? 'שומר…' : 'המשך להרשמה'}
+            {submitting ? 'שומר…' : 'כן. משאיר/ה אימייל וממשיך/ה'}
           </button>
         </form>
         <button type="button" onClick={() => setOpen(false)} className="mt-4 text-xs text-white/40 hover:text-white cursor-pointer min-h-11">

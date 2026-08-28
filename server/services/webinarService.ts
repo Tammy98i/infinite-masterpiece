@@ -55,15 +55,20 @@ export function seedWebinarConfigIfMissing() {
     next.location = DEFAULT_WEBINAR_CONFIG.location;
     changed = true;
   }
-  if (current.heroSubheadline.includes('וובינר פתיחה ליוצרים')) {
+  if (current.heroHeadline === 'יש לך יצירה. עכשיו בונים לה מערכת הכנסה.' || current.heroHeadline.includes('עכשיו בונים לה מערכת')) {
+    next.heroHeadline = DEFAULT_WEBINAR_CONFIG.heroHeadline;
+    next.heroHeadlineVariantB = DEFAULT_WEBINAR_CONFIG.heroHeadlineVariantB;
     next.heroSubheadline = DEFAULT_WEBINAR_CONFIG.heroSubheadline;
+    next.title = DEFAULT_WEBINAR_CONFIG.title;
+    next.leaderPrimaryBio = DEFAULT_WEBINAR_CONFIG.leaderPrimaryBio;
+    next.socialProofQuotes = DEFAULT_WEBINAR_CONFIG.socialProofQuotes;
     changed = true;
   }
   if (current.spotsLabel === 'מקומות מוגבלים' && current.maxSpots === 0) {
     next.spotsLabel = DEFAULT_WEBINAR_CONFIG.spotsLabel;
     changed = true;
   }
-  if (current.socialProofQuotes.some((item) => item.author.includes('יוצר/ת') || item.author === 'מאמן/ת' || item.quote.includes('בלי לחכות לעוד קורס') || item.quote.includes('שינתה לי את הראש'))) {
+  if (current.socialProofQuotes.some((item) => item.author.includes('יוצר/ת') || item.author === 'מאמן/ת' || item.quote.includes('בלי לחכות לעוד קורס') || item.quote.includes('שינתה לי את הראש') || item.quote.includes('—'))) {
     next.socialProofQuotes = DEFAULT_WEBINAR_CONFIG.socialProofQuotes;
     changed = true;
   }
