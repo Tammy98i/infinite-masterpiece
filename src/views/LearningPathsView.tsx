@@ -7,7 +7,7 @@ export const LearningPathsView: React.FC = () => {
   const { learningPaths, courses, setView } = useApp();
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-28 pb-24 px-4 sm:px-8 max-w-7xl mx-auto text-right">
+    <div className="min-h-screen text-white pt-28 pb-24 px-4 sm:px-8 max-w-7xl mx-auto text-right">
       
       <div className="text-center max-w-3xl mx-auto mb-16">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/20 text-primary-light text-xs font-black uppercase mb-3">

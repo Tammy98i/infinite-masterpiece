@@ -47,7 +47,7 @@ export const SearchView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto">
+    <div className="min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto">
       <div className="max-w-3xl mx-auto text-center mb-10">
         <h1 className="text-3xl sm:text-4xl font-heading font-semibold mb-6 text-white">חיפוש בספרייה</h1>
 

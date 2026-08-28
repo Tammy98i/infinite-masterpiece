@@ -7,6 +7,7 @@ import { OnboardingTriggers } from './components/onboarding/OnboardingTriggers';
 import { PaywallProvider } from './context/PaywallContext';
 import { PaywallTriggers } from './components/PaywallTriggers';
 import { SITE_TAGLINE } from './constants/brand';
+import { SkyBackdrop } from './components/SkyBackdrop';
 
 import { HomeView } from './views/HomeView';
 import { CategoryView } from './views/CategoryView';
@@ -97,7 +98,8 @@ export const VodApp: React.FC = () => {
   return (
     <PaywallProvider>
     <PaywallTriggers />
-    <div className="vod-app flex flex-col min-h-screen bg-[#050505] text-white">
+    <div className={`vod-app flex flex-col min-h-screen relative text-white ${currentView === 'watch' || currentView === 'admin' || currentView === 'lecturer' ? 'bg-[#050505]' : 'sky-readable bg-[#010308]'}`}>
+      {currentView !== 'watch' && currentView !== 'admin' && currentView !== 'lecturer' ? <SkyBackdrop /> : null}
       {currentView !== 'watch' && (
         <a href="#library-main" className="skip-link">
           דילוג לתוכן הראשי
@@ -105,12 +107,12 @@ export const VodApp: React.FC = () => {
       )}
       {currentView !== 'watch' && currentView !== 'admin' && currentView !== 'lecturer' && <Navbar />}
 
-      <main id="library-main" key={currentView} className="flex-grow page-fade" tabIndex={-1}>
+      <main id="library-main" key={currentView} className="relative z-10 flex-grow page-fade" tabIndex={-1}>
         {renderView()}
       </main>
 
       {currentView !== 'watch' && (
-        <footer className="border-t border-white/10 bg-black py-6 px-4 sm:px-8 text-right select-none" role="contentinfo" aria-label="תחתית הספרייה">
+        <footer className="relative z-10 border-t border-white/10 bg-[#010308]/75 backdrop-blur-md py-6 px-4 sm:px-8 text-right select-none" role="contentinfo" aria-label="תחתית הספרייה">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-5 text-sm text-zinc-400">
             <div>
               <p className="text-white/80 mb-1 text-sm">Infinite Masterpiece</p>

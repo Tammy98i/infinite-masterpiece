@@ -91,7 +91,7 @@ export const HomeView: React.FC = () => {
 
   if (catalogStatus === 'error' && courses.length === 0) {
     return (
-      <div className="min-h-screen bg-[#050505] text-white pt-32 px-4 text-center">
+      <div className="min-h-screen text-white pt-32 px-4 text-center">
         <h1 className="text-2xl font-semibold mb-3">לא הצלחנו לטעון את הספרייה</h1>
         <p className="text-white/50 mb-8">נסו שוב, או חזרו לאתר הראשי.</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
@@ -111,7 +111,7 @@ export const HomeView: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white overflow-x-hidden pb-28">
+    <div className="min-h-screen text-white overflow-x-hidden pb-28">
       {heroCourse ? (
         <HeroBanner
           course={heroCourse}

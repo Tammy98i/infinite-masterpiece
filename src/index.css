@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./styles/typography.css";
+@import "./styles/sky-readable.css";
 
 @theme {
   --color-primary: #c9a227;

@@ -5,7 +5,7 @@ export const InstructorsView: React.FC = () => {
   const { instructors, courses, setView } = useApp();
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-28 pb-24 px-4 sm:px-8 max-w-5xl mx-auto text-right">
+    <div className="min-h-screen text-white pt-28 pb-24 px-4 sm:px-8 max-w-5xl mx-auto text-right">
       <h1 className="text-3xl sm:text-4xl font-semibold mb-3">מרצים</h1>
       <p className="text-sm text-white/45 font-light mb-12">בחרו מרצה כדי לראות את ההרצאות שלו בספרייה.</p>
 

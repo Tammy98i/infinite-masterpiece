@@ -374,7 +374,7 @@ export const CourseDetailView: React.FC = () => {
   if (!course) {
     if (catalogStatus === 'loading') {
       return (
-        <div className="min-h-screen bg-[#050505] text-white pt-28 px-4 sm:px-8 max-w-[1360px] mx-auto animate-pulse">
+        <div className="min-h-screen text-white pt-28 px-4 sm:px-8 max-w-[1360px] mx-auto animate-pulse">
           <div className="h-4 w-48 bg-white/10 rounded mb-8" />
           <div className="h-10 w-2/3 bg-white/10 rounded mb-4" />
           <div className="aspect-video bg-white/10 rounded-2xl" />
@@ -382,7 +382,7 @@ export const CourseDetailView: React.FC = () => {
       );
     }
     return (
-      <div className="min-h-screen bg-[#050505] text-white pt-28 px-4 text-center">
+      <div className="min-h-screen text-white pt-28 px-4 text-center">
         <h1 className="text-2xl font-semibold mb-4">הקורס לא נמצא</h1>
         <button
           type="button"
@@ -398,7 +398,7 @@ export const CourseDetailView: React.FC = () => {
   const totalDuration = course.episodes.reduce((s, ep) => s + ep.duration, 0);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-24 pb-16">
+    <div className="min-h-screen text-white pt-24 pb-16">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-8 text-right">
         {/* Breadcrumb */}
         <nav className="mb-8 text-sm text-white/45" aria-label="ניווט משני">

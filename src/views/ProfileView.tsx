@@ -22,7 +22,7 @@ export const ProfileView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-24 pb-28">
+    <div className="min-h-screen text-white pt-24 pb-28">
       <div className="max-w-3xl mx-auto px-4 sm:px-8 text-right">
         <button
           type="button"

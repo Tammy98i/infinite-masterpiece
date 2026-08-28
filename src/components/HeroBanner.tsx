@@ -75,8 +75,8 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           decoding="async"
           className="w-full h-full object-cover object-center scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#050505] via-[#050505]/45 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-l from-[#050505]/90 via-[#050505]/35 to-transparent w-full md:w-[65%] ms-auto" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#010308] via-[#010308]/50 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-l from-[#010308]/90 via-[#010308]/40 to-transparent w-full md:w-[65%] ms-auto" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-8 w-full z-10 text-right md:max-w-2xl md:ms-0 md:me-auto">

@@ -102,7 +102,7 @@ export const Navbar: React.FC = () => {
                 className={`transition-colors py-2 min-h-11 border-b-2 ${
                   currentView === 'home'
                     ? 'text-white border-[#C8A24C]'
-                    : 'text-white/60 hover:text-white border-transparent'
+                    : 'text-white/85 hover:text-white border-transparent'
                 }`}
               >
                 ספרייה
@@ -113,7 +113,7 @@ export const Navbar: React.FC = () => {
                 className={`transition-colors py-2 min-h-11 border-b-2 ${
                   currentView === 'mylist'
                     ? 'text-white border-[#C8A24C]'
-                    : 'text-white/60 hover:text-white border-transparent'
+                    : 'text-white/85 hover:text-white border-transparent'
                 }`}
               >
                 הרשימה
@@ -124,7 +124,7 @@ export const Navbar: React.FC = () => {
                 className={`transition-colors py-2 min-h-11 border-b-2 ${
                   currentView === 'history'
                     ? 'text-white border-[#C8A24C]'
-                    : 'text-white/60 hover:text-white border-transparent'
+                    : 'text-white/85 hover:text-white border-transparent'
                 }`}
               >
                 היסטוריה
@@ -135,7 +135,7 @@ export const Navbar: React.FC = () => {
                 className={`transition-colors py-2 min-h-11 border-b-2 ${
                   currentView === 'shorts'
                     ? 'text-white border-[#C8A24C]'
-                    : 'text-white/60 hover:text-white border-transparent'
+                    : 'text-white/85 hover:text-white border-transparent'
                 }`}
               >
                 10 דק׳

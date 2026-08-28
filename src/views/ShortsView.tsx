@@ -10,7 +10,7 @@ export const ShortsView: React.FC = () => {
   const shortCourses = courses.filter((c) => c.isShort);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto text-right">
+    <div className="min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto text-right">
       <div className="rounded-3xl p-8 mb-10 border border-white/10 bg-white/[0.03] relative overflow-hidden">
         <div className="flex items-center gap-2 text-[#C8A24C] text-xs font-semibold mb-2">
           <Zap className="w-4 h-4" />

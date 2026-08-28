@@ -30,7 +30,7 @@ export const CategoryView: React.FC = () => {
   const filteredCourses = filterCatalogCourses(baseCourses, user, activeFilter, selectedInstructor);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-28 pb-20 px-4 sm:px-8 max-w-7xl mx-auto">
+    <div className="min-h-screen text-white pt-28 pb-20 px-4 sm:px-8 max-w-7xl mx-auto">
       <div
         className="rounded-3xl p-8 mb-10 relative overflow-hidden text-right border border-white/10"
         style={
