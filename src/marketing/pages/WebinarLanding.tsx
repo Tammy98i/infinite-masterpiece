@@ -200,8 +200,8 @@ export function WebinarLanding() {
     <div className="w-full pb-28">
       <section id="webinar-hero" className="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#010308] via-[#010308]/90 to-[#010308]" />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[min(900px,90vw)] h-[320px] bg-[radial-gradient(ellipse_at_center,rgba(200,162,76,0.22),transparent_70%)]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/40 via-transparent to-[#010308]/55" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[min(900px,90vw)] h-[320px] bg-[radial-gradient(ellipse_at_center,rgba(200,162,76,0.18),transparent_70%)]" />
         </div>
 
         <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -423,7 +423,7 @@ export function WebinarLanding() {
 
       <section id="webinar-register-bottom" className="relative py-20 md:py-28 border-t border-white/[0.04] overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#010308] via-[#010308]/90 to-[#010308]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#010308]/20 to-[#010308]/50" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(200,162,76,0.16),transparent_70%)]" />
         </div>
         <div className="relative z-10 max-w-[920px] mx-auto px-4 sm:px-6 lg:px-8 text-center">

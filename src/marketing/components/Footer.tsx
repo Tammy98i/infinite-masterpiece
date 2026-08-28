@@ -9,7 +9,7 @@ export function Footer() {
   if (onWebinar) {
     return (
       <footer
-        className="relative bg-[#010308] overflow-hidden pt-12 pb-12 border-t border-white/[0.04]"
+        className="relative bg-[#010308]/40 overflow-hidden pt-12 pb-12 border-t border-white/[0.04]"
         role="contentinfo"
         aria-label="תחתית האתר"
       >
