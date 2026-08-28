@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { CalendarPlus, MessageCircle, Share2 } from 'lucide-react';
+import { CalendarPlus, MessageCircle, Share2, UserRound } from 'lucide-react';
 import { webinarApi } from '../../api/webinar';
 import { DEFAULT_WEBINAR_CONFIG } from '../../constants/webinar';
 import { buildGoogleCalendarUrl, buildShareUrl, downloadIcs } from '../../utils/webinarTime';
@@ -10,6 +10,7 @@ import { trackEvent } from '../../utils/analytics';
 export function WebinarThankYou() {
   const [params] = useSearchParams();
   const name = params.get('name') || '';
+  const firstName = name.trim().split(/\s+/)[0] || '';
   const date = params.get('date') || DEFAULT_WEBINAR_CONFIG.date;
   const time = params.get('time') || DEFAULT_WEBINAR_CONFIG.time;
   const isWaitlist = params.get('waitlist') === '1';
@@ -66,85 +67,124 @@ export function WebinarThankYou() {
             {isWaitlist ? 'נרשמת לרשימת המתנה' : 'נרשמת לוובינר'}
           </p>
           <h1 className="text-3xl md:text-4xl font-light text-white mb-4">
-            {name ? `${name}, ` : ''}נרשמת. עכשיו שני צעדים: וואטסאפ ויומן.
+            {firstName ? `תודה, ${firstName}.` : 'נרשמת.'}
           </h1>
-          <p className="text-white/55 font-light leading-relaxed mb-6">
+          <p className="text-white/55 font-light leading-relaxed mb-8">
             {isWaitlist
               ? 'הפרטים שלך נקלטו לרשימת ההמתנה. נעדכן כשיתפנה מקום.'
-              : `הפרטים שלך נקלטו. שמרו את התאריך ביומן: ${date}, ${time}. קישור Zoom יישלח לפני הערב.`}
+              : `נרשמת בהצלחה. שלושה צעדים לפני הערב: יומן, וואטסאפ, ואדם אחד. ${date}, ${time}.`}
           </p>
 
-          <label className="flex items-start justify-center gap-3 rounded-2xl border border-[#C8A24C]/25 bg-[#010308]/40 px-5 py-4 text-sm text-[#F7E7B5] font-light leading-relaxed mb-8 cursor-pointer text-center">
-            <input
-              type="checkbox"
-              checked={personPicked}
-              onChange={(e) => setPersonPicked(e.target.checked)}
-              className="mt-1 accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer"
-            />
-            <span>בחר/י אדם אחד שעשוי להתאים להצעה שלך. בוובינר נבצע פעולה אמיתית.</span>
-          </label>
+          <ol className="space-y-4 text-right mb-8">
+            <li className="rounded-2xl border border-[#C8A24C]/25 bg-[#010308]/40 px-5 py-4">
+              <div className="flex items-start gap-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#C8A24C]/50 text-sm text-[#F7E7B5]">
+                  1
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="flex items-center gap-2 text-white mb-1">
+                    <CalendarPlus className="w-4 h-4 text-[#C8A24C]" aria-hidden />
+                    הוספה ליומן
+                  </p>
+                  <p className="text-xs text-white/45 font-light mb-3">
+                    {date} · {time}. קישור Zoom יישלח לפני הערב.
+                  </p>
+                  <div className="flex flex-col sm:flex-row gap-2">
+                    {googleUrl ? (
+                      <a
+                        href={googleUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        onClick={() => markCalendar('google')}
+                        className="inline-flex items-center justify-center gap-2 rounded-full border border-[#C8A24C]/40 px-4 py-2 text-sm text-white min-h-11 cursor-pointer hover:bg-[#C8A24C]/10 transition-colors duration-200"
+                      >
+                        Google
+                      </a>
+                    ) : null}
+                    <button
+                      type="button"
+                      onClick={() => {
+                        markCalendar('ics');
+                        downloadIcs(calendarConfig);
+                      }}
+                      className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-4 py-2 text-sm text-white min-h-11 cursor-pointer hover:border-[#C8A24C]/40 transition-colors duration-200"
+                    >
+                      קובץ יומן
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </li>
 
-          {config.whatsappGroupUrl ? (
-            <a
-              href={config.whatsappGroupUrl}
-              target="_blank"
-              rel="noreferrer"
-              onClick={markWhatsapp}
-              className="mb-4 inline-flex items-center justify-center gap-2 w-full rounded-full bg-[#C8A24C] text-black px-5 py-3 text-sm font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
-            >
-              <MessageCircle className="w-4 h-4" aria-hidden />
-              הצטרפות לקבוצת עדכונים שקטה
-            </a>
-          ) : (
-            <p className="mb-4 text-xs text-white/40 font-light">קישור לקבוצת עדכונים שקטה יישלח באישור המייל.</p>
-          )}
+            <li className="rounded-2xl border border-[#C8A24C]/25 bg-[#010308]/40 px-5 py-4">
+              <div className="flex items-start gap-3">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#C8A24C]/50 text-sm text-[#F7E7B5]">
+                  2
+                </span>
+                <div className="min-w-0 flex-1">
+                  <p className="flex items-center gap-2 text-white mb-1">
+                    <MessageCircle className="w-4 h-4 text-[#C8A24C]" aria-hidden />
+                    קבוצת עדכונים שקטה
+                  </p>
+                  <p className="text-xs text-white/45 font-light mb-3">נעדכן רק כשיש משהו שחשוב לדעת.</p>
+                  {config.whatsappGroupUrl ? (
+                    <a
+                      href={config.whatsappGroupUrl}
+                      target="_blank"
+                      rel="noreferrer"
+                      onClick={markWhatsapp}
+                      className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C8A24C] text-black px-5 py-2 text-sm font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+                    >
+                      הצטרפות עכשיו
+                    </a>
+                  ) : (
+                    <p className="text-xs text-white/40 font-light">הקישור יישלח באישור המייל.</p>
+                  )}
+                </div>
+              </div>
+            </li>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
-            {googleUrl ? (
-              <a
-                href={googleUrl}
-                target="_blank"
-                rel="noreferrer"
-                onClick={() => markCalendar('google')}
-                className="inline-flex items-center justify-center gap-2 rounded-full border border-[#C8A24C]/40 px-5 py-3 text-sm text-white min-h-11 cursor-pointer hover:bg-[#C8A24C]/10 transition-colors duration-200"
-              >
-                <CalendarPlus className="w-4 h-4 text-[#C8A24C]" aria-hidden />
-                הוספה ליומן
-              </a>
-            ) : null}
-            <button
-              type="button"
-              onClick={() => {
-                markCalendar('ics');
-                downloadIcs(calendarConfig);
-              }}
-              className="inline-flex items-center justify-center gap-2 rounded-full border border-white/15 px-5 py-3 text-sm text-white min-h-11 cursor-pointer hover:border-[#C8A24C]/40 transition-colors duration-200"
-            >
-              <CalendarPlus className="w-4 h-4 text-[#C8A24C]" aria-hidden />
-              קובץ יומן
-            </button>
-          </div>
+            <li className="rounded-2xl border border-[#C8A24C]/25 bg-[#010308]/40 px-5 py-4">
+              <label className="flex items-start gap-3 cursor-pointer">
+                <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-[#C8A24C]/50 text-sm text-[#F7E7B5]">
+                  3
+                </span>
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-center gap-2 text-white mb-1">
+                    <UserRound className="w-4 h-4 text-[#C8A24C]" aria-hidden />
+                    אדם אחד
+                  </span>
+                  <span className="block text-xs text-white/45 font-light mb-3">
+                    בחר/י אדם אחד שעשוי להתאים להצעה שלך. בוובינר נבצע פעולה אמיתית.
+                  </span>
+                  <input
+                    type="checkbox"
+                    checked={personPicked}
+                    onChange={(e) => {
+                      setPersonPicked(e.target.checked);
+                      if (e.target.checked) {
+                        trackEvent('webinar_thank_you_step_completed', { step: 'person' });
+                      }
+                    }}
+                    className="accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer"
+                  />
+                  <span className="mr-2 text-sm text-[#F7E7B5]">בחרתי אדם</span>
+                </span>
+              </label>
+            </li>
+          </ol>
 
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 mb-6">
-            <Link
-              to="/"
-              className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 text-sm text-white/75 hover:text-white min-h-11 cursor-pointer transition-colors duration-200"
-            >
-              חזרה לאתר
-            </Link>
-            <Link
-              to="/pricing"
-              onClick={() => trackEvent('pilot_cta_clicked', { source: 'thank_you' })}
-              className="text-xs text-white/35 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
-            >
-              מידע על הפיילוט
-            </Link>
-          </div>
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 text-sm text-white/75 hover:text-white min-h-11 cursor-pointer transition-colors duration-200 mb-4"
+          >
+            חזרה לאתר
+          </Link>
 
           <button
             type="button"
             onClick={() => void share()}
-            className="inline-flex items-center gap-2 text-[#C8A24C] hover:text-[#F7E7B5] min-h-11 cursor-pointer transition-colors duration-200"
+            className="flex mx-auto items-center gap-2 text-[#C8A24C] hover:text-[#F7E7B5] min-h-11 cursor-pointer transition-colors duration-200"
           >
             <Share2 className="w-4 h-4" aria-hidden />
             {copied ? 'הקישור הועתק' : 'הבא/י חבר/ה לוובינר'}

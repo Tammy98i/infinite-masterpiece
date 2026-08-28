@@ -24,7 +24,7 @@ type Props = {
 };
 
 const fieldClass =
-  'w-full bg-[#010308]/60 border border-[#C8A24C]/25 rounded-xl px-4 py-3 text-white text-sm text-center focus:outline-none focus:border-[#C8A24C] focus:ring-1 focus:ring-[#C8A24C]/40 min-h-11';
+  'w-full bg-[#010308]/60 border border-[#C8A24C]/25 rounded-xl px-4 py-3 text-white text-sm text-right focus:outline-none focus:border-[#C8A24C] focus:ring-1 focus:ring-[#C8A24C]/40 min-h-11';
 
 export function WebinarRegistrationForm({
   payload,
@@ -191,23 +191,23 @@ export function WebinarRegistrationForm({
 
   if (step === 'b' && registrationId) {
     return (
-      <form ref={rootRef} id={formId} onSubmit={handleStepB} className="space-y-4 text-center">
+      <form ref={rootRef} id={formId} onSubmit={handleStepB} className="space-y-4 text-right">
         {!compact ? (
           <div className="mb-2">
             <p className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-2">שלב 2 מתוך 2</p>
-            <h2 className="text-xl font-light text-white mb-1">עוד 20 שניות</h2>
-            <p className="text-xs text-white/40 font-light">כדי שנתאים את הערב אליך. המקום כבר נשמר.</p>
+            <h2 className="text-xl font-light text-white mb-1">כדי שנתאים את הערב אליך</h2>
+            <p className="text-xs text-white/40 font-light">המקום כבר נשמר. עוד כמה פרטים.</p>
           </div>
         ) : null}
 
         <div>
-          <label htmlFor={`${formId}-field`} className="text-xs text-white/60 mb-1 block">
+          <label htmlFor={`${formId}-field`} className="text-xs text-white/60 mb-1 block text-right">
             תחום יצירה / עיסוק *
           </label>
           <input required id={`${formId}-field`} name="field" type="text" className={fieldClass} />
         </div>
         <div>
-          <label htmlFor={`${formId}-interest`} className="text-xs text-white/60 mb-1 block">
+          <label htmlFor={`${formId}-interest`} className="text-xs text-white/60 mb-1 block text-right">
             איפה את/ה נמצא/ת היום? *
           </label>
           <select required id={`${formId}-interest`} name="interest" className={`${fieldClass} cursor-pointer`} defaultValue="">
@@ -222,7 +222,7 @@ export function WebinarRegistrationForm({
           </select>
         </div>
         <div>
-          <label htmlFor={`${formId}-blocker`} className="text-xs text-white/60 mb-1 block">
+          <label htmlFor={`${formId}-blocker`} className="text-xs text-white/60 mb-1 block text-right">
             מה צוואר הבקבוק המרכזי שלך? *
           </label>
           <select required id={`${formId}-blocker`} name="blocker" className={`${fieldClass} cursor-pointer`} defaultValue="">
@@ -258,7 +258,7 @@ export function WebinarRegistrationForm({
       id={formId}
       onSubmit={handleStepA}
       onFocus={markStarted}
-      className="space-y-4 text-center"
+      className="space-y-4 text-right"
       aria-labelledby={`${formId}-title`}
     >
       {!compact ? (
@@ -267,7 +267,7 @@ export function WebinarRegistrationForm({
             {isWaitlist ? 'רשימת המתנה' : 'הרשמה לוובינר, שלב 1 מתוך 2'}
           </p>
           <h2 className="text-xl font-light text-white mb-1">
-            {isWaitlist ? 'הצטרפ/י לרשימת המתנה' : 'המקום נשמר תוך 20 שניות'}
+            {isWaitlist ? 'הצטרפ/י לרשימת המתנה' : 'נרשמים לערב החי'}
           </h2>
           <WebinarUrgencyStrip
             config={config}
@@ -279,13 +279,13 @@ export function WebinarRegistrationForm({
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         <div>
-          <label htmlFor={`${formId}-fullName`} className="text-xs text-white/60 mb-1 block">
+          <label htmlFor={`${formId}-fullName`} className="text-xs text-white/60 mb-1 block text-right">
             שם מלא *
           </label>
           <input required id={`${formId}-fullName`} name="fullName" type="text" autoComplete="name" className={fieldClass} />
         </div>
         <div>
-          <label htmlFor={`${formId}-phone`} className="text-xs text-white/60 mb-1 block">
+          <label htmlFor={`${formId}-phone`} className="text-xs text-white/60 mb-1 block text-right">
             טלפון *
           </label>
           <input
@@ -296,13 +296,14 @@ export function WebinarRegistrationForm({
             inputMode="tel"
             autoComplete="tel"
             placeholder="0500000000"
-            className={fieldClass}
+            dir="ltr"
+            className={`${fieldClass} text-left`}
           />
         </div>
       </div>
 
       <div>
-        <label htmlFor={`${formId}-email`} className="text-xs text-white/60 mb-1 block">
+        <label htmlFor={`${formId}-email`} className="text-xs text-white/60 mb-1 block text-right">
           אימייל *
         </label>
         <input
@@ -311,7 +312,8 @@ export function WebinarRegistrationForm({
           name="email"
           type="email"
           autoComplete="email"
-          className={fieldClass}
+          className={`${fieldClass} text-left`}
+          dir="ltr"
           value={prefillEmail}
           onChange={(event) => setPrefillEmail(event.target.value)}
         />

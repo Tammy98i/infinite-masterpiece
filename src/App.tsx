@@ -49,7 +49,12 @@ function ScrollManager() {
   useEffect(() => {
     if (location.hash) {
       const rawId = location.hash.replace('#', '');
-      const id = rawId === 'webinar-register-hero' ? 'webinar-register' : rawId;
+      const aliases: Record<string, string> = {
+        'webinar-register-hero': 'webinar-register',
+        'about-creation': 'hosts',
+        pilot: 'tracks',
+      };
+      const id = aliases[rawId] || rawId;
       const timer = window.setTimeout(() => {
         document.getElementById(id)?.scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth' });
       }, 80);

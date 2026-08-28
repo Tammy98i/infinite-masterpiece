@@ -13,26 +13,32 @@ export function WebinarStickyCta({ date, time, registrationCount = 0 }: Props) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const targets = ['webinar-register', 'webinar-register-bottom-card']
-      .map((id) => document.getElementById(id))
-      .filter((node): node is HTMLElement => Boolean(node));
-    if (targets.length === 0) {
+    const hero = document.getElementById('webinar-hero');
+    const form = document.getElementById('webinar-register');
+    if (!hero && !form) {
       setVisible(true);
       return;
     }
 
-    const visibleIds = new Set<string>();
+    let heroVisible = Boolean(hero);
+    let formVisible = false;
+
+    const update = () => {
+      setVisible(!heroVisible && !formVisible);
+    };
+
     const observer = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
-          if (entry.isIntersecting) visibleIds.add(entry.target.id);
-          else visibleIds.delete(entry.target.id);
+          if (entry.target.id === 'webinar-hero') heroVisible = entry.isIntersecting;
+          if (entry.target.id === 'webinar-register') formVisible = entry.isIntersecting;
         }
-        setVisible(visibleIds.size === 0);
+        update();
       },
-      { threshold: 0.1 }
+      { threshold: 0.12 }
     );
-    targets.forEach((node) => observer.observe(node));
+    if (hero) observer.observe(hero);
+    if (form) observer.observe(form);
     return () => observer.disconnect();
   }, []);
 

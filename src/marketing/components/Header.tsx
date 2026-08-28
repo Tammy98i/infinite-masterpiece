@@ -8,8 +8,8 @@ import { scrollToWebinarForm, trackWebinarCta } from '../../utils/analytics';
 import { WEBINAR_CTA_HEADER, WEBINAR_REGISTER_ID } from '../../constants/webinarPage';
 
 const WEBINAR_NAV = [
-  { name: 'על היצירה', to: '/webinar#about-creation' },
-  { name: 'הפיילוט', to: '/webinar#pilot' },
+  { name: 'הצוות', to: '/webinar#hosts' },
+  { name: 'התאמה', to: '/webinar#webinar-fit' },
   { name: 'שאלות נפוצות', to: '/webinar#webinar-faq' },
 ];
 
