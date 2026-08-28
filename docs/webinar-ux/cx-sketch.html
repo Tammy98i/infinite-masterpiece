@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>סקיצת CX — וובינר Infinite Masterpiece</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@300;400;500;600&family=Noto+Sans+Hebrew:wght@400;500;600;700&family=Rubik:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #010308;
+      --gold: #c8a24c;
+      --gold-soft: #f7e7b5;
+      --ink: #ffffff;
+      --muted: rgba(255, 255, 255, 0.5);
+      --line: rgba(200, 162, 76, 0.28);
+      --card: rgba(1, 3, 8, 0.86);
+      --note: #ff7a33;
+      --heading: "Noto Sans Hebrew", "Arial Hebrew", sans-serif;
+      --body: "IBM Plex Sans Hebrew", "Arial Hebrew", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--body);
+      direction: rtl;
+    }
+    a { color: inherit; }
+    button, input { font-family: inherit; }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 16px 80px; }
+    .banner {
+      border: 1px dashed var(--note);
+      color: var(--note);
+      padding: 10px 14px;
+      border-radius: 999px;
+      display: inline-flex;
+      gap: 8px;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    h1.page-title {
+      font-family: var(--heading);
+      font-weight: 500;
+      font-size: clamp(1.6rem, 3vw, 2.4rem);
+      margin: 0 0 8px;
+    }
+    .lede { color: var(--muted); max-width: 46rem; line-height: 1.6; margin-bottom: 24px; }
+    nav.states {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 28px;
+    }
+    nav.states button {
+      background: transparent;
+      color: var(--gold-soft);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      min-height: 44px;
+      padding: 0 16px;
+      cursor: pointer;
+    }
+    nav.states button[aria-pressed="true"] {
+      background: linear-gradient(90deg, #c8a24c, #f7e7b5, #d4af37);
+      color: #111;
+      border-color: transparent;
+      font-weight: 600;
+    }
+    .screen { display: none; }
+    .screen.is-on { display: block; }
+    .canvas {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 100%, rgba(200, 162, 76, 0.18), transparent 55%),
+        #010308;
+      min-height: 720px;
+      padding: 28px 20px 48px;
+    }
+    .note {
+      position: absolute;
+      color: var(--note);
+      font-family: Rubik, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      z-index: 3;
+      max-width: 11rem;
+      line-height: 1.35;
+    }
+    .note::before {
+      content: "→ ";
+    }
+    .hero, .center { text-align: center; }
+    .pill {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 12px;
+      color: rgba(255,255,255,0.7);
+      margin-bottom: 22px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+    .headline {
+      font-family: var(--heading);
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      font-weight: 500;
+      line-height: 1.2;
+      margin: 0 0 16px;
+    }
+    .headline .gold {
+      display: block;
+      margin-top: 8px;
+      background: linear-gradient(90deg, #c8a24c, #f7e7b5);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .sub { color: var(--muted); max-width: 34rem; margin: 0 auto 18px; line-height: 1.65; font-weight: 300; }
+    .punch { color: var(--gold-soft); margin: 0 0 28px; }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 28px;
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #c8a24c, #f7e7b5, #d4af37);
+      color: #111;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+    }
+    .cta.ghost {
+      background: transparent;
+      color: var(--gold-soft);
+      border: 1px solid var(--line);
+    }
+    .quiet {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      color: rgba(255,255,255,0.45);
+      text-decoration: none;
+      font-size: 14px;
+    }
+    .card {
+      width: min(380px, 100%);
+      margin: 0 auto;
+      border: 1px solid var(--line);
+      background: var(--card);
+      border-radius: 24px;
+      padding: 22px;
+      text-align: right;
+    }
+    .faces { display: flex; align-items: center; justify-content: center; gap: 10px; margin: 12px 0 18px; }
+    .avatar {
+      width: 36px; height: 36px; border-radius: 50%;
+      border: 1px solid var(--gold);
+      display: grid; place-items: center;
+      background: radial-gradient(circle at center, rgba(200,162,76,0.35), #0b1020 70%);
+      color: var(--gold-soft); font-size: 13px; margin-inline-start: -8px;
+    }
+    .avatar:first-child { margin-inline-start: 0; }
+    label { display: block; font-size: 12px; color: rgba(255,255,255,0.6); margin: 12px 0 6px; }
+    input[type="text"], input[type="tel"], input[type="email"] {
+      width: 100%;
+      min-height: 44px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(1,3,8,0.6);
+      color: #fff;
+      padding: 0 14px;
+    }
+    .check { display: flex; gap: 10px; align-items: flex-start; font-size: 12px; color: rgba(255,255,255,0.5); margin: 14px 0; }
+    .check input { width: 16px; height: 16px; accent-color: var(--gold); margin-top: 2px; }
+    .full { width: 100%; }
+    .tiny { font-size: 12px; color: rgba(255,255,255,0.4); text-align: center; margin: 12px 0 0; }
+    .steps { width: min(560px, 100%); margin: 24px auto 0; display: grid; gap: 12px; }
+    .step {
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 16px 18px;
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 12px;
+      text-align: right;
+      background: rgba(1,3,8,0.4);
+    }
+    .num {
+      width: 32px; height: 32px; border-radius: 50%;
+      border: 1px solid var(--gold);
+      display: grid; place-items: center;
+      color: var(--gold-soft); font-size: 14px;
+    }
+    .step h3 { margin: 0 0 6px; font-size: 16px; font-weight: 500; font-family: var(--heading); }
+    .step p { margin: 0 0 10px; color: rgba(255,255,255,0.45); font-size: 13px; font-weight: 300; }
+    .links { display: flex; gap: 12px; font-size: 12px; color: rgba(255,255,255,0.45); }
+    .links a { min-height: 44px; display: inline-flex; align-items: center; }
+    .phone {
+      width: 360px;
+      margin: 0 auto;
+      border: 8px solid #1a1a1a;
+      border-radius: 36px;
+      padding: 18px 14px 28px;
+      min-height: 680px;
+      background: var(--bg);
+    }
+    footer.sketch-foot {
+      margin-top: 28px;
+      color: rgba(255,255,255,0.35);
+      font-size: 13px;
+    }
+    @media (max-width: 800px) {
+      .note { position: static; max-width: none; margin: 8px 0; }
+      .note::before { content: "• "; }
+    }
+  </style>
+</head>
+<body>
+  <a href="#sketch" class="quiet" style="position:absolute;inset-inline-start:-999px">דילוג לסקיצה</a>
+  <div class="wrap" id="sketch">
+    <p class="banner">סקיצה לאישור · לא קוד במוצר · בלי מחירים ובלי ספרייה</p>
+    <h1 class="page-title">סקיצת CX לוובינר</h1>
+    <p class="lede">
+      ששת מקטעי הנחיתה נשארים. כאן רק מקצרים חיכוך: הרשמה בלחיצה אחת, דף תודה עם כפתור אחד לכל צעד, וביום האירוע כניסה לערב במקום טופס.
+    </p>
+    <nav class="states" aria-label="מצבי הסקיצה">
+      <button type="button" data-screen="hero" aria-pressed="true">1 הירו</button>
+      <button type="button" data-screen="form" aria-pressed="false">2 טופס אחד</button>
+      <button type="button" data-screen="thanks" aria-pressed="false">3 תודה</button>
+      <button type="button" data-screen="night" aria-pressed="false">4 ערב האירוע</button>
+      <button type="button" data-screen="mobile" aria-pressed="false">מובייל</button>
+    </nav>
+
+    <section class="screen is-on" id="screen-hero" aria-label="הירו לפני הערב">
+      <div class="canvas hero">
+        <p class="note" style="top:28px;inset-inline-start:24px">אין טופס כאן</p>
+        <p class="pill"><span class="dot"></span> ערב חי, 26.05.2026, 20:00 · נשארו ימים</p>
+        <h2 class="headline">הכישרון כבר יש.<span class="gold">הערב שולחים פעולה אמיתית.</span></h2>
+        <p class="sub">ערב חי ליוצרים שרוצים לסגור את הפער בין כישרון להכנסה. שיעור מכירות, משימת ביצוע בזמן אמת, והזמנה לפיילוט של 33 ימים. בלי כרטיס אשראי.</p>
+        <p class="punch">לא עוד השראה. פעולה. מערכת. פרנסה.</p>
+        <button class="cta" type="button" data-goto="form">כן. אני מגיע/ה לערב החי</button>
+        <div><a class="quiet" href="#fit">רוצה לדעת אם זה בשבילך?</a></div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-form" aria-label="טופס הרשמה בשלב אחד">
+      <div class="canvas">
+        <p class="note" style="top:24px;inset-inline-start:20px">אין שלב 2</p>
+        <p class="note" style="bottom:90px;inset-inline-end:18px">לחצת = נרשמת</p>
+        <p class="center punch" style="margin-top:8px">זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.</p>
+        <form class="card" onsubmit="event.preventDefault(); show('thanks')">
+          <p style="margin:0 0 8px;font-size:15px">הכישרון כבר יש. <span style="color:var(--gold-soft)">הערב שולחים פעולה אמיתית.</span></p>
+          <div class="faces">
+            <span class="avatar">ג</span>
+            <span class="avatar">ת</span>
+            <span class="avatar">ג</span>
+            <span style="font-size:12px;color:rgba(255,255,255,0.5)">גל, תמי וגלב בלייב</span>
+          </div>
+          <label for="name">שם מלא *</label>
+          <input id="name" name="fullName" type="text" autocomplete="name" required />
+          <label for="phone">טלפון *</label>
+          <input id="phone" name="phone" type="tel" dir="ltr" inputmode="tel" placeholder="0500000000" autocomplete="tel" required />
+          <label for="email">אימייל *</label>
+          <input id="email" name="email" type="email" dir="ltr" autocomplete="email" required />
+          <label class="check">
+            <input type="checkbox" required />
+            <span>אישור תנאי שימוש ומדיניות פרטיות. עדכוני הערב כלולים. אפשר לבטל בכל עת.</span>
+          </label>
+          <button class="cta full" type="submit">כן. אני מגיע/ה לערב החי</button>
+          <p class="tiny">בלי כרטיס אשראי. 150 דקות בלייב. לא מבטיחים הכנסה</p>
+          <p class="tiny"><a class="quiet" href="#" onclick="event.preventDefault(); show('thanks')">כבר נרשמתי</a></p>
+        </form>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-thanks" aria-label="דף תודה">
+      <div class="canvas hero">
+        <p class="note" style="top:20px;inset-inline-start:16px">כפתור אחד ליומן</p>
+        <p class="note" style="bottom:40px;inset-inline-end:16px">אדם להצעה שלך, לא הזמנת חבר</p>
+        <p class="pill">נרשמת לוובינר</p>
+        <h2 class="headline" style="font-size:2.2rem">תודה, מיכל.</h2>
+        <p class="sub">שלושה צעדים לפני הערב. 26.05.2026, 20:00.</p>
+        <div class="steps">
+          <div class="step">
+            <span class="num">1</span>
+            <div>
+              <h3>הוספה ליומן</h3>
+              <p>26.05.2026 · 20:00. קישור Zoom יישלח לפני הערב.</p>
+              <button class="cta" type="button">הוספה ליומן</button>
+              <div class="links">
+                <a href="#">Google</a>
+                <a href="#">Apple / Outlook</a>
+              </div>
+            </div>
+          </div>
+          <div class="step">
+            <span class="num">2</span>
+            <div>
+              <h3>קבוצת עדכונים שקטה</h3>
+              <p>נעדכן רק כשיש משהו שחשוב לדעת.</p>
+              <button class="cta" type="button">הצטרפות עכשיו</button>
+            </div>
+          </div>
+          <div class="step">
+            <span class="num">3</span>
+            <div>
+              <h3>אדם אחד</h3>
+              <p>שם, וואטסאפ, ומשפט אחד על מה שאת/ה מציע/ה. בוובינר נבצע פעולה אמיתית.</p>
+              <label class="check" style="margin:0">
+                <input type="checkbox" />
+                <span>בחרתי אדם</span>
+              </label>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-night" aria-label="ערב האירוע">
+      <div class="canvas hero">
+        <p class="note" style="top:24px;inset-inline-start:20px">ביום האירוע — כניסה, לא טופס</p>
+        <p class="note" style="bottom:80px;inset-inline-end:18px">Zoom רק אם מוגדר באדמין</p>
+        <p class="pill"><span class="dot"></span> היום · 20:00 · הערב החי פתוח</p>
+        <h2 class="headline">הכישרון כבר יש.<span class="gold">מתחילים עכשיו.</span></h2>
+        <p class="sub">מי שנרשם נכנס. מי שעדיין לא — נרשם למטה, לא כאן.</p>
+        <button class="cta" type="button">כניסה לערב החי</button>
+        <div><a class="quiet" href="#" onclick="event.preventDefault(); show('form')">עדיין לא נרשמת? הרשמה למטה</a></div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-mobile" aria-label="מובייל">
+      <div class="canvas">
+        <p class="note" style="top:16px;inset-inline-start:16px">כפתור אחד לכל צעד</p>
+        <div class="phone">
+          <p class="tiny">תודה, מיכל.</p>
+          <p class="tiny" style="margin-bottom:16px">שלושה צעדים לפני הערב.</p>
+          <div class="step" style="margin-bottom:10px"><span class="num">1</span><div><h3>הוספה ליומן</h3><button class="cta full" type="button">הוספה ליומן</button></div></div>
+          <div class="step" style="margin-bottom:10px"><span class="num">2</span><div><h3>וואטסאפ שקט</h3><button class="cta full" type="button">הצטרפות עכשיו</button></div></div>
+          <div class="step"><span class="num">3</span><div><h3>אדם אחד</h3><p>שם + וואטסאפ + משפט אחד על ההצעה</p><label class="check"><input type="checkbox" /><span>בחרתי אדם</span></label></div></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="sketch-foot">
+      לא בסקיצה: פופאפ, מונה חי מדומה, ₪, ספרייה, תגובות, הבטחת הכנסה.
+    </footer>
+  </div>
+  <script>
+    function show(id) {
+      document.querySelectorAll('.screen').forEach((el) => el.classList.toggle('is-on', el.id === 'screen-' + id));
+      document.querySelectorAll('nav.states button').forEach((btn) => {
+        btn.setAttribute('aria-pressed', btn.getAttribute('data-screen') === id ? 'true' : 'false');
+      });
+    }
+    document.querySelectorAll('nav.states button').forEach((btn) => {
+      btn.addEventListener('click', () => show(btn.getAttribute('data-screen')));
+    });
+    document.querySelectorAll('[data-goto]').forEach((btn) => {
+      btn.addEventListener('click', () => show(btn.getAttribute('data-goto')));
+    });
+  </script>
+</body>
+</html>
