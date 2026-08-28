@@ -1,6 +1,5 @@
 @import "tailwindcss";
 @import "./styles/typography.css";
-@import "./styles/sky-readable.css";
 
 @theme {
   --color-primary: #c9a227;
@@ -207,4 +206,134 @@ html.a11y-reduce-motion .page-fade {
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #2a3142;
+}
+
+/* Night-sky readability — kept in this file so Tailwind v4 actually emits it. */
+.sky-readable {
+  color: #f4f4f5;
+}
+
+.sky-readable h1,
+.sky-readable h2,
+.sky-readable h3,
+.sky-readable h4 {
+  color: #ffffff;
+  text-shadow:
+    0 1px 2px rgba(1, 3, 8, 0.9),
+    0 4px 22px rgba(1, 3, 8, 0.75);
+}
+
+.sky-readable .text-gold-gradient {
+  text-shadow: 0 2px 16px rgba(1, 3, 8, 0.75);
+}
+
+.sky-readable p,
+.sky-readable li,
+.sky-readable label,
+.sky-readable dd,
+.sky-readable figcaption,
+.sky-readable summary,
+.sky-readable dt {
+  font-weight: 500;
+  text-shadow: 0 1px 12px rgba(1, 3, 8, 0.72);
+}
+
+.sky-readable .font-light,
+.sky-readable .font-extralight,
+.sky-readable .font-thin {
+  font-weight: 500;
+}
+
+.sky-readable .text-white\/20,
+.sky-readable .text-white\/25 {
+  color: rgb(255 255 255 / 0.8);
+}
+
+.sky-readable .text-white\/30,
+.sky-readable .text-white\/35 {
+  color: rgb(255 255 255 / 0.86);
+}
+
+.sky-readable .text-white\/40,
+.sky-readable .text-white\/45 {
+  color: rgb(255 255 255 / 0.9);
+}
+
+.sky-readable .text-white\/50,
+.sky-readable .text-white\/55 {
+  color: rgb(255 255 255 / 0.94);
+}
+
+.sky-readable .text-white\/60,
+.sky-readable .text-white\/65,
+.sky-readable .text-white\/70 {
+  color: rgb(255 255 255 / 0.96);
+}
+
+.sky-readable .text-slate-300,
+.sky-readable .text-zinc-400,
+.sky-readable .text-zinc-500 {
+  color: rgb(244 244 245 / 0.92);
+}
+
+.sky-readable .text-zinc-600 {
+  color: rgb(228 228 231 / 0.82);
+}
+
+.sky-readable a:not(.text-black) {
+  text-shadow: 0 1px 10px rgba(1, 3, 8, 0.65);
+}
+
+.sky-readable .text-black {
+  color: #111;
+  text-shadow: none;
+}
+
+.sky-readable .hover\:text-white:hover,
+.sky-readable .hover\:text-zinc-200:hover {
+  color: #ffffff;
+}
+
+.sky-readable .hover\:text-\[\#C8A24C\]:hover,
+.sky-readable .group:hover .group-hover\:text-\[\#C8A24C\] {
+  color: #c8a24c;
+}
+
+.sky-readable .hover\:text-\[\#F7E7B5\]:hover {
+  color: #f7e7b5;
+}
+
+.sky-readable .bg-white\/\[0\.01\],
+.sky-readable .bg-white\/\[0\.02\],
+.sky-readable .bg-white\/\[0\.03\],
+.sky-readable .bg-white\/\[0\.04\],
+.sky-readable .bg-white\/\[0\.05\] {
+  background-color: rgb(1 3 8 / 0.64);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.sky-readable .bg-\[\#C8A24C\]\/5,
+.sky-readable .bg-\[\#C8A24C\]\/10,
+.sky-readable .bg-\[\#C8A24C\]\/\[0\.07\] {
+  background-color: rgb(12 10 6 / 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+.sky-readable .bg-rose-500\/5 {
+  background-color: rgb(22 8 10 / 0.72);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+}
+
+html.a11y-contrast-high .sky-readable .text-white\/20,
+html.a11y-contrast-high .sky-readable .text-white\/25,
+html.a11y-contrast-high .sky-readable .text-white\/30,
+html.a11y-contrast-high .sky-readable .text-white\/35,
+html.a11y-contrast-high .sky-readable .text-white\/40,
+html.a11y-contrast-high .sky-readable .text-white\/45,
+html.a11y-contrast-high .sky-readable .text-white\/50,
+html.a11y-contrast-high .sky-readable .text-white\/55 {
+  color: #ffffff;
 }
