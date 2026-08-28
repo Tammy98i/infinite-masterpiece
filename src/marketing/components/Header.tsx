@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
+import { Menu, X, Infinity as InfinityIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { AccountMenu } from '../../components/AccountMenu';
@@ -11,7 +11,6 @@ import {
   WEBINAR_REGISTER_ID,
 } from '../../constants/webinarPage';
 import { useWebinarPhase } from '../hooks/useWebinarPhase';
-import { SiteLogo } from '../../components/SiteLogo';
 
 const WEBINAR_NAV = [
   { name: 'הצוות', to: '/webinar#hosts' },
@@ -165,8 +164,15 @@ export function Header() {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           
-          <Link to="/" className="flex items-center min-h-11" aria-label="Infinite Masterpiece">
-            <SiteLogo alt="" className="h-8 sm:h-9 lg:h-10" />
+          <Link to="/" className="flex items-center gap-4 group">
+            <InfinityIcon className="w-8 h-8 text-[#F7E7B5] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
+            <div className="flex flex-col">
+              <span className="font-light text-[15px] tracking-[0.25em] text-white/90 leading-tight uppercase">
+                Infinite
+                <br/>
+                <span className="font-medium">Masterpiece</span>
+              </span>
+            </div>
           </Link>
 
           {/* Desktop Nav */}
