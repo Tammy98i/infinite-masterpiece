@@ -5,6 +5,7 @@ export const WEBINAR_HOLDING_LINE =
 
 export const WEBINAR_AUDIENCE_LABEL = 'יוצרים, אמנים, מומחים ובעלי עסקים יצירתיים';
 
+export const WEBINAR_REGISTER_ID = 'webinar-register';
 export const WEBINAR_CTA_PRIMARY = 'כן. אני מגיע/ה לערב החי';
 export const WEBINAR_CTA_SHORT = 'אני מגיע/ה';
 export const WEBINAR_CTA_HEADER = 'אני מגיע/ה לערב החי';

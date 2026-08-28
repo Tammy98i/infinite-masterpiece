@@ -39,10 +39,10 @@ export function WebinarExitIntent({ enabled = true }: Props) {
       const y = window.scrollY;
       if (y > 480) wentDown = true;
       const scrollingUpFast = wentDown && y < lastY - 70;
-      const hero = document.getElementById('webinar-register-hero');
-      const rect = hero?.getBoundingClientRect();
-      const heroVisible = Boolean(rect && rect.bottom > 80 && rect.top < window.innerHeight);
-      if (scrollingUpFast && !heroVisible) reveal();
+      const form = document.getElementById('webinar-register');
+      const rect = form?.getBoundingClientRect();
+      const formVisible = Boolean(rect && rect.bottom > 80 && rect.top < window.innerHeight);
+      if (scrollingUpFast && !formVisible) reveal();
       lastY = y;
     };
 

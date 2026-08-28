@@ -5,7 +5,7 @@ import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { AccountMenu } from '../../components/AccountMenu';
 import { scrollToWebinarForm, trackWebinarCta } from '../../utils/analytics';
-import { WEBINAR_CTA_HEADER } from '../../constants/webinarPage';
+import { WEBINAR_CTA_HEADER, WEBINAR_REGISTER_ID } from '../../constants/webinarPage';
 
 const WEBINAR_NAV = [
   { name: 'על היצירה', to: '/webinar#about-creation' },
@@ -46,7 +46,7 @@ export function Header() {
       scrollToWebinarForm();
       return;
     }
-    window.location.assign('/webinar#webinar-register-hero');
+    window.location.assign(`/webinar#${WEBINAR_REGISTER_ID}`);
   };
 
   return (

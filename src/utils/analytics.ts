@@ -1,4 +1,5 @@
 import { getAuthToken } from '../api/auth';
+import { WEBINAR_REGISTER_ID } from '../constants/webinarPage';
 
 declare global {
   interface Window {
@@ -54,7 +55,7 @@ export function trackWebinarCta(section: string) {
   trackEvent('webinar_cta_clicked', { section });
 }
 
-export function scrollToWebinarForm(formId = 'webinar-register-hero') {
+export function scrollToWebinarForm(formId = WEBINAR_REGISTER_ID) {
   document.getElementById(formId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 

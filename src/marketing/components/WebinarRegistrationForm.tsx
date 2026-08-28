@@ -42,7 +42,7 @@ export function WebinarRegistrationForm({
   const [prefillEmail, setPrefillEmail] = useState(() => consumeWebinarExitEmailPrefill());
 
   useEffect(() => {
-    if (formId !== 'webinar-register-hero' || resumedRef.current) return;
+    if (resumedRef.current) return;
     const fromQuery = searchParams.get('resume')?.trim() || '';
     let fromSession = '';
     try {

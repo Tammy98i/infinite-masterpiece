@@ -32,6 +32,7 @@ import {
   WEBINAR_CTA_FIT,
   WEBINAR_CTA_FIT_LINK,
   WEBINAR_CTA_PRIMARY,
+  WEBINAR_REGISTER_ID,
   WEBINAR_DIFFERENCE_POINTS,
   WEBINAR_ECOSYSTEM,
   WEBINAR_FIT_NO,
@@ -111,18 +112,14 @@ function WebinarRegisterCard({
   payload,
   formId,
   headlineParts,
-  headlineVisible = 'always',
 }: {
   payload: WebinarPublicPayload;
   formId: string;
   headlineParts: { line1: string; line2: string };
-  headlineVisible?: 'always' | 'until-xl';
 }) {
   return (
     <>
-      <p
-        className={`${headlineVisible === 'until-xl' ? 'xl:hidden ' : ''}text-lg text-white font-light leading-snug mb-4`}
-      >
+      <p className="text-lg text-white font-light leading-snug mb-4">
         {headlineParts.line1}
         {headlineParts.line2 ? (
           <>
@@ -204,26 +201,11 @@ export function WebinarLanding() {
         </div>
 
         <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="grid grid-cols-1 xl:grid-cols-[minmax(0,380px)_1fr] gap-10 xl:gap-14 items-start">
-            <motion.aside
-              id="webinar-register-hero"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className={`order-1 ${REGISTER_CARD_CLASS}`}
-            >
-              <WebinarRegisterCard
-                payload={payload}
-                formId="webinar-register-hero"
-                headlineParts={headlineParts}
-                headlineVisible="until-xl"
-              />
-            </motion.aside>
-
+          <div className="flex justify-center">
             <motion.div
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.08 }}
-              className="order-2 text-center flex flex-col items-center"
+              className="text-center flex flex-col items-center"
             >
               <div className="inline-flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-1.5 rounded-full bg-white/[0.03] border border-[#C8A24C]/20 mb-8">
                 <span className="w-2 h-2 rounded-full bg-[#C8A24C]" aria-hidden />
@@ -250,7 +232,7 @@ export function WebinarLanding() {
                 <button
                   type="button"
                   onClick={() => scrollToForm('hero')}
-                  className="hidden xl:inline-flex px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+                  className="inline-flex px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
                 >
                   {WEBINAR_CTA_PRIMARY}
                 </button>
@@ -600,14 +582,14 @@ export function WebinarLanding() {
             אמיצים והססנים. לא נדרש הערב. בסוף הוובינר תהיה הזמנה להיכנס לפיילוט. רק למי שמתאים ורוצה להמשיך.
           </p>
           <aside
+            id={WEBINAR_REGISTER_ID}
             aria-label="הרשמה לוובינר"
-            className={`${REGISTER_CARD_CLASS} mx-auto w-full max-w-[380px] text-start`}
+            className={`${REGISTER_CARD_CLASS} mx-auto w-full max-w-[380px] text-start scroll-mt-24`}
           >
             <WebinarRegisterCard
               payload={payload}
-              formId="webinar-register-tracks"
+              formId={`${WEBINAR_REGISTER_ID}-form`}
               headlineParts={headlineParts}
-              headlineVisible="always"
             />
           </aside>
           <p className="mt-6 text-[11px] text-white/35 font-light leading-relaxed">{WEBINAR_TRACKS_FINE_PRINT}</p>

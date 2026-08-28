@@ -48,7 +48,8 @@ function ScrollManager() {
 
   useEffect(() => {
     if (location.hash) {
-      const id = location.hash.replace('#', '');
+      const rawId = location.hash.replace('#', '');
+      const id = rawId === 'webinar-register-hero' ? 'webinar-register' : rawId;
       const timer = window.setTimeout(() => {
         document.getElementById(id)?.scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth' });
       }, 80);

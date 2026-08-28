@@ -13,7 +13,7 @@ export function WebinarStickyCta({ date, time, registrationCount = 0 }: Props) {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const target = document.getElementById('webinar-register-hero');
+    const target = document.getElementById('webinar-register');
     if (!target) {
       setVisible(true);
       return;
