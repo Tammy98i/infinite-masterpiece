@@ -628,7 +628,7 @@ export function WebinarLanding() {
           >
             <WebinarRegisterCard
               payload={payload}
-              formId={`${WEBINAR_REGISTER_ID}-bottom`}
+              formId={`${WEBINAR_REGISTER_ID}-bottom-form`}
               headlineParts={headlineParts}
             />
           </aside>
