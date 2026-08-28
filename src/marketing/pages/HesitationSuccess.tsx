@@ -37,7 +37,7 @@ export function HesitationSuccess() {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-12 text-right">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-12 text-center">
           {HESITANT_INSTALLMENTS.map((item) => (
             <div key={item.number} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
               <p className="text-white font-accent font-semibold tabular-nums mb-1">{item.amountBeforeVat.toLocaleString('he-IL')} ₪</p>

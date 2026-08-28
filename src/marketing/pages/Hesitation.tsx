@@ -106,13 +106,13 @@ export function Hesitation() {
               </div>
               <div className="space-y-2">
                 <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">טלפון נייד</label>
-                <input required name="phone" type="tel" dir="ltr" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#C8A24C]/50 transition-colors text-right min-h-11" />
+                <input required name="phone" type="tel" dir="ltr" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#C8A24C]/50 transition-colors text-center min-h-11" />
               </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">אימייל</label>
-              <input required name="email" type="email" dir="ltr" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#C8A24C]/50 transition-colors text-right min-h-11" />
+              <input required name="email" type="email" dir="ltr" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#C8A24C]/50 transition-colors text-center min-h-11" />
             </div>
 
             <div className="space-y-2">
@@ -171,7 +171,7 @@ export function Hesitation() {
 
             <div className="space-y-2">
               <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">לינק לאינסטגרם / אתר (רשות)</label>
-              <input name="links" type="url" dir="ltr" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#C8A24C]/50 transition-colors text-right min-h-11" />
+              <input name="links" type="url" dir="ltr" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#C8A24C]/50 transition-colors text-center min-h-11" />
             </div>
 
             <div className="flex items-start gap-4 pt-4">
@@ -211,7 +211,7 @@ export function Hesitation() {
           </form>
         </motion.div>
 
-        <p className="mt-10 text-[11px] text-white/30 font-light leading-relaxed text-right">
+        <p className="mt-10 text-[11px] text-white/30 font-light leading-relaxed text-center">
           {ENTRY_TRACK_FINE_PRINT}
         </p>
       </div>

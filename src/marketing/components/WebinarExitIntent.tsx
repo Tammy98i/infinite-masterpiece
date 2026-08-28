@@ -83,12 +83,17 @@ export function WebinarExitIntent({ enabled = true }: Props) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="webinar-exit-title">
-      <div className="w-full max-w-md rounded-3xl border border-[#C8A24C]/30 bg-[#010308] p-6 text-right shadow-2xl">
-        <h2 id="webinar-exit-title" className="text-xl text-white font-light mb-2">
+    <div
+      className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="webinar-exit-title"
+    >
+      <div className="w-full max-w-md rounded-3xl border border-[#C8A24C]/30 bg-[#010308] px-6 py-8 text-center shadow-2xl">
+        <h2 id="webinar-exit-title" className="font-heading text-2xl text-white mb-3">
           לפני שיוצאים. השאירו אימייל.
         </h2>
-        <p className="text-sm text-white/50 font-light mb-4">
+        <p className="font-body text-base text-white/55 leading-relaxed mb-6 max-w-sm mx-auto">
           נשמור את הכתובת ונעביר אתכם להשלמת הרשמה. בלי כרטיס אשראי.
         </p>
         <form className="space-y-3" onSubmit={(e) => void handleSave(e)}>
@@ -100,10 +105,11 @@ export function WebinarExitIntent({ enabled = true }: Props) {
             id="webinar-exit-email"
             required
             autoComplete="email"
+            dir="ltr"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            placeholder="אימייל"
-            className="w-full rounded-xl border border-white/15 bg-white/[0.03] px-4 py-3 text-white min-h-11"
+            placeholder="email@example.com"
+            className="w-full rounded-xl border border-white/15 bg-white/[0.03] px-4 py-3 text-white text-center min-h-11"
           />
           {error ? (
             <p className="text-sm text-rose-300" role="alert">
@@ -118,7 +124,11 @@ export function WebinarExitIntent({ enabled = true }: Props) {
             {submitting ? 'שומר…' : 'כן. משאיר/ה אימייל וממשיך/ה'}
           </button>
         </form>
-        <button type="button" onClick={() => setOpen(false)} className="mt-4 text-xs text-white/40 hover:text-white cursor-pointer min-h-11">
+        <button
+          type="button"
+          onClick={() => setOpen(false)}
+          className="mt-5 font-body font-normal text-sm text-white/45 hover:text-white cursor-pointer py-3 px-4 min-h-11"
+        >
           סגירה
         </button>
       </div>

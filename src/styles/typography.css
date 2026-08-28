@@ -177,6 +177,7 @@ p.max-w-xl,
 p.max-w-2xl,
 p.max-w-3xl {
   max-width: min(100%, var(--measure));
+  margin-inline: auto;
 }
 
 /* Forms, nav, tables — body family */
@@ -203,20 +204,32 @@ th {
   font-weight: 600;
 }
 
-/* Accent: CTAs, badges, labels, prices, numbers — not whole-card buttons */
-button.min-h-11,
+/* Accent: primary CTAs and filled controls only — not every min-h-11 control */
 button.rounded-full,
 button.rounded-xl,
 button.rounded-2xl,
+button[class*='bg-gradient'],
 [type='submit'],
-[type='reset'],
-a.min-h-11,
 a[class*='rounded-full'],
 a[class*='rounded-[22px]'],
 a[class*='rounded-[24px]'] {
   font-family: var(--font-accent);
   font-weight: 600;
   letter-spacing: 0.01em;
+}
+
+button.font-body,
+a.font-body {
+  font-family: var(--font-body);
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+[role='dialog'] h1,
+[role='dialog'] h2,
+[role='dialog'] h3 {
+  letter-spacing: 0;
+  line-height: 1.35;
 }
 
 .uppercase,

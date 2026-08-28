@@ -69,7 +69,7 @@ export function FAQPage() {
             >
               <button
                 onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
-                className="w-full flex items-center justify-between p-8 text-right focus:outline-none"
+                className="w-full flex items-center justify-between p-8 text-center focus:outline-none"
               >
                 <span className="text-lg font-heading text-white/90">{faq.q}</span>
                 <ChevronDown 

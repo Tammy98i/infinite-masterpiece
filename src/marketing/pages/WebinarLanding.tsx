@@ -76,7 +76,7 @@ function SectionLabel({ children }: { children: ReactNode }) {
 }
 
 function SectionTitle({ children }: { children: ReactNode }) {
-  return <h2 className="text-3xl md:text-5xl font-heading text-white mb-6 leading-tight">{children}</h2>;
+  return <h2 className="text-3xl md:text-5xl font-heading text-white mb-6 leading-tight mx-auto max-w-3xl">{children}</h2>;
 }
 
 function HostFaces() {
@@ -86,7 +86,7 @@ function HostFaces() {
     { name: 'גלב', src: '' },
   ];
   return (
-    <div className="flex items-center gap-3 mb-5">
+    <div className="flex items-center justify-center gap-3 mb-5">
       <div className="flex -space-x-3 space-x-reverse">
         {hosts.map((host) =>
           host.src ? (
@@ -203,7 +203,7 @@ export function WebinarLanding() {
               initial={{ opacity: 0, y: 24 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.08 }}
-              className="order-2 text-right"
+              className="order-2 text-center flex flex-col items-center"
             >
               <div className="inline-flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-1.5 rounded-full bg-white/[0.03] border border-[#C8A24C]/20 mb-8">
                 <span className="w-2 h-2 rounded-full bg-[#C8A24C]" aria-hidden />
@@ -226,7 +226,7 @@ export function WebinarLanding() {
                 {config.location}, {config.durationMinutes} דקות, {WEBINAR_AUDIENCE_LABEL}
               </p>
 
-              <div className="flex flex-col items-start gap-3">
+              <div className="flex flex-col items-center gap-3">
                 <button
                   type="button"
                   onClick={() => scrollToForm('hero')}
@@ -251,13 +251,13 @@ export function WebinarLanding() {
       </section>
 
       <section id="why-different" className="py-20 md:py-28 border-t border-white/[0.04]">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>למה זה שונה</SectionLabel>
           <SectionTitle>הערב הזה הוא ניסוי חי. לא עוד שידור השראה.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-4">
             לא מציגים מוצר מהצד. בונים אותו מולכם, מלמדים, מבצעים ומקשיבים. בסוף הערב יש פעולה שנשלחה, לא רעיון במחברת.
           </p>
-          <p className="text-lg text-[#F7E7B5] font-medium leading-relaxed max-w-3xl mb-10">{WEBINAR_HOLDING_LINE}</p>
+          <p className="text-lg text-[#F7E7B5] font-medium leading-relaxed max-w-3xl mx-auto mb-10">{WEBINAR_HOLDING_LINE}</p>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {WEBINAR_DIFFERENCE_POINTS.map((item) => (
               <GoldCard key={item.title}>
@@ -272,7 +272,7 @@ export function WebinarLanding() {
 
       {config.socialProofQuotes.length ? (
         <section className="py-12 border-t border-white/[0.04]">
-          <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
+          <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <SectionLabel>למה נרשמים</SectionLabel>
             <p className="text-xs text-white/35 font-light mb-4">קולות לפני הערב. לא הבטחת תוצאה.</p>
             <WebinarSocialProof quotes={config.socialProofQuotes} />
@@ -281,7 +281,7 @@ export function WebinarLanding() {
       ) : null}
 
       <section id="problem" className="py-20 md:py-28 border-t border-white/[0.04]">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>הבעיה</SectionLabel>
           <SectionTitle>
             הבעיה היא לא שאין לך כישרון.
@@ -308,7 +308,7 @@ export function WebinarLanding() {
       </section>
 
       <section id="why-now" className="py-20 md:py-28 bg-white/[0.01] border-t border-white/[0.04]">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>למה עכשיו</SectionLabel>
           <SectionTitle>היצירה היא כבר שוק. השאלה היא אם יש לך מערכת.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-4">
@@ -319,7 +319,7 @@ export function WebinarLanding() {
             לכן השאלה היא לא אם יש ערך ליצירה שלך. השאלה היא האם הערך מחובר להצעה, לקהל, לשיחה, למכירה ולמערכת שחוזרת
             על עצמה.
           </p>
-          <div className="flex flex-wrap items-center justify-start gap-2 md:gap-3">
+          <div className="flex flex-wrap items-center justify-center gap-2 md:gap-3">
             {WEBINAR_VALUE_CHAIN.map((item, index) => (
               <div key={item} className="flex items-center gap-2 md:gap-3">
                 <span className="rounded-full border border-[#C8A24C]/30 bg-[#C8A24C]/10 px-4 py-2 text-sm text-[#F7E7B5]">
@@ -337,7 +337,7 @@ export function WebinarLanding() {
       </section>
 
       <section id="timeline" className="py-20 md:py-28 border-t border-white/[0.04]">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>150 דקות</SectionLabel>
           <SectionTitle>150 דקות. מסע אחד שלם.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-8">
@@ -368,7 +368,7 @@ export function WebinarLanding() {
       </section>
 
       <section id="sales" className="py-20 md:py-28 bg-white/[0.01] border-t border-white/[0.04]">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>שיעור המכירות</SectionLabel>
           <SectionTitle>מכירות בלי לאבד את עצמך.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">
@@ -393,7 +393,7 @@ export function WebinarLanding() {
       </section>
 
       <section id="execution" className="py-20 md:py-28 border-t border-white/[0.04]">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>משימת ביצוע</SectionLabel>
           <SectionTitle>לא באים רק ללמוד. באים לבצע.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-4">
@@ -414,16 +414,16 @@ export function WebinarLanding() {
 
       <section id="webinar-fit" ref={fitRef} className="py-20 md:py-28 border-t border-white/[0.04]">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-right mb-10">
+          <div className="text-center mb-10">
             <SectionLabel>התאמה</SectionLabel>
             <SectionTitle>הוובינר הזה מתאים לך אם…</SectionTitle>
           </div>
           <div className="grid grid-cols-1 lg:grid-cols-[1fr_80px_1fr] gap-6 items-stretch">
-            <div className="rounded-3xl border border-[#C8A24C]/25 bg-[#C8A24C]/5 p-6 text-right">
+            <div className="rounded-3xl border border-[#C8A24C]/25 bg-[#C8A24C]/5 p-6 text-center">
               <h3 className="text-lg text-white mb-4 font-light">מתאים אם…</h3>
               <ul className="space-y-3">
                 {WEBINAR_FIT_YES.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm text-white/65 font-light">
+                  <li key={item} className="flex items-start justify-center gap-3 text-sm text-white/65 font-light">
                     <Check className="w-4 h-4 text-[#C8A24C] shrink-0 mt-0.5" aria-hidden />
                     <span>{item}</span>
                   </li>
@@ -433,11 +433,11 @@ export function WebinarLanding() {
             <div className="hidden lg:flex items-stretch justify-center" aria-hidden>
               <div className="w-px bg-gradient-to-b from-transparent via-[#F7E7B5]/70 to-transparent" />
             </div>
-            <div className="rounded-3xl border border-rose-500/20 bg-rose-500/5 p-6 text-right">
+            <div className="rounded-3xl border border-rose-500/20 bg-rose-500/5 p-6 text-center">
               <h3 className="text-lg text-white mb-4 font-light">לא מתאים אם…</h3>
               <ul className="space-y-3">
                 {WEBINAR_FIT_NO.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm text-white/55 font-light">
+                  <li key={item} className="flex items-start justify-center gap-3 text-sm text-white/55 font-light">
                     <X className="w-4 h-4 text-rose-300 shrink-0 mt-0.5" aria-hidden />
                     <span>{item}</span>
                   </li>
@@ -450,7 +450,7 @@ export function WebinarLanding() {
       </section>
 
       <section id="hosts" className="py-20 md:py-28 border-t border-white/[0.04]">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>הצוות</SectionLabel>
           <SectionTitle>הצוות אינו תפאורה. הוא המערכת.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-12">
@@ -505,7 +505,7 @@ export function WebinarLanding() {
       </section>
 
       <section id="about-creation" className="py-20 md:py-28 bg-white/[0.01] border-t border-white/[0.04]">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>היצירה</SectionLabel>
           <SectionTitle>לא קורס. אקוסיסטם.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">
@@ -529,7 +529,7 @@ export function WebinarLanding() {
       </section>
 
       <section id="pilot" className="py-20 md:py-28 border-t border-white/[0.04]">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>הפיילוט</SectionLabel>
           <SectionTitle>הפיילוט הראשון: 33 ימים של ניסוי, למידה וביצוע.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">
@@ -555,7 +555,7 @@ export function WebinarLanding() {
       </section>
 
       <section id="transparency" className="py-20 md:py-28 bg-white/[0.01] border-t border-white/[0.04]">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>שקיפות</SectionLabel>
           <SectionTitle>אין אותיות קטנות. הכול בפרצוף.</SectionTitle>
           <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">
@@ -564,7 +564,7 @@ export function WebinarLanding() {
           </p>
           <ul className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {WEBINAR_TRANSPARENCY_POINTS.map((item) => (
-              <li key={item} className="rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-4 flex items-start gap-3">
+              <li key={item} className="rounded-2xl border border-white/10 bg-white/[0.02] px-5 py-4 flex items-start justify-center gap-3">
                 <Scale className="w-4 h-4 text-[#C8A24C] shrink-0 mt-0.5" aria-hidden />
                 <span className="text-sm text-white/65 font-light">{item}</span>
               </li>
@@ -574,7 +574,7 @@ export function WebinarLanding() {
       </section>
 
       <section id="tracks" className="py-20 md:py-28 border-t border-white/[0.04]">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>הצטרפות לפיילוט</SectionLabel>
           <SectionTitle>שני מסלולי כניסה לפיילוט. אותו יעד. שתי רמות מחויבות.</SectionTitle>
           <p className="text-sm text-[#F7E7B5]/80 font-light leading-relaxed max-w-3xl mb-8">
@@ -614,7 +614,7 @@ export function WebinarLanding() {
 
       <section id="webinar-faq" className="py-20 md:py-28 border-t border-white/[0.04]">
         <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-right mb-8">
+          <div className="text-center mb-8">
             <SectionLabel>שאלות</SectionLabel>
             <SectionTitle>שאלות נפוצות</SectionTitle>
           </div>
@@ -632,7 +632,7 @@ export function WebinarLanding() {
           <div className="absolute inset-0 bg-gradient-to-b from-[#010308] via-[#010308]/90 to-[#010308]" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(200,162,76,0.16),transparent_70%)]" />
         </div>
-        <div className="relative z-10 max-w-[720px] mx-auto px-4 sm:px-6 lg:px-8 text-right">
+        <div className="relative z-10 max-w-[720px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4">
             זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.
           </p>
@@ -640,14 +640,14 @@ export function WebinarLanding() {
           <button
             type="button"
             onClick={() => scrollToForm('bottom')}
-            className="w-full sm:w-auto px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+            className="w-full sm:w-auto mx-auto px-10 py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
           >
             {WEBINAR_CTA_PRIMARY}
           </button>
           <div className="mt-4">
             <WebinarTrustStrip config={config} />
           </div>
-          <p className="flex flex-wrap items-center justify-start gap-4 text-xs text-[#C8A24C]/80 font-light mt-8">
+          <p className="flex flex-wrap items-center justify-center gap-4 text-xs text-[#C8A24C]/80 font-light mt-8">
             <Link to="/terms" className="hover:text-[#F7E7B5] min-h-11 inline-flex items-center">
               תנאי שימוש
             </Link>

@@ -29,8 +29,8 @@ export function Home() {
           <div className="absolute inset-0 bg-gradient-to-t from-[#010308] via-transparent to-[#010308]" />
         </div>
 
-        <div className="relative z-20 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full flex justify-end">
-          <div className="w-full lg:w-[55%] lg:pr-16 flex flex-col justify-center items-start text-right">
+        <div className="relative z-20 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full flex justify-center">
+          <div className="w-full max-w-3xl flex flex-col justify-center items-center text-center">
             <MotionDiv
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
@@ -148,7 +148,7 @@ export function Home() {
           </p>
           <p className="text-sm text-white/35 font-light mb-10">בנוסף למסלול הראשי. 8,888 ₪ לפני מע״מ.</p>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-3 text-sm text-white/70 font-light mb-10 text-right">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-3 text-sm text-white/70 font-light mb-10 text-center">
             {['Hot Seats', 'Micro-Pods', 'Mastermind', 'ניתוח אישי', 'גישה למומחים', 'ליווי הטמעה'].map(
               (item) => (
                 <span key={item}>{item}</span>

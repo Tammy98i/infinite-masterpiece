@@ -20,7 +20,7 @@ export function LibraryMembership() {
   };
 
   return (
-    <div className="max-w-[960px] mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-right">
+    <div className="max-w-[960px] mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
       <p className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-4">מנוי ספרייה</p>
       <h1 className="text-3xl md:text-4xl font-heading text-white mb-4">גישה לספריית Infinite Masterpiece</h1>
       <p className="text-sm md:text-base text-white/50 font-light leading-relaxed max-w-2xl mb-4">

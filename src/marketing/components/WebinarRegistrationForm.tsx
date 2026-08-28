@@ -20,7 +20,7 @@ type Props = {
 };
 
 const fieldClass =
-  'w-full bg-[#010308]/60 border border-[#C8A24C]/25 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#C8A24C] focus:ring-1 focus:ring-[#C8A24C]/40 min-h-11';
+  'w-full bg-[#010308]/60 border border-[#C8A24C]/25 rounded-xl px-4 py-3 text-white text-sm text-center focus:outline-none focus:border-[#C8A24C] focus:ring-1 focus:ring-[#C8A24C]/40 min-h-11';
 
 export function WebinarRegistrationForm({
   payload,
@@ -187,7 +187,7 @@ export function WebinarRegistrationForm({
 
   if (step === 'b' && registrationId) {
     return (
-      <form ref={rootRef} id={formId} onSubmit={handleStepB} className="space-y-4 text-right">
+      <form ref={rootRef} id={formId} onSubmit={handleStepB} className="space-y-4 text-center">
         {!compact ? (
           <div className="mb-2">
             <p className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-2">שלב 2 מתוך 2</p>
@@ -254,7 +254,7 @@ export function WebinarRegistrationForm({
       id={formId}
       onSubmit={handleStepA}
       onFocus={markStarted}
-      className="space-y-4 text-right"
+      className="space-y-4 text-center"
       aria-labelledby={`${formId}-title`}
     >
       {!compact ? (

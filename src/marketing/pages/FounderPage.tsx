@@ -68,14 +68,14 @@ export function FounderPage() {
           </Link>
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
-            <div className="lg:col-span-6 text-right">
+            <div className="lg:col-span-6 text-center">
               <h1 className="text-4xl md:text-5xl font-heading text-white tracking-tight mb-4">
                 {founder.name}
               </h1>
               <p className="text-[#C8A24C] text-sm tracking-widest mb-8 font-medium">
                 {founder.title}
               </p>
-              <div className="max-w-xl space-y-5">
+              <div className="max-w-xl mx-auto space-y-5">
                 {paragraphs.map((p) => (
                   <p key={p} className="text-lg text-white/55 font-light leading-relaxed">
                     {p}
@@ -83,7 +83,7 @@ export function FounderPage() {
                 ))}
               </div>
               {founder.expertise.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-8">
+                <div className="flex flex-wrap justify-center gap-2 mt-8">
                   {founder.expertise.map((item) => (
                     <span
                       key={item}
@@ -150,7 +150,7 @@ export function FounderPage() {
 
       {founder.portfolio.length > 0 && (
         <section className="pb-20">
-          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-right">
+          <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
             <h2 className="text-sm tracking-[0.25em] text-[#C8A24C] mb-8">תיק עסקי</h2>
             <div className="divide-y divide-white/10 border-t border-white/10">
               {founder.portfolio.map((item) => (
@@ -165,7 +165,7 @@ export function FounderPage() {
       )}
 
       <section id="lectures" className="pb-20 scroll-mt-28">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-right">
+        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h2 className="text-sm tracking-[0.25em] text-[#C8A24C] mb-8">הרצאות בספרייה</h2>
           {!loaded && <p className="text-sm text-white/40 font-light">טוען הרצאות...</p>}
           {loaded && courses.length === 0 && (

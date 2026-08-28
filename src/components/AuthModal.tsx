@@ -48,7 +48,7 @@ export const AuthModal: React.FC = () => {
         role="dialog"
         aria-modal="true"
         aria-labelledby="auth-title"
-        className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 text-right"
+        className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 text-center"
       >
         <button
           type="button"
@@ -70,7 +70,7 @@ export const AuthModal: React.FC = () => {
 
         <form onSubmit={(e) => void handleSubmit(e)} className="grid gap-4">
           {mode === 'register' && (
-            <label className="block text-right">
+            <label className="block text-center">
               <span className="block text-xs text-white/45 mb-1">שם מלא</span>
               <input
                 type="text"
@@ -81,7 +81,7 @@ export const AuthModal: React.FC = () => {
               />
             </label>
           )}
-          <label className="block text-right">
+          <label className="block text-center">
             <span className="block text-xs text-white/45 mb-1">אימייל</span>
             <input
               type="email"
@@ -91,7 +91,7 @@ export const AuthModal: React.FC = () => {
               className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11"
             />
           </label>
-          <label className="block text-right">
+          <label className="block text-center">
             <span className="block text-xs text-white/45 mb-1">סיסמה</span>
             <input
               type="password"

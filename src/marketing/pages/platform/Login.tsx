@@ -43,7 +43,7 @@ export function Login() {
                 dir="ltr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none relative block w-full px-5 py-4 border border-white/[0.08] bg-black/40 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-[#C8A24C] focus:border-[#C8A24C] focus:z-10 text-right transition-colors"
+                className="appearance-none relative block w-full px-5 py-4 border border-white/[0.08] bg-black/40 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-[#C8A24C] focus:border-[#C8A24C] focus:z-10 text-center transition-colors"
                 placeholder="כתובת אימייל"
               />
             </div>
@@ -55,7 +55,7 @@ export function Login() {
                 dir="ltr"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none relative block w-full px-5 py-4 border border-white/[0.08] bg-black/40 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-[#C8A24C] focus:border-[#C8A24C] focus:z-10 text-right transition-colors"
+                className="appearance-none relative block w-full px-5 py-4 border border-white/[0.08] bg-black/40 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-[#C8A24C] focus:border-[#C8A24C] focus:z-10 text-center transition-colors"
                 placeholder="סיסמה"
               />
             </div>

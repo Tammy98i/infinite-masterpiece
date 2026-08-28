@@ -6,9 +6,9 @@ import { trackEvent } from '../../utils/analytics';
 
 function FeatureList({ items }: { items: string[] }) {
   return (
-    <ul className="grid gap-2 text-right mb-6">
+    <ul className="grid gap-2 text-center mb-6">
       {items.map((item) => (
-        <li key={item} className="flex items-start gap-2 text-[13px] text-white/60 font-light">
+        <li key={item} className="flex items-start justify-center gap-2 text-[13px] text-white/60 font-light">
           <Check className="w-3.5 h-3.5 text-[#C8A24C] shrink-0 mt-0.5" strokeWidth={1.5} />
           <span>{item}</span>
         </li>
@@ -24,7 +24,7 @@ export function EntryTrackCards() {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <div className="grid grid-cols-2 gap-4 text-right items-stretch">
+      <div className="grid grid-cols-2 gap-4 text-center items-stretch">
         <article className="flex flex-col rounded-2xl border border-[#C8A24C]/40 bg-[#C8A24C]/[0.07] p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3 min-h-8 mb-3">
             <h3 className="text-lg sm:text-xl font-heading text-white">מסלול האמיצים</h3>
@@ -86,7 +86,7 @@ export function EntryTrackCards() {
         </article>
       </div>
 
-      <p className="mt-6 text-[11px] text-white/28 font-light leading-relaxed text-right">
+      <p className="mt-6 text-[11px] text-white/28 font-light leading-relaxed text-center">
         {ENTRY_TRACK_FINE_PRINT}
       </p>
     </div>

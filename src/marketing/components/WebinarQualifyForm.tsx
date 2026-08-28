@@ -39,7 +39,7 @@ export function WebinarQualifyForm({ registrationId, onComplete }: Props) {
     'w-full bg-[#010308]/60 border border-[#C8A24C]/25 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#C8A24C] min-h-11';
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3 text-right">
+    <form onSubmit={handleSubmit} className="space-y-3 text-center">
       <p className="text-sm text-white/70 font-light mb-2">עזר/י לנו להתאים את הוובינר אליך</p>
       <div>
         <label htmlFor="qualify-field" className="text-xs text-white/60 mb-1 block">

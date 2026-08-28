@@ -60,7 +60,7 @@ export function WebinarThankYou() {
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="rounded-3xl border border-[#C8A24C]/25 bg-[#C8A24C]/5 p-8 md:p-12 text-right"
+          className="rounded-3xl border border-[#C8A24C]/25 bg-[#C8A24C]/5 p-8 md:p-12 text-center"
         >
           <p className="text-[11px] uppercase tracking-[0.25em] text-[#C8A24C] mb-4">
             {isWaitlist ? 'נרשמת לרשימת המתנה' : 'נרשמת לוובינר'}
@@ -74,7 +74,7 @@ export function WebinarThankYou() {
               : `הפרטים שלך נקלטו. שמרו את התאריך ביומן: ${date}, ${time}. קישור Zoom יישלח לפני הערב.`}
           </p>
 
-          <label className="flex items-start gap-3 rounded-2xl border border-[#C8A24C]/25 bg-[#010308]/40 px-5 py-4 text-sm text-[#F7E7B5] font-light leading-relaxed mb-8 cursor-pointer text-right">
+          <label className="flex items-start justify-center gap-3 rounded-2xl border border-[#C8A24C]/25 bg-[#010308]/40 px-5 py-4 text-sm text-[#F7E7B5] font-light leading-relaxed mb-8 cursor-pointer text-center">
             <input
               type="checkbox"
               checked={personPicked}

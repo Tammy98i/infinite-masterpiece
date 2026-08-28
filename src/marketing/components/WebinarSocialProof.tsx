@@ -8,9 +8,9 @@ export function WebinarSocialProof({ quotes }: { quotes: WebinarSocialProofQuote
       {quotes.slice(0, 3).map((item) => (
         <blockquote
           key={`${item.author}-${item.quote.slice(0, 20)}`}
-          className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-right"
+          className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-center"
         >
-          <div className="flex items-center gap-3 mb-3">
+          <div className="flex items-center justify-center gap-3 mb-3">
             <span
               className="w-9 h-9 rounded-full border border-[#C8A24C]/40 bg-[#C8A24C]/10 text-[#F7E7B5] text-sm flex items-center justify-center shrink-0"
               aria-hidden
@@ -56,7 +56,7 @@ export function WebinarSectionCta({
         onClick();
       }}
       data-section={section}
-      className="mt-8 px-8 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-semibold min-h-11 cursor-pointer hover:bg-[#F7E7B5] transition-colors duration-200"
+      className="mt-8 mx-auto px-8 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-semibold min-h-11 cursor-pointer hover:bg-[#F7E7B5] transition-colors duration-200"
     >
       {label}
     </button>

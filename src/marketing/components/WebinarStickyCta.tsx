@@ -34,7 +34,7 @@ export function WebinarStickyCta({ date, time, registrationCount = 0 }: Props) {
   return (
     <div className="fixed bottom-0 inset-x-0 z-40 border-t border-[#C8A24C]/20 bg-[#010308]/95 backdrop-blur-xl px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       <div className="max-w-[1100px] mx-auto flex items-center gap-3">
-        <div className="min-w-0 flex-1 text-right">
+        <div className="min-w-0 flex-1 text-center sm:text-right">
           <p className="text-xs text-white/70 truncate">
             {date}, {time}
           </p>

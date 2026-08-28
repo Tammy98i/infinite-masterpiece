@@ -25,7 +25,7 @@ export function Layout({ children }: LayoutProps) {
           דילוג לתוכן הראשי
         </a>
         <Header />
-        <main id="main-content" className="flex-1 w-full pt-20" tabIndex={-1}>
+        <main id="main-content" className="flex-1 w-full pt-20 text-center" tabIndex={-1}>
           {children}
         </main>
         <Footer />
