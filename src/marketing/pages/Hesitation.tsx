@@ -86,7 +86,7 @@ export function Hesitation() {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-12">
           {HESITANT_INSTALLMENTS.map((item) => (
             <div key={item.number} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-center">
-              <p className="text-xl text-white font-light mb-1">{formatAmount(item.amountBeforeVat)} ₪</p>
+              <p className="text-xl text-white font-accent font-semibold tabular-nums mb-1">{formatAmount(item.amountBeforeVat)} ₪</p>
               <p className="text-[11px] text-white/40 font-light leading-relaxed">{item.when}</p>
             </div>
           ))}

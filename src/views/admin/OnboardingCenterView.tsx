@@ -57,19 +57,19 @@ export const OnboardingCenterView: React.FC = () => {
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
           <div className="glass rounded-2xl p-4 border border-white/10">
             <div className="text-xs text-zinc-500 mb-1">התחילו מסלול</div>
-            <div className="text-2xl font-black text-primary-light">{stats.totalStarted}</div>
+            <div className="text-2xl font-accent font-semibold tabular-nums text-primary-light">{stats.totalStarted}</div>
           </div>
           <div className="glass rounded-2xl p-4 border border-white/10">
             <div className="text-xs text-zinc-500 mb-1">סיימו מסלול</div>
-            <div className="text-2xl font-black text-emerald-400">{stats.totalCompleted}</div>
+            <div className="text-2xl font-accent font-semibold tabular-nums text-emerald-400">{stats.totalCompleted}</div>
           </div>
           <div className="glass rounded-2xl p-4 border border-white/10">
             <div className="text-xs text-zinc-500 mb-1">אחוז השלמה</div>
-            <div className="text-2xl font-black text-white">{stats.completionRate}%</div>
+            <div className="text-2xl font-accent font-semibold tabular-nums text-white">{stats.completionRate}%</div>
           </div>
           <div className="glass rounded-2xl p-4 border border-white/10">
             <div className="text-xs text-zinc-500 mb-1">בונוסים שנפתחו</div>
-            <div className="text-2xl font-black text-white">{stats.bonusesUnlockedCount}</div>
+            <div className="text-2xl font-accent font-semibold tabular-nums text-white">{stats.bonusesUnlockedCount}</div>
           </div>
         </div>
       )}
@@ -119,7 +119,7 @@ export const OnboardingCenterView: React.FC = () => {
             <>
               <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10">
                 <div>
-                  <h3 className="font-black text-lg text-white">{selectedPath.name}</h3>
+                  <h3 className="font-heading text-lg text-white">{selectedPath.name}</h3>
                   <p className="text-xs text-zinc-400">{selectedPath.description}</p>
                 </div>
                 <button

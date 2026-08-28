@@ -117,7 +117,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
     >
       {rank != null && (
         <span
-          className="absolute left-0 bottom-10 z-0 text-7xl sm:text-8xl font-black leading-none text-[#C8A24C]/30 pointer-events-none select-none"
+          className="absolute left-0 bottom-10 z-0 text-7xl sm:text-8xl font-accent font-bold leading-none text-[#C8A24C]/30 pointer-events-none select-none"
           aria-hidden
         >
           {rank}
@@ -179,7 +179,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
               )}
 
               <div className="absolute bottom-3 right-3 left-3 z-[1] text-right pointer-events-none">
-                <div className="text-[15px] sm:text-base font-semibold text-white leading-snug line-clamp-2">
+                <div className="text-[15px] sm:text-base font-heading font-semibold text-white leading-snug line-clamp-2">
                   {title}
                 </div>
                 {instructorName && (

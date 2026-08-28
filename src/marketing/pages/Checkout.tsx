@@ -19,7 +19,7 @@ export function Checkout() {
           <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-4 font-semibold">
             בחירת מסלול
           </p>
-          <h1 className="text-3xl md:text-4xl font-serif italic text-white mb-4">
+          <h1 className="text-3xl md:text-4xl font-heading text-white mb-4">
             בחרו איך להיכנס
           </h1>
           <p className="text-sm text-white/45 font-light leading-relaxed max-w-xl mx-auto">

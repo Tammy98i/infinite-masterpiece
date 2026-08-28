@@ -17,7 +17,7 @@ export const OnboardingCompleteModal: React.FC = () => {
           <X className="w-5 h-5" />
         </button>
         <Award className="w-16 h-16 text-primary-light mx-auto mb-4" />
-        <h2 className="text-2xl font-black font-display text-white mb-2">סיימתם את מסלול ההדרכה!</h2>
+        <h2 className="text-2xl font-heading text-white mb-2">סיימתם את מסלול ההדרכה!</h2>
         <p className="text-sm text-zinc-400 mb-6">קיבלתם בונוס: {unlockedBonus.title}</p>
         {unlockedBonus.value && unlockedBonus.bonusType === 'pdf' && (
           <a

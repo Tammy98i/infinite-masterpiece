@@ -28,7 +28,7 @@ export function PlatformLayout({ children }: PlatformLayoutProps) {
         <div className="p-8 flex items-center justify-center border-b border-white/[0.05]">
           <Link to="/" className="text-white flex items-center gap-2 group">
             <Infinity className="w-8 h-8 text-[#C8A24C] group-hover:rotate-180 transition-transform duration-700" strokeWidth={1} />
-            <span className="font-serif italic text-xl tracking-wide">Masterpiece</span>
+            <span className="font-heading text-xl tracking-wide">Masterpiece</span>
           </Link>
         </div>
 

@@ -43,7 +43,7 @@ export function Home() {
                 </span>
               </div>
 
-              <h1 className="text-[56px] md:text-[84px] font-light tracking-tighter leading-[1.05] mb-8">
+              <h1 className="text-[56px] md:text-[84px] font-heading tracking-tight leading-[1.15] mb-8">
                 <span className="text-white block">יש לך יצירה.</span>
                 <span className="text-gold-gradient font-medium block">
                   עכשיו בונים לה
@@ -142,7 +142,7 @@ export function Home() {
           <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-4 font-semibold">
             שכבת העומק
           </p>
-          <h2 className="text-4xl md:text-5xl font-serif italic text-white tracking-tight mb-5">נבחרת 88</h2>
+          <h2 className="text-4xl md:text-5xl font-heading text-white tracking-tight mb-5">נבחרת 88</h2>
           <p className="text-lg text-white/55 font-light leading-relaxed mb-3">
             עד 88 יוצרים שעובדים קרוב יותר. על ההצעה, המכירה והמודל. לפי התאמה, לא בלחיצת תשלום.
           </p>
@@ -191,7 +191,7 @@ export function Home() {
             </h2>
             <h3 className="text-4xl md:text-5xl font-light text-white mb-6 tracking-tight">
               כל מה שאת/ה צריך/ה כדי להתקדם{' '}
-              <span className="font-serif italic text-gold-gradient">במקום אחד.</span>
+              <span className="font-heading text-gold-gradient">במקום אחד.</span>
             </h3>
             <p className="text-xl text-white/50 font-light max-w-2xl leading-relaxed">
               לא עוד קבצים מפוזרים, לינקים שנעלמים וקבוצות עמוסות. Infinite Masterpiece נבנית כפלטפורמה
@@ -249,7 +249,7 @@ export function Home() {
             </span>
           </div>
 
-          <h2 className="text-3xl md:text-4xl font-serif italic text-white mb-3">אמיצים או הססנים</h2>
+          <h2 className="text-3xl md:text-4xl font-heading text-white mb-3">אמיצים או הססנים</h2>
           <p className="text-sm text-white/45 font-light max-w-xl mx-auto leading-relaxed mb-10">
             אמיצים: 8,008 ₪ לפני מע״מ. הססנים: 8,888 ₪ בפריסה. ההבדל בקצב הכניסה ובכרטיסי ההגרלה.
           </p>

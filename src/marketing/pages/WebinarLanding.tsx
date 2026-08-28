@@ -76,7 +76,7 @@ function SectionLabel({ children }: { children: ReactNode }) {
 }
 
 function SectionTitle({ children }: { children: ReactNode }) {
-  return <h2 className="text-3xl md:text-5xl font-light text-white mb-6 leading-tight">{children}</h2>;
+  return <h2 className="text-3xl md:text-5xl font-heading text-white mb-6 leading-tight">{children}</h2>;
 }
 
 function HostFaces() {
@@ -211,7 +211,7 @@ export function WebinarLanding() {
                 <WebinarCountdown date={config.date} time={config.time} />
               </div>
 
-              <h1 className="text-4xl md:text-6xl xl:text-7xl font-light tracking-tight leading-[1.05] mb-6">
+              <h1 className="text-4xl md:text-6xl xl:text-7xl font-heading tracking-tight leading-[1.15] mb-6">
                 <span className="text-white block">{headlineParts.line1}</span>
                 {headlineParts.line2 ? (
                   <span className="text-gold-gradient font-medium block mt-2">{headlineParts.line2}</span>
@@ -584,7 +584,7 @@ export function WebinarLanding() {
             <article className="rounded-3xl border border-[#C8A24C]/40 bg-[#C8A24C]/[0.07] p-6 md:p-8 flex flex-col">
               <h3 className="text-2xl text-white mb-2">מסלול האמיצים</h3>
               <p className="text-sm text-white/50 font-light mb-6">תשלום אחד מראש. למי שכבר החליט/ה ורוצה לסגור את ההתחייבות בפעולה אחת.</p>
-              <p className="text-3xl text-white font-light mb-1">{BRAVE_PRICE_BEFORE_VAT.toLocaleString('he-IL')} ₪</p>
+              <p className="text-3xl text-white font-accent font-semibold tabular-nums mb-1">{BRAVE_PRICE_BEFORE_VAT.toLocaleString('he-IL')} ₪</p>
               <p className="text-xs text-white/40 mb-8">לפני מע״מ</p>
               <Link
                 to="/application?track=brave"
@@ -597,7 +597,7 @@ export function WebinarLanding() {
             <article className="rounded-3xl border border-white/10 bg-white/[0.02] p-6 md:p-8 flex flex-col">
               <h3 className="text-2xl text-white mb-2">מסלול ההססנים</h3>
               <p className="text-sm text-white/50 font-light mb-6">מחויבות מדורגת. למי שרוצה להתחיל בצעד קטן ולהמשיך לפי אבני הדרך.</p>
-              <p className="text-3xl text-white font-light mb-1">8 ₪, 80 ₪, 800 ₪ ו8,000 ₪</p>
+              <p className="text-3xl text-white font-accent font-semibold tabular-nums mb-1">8 ₪, 80 ₪, 800 ₪ ו8,000 ₪</p>
               <p className="text-xs text-white/40 mb-8">סה״כ {HESITANT_TOTAL_BEFORE_VAT.toLocaleString('he-IL')} ₪ לפני מע״מ</p>
               <Link
                 to="/hesitation"

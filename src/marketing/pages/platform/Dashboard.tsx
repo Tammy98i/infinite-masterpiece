@@ -272,7 +272,7 @@ export function Dashboard() {
           { label: "הססנים פעילים", value: "45", color: "text-purple-400" }
         ].map((stat, i) => (
           <div key={i} className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-6 text-center">
-            <div className={`text-3xl font-light mb-2 ${stat.color}`}>{stat.value}</div>
+            <div className={`text-3xl font-accent font-semibold tabular-nums mb-2 ${stat.color}`}>{stat.value}</div>
             <div className="text-xs text-white/50 uppercase tracking-widest">{stat.label}</div>
           </div>
         ))}

@@ -1,0 +1,324 @@
+/* Premium typography system — source of truth for the whole site.
+   Tokens: --font-heading, --font-body, --font-accent (see @theme in index.css). */
+
+:root {
+  --text-h1: clamp(2rem, 1.2rem + 3.2vw, 3.75rem);
+  --text-h2: clamp(1.5rem, 1.05rem + 1.8vw, 2.25rem);
+  --text-h3: clamp(1.1875rem, 1.05rem + 0.7vw, 1.5rem);
+  --text-body-lg: clamp(1.125rem, 1.05rem + 0.25vw, 1.25rem);
+  --text-body: clamp(1rem, 0.97rem + 0.15vw, 1.125rem);
+  --text-small: clamp(0.875rem, 0.84rem + 0.12vw, 1rem);
+  --leading-heading: 1.22;
+  --leading-body: 1.7;
+  --tracking-heading: -0.018em;
+  --measure: 40rem;
+}
+
+html {
+  font-family: var(--font-body);
+}
+
+body {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: 400;
+  line-height: var(--leading-body);
+  letter-spacing: 0;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+}
+
+/* Headings: Noto Sans Hebrew, semibold/bold, never light/black-shouting */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-heading);
+  font-style: normal;
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+  text-wrap: pretty;
+}
+
+h1 {
+  font-weight: 700;
+}
+
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-weight: 600;
+}
+
+@layer base {
+  h1 {
+    font-size: var(--text-h1);
+    font-weight: 700;
+  }
+
+  h2 {
+    font-size: var(--text-h2);
+    font-weight: 600;
+  }
+
+  h3 {
+    font-size: var(--text-h3);
+    font-weight: 600;
+  }
+
+  h4,
+  h5,
+  h6 {
+    font-size: 1.0625rem;
+    font-weight: 600;
+  }
+}
+
+h1.font-light,
+h1.font-normal,
+h1.font-medium,
+h1.font-semibold,
+h1.font-bold,
+h1.font-extrabold,
+h1.font-black {
+  font-weight: 700;
+}
+
+h2.font-light,
+h2.font-normal,
+h2.font-medium,
+h2.font-bold,
+h2.font-extrabold,
+h2.font-black,
+h3.font-light,
+h3.font-normal,
+h3.font-medium,
+h3.font-bold,
+h3.font-extrabold,
+h3.font-black,
+h4.font-light,
+h4.font-black {
+  font-weight: 600;
+}
+
+.font-black,
+.font-extrabold {
+  font-weight: 700;
+}
+
+h1.italic,
+h2.italic,
+h3.italic,
+h4.italic,
+.font-serif.italic,
+.font-heading.italic,
+.font-display.italic {
+  font-style: normal;
+}
+
+/* Body copy: IBM Plex, readable weight even when classes still say font-light */
+p,
+li,
+dd,
+dt,
+label,
+blockquote,
+figcaption,
+legend,
+summary,
+td,
+th,
+small {
+  font-family: var(--font-body);
+}
+
+p,
+li,
+label,
+dd,
+blockquote,
+figcaption,
+summary,
+td {
+  line-height: var(--leading-body);
+}
+
+p.font-light,
+li.font-light,
+label.font-light,
+span.font-light,
+div.font-light,
+p.font-thin,
+span.font-thin,
+div.font-thin {
+  font-weight: 400;
+}
+
+p.font-accent,
+div.font-accent,
+span.font-accent,
+p.font-semibold,
+.font-accent.font-semibold {
+  font-weight: 600;
+}
+
+p.leading-relaxed,
+p.leading-snug,
+.leading-relaxed {
+  line-height: var(--leading-body);
+}
+
+p.max-w-xl,
+p.max-w-2xl,
+p.max-w-3xl {
+  max-width: min(100%, var(--measure));
+}
+
+/* Forms, nav, tables — body family */
+input,
+textarea,
+select,
+option {
+  font-family: var(--font-body);
+  font-weight: 400;
+}
+
+nav,
+nav a {
+  font-family: var(--font-body);
+  font-weight: 500;
+}
+
+table {
+  font-family: var(--font-body);
+}
+
+th {
+  font-family: var(--font-heading);
+  font-weight: 600;
+}
+
+/* Accent: CTAs, badges, labels, prices, numbers — not whole-card buttons */
+button.min-h-11,
+button.rounded-full,
+button.rounded-xl,
+button.rounded-2xl,
+[type='submit'],
+[type='reset'],
+a.min-h-11,
+a[class*='rounded-full'],
+a[class*='rounded-[22px]'] {
+  font-family: var(--font-accent);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+
+.uppercase,
+.badge,
+[data-badge],
+[data-price],
+.price,
+.tabular-nums {
+  font-family: var(--font-accent);
+}
+
+.uppercase {
+  font-weight: 500;
+}
+
+.price,
+[data-price],
+.tabular-nums {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+
+.skip-link {
+  font-family: var(--font-accent);
+}
+
+/* Explicit utilities — new components should use these tokens */
+.font-heading,
+.font-display,
+.font-serif {
+  font-family: var(--font-heading);
+}
+
+.font-body,
+.font-sans {
+  font-family: var(--font-body);
+}
+
+.font-accent {
+  font-family: var(--font-accent);
+}
+
+.type-h1 {
+  font-family: var(--font-heading);
+  font-size: var(--text-h1);
+  font-weight: 700;
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+}
+
+.type-h2 {
+  font-family: var(--font-heading);
+  font-size: var(--text-h2);
+  font-weight: 600;
+  line-height: var(--leading-heading);
+  letter-spacing: var(--tracking-heading);
+}
+
+.type-h3 {
+  font-family: var(--font-heading);
+  font-size: var(--text-h3);
+  font-weight: 600;
+  line-height: var(--leading-heading);
+}
+
+.type-body-lg {
+  font-family: var(--font-body);
+  font-size: var(--text-body-lg);
+  font-weight: 400;
+  line-height: var(--leading-body);
+}
+
+.type-body {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: 400;
+  line-height: var(--leading-body);
+}
+
+.type-small {
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  font-weight: 400;
+  line-height: 1.6;
+}
+
+.type-cta {
+  font-family: var(--font-accent);
+  font-weight: 600;
+}
+
+.type-label {
+  font-family: var(--font-accent);
+  font-weight: 500;
+}
+
+.measure {
+  max-width: var(--measure);
+}
+
+/* English islands keep the same families; force LTR only when marked */
+[lang='en'] {
+  font-family: inherit;
+}
+
+/* Accessibility: readable-font preference still wins via a11y.css !important */

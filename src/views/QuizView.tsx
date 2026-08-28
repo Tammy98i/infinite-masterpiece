@@ -111,7 +111,7 @@ export const QuizView: React.FC = () => {
       {selectedMood && (
         <div className="animate-in fade-in duration-500">
           <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-8">
-            <h2 className="text-2xl font-black font-display text-primary-light">
+            <h2 className="text-2xl font-heading text-primary-light">
               התכנים המדויקים ביותר עבורכם ({recommendedCourses.length || courses.slice(0, 3).length})
             </h2>
             <button
@@ -134,7 +134,7 @@ export const QuizView: React.FC = () => {
                   <div className="flex flex-col sm:flex-row gap-6 items-center">
                     <img src={featured.coverImage} alt={featured.title} className="w-full sm:w-48 aspect-video object-cover rounded-2xl" />
                     <div className="flex-1 text-right">
-                      <h3 className="text-xl font-black font-display text-white mb-2">{featured.title}</h3>
+                      <h3 className="text-xl font-heading text-white mb-2">{featured.title}</h3>
                       <p className="text-sm text-zinc-400 mb-4 line-clamp-2">{featured.subtitle}</p>
                       <button
                         onClick={() => setView('watch', { courseId: featured.id, episodeId: featured.episodes[0]?.id })}

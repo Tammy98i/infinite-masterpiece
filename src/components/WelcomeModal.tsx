@@ -37,7 +37,7 @@ export const WelcomeModal: React.FC = () => {
           <X className="w-5 h-5" />
         </button>
 
-        <h2 className="text-2xl font-black text-white mb-6 font-display">שלושה צעדים להתחלה מושלמת</h2>
+        <h2 className="text-2xl font-heading text-white mb-6">שלושה צעדים להתחלה מושלמת</h2>
 
         <div className="grid gap-4 mb-8">
           {steps.map((step, i) => {

@@ -1,5 +1,5 @@
-@import url('https://fonts.googleapis.com/css2?family=Assistant:wght@200;300;400;500;600;700;800&family=Frank+Ruhl+Libre:wght@400;500;700;900&display=swap');
 @import "tailwindcss";
+@import "./styles/typography.css";
 
 @theme {
   --color-primary: #c9a227;
@@ -8,8 +8,12 @@
   --color-primary-muted: #c9a22733;
   --color-surface: #050505;
   --color-surface-elevated: #0a0a0a;
-  --font-display: 'Frank Ruhl Libre', serif;
-  --font-body: 'Assistant', sans-serif;
+  --font-heading: "Noto Sans Hebrew", "Noto Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "IBM Plex Sans Hebrew", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-accent: "Rubik", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: var(--font-body);
+  --font-serif: var(--font-heading);
+  --font-display: var(--font-heading);
 }
 
 html {
@@ -27,10 +31,6 @@ html {
     padding: 0;
     overflow-x: hidden;
     direction: rtl;
-  }
-
-  h1, h2, h3, .font-display {
-    font-family: var(--font-display);
   }
 
   section[id] {

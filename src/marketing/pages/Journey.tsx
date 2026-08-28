@@ -65,7 +65,7 @@ export function Journey() {
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-[#C8A24C]/0 via-transparent to-[#C8A24C]/0 group-hover:from-[#C8A24C]/5 transition-all duration-700" />
                 <div className="relative z-10">
-                  <div className="text-[48px] font-light text-white/10 mb-8 leading-none font-serif tracking-tighter">
+                  <div className="text-[48px] font-accent font-semibold tabular-nums text-white/10 mb-8 leading-none">
                     {step.num}
                   </div>
                   <div className="flex justify-between items-start mb-6">

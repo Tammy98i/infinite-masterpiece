@@ -29,7 +29,7 @@ export function Login() {
           <Infinity className="mx-auto h-12 w-12 text-[#C8A24C]" strokeWidth={1} />
           <h2 className="mt-6 text-3xl font-light text-white tracking-tight">כניסה למערכת</h2>
           <p className="mt-2 text-sm text-white/50 font-light">
-            האזור האישי לתלמידי <span className="font-serif italic text-gold-gradient">Infinite Masterpiece</span>
+            האזור האישי לתלמידי <span className="font-heading text-gold-gradient">Infinite Masterpiece</span>
           </p>
         </div>
         

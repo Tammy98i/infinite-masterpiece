@@ -69,7 +69,7 @@ export function FounderPage() {
 
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
             <div className="lg:col-span-6 text-right">
-              <h1 className="text-4xl md:text-5xl font-serif italic text-white tracking-tight mb-4">
+              <h1 className="text-4xl md:text-5xl font-heading text-white tracking-tight mb-4">
                 {founder.name}
               </h1>
               <p className="text-[#C8A24C] text-sm tracking-widest mb-8 font-medium">

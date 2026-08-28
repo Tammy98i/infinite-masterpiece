@@ -18,7 +18,7 @@ export const OnboardingModal: React.FC = () => {
           <X className="w-5 h-5" />
         </button>
         <div className="text-xs font-bold text-primary-light mb-2">הדרכה</div>
-        <h3 className="text-xl font-black font-display text-white mb-3">{activeStep.title}</h3>
+        <h3 className="text-xl font-heading text-white mb-3">{activeStep.title}</h3>
         <p className="text-sm text-zinc-300 leading-relaxed mb-6">{activeStep.description}</p>
         {activeStep.videoUrl && (
           <video src={activeStep.videoUrl} controls className="w-full rounded-xl mb-4" />

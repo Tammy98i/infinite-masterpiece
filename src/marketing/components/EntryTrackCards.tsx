@@ -27,7 +27,7 @@ export function EntryTrackCards() {
       <div className="grid grid-cols-2 gap-4 text-right items-stretch">
         <article className="flex flex-col rounded-2xl border border-[#C8A24C]/40 bg-[#C8A24C]/[0.07] p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3 min-h-8 mb-3">
-            <h3 className="text-lg sm:text-xl font-serif italic text-white">מסלול האמיצים</h3>
+            <h3 className="text-lg sm:text-xl font-heading text-white">מסלול האמיצים</h3>
             <span className="shrink-0 px-2.5 py-1 rounded-full bg-[#C8A24C] text-black text-[10px] font-semibold tracking-wide">
               מומלץ
             </span>
@@ -36,7 +36,7 @@ export function EntryTrackCards() {
             למי שכבר יודע/ת שזה הזמן להיכנס עד הסוף.
           </p>
           <div className="mb-4 min-h-14">
-            <p className="text-2xl font-light text-white">8,008 ₪</p>
+            <p className="text-2xl font-accent font-semibold tabular-nums text-white">8,008 ₪</p>
             <p className="text-[11px] text-white/35 mt-1">+ מע״מ · תשלום מלא</p>
           </div>
           <FeatureList
@@ -57,7 +57,7 @@ export function EntryTrackCards() {
 
         <article className="flex flex-col rounded-2xl border border-white/10 bg-white/[0.02] p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3 min-h-8 mb-3">
-            <h3 className="text-lg sm:text-xl font-serif italic text-white">מסלול ההססנים</h3>
+            <h3 className="text-lg sm:text-xl font-heading text-white">מסלול ההססנים</h3>
             <span className="shrink-0 px-2.5 py-1 text-[10px] opacity-0 pointer-events-none" aria-hidden>
               מומלץ
             </span>
@@ -66,7 +66,7 @@ export function EntryTrackCards() {
             למי שרוצה להיכנס שלב שלב. גישה מלאה מההתחלה.
           </p>
           <div className="mb-4 min-h-14">
-            <p className="text-2xl font-light text-white">8 ₪ היום</p>
+            <p className="text-2xl font-accent font-semibold tabular-nums text-white">8 ₪ היום</p>
             <p className="text-[11px] text-white/35 mt-1">ואחר כך 80 · 800 · 8,000</p>
           </div>
           <FeatureList

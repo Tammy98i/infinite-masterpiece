@@ -35,7 +35,7 @@ export const OnboardingLevelPicker: React.FC<Props> = ({ userId, role, onClose }
             דילוג
           </button>
         )}
-        <h2 className="text-2xl font-black font-display text-white mb-2">איך תרצו שנלווה אתכם?</h2>
+        <h2 className="text-2xl font-heading text-white mb-2">איך תרצו שנלווה אתכם?</h2>
         <p className="text-sm text-zinc-400 mb-6">בחרו את רמת הליווי המתאימה לכם. ניתן לשנות בכל עת מהפרופיל.</p>
         <div className="grid gap-3">
           {LEVELS.map((lvl) => {

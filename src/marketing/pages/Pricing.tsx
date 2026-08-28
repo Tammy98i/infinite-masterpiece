@@ -10,7 +10,7 @@ export function Pricing() {
         </span>
       </div>
 
-      <h1 className="text-3xl md:text-5xl font-serif italic text-white mb-4">
+      <h1 className="text-3xl md:text-5xl font-heading text-white mb-4">
         אמיצים או הססנים
       </h1>
       <p className="text-sm md:text-base text-white/45 font-light leading-relaxed max-w-xl mx-auto mb-12">
