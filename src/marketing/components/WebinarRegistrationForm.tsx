@@ -19,7 +19,7 @@ type Props = {
 };
 
 const fieldClass =
-  'w-full bg-[#010308]/60 border border-[#C8A24C]/25 rounded-xl px-4 py-3 text-white text-sm text-right focus:outline-none focus:border-[#C8A24C] focus:ring-1 focus:ring-[#C8A24C]/40 min-h-11';
+  'w-full bg-[#010308]/60 border border-[#C8A24C]/25 rounded-xl px-4 py-3 sm:px-5 sm:py-3.5 text-white text-base text-right focus:outline-none focus:border-[#C8A24C] focus:ring-1 focus:ring-[#C8A24C]/40 min-h-11';
 
 export function WebinarRegistrationForm({
   payload,
@@ -178,15 +178,15 @@ export function WebinarRegistrationForm({
       id={formId}
       onSubmit={handleSubmit}
       onFocus={markStarted}
-      className="space-y-4 text-right"
+      className="space-y-4 sm:space-y-5 text-right"
       aria-labelledby={`${formId}-title`}
     >
       {!compact ? (
         <div className="mb-2">
-          <p id={`${formId}-title`} className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-2">
+          <p id={`${formId}-title`} className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-[#C8A24C] mb-2">
             {isWaitlist ? 'רשימת המתנה' : 'הרשמה לוובינר'}
           </p>
-          <h2 className="text-xl font-light text-white mb-1">
+          <h2 className="text-xl sm:text-2xl md:text-3xl font-light text-white mb-1">
             {isWaitlist ? 'הצטרפ/י לרשימת המתנה' : 'נרשמים לערב החי'}
           </h2>
           <WebinarUrgencyStrip
@@ -197,15 +197,15 @@ export function WebinarRegistrationForm({
         </div>
       ) : null}
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label htmlFor={`${formId}-fullName`} className="text-xs text-white/60 mb-1 block text-right">
+          <label htmlFor={`${formId}-fullName`} className="text-sm text-white/60 mb-1.5 block text-right">
             שם מלא *
           </label>
           <input required id={`${formId}-fullName`} name="fullName" type="text" autoComplete="name" className={fieldClass} />
         </div>
         <div>
-          <label htmlFor={`${formId}-phone`} className="text-xs text-white/60 mb-1 block text-right">
+          <label htmlFor={`${formId}-phone`} className="text-sm text-white/60 mb-1.5 block text-right">
             טלפון *
           </label>
           <input
@@ -227,7 +227,7 @@ export function WebinarRegistrationForm({
       </div>
 
       <div>
-        <label htmlFor={`${formId}-email`} className="text-xs text-white/60 mb-1 block text-right">
+          <label htmlFor={`${formId}-email`} className="text-sm text-white/60 mb-1.5 block text-right">
           אימייל *
         </label>
         <input
@@ -243,7 +243,7 @@ export function WebinarRegistrationForm({
         />
       </div>
 
-      <label className="flex items-start gap-3 text-xs text-white/45 leading-relaxed cursor-pointer">
+      <label className="flex items-start gap-3 text-sm text-white/45 leading-relaxed cursor-pointer">
         <input
           required
           type="checkbox"
@@ -274,7 +274,7 @@ export function WebinarRegistrationForm({
       <button
         type="submit"
         disabled={busy || !config.enabled}
-        className="w-full py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-sm font-semibold min-h-11 cursor-pointer hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-200"
+        className="w-full py-4 sm:py-5 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-base font-semibold min-h-11 cursor-pointer hover:opacity-95 disabled:opacity-50 disabled:cursor-not-allowed transition-opacity duration-200"
       >
         {submitting ? 'שולח…' : isWaitlist ? 'הצטרפות לרשימת המתנה' : 'כן. אני מגיע/ה לערב החי'}
       </button>
@@ -284,7 +284,7 @@ export function WebinarRegistrationForm({
           type="button"
           disabled={busy}
           onClick={() => void handleAlreadyRegistered()}
-          className="text-xs text-white/45 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer disabled:opacity-50 transition-colors duration-200"
+          className="text-sm text-white/45 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer disabled:opacity-50 transition-colors duration-200"
         >
           {lookingUp ? 'בודקים…' : 'כבר נרשמתי'}
         </button>

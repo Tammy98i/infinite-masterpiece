@@ -58,7 +58,7 @@ function SectionTitle({ children }: { children: ReactNode }) {
 }
 
 const REGISTER_CARD_CLASS =
-  'rounded-3xl border border-[#C8A24C]/30 bg-[#010308]/80 backdrop-blur-xl p-6 shadow-2xl shadow-black/40';
+  'rounded-3xl border border-[#C8A24C]/30 bg-[#010308]/80 backdrop-blur-xl shadow-2xl shadow-black/40 p-5 sm:p-8 lg:p-10';
 
 function HostFaces() {
   const hosts = [
@@ -67,20 +67,20 @@ function HostFaces() {
     { name: 'גלב', src: '/team/gleb.png' },
   ];
   return (
-    <div className="flex items-center justify-center gap-3 mb-5">
-      <div className="flex -space-x-3 space-x-reverse">
+    <div className="flex items-center justify-center gap-3 mb-5 sm:mb-6">
+      <div className="flex -space-x-3 space-x-reverse sm:-space-x-4">
         {hosts.map((host) => (
           <span key={host.name} className="inline-flex">
             <TeamPhoto
               src={host.src}
               name={host.name}
               alt={host.name}
-              className="w-9 h-9 rounded-full border border-[#C8A24C]/50 text-[11px]"
+              className="w-9 h-9 sm:w-11 sm:h-11 rounded-full border border-[#C8A24C]/50 text-[11px] sm:text-sm"
             />
           </span>
         ))}
       </div>
-      <p className="text-xs text-white/50 font-light">גל, תמי וגלב בלייב</p>
+      <p className="text-xs sm:text-sm text-white/50 font-light">גל, תמי וגלב בלייב</p>
     </div>
   );
 }
@@ -96,7 +96,7 @@ function WebinarRegisterCard({
 }) {
   return (
     <>
-      <p className="text-lg text-white font-light leading-snug mb-4 text-right">
+      <p className="text-lg sm:text-xl md:text-2xl text-white font-light leading-snug mb-4 sm:mb-5 text-right">
         {headlineParts.line1}
         {headlineParts.line2 ? (
           <>
@@ -401,15 +401,15 @@ export function WebinarLanding() {
           <div className="absolute inset-0 bg-gradient-to-b from-[#010308] via-[#010308]/90 to-[#010308]" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(200,162,76,0.16),transparent_70%)]" />
         </div>
-        <div className="relative z-10 max-w-[720px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4">
+        <div className="relative z-10 max-w-[920px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4 max-w-2xl mx-auto">
             זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.
           </p>
-          <p className="text-sm text-[#C8A24C] font-light mb-8">מחכים לך בוובינר. גל, תמי וגלב.</p>
+          <p className="text-sm sm:text-base text-[#C8A24C] font-light mb-8">מחכים לך בוובינר. גל, תמי וגלב.</p>
           <aside
             id={WEBINAR_REGISTER_ID}
             aria-label="הרשמה לוובינר"
-            className={`${REGISTER_CARD_CLASS} mx-auto w-full max-w-[380px] text-start scroll-mt-24`}
+            className={`${REGISTER_CARD_CLASS} mx-auto w-full max-w-xl md:max-w-2xl lg:max-w-3xl text-start scroll-mt-24`}
           >
             <WebinarRegisterCard
               payload={payload}
