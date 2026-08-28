@@ -1,0 +1,430 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>סקיצת עיצוב — Infinite Masterpiece</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600&family=Noto+Sans+Hebrew:wght@500;600;700&family=Rubik:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #010308;
+      --gold: #c8a24c;
+      --gold-soft: #f7e7b5;
+      --ink: #fff;
+      --muted: rgba(255,255,255,0.86);
+      --line: rgba(200,162,76,0.28);
+      --card: rgba(1,3,8,0.64);
+      --note: #ff7a33;
+      --heading: "Noto Sans Hebrew", "Arial Hebrew", sans-serif;
+      --body: "IBM Plex Sans Hebrew", "Arial Hebrew", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--body);
+    }
+    .wrap { max-width: 1180px; margin: 0 auto; padding: 24px 16px 80px; }
+    .banner {
+      border: 1px dashed var(--note);
+      color: var(--note);
+      padding: 10px 14px;
+      border-radius: 999px;
+      display: inline-flex;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    h1.page-title {
+      font-family: var(--heading);
+      font-weight: 600;
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+      margin: 0 0 8px;
+    }
+    .lede { color: var(--muted); max-width: 46rem; line-height: 1.7; margin-bottom: 22px; }
+    nav.states { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+    nav.states button {
+      background: transparent;
+      color: var(--gold-soft);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      min-height: 44px;
+      padding: 0 16px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    nav.states button[aria-pressed="true"] {
+      background: linear-gradient(90deg, #c8a24c, #f7e7b5, #d4af37);
+      color: #111;
+      border-color: transparent;
+      font-weight: 600;
+    }
+    .screen { display: none; }
+    .screen.is-on { display: block; }
+    .illo {
+      width: 100%;
+      border-radius: 22px;
+      border: 1px solid var(--line);
+      margin-bottom: 16px;
+      display: block;
+    }
+    .canvas {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(200,162,76,0.12), transparent 50%),
+        #010308;
+      min-height: 560px;
+      padding: 28px 20px 40px;
+    }
+    .note {
+      color: var(--note);
+      font-family: Rubik, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 0 0 12px;
+    }
+    .note::before { content: "→ "; }
+    .hero { text-align: center; }
+    .pill {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: rgba(1,3,8,0.64);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 12px;
+      margin-bottom: 20px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+    .headline {
+      font-family: var(--heading);
+      font-size: clamp(1.8rem, 4.4vw, 3.2rem);
+      font-weight: 700;
+      line-height: 1.18;
+      margin: 0 0 14px;
+      text-shadow: 0 2px 18px rgba(1,3,8,0.8);
+    }
+    .headline .gold {
+      display: block;
+      margin-top: 6px;
+      background: linear-gradient(90deg, #c8a24c, #f7e7b5);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .sub { color: var(--muted); max-width: 34rem; margin: 0 auto 22px; line-height: 1.7; font-weight: 500; }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 28px;
+      border: 0;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #c8a24c, #f7e7b5, #d4af37);
+      color: #111;
+      font-weight: 700;
+      box-shadow: 0 8px 28px rgba(200,162,76,0.28);
+      text-decoration: none;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .cta.ghost {
+      background: transparent;
+      color: var(--gold-soft);
+      border: 1px solid var(--line);
+      box-shadow: none;
+    }
+    .quiet { color: rgba(255,255,255,0.8); font-size: 14px; min-height: 44px; display: inline-flex; align-items: center; }
+    .grid5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px; margin-top: 36px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .glass {
+      background: var(--card);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 22px 16px;
+      min-height: 140px;
+    }
+    .glass.hover { box-shadow: 0 0 0 1px rgba(200,162,76,0.5), 0 12px 40px rgba(200,162,76,0.18); }
+    .icon { color: var(--gold); font-size: 22px; margin-bottom: 10px; }
+    .caption { font-size: 14px; font-weight: 500; line-height: 1.5; }
+    .faces { display: flex; justify-content: center; gap: 18px; margin: 18px 0 22px; }
+    .avatar {
+      width: 72px; height: 72px; border-radius: 50%;
+      border: 2px solid var(--gold);
+      display: grid; place-items: center;
+      background: radial-gradient(circle at 30% 30%, rgba(200,162,76,0.4), #0b1020 70%);
+      color: var(--gold-soft); font-family: var(--heading);
+    }
+    .reg {
+      width: min(420px, 100%);
+      margin: 0 auto;
+      text-align: right;
+    }
+    .reg input {
+      width: 100%;
+      min-height: 44px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(1,3,8,0.55);
+      color: #fff;
+      margin: 8px 0;
+      padding: 0 12px;
+    }
+    .phones { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+    .phone {
+      width: 240px;
+      border: 8px solid #161616;
+      border-radius: 32px;
+      min-height: 460px;
+      padding: 18px 12px;
+      background: #010308;
+      text-align: center;
+    }
+    .phone h3 { font-size: 18px; margin: 40px 0 10px; font-family: var(--heading); }
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .dead { opacity: 0.45; }
+    .stamp {
+      position: absolute;
+      color: var(--note);
+      border: 2px solid var(--note);
+      padding: 4px 10px;
+      border-radius: 8px;
+      transform: rotate(-8deg);
+      font-weight: 600;
+    }
+    .rail-title { font-size: 1.25rem; font-weight: 600; margin: 22px 0 12px; font-family: var(--heading); }
+    .cards { display: flex; gap: 12px; overflow: hidden; }
+    .thumb {
+      flex: 0 0 180px;
+      aspect-ratio: 16/9;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #1a2238, #0b1020);
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+    .thumb.on { border-color: var(--gold); box-shadow: 0 0 24px rgba(200,162,76,0.35); }
+    .hero-mask {
+      border-radius: 20px;
+      min-height: 220px;
+      background:
+        linear-gradient(to top, #010308 12%, transparent 70%),
+        linear-gradient(135deg, #243056, #0b1020);
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      padding: 24px;
+      text-align: right;
+    }
+    .specimens { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+    .spec { text-align: center; }
+    .spec p { font-size: 13px; color: var(--gold-soft); margin-top: 10px; }
+    .ruler { height: 160px; border-inline-start: 2px dashed var(--gold); margin: 0 auto; width: 0; }
+    footer.sketch-foot { margin-top: 24px; color: rgba(255,255,255,0.55); font-size: 13px; }
+    @media (max-width: 800px) {
+      .grid5, .grid3, .split, .specimens { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="banner">סקיצה לאישור · לא קוד במוצר · בלי לשלב 2 · בלי לערבב מסע עם מנוי ספרייה</p>
+    <h1 class="page-title">סקיצת שדרוג עיצוב וחוויה</h1>
+    <p class="lede">
+      שמיים + זהב נשארים. מה שמשתנה: כרטיס אחד, כפתור זהב אחד, ריווח יוקרתי, והירו שלא נגמר במבוי סתום.
+      האיורים למעלה בכל מסך הם כיוון ויזואלי. המוקאפ מתחת הוא העברית המדויקת.
+    </p>
+    <nav class="states" aria-label="מסכי הסקיצה">
+      <button type="button" data-screen="system" aria-pressed="true">שפה</button>
+      <button type="button" data-screen="home" aria-pressed="false">אתר שיווקי</button>
+      <button type="button" data-screen="webinar" aria-pressed="false">וובינר</button>
+      <button type="button" data-screen="vod" aria-pressed="false">ספרייה</button>
+      <button type="button" data-screen="mobile" aria-pressed="false">מובייל</button>
+      <button type="button" data-screen="cta" aria-pressed="false">CTA חי</button>
+      <button type="button" data-screen="endcard" aria-pressed="false">אחרי טעימה</button>
+      <button type="button" data-screen="start" aria-pressed="false">המשיכו מכאן</button>
+    </nav>
+
+    <section class="screen is-on" id="screen-system" aria-label="שפת עיצוב">
+      <img class="illo" src="sketch-system.jpg" alt="איור: כפתור, כרטיס זכוכית, דיוקנאות וריווח" />
+      <div class="canvas">
+        <p class="note">חבילה ראשונה: ארבעה אבנים. בלי רקע חדש.</p>
+        <div class="specimens">
+          <div class="spec">
+            <button class="cta" type="button">כפתור זהב אחד</button>
+            <p>גודל, צל, hover</p>
+          </div>
+          <div class="spec">
+            <div class="glass hover"><span class="icon">◇</span><p class="caption">כרטיס זכוכית<br/>מסגרת זהב 25%</p></div>
+            <p>רדיוס 24</p>
+          </div>
+          <div class="spec">
+            <div class="faces" style="margin:0">
+              <span class="avatar">ג</span>
+              <span class="avatar">ת</span>
+              <span class="avatar">ג</span>
+            </div>
+            <p>פנים באותו גודל</p>
+          </div>
+          <div class="spec">
+            <div class="ruler" aria-hidden></div>
+            <p>ריווח סקשן קבוע</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-home" aria-label="אתר שיווקי">
+      <img class="illo" src="sketch-marketing-home.jpg" alt="איור: הירו שיווקי על שמיים עם כרטיסי זכוכית" />
+      <div class="canvas hero">
+        <p class="note">כותרת גדולה. שורת זהב אחת. השמיים נשארים חלק מהעיצוב.</p>
+        <p class="pill"><span class="dot"></span> The Masterpiece Framework</p>
+        <h2 class="headline">יש לך יצירה.<span class="gold">עכשיו בונים לה מערכת הכנסה.</span></h2>
+        <p class="sub">הבעיה היא לא שאין לך כישרון. הבעיה היא שאין סביב הכישרון שלך מערכת עסקית.</p>
+        <button class="cta" type="button">כן. אני מגיע/ה לערב החי</button>
+        <div class="grid5">
+          <div class="glass"><span class="icon">◎</span><p class="caption">מתחילים ממכירה לא מאפס</p></div>
+          <div class="glass"><span class="icon">▣</span><p class="caption">מציגים ערך ברור ומוכרים אותו</p></div>
+          <div class="glass"><span class="icon">▤</span><p class="caption">מכניסים כסף ורק אז בונים</p></div>
+          <div class="glass"><span class="icon">⚙</span><p class="caption">בונים מערכת סביב היצירה</p></div>
+          <div class="glass"><span class="icon">→</span><p class="caption">סקייל, חופש והשפעה</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-webinar" aria-label="וובינר">
+      <img class="illo" src="sketch-webinar.jpg" alt="איור: כרטיס הרשמה פרימיום ודיוקנאות צוות" />
+      <div class="canvas hero">
+        <p class="note">כרטיס הרשמה כאובייקט. תג תאריך זהב. שלושה פנים באותו עיגול.</p>
+        <p class="pill"><span class="dot"></span> ערב חי · תאריך · שעה · ספירה</p>
+        <h2 class="headline">הכישרון כבר יש.<span class="gold">הערב שולחים פעולה אמיתית.</span></h2>
+        <div class="faces">
+          <span class="avatar">גל</span>
+          <span class="avatar">תמי</span>
+          <span class="avatar">גלב</span>
+        </div>
+        <form class="glass reg hover" onsubmit="event.preventDefault()">
+          <input aria-label="שם" placeholder="שם מלא" />
+          <input aria-label="טלפון" placeholder="טלפון" dir="ltr" />
+          <input aria-label="אימייל" placeholder="אימייל" dir="ltr" />
+          <button class="cta" type="submit" style="width:100%;margin-top:8px">כן. אני מגיע/ה לערב החי</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-vod" aria-label="ספריית VOD">
+      <img class="illo" src="sketch-vod-library.jpg" alt="איור: הירו קולנוע ורכבי הרצאות עם הילה" />
+      <div class="canvas">
+        <p class="note">מסכת הירו חזקה. כרטיס 16:9 עם הילת hover. כותרת רכבת גדולה.</p>
+        <div class="hero-mask">
+          <p style="color:var(--gold);font-size:12px;margin:0 0 8px">מומלץ הערב</p>
+          <h2 class="headline" style="font-size:2rem;margin-bottom:10px">מחזון למערכת</h2>
+          <button class="cta" type="button">התחילו לצפות</button>
+        </div>
+        <p class="rail-title">בחירת המערכת</p>
+        <div class="cards">
+          <div class="thumb on"></div>
+          <div class="thumb"></div>
+          <div class="thumb"></div>
+          <div class="thumb"></div>
+          <div class="thumb"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-mobile" aria-label="מובייל">
+      <img class="illo" src="sketch-mobile.jpg" alt="איור: שלושה טלפונים — בית, וובינר, ספרייה" />
+      <div class="canvas">
+        <p class="note">הירו קצר. כפתור הזהב נכנס למסך בלי גלילה.</p>
+        <div class="phones">
+          <div class="phone">
+            <p class="pill"><span class="dot"></span> אתר</p>
+            <h3>יש לך יצירה.</h3>
+            <p class="caption" style="color:var(--gold-soft)">מערכת הכנסה.</p>
+            <button class="cta" type="button" style="margin-top:16px">לערב החי</button>
+          </div>
+          <div class="phone">
+            <p class="pill"><span class="dot"></span> וובינר</p>
+            <h3>פעולה אמיתית.</h3>
+            <div class="glass" style="margin-top:16px;min-height:auto">
+              <button class="cta" type="button" style="width:100%">הרשמה</button>
+            </div>
+          </div>
+          <div class="phone">
+            <p class="pill"><span class="dot"></span> ספרייה</p>
+            <div class="thumb" style="width:100%;margin:16px 0"></div>
+            <p class="caption">ספרייה · חיפוש · רשימה</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-cta" aria-label="CTA חי">
+      <img class="illo" src="sketch-cta-alive.jpg" alt="איור: כפתור מת מול צעד הבא החי" />
+      <div class="canvas">
+        <p class="note">כשהערב נגמר — הזהב לא אומר «הסתיים». הוא מוביל לצעד הבא.</p>
+        <div class="split">
+          <div class="glass dead" style="position:relative">
+            <span class="stamp" style="top:16px;inset-inline-start:16px">לא</span>
+            <h3 class="headline" style="font-size:1.4rem">יש לך יצירה.</h3>
+            <button class="cta" type="button" style="margin-top:16px">הערב החי הסתיים</button>
+          </div>
+          <div class="glass hover">
+            <h3 class="headline" style="font-size:1.4rem">יש לך יצירה.</h3>
+            <button class="cta" type="button" style="margin-top:16px">בדיקת התאמה למחזור הבא</button>
+            <p class="quiet">הערב החי הסתיים. הצעד הבא חי.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-endcard" aria-label="אחרי טעימה">
+      <img class="illo" src="sketch-paywall-endcard.jpg" alt="איור: כרטיס סיום אחרי טעימה במקום Paywall על נגן מת" />
+      <div class="canvas hero">
+        <p class="note">טעימה, ואז כרטיס סיום. לא מודאל על מסך שחור.</p>
+        <div class="hero-mask" style="max-width:720px;margin:0 auto;text-align:center;align-items:center">
+          <h2 class="headline" style="font-size:1.8rem">רוצה להמשיך לצפות?</h2>
+          <p class="sub">ההדרכה הזו היא חלק מספריית Infinite Masterpiece למנויים.</p>
+          <button class="cta" type="button">פתיחת גישה עכשיו</button>
+          <div><a class="quiet" href="#">בדיקת התאמה</a></div>
+          <div><a class="quiet" href="#">לא עכשיו</a></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-start" aria-label="המשיכו מכאן">
+      <img class="illo" src="sketch-library-start.jpg" alt="איור: רכבת התחלה במקום היסטוריה ריקה" />
+      <div class="canvas">
+        <p class="note">אורח לא רואה רשימה ריקה. הוא רואה שלוש התחלות.</p>
+        <p class="rail-title">המשיכו מכאן</p>
+        <div class="grid3">
+          <div class="glass hover"><span class="icon">⏱</span><p class="caption">10 דקות</p></div>
+          <div class="glass hover"><span class="icon">◌</span><p class="caption">טעימה פתוחה</p></div>
+          <div class="glass hover"><span class="icon">✦</span><p class="caption">חדש בספרייה</p></div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="sketch-foot">
+      לא בסקיצה: תגובות, AI, Pods, אפליקציה, הבטחת הכנסה, ערבוב CTA של מסע עם מנוי ספרייה.
+    </footer>
+  </div>
+  <script>
+    function show(id) {
+      document.querySelectorAll('.screen').forEach((el) => el.classList.toggle('is-on', el.id === 'screen-' + id));
+      document.querySelectorAll('nav.states button').forEach((btn) => {
+        btn.setAttribute('aria-pressed', btn.getAttribute('data-screen') === id ? 'true' : 'false');
+      });
+    }
+    document.querySelectorAll('nav.states button').forEach((btn) => {
+      btn.addEventListener('click', () => show(btn.getAttribute('data-screen')));
+    });
+  </script>
+</body>
+</html>
