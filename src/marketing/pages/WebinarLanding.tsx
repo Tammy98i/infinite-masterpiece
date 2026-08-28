@@ -79,6 +79,9 @@ function SectionTitle({ children }: { children: ReactNode }) {
   return <h2 className="text-3xl md:text-5xl font-heading text-white mb-6 leading-tight mx-auto max-w-3xl">{children}</h2>;
 }
 
+const REGISTER_CARD_CLASS =
+  'rounded-3xl border border-[#C8A24C]/30 bg-[#010308]/80 backdrop-blur-xl p-6 shadow-2xl shadow-black/40';
+
 function HostFaces() {
   const hosts = [
     { name: 'גל', src: '/team/gal.png' },
@@ -101,6 +104,36 @@ function HostFaces() {
       </div>
       <p className="text-xs text-white/50 font-light">גל, תמי וגלב בלייב</p>
     </div>
+  );
+}
+
+function WebinarRegisterCard({
+  payload,
+  formId,
+  headlineParts,
+  headlineVisible = 'always',
+}: {
+  payload: WebinarPublicPayload;
+  formId: string;
+  headlineParts: { line1: string; line2: string };
+  headlineVisible?: 'always' | 'until-xl';
+}) {
+  return (
+    <>
+      <p
+        className={`${headlineVisible === 'until-xl' ? 'xl:hidden ' : ''}text-lg text-white font-light leading-snug mb-4`}
+      >
+        {headlineParts.line1}
+        {headlineParts.line2 ? (
+          <>
+            {' '}
+            <span className="text-gold-gradient font-medium">{headlineParts.line2}</span>
+          </>
+        ) : null}
+      </p>
+      <HostFaces />
+      <WebinarRegistrationForm payload={payload} formId={formId} />
+    </>
   );
 }
 
@@ -176,19 +209,14 @@ export function WebinarLanding() {
               id="webinar-register-hero"
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              className="order-1 rounded-3xl border border-[#C8A24C]/30 bg-[#010308]/80 backdrop-blur-xl p-6 shadow-2xl shadow-black/40"
+              className={`order-1 ${REGISTER_CARD_CLASS}`}
             >
-              <p className="xl:hidden text-lg text-white font-light leading-snug mb-4">
-                {headlineParts.line1}
-                {headlineParts.line2 ? (
-                  <>
-                    {' '}
-                    <span className="text-gold-gradient font-medium">{headlineParts.line2}</span>
-                  </>
-                ) : null}
-              </p>
-              <HostFaces />
-              <WebinarRegistrationForm payload={payload} formId="webinar-register-hero" />
+              <WebinarRegisterCard
+                payload={payload}
+                formId="webinar-register-hero"
+                headlineParts={headlineParts}
+                headlineVisible="until-xl"
+              />
             </motion.aside>
 
             <motion.div
@@ -568,59 +596,20 @@ export function WebinarLanding() {
         <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>הצטרפות לפיילוט</SectionLabel>
           <SectionTitle>שני מסלולי כניסה לפיילוט. אותו יעד. שתי רמות מחויבות.</SectionTitle>
-          <p className="text-sm text-[#F7E7B5]/80 font-light leading-relaxed max-w-3xl mb-8">
-            לא נדרש הערב. בסוף הוובינר תהיה הזמנה להיכנס לפיילוט. רק למי שמתאים ורוצה להמשיך.
+          <p className="text-sm text-[#F7E7B5]/80 font-light leading-relaxed max-w-3xl mx-auto mb-10">
+            אמיצים והססנים. לא נדרש הערב. בסוף הוובינר תהיה הזמנה להיכנס לפיילוט. רק למי שמתאים ורוצה להמשיך.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <article className="rounded-3xl border border-[#C8A24C]/30 bg-[#010308]/80 backdrop-blur-xl p-6 shadow-2xl shadow-black/40 flex flex-col text-center">
-              <p className="text-[11px] text-[#C8A24C] mb-3">כניסה בפעולה אחת</p>
-              <h3 className="font-heading text-2xl text-white mb-3">מסלול האמיצים</h3>
-              <p className="text-sm text-white/55 font-light leading-relaxed mb-6">
-                תשלום אחד מראש. למי שכבר החליט/ה ורוצה לסגור את ההתחייבות בפעולה אחת.
-              </p>
-              <ul className="grid gap-3 mb-8 text-sm text-white/65 font-light">
-                <li className="flex items-start justify-center gap-2">
-                  <Check className="w-4 h-4 text-[#C8A24C] shrink-0 mt-0.5" strokeWidth={1.5} aria-hidden />
-                  <span>גישה מלאה לפיילוט ולספרייה</span>
-                </li>
-                <li className="flex items-start justify-center gap-2">
-                  <Check className="w-4 h-4 text-[#C8A24C] shrink-0 mt-0.5" strokeWidth={1.5} aria-hidden />
-                  <span>שני כרטיסי כניסה לכל הגרלה</span>
-                </li>
-              </ul>
-              <Link
-                to="/application?track=brave"
-                onClick={() => trackEvent('brave_track_interest_clicked', { source: 'webinar' })}
-                className="mt-auto inline-flex justify-center items-center w-full py-4 rounded-full bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
-              >
-                אני רוצה להיכנס כאמיץ/ה
-              </Link>
-            </article>
-            <article className="rounded-3xl border border-[#C8A24C]/30 bg-[#010308]/80 backdrop-blur-xl p-6 shadow-2xl shadow-black/40 flex flex-col text-center">
-              <p className="text-[11px] text-[#C8A24C] mb-3">כניסה שלב שלב</p>
-              <h3 className="font-heading text-2xl text-white mb-3">מסלול ההססנים</h3>
-              <p className="text-sm text-white/55 font-light leading-relaxed mb-6">
-                מחויבות מדורגת. למי שרוצה להתחיל בצעד קטן ולהמשיך לפי אבני הדרך. אותו יעד. לא הנחה ולא מסלול חלקי.
-              </p>
-              <ul className="grid gap-3 mb-8 text-sm text-white/65 font-light">
-                <li className="flex items-start justify-center gap-2">
-                  <Check className="w-4 h-4 text-[#C8A24C] shrink-0 mt-0.5" strokeWidth={1.5} aria-hidden />
-                  <span>גישה מלאה לפיילוט ולספרייה מההתחלה</span>
-                </li>
-                <li className="flex items-start justify-center gap-2">
-                  <Check className="w-4 h-4 text-[#C8A24C] shrink-0 mt-0.5" strokeWidth={1.5} aria-hidden />
-                  <span>כרטיס כניסה אחד לכל הגרלה</span>
-                </li>
-              </ul>
-              <Link
-                to="/hesitation"
-                onClick={() => trackEvent('hesitant_track_interest_clicked', { source: 'webinar' })}
-                className="mt-auto inline-flex justify-center items-center w-full py-4 rounded-full text-[#F7E7B5] border border-[#C8A24C]/50 hover:border-[#F7E7B5] font-medium min-h-11 cursor-pointer transition-colors duration-200"
-              >
-                אני רוצה להיכנס שלב שלב
-              </Link>
-            </article>
-          </div>
+          <aside
+            aria-label="הרשמה לוובינר"
+            className={`${REGISTER_CARD_CLASS} mx-auto w-full max-w-[380px] text-start`}
+          >
+            <WebinarRegisterCard
+              payload={payload}
+              formId="webinar-register-tracks"
+              headlineParts={headlineParts}
+              headlineVisible="always"
+            />
+          </aside>
           <p className="mt-6 text-[11px] text-white/35 font-light leading-relaxed">{WEBINAR_TRACKS_FINE_PRINT}</p>
         </div>
       </section>
