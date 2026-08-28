@@ -4,6 +4,7 @@ import { CourseCard } from '../components/CourseCard';
 import { Layers } from 'lucide-react';
 import { coursesInCategory } from '../utils/recommendations';
 import { filterCatalogCourses, type CatalogFilter } from '../utils/searchCatalog';
+import { EmptyState } from '../components/LibraryStates';
 
 const FILTERS: Array<{ id: CatalogFilter; label: string }> = [
   { id: 'all', label: 'הכול' },
@@ -97,7 +98,7 @@ export const CategoryView: React.FC = () => {
       </div>
 
       {filteredCourses.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">
           {filteredCourses.map((course, index) => (
             <CourseCard
               key={course.id}
@@ -110,9 +111,10 @@ export const CategoryView: React.FC = () => {
           ))}
         </div>
       ) : (
-        <div className="rounded-2xl border border-white/10 bg-white/[0.03] p-10 text-center text-white/55">
-          אין תכנים שמתאימים לסינון הזה בנושא.
-        </div>
+        <EmptyState
+          title="אין תכנים שמתאימים לסינון"
+          body="אפשר לבחור סינון אחר, או לחזור לנושא מלא."
+        />
       )}
     </div>
   );

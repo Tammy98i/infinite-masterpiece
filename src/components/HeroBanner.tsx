@@ -35,7 +35,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
       ? 'התחילו לצפות'
       : canPreview
         ? 'צפו בטעימה'
-        : 'בחירת מסלול';
+        : 'פתיחת גישה';
 
   const continuePct = continueWatching
     ? Math.min(

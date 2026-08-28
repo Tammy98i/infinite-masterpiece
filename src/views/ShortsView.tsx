@@ -1,7 +1,8 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { CourseCard } from '../components/CourseCard';
-import { Zap, Clock, ArrowRight } from 'lucide-react';
+import { Zap, ArrowRight } from 'lucide-react';
+import { EmptyState } from '../components/LibraryStates';
 
 export const ShortsView: React.FC = () => {
   const { courses, setView } = useApp();
@@ -9,32 +10,43 @@ export const ShortsView: React.FC = () => {
   const shortCourses = courses.filter((c) => c.isShort);
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-28 pb-20 px-4 sm:px-8 max-w-7xl mx-auto text-right">
-      
-      {/* Header Banner */}
-      <div className="glass rounded-3xl p-8 mb-10 bg-gradient-to-l from-purple-900/30 via-zinc-900 to-black border border-purple-500/30 relative overflow-hidden">
-        <div className="absolute -left-10 -bottom-10 w-64 h-64 bg-purple-600/20 rounded-full blur-3xl pointer-events-none" />
-        
-        <div className="flex items-center gap-2 text-purple-400 text-xs font-bold uppercase mb-2">
-          <Zap className="w-4 h-4 fill-purple-400" />
-          <span>מצב צפייה מהירה</span>
+    <div className="min-h-screen bg-[#050505] text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto text-right">
+      <div className="rounded-3xl p-8 mb-10 border border-white/10 bg-white/[0.03] relative overflow-hidden">
+        <div className="flex items-center gap-2 text-[#C8A24C] text-xs font-semibold mb-2">
+          <Zap className="w-4 h-4" />
+          <span>צפייה קצרה</span>
         </div>
 
-        <h1 className="text-3xl sm:text-5xl font-black mb-3 text-white">
-          יש לי 10 דקות (שיעורי מאסטר ממוקדים)
-        </h1>
+        <h1 className="text-3xl sm:text-5xl font-heading font-semibold mb-3 text-white">יש לי 10 דקות</h1>
 
-        <p className="text-zinc-300 text-base sm:text-lg max-w-2xl leading-relaxed">
-          אין לכם זמן לסדרה ארוכה? ריכזנו עבורכם הרצאות קצרות וקולעות באורך 5-12 דקות בלבד שנותנות כלים פרקטיים ומיידיים לביצוע עוד היום.
+        <p className="text-white/55 text-base sm:text-lg max-w-2xl leading-relaxed font-light">
+          הרצאות קצרות, 5 עד 12 דקות, עם כלי אחד שאפשר לבצע עוד היום.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 justify-items-center">
-        {shortCourses.map((course) => (
-          <CourseCard key={course.id} course={course} />
-        ))}
-      </div>
+      {shortCourses.length > 0 ? (
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">
+          {shortCourses.map((course) => (
+            <CourseCard key={course.id} course={course} />
+          ))}
+        </div>
+      ) : (
+        <EmptyState
+          title="אין עדיין הרצאות קצרות"
+          body="כשיתווספו שיעורים עד 10 דקות, הם יופיעו כאן."
+          actionLabel="לספרייה"
+          onAction={() => setView('home')}
+        />
+      )}
 
+      <button
+        type="button"
+        onClick={() => setView('home')}
+        className="mt-10 inline-flex items-center gap-1.5 text-sm text-white/45 hover:text-white min-h-11 cursor-pointer"
+      >
+        <span>לספרייה</span>
+        <ArrowRight className="w-4 h-4" />
+      </button>
     </div>
   );
 };

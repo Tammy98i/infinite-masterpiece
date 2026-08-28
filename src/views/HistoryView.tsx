@@ -3,6 +3,7 @@ import { useApp } from '../context/AppContext';
 import { Clock, ArrowRight, Play } from 'lucide-react';
 import { formatClock } from '../utils/time';
 import { useWatchAccess } from '../utils/useWatchAccess';
+import { EmptyState } from '../components/LibraryStates';
 
 function formatWhen(ts: number) {
   return new Date(ts).toLocaleDateString('he-IL', { day: 'numeric', month: 'short' });
@@ -14,7 +15,7 @@ export const HistoryView: React.FC = () => {
   const items = getWatchHistory();
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-28 pb-20 px-4 sm:px-8 max-w-4xl mx-auto">
+    <div className="min-h-screen bg-[#050505] text-white pt-28 pb-28 px-4 sm:px-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8">
         <div>
           <div className="flex items-center gap-2 text-[#C8A24C] text-xs mb-1">
@@ -34,7 +35,12 @@ export const HistoryView: React.FC = () => {
       </div>
 
       {items.length === 0 ? (
-        <p className="text-sm text-white/45">עדיין אין צפיות. כשתתחילו הרצאה היא תופיע כאן.</p>
+        <EmptyState
+          title="עדיין אין צפיות"
+          body="כשמתחילים הרצאה, היא תופיע כאן עם נקודת ההמשך."
+          actionLabel="לספרייה"
+          onAction={() => setView('home')}
+        />
       ) : (
         <div className="divide-y divide-white/10">
           {items.map(({ course, episode, progress }) => {

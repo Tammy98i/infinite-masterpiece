@@ -15,6 +15,28 @@
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500&family=IBM+Plex+Sans+Hebrew:wght@400;500&family=Noto+Sans:wght@600;700;800&family=Noto+Sans+Hebrew:wght@600;700;800&family=Rubik:wght@500;600;700&display=swap"
     />
+    <style>
+      #quiet-boot {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #010308;
+        transition: opacity 0.52s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      #quiet-boot.quiet-boot-out {
+        opacity: 0;
+        pointer-events: none;
+      }
+      html.a11y-reduce-motion #quiet-boot {
+        display: none !important;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        #quiet-boot { display: none !important; }
+      }
+    </style>
     <script>
       (function(){try{var raw=localStorage.getItem("site_a11y_prefs_v1");if(!raw)return;var p=JSON.parse(raw);if(p.version!==2)return;var c=document.documentElement.classList;c.toggle("a11y-links",!!p.links);c.toggle("a11y-contrast-high",p.contrast==='high');c.toggle("a11y-contrast-invert",p.contrast==='invert');c.toggle("a11y-contrast-mono",p.contrast==='mono');c.toggle("a11y-contrast-dark",p.contrast==='dark');c.toggle("a11y-contrast-light",p.contrast==='light');c.toggle("a11y-sat-low",p.saturation==='low');c.toggle("a11y-sat-high",p.saturation==='high');c.toggle("a11y-text-115",p.textSize===115);c.toggle("a11y-text-130",p.textSize===130);c.toggle("a11y-text-150",p.textSize===150);c.toggle("a11y-lines-16",p.lineSpacing==='16');c.toggle("a11y-lines-20",p.lineSpacing==='20');c.toggle("a11y-readable-font",!!p.readableFont);c.toggle("a11y-headings",!!p.headings);c.toggle("a11y-cursor-black",!!p.cursorBlack);c.toggle("a11y-cursor-large",!!p.cursorLarge);c.toggle("a11y-reduce-motion",!!p.reduceMotion);c.toggle("a11y-large-targets",!!p.largeTargets);c.toggle("a11y-mute-media",!!p.muteMedia)}catch(e){}})();
     </script>
@@ -26,6 +48,16 @@
         <a href="/accessibility" style="color:#c8a24c">הצהרת נגישות</a>
       </p>
     </noscript>
+    <div id="quiet-boot" aria-hidden="true">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path
+          d="M12 8c-2.8-4.4-8-4.4-8 0s5.2 4.4 8 0 8-4.4 8 0-5.2 4.4-8 0-8 4.4-8 0 5.2-4.4 8 0"
+          stroke="#F7E7B5"
+          stroke-width="1.2"
+          stroke-linecap="round"
+        />
+      </svg>
+    </div>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

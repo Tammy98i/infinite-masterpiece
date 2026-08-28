@@ -34,7 +34,7 @@ export function searchSuggestions(
   limit = 6
 ): Array<{ type: 'course' | 'instructor' | 'topic'; id: string; label: string; meta?: string }> {
   const q = query.trim().toLowerCase();
-  if (q.length < 2) return [];
+  if (q.length < 1) return [];
 
   const out: Array<{ type: 'course' | 'instructor' | 'topic'; id: string; label: string; meta?: string }> = [];
 

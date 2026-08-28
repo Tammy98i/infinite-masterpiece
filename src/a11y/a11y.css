@@ -144,21 +144,28 @@ html.a11y-contrast-mono #a11y-widget-trigger {
 /* Widget UI */
 #a11y-widget-trigger {
   position: fixed;
-  bottom: 1.5rem;
-  inset-inline-start: 1.5rem;
+  bottom: 5.5rem;
+  inset-inline-start: 1.25rem;
   z-index: 9990;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 3rem;
   height: 3rem;
-  border: none;
+  border: 1px solid rgba(200, 162, 76, 0.4);
   border-radius: 9999px;
-  background: #c8a24c;
-  color: #000;
+  background: #0a0a0a;
+  color: #f7e7b5;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
   cursor: pointer;
-  transition: transform 0.15s ease, box-shadow 0.15s ease;
+  transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (min-width: 768px) {
+  #a11y-widget-trigger {
+    bottom: 1.5rem;
+    inset-inline-start: 1.5rem;
+  }
 }
 
 #a11y-widget-trigger:hover {

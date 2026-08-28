@@ -8,6 +8,7 @@ import { trackEvent } from '../utils/analytics';
 import { searchSuggestions } from '../utils/searchCatalog';
 import { formatClock } from '../utils/time';
 import { getCardAccessState } from '../utils/libraryHome';
+import { useWatchAccess } from '../utils/useWatchAccess';
 
 export const Navbar: React.FC = () => {
   const {
@@ -22,6 +23,7 @@ export const Navbar: React.FC = () => {
     categories,
   } = useApp();
   const { user, isGuest, setAuthModalOpen } = useUser();
+  const { goWatch } = useWatchAccess();
   const navigate = useNavigate();
 
   const [isScrolled, setIsScrolled] = useState(false);
@@ -197,7 +199,15 @@ export const Navbar: React.FC = () => {
                                 type: item.type,
                               });
                               setIsSearchOpen(false);
-                              if (item.type === 'course') setView('course', { courseId: item.id });
+                              if (item.type === 'course') {
+                                const course = courses.find((c) => c.id === item.id);
+                                const access = course ? getCardAccessState(course, user) : 'open';
+                                if (access === 'locked' || access === 'preview') {
+                                  goWatch(item.id, course?.episodes[0]?.id, 'search');
+                                } else {
+                                  setView('course', { courseId: item.id });
+                                }
+                              }
                               else if (item.type === 'instructor') setView('instructor', { instructorId: item.id });
                               else setView('category', { categoryId: item.id });
                             }}

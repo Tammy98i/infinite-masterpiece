@@ -23,7 +23,7 @@ export const TopicsGrid: React.FC = () => {
 
   return (
     <section
-      className="py-6 select-none scroll-mt-24"
+      className="py-8 select-none scroll-mt-24"
       aria-labelledby="topics-heading"
     >
       <div className="px-4 sm:px-8 mb-4">
@@ -32,7 +32,7 @@ export const TopicsGrid: React.FC = () => {
         </h2>
       </div>
 
-      <div className="px-4 sm:px-8 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-3 sm:gap-4">
+      <div className="px-4 sm:px-8 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-5 sm:gap-6">
         {topics.map(({ category, count, cover }) => (
           <button
             key={category.id}

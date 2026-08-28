@@ -105,7 +105,7 @@ export const VodApp: React.FC = () => {
       )}
       {currentView !== 'watch' && currentView !== 'admin' && currentView !== 'lecturer' && <Navbar />}
 
-      <main id="library-main" className="flex-grow" tabIndex={-1}>
+      <main id="library-main" key={currentView} className="flex-grow page-fade" tabIndex={-1}>
         {renderView()}
       </main>
 

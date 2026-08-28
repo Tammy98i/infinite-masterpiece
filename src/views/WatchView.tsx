@@ -6,6 +6,20 @@ import { formatClock } from '../utils/time';
 import { canPreviewEpisode, canWatchEpisode, episodeAccess, hasFullLibraryAccess, PREVIEW_SECONDS } from '../utils/access';
 import { trackEvent } from '../utils/analytics';
 import { playbackApi } from '../api/playback';
+import { PlayerSkeleton } from '../components/LibraryStates';
+import { useA11yPrefs } from '../a11y/prefs';
+
+const SPEED_OPTIONS = [0.75, 1, 1.25, 1.5, 2] as const;
+const SPEED_KEY = 'mc_playback_rate';
+
+function readSpeed() {
+  try {
+    const value = Number(localStorage.getItem(SPEED_KEY));
+    return SPEED_OPTIONS.includes(value as (typeof SPEED_OPTIONS)[number]) ? value : 1;
+  } catch {
+    return 1;
+  }
+}
 
 function episodeName(title: string) {
   return title.replace(/^פרק\s+\d+\s*[:·-]\s*/, '');
@@ -22,6 +36,7 @@ export const WatchView: React.FC = () => {
     user,
   } = useApp();
   const { isOpen: paywallOpen, openPaywall } = usePaywall();
+  const { muteMedia } = useA11yPrefs();
   const skipPaywallClose = useRef(true);
 
   const course = courses.find((c) => c.id === selectedCourseId);
@@ -36,7 +51,8 @@ export const WatchView: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(episode?.duration || 0);
-  const [muted, setMuted] = useState(false);
+  const [muted, setMuted] = useState(true);
+  const [playbackRate, setPlaybackRate] = useState(readSpeed);
   const [showChrome, setShowChrome] = useState(true);
   const [showEpisodes, setShowEpisodes] = useState(false);
   const [isFullscreen, setIsFullscreen] = useState(false);
@@ -125,6 +141,23 @@ export const WatchView: React.FC = () => {
     }
     void video.play().catch(() => setIsPlaying(false));
   }, [episode?.id, locked, previewing, playbackUrl, captionsOn]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.playbackRate = playbackRate;
+    try {
+      localStorage.setItem(SPEED_KEY, String(playbackRate));
+    } catch {
+      /* ignore */
+    }
+  }, [playbackRate, episode?.id, playbackUrl]);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    video.muted = muted || muteMedia;
+  }, [muted, muteMedia, playbackUrl]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -246,6 +279,12 @@ export const WatchView: React.FC = () => {
     }
   };
 
+  const cycleSpeed = (dir: 1 | -1) => {
+    const idx = SPEED_OPTIONS.indexOf(playbackRate as (typeof SPEED_OPTIONS)[number]);
+    const next = SPEED_OPTIONS[Math.min(SPEED_OPTIONS.length - 1, Math.max(0, (idx === -1 ? 1 : idx) + dir))];
+    setPlaybackRate(next);
+  };
+
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const target = e.target as HTMLElement | null;
@@ -259,16 +298,25 @@ export const WatchView: React.FC = () => {
       if (e.key === ' ' || e.key === 'k' || e.key === 'K') {
         e.preventDefault();
         togglePlay();
-      } else if (e.key === 'ArrowRight') {
+      } else if (e.key === 'l' || e.key === 'L' || e.key === 'ArrowRight') {
         e.preventDefault();
         seekTo(currentTime + 10);
-      } else if (e.key === 'ArrowLeft') {
+      } else if (e.key === 'j' || e.key === 'J' || e.key === 'ArrowLeft') {
         e.preventDefault();
         seekTo(currentTime - 10);
+      } else if (e.key === '>' || e.key === '.') {
+        e.preventDefault();
+        cycleSpeed(1);
+      } else if (e.key === '<' || e.key === ',') {
+        e.preventDefault();
+        cycleSpeed(-1);
+      } else if ((e.key === 'n' || e.key === 'N') && nextEpisode) {
+        e.preventDefault();
+        playEpisode(nextEpisode.id);
       } else if (e.key === 'f' || e.key === 'F') {
         void toggleFullscreen();
       } else if (e.key === 'm' || e.key === 'M') {
-        setMuted((v) => !v);
+        if (!muteMedia) setMuted((v) => !v);
       } else if ((e.key === 'c' || e.key === 'C') && captionTracks.length > 0) {
         setCaptionsOn((v) => !v);
       } else if (e.key === 'e' || e.key === 'E') {
@@ -280,12 +328,12 @@ export const WatchView: React.FC = () => {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [showEpisodes, currentTime, revealChrome, captionTracks.length]);
+  }, [showEpisodes, currentTime, revealChrome, captionTracks.length, muteMedia, playbackRate, nextEpisode]);
 
   if (!course || !episode) {
     return (
-      <div className="fixed inset-0 z-[60] bg-black text-white flex items-center justify-center">
-        <p className="text-white/50">טוען את הפרק...</p>
+      <div className="fixed inset-0 z-[60] bg-black text-white">
+        <PlayerSkeleton />
       </div>
     );
   }
@@ -327,7 +375,7 @@ export const WatchView: React.FC = () => {
           </button>
         </div>
       ) : !playbackUrl ? (
-        <div className="absolute inset-0 flex items-center justify-center text-sm text-white/50">טוען נגן...</div>
+        <PlayerSkeleton />
       ) : (
       <video
         ref={videoRef}
@@ -335,7 +383,7 @@ export const WatchView: React.FC = () => {
         src={playbackUrl}
         playsInline
         autoPlay
-        muted={muted}
+        muted={muted || muteMedia}
         onTimeUpdate={handleTimeUpdate}
         onPlay={() => {
           setIsPlaying(true);
@@ -416,7 +464,7 @@ export const WatchView: React.FC = () => {
             <button
               type="button"
               onClick={() => setCaptionsOn((v) => !v)}
-              className={`px-3 py-2 rounded-full text-[12px] min-h-11 border ${
+              className={`px-3 py-2 rounded-full text-[12px] min-h-11 border cursor-pointer ${
                 captionsOn ? 'border-[#C8A24C] text-[#F7E7B5]' : 'border-white/20 text-white/50'
               }`}
               aria-pressed={captionsOn}
@@ -426,11 +474,22 @@ export const WatchView: React.FC = () => {
           ) : null}
           <button
             type="button"
-            onClick={() => setMuted((v) => !v)}
-            className="p-2.5 text-white/70 hover:text-white min-h-11 min-w-11 flex items-center justify-center"
-            aria-label={muted ? 'הפעלת שמע' : 'השתקה'}
+            onClick={() => cycleSpeed(playbackRate >= 2 ? -1 : 1)}
+            className="px-3 py-2 rounded-full text-[12px] min-h-11 border border-white/20 text-white/70 hover:border-[#C8A24C] cursor-pointer"
+            aria-label={`מהירות ${playbackRate}`}
           >
-            {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+            {playbackRate}x
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (!muteMedia) setMuted((v) => !v);
+            }}
+            className="p-2.5 text-white/70 hover:text-white min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
+            aria-label={muted || muteMedia ? 'הפעלת שמע' : 'השתקה'}
+            disabled={muteMedia}
+          >
+            {muted || muteMedia ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
           </button>
           <button
             type="button"
@@ -514,7 +573,7 @@ export const WatchView: React.FC = () => {
               }}
               className="px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11"
             >
-              {nextLocked ? 'בחירת מסלול' : 'לפרק הבא'}
+              {nextLocked ? 'פתיחת גישה' : 'לפרק הבא'}
             </button>
           </div>
         </div>
@@ -562,11 +621,44 @@ export const WatchView: React.FC = () => {
             {isPlaying ? <Pause className="w-4 h-4 fill-black" /> : <Play className="w-4 h-4 fill-black ml-0.5" />}
           </button>
 
-          <span className="justify-self-end text-sm text-white/40 tabular-nums" dir="ltr">
-            {formatClock(currentTime)}
-          </span>
+          <div className="justify-self-end flex items-center gap-3">
+            {nextEpisode ? (
+              <button
+                type="button"
+                onClick={() => {
+                  if (nextLocked) {
+                    openPaywall({
+                      source: 'locked_card',
+                      courseId: course.id,
+                      courseTitle: episodeName(nextEpisode.title),
+                    });
+                    return;
+                  }
+                  playEpisode(nextEpisode.id);
+                }}
+                className="text-sm text-white/70 hover:text-white min-h-11 cursor-pointer"
+              >
+                {nextLocked ? 'פתיחת גישה' : 'הבא'}
+              </button>
+            ) : null}
+            <span className="text-sm text-white/40 tabular-nums" dir="ltr">
+              {formatClock(currentTime)}
+            </span>
+          </div>
         </div>
       </div>
+
+      {(muted || muteMedia) && playbackUrl && !locked ? (
+        <button
+          type="button"
+          onClick={() => {
+            if (!muteMedia) setMuted(false);
+          }}
+          className="absolute bottom-28 inset-x-0 mx-auto w-fit z-20 px-4 py-2 rounded-full border border-white/20 bg-black/70 text-xs text-white/80 min-h-11 cursor-pointer"
+        >
+          {muteMedia ? 'השמע מושתק בהגדרות הנגישות' : 'מושתק. לחצו להפעלת שמע'}
+        </button>
+      ) : null}
     </div>
   );
 };

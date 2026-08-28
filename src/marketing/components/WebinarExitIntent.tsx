@@ -15,6 +15,8 @@ export function WebinarExitIntent({ enabled = true }: Props) {
   const [error, setError] = useState('');
   const [submitting, setSubmitting] = useState(false);
   const shownRef = useRef(false);
+  const dialogRef = useRef<HTMLDivElement>(null);
+  const closeRef = useRef<HTMLButtonElement>(null);
 
   useEffect(() => {
     if (!enabled || shownRef.current) return;
@@ -52,6 +54,36 @@ export function WebinarExitIntent({ enabled = true }: Props) {
     };
   }, [enabled]);
 
+  useEffect(() => {
+    if (!open) return;
+    const input = dialogRef.current?.querySelector<HTMLInputElement>('input');
+    input?.focus();
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        return;
+      }
+      if (e.key !== 'Tab' || !dialogRef.current) return;
+      const focusable = [
+        ...dialogRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])'
+        ),
+      ].filter((el) => !el.hasAttribute('disabled'));
+      if (focusable.length === 0) return;
+      const firstEl = focusable[0];
+      const lastEl = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === firstEl) {
+        e.preventDefault();
+        lastEl.focus();
+      } else if (!e.shiftKey && document.activeElement === lastEl) {
+        e.preventDefault();
+        firstEl.focus();
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open]);
+
   const handleSave = async (event: FormEvent) => {
     event.preventDefault();
     const value = email.trim().toLowerCase();
@@ -84,12 +116,21 @@ export function WebinarExitIntent({ enabled = true }: Props) {
 
   return (
     <div
-      className="fixed inset-0 z-[60] bg-black/70 backdrop-blur-sm flex items-center justify-center p-4"
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="webinar-exit-title"
     >
-      <div className="w-full max-w-md rounded-3xl border border-[#C8A24C]/30 bg-[#010308] px-6 py-8 text-center shadow-2xl">
+      <button
+        type="button"
+        className="absolute inset-0 bg-black/70 backdrop-blur-sm cursor-pointer"
+        aria-label="סגירה"
+        onClick={() => setOpen(false)}
+      />
+      <div
+        ref={dialogRef}
+        className="relative w-full max-w-md rounded-3xl border border-[#C8A24C]/30 bg-[#010308] px-6 py-8 text-center shadow-2xl"
+      >
         <h2 id="webinar-exit-title" className="font-heading text-2xl text-white mb-3">
           לפני שיוצאים. השאירו אימייל.
         </h2>
@@ -105,6 +146,7 @@ export function WebinarExitIntent({ enabled = true }: Props) {
             id="webinar-exit-email"
             required
             autoComplete="email"
+            inputMode="email"
             dir="ltr"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -125,6 +167,7 @@ export function WebinarExitIntent({ enabled = true }: Props) {
           </button>
         </form>
         <button
+          ref={closeRef}
           type="button"
           onClick={() => setOpen(false)}
           className="mt-5 font-body font-normal text-sm text-white/45 hover:text-white cursor-pointer py-3 px-4 min-h-11"

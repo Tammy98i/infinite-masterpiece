@@ -21,7 +21,7 @@ export const LecturersRow: React.FC = () => {
   if (list.length === 0) return null;
 
   return (
-    <section className="py-6 select-none scroll-mt-24" aria-labelledby="lecturers-heading">
+    <section className="py-8 select-none scroll-mt-24" aria-labelledby="lecturers-heading">
       <div className="flex items-center justify-between gap-3 px-4 sm:px-8 mb-4">
         <h2 id="lecturers-heading" className="text-base sm:text-lg font-semibold text-white tracking-tight">
           המרצים שלנו

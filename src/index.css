@@ -8,12 +8,13 @@
   --color-primary-muted: #c9a22733;
   --color-surface: #050505;
   --color-surface-elevated: #0a0a0a;
-  --font-heading: "Noto Sans Hebrew", "Noto Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-body: "IBM Plex Sans Hebrew", "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Noto Sans Hebrew", "Noto Sans", "Arial Hebrew", ui-sans-serif, system-ui, sans-serif;
+  --font-body: "IBM Plex Sans Hebrew", "IBM Plex Sans", "Arial Hebrew", ui-sans-serif, system-ui, sans-serif;
   --font-accent: "Rubik", ui-sans-serif, system-ui, sans-serif;
   --font-sans: var(--font-body);
   --font-serif: var(--font-heading);
   --font-display: var(--font-heading);
+  --ease-premium: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 html {
@@ -38,9 +39,25 @@ html {
   }
 }
 
+@layer base {
+  :focus-visible {
+    outline: 2px solid #c8a24c;
+    outline-offset: 2px;
+  }
+}
+
+.page-fade {
+  animation: page-fade 0.45s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes page-fade {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
 @layer utilities {
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505];
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505];
   }
 
   .skip-link {
@@ -88,11 +105,18 @@ html {
   .card-hover:hover {
     transform: none;
   }
+  .page-fade {
+    animation: none;
+  }
   *, *::before, *::after {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+html.a11y-reduce-motion .page-fade {
+  animation: none;
 }
 
 .glass {

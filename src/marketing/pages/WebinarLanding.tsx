@@ -55,6 +55,7 @@ import { WebinarSocialProof, WebinarSectionCta, WebinarTrustStrip } from '../com
 import { WebinarCountdown } from '../components/WebinarCountdown';
 import { trackEvent, trackWebinarCta, scrollToWebinarForm, scrollToWebinarFit } from '../../utils/analytics';
 import { captureUtmFromSearch } from '../../utils/utm';
+import { TeamPhoto } from '../../components/TeamPhoto';
 
 const bottleneckIcons = [Tag, Handshake, Megaphone, Network, Target];
 const ecosystemIcons = [Radio, Users, Sparkles, Compass, Infinity, Shield];
@@ -83,29 +84,21 @@ function HostFaces() {
   const hosts = [
     { name: 'גל', src: '/team/gal.png' },
     { name: 'תמי', src: '/team/tami.png' },
-    { name: 'גלב', src: '' },
+    { name: 'גלב', src: '/team/gleb.png' },
   ];
   return (
     <div className="flex items-center justify-center gap-3 mb-5">
       <div className="flex -space-x-3 space-x-reverse">
-        {hosts.map((host) =>
-          host.src ? (
-            <img
-              key={host.name}
+        {hosts.map((host) => (
+          <span key={host.name} className="inline-flex">
+            <TeamPhoto
               src={host.src}
+              name={host.name}
               alt={host.name}
-              className="w-9 h-9 rounded-full border border-[#C8A24C]/50 object-cover object-top bg-[#0b1020]"
+              className="w-9 h-9 rounded-full border border-[#C8A24C]/50 text-[11px]"
             />
-          ) : (
-            <span
-              key={host.name}
-              className="w-9 h-9 rounded-full border border-[#C8A24C]/50 bg-[#0b1020] text-[#F7E7B5] text-[11px] flex items-center justify-center"
-              aria-hidden
-            >
-              ג
-            </span>
-          )
-        )}
+          </span>
+        ))}
       </div>
       <p className="text-xs text-white/50 font-light">גל, תמי וגלב בלייב</p>
     </div>
@@ -474,18 +467,17 @@ export function WebinarLanding() {
                 name: WEBINAR_GLEB.name,
                 title: WEBINAR_GLEB.title,
                 bio: WEBINAR_GLEB.bio,
-                image: '',
+                image: '/team/gleb.png',
               },
             ].map((leader) => (
               <article key={leader.name} className="rounded-3xl border border-white/10 overflow-hidden bg-white/[0.02]">
                 <div className="aspect-[4/3] overflow-hidden bg-[#0b1020]">
-                  {leader.image ? (
-                    <img src={leader.image} alt={leader.name} className="w-full h-full object-cover object-top" />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center bg-[radial-gradient(circle_at_center,rgba(200,162,76,0.22),transparent_65%)]">
-                      <Infinity className="w-16 h-16 text-[#C8A24C]/80" strokeWidth={1} aria-hidden />
-                    </div>
-                  )}
+                  <TeamPhoto
+                    src={leader.image}
+                    name={leader.name}
+                    alt={leader.name}
+                    className="w-full h-full text-6xl"
+                  />
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl text-white mb-1">{leader.name}</h3>

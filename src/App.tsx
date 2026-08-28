@@ -15,6 +15,7 @@ import { HesitationSuccess } from './marketing/pages/HesitationSuccess';
 import { Pricing } from './marketing/pages/Pricing';
 import { Journey } from './marketing/pages/Journey';
 import { BridgeShell } from './components/BridgeShell';
+import { QuietBoot } from './components/QuietBoot';
 import { UserProvider } from './context/UserContext';
 import { AuthModal } from './components/AuthModal';
 import { captureReferralFromSearch } from './utils/referral';
@@ -26,11 +27,16 @@ import { LibraryMembership } from './marketing/pages/LibraryMembership';
 import { WebinarLanding } from './marketing/pages/WebinarLanding';
 import { WebinarThankYou } from './marketing/pages/WebinarThankYou';
 
-const PublicLayoutWrapper = () => (
-  <Layout>
-    <Outlet />
-  </Layout>
-);
+const PublicLayoutWrapper = () => {
+  const location = useLocation();
+  return (
+    <Layout>
+      <div key={location.pathname} className="page-fade">
+        <Outlet />
+      </div>
+    </Layout>
+  );
+};
 
 function ScrollManager() {
   const location = useLocation();
@@ -44,14 +50,22 @@ function ScrollManager() {
     if (location.hash) {
       const id = location.hash.replace('#', '');
       const timer = window.setTimeout(() => {
-        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById(id)?.scrollIntoView({ behavior: prefersReduced() ? 'auto' : 'smooth' });
       }, 80);
       return () => window.clearTimeout(timer);
     }
+    if (location.pathname.startsWith('/library')) return;
     window.scrollTo({ top: 0, behavior: 'auto' });
   }, [location.pathname, location.hash]);
 
   return null;
+}
+
+function prefersReduced() {
+  return (
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+    document.documentElement.classList.contains('a11y-reduce-motion')
+  );
 }
 
 function LibraryFallback() {
@@ -96,6 +110,7 @@ export default function App() {
     <UserProvider>
     <BrowserRouter>
       <MotionA11yProvider>
+      <QuietBoot />
       <ScrollManager />
       <AuthModal />
       <A11yWidget />

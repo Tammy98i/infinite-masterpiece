@@ -76,10 +76,10 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
   return (
     <section
       id={id}
-      className="py-3 select-none relative group/row scroll-mt-24"
+      className="py-8 select-none relative group/row scroll-mt-24"
       aria-label={`${title} — רשימת הרצאות`}
     >
-      <div className="flex items-center gap-3 px-4 sm:px-8 mb-3">
+      <div className="flex items-center gap-3 px-4 sm:px-8 mb-5">
         <h2 className="text-base sm:text-lg font-semibold text-white tracking-tight">{title}</h2>
         {onSeeAll && (
           <button

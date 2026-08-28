@@ -142,7 +142,7 @@ export const PaywallProvider: React.FC<{ children: React.ReactNode }> = ({ child
           />
           <div
             ref={dialogRef}
-            className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 text-right"
+            className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 text-center"
           >
             <h2 id="paywall-title" className="text-2xl font-medium text-white mb-4">
               {title}

@@ -14,9 +14,11 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { EntryTrackCards } from '../components/EntryTrackCards';
+import { WEBINAR_CTA_HEADER } from '../../constants/webinarPage';
 
 const MotionDiv = motion.div;
 const MotionSection = motion.section;
+const MOTION = { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const };
 
 export function Home() {
   return (
@@ -32,12 +34,12 @@ export function Home() {
         <div className="relative z-20 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full flex justify-center">
           <div className="w-full max-w-3xl flex flex-col justify-center items-center text-center">
             <MotionDiv
-              initial={{ opacity: 0, y: 30 }}
+              initial={{ opacity: 0, y: 16 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 1, ease: [0.16, 1, 0.3, 1] }}
+              transition={MOTION}
             >
               <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.05] backdrop-blur-md mb-8">
-                <span className="w-2 h-2 rounded-full bg-[#C8A24C] animate-pulse" />
+                <span className="w-2 h-2 rounded-full bg-[#C8A24C]" />
                 <span className="text-[11px] font-medium tracking-[0.2em] text-white/60 uppercase">
                   The Masterpiece Framework
                 </span>
@@ -57,21 +59,27 @@ export function Home() {
                 לעסק, השפעה וחופש.
               </p>
 
-              <div className="flex flex-col sm:flex-row items-center gap-6 w-full sm:w-auto">
+              <div className="flex flex-col items-center gap-4 w-full sm:w-auto">
+                <Link
+                  to="/webinar"
+                  className="w-full sm:w-auto px-12 py-5 rounded-[22px] bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-lg font-bold transition-transform duration-500 hover:-translate-y-1 motion-reduce:hover:translate-y-0 flex items-center justify-center gap-3 group min-h-11"
+                >
+                  <span>{WEBINAR_CTA_HEADER}</span>
+                  <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-500" />
+                </Link>
                 <a
                   href="/#pricing"
-                  className="w-full sm:w-auto px-12 py-5 rounded-[22px] bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] text-black text-lg font-bold transition-all duration-500 hover:-translate-y-1 flex items-center justify-center gap-3 group min-h-11"
+                  className="text-white/45 hover:text-[#C8A24C] transition-colors duration-500 text-sm font-light min-h-11 inline-flex items-center"
                 >
-                  <span>להצטרף</span>
-                  <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform" />
+                  למסלול האמיצים והססנים
                 </a>
+                <Link
+                  to="/library"
+                  className="text-white/30 hover:text-[#C8A24C] transition-colors duration-500 text-sm font-light min-h-11 inline-flex items-center"
+                >
+                  כבר בפנים? כניסה לספרייה
+                </Link>
               </div>
-              <Link
-                to="/library"
-                className="mt-6 inline-block text-white/40 hover:text-[#C8A24C] transition-colors text-sm font-light"
-              >
-                כבר בפנים? כניסה לספרייה
-              </Link>
             </MotionDiv>
           </div>
         </div>
@@ -81,9 +89,9 @@ export function Home() {
       <MotionSection
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: '-100px' }}
-        transition={{ duration: 1 }}
-        className="py-20 md:py-28 relative"
+        viewport={{ once: true, margin: '-80px' }}
+        transition={MOTION}
+        className="py-24 md:py-32 relative"
         id="what-is-it"
       >
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -97,7 +105,7 @@ export function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-5 gap-4 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-6 md:gap-10">
             {[
               { icon: Target, text: 'מתחילים ממכירה\nלא מאפס' },
               { icon: Tag, text: 'מציגים ערך ברור\nומוכרים אותו' },
@@ -131,11 +139,11 @@ export function Home() {
 
       {/* נבחרת 88 */}
       <MotionSection
-        initial={{ opacity: 0, y: 40 }}
+        initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-100px' }}
-        transition={{ duration: 1 }}
-        className="py-20 md:py-28 relative z-10"
+        viewport={{ once: true, margin: '-80px' }}
+        transition={MOTION}
+        className="py-24 md:py-32 relative z-10"
         id="depth-layer"
       >
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
@@ -176,16 +184,16 @@ export function Home() {
       <MotionSection
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: '-100px' }}
-        transition={{ duration: 1 }}
-        className="py-20 md:py-28 relative bg-[#010308]"
+        viewport={{ once: true, margin: '-80px' }}
+        transition={MOTION}
+        className="py-24 md:py-32 relative bg-[#010308]"
         id="infinite-library"
       >
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518066000714-58c45f1a2c0a?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-[0.03] mix-blend-screen" />
         <div className="absolute inset-0 bg-gradient-to-b from-[#010308] via-transparent to-[#010308]" />
 
         <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="mb-20">
+          <div className="mb-24">
             <h2 className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-6 font-semibold">
               THE PLATFORM
             </h2>
@@ -199,7 +207,7 @@ export function Home() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {[
               { title: 'ספריית VOD', icon: PlaySquare, desc: 'כל השיעורים, המשימות והתבניות' },
               { title: 'אזור אישי', icon: UserCircle, desc: 'המסע שלך, המשימות והיעד הבא' },
@@ -234,22 +242,22 @@ export function Home() {
 
       {/* PRICING */}
       <MotionSection
-        initial={{ opacity: 0, y: 50 }}
+        initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true, margin: '-100px' }}
-        transition={{ duration: 1 }}
+        viewport={{ once: true, margin: '-80px' }}
+        transition={MOTION}
         id="pricing"
-        className="py-16 md:py-20 relative"
+        className="py-24 md:py-32 relative"
       >
         <div className="max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#C8A24C]/10 border border-[#C8A24C]/20 mb-8">
-            <span className="w-1.5 h-1.5 rounded-full bg-[#C8A24C] animate-pulse" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#C8A24C]" />
             <span className="text-[11px] font-medium tracking-[0.15em] text-[#F7E7B5] uppercase">
-              המחזור הקרוב נפתח בקרוב
+              אמיצים או הססנים
             </span>
           </div>
 
-          <h2 className="text-3xl md:text-4xl font-heading text-white mb-3">אמיצים או הססנים</h2>
+          <h2 className="text-3xl md:text-4xl font-heading text-white mb-3">שתי דרכי כניסה. אותו מסע.</h2>
           <p className="text-sm text-white/45 font-light max-w-xl mx-auto leading-relaxed mb-10">
             אמיצים: 8,008 ₪ לפני מע״מ. הססנים: 8,888 ₪ בפריסה. ההבדל בקצב הכניסה ובכרטיסי ההגרלה.
           </p>
@@ -262,9 +270,9 @@ export function Home() {
       <MotionSection
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        viewport={{ once: true, margin: '-100px' }}
-        transition={{ duration: 1 }}
-        className="py-20 md:py-28 relative border-t border-white/[0.02]"
+        viewport={{ once: true, margin: '-80px' }}
+        transition={MOTION}
+        className="py-24 md:py-32 relative border-t border-white/[0.02]"
         id="who-is-it-for"
       >
         <div className="max-w-[1000px] mx-auto px-4 sm:px-6 lg:px-8 text-center relative z-10">

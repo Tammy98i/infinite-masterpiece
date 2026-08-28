@@ -54,10 +54,10 @@ export function Header() {
       role="banner"
       aria-label="כותרת האתר"
       className={cn(
-        'fixed top-0 left-0 right-0 z-50 transition-all duration-500',
+        'fixed top-0 left-0 right-0 z-50 h-20 flex items-center transition-colors duration-500',
         isScrolled
-          ? 'bg-[#010308]/60 backdrop-blur-2xl border-b border-white/[0.03] py-4'
-          : 'bg-transparent py-8'
+          ? 'bg-[#010308]/60 backdrop-blur-2xl border-b border-white/[0.03]'
+          : 'bg-transparent border-b border-transparent'
       )}
     >
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -122,7 +122,7 @@ export function Header() {
             {!onWebinarLanding ? (
               <Link
                 to="/library"
-                className="px-6 py-3 rounded-full text-sm font-medium text-white/90 border border-[#C8A24C]/40 hover:border-[#F7E7B5] hover:text-white transition-all duration-300 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#010308]"
+                className="px-5 py-3 rounded-full text-sm font-medium text-white/55 hover:text-[#C8A24C] transition-colors duration-500 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#010308]"
                 aria-label="כניסה לספרייה אינסופית. קורסים והרצאות אונליין"
               >
                 ספרייה
@@ -183,13 +183,22 @@ export function Header() {
                     {WEBINAR_CTA_HEADER}
                   </button>
                 ) : (
-                  <Link
-                    to="/library"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block w-full text-center px-8 py-4 rounded-full text-base font-medium text-white border border-[#C8A24C]/40 min-h-11"
-                  >
-                    ספרייה
-                  </Link>
+                  <>
+                    <Link
+                      to="/webinar"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block w-full text-center px-8 py-4 rounded-full text-base font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] min-h-11"
+                    >
+                      {WEBINAR_CTA_HEADER}
+                    </Link>
+                    <Link
+                      to="/library"
+                      onClick={() => setMobileMenuOpen(false)}
+                      className="block w-full text-center px-8 py-3 text-sm text-white/50 hover:text-[#C8A24C] min-h-11"
+                    >
+                      כבר בפנים? כניסה לספרייה
+                    </Link>
+                  </>
                 )}
               </div>
             </nav>

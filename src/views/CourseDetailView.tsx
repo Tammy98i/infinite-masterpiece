@@ -8,6 +8,8 @@ import {
   BookmarkCheck,
   Lock,
   Check,
+  Volume2,
+  VolumeX,
 } from 'lucide-react';
 import { formatClock } from '../utils/time';
 import { canPreviewEpisode, canWatchEpisode, PREVIEW_SECONDS } from '../utils/access';
@@ -55,6 +57,7 @@ export const CourseDetailView: React.FC = () => {
   const [activeEpisodeId, setActiveEpisodeId] = useState<string | null>(null);
   const [playerOn, setPlayerOn] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [muted, setMuted] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [playerError, setPlayerError] = useState(false);
@@ -290,6 +293,7 @@ export const CourseDetailView: React.FC = () => {
 
     const onLoaded = () => {
       if (startAt > 0) video.currentTime = startAt;
+      video.muted = muted;
       for (const track of Array.from(video.textTracks) as TextTrack[]) {
         track.mode = captionsOn ? 'showing' : 'hidden';
       }
@@ -506,6 +510,7 @@ export const CourseDetailView: React.FC = () => {
                       className="w-full h-full object-contain bg-black"
                       src={playbackUrl}
                       playsInline
+                      muted={muted}
                       controls={false}
                       onTimeUpdate={onTimeUpdate}
                       onPlay={() => setIsPlaying(true)}
@@ -559,7 +564,7 @@ export const CourseDetailView: React.FC = () => {
                           }
                           className="px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-semibold min-h-11"
                         >
-                          בחירת מסלול
+                          פתיחת גישה
                         </button>
                       ) : null}
                       <button
@@ -612,6 +617,18 @@ export const CourseDetailView: React.FC = () => {
                           כתוביות
                         </button>
                       ) : null}
+                      <button
+                        type="button"
+                        onClick={() => {
+                          const next = !muted;
+                          setMuted(next);
+                          if (videoRef.current) videoRef.current.muted = next;
+                        }}
+                        className="p-2.5 text-white/70 hover:text-white min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
+                        aria-label={muted ? 'הפעלת שמע' : 'השתקה'}
+                      >
+                        {muted ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+                      </button>
                     </div>
                   )}
                 </>

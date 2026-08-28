@@ -130,6 +130,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   };
 
   const lastFlush = useRef(0);
+  const scrollMemory = useRef<Partial<Record<ViewType, number>>>({});
 
   useEffect(() => {
     void reloadCatalog();
@@ -194,6 +195,9 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     view: ViewType,
     options?: { courseId?: string; episodeId?: string; categoryId?: string; instructorId?: string; tag?: string }
   ) => {
+    if (currentView !== 'watch') {
+      scrollMemory.current[currentView] = window.scrollY;
+    }
     const courseId = options?.courseId !== undefined ? options.courseId : selectedCourseId;
     const episodeId = options?.episodeId !== undefined ? options.episodeId : selectedEpisodeId;
     const categoryId = options?.categoryId !== undefined ? options.categoryId : selectedCategoryId;
@@ -212,7 +216,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     if (options?.categoryId !== undefined) setSelectedCategoryId(options.categoryId);
     if (options?.instructorId !== undefined) setSelectedInstructorId(options.instructorId);
     if (options?.tag !== undefined) setSelectedTag(options.tag);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
+
+    const restoreViews: ViewType[] = ['home', 'search', 'mylist', 'history', 'shorts', 'instructors', 'paths'];
+    const sameCategory =
+      view === 'category' && (!options?.categoryId || options.categoryId === selectedCategoryId);
+    const shouldRestore = restoreViews.includes(view) || sameCategory;
+
+    window.requestAnimationFrame(() => {
+      const y = shouldRestore ? scrollMemory.current[view] : 0;
+      window.scrollTo({ top: y || 0, behavior: 'auto' });
+    });
   };
 
   const setSearchQuery = (query: string) => {

@@ -65,7 +65,7 @@ export function resolvePrimaryCta(
 ): { mode: PrimaryCtaMode; label: string; episodeId: string | null } {
   const available = firstAvailableEpisode(course, user);
   if (!available) {
-    return { mode: 'access', label: 'בחירת מסלול', episodeId: course.episodes[0]?.id || null };
+    return { mode: 'access', label: 'פתיחת גישה', episodeId: course.episodes[0]?.id || null };
   }
 
   if (courseCompleted(course, watchProgress)) {

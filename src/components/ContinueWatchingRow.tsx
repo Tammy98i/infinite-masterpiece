@@ -20,11 +20,11 @@ export const ContinueWatchingRow: React.FC = () => {
 
   return (
     <section
-      className="py-3 select-none scroll-mt-24"
+      className="py-8 select-none scroll-mt-24"
       data-onboarding="continue-watching"
       aria-label="המשך צפייה — רשימת הרצאות"
     >
-      <div className="flex items-center gap-3 px-4 sm:px-8 mb-3">
+      <div className="flex items-center gap-3 px-4 sm:px-8 mb-5">
         <h2 className="text-base sm:text-lg font-semibold text-white">המשך צפייה</h2>
         <button
           type="button"
