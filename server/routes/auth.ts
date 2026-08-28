@@ -15,9 +15,12 @@ import { recordPayment } from '../services/paymentService.js';
 const router = Router();
 
 router.get('/providers', (_req, res) => {
+  const url = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '').trim().replace(/\/$/, '');
+  const anonKey = (process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '').trim();
   res.json({
     local: true,
     supabase: isSupabaseAuthConfigured(),
+    ...(url && anonKey ? { supabaseUrl: url, anonKey } : {}),
   });
 });
 

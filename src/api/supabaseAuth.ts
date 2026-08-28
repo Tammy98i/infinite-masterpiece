@@ -1,7 +1,10 @@
 import { getSupabase, isSupabaseAuthEnabled, oauthRedirectTo } from '../lib/supabase';
+import { isApiUnavailableMessage, payloadFromSupabase, type ProfileRow } from '../lib/supabaseUser';
 import { apiRequest, type AuthUserPayload } from './auth';
 
 export { isSupabaseAuthEnabled };
+
+const extraAdminEmails = import.meta.env.VITE_ADMIN_EMAILS?.trim() || '';
 
 export class EmailConfirmationRequiredError extends Error {
   constructor() {
@@ -39,11 +42,66 @@ function hebrewAuthError(message: string) {
   return message || 'הבקשה נכשלה';
 }
 
+async function profileForUser(userId: string): Promise<ProfileRow | null> {
+  const supabase = getSupabase();
+  if (!supabase) return null;
+  const { data } = await supabase
+    .from('profiles')
+    .select('role, subscription_plan, is_founder, staff_desk, staff_status, full_name')
+    .eq('id', userId)
+    .maybeSingle();
+  return (data as ProfileRow | null) || null;
+}
+
+export async function sessionFromSupabaseUser(accessToken: string, fullName = '') {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
+
+  const { data, error } = await supabase.auth.getUser(accessToken);
+  if (error || !data.user) {
+    throw new Error(hebrewAuthError(error?.message || 'טוקן ההתחברות לא תקין. נסו להתחבר מחדש'));
+  }
+
+  const user = data.user;
+  const profile = await profileForUser(user.id);
+  return {
+    token: accessToken,
+    user: payloadFromSupabase({
+      id: user.id,
+      email: user.email,
+      fullName:
+        fullName ||
+        String(user.user_metadata?.full_name || user.user_metadata?.name || ''),
+      avatar: typeof user.user_metadata?.avatar_url === 'string' ? user.user_metadata.avatar_url : null,
+      profile,
+      extraAdminEmails,
+    }),
+  };
+}
+
+export async function restoreSupabaseBrowserSession() {
+  const supabase = getSupabase();
+  if (!supabase) return null;
+  const { data } = await supabase.auth.getSession();
+  if (!data.session?.access_token) return null;
+  try {
+    return await sessionFromSupabaseUser(data.session.access_token);
+  } catch {
+    return null;
+  }
+}
+
 async function syncAccessToken(accessToken: string, fullName = '') {
-  return apiRequest<{ token: string; user: AuthUserPayload }>('/api/auth/supabase', {
-    method: 'POST',
-    body: JSON.stringify({ accessToken, fullName }),
-  });
+  try {
+    return await apiRequest<{ token: string; user: AuthUserPayload }>('/api/auth/supabase', {
+      method: 'POST',
+      body: JSON.stringify({ accessToken, fullName }),
+    });
+  } catch (err) {
+    const message = err instanceof Error ? err.message : '';
+    if (!isApiUnavailableMessage(message)) throw err;
+    return sessionFromSupabaseUser(accessToken, fullName);
+  }
 }
 
 export async function supabaseLogin(email: string, password: string) {
@@ -77,14 +135,18 @@ export async function supabaseRegister(fullName: string, email: string, password
   return syncAccessToken(data.session.access_token, fullName);
 }
 
-export async function supabaseStartGoogleOAuth() {
+export async function supabaseStartGoogleOAuth(nextPath?: string) {
   const supabase = getSupabase();
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
+
+  const redirectTo = nextPath
+    ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`
+    : oauthRedirectTo();
 
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: oauthRedirectTo(),
+      redirectTo,
       queryParams: { prompt: 'select_account' },
     },
   });

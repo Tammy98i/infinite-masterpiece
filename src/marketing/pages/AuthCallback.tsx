@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import { libraryPath } from '../../utils/libraryPath';
+import { safeNextPath, takeAuthNext } from '../../lib/authRedirect';
 
 export function AuthCallback() {
   const { completeOAuthLogin } = useUser();
@@ -17,6 +18,12 @@ export function AuthCallback() {
       try {
         const next = await completeOAuthLogin();
         if (cancelled) return;
+        const requested =
+          safeNextPath(new URLSearchParams(window.location.search).get('next')) || takeAuthNext();
+        if (requested) {
+          navigate(requested, { replace: true });
+          return;
+        }
         if (next.role === 'admin') navigate(libraryPath('admin'), { replace: true });
         else if (next.role === 'instructor') navigate(libraryPath('lecturer'), { replace: true });
         else navigate('/library', { replace: true });

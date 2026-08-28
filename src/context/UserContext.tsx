@@ -7,12 +7,14 @@ import { authApi, getAuthToken, setAuthToken, type AuthUserPayload } from '../ap
 import { isPaidPlan } from '../utils/access';
 import {
   isSupabaseAuthEnabled,
+  restoreSupabaseBrowserSession,
   supabaseCompleteOAuthFromUrl,
   supabaseLogin,
   supabaseRegister,
   supabaseSignOut,
   supabaseStartGoogleOAuth,
 } from '../api/supabaseAuth';
+import { loadSupabaseConfig } from '../lib/supabase';
 
 const GUEST_USER: UserProfile = {
   id: 'guest',
@@ -44,7 +46,7 @@ interface UserContextType {
   isWelcomeOpen: boolean;
   login: (email: string, password: string) => Promise<AuthUserPayload>;
   register: (name: string, email: string, password: string) => Promise<AuthUserPayload>;
-  loginWithGoogle: () => Promise<void>;
+  loginWithGoogle: (nextPath?: string) => Promise<void>;
   completeOAuthLogin: () => Promise<AuthUserPayload>;
   supabaseAuthEnabled: boolean;
   logout: () => void;
@@ -66,24 +68,37 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isAuthModalOpen, setAuthModalOpen] = useState(false);
   const [isWelcomeOpen, setWelcomeOpen] = useState(false);
   const [ready, setReady] = useState(false);
+  const [supabaseAuthEnabled, setSupabaseAuthEnabled] = useState(isSupabaseAuthEnabled());
   const pendingPlanRef = useRef<PlanId | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     const boot = async () => {
-      if (!getAuthToken()) {
-        setReady(true);
-        return;
+      await loadSupabaseConfig();
+      if (cancelled) return;
+      setSupabaseAuthEnabled(isSupabaseAuthEnabled());
+
+      const restored = await restoreSupabaseBrowserSession();
+      if (cancelled) return;
+
+      if (getAuthToken()) {
+        try {
+          const { user: next } = await authApi.me();
+          if (!cancelled) setUser(fromPayload(next));
+        } catch {
+          if (restored) {
+            setAuthToken(restored.token);
+            if (!cancelled) setUser(fromPayload(restored.user));
+          } else {
+            setAuthToken(null);
+            if (!cancelled) setUser(GUEST_USER);
+          }
+        }
+      } else if (restored) {
+        setAuthToken(restored.token);
+        setUser(fromPayload(restored.user));
       }
-      try {
-        const { user: next } = await authApi.me();
-        if (!cancelled) setUser(fromPayload(next));
-      } catch {
-        setAuthToken(null);
-        if (!cancelled) setUser(GUEST_USER);
-      } finally {
-        if (!cancelled) setReady(true);
-      }
+      if (!cancelled) setReady(true);
     };
     void boot();
     return () => {
@@ -133,8 +148,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return result.user;
   };
 
-  const loginWithGoogle = async () => {
-    await supabaseStartGoogleOAuth();
+  const loginWithGoogle = async (nextPath?: string) => {
+    await supabaseStartGoogleOAuth(nextPath);
   };
 
   const completeOAuthLogin = async () => {
@@ -180,6 +195,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refreshUser = useCallback(async () => {
     if (!getAuthToken()) {
+      const restored = await restoreSupabaseBrowserSession();
+      if (restored) {
+        setAuthToken(restored.token);
+        setUser(fromPayload(restored.user));
+        return;
+      }
       setUser(GUEST_USER);
       return;
     }
@@ -187,6 +208,12 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { user: next } = await authApi.me();
       setUser(fromPayload(next));
     } catch {
+      const restored = await restoreSupabaseBrowserSession();
+      if (restored) {
+        setAuthToken(restored.token);
+        setUser(fromPayload(restored.user));
+        return;
+      }
       setAuthToken(null);
       setUser(GUEST_USER);
     }
@@ -217,7 +244,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         register,
         loginWithGoogle,
         completeOAuthLogin,
-        supabaseAuthEnabled: isSupabaseAuthEnabled(),
+        supabaseAuthEnabled,
         logout,
         startTrialOrSubscribe,
         cancelSubscription,

@@ -1,23 +1,29 @@
 # Supabase Auth — Infinite Masterpiece
 
-התחברות אופציונלית דרך Supabase: אימייל+סיסמה ו־**OAuth עם Google**.
+שני דברים שונים ב-Supabase, שניהם מחוברים בקוד:
 
-בלי מפתחות — נשארת ההתחברות המקומית (`admin@infinitemasterpiece.local` / `Masterpiece88` עם `npm run dev`).
+1. **התחברות לאתר** — Google / אימייל דרך **Authentication → Sign In / Providers**.
+2. **OAuth Server** — האתר שלנו כספק זהות לאפליקציות אחרות. דף האישור: `/oauth/consent`.
+
+בלי מפתחות נשארת ההתחברות המקומית (`admin@infinitemasterpiece.local` / `Masterpiece88` עם `npm run dev`).
 
 ## מה חובר בקוד
 
-1. Frontend: אם מוגדרים `VITE_SUPABASE_URL` + `VITE_SUPABASE_ANON_KEY` — מופיע כפתור «התחברות עם Google», ואימייל/סיסמה עוברים ב-Supabase.
-2. אחרי Google חוזרים ל־`/auth/callback`. השרת מסנכרן לטבלת `users` (`POST /api/auth/supabase`) ויוצר session רגיל.
-3. תפקידים (admin / מרצה / מנוי) ממשיכים להתנהל באדמין על המשתמש המקומי.
-4. SQL לפרופילים: [`supabase/profiles.sql`](../supabase/profiles.sql).
+1. כפתור «התחברות עם Google» כשיש URL+anon (build-time `VITE_*` או runtime מ־`GET /api/auth/providers`).
+2. אחרי Google חוזרים ל־`/auth/callback`. מקומית Express מסנכרן ל-SQLite. ב-Vercel יש פונקציות `api/auth/*` בלי SQLite, ואם גם הן חסומות — הסשן נשמר ישירות מ-Supabase בדפדפן.
+3. אפליקציה חיצונית שמתחברת דרך OAuth Server מגיעה ל־`/oauth/consent?authorization_id=…` (אישור / דחייה).
+4. האימייל `tam98iiy@gmail.com` מקבל תפקיד admin כשאין שורת `profiles`. אפשר להוסיף עוד ב־`VITE_ADMIN_EMAILS`.
+5. SQL לפרופילים: [`supabase/profiles.sql`](../supabase/profiles.sql).
 
 ## הקמה (פעם אחת)
 
 ### 1. מפתחות
 
-1. פרויקט ב-[supabase.com](https://supabase.com) (אצלכם: `bjhxluqeyjdioebtuvob`).
-2. **Project Settings → API**: העתיקי Project URL + `anon` `public` key.
-3. הוסיפי ל-`.env` המקומי **ול-Vercel → Environment Variables** (Production + Preview):
+פרויקט: `bjhxluqeyjdioebtuvob`.
+
+**Project Settings → API**: Project URL + `anon` `public`.
+
+ב-`.env` המקומי **וב-Vercel → Environment Variables** (Production + Preview):
 
 ```bash
 VITE_SUPABASE_URL="https://bjhxluqeyjdioebtuvob.supabase.co"
@@ -26,58 +32,67 @@ SUPABASE_URL="https://bjhxluqeyjdioebtuvob.supabase.co"
 SUPABASE_ANON_KEY="eyJ..."
 ```
 
-`VITE_*` נדרשים ב-build של Vercel. `SUPABASE_*` נדרשים בשרת Node.
+`VITE_*` נדרשים ב-build כדי שכפתור Google יופיע מיד. `SUPABASE_*` מספיקים לפונקציות Vercel בזמן ריצה.
 
-4. ב-Supabase SQL Editor הריצי את [`supabase/profiles.sql`](../supabase/profiles.sql).
+ב-SQL Editor הריצי את [`supabase/profiles.sql`](../supabase/profiles.sql).
 
-### 2. Google OAuth
+### 2. Google — כניסה לאתר
 
-1. **Authentication → Sign In / Providers** — גללי **למעלה** ל-Google (לא LinkedIn/X).
+זה **לא** מסך OAuth Server. זה **Authentication → Sign In / Providers**.
+
+1. גללי **למעלה** ל-Google (לא LinkedIn/X).
 2. Enable Google.
 3. ב-[Google Cloud Console](https://console.cloud.google.com/apis/credentials) צרי OAuth 2.0 Client (Web application):
    - Authorized JavaScript origins: `https://bjhxluqeyjdioebtuvob.supabase.co` + `http://localhost:3000`
    - Authorized redirect URI: `https://bjhxluqeyjdioebtuvob.supabase.co/auth/v1/callback`
 4. הדביקי Client ID + Client Secret במסך Google ב-Supabase.
 
-### 3. כתובות חזרה
+### 3. OAuth Server — האתר כספק זהות
+
+כבר הופעל אצלכם (Site URL `http://localhost:3000`, Authorization Path `/oauth/consent`).
+
+- הקוד מגיש את `/oauth/consent`.
+- בפריסה חיה עדכני Site URL לדומיין החי (או הוסיפי אותו ב-URL Configuration).
+- **Allow Dynamic OAuth Apps** דלוק — אפליקציות יכולות להירשם דרך ה-API. כבו אם לא צריך.
+
+### 4. כתובות חזרה
 
 **Authentication → URL Configuration**
 
-- Site URL: `http://localhost:3000` בפיתוח, ובפריסה הדומיין החי.
-- Redirect URLs (כל אחד בשורה):
+- Site URL: `http://localhost:3000` בפיתוח; בפריסה הדומיין החי.
+- Redirect URLs:
   - `http://localhost:3000/auth/callback`
+  - `http://localhost:3000/oauth/consent`
   - `https://infinite-masterpiece-lovat.vercel.app/auth/callback`
   - `https://*.vercel.app/auth/callback`
+  - `https://*.vercel.app/oauth/consent`
 
-### 4. אימייל בפיתוח
+### 5. אימייל בפיתוח
 
 Authentication → Providers → Email: כבו Confirm email אם רוצים להיכנס בלי מייל אישור.
 
-הריצי מחדש `npm run dev` (או Redeploy ב-Vercel אחרי שמירת המשתנים).
+הריצי מחדש `npm run dev`, וב-Vercel Redeploy אחרי שמירת המשתנים.
 
 ## אדמין אחרי Google
 
-החשבון `admin@infinitemasterpiece.local` הוא סיד מקומי, לא משתמש Google.
+`admin@infinitemasterpiece.local` הוא סיד מקומי, לא משתמש Google.
 
-1. התחברי פעם אחת עם Google.
-2. עדכני תפקיד ב-SQLite המקומי, או מאדמין קיים:
+ה-Gmail של המייסדת מקבל admin אוטומטית בנתיב Vercel/Supabase. מקומית עם SQLite:
 
 ```sql
-UPDATE users SET role = 'admin' WHERE email = 'your-gmail@gmail.com';
+UPDATE users SET role = 'admin' WHERE email = 'tam98iiy@gmail.com';
+UPDATE public.profiles SET role = 'admin' WHERE email = 'tam98iiy@gmail.com';
 ```
 
 ## בדיקה מקומית
 
 ```bash
 curl http://localhost:3001/api/auth/providers
-# {"local":true,"supabase":true}
+# {"local":true,"supabase":true,...}
 ```
 
-## הערה על Vercel
+## Vercel
 
-Vercel מגיש את ה-SPA בלבד. בלי שרת Node חי (`/api/auth/supabase`) ההתחברות עם Google תיעצר אחרי החזרה מ-Google.
+`vercel.json` מגיש את ה-SPA. `api/auth/providers`, `supabase`, `me`, `logout` רצים כפונקציות Serverless (בלי SQLite). קטלוג הספרייה נופל לתוכן הסטטי אם אין Express.
 
-- מקומית: `npm run dev` — עובד.
-- בפריוויו: צריך API נפרד (Railway/Fly) + `VITE_API_URL` (PR #3), או כניסה מקומית.
-
-Deployment Protection על Preview (401 Protected deployment) גם חוסם את `/api`. כבו זאת ב-Vercel לפריוויו, או התחברו מקומית.
+Deployment Protection על Preview מחזיר 401 על `/api`. כבו זאת לפריוויו, או הגדירו `VITE_*` ב-build — אז Google עובד בסשן דפדפן גם בלי הפונקציות.

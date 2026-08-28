@@ -4,6 +4,7 @@ import { useUser } from '../context/UserContext';
 import { X } from 'lucide-react';
 import { libraryPath } from '../utils/libraryPath';
 import { EmailConfirmationRequiredError } from '../api/supabaseAuth';
+import { takeAuthNext } from '../lib/authRedirect';
 
 export const AuthModal: React.FC = () => {
   const { isAuthModalOpen, setAuthModalOpen, login, register, loginWithGoogle, supabaseAuthEnabled } =
@@ -20,6 +21,11 @@ export const AuthModal: React.FC = () => {
   if (!isAuthModalOpen) return null;
 
   const goAfterAuth = (role: string) => {
+    const next = takeAuthNext();
+    if (next) {
+      navigate(next);
+      return;
+    }
     if (role === 'admin') navigate(libraryPath('admin'));
     else if (role === 'instructor') navigate(libraryPath('lecturer'));
     else if (!window.location.pathname.startsWith('/library')) navigate('/library');
@@ -55,7 +61,11 @@ export const AuthModal: React.FC = () => {
     setErrorKind('error');
     setPending(true);
     try {
-      await loginWithGoogle();
+      const next =
+        window.location.pathname === '/oauth/consent'
+          ? `${window.location.pathname}${window.location.search}`
+          : undefined;
+      await loginWithGoogle(next);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'כשל התחברות עם Google');
       setPending(false);

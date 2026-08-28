@@ -27,6 +27,7 @@ import { LibraryMembership } from './marketing/pages/LibraryMembership';
 import { WebinarLanding } from './marketing/pages/WebinarLanding';
 import { WebinarThankYou } from './marketing/pages/WebinarThankYou';
 import { AuthCallback } from './marketing/pages/AuthCallback';
+import { OAuthConsent } from './marketing/pages/OAuthConsent';
 
 const PublicLayoutWrapper = () => {
   const location = useLocation();
@@ -139,6 +140,7 @@ export default function App() {
           <Route path="/webinar" element={<WebinarLanding />} />
           <Route path="/webinar/thank-you" element={<WebinarThankYou />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
+          <Route path="/oauth/consent" element={<OAuthConsent />} />
           <Route path="/hesitation" element={<Hesitation />} />
           <Route path="/hesitation-success" element={<HesitationSuccess />} />
         </Route>

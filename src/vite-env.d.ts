@@ -9,6 +9,8 @@ interface ImportMetaEnv {
   readonly VITE_A11Y_STATEMENT_UPDATED?: string;
   readonly VITE_SUPABASE_URL?: string;
   readonly VITE_SUPABASE_ANON_KEY?: string;
+  readonly VITE_API_URL?: string;
+  readonly VITE_ADMIN_EMAILS?: string;
 }
 
 interface ImportMeta {
