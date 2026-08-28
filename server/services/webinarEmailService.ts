@@ -1,6 +1,10 @@
+import { Resend } from 'resend';
 import { getWebinarConfig } from './webinarService.js';
 import { getDb } from '../db/connection.js';
 import { appUrl } from '../config/env.js';
+
+/** Works immediately. After the domain is verified in Resend, set EMAIL_FROM to that address. */
+export const RESEND_ONBOARDING_FROM = 'Infinite Masterpiece <onboarding@resend.dev>';
 
 type ConfirmationInput = {
   fullName: string;
@@ -8,12 +12,16 @@ type ConfirmationInput = {
   registrationId: string;
 };
 
-function emailEnabled() {
-  return Boolean(process.env.RESEND_API_KEY || process.env.SMTP_HOST);
+export function webinarEmailFrom() {
+  return process.env.EMAIL_FROM?.trim() || RESEND_ONBOARDING_FROM;
 }
 
-function fromAddress() {
-  return process.env.EMAIL_FROM || 'Infinite Masterpiece <noreply@infinite-masterpiece.co.il>';
+export function isWebinarEmailEnabled() {
+  return Boolean(process.env.RESEND_API_KEY?.trim());
+}
+
+export function isOnboardingSender() {
+  return webinarEmailFrom().toLowerCase().includes('onboarding@resend.dev');
 }
 
 function buildConfirmationHtml(input: ConfirmationInput) {
@@ -36,44 +44,46 @@ function buildConfirmationHtml(input: ConfirmationInput) {
 }
 
 async function sendViaResend(to: string, subject: string, html: string) {
-  const apiKey = process.env.RESEND_API_KEY;
-  if (!apiKey) return false;
-  const res = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: fromAddress(),
-      to: [to],
-      subject,
-      html,
-    }),
+  const apiKey = process.env.RESEND_API_KEY?.trim();
+  if (!apiKey) return { sent: false as const, error: 'חסר RESEND_API_KEY' };
+
+  const resend = new Resend(apiKey);
+  const { data, error } = await resend.emails.send({
+    from: webinarEmailFrom(),
+    to: [to],
+    subject,
+    html,
   });
-  return res.ok;
+
+  if (error) {
+    const message = error.message || 'שליחת המייל נכשלה';
+    console.error('[webinar-email] resend failed', { to, message, name: error.name });
+    return { sent: false as const, error: message };
+  }
+
+  return { sent: true as const, id: data?.id };
 }
 
 export async function sendWebinarConfirmationEmail(input: ConfirmationInput) {
-  if (!emailEnabled()) {
-    console.info('[webinar-email] skipped (no RESEND_API_KEY / SMTP_HOST)', input.email);
+  if (!isWebinarEmailEnabled()) {
+    console.info('[webinar-email] skipped (no RESEND_API_KEY)', input.email);
     return { sent: false, reason: 'disabled' };
   }
 
   const config = getWebinarConfig();
   const subject = `אישור הרשמה — ${config.title}`;
   const html = buildConfirmationHtml(input);
-  const sent = await sendViaResend(input.email, subject, html);
-  if (sent) {
+  const result = await sendViaResend(input.email, subject, html);
+  if (result.sent) {
     getDb()
       .prepare(`UPDATE webinar_registrations SET confirmation_email_sent_at = ? WHERE id = ?`)
       .run(new Date().toISOString(), input.registrationId);
   }
-  return { sent, reason: sent ? 'resend' : 'failed' };
+  return { sent: result.sent, reason: result.sent ? 'resend' : result.error };
 }
 
 export async function sendWebinarPartialEmail(input: ConfirmationInput) {
-  if (!emailEnabled()) return { sent: false, reason: 'disabled' };
+  if (!isWebinarEmailEnabled()) return { sent: false, reason: 'disabled' };
   const config = getWebinarConfig();
   const url = `${appUrl()}/webinar?resume=${encodeURIComponent(input.registrationId)}`;
   const subject = `עוד רגע לסיום ההרשמה — ${config.title}`;
@@ -85,12 +95,12 @@ export async function sendWebinarPartialEmail(input: ConfirmationInput) {
       <p>${config.date} · ${config.time} · ${config.location}</p>
     </div>
   `;
-  const sent = await sendViaResend(input.email, subject, html);
-  return { sent, reason: sent ? 'resend' : 'failed' };
+  const result = await sendViaResend(input.email, subject, html);
+  return { sent: result.sent, reason: result.sent ? 'resend' : result.error };
 }
 
 export async function sendWebinarReminderEmail(input: ConfirmationInput, kind: '24h' | '1h') {
-  if (!emailEnabled()) return { sent: false, reason: 'disabled' };
+  if (!isWebinarEmailEnabled()) return { sent: false, reason: 'disabled' };
   const config = getWebinarConfig();
   const subject =
     kind === '24h'
@@ -103,6 +113,36 @@ export async function sendWebinarReminderEmail(input: ConfirmationInput, kind: '
       ${config.zoomLink ? `<p><a href="${config.zoomLink}">קישור ל-Zoom</a></p>` : ''}
     </div>
   `;
-  const sent = await sendViaResend(input.email, subject, html);
-  return { sent, reason: sent ? 'resend' : 'failed' };
+  const result = await sendViaResend(input.email, subject, html);
+  return { sent: result.sent, reason: result.sent ? 'resend' : result.error };
+}
+
+export async function sendWebinarTestEmail(to: string) {
+  const email = to.trim();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    throw Object.assign(new Error('נא להזין כתובת מייל תקינה'), { status: 400 });
+  }
+  if (!isWebinarEmailEnabled()) {
+    throw Object.assign(new Error('חסר RESEND_API_KEY בשרת'), { status: 400 });
+  }
+
+  const config = getWebinarConfig();
+  const result = await sendViaResend(
+    email,
+    'בדיקת מייל — Infinite Masterpiece',
+    `
+      <div dir="rtl" style="font-family:Arial,sans-serif;line-height:1.6;color:#111">
+        <p>זה מייל בדיקה ממשפך הוובינר.</p>
+        <p>אם קיבלת אותו — Resend מחובר.</p>
+        <p><strong>שולח:</strong> ${webinarEmailFrom()}</p>
+        <p><strong>וובינר:</strong> ${config.title} · ${config.date} · ${config.time}</p>
+      </div>
+    `,
+  );
+
+  if (!result.sent) {
+    throw Object.assign(new Error(result.error || 'שליחת מייל הבדיקה נכשלה'), { status: 502 });
+  }
+
+  return { sent: true, id: result.id, from: webinarEmailFrom() };
 }

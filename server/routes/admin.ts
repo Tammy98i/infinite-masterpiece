@@ -56,6 +56,7 @@ import {
   countWebinarRegistrations,
   getWebinarFunnelStats,
 } from '../services/webinarService.js';
+import { sendWebinarTestEmail } from '../services/webinarEmailService.js';
 
 const router = Router();
 
@@ -653,6 +654,24 @@ router.patch('/webinar', (req, res) => {
     res.json({ config });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
+  }
+});
+
+router.post('/webinar/test-email', async (req, res) => {
+  try {
+    const to = String(req.body?.to || '').trim();
+    const result = await sendWebinarTestEmail(to);
+    writeAudit({
+      adminUserId: authUser(req).id,
+      actionType: 'webinar_test_email',
+      entityType: 'webinar',
+      entityId: 'email',
+      after: { to },
+    });
+    res.json(result);
+  } catch (err) {
+    const status = (err as { status?: number }).status || 500;
+    res.status(status).json({ error: (err as Error).message });
   }
 });
 

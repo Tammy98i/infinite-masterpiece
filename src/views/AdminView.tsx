@@ -3624,6 +3624,9 @@ function WebinarPanel() {
   const [saving, setSaving] = useState(false);
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<'all' | 'partial' | 'complete' | 'waitlist'>('all');
+  const [testEmail, setTestEmail] = useState('infinite.masterpiece8@gmail.com');
+  const [testEmailBusy, setTestEmailBusy] = useState(false);
+  const [testEmailResult, setTestEmailResult] = useState('');
 
   const load = () =>
     adminApi
@@ -3649,6 +3652,20 @@ function WebinarPanel() {
       setError(err instanceof Error ? err.message : 'שמירה נכשלה');
     } finally {
       setSaving(false);
+    }
+  };
+
+  const sendTestEmail = async () => {
+    setTestEmailBusy(true);
+    setTestEmailResult('');
+    setError('');
+    try {
+      const result = await adminApi.sendWebinarTestEmail(testEmail);
+      setTestEmailResult(`נשלח אל ${testEmail} · שולח: ${result.from}`);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'שליחת מייל בדיקה נכשלה');
+    } finally {
+      setTestEmailBusy(false);
     }
   };
 
@@ -3740,6 +3757,28 @@ function WebinarPanel() {
               </li>
             ))}
           </ul>
+          <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end pt-2">
+            <label className="grid gap-1 text-sm">
+              <span className="text-white/50">מייל בדיקה</span>
+              <input
+                type="email"
+                value={testEmail}
+                onChange={(e) => setTestEmail(e.target.value)}
+                className={fieldClass}
+                dir="ltr"
+                autoComplete="email"
+              />
+            </label>
+            <button
+              type="button"
+              onClick={() => void sendTestEmail()}
+              disabled={testEmailBusy}
+              className="px-5 py-2.5 rounded-full border border-[#C8A24C]/40 text-[#F7E7B5] text-sm min-h-11 cursor-pointer hover:bg-[#C8A24C]/10 disabled:opacity-60"
+            >
+              {testEmailBusy ? 'שולח…' : 'שליחת מייל בדיקה'}
+            </button>
+          </div>
+          {testEmailResult ? <p className="text-sm text-[#F7E7B5] font-light">{testEmailResult}</p> : null}
         </section>
       ) : null}
 

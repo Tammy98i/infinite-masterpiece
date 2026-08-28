@@ -31,6 +31,7 @@
     "react": "^19.0.1",
     "react-dom": "^19.0.1",
     "react-router-dom": "^7.18.2",
+    "resend": "^6.24.0",
     "stripe": "^22.5.0",
     "tailwind-merge": "^3.6.0",
     "vite": "^6.2.3"

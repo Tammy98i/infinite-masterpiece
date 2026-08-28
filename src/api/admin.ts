@@ -256,6 +256,11 @@ export const adminApi = {
       method: 'PATCH',
       body: JSON.stringify({ config }),
     }),
+  sendWebinarTestEmail: (to: string) =>
+    apiRequest<{ sent: boolean; id?: string; from: string }>('/api/admin/webinar/test-email', {
+      method: 'POST',
+      body: JSON.stringify({ to }),
+    }),
   notifications: () =>
     apiRequest<{
       notifications: AdminNotification[];

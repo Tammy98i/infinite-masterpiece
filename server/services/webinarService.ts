@@ -9,7 +9,7 @@ import { getSetting, setSetting } from './settingsService.js';
 import { parseIsraeliDateTime } from '../../src/utils/webinarTime.ts';
 import { isIsraeliMobile } from '../../src/utils/phone.ts';
 import { countEvent, trackEvent } from './analyticsService.js';
-import { sendWebinarConfirmationEmail } from './webinarEmailService.js';
+import { isOnboardingSender, isWebinarEmailEnabled, sendWebinarConfirmationEmail } from './webinarEmailService.js';
 import { postWebinarWebhook } from './webinarWebhookService.js';
 
 const CONFIG_KEY = 'webinar_config';
@@ -168,7 +168,8 @@ export function getWebinarLaunchReadiness() {
   const dateInFuture = Boolean(start && start.getTime() > Date.now());
   const hasWhatsapp = Boolean(config.whatsappGroupUrl.trim());
   const hasZoom = Boolean(config.zoomLink.trim());
-  const emailEnabled = Boolean(process.env.RESEND_API_KEY || process.env.SMTP_HOST);
+  const emailEnabled = isWebinarEmailEnabled();
+  const onboardingSender = isOnboardingSender();
 
   const items: WebinarLaunchCheck[] = [
     {
@@ -197,7 +198,11 @@ export function getWebinarLaunchReadiness() {
       ok: emailEnabled,
       required: true,
       label: 'שליחת מייל',
-      hint: emailEnabled ? 'Resend/SMTP פעיל' : 'חסר RESEND_API_KEY או SMTP_HOST בשרת.',
+      hint: emailEnabled
+        ? onboardingSender
+          ? 'Resend פעיל עם onboarding@resend.dev — עד לאימות הדומיין, מייל יוצא רק לחשבון Resend שלכם.'
+          : 'Resend פעיל'
+        : 'חסר RESEND_API_KEY בשרת.',
     },
   ];
 
