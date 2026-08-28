@@ -1,4 +1,4 @@
-import { getSupabase, isSupabaseAuthEnabled, oauthRedirectTo } from '../lib/supabase';
+import { getSupabase, isGoogleProviderEnabled, isSupabaseAuthEnabled, oauthRedirectTo, loadSupabaseConfig, refreshGoogleProviderFlag } from '../lib/supabase';
 import { isApiUnavailableMessage, payloadFromSupabase, type ProfileRow } from '../lib/supabaseUser';
 import { apiRequest, type AuthUserPayload } from './auth';
 
@@ -138,6 +138,11 @@ export async function supabaseRegister(fullName: string, email: string, password
 export async function supabaseStartGoogleOAuth(nextPath?: string) {
   const supabase = getSupabase();
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
+  await loadSupabaseConfig();
+  await refreshGoogleProviderFlag();
+  if (!isGoogleProviderEnabled()) {
+    throw new Error('התחברות עם Google עדיין לא הופעלה ב-Supabase');
+  }
 
   const redirectTo = nextPath
     ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`

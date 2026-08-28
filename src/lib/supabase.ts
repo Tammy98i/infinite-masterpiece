@@ -9,6 +9,7 @@ let runtimeUrl = '';
 let runtimeAnon = '';
 let configPromise: Promise<boolean> | null = null;
 let client: SupabaseClient | null = null;
+let googleProviderEnabled = false;
 
 function url() {
   return buildUrl || runtimeUrl;
@@ -22,31 +23,55 @@ export function isSupabaseAuthEnabled() {
   return Boolean(url() && anon());
 }
 
+export function isGoogleProviderEnabled() {
+  return googleProviderEnabled;
+}
+
+export async function refreshGoogleProviderFlag() {
+  if (!isSupabaseAuthEnabled()) {
+    googleProviderEnabled = false;
+    return;
+  }
+  try {
+    const res = await fetch(`${url()}/auth/v1/settings`, {
+      headers: {
+        apikey: anon(),
+        Authorization: `Bearer ${anon()}`,
+      },
+    });
+    const data = (await res.json().catch(() => ({}))) as { external?: { google?: boolean } };
+    googleProviderEnabled = Boolean(data.external?.google);
+  } catch {
+    googleProviderEnabled = false;
+  }
+}
+
 export function oauthRedirectTo() {
   return `${window.location.origin}/auth/callback`;
 }
 
 export async function loadSupabaseConfig() {
-  if (isSupabaseAuthEnabled()) return true;
   if (!configPromise) {
     configPromise = (async () => {
-      try {
-        const res = await fetch(apiUrl('/api/auth/providers'));
-        const data = (await res.json().catch(() => ({}))) as {
-          supabaseUrl?: string;
-          anonKey?: string;
-        };
-        const nextUrl = String(data.supabaseUrl || '').trim();
-        const nextAnon = String(data.anonKey || '').trim();
-        if (nextUrl && nextAnon) {
-          runtimeUrl = nextUrl;
-          runtimeAnon = nextAnon;
-          client = null;
-          return true;
+      if (!isSupabaseAuthEnabled()) {
+        try {
+          const res = await fetch(apiUrl('/api/auth/providers'));
+          const data = (await res.json().catch(() => ({}))) as {
+            supabaseUrl?: string;
+            anonKey?: string;
+          };
+          const nextUrl = String(data.supabaseUrl || '').trim();
+          const nextAnon = String(data.anonKey || '').trim();
+          if (nextUrl && nextAnon) {
+            runtimeUrl = nextUrl;
+            runtimeAnon = nextAnon;
+            client = null;
+          }
+        } catch {
+          /* Vercel without functions, or local API down */
         }
-      } catch {
-        /* Vercel without functions, or local API down */
       }
+      await refreshGoogleProviderFlag();
       return isSupabaseAuthEnabled();
     })();
   }
