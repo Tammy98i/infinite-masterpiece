@@ -71,7 +71,7 @@ export function FAQPage() {
                 onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
                 className="w-full flex items-center justify-between p-8 text-right focus:outline-none"
               >
-                <span className="text-lg font-light text-white/90">{faq.q}</span>
+                <span className="text-lg font-heading text-white/90">{faq.q}</span>
                 <ChevronDown 
                   className={`w-5 h-5 text-[#C8A24C]/60 transition-transform duration-500 ${openIndex === idx ? 'rotate-180' : ''}`} 
                   strokeWidth={1.5}

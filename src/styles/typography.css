@@ -212,7 +212,8 @@ button.rounded-2xl,
 [type='reset'],
 a.min-h-11,
 a[class*='rounded-full'],
-a[class*='rounded-[22px]'] {
+a[class*='rounded-[22px]'],
+a[class*='rounded-[24px]'] {
   font-family: var(--font-accent);
   font-weight: 600;
   letter-spacing: 0.01em;
