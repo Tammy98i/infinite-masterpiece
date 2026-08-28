@@ -34,11 +34,7 @@ export function Header() {
 
   const headerCta = () => {
     if (phase === 'ended') {
-      if (onWebinarLanding) {
-        return (
-          <span className="px-5 py-3 text-sm text-white/50 min-h-11 inline-flex items-center">{WEBINAR_CTA_ENDED}</span>
-        );
-      }
+      if (onWebinar) return null;
       return (
         <Link to="/webinar" className="px-5 py-3 text-sm text-white/55 hover:text-[#F7E7B5] min-h-11 inline-flex items-center transition-colors duration-200">
           {WEBINAR_CTA_ENDED}
@@ -77,11 +73,8 @@ export function Header() {
     const mobileClass =
       'block w-full text-center px-8 py-4 rounded-full text-base font-medium text-black bg-gradient-to-r from-[#C8A24C] via-[#F7E7B5] to-[#D4AF37] min-h-11 cursor-pointer';
     if (phase === 'ended') {
-      return onWebinar ? (
-        <p className="text-center text-white/50 text-sm min-h-11 inline-flex items-center justify-center w-full">
-          {WEBINAR_CTA_ENDED}
-        </p>
-      ) : (
+      if (onWebinar) return null;
+      return (
         <Link to="/webinar" onClick={close} className="block w-full text-center px-8 py-4 text-base text-white/55 min-h-11">
           {WEBINAR_CTA_ENDED}
         </Link>
@@ -164,15 +157,21 @@ export function Header() {
       <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between">
           
-          <Link to="/" className="flex items-center gap-4 group">
+          <Link to="/" className="flex items-center gap-4 group" aria-label="Infinite Masterpiece">
             <InfinityIcon className="w-8 h-8 text-[#F7E7B5] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
-            <div className="flex flex-col">
-              <span className="font-light text-[15px] tracking-[0.25em] text-white/90 leading-tight uppercase">
-                Infinite
-                <br/>
-                <span className="font-medium">Masterpiece</span>
+            {onWebinar ? (
+              <span className="font-light text-[15px] tracking-[0.25em] text-white/90 leading-tight uppercase" aria-hidden="true">
+                IM
               </span>
-            </div>
+            ) : (
+              <div className="flex flex-col">
+                <span className="font-light text-[15px] tracking-[0.25em] text-white/90 leading-tight uppercase">
+                  Infinite
+                  <br/>
+                  <span className="font-medium">Masterpiece</span>
+                </span>
+              </div>
+            )}
           </Link>
 
           {/* Desktop Nav */}
@@ -214,11 +213,11 @@ export function Header() {
                 ספרייה
               </Link>
             ) : null}
-            <AccountMenu />
+            {!onWebinar ? <AccountMenu /> : null}
           </div>
 
           <div className="flex items-center gap-2 lg:hidden">
-            <AccountMenu />
+            {!onWebinar ? <AccountMenu /> : null}
             <button
               type="button"
               className="p-2 text-white/60 hover:text-white transition-colors min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
