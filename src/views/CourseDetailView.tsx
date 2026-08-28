@@ -13,7 +13,6 @@ import {
 } from 'lucide-react';
 import { formatClock } from '../utils/time';
 import { canPreviewEpisode, canWatchEpisode, PREVIEW_SECONDS } from '../utils/access';
-import { usePaywall } from '../context/PaywallContext';
 import { playbackApi } from '../api/playback';
 import { trackEvent } from '../utils/analytics';
 import { AuthRequiredDialog } from '../components/AuthRequiredDialog';
@@ -43,7 +42,6 @@ export const CourseDetailView: React.FC = () => {
     setAuthModalOpen,
     catalogStatus,
   } = useApp();
-  const { openPaywall } = usePaywall();
   const navigate = useNavigate();
   const location = useLocation();
 
@@ -68,7 +66,7 @@ export const CourseDetailView: React.FC = () => {
   const [playbackUrl, setPlaybackUrl] = useState('');
   const [playbackMode, setPlaybackMode] = useState<'full' | 'preview'>('full');
   const [showEndOverlay, setShowEndOverlay] = useState(false);
-  const [previewEnded, setPreviewEnded] = useState(false);
+  const [accessCardSource, setAccessCardSource] = useState<string | null>(null);
   const [sessionLoading, setSessionLoading] = useState(false);
   const [captionTracks, setCaptionTracks] = useState<
     Array<{ src: string; label: string; srclang: string; kind?: 'subtitles' | 'captions'; default?: boolean }>
@@ -148,7 +146,7 @@ export const CourseDetailView: React.FC = () => {
     setPlayerError(false);
     setPlaybackUrl('');
     setShowEndOverlay(false);
-    setPreviewEnded(false);
+    setAccessCardSource(null);
     progressMarks.current = { p25: false, p50: false, p75: false, completed: false };
   }, [course?.id, chapterFromUrl]);
 
@@ -196,11 +194,8 @@ export const CourseDetailView: React.FC = () => {
           course_id: course.id,
           chapter_id: ep.id,
         });
-        openPaywall({
-          source: 'locked_card',
-          courseId: course.id,
-          courseTitle: episodeDisplayName(ep.title),
-        });
+        setChapterInUrl(episodeId);
+        setAccessCardSource('locked_card');
         trackEvent('course_access_dialog_view', { course_id: course.id, chapter_id: ep.id });
         return;
       }
@@ -209,7 +204,7 @@ export const CourseDetailView: React.FC = () => {
       setSessionLoading(true);
       setPlayerError(false);
       setShowEndOverlay(false);
-      setPreviewEnded(false);
+      setAccessCardSource(null);
       try {
         const session = await playbackApi.createSession(ep.id);
         setPlaybackUrl(session.playbackUrl);
@@ -240,7 +235,7 @@ export const CourseDetailView: React.FC = () => {
         setSessionLoading(false);
       }
     },
-    [course, user, openPaywall, setChapterInUrl]
+    [course, user, setChapterInUrl]
   );
 
   const handlePrimaryCta = () => {
@@ -250,11 +245,7 @@ export const CourseDetailView: React.FC = () => {
       mode: cta.mode,
     });
     if (cta.mode === 'access') {
-      openPaywall({
-        source: 'course',
-        courseId: course.id,
-        courseTitle: course.title,
-      });
+      setAccessCardSource('course');
       trackEvent('course_access_dialog_view', { course_id: course.id });
       return;
     }
@@ -329,7 +320,7 @@ export const CourseDetailView: React.FC = () => {
     if (playbackMode === 'preview' && video.currentTime >= PREVIEW_SECONDS) {
       video.pause();
       setIsPlaying(false);
-      setPreviewEnded(true);
+      setAccessCardSource('preview_limit');
       return;
     }
 
@@ -540,39 +531,27 @@ export const CourseDetailView: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => void startPlayback(activeEpisode.id)}
-                        className="px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm font-semibold min-h-11"
+                        className="btn-gold text-black px-5 py-2.5 text-sm"
                       >
                         ניסיון נוסף
                       </button>
                     </div>
-                  ) : previewEnded ? (
-                    <AccessEndCard
-                      source="preview_limit"
-                      courseTitle={course.title}
-                      onDismiss={() => setPreviewEnded(false)}
-                    />
-                  ) : showEndOverlay ? (
+                  ) : showEndOverlay && !accessCardSource ? (
                     <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black/80 p-6 text-center">
                       <p className="text-base text-white">הפרק הסתיים</p>
                       {nextEpisode && !nextLocked ? (
                         <button
                           type="button"
                           onClick={() => void startPlayback(nextEpisode.id)}
-                          className="px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-semibold min-h-11"
+                          className="btn-gold text-black px-6 py-3 text-sm"
                         >
                           לפרק הבא
                         </button>
                       ) : nextEpisode && nextLocked ? (
                         <button
                           type="button"
-                          onClick={() =>
-                            openPaywall({
-                              source: 'locked_card',
-                              courseId: course.id,
-                              courseTitle: episodeDisplayName(nextEpisode.title),
-                            })
-                          }
-                          className="px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-semibold min-h-11"
+                          onClick={() => setAccessCardSource('locked_card')}
+                          className="btn-gold text-black px-6 py-3 text-sm"
                         >
                           פתיחת גישה
                         </button>
@@ -664,6 +643,13 @@ export const CourseDetailView: React.FC = () => {
                   </button>
                 </>
               )}
+              {accessCardSource ? (
+                <AccessEndCard
+                  source={accessCardSource}
+                  courseTitle={course.title}
+                  onDismiss={() => setAccessCardSource(null)}
+                />
+              ) : null}
             </div>
             {activeEpisode && (
               <p className="mt-3 text-sm text-white/55">

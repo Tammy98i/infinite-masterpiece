@@ -46,9 +46,13 @@ export function Home() {
                 </span>
               </div>
 
-              <h1 className="text-[32px] sm:text-[40px] md:text-[84px] font-heading tracking-tight leading-[1.15] mb-4 md:mb-8">
-                <span className="text-white block">יש לך יצירה.</span>
-                <span className="text-gold-gradient font-medium block">עכשיו בונים לה מערכת הכנסה.</span>
+              <h1 className="font-heading tracking-tight leading-[1.15] mb-4 md:mb-8 mx-auto w-[min(calc(100vw-2rem),72rem)]">
+                <span className="text-white block text-[32px] sm:text-[40px] md:text-[64px] lg:text-[76px]">
+                  יש לך יצירה.
+                </span>
+                <span className="text-gold-gradient font-medium block whitespace-nowrap text-[clamp(1.5rem,calc((100vw-3rem)/11),4.5rem)]">
+                  עכשיו בונים לה מערכת הכנסה.
+                </span>
               </h1>
 
               <p className="text-[16px] md:text-[22px] text-white/50 mb-6 md:mb-12 max-w-xl leading-relaxed font-light">

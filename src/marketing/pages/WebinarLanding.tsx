@@ -78,7 +78,7 @@ function HostFaces() {
               src={host.src}
               name={host.name}
               alt={host.name}
-              className="w-14 h-14 sm:w-16 sm:h-16 rounded-full border-2 border-[#C8A24C] text-sm sm:text-base"
+              className="w-[72px] h-[72px] rounded-full border-2 border-[#C8A24C] text-base"
             />
           </span>
         ))}
@@ -199,7 +199,7 @@ export function WebinarLanding() {
 
   return (
     <div className="w-full pb-28">
-      <section id="webinar-hero" className="relative min-h-screen flex items-center pt-24 pb-16 overflow-hidden">
+      <section id="webinar-hero" className="relative min-h-0 md:min-h-screen flex items-center pt-20 pb-8 md:pt-24 md:pb-16 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/40 via-transparent to-[#010308]/55" />
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[min(900px,90vw)] h-[320px] bg-[radial-gradient(ellipse_at_center,rgba(200,162,76,0.18),transparent_70%)]" />
@@ -220,31 +220,30 @@ export function WebinarLanding() {
                 {eventNight || eventEnded ? null : <WebinarCountdown date={config.date} time={config.time} />}
               </div>
 
-              <h1 className="text-4xl md:text-6xl xl:text-7xl font-heading tracking-tight leading-[1.15] mb-6">
+              <h1 className="text-[32px] sm:text-4xl md:text-6xl xl:text-7xl font-heading tracking-tight leading-[1.15] mb-4 md:mb-6">
                 <span className="text-white block">{headlineParts.line1}</span>
                 {headlineParts.line2 ? (
                   <span className="text-gold-gradient font-medium block mt-2">{headlineParts.line2}</span>
                 ) : null}
               </h1>
 
-              <p className="text-lg md:text-xl text-white/50 font-light leading-relaxed max-w-2xl mb-5">
+              <p className="text-base md:text-xl text-white/50 font-light leading-relaxed max-w-2xl mb-3 md:mb-5">
                 {config.heroSubheadline}
               </p>
-              <p className="text-base md:text-lg text-[#F7E7B5] font-medium mb-6">{WEBINAR_PUNCHLINE}</p>
-              <p className="text-sm text-white/45 font-light mb-8">
+              <p className="text-sm md:text-lg text-[#F7E7B5] font-medium mb-3 md:mb-6">{WEBINAR_PUNCHLINE}</p>
+              <p className="text-sm text-white/45 font-light mb-5 md:mb-8">
                 {config.location}, {config.durationMinutes} דקות, {WEBINAR_AUDIENCE_LABEL}
               </p>
 
               <div className="flex flex-col items-center gap-3">
                 {eventEnded ? (
                   <>
-                    <p className="text-base text-white/85 font-medium min-h-11 inline-flex items-center">
-                      {WEBINAR_CTA_ENDED}
-                    </p>
-                    <p className="text-sm text-white/80 font-medium max-w-md">{WEBINAR_ENDED_NOTE}</p>
                     <Link to="/pricing" className="btn-gold text-black">
                       {WEBINAR_CTA_NEXT_CYCLE}
                     </Link>
+                    <p className="text-sm text-white/70 font-medium max-w-md min-h-11 inline-flex items-center text-center">
+                      {WEBINAR_CTA_ENDED}. {WEBINAR_ENDED_NOTE}
+                    </p>
                   </>
                 ) : eventNight ? (
                   liveEnter.href ? (

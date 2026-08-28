@@ -38,7 +38,7 @@ export function LibraryMembership() {
           <p className="text-white/85">יש לכם כבר גישה פעילה לספרייה.</p>
           <Link
             to="/library"
-            className="inline-flex mt-4 px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 items-center"
+            className="btn-gold text-black mt-4 px-6 py-3 text-sm"
           >
             מעבר לספרייה
           </Link>
@@ -52,7 +52,7 @@ export function LibraryMembership() {
           return (
             <div
               key={key}
-              className="rounded-2xl border border-white/10 bg-white/[0.03] p-6 flex flex-col"
+              className="glass-card p-6 flex flex-col"
             >
               <h2 className="text-lg font-medium text-white mb-1">{plan.title}</h2>
               <p className="text-xs text-white/45 mb-4 flex-1">{plan.subtitle}</p>
@@ -64,7 +64,7 @@ export function LibraryMembership() {
                   choose(plan.id);
                   if (!isGuest) navigate('/library');
                 }}
-                className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer hover:bg-[#F7E7B5] disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                className="btn-gold text-black w-full py-3 text-sm"
               >
                 {plan.cta}
               </button>

@@ -79,7 +79,7 @@ export function WebinarQualifyForm({ registrationId, onComplete }: Props) {
       <button
         type="submit"
         disabled={submitting}
-        className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm font-semibold min-h-11 cursor-pointer disabled:opacity-50 disabled:cursor-not-allowed"
+        className="btn-gold text-black w-full py-3 text-sm"
       >
         {submitting ? 'שולח…' : 'שמירת התשובות'}
       </button>

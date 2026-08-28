@@ -8,6 +8,8 @@ import { scrollToWebinarForm, trackWebinarCta } from '../../utils/analytics';
 import {
   WEBINAR_CTA_HEADER,
   WEBINAR_CTA_NEXT_CYCLE,
+  WEBINAR_CTA_NEXT_CYCLE_SHORT,
+  WEBINAR_CTA_SHORT,
   WEBINAR_REGISTER_ID,
 } from '../../constants/webinarPage';
 import { useWebinarPhase } from '../hooks/useWebinarPhase';
@@ -33,7 +35,6 @@ export function Header() {
 
   const headerCta = () => {
     if (phase === 'ended') {
-      if (onWebinar) return null;
       return (
         <Link to="/pricing" className={headerCtaClass}>
           {WEBINAR_CTA_NEXT_CYCLE}
@@ -67,11 +68,47 @@ export function Header() {
     );
   };
 
+  const compactBarCtaClass = 'btn-gold text-black text-[12px] px-3 py-2 shrink-0';
+
+  const compactBarCta = () => {
+    if (phase === 'ended') {
+      return (
+        <Link to="/pricing" className={compactBarCtaClass}>
+          {WEBINAR_CTA_NEXT_CYCLE_SHORT}
+        </Link>
+      );
+    }
+    if (phase === 'live' && liveEnter.href) {
+      return (
+        <a
+          href={liveEnter.href}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => trackWebinarCta('header_enter')}
+          className={compactBarCtaClass}
+        >
+          {WEBINAR_CTA_SHORT}
+        </a>
+      );
+    }
+    if (onWebinarLanding) {
+      return (
+        <button type="button" onClick={goToWebinarForm} className={compactBarCtaClass}>
+          {WEBINAR_CTA_SHORT}
+        </button>
+      );
+    }
+    return (
+      <Link to={onWebinar ? `/webinar#${WEBINAR_REGISTER_ID}` : '/webinar'} className={compactBarCtaClass}>
+        {WEBINAR_CTA_SHORT}
+      </Link>
+    );
+  };
+
   const mobileHeaderCta = () => {
     const close = () => setMobileMenuOpen(false);
     const mobileClass = 'btn-gold text-black text-base block w-full text-center px-8 py-4';
     if (phase === 'ended') {
-      if (onWebinar) return null;
       return (
         <Link to="/pricing" onClick={close} className={mobileClass}>
           {WEBINAR_CTA_NEXT_CYCLE}
@@ -206,6 +243,7 @@ export function Header() {
               {!onWebinar ? <AccountMenu /> : null}
             </div>
             <div className="flex items-center gap-2 lg:hidden">
+              {compactBarCta()}
               {!onWebinar ? <AccountMenu /> : null}
               <button
                 type="button"

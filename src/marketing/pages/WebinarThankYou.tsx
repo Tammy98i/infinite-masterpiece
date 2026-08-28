@@ -272,7 +272,7 @@ export function WebinarThankYou() {
                       target="_blank"
                       rel="noreferrer"
                       onClick={markWhatsapp}
-                      className="inline-flex items-center justify-center gap-2 rounded-full bg-[#C8A24C] text-black px-5 py-2 text-sm font-semibold min-h-11 cursor-pointer hover:opacity-95 transition-opacity duration-200"
+                      className="btn-gold text-black gap-2 px-5 py-2 text-sm"
                     >
                       {localSteps.whatsapp ? 'הצטרפת' : 'הצטרפות עכשיו'}
                     </a>
