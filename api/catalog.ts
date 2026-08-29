@@ -1,4 +1,4 @@
-import { COURSES, INSTRUCTORS, CATEGORIES } from '../src/data/initialData';
+import { COURSES, INSTRUCTORS, CATEGORIES } from '../src/data/initialData.js';
 
 type VercelReq = { method?: string };
 type VercelRes = {

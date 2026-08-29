@@ -1,8 +1,8 @@
-import { COURSES, INSTRUCTORS, CATEGORIES } from '../../src/data/initialData';
-import { FOUNDERS } from '../../src/marketing/data/founders';
-import { BUILT_IN_ADMIN_EMAILS, mergeAdminEmails } from '../../src/data/adminEmails';
-import { DEFAULT_WEBINAR_CONFIG } from '../../src/constants/webinar';
-import type { SessionUser } from './session';
+import { COURSES, INSTRUCTORS, CATEGORIES } from '../../src/data/initialData.js';
+import { FOUNDERS } from '../../src/marketing/data/founders.js';
+import { BUILT_IN_ADMIN_EMAILS, mergeAdminEmails } from './publicConfig.js';
+import { DEFAULT_WEBINAR_CONFIG } from '../../src/constants/webinar.js';
+import type { SessionUser } from './session.js';
 
 export type ProfileListRow = {
   id: string;

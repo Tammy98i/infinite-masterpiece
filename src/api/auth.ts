@@ -51,6 +51,9 @@ function errorMessageFromBody(data: unknown, status: number) {
   if (status === 404 || status === 405) {
     return 'נקודת הקצה לא זמינה בפריסה הזו.';
   }
+  if (status >= 500) {
+    return 'לא ניתן להתחבר לשרת. נסו שוב בעוד רגע.';
+  }
   return 'הבקשה נכשלה';
 }
 

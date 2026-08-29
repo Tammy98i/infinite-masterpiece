@@ -1,4 +1,4 @@
-import { httpError, requireAdmin } from '../_lib/requireAdmin';
+import { httpError, requireAdmin } from '../_lib/requireAdmin.js';
 import {
   adminEmailsPayload,
   emptyAnalytics,
@@ -8,10 +8,10 @@ import {
   readinessPayload,
   usersFromProfiles,
   WRITE_UNAVAILABLE,
-} from '../_lib/adminDesk';
-import { listProfiles, mergeCurrentUser, updateProfile } from '../_lib/profiles';
-import { COURSES, CATEGORIES } from '../../src/data/initialData';
-import { FOUNDERS } from '../../src/marketing/data/founders';
+} from '../_lib/adminDesk.js';
+import { listProfiles, mergeCurrentUser, updateProfile } from '../_lib/profiles.js';
+import { COURSES, CATEGORIES } from '../../src/data/initialData.js';
+import { FOUNDERS } from '../../src/marketing/data/founders.js';
 
 type VercelReq = {
   method?: string;

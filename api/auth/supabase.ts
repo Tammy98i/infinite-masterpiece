@@ -1,5 +1,5 @@
-import { jsonBody } from '../_lib/body';
-import { sessionFromAccessToken } from '../_lib/session';
+import { jsonBody } from '../_lib/body.js';
+import { sessionFromAccessToken } from '../_lib/session.js';
 
 type VercelReq = {
   method?: string;
@@ -18,19 +18,18 @@ export default async function handler(req: VercelReq, res: VercelRes) {
     return;
   }
 
-  const body = jsonBody(req);
-  const accessToken = String(body.accessToken || '');
-  const fullName = String(body.fullName || '');
-  if (!accessToken) {
-    res.status(400).json({ error: 'חסר טוקן התחברות' });
-    return;
-  }
-
   try {
+    const body = jsonBody(req);
+    const accessToken = String(body.accessToken || '');
+    const fullName = String(body.fullName || '');
+    if (!accessToken) {
+      res.status(400).json({ error: 'חסר טוקן התחברות' });
+      return;
+    }
     const result = await sessionFromAccessToken(accessToken, fullName);
     res.status(200).json(result);
   } catch (err) {
     const status = (err as { status?: number }).status || 500;
-    res.status(status).json({ error: (err as Error).message });
+    res.status(status).json({ error: (err as Error).message || 'הבקשה נכשלה' });
   }
 }

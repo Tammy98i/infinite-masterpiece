@@ -1,4 +1,4 @@
-import { bearer, sessionFromAccessToken, type SessionUser } from './session';
+import { bearer, sessionFromAccessToken, type SessionUser } from './session.js';
 
 type VercelReq = {
   headers: Record<string, string | string[] | undefined>;

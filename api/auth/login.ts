@@ -1,5 +1,5 @@
-import { jsonBody } from '../_lib/body';
-import { previewLogin as matchPreview } from '../../src/lib/previewAuth';
+import { jsonBody } from '../_lib/body.js';
+import { previewLogin as matchPreview } from '../_lib/previewLogin.js';
 
 type VercelReq = {
   method?: string;

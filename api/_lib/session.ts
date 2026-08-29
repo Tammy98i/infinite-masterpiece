@@ -1,6 +1,18 @@
-import { SUPABASE_ANON_KEY, SUPABASE_PROJECT_URL } from '../../src/lib/supabasePublic';
-import { BUILT_IN_ADMIN_EMAILS, mergeAdminEmails } from '../../src/data/adminEmails';
-import { formatPhoneDisplay, phonePlaceholderEmail } from '../../src/utils/phone';
+import { BUILT_IN_ADMIN_EMAILS, mergeAdminEmails, supabaseEnv } from './publicConfig.js';
+
+export { supabaseEnv };
+
+function digitsOnlyPhone(phone: string) {
+  return phone.replace(/[^\d]/g, '');
+}
+
+function formatPhoneDisplay(phone: string) {
+  return phone.trim();
+}
+
+function phonePlaceholderEmail(phone: string) {
+  return `${digitsOnlyPhone(phone)}@phone.infinitemasterpiece.local`;
+}
 
 export type SessionUser = {
   id: string;
@@ -26,19 +38,7 @@ type ProfileRow = {
 };
 
 function adminEmails() {
-  return mergeAdminEmails(
-    BUILT_IN_ADMIN_EMAILS,
-    process.env.ADMIN_EMAILS,
-    process.env.VITE_ADMIN_EMAILS
-  );
-}
-
-export function supabaseEnv() {
-  const url = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || SUPABASE_PROJECT_URL)
-    .trim()
-    .replace(/\/$/, '');
-  const anonKey = (process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || SUPABASE_ANON_KEY).trim();
-  return { url, anonKey };
+  return mergeAdminEmails(BUILT_IN_ADMIN_EMAILS, process.env.ADMIN_EMAILS, process.env.VITE_ADMIN_EMAILS);
 }
 
 export function mapUser(input: {

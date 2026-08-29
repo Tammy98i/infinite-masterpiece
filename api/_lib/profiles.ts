@@ -1,5 +1,5 @@
-import { supabaseEnv, type SessionUser } from './session';
-import type { ProfileListRow } from './adminDesk';
+import { supabaseEnv, type SessionUser } from './session.js';
+import type { ProfileListRow } from './adminDesk.js';
 
 export async function listProfiles(accessToken: string): Promise<ProfileListRow[]> {
   const { url, anonKey } = supabaseEnv();
