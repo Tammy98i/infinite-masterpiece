@@ -1,6 +1,7 @@
 import type { AuthUserPayload } from '../api/auth';
 import type { UserRole } from '../types';
 import { configuredAdminEmails } from '../data/adminEmails';
+import { formatPhoneDisplay, phonePlaceholderEmail } from '../utils/phone';
 
 export type ProfileRow = {
   role?: string | null;
@@ -26,17 +27,21 @@ export function roleFromProfile(profileRole: string | undefined | null, email: s
 export function payloadFromSupabase(input: {
   id: string;
   email?: string | null;
+  phone?: string | null;
   fullName?: string;
   avatar?: string | null;
   profile?: ProfileRow | null;
   extraAdminEmails?: string;
 }): AuthUserPayload {
-  const email = String(input.email || '')
+  const phone = String(input.phone || '').trim();
+  const rawEmail = String(input.email || '')
     .trim()
     .toLowerCase();
+  const email = rawEmail.includes('@') ? rawEmail : phone ? phonePlaceholderEmail(phone) : '';
   const name =
     input.fullName?.trim() ||
     input.profile?.full_name?.trim() ||
+    (phone ? formatPhoneDisplay(phone) : '') ||
     email.split('@')[0] ||
     'משתמש/ת';
   const plan = input.profile?.subscription_plan;
@@ -66,6 +71,7 @@ export function payloadFromSupabase(input: {
     isFounder: Boolean(input.profile?.is_founder),
     staffDesk,
     staffStatus,
+    phone: phone || undefined,
   };
 }
 

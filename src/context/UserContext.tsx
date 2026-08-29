@@ -13,8 +13,10 @@ import {
   supabaseRegister,
   supabaseSignOut,
   supabaseStartGoogleOAuth,
+  supabaseStartPhoneOtp,
+  supabaseVerifyPhoneOtp,
 } from '../api/supabaseAuth';
-import { loadSupabaseConfig } from '../lib/supabase';
+import { isGoogleProviderEnabled, isPhoneProviderEnabled, loadSupabaseConfig } from '../lib/supabase';
 import { previewLogin, previewRegister, previewSessionFromToken, isPreviewToken, isDemoEmail } from '../lib/previewAuth';
 import { isApiUnavailableMessage } from '../lib/supabaseUser';
 
@@ -48,9 +50,13 @@ interface UserContextType {
   isWelcomeOpen: boolean;
   login: (email: string, password: string) => Promise<AuthUserPayload>;
   register: (name: string, email: string, password: string) => Promise<AuthUserPayload>;
+  startPhoneOtp: (phone: string, options?: { fullName?: string; createUser?: boolean }) => Promise<void>;
+  verifyPhoneOtp: (phone: string, code: string, fullName?: string) => Promise<AuthUserPayload>;
   loginWithGoogle: (nextPath?: string) => Promise<void>;
   completeOAuthLogin: () => Promise<AuthUserPayload>;
   supabaseAuthEnabled: boolean;
+  googleAuthEnabled: boolean;
+  phoneAuthEnabled: boolean;
   logout: () => void;
   startTrialOrSubscribe: (plan: PlanId) => void;
   cancelSubscription: () => void;
@@ -71,6 +77,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isWelcomeOpen, setWelcomeOpen] = useState(false);
   const [ready, setReady] = useState(false);
   const [supabaseAuthEnabled, setSupabaseAuthEnabled] = useState(isSupabaseAuthEnabled());
+  const [googleAuthEnabled, setGoogleAuthEnabled] = useState(false);
+  const [phoneAuthEnabled, setPhoneAuthEnabled] = useState(false);
   const pendingPlanRef = useRef<PlanId | null>(null);
 
   useEffect(() => {
@@ -79,6 +87,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       await loadSupabaseConfig();
       if (cancelled) return;
       setSupabaseAuthEnabled(isSupabaseAuthEnabled());
+      setGoogleAuthEnabled(isGoogleProviderEnabled());
+      setPhoneAuthEnabled(isPhoneProviderEnabled());
 
       const restored = (await restoreSupabaseBrowserSession()) || previewSessionFromToken(getAuthToken());
       if (cancelled) return;
@@ -176,6 +186,26 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setWelcomeOpen(true);
       return result.user;
     }
+  };
+
+  const completePhoneLogin = async (phone: string, code: string, fullName = '') => {
+    const result = await supabaseVerifyPhoneOtp(phone, code, fullName);
+    applySession(result.token, result.user);
+    const plan = result.user.subscriptionPlan || 'none';
+    if (!isPaidPlan(plan) && result.user.role !== 'admin') {
+      sessionStorage.setItem('mc_paywall_login', '1');
+    }
+    return result.user;
+  };
+
+  const startPhoneOtp = async (phone: string, options?: { fullName?: string; createUser?: boolean }) => {
+    await supabaseStartPhoneOtp(phone, options);
+  };
+
+  const verifyPhoneOtp = async (phone: string, code: string, fullName = '') => {
+    const user = await completePhoneLogin(phone, code, fullName);
+    if (fullName.trim()) setWelcomeOpen(true);
+    return user;
   };
 
   const loginWithGoogle = async (nextPath?: string) => {
@@ -283,9 +313,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isWelcomeOpen,
         login,
         register,
+        startPhoneOtp,
+        verifyPhoneOtp,
         loginWithGoogle,
         completeOAuthLogin,
         supabaseAuthEnabled,
+        googleAuthEnabled,
+        phoneAuthEnabled,
         logout,
         startTrialOrSubscribe,
         cancelSubscription,

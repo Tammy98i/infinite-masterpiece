@@ -119,10 +119,11 @@ export interface UserProfile {
   trialEndsAt?: string;
   interests: string[];
   onboardingLevel?: OnboardingLevel;
-  isFounder?: boolean;
-  staffDesk?: '' | 'content' | 'support' | 'sales' | 'legal' | 'finance' | 'community';
-  staffStatus?: 'active' | 'suspended' | 'limited';
-}
+    isFounder?: boolean;
+    staffDesk?: '' | 'content' | 'support' | 'sales' | 'legal' | 'finance' | 'community';
+    staffStatus?: 'active' | 'suspended' | 'limited';
+    phone?: string;
+  }
 
 export type ViewType =
   | 'home'

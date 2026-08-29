@@ -1,12 +1,21 @@
-import { getSupabase, isGoogleProviderEnabled, isSupabaseAuthEnabled, oauthRedirectTo, loadSupabaseConfig, refreshGoogleProviderFlag } from '../lib/supabase';
+import {
+  getSupabase,
+  isGoogleProviderEnabled,
+  isPhoneProviderEnabled,
+  isSupabaseAuthEnabled,
+  oauthRedirectTo,
+  loadSupabaseConfig,
+  refreshAuthProviderFlags,
+} from '../lib/supabase';
 import { isApiUnavailableMessage, payloadFromSupabase, type ProfileRow } from '../lib/supabaseUser';
+import { isIsraeliMobile, toE164IL } from '../utils/phone';
 import { apiRequest, type AuthUserPayload } from './auth';
 
 export { isSupabaseAuthEnabled };
 
 export class EmailConfirmationRequiredError extends Error {
   constructor() {
-    super('נרשמת בהצלחה. בדקו את האימייל לאישור החשבון, ואז התחברו.');
+    super('נרשמת בהצלחה. בדקו את האימייל לאישור החשבון, ואז התחברו עם האימייל והסיסמה.');
     this.name = 'EmailConfirmationRequiredError';
   }
 }
@@ -25,7 +34,7 @@ function hebrewAuthError(message: string) {
   if (text.includes('password should be at least') || text.includes('password is known to be weak')) {
     return 'הסיסמה חייבת להיות לפחות 8 תווים';
   }
-  if (text.includes('invalid format') || text.includes('unable to validate email')) {
+  if (text.includes('unable to validate email') || text.includes('invalid format')) {
     return 'נא להזין אימייל תקין';
   }
   if (text.includes('signup requires a valid password')) {
@@ -35,9 +44,34 @@ function hebrewAuthError(message: string) {
     return 'יותר מדי ניסיונות. נסו שוב בעוד כמה דקות';
   }
   if (text.includes('provider is not enabled') || text.includes('unsupported provider')) {
+    if (text.includes('phone')) return 'הרשמה בטלפון עדיין לא הופעלה ב-Supabase';
     return 'התחברות עם Google עדיין לא הופעלה ב-Supabase';
   }
+  if (text.includes('otp') && (text.includes('expired') || text.includes('token has expired'))) {
+    return 'הקוד פג תוקף. שלחו קוד חדש';
+  }
+  if (text.includes('invalid otp') || text.includes('token not found') || text.includes('otp_disabled')) {
+    return 'הקוד שגוי. בדקו את ההודעה ונסו שוב';
+  }
+  if (text.includes('invalid phone') || text.includes('phone number')) {
+    return 'נא להזין נייד ישראלי תקין (05XXXXXXXX)';
+  }
+  if (text.includes('signups not allowed') || text.includes('signup is disabled')) {
+    return 'אין חשבון עם הטלפון הזה. הירשמו קודם';
+  }
+  if (text.includes('sms') && (text.includes('error') || text.includes('failed'))) {
+    return 'שליחת ה-SMS נכשלה. בדקו את מספר הטלפון או נסו שוב בעוד רגע';
+  }
   return message || 'הבקשה נכשלה';
+}
+
+function requireE164(phone: string) {
+  if (!isIsraeliMobile(phone)) {
+    throw new Error('נא להזין נייד ישראלי תקין (05XXXXXXXX)');
+  }
+  const e164 = toE164IL(phone);
+  if (!e164) throw new Error('נא להזין נייד ישראלי תקין (05XXXXXXXX)');
+  return e164;
 }
 
 async function profileForUser(userId: string): Promise<ProfileRow | null> {
@@ -67,6 +101,7 @@ export async function sessionFromSupabaseUser(accessToken: string, fullName = ''
     user: payloadFromSupabase({
       id: user.id,
       email: user.email,
+      phone: user.phone,
       fullName:
         fullName ||
         String(user.user_metadata?.full_name || user.user_metadata?.name || ''),
@@ -123,6 +158,7 @@ export async function supabaseRegister(fullName: string, email: string, password
     password,
     options: {
       data: { full_name: fullName },
+      emailRedirectTo: oauthRedirectTo(),
     },
   });
   if (error) throw new Error(hebrewAuthError(error.message));
@@ -133,11 +169,57 @@ export async function supabaseRegister(fullName: string, email: string, password
   return syncAccessToken(data.session.access_token, fullName);
 }
 
+export async function supabaseStartPhoneOtp(phone: string, options?: { fullName?: string; createUser?: boolean }) {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
+  await loadSupabaseConfig();
+  await refreshAuthProviderFlags();
+  if (!isPhoneProviderEnabled()) {
+    throw new Error('הרשמה בטלפון עדיין לא הופעלה ב-Supabase');
+  }
+
+  const e164 = requireE164(phone);
+  const { error } = await supabase.auth.signInWithOtp({
+    phone: e164,
+    options: {
+      channel: 'sms',
+      shouldCreateUser: options?.createUser !== false,
+      data: options?.fullName ? { full_name: options.fullName } : undefined,
+    },
+  });
+  if (error) throw new Error(hebrewAuthError(error.message));
+  return e164;
+}
+
+export async function supabaseVerifyPhoneOtp(phone: string, code: string, fullName = '') {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
+
+  const e164 = requireE164(phone);
+  const token = code.replace(/\D/g, '');
+  if (token.length < 6) throw new Error('נא להזין את הקוד בן 6 הספרות מה-SMS');
+
+  const { data, error } = await supabase.auth.verifyOtp({
+    phone: e164,
+    token,
+    type: 'sms',
+  });
+  if (error || !data.session?.access_token) {
+    throw new Error(hebrewAuthError(error?.message || 'הקוד שגוי. בדקו את ההודעה ונסו שוב'));
+  }
+
+  if (fullName.trim() && data.user) {
+    await supabase.auth.updateUser({ data: { full_name: fullName.trim() } }).catch(() => undefined);
+  }
+
+  return syncAccessToken(data.session.access_token, fullName);
+}
+
 export async function supabaseStartGoogleOAuth(nextPath?: string) {
   const supabase = getSupabase();
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
   await loadSupabaseConfig();
-  await refreshGoogleProviderFlag();
+  await refreshAuthProviderFlags();
   if (!isGoogleProviderEnabled()) {
     throw new Error('התחברות עם Google עדיין לא הופעלה ב-Supabase');
   }
@@ -173,7 +255,7 @@ export async function supabaseCompleteOAuthFromUrl() {
   const { data, error } = await supabase.auth.getSession();
   if (error) throw new Error(hebrewAuthError(error.message));
   if (!data.session?.access_token) {
-    throw new Error('ההתחברות עם Google לא הושלמה. נסו שוב.');
+    throw new Error('ההתחברות לא הושלמה. נסו שוב.');
   }
 
   const fullName = String(

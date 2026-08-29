@@ -1,10 +1,12 @@
 import { randomUUID } from 'crypto';
 import { getDb } from '../db/connection.js';
 import { createSession, userFromToken } from './authService.js';
+import { phonePlaceholderEmail } from '../../src/utils/phone.ts';
 
 type SupabaseUserPayload = {
   id: string;
   email?: string | null;
+  phone?: string | null;
   user_metadata?: { full_name?: string; name?: string };
 };
 
@@ -39,7 +41,7 @@ function upsertLocalUserFromSupabase(input: {
   const db = getDb();
   const email = input.email.trim().toLowerCase();
   if (!email.includes('@')) {
-    throw Object.assign(new Error('חסר אימייל בחשבון'), { status: 400 });
+    throw Object.assign(new Error('חסר אימייל או טלפון בחשבון'), { status: 400 });
   }
 
   const bySupabase = db
@@ -79,16 +81,18 @@ export async function syncSupabaseSession(accessToken: string, fullNameHint = ''
     throw Object.assign(new Error('התחברות חיצונית אינה מוגדרת בשרת'), { status: 503 });
   }
   const remote = await fetchSupabaseUser(accessToken);
+  const phone = String(remote.phone || '').trim();
   const email = String(remote.email || '')
     .trim()
     .toLowerCase();
+  const identityEmail = email.includes('@') ? email : phone ? phonePlaceholderEmail(phone) : '';
   const fullName =
     fullNameHint.trim() ||
     String(remote.user_metadata?.full_name || remote.user_metadata?.name || '').trim();
 
   const userId = upsertLocalUserFromSupabase({
     supabaseUserId: remote.id,
-    email,
+    email: identityEmail,
     fullName,
   });
 
