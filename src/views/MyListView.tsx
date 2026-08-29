@@ -24,7 +24,7 @@ export const MyListView: React.FC = () => {
             הרשימה שלי ({savedCourses.length})
           </h1>
           {isFreeList && (
-            <p className="text-xs text-white/40 mt-2">
+            <p className="text-xs text-white/70 mt-2">
               {savedCourses.length >= FREE_LIST_LIMIT
                 ? 'הרשימה החינמית מלאה. מנוי פותח שמירה בלי הגבלה.'
                 : `שמירת עד ${FREE_LIST_LIMIT} הרצאות במסלול החינמי.`}

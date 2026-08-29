@@ -8,15 +8,22 @@ import { isPaidPlan } from '../utils/access';
 import {
   isSupabaseAuthEnabled,
   restoreSupabaseBrowserSession,
+  sessionFromSupabaseUser,
   supabaseCompleteOAuthFromUrl,
   supabaseLogin,
   supabaseRegister,
+  supabaseRequestPasswordReset,
   supabaseSignOut,
   supabaseStartGoogleOAuth,
+  supabaseStartPhoneOtp,
+  supabaseUpdatePassword,
+  supabaseVerifyPhoneOtp,
+  subscribeSupabaseAuth,
 } from '../api/supabaseAuth';
-import { loadSupabaseConfig } from '../lib/supabase';
+import { isGoogleProviderEnabled, isPhoneProviderEnabled, loadSupabaseConfig } from '../lib/supabase';
 import { previewLogin, previewRegister, previewSessionFromToken, isPreviewToken, isDemoEmail } from '../lib/previewAuth';
-import { isApiUnavailableMessage } from '../lib/supabaseUser';
+import { isApiUnavailableMessage, overlayApiUser } from '../lib/supabaseUser';
+import { markPasswordRecovery, clearPasswordRecovery } from '../lib/passwordRecovery';
 
 const GUEST_USER: UserProfile = {
   id: 'guest',
@@ -48,9 +55,15 @@ interface UserContextType {
   isWelcomeOpen: boolean;
   login: (email: string, password: string) => Promise<AuthUserPayload>;
   register: (name: string, email: string, password: string) => Promise<AuthUserPayload>;
+  startPhoneOtp: (phone: string, fullName?: string) => Promise<void>;
+  verifyPhoneOtp: (phone: string, code: string, fullName?: string) => Promise<AuthUserPayload>;
+  requestPasswordReset: (email: string) => Promise<void>;
+  updatePassword: (password: string) => Promise<void>;
   loginWithGoogle: (nextPath?: string) => Promise<void>;
   completeOAuthLogin: () => Promise<AuthUserPayload>;
   supabaseAuthEnabled: boolean;
+  googleAuthEnabled: boolean;
+  phoneAuthEnabled: boolean;
   logout: () => void;
   startTrialOrSubscribe: (plan: PlanId) => void;
   cancelSubscription: () => void;
@@ -71,14 +84,53 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isWelcomeOpen, setWelcomeOpen] = useState(false);
   const [ready, setReady] = useState(false);
   const [supabaseAuthEnabled, setSupabaseAuthEnabled] = useState(isSupabaseAuthEnabled());
+  const [googleAuthEnabled, setGoogleAuthEnabled] = useState(() => isSupabaseAuthEnabled());
+  const [phoneAuthEnabled, setPhoneAuthEnabled] = useState(false);
   const pendingPlanRef = useRef<PlanId | null>(null);
 
   useEffect(() => {
     let cancelled = false;
+    const onAuthEvent = (event: string, accessToken: string | null) => {
+      if (cancelled) return;
+      if (event === 'INITIAL_SESSION') return;
+      if (event === 'SIGNED_OUT') {
+        if (isPreviewToken(getAuthToken())) return;
+        clearPasswordRecovery();
+        setAuthToken(null);
+        setUser(GUEST_USER);
+        return;
+      }
+      if (event === 'PASSWORD_RECOVERY' && accessToken) {
+        markPasswordRecovery();
+      }
+      if (
+        (event === 'SIGNED_IN' ||
+          event === 'TOKEN_REFRESHED' ||
+          event === 'USER_UPDATED' ||
+          event === 'PASSWORD_RECOVERY') &&
+        accessToken
+      ) {
+        if (isPreviewToken(getAuthToken())) return;
+        void sessionFromSupabaseUser(accessToken)
+          .then((result) => {
+            if (cancelled) return;
+            setAuthToken(result.token);
+            setUser(fromPayload(result.user));
+          })
+          .catch(() => undefined);
+      }
+    };
+
+    let unsub = () => undefined as void;
     const boot = async () => {
       await loadSupabaseConfig();
       if (cancelled) return;
       setSupabaseAuthEnabled(isSupabaseAuthEnabled());
+      setGoogleAuthEnabled(isGoogleProviderEnabled());
+      setPhoneAuthEnabled(isPhoneProviderEnabled());
+      // Subscribe after runtime config so recovery events are not missed when
+      // the anon key is loaded from /api/auth/providers.
+      unsub = subscribeSupabaseAuth(onAuthEvent);
 
       const restored = (await restoreSupabaseBrowserSession()) || previewSessionFromToken(getAuthToken());
       if (cancelled) return;
@@ -89,28 +141,34 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
+      if (restored) {
+        setAuthToken(restored.token);
+        setUser(fromPayload(restored.user));
+        if (!cancelled) setReady(true);
+        void authApi
+          .me()
+          .then(({ user: next }) => {
+            if (!cancelled) setUser(fromPayload(overlayApiUser(restored.user, next)));
+          })
+          .catch(() => undefined);
+        return;
+      }
+
       if (getAuthToken()) {
         try {
           const { user: next } = await authApi.me();
           if (!cancelled) setUser(fromPayload(next));
         } catch {
-          if (restored) {
-            setAuthToken(restored.token);
-            if (!cancelled) setUser(fromPayload(restored.user));
-          } else {
-            setAuthToken(null);
-            if (!cancelled) setUser(GUEST_USER);
-          }
+          setAuthToken(null);
+          if (!cancelled) setUser(GUEST_USER);
         }
-      } else if (restored) {
-        setAuthToken(restored.token);
-        setUser(fromPayload(restored.user));
       }
       if (!cancelled) setReady(true);
     };
     void boot();
     return () => {
       cancelled = true;
+      unsub();
     };
   }, []);
 
@@ -178,6 +236,34 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const completePhoneLogin = async (phone: string, code: string, fullName = '') => {
+    const result = await supabaseVerifyPhoneOtp(phone, code, fullName);
+    applySession(result.token, result.user);
+    const plan = result.user.subscriptionPlan || 'none';
+    if (!isPaidPlan(plan) && result.user.role !== 'admin') {
+      sessionStorage.setItem('mc_paywall_login', '1');
+    }
+    return result.user;
+  };
+
+  const startPhoneOtp = async (phone: string, fullName = '') => {
+    await supabaseStartPhoneOtp(phone, fullName);
+  };
+
+  const verifyPhoneOtp = async (phone: string, code: string, fullName = '') => {
+    const user = await completePhoneLogin(phone, code, fullName);
+    if (fullName.trim()) setWelcomeOpen(true);
+    return user;
+  };
+
+  const requestPasswordReset = async (email: string) => {
+    await supabaseRequestPasswordReset(email);
+  };
+
+  const updatePassword = async (password: string) => {
+    await supabaseUpdatePassword(password);
+  };
+
   const loginWithGoogle = async (nextPath?: string) => {
     await supabaseStartGoogleOAuth(nextPath);
   };
@@ -194,10 +280,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     pendingPlanRef.current = null;
-    void authApi.logout();
-    void supabaseSignOut();
+    clearPasswordRecovery();
     setAuthToken(null);
     setUser(GUEST_USER);
+    void supabaseSignOut().catch(() => undefined);
+    void authApi.logout();
   };
 
   const startTrialOrSubscribe = (plan: PlanId) => {
@@ -245,11 +332,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(GUEST_USER);
       return;
     }
+    const restored = await restoreSupabaseBrowserSession();
     try {
       const { user: next } = await authApi.me();
+      if (restored) {
+        setAuthToken(restored.token);
+        setUser(fromPayload(overlayApiUser(restored.user, next)));
+        return;
+      }
       setUser(fromPayload(next));
     } catch {
-      const restored = await restoreSupabaseBrowserSession();
       if (restored) {
         setAuthToken(restored.token);
         setUser(fromPayload(restored.user));
@@ -283,9 +375,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         isWelcomeOpen,
         login,
         register,
+        startPhoneOtp,
+        verifyPhoneOtp,
+        requestPasswordReset,
+        updatePassword,
         loginWithGoogle,
         completeOAuthLogin,
         supabaseAuthEnabled,
+        googleAuthEnabled,
+        phoneAuthEnabled,
         logout,
         startTrialOrSubscribe,
         cancelSubscription,

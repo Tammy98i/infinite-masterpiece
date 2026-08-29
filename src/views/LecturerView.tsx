@@ -391,6 +391,11 @@ function LecturerDashboard({
             <p className="text-[11px] uppercase tracking-[0.28em] text-[#C8A24C] mb-2">מרצה</p>
             <h1 className="text-xl font-light">דשבורד מרצה</h1>
             <p className="text-xs text-white/40 mt-2 font-light truncate">{user.name}</p>
+            {user.email ? (
+              <p className="text-[11px] text-white/30 mt-1 truncate" dir="ltr">
+                {user.email}
+              </p>
+            ) : null}
             {stats?.isFounder ? (
               <p className="text-[11px] text-[#C8A24C] mt-1">מרצה ומייסד</p>
             ) : (
@@ -431,6 +436,11 @@ function LecturerDashboard({
               <div className="min-w-0">
                 <p className="text-[11px] tracking-[0.2em] text-[#C8A24C] uppercase truncate">Infinite Masterpiece</p>
                 <p className="text-sm text-white/70 font-light truncate">שלום, {user.name}</p>
+                {user.email ? (
+                  <p className="text-[11px] text-white/40 truncate" dir="ltr">
+                    {user.email}
+                  </p>
+                ) : null}
               </div>
             </div>
             <button

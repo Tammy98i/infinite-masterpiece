@@ -13,9 +13,11 @@ import {
 } from '../data/adminEmails';
 import { DEFAULT_WEBINAR_CONFIG, type WebinarConfig } from '../constants/webinar';
 import type { LecturerApplication } from '../api/lecturer';
-import type { AccessLevel, Category, Course, Instructor, PublishStatus } from '../types';
+import type { AccessLevel, Category, Course, Instructor, PublishStatus, UserProfile } from '../types';
 import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
+import { isApiUnavailableMessage } from '../lib/supabaseUser';
+import { emptyAnalytics, overviewFrom, readinessPayload, usersFromProfiles, type ProfileListRow } from '../lib/adminFallback';
 
 type Tab =
   | 'overview'
@@ -108,6 +110,23 @@ function linkUrl(founder: Instructor, label: string) {
   return founder.externalLinks?.find((item) => item.label === label)?.url || '';
 }
 
+function isDeskOffline(message: string) {
+  return isApiUnavailableMessage(message) || message.includes('יש להתחבר מחדש');
+}
+
+function profileRowFromUser(user: UserProfile): ProfileListRow {
+  return {
+    id: user.id,
+    email: user.email,
+    full_name: user.name,
+    role: user.role === 'admin' ? 'admin' : user.role === 'instructor' ? 'lecturer' : 'user',
+    subscription_plan: user.subscriptionPlan,
+    is_founder: Boolean(user.isFounder),
+    staff_desk: user.staffDesk || '',
+    staff_status: user.staffStatus || 'active',
+  };
+}
+
 function normalizeExternalUrl(raw: string) {
   const value = raw.trim();
   if (!value) return '';
@@ -192,6 +211,11 @@ export function AdminView() {
             <p className="text-[11px] uppercase tracking-[0.28em] text-[#C8A24C] mb-2">ניהול</p>
             <h1 className="text-xl font-light">לוח בקרה</h1>
             <p className="text-xs text-white/40 mt-2 font-light truncate">{user.name}</p>
+            {user.email ? (
+              <p className="text-[11px] text-white/30 mt-1 truncate" dir="ltr">
+                {user.email}
+              </p>
+            ) : null}
           </div>
           <nav className="flex-1 p-3 grid gap-1 content-start">{visibleNav.map(navButton)}</nav>
           <div className="p-4 border-t border-white/10">
@@ -219,6 +243,11 @@ export function AdminView() {
                 <p className="text-sm text-white/70 font-light truncate">
                   שלום, {user.name.split(' ')[0] || 'אדמין'}
                 </p>
+                {user.email ? (
+                  <p className="text-[11px] text-white/40 truncate" dir="ltr">
+                    {user.email}
+                  </p>
+                ) : null}
                 <p className="text-xs text-white/35">
                   {staffDesk ? `צוות · ${STAFF_DESK_LABEL[staffDesk] || staffDesk}` : 'Super Admin'}
                 </p>
@@ -380,7 +409,14 @@ function ReadinessPanel() {
     adminApi
       .readiness()
       .then(setData)
-      .catch((err) => setError(err instanceof Error ? err.message : 'טעינה נכשלה'));
+      .catch((err) => {
+        const message = err instanceof Error ? err.message : 'טעינה נכשלה';
+        if (isDeskOffline(message)) {
+          setData(readinessPayload() as AdminReadiness);
+          return;
+        }
+        setError(message);
+      });
 
   useEffect(() => {
     void load();
@@ -549,6 +585,7 @@ function ReadinessPanel() {
 }
 
 function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
+  const { user } = useApp();
   const [data, setData] = useState<AdminOverview | null>(null);
   const [analytics, setAnalytics] = useState<AdminAnalytics | null>(null);
   const [error, setError] = useState('');
@@ -559,10 +596,24 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
         setData(overview);
         setAnalytics(nextAnalytics);
       })
-      .catch((err) => setError(err instanceof Error ? err.message : 'טעינה נכשלה'));
-  }, []);
+      .catch((err) => {
+        const message = err instanceof Error ? err.message : 'טעינה נכשלה';
+        if (isDeskOffline(message) && user.id !== 'guest') {
+          setData(overviewFrom([profileRowFromUser(user)]));
+          setAnalytics(emptyAnalytics());
+          return;
+        }
+        setError(message);
+      });
+  }, [user]);
 
-  if (error) return <p className="text-sm text-rose-300">{error}</p>;
+  if (error) {
+    return (
+      <p className="text-sm text-rose-300" role="alert">
+        {error}
+      </p>
+    );
+  }
   if (!data) return <p className="text-sm text-white/40">טוען...</p>;
 
   const cards = [
@@ -777,7 +828,14 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
     adminApi
       .analytics()
       .then(setData)
-      .catch((err) => setError(err instanceof Error ? err.message : 'טעינה נכשלה'));
+      .catch((err) => {
+        const message = err instanceof Error ? err.message : 'טעינה נכשלה';
+        if (isDeskOffline(message)) {
+          setData(emptyAnalytics());
+          return;
+        }
+        setError(message);
+      });
   }, []);
 
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
@@ -1319,7 +1377,7 @@ function AdminEmailsCard({ onChanged }: { onChanged: () => void }) {
       <div>
         <h2 className="text-lg font-light mb-1">מיילים עם הרשאת אדמין</h2>
         <p className="text-sm text-white/45 font-light">
-          מי שמתחבר עם Google באחד המיילים האלה נכנס כאדמין. אפשר להוסיף כמה כתובות.
+          מי שמתחבר באחד המיילים האלה — באימייל וסיסמה או ב-Google — נכנס כאדמין.
         </p>
       </div>
       <ul className="grid gap-2">
@@ -1382,7 +1440,7 @@ function AdminEmailsCard({ onChanged }: { onChanged: () => void }) {
 }
 
 function UsersPanel() {
-  const { reloadCatalog } = useApp();
+  const { reloadCatalog, user } = useApp();
   const [users, setUsers] = useState<AdminUserRow[]>([]);
   const [error, setError] = useState('');
   const [pendingId, setPendingId] = useState<string | null>(null);
@@ -1396,7 +1454,14 @@ function UsersPanel() {
     adminApi
       .users()
       .then((res) => setUsers(res.users))
-      .catch((err) => setError(err instanceof Error ? err.message : 'טעינה נכשלה'));
+      .catch((err) => {
+        const message = err instanceof Error ? err.message : 'טעינה נכשלה';
+        if (isDeskOffline(message) && user.id !== 'guest') {
+          setUsers(usersFromProfiles([profileRowFromUser(user)]));
+          return;
+        }
+        setError(message);
+      });
 
   useEffect(() => {
     void load();

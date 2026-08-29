@@ -1,6 +1,7 @@
 import type { AuthUserPayload } from '../api/auth';
 import type { UserRole } from '../types';
 import { configuredAdminEmails } from '../data/adminEmails';
+import { formatPhoneDisplay, phonePlaceholderEmail } from '../utils/phone';
 
 export type ProfileRow = {
   role?: string | null;
@@ -26,17 +27,21 @@ export function roleFromProfile(profileRole: string | undefined | null, email: s
 export function payloadFromSupabase(input: {
   id: string;
   email?: string | null;
+  phone?: string | null;
   fullName?: string;
   avatar?: string | null;
   profile?: ProfileRow | null;
   extraAdminEmails?: string;
 }): AuthUserPayload {
-  const email = String(input.email || '')
+  const phone = String(input.phone || '').trim();
+  const rawEmail = String(input.email || '')
     .trim()
     .toLowerCase();
+  const email = rawEmail.includes('@') ? rawEmail : phone ? phonePlaceholderEmail(phone) : '';
   const name =
     input.fullName?.trim() ||
     input.profile?.full_name?.trim() ||
+    (phone ? formatPhoneDisplay(phone) : '') ||
     email.split('@')[0] ||
     'משתמש/ת';
   const plan = input.profile?.subscription_plan;
@@ -66,13 +71,39 @@ export function payloadFromSupabase(input: {
     isFounder: Boolean(input.profile?.is_founder),
     staffDesk,
     staffStatus,
+    phone: phone || undefined,
+  };
+}
+
+/** Name + phone-derived email stored on public.profiles after phone OTP. */
+export function phoneProfileIdentity(phone: string, fullName = '') {
+  const e164 = String(phone || '').trim();
+  const email = phonePlaceholderEmail(e164);
+  const name = fullName.trim() || formatPhoneDisplay(e164);
+  return { email, fullName: name, phone: e164 };
+}
+
+/** Keep the Supabase browser identity when the local/Vercel API returns a different row. */
+export function overlayApiUser(current: AuthUserPayload, next: AuthUserPayload): AuthUserPayload {
+  if (current.email && next.email && current.email !== next.email) return current;
+  return {
+    ...next,
+    id: current.id || next.id,
+    email: current.email || next.email,
+    name: current.name || next.name,
+    role: current.role === 'admin' || next.role === 'admin' ? 'admin' : next.role || current.role,
+    phone: current.phone || next.phone,
   };
 }
 
 export function isApiUnavailableMessage(message: string) {
   return (
     message.includes('לא ניתן להתחבר') ||
+    message.includes('השרת לא זמין') ||
     message.includes('שרת ההתחברות לא זמין') ||
+    message.includes('נקודת הקצה לא זמינה') ||
+    message.includes('הריצו npm run server') ||
+    message.includes('הריצו npm run dev') ||
     message.includes('פריוויו של Vercel') ||
     message.includes('התחברות חיצונית אינה מוגדרת') ||
     message.includes('Protected deployment')

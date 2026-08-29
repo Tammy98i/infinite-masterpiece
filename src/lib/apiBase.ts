@@ -5,7 +5,10 @@
  * On Vercel, serverless functions under /api handle auth; other routes fall back
  * to static catalog data when the Node API is not hosted.
  */
-const raw = import.meta.env.VITE_API_URL?.trim() ?? '';
+const raw =
+  typeof import.meta !== 'undefined' && import.meta.env && typeof import.meta.env.VITE_API_URL === 'string'
+    ? import.meta.env.VITE_API_URL.trim()
+    : '';
 
 export function apiOrigin(): string {
   return raw.replace(/\/$/, '');

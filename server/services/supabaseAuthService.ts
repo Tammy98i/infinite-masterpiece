@@ -1,10 +1,13 @@
 import { randomUUID } from 'crypto';
 import { getDb } from '../db/connection.js';
-import { createSession, userFromToken } from './authService.js';
+import { createSession, userFromId, userFromToken, type AuthUser } from './authService.js';
+import { phonePlaceholderEmail } from '../../src/utils/phone.ts';
+import { BUILT_IN_ADMIN_EMAILS } from '../../src/data/adminEmails.ts';
 
 type SupabaseUserPayload = {
   id: string;
   email?: string | null;
+  phone?: string | null;
   user_metadata?: { full_name?: string; name?: string };
 };
 
@@ -39,7 +42,7 @@ function upsertLocalUserFromSupabase(input: {
   const db = getDb();
   const email = input.email.trim().toLowerCase();
   if (!email.includes('@')) {
-    throw Object.assign(new Error('חסר אימייל בחשבון'), { status: 400 });
+    throw Object.assign(new Error('חסר אימייל או טלפון בחשבון'), { status: 400 });
   }
 
   const bySupabase = db
@@ -48,6 +51,7 @@ function upsertLocalUserFromSupabase(input: {
   if (bySupabase) {
     db.prepare(
       `UPDATE users SET email = ?, full_name = COALESCE(NULLIF(?, ''), full_name), last_login_at = datetime('now')
+       ${BUILT_IN_ADMIN_EMAILS.includes(email) ? `, role = 'admin'` : ''}
        WHERE id = ?`
     ).run(email, input.fullName, String(bySupabase.id));
     return String(bySupabase.id);
@@ -59,6 +63,7 @@ function upsertLocalUserFromSupabase(input: {
   if (byEmail) {
     db.prepare(
       `UPDATE users SET supabase_user_id = ?, full_name = COALESCE(NULLIF(?, ''), full_name), last_login_at = datetime('now')
+       ${BUILT_IN_ADMIN_EMAILS.includes(email) ? `, role = 'admin'` : ''}
        WHERE id = ?`
     ).run(input.supabaseUserId, input.fullName, String(byEmail.id));
     return String(byEmail.id);
@@ -66,29 +71,29 @@ function upsertLocalUserFromSupabase(input: {
 
   const id = `user-${randomUUID()}`;
   const name = input.fullName.trim() || email.split('@')[0] || 'משתמש/ת';
+  const role = BUILT_IN_ADMIN_EMAILS.includes(email) ? 'admin' : 'user';
   db.prepare(
     `INSERT INTO users (id, email, password_hash, full_name, role, supabase_user_id, last_login_at)
-     VALUES (?, ?, ?, ?, 'user', ?, datetime('now'))`
-  ).run(id, email, `supabase:${input.supabaseUserId}`, name, input.supabaseUserId);
+     VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`
+  ).run(id, email, `supabase:${input.supabaseUserId}`, name, role, input.supabaseUserId);
 
   return id;
 }
 
-export async function syncSupabaseSession(accessToken: string, fullNameHint = '') {
-  if (!supabaseConfigured()) {
-    throw Object.assign(new Error('התחברות חיצונית אינה מוגדרת בשרת'), { status: 503 });
-  }
+async function localUserFromAccessToken(accessToken: string, fullNameHint = '') {
   const remote = await fetchSupabaseUser(accessToken);
+  const phone = String(remote.phone || '').trim();
   const email = String(remote.email || '')
     .trim()
     .toLowerCase();
+  const identityEmail = email.includes('@') ? email : phone ? phonePlaceholderEmail(phone) : '';
   const fullName =
     fullNameHint.trim() ||
     String(remote.user_metadata?.full_name || remote.user_metadata?.name || '').trim();
 
   const userId = upsertLocalUserFromSupabase({
     supabaseUserId: remote.id,
-    email,
+    email: identityEmail,
     fullName,
   });
 
@@ -103,8 +108,30 @@ export async function syncSupabaseSession(accessToken: string, fullNameHint = ''
     throw Object.assign(new Error('הגישה הושהתה. פנו לאדמין'), { status: 403 });
   }
 
-  const token = createSession(userId);
-  const user = userFromToken(token);
-  if (!user) throw Object.assign(new Error('כשל ביצירת סשן'), { status: 500 });
-  return { token, user, supabaseUserId: remote.id };
+  const user = userFromId(userId);
+  if (!user) throw Object.assign(new Error('כשל בזיהוי המשתמש'), { status: 500 });
+  return { user, supabaseUserId: remote.id };
+}
+
+export async function syncSupabaseSession(accessToken: string, fullNameHint = '') {
+  if (!supabaseConfigured()) {
+    throw Object.assign(new Error('התחברות חיצונית אינה מוגדרת בשרת'), { status: 503 });
+  }
+  const { user, supabaseUserId } = await localUserFromAccessToken(accessToken, fullNameHint);
+  const token = createSession(user.id);
+  return { token, user, supabaseUserId };
+}
+
+export async function userFromBearer(token: string | undefined): Promise<AuthUser | null> {
+  const local = userFromToken(token);
+  if (local) return local;
+  if (!token || token.split('.').length < 3) return null;
+  try {
+    // Keep the browser on the Supabase JWT (Vercel + identity overlay), but map
+    // it to the local SQLite user so progress/list/subscription FKs match.
+    const { user } = await localUserFromAccessToken(token);
+    return user;
+  } catch {
+    return null;
+  }
 }

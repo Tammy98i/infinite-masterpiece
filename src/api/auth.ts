@@ -20,7 +20,7 @@ export type AuthUserPayload = Pick<
   | 'isFounder'
   | 'staffDesk'
   | 'staffStatus'
->;
+> & { phone?: string };
 
 function token() {
   return localStorage.getItem(TOKEN_KEY);

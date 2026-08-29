@@ -10,7 +10,9 @@ let runtimeUrl = '';
 let runtimeAnon = '';
 let configPromise: Promise<boolean> | null = null;
 let client: SupabaseClient | null = null;
-let googleProviderEnabled = false;
+let googleProviderEnabled = Boolean(buildUrl && buildAnon);
+let emailProviderEnabled = Boolean(buildUrl && buildAnon);
+let phoneProviderEnabled = false;
 
 function url() {
   return buildUrl || runtimeUrl;
@@ -28,9 +30,19 @@ export function isGoogleProviderEnabled() {
   return googleProviderEnabled;
 }
 
-export async function refreshGoogleProviderFlag() {
+export function isEmailProviderEnabled() {
+  return emailProviderEnabled;
+}
+
+export function isPhoneProviderEnabled() {
+  return phoneProviderEnabled;
+}
+
+export async function refreshAuthProviderFlags() {
   if (!isSupabaseAuthEnabled()) {
     googleProviderEnabled = false;
+    emailProviderEnabled = false;
+    phoneProviderEnabled = false;
     return;
   }
   try {
@@ -40,11 +52,23 @@ export async function refreshGoogleProviderFlag() {
         Authorization: `Bearer ${anon()}`,
       },
     });
-    const data = (await res.json().catch(() => ({}))) as { external?: { google?: boolean } };
-    googleProviderEnabled = Boolean(data.external?.google);
+    const data = (await res.json().catch(() => ({}))) as {
+      external?: { google?: boolean; email?: boolean; phone?: boolean };
+    };
+    googleProviderEnabled = data.external?.google !== false;
+    emailProviderEnabled = data.external?.email !== false;
+    phoneProviderEnabled = Boolean(data.external?.phone);
   } catch {
-    googleProviderEnabled = false;
+    // Google is on in this project; keep the button if settings fail to load.
+    googleProviderEnabled = isSupabaseAuthEnabled();
+    emailProviderEnabled = isSupabaseAuthEnabled();
+    phoneProviderEnabled = false;
   }
+}
+
+/** @deprecated use refreshAuthProviderFlags */
+export async function refreshGoogleProviderFlag() {
+  await refreshAuthProviderFlags();
 }
 
 export function oauthRedirectTo() {
@@ -74,7 +98,7 @@ export async function loadSupabaseConfig() {
       } catch {
         /* Vercel without functions, or local API down */
       }
-      await refreshGoogleProviderFlag();
+      await refreshAuthProviderFlags();
       return isSupabaseAuthEnabled();
     })();
   }

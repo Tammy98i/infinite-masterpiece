@@ -112,16 +112,11 @@ export const PaywallProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const isLockedContent = Boolean(courseTitle) || source === 'locked_card' || source === 'hero';
-
-  const title = courseTitle
-    ? courseTitle
-    : isLockedContent
-      ? 'ההרצאה דורשת גישה מלאה'
-      : copyBySource(source).title;
-
-  const body = courseTitle
-    ? 'הגישה לספרייה היא במנוי לצפייה — לא רכישת קורס בודד. אפשר לפתוח גישה עכשיו, או לבדוק התאמה למסלול המלא.'
-    : copyBySource(source).body;
+  const sourced = copyBySource(source);
+  const title = isLockedContent ? 'רוצה להמשיך לצפות?' : sourced.title;
+  const body = isLockedContent
+    ? 'ההדרכה הזו היא חלק מספריית Infinite Masterpiece למנויים. הצטרפות פותחת גישה לכל ההרצאות, ההדרכות, המסלולים והעדכונים החדשים.'
+    : sourced.body;
 
   return (
     <PaywallContext.Provider value={{ isOpen, openPaywall, closePaywall }}>
@@ -144,22 +139,25 @@ export const PaywallProvider: React.FC<{ children: React.ReactNode }> = ({ child
             ref={dialogRef}
             className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 text-center"
           >
-            <h2 id="paywall-title" className="text-2xl font-medium text-white mb-4">
+            <h2 id="paywall-title" className="text-2xl font-heading font-semibold text-white mb-2">
               {title}
             </h2>
-            <p className="text-sm text-white/55 font-light leading-relaxed mb-8">{body}</p>
+            {courseTitle ? (
+              <p className="text-sm text-white/80 mb-3 line-clamp-2">{courseTitle}</p>
+            ) : null}
+            <p className="text-sm text-white/70 font-light leading-relaxed mb-8">{body}</p>
             <div className="flex flex-col gap-3">
               <button
                 type="button"
                 onClick={goLibraryAccess}
-                className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer hover:bg-[#F7E7B5] transition-colors duration-200"
+                className="btn-gold text-black w-full"
               >
                 פתיחת גישה עכשיו
               </button>
               <button
                 type="button"
                 onClick={goFitCheck}
-                className="w-full py-3 rounded-full border border-[#C8A24C]/50 text-[#F7E7B5] text-sm min-h-11 cursor-pointer hover:border-[#F7E7B5] transition-colors duration-200"
+                className="w-full py-3 rounded-full border border-white/25 text-white text-sm min-h-11 cursor-pointer hover:border-white/50 transition-colors duration-200"
               >
                 בדיקת התאמה
               </button>
@@ -175,7 +173,7 @@ export const PaywallProvider: React.FC<{ children: React.ReactNode }> = ({ child
               <button
                 type="button"
                 onClick={closePaywall}
-                className="w-full py-3 text-sm text-white/50 hover:text-white min-h-11 cursor-pointer transition-colors duration-200"
+                className="w-full py-3 text-sm text-white/70 hover:text-white min-h-11 cursor-pointer transition-colors duration-200"
               >
                 לא עכשיו
               </button>

@@ -1,5 +1,5 @@
 /** Emails that get the admin role on Google / Supabase login. Add addresses here. */
-export const BUILT_IN_ADMIN_EMAILS = ['tam98iiy@gmail.com'];
+export const BUILT_IN_ADMIN_EMAILS = ['tam98iiy@gmail.com', 'infinite.masterpiece8@gmail.com'];
 
 const STORAGE_KEY = 'mc_admin_emails';
 
