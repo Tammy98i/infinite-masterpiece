@@ -23,7 +23,7 @@
 
 טבלת `public.profiles` כבר נוצרה בפרויקט.
 
-Google ב-Providers עדיין **כבוי** בפרויקט — בלי Client ID/Secret מ-Google Cloud הכפתור יופיע אבל ההתחברות תיעצר.
+**Google דלוק** ב-Providers (אומת ב־`/auth/v1/authorize` → 302 ל-accounts.google.com). כתובות חזרה ל-localhost ול-Vercel מאושרות.
 
 **Project Settings → API**: Project URL + `anon` `public`.
 
@@ -38,18 +38,13 @@ SUPABASE_ANON_KEY="eyJ..."
 
 `VITE_*` נדרשים ב-build כדי שכפתור Google יופיע מיד. `SUPABASE_*` מספיקים לפונקציות Vercel בזמן ריצה.
 
-ב-SQL Editor הריצי את [`supabase/profiles.sql`](../supabase/profiles.sql).
+ב-SQL Editor כבר רצה [`supabase/profiles.sql`](../supabase/profiles.sql). Confirm email עדיין דלוק — הרשמה באימייל דורשת אישור מייל. Google לא צריך את זה.
 
 ### 2. Google — כניסה לאתר
 
-זה **לא** מסך OAuth Server. זה **Authentication → Sign In / Providers**.
+הופעל. Authentication → Sign In / Providers → Google.
 
-1. גללי **למעלה** ל-Google (לא LinkedIn/X).
-2. Enable Google.
-3. ב-[Google Cloud Console](https://console.cloud.google.com/apis/credentials) צרי OAuth 2.0 Client (Web application):
-   - Authorized JavaScript origins: `https://bjhxluqeyjdioebtuvob.supabase.co` + `http://localhost:3000`
-   - Authorized redirect URI: `https://bjhxluqeyjdioebtuvob.supabase.co/auth/v1/callback`
-4. הדביקי Client ID + Client Secret במסך Google ב-Supabase.
+Redirect ב-Google Cloud: `https://bjhxluqeyjdioebtuvob.supabase.co/auth/v1/callback`
 
 ### 3. OAuth Server — האתר כספק זהות
 
@@ -99,4 +94,4 @@ curl http://localhost:3001/api/auth/providers
 
 `vercel.json` מגיש את ה-SPA. `api/auth/login` + `providers` / `supabase` / `me` / `logout` רצים כפונקציות. בלי מפתחות Supabase, חשבונות הדמו (`admin@infinitemasterpiece.local` / `Masterpiece88`) נכנסים בפריוו לבד — גם אם Deployment Protection חוסם את `/api`.
 
-קטלוג הספרייה נופל לתוכן הסטטי אם אין Express. Google עדיין דורש את המפתחות בסעיף 1.
+קטלוג הספרייה נופל לתוכן הסטטי אם אין Express. כפתור Google עובד בפריוו בלי משתני Vercel (ה-anon הציבורי בקוד).
