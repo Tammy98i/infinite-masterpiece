@@ -1,4 +1,4 @@
-import { DEFAULT_WEBINAR_CONFIG } from '../../src/constants/webinar.js';
+import { DEFAULT_WEBINAR_CONFIG } from '../_lib/staticData.js';
 
 type VercelReq = { method?: string };
 type VercelRes = {

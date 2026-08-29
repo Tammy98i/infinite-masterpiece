@@ -1,7 +1,5 @@
-import { COURSES, INSTRUCTORS, CATEGORIES } from '../../src/data/initialData.js';
-import { FOUNDERS } from '../../src/marketing/data/founders.js';
 import { BUILT_IN_ADMIN_EMAILS, mergeAdminEmails } from './publicConfig.js';
-import { DEFAULT_WEBINAR_CONFIG } from '../../src/constants/webinar.js';
+import { CATEGORIES, COURSES, DEFAULT_WEBINAR_CONFIG, FOUNDERS, INSTRUCTORS } from './staticData.js';
 import type { SessionUser } from './session.js';
 
 export type ProfileListRow = {

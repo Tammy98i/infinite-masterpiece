@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { COURSES } from '../../src/data/initialData.ts';
 import { overviewFrom, usersFromProfiles } from './adminDesk.ts';
+import { COURSES } from './staticData.ts';
 
 test('overview counts published catalog lectures', () => {
   const overview = overviewFrom([]);

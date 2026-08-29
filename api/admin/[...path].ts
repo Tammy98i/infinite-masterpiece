@@ -10,8 +10,7 @@ import {
   WRITE_UNAVAILABLE,
 } from '../_lib/adminDesk.js';
 import { listProfiles, mergeCurrentUser, updateProfile } from '../_lib/profiles.js';
-import { COURSES, CATEGORIES } from '../../src/data/initialData.js';
-import { FOUNDERS } from '../../src/marketing/data/founders.js';
+import { CATEGORIES, COURSES, FOUNDERS } from '../_lib/staticData.js';
 
 type VercelReq = {
   method?: string;
