@@ -1,0 +1,906 @@
+/** Auto-generated for Vercel serverless. Do not edit by hand — run: npm run sync:api-data */
+/* eslint-disable */
+export const COURSES: any[] = [
+  {
+    "id": "course-crisis-growth",
+    "title": "המדריך לטיפול וצמיחה ממשברים",
+    "subtitle": "איך להפוך תקופה קשה להזדמנות בלתי רגילה לצמיחה, תקווה וחוסן אישי",
+    "description": "בחיים כולנו פוגשים רגעים שבהם הקרקע נשמטת מתחת לרגליים. פרידה, אובדן, כישלון עסקי או משבר זהות. בקורס המקיף הזה, ד\"ר מיכל שוורץ לוקחת אותנו למסע מרתק אל תוך הביולוגיה והפסיכולוגיה של המשבר, ומעניקה כלים מוכחים להפחתת חרדה ובניית \"שריר החוסן\" הפנימי.",
+    "categoryId": "cat-mindset",
+    "instructorId": "inst-michal",
+    "coverImage": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=800&q=80",
+    "backdropImage": "https://images.unsplash.com/photo-1518531933037-91b2f5f229cc?auto=format&fit=crop&w=1600&q=80",
+    "trailerUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "level": "לכל הרמות",
+    "tags": [
+      "חרדה",
+      "חוסן מנטלי",
+      "פסיכולוגיה",
+      "משברים",
+      "צמיחה"
+    ],
+    "targetAudience": "אנשים החווים תפיסה של עומס רגשי, משבר או שינוי משמעותי בחיים ומחפשים עוגן וכלים מדעיות.",
+    "whatYouWillLearn": [
+      "להבין את התגובה הנוירו-ביולוגית של גופנו ללחץ קיצוני",
+      "טכניקת 4 השלבים לניתוק לולאות מחשבה שליליות טורדניות",
+      "איך לזהות את \"נקודת המפנה\" שבה קושי הופך להעצמה אישית",
+      "בניית שגרת בוקר ויער חוסן יומי לשמירה על יציבות רגשית"
+    ],
+    "isFeatured": true,
+    "isPopular": true,
+    "rating": 4.9,
+    "reviewCount": 342,
+    "createdAt": "2026-05-10",
+    "episodes": [
+      {
+        "id": "ep-cg-1",
+        "title": "פרק 1: האנטומיה של הנפש בזמן משבר",
+        "description": "מבוא להבנת מנגנוני ההישרדות של המוח. למה אנחנו קופאים או בורחים, ואיך להחזיר את המושכות לקורטקס הפרה-פרונטלי.",
+        "duration": 980,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "episodeNumber": 1,
+        "isFreeSample": true
+      },
+      {
+        "id": "ep-cg-2",
+        "title": "פרק 2: לעצור את הספירלה. עזרה ראשונה רגשית",
+        "description": "תרגילי נשימה וויסות עצבי מהירים שאפשר לבצע בכל מקום ובכל עת שהגל הרגשי מאיים להציף.",
+        "duration": 1140,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        "episodeNumber": 2
+      },
+      {
+        "id": "ep-cg-3",
+        "title": "פרק 3: שכתוב הנרטיב הפנימי",
+        "description": "הסיפור שאנחנו מספרים לעצמנו על הכישלון הוא זה שקובע את עתידנו. איך לערוך מחדש את סיפור חיינו.",
+        "duration": 1250,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        "episodeNumber": 3
+      },
+      {
+        "id": "ep-cg-4",
+        "title": "פרק 4: מאבל לצמיחה. מפת הדרכים ליום שאחרי",
+        "description": "תכנון צעדים פרקטיים קטנים מתוך חמלה עצמית ליצירת מציאות חדשה ומדויקת פי כמה.",
+        "duration": 1320,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        "episodeNumber": 4
+      }
+    ]
+  },
+  {
+    "id": "course-art-of-intimacy",
+    "title": "אמנות התקשורת והאינטימיות בזוגיות",
+    "subtitle": "להפסיק להתווכח על אותם דברים ולייצר חיבור רגשי וגופני עמוק מחדש",
+    "description": "זוגיות היא המרחב הרגיש ביותר בחיינו. מדוע לאחר מספר שנים החבר הכי טוב שלנו הופך לעיתים ליריב במשא ומתן מתיש על מטלות היום? יעל בר-און חושפת את הסודות הקליניים של זוגות שנשארים מאוהבים ומחוברים לאורך עשורים.",
+    "categoryId": "cat-mindset",
+    "instructorId": "inst-yael",
+    "coverImage": "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=800&q=80",
+    "backdropImage": "https://images.unsplash.com/photo-1516589178581-6cd7833ae3b2?auto=format&fit=crop&w=1600&q=80",
+    "trailerUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "level": "לכל הרמות",
+    "tags": [
+      "זוגיות",
+      "יחסים",
+      "תקשורת",
+      "אינטימיות",
+      "אהבה"
+    ],
+    "targetAudience": "זוגות בכל שלב, מהתחלת הדרך ועד זוגיות רבת שנים המעוניינים לרענן את הלהבה ולפתור קונפליקטים מן השורש.",
+    "whatYouWillLearn": [
+      "מודל \"השיחה הבטוחה\" לדיבור על נושאים נפיצים מבלי להיכנס למגננה",
+      "ההבדל הקריטי בין ביקורת מעליבה לבין ביטוי צורך רגשי לגיטימי",
+      "5 שפות האהבה בגרסת המאה ה-21 ואיך לזהות את השפה של בן/בת הזוג",
+      "תחזוקת אינטימיות ותשוקה בתוך עומס הקריירה והילדים"
+    ],
+    "isPopular": true,
+    "rating": 4.8,
+    "reviewCount": 289,
+    "createdAt": "2026-04-15",
+    "episodes": [
+      {
+        "id": "ep-aoi-1",
+        "title": "פרק 1: למה אנחנו בעצם רבים?",
+        "description": "פיצוח \"הריקוד הזוגי\" הקבוע שלנו. זיהוי הפצעים המוקדמים שמפעילים אותנו בזמן ריב.",
+        "duration": 920,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+        "episodeNumber": 1,
+        "isFreeSample": true
+      },
+      {
+        "id": "ep-aoi-2",
+        "title": "פרק 2: הקשבה אקטיבית מול הקשבה לענות",
+        "description": "איך לגרום לצד השני להרגיש שרואים ושומעים אותו באמת ללא שיפוט.",
+        "duration": 1080,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "episodeNumber": 2
+      },
+      {
+        "id": "ep-aoi-3",
+        "title": "פרק 3: סליחה וריפוי פגיעות בעבר",
+        "description": "טכניקה מעשית לניקוי משקעים ישנים שחוסמים את הקרבה ביומיום.",
+        "duration": 1150,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        "episodeNumber": 3
+      }
+    ]
+  },
+  {
+    "id": "course-startup-accelerator",
+    "title": "מאיץ ביצועים: מביצוע לתוצאות שיא בעסקים",
+    "subtitle": "נוסחת הניהול של יזמי עילית לעקיפת חסמים והכפלת פרודוקטיביות",
+    "description": "העולם המודרני מוצף במידע והסחות דעת. ההבדל בין חולמי חלומות למגשימי חזון טמון ביכולת המיקוד והביצוע הסיסטמתי. אורי לוי מפרק לגורמים את שיטת העבודה המדויקת שבאמצעותה ניהל צוותי פיתוח גלובליים והביא לחברות של מיליוני דולרים.",
+    "categoryId": "cat-sales",
+    "instructorId": "inst-ori",
+    "coverImage": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80",
+    "backdropImage": "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=1600&q=80",
+    "trailerUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+    "level": "מתקדם",
+    "tags": [
+      "עסקים",
+      "יזמות",
+      "מנהיגות",
+      "פרודוקטיביות",
+      "קריירה"
+    ],
+    "targetAudience": "יזמים, מנהלים, עצמאיים ושכירים שרוצים לקפוץ לדרגה הבאה של ביצועים בקריירה ובחיים.",
+    "whatYouWillLearn": [
+      "שיטת \"בלוקי הזהב\" לניהול יומן בלתי חדיר להסחות דעת",
+      "קבלת החלטות מהירה בתנאי אי ודאות (מודל 70%)",
+      "בניית צוות מנצח והאצלת סמכויות אפקטיבית ללא מיקרו-ניהול",
+      "איך להתמודד מנטלית עם דחייה וכישלון בעולם העסקי"
+    ],
+    "isFeatured": true,
+    "isNew": true,
+    "rating": 4.95,
+    "reviewCount": 412,
+    "createdAt": "2026-06-01",
+    "episodes": [
+      {
+        "id": "ep-sa-1",
+        "title": "פרק 1: תודעת מנכ\"ל. ניהול אנרגיה במקום זמן",
+        "description": "הזמן שלנו מוגבל ל-24 שעות, אך האנרגיה שלנו גמישה. איך למקסם שעות שיא.",
+        "duration": 1200,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        "episodeNumber": 1,
+        "isFreeSample": true
+      },
+      {
+        "id": "ep-sa-2",
+        "title": "פרק 2: אדריכלות המיקוד העמוק (Deep Work)",
+        "description": "סילוק \"חוב קוגניטיבי\" ויצירת תנאים מושלמים ליצירה אסטרטגית.",
+        "duration": 1350,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        "episodeNumber": 2
+      },
+      {
+        "id": "ep-sa-3",
+        "title": "פרק 3: אמנות המשא ומתן והשכנוע",
+        "description": "פסיכולוגיה של השפעה עסקית מול משקיעים, לקוחות ושותפים מפתח.",
+        "duration": 1400,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+        "episodeNumber": 3
+      },
+      {
+        "id": "ep-sa-4",
+        "title": "פרק 4: סקייל. מפיצוח המוצר ועד לצמיחה אקספוננציאלית",
+        "description": "מדדים שחייבים לעקוב אחריהם בכל בוקר ובניית מכונת שיווק אוטומטית.",
+        "duration": 1520,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "episodeNumber": 4
+      }
+    ]
+  },
+  {
+    "id": "course-silent-mind",
+    "title": "שקט פנימי בעולם מופרע: מיינדפולנס מעשי",
+    "subtitle": "לאלף את \"קוף המחשבות\" ולמצוא שלווה עמוקה בתוך שאון היומיום",
+    "description": "האם המחשבות שלכם רצות בלולאה מתישה רגע לפני השינה? נדב כהן מזקק עשור במנזרי ההימלאיה לסדרת שיעורים קצרים ונגישים המלמדים איך לעגון את התודעה בכאן ועכשיו, להוריד רמות קורטיזול ולחוות נוכחות פעימה מול החיים.",
+    "categoryId": "cat-mindset",
+    "instructorId": "inst-nadav",
+    "coverImage": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80",
+    "backdropImage": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1600&q=80",
+    "trailerUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "level": "למתחילים",
+    "tags": [
+      "מיינדפולנס",
+      "מדיטציה",
+      "שלווה",
+      "רוח",
+      "לחץ",
+      "שינה"
+    ],
+    "targetAudience": "כל מי שמרגיש מוצף מחשבתית ומחפש תרגול מעשי פשוט ללא ניו-אייג' מנותק.",
+    "whatYouWillLearn": [
+      "מדיטציית 5 הדקות שאפשר לעשות תוך כדי נסיעה ברכבת או בהפסקה במשרד",
+      "טכניקת סריקת הגוף לשחרור כיווצים פיזיים אצורים",
+      "ההתבוננות הלא מגיבה במחשבות מעוררות חרדה",
+      "חיבור לטבע ולנשימה הטבעית כמרפא עצבי מיידי"
+    ],
+    "isPopular": true,
+    "rating": 4.88,
+    "reviewCount": 510,
+    "createdAt": "2026-03-20",
+    "episodes": [
+      {
+        "id": "ep-sm-1",
+        "title": "פרק 1: המבוא לשקט. איפה המחשבות מתחילות?",
+        "description": "להכיר את \"תודעת הקוף\" המדלגת מענף לענף וללמוד איך לעצור ברוך.",
+        "duration": 720,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        "episodeNumber": 1,
+        "isFreeSample": true
+      },
+      {
+        "id": "ep-sm-2",
+        "title": "פרק 2: נשימה סרעפתית. השלט הרחוק של מערכת העצבים",
+        "description": "תרגול מעשי להפעלת העצב המוטור-ואגוס (Vagus) והרגעת הדופק.",
+        "duration": 890,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        "episodeNumber": 2
+      },
+      {
+        "id": "ep-sm-3",
+        "title": "פרק 3: מדיטציה מודרכת לשינה עמוקה",
+        "description": "שחרור מוחלט של מאורעות היום וכניסה לגלי אלפא ותת-מודע רגוע.",
+        "duration": 1200,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        "episodeNumber": 3
+      }
+    ]
+  },
+  {
+    "id": "course-leader-parenting",
+    "title": "הורות מנהיגה בגובה העיניים",
+    "subtitle": "בניית גבולות ברורים מתוך כבוד, אמון ורוגע בבית המודרני",
+    "description": "ילדינו גדלים בעולם מהיר ומאתגר. איך מגדלים ילדים עצמאיים בעלי ביטחון עצמי וחוסן פנימי מבלי לנקוט באיומים או לוותר על הסמכות ההורית? רונית אלמוג מביאה גישה מהפכנית המחזירה להורים את השקט והביטחון בדרך החינוכית שלהם.",
+    "categoryId": "cat-mindset",
+    "instructorId": "inst-ronit",
+    "coverImage": "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=800&q=80",
+    "backdropImage": "https://images.unsplash.com/photo-1511895426328-dc8714191300?auto=format&fit=crop&w=1600&q=80",
+    "trailerUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "level": "לכל הרמות",
+    "tags": [
+      "הורות",
+      "משפחה",
+      "ילדים",
+      "חינוך",
+      "ביטחון עצמי"
+    ],
+    "targetAudience": "הורים לילדים בגילאי הגן ובית הספר היסודי המחפשים כלים פרקטיים להתמודדות עם התקפי זעם ומסכים.",
+    "whatYouWillLearn": [
+      "גישת \"הסמכות החמלתית\". להגיד \"לא\" נחוש מתוך אמפתיה מלאה",
+      "ניהול זמן מסכים ללא מאבקי כוח מתישים כל ערב",
+      "איך להגיב להתקף זעם (Tantrum) בצורה שמעצימה את החוסן הרגשי של הילד",
+      "יצירת זמן איכות אמיתי בתוך טירוף הקריירה והבית"
+    ],
+    "isNew": true,
+    "rating": 4.91,
+    "reviewCount": 198,
+    "createdAt": "2026-05-25",
+    "episodes": [
+      {
+        "id": "ep-lp-1",
+        "title": "פרק 1: למה ילדים בודקים גבולות?",
+        "description": "הבנת הצורך הביולוגי של הילד בגבול כקירות מגנים. למה הם חייבים שנגיד \"לא\".",
+        "duration": 850,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "episodeNumber": 1,
+        "isFreeSample": true
+      },
+      {
+        "id": "ep-lp-2",
+        "title": "פרק 2: פרידה מיוסרת מאשמה הורית",
+        "description": "ההורה המספיק טוב מול ההורה המושלם. איך לשחרר אשמה כשאנחנו כועסים.",
+        "duration": 940,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        "episodeNumber": 2
+      },
+      {
+        "id": "ep-lp-3",
+        "title": "פרק 3: חוזה המסכים המשפחתי",
+        "description": "בניית הסכם הוגן ושקוף מול הילדים לשימוש במובייל ובקונסולות.",
+        "duration": 1020,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        "episodeNumber": 3
+      }
+    ]
+  },
+  {
+    "id": "course-biohacking-energy",
+    "title": "ביו-האקינג ואנרגיית שיא ביומיום",
+    "subtitle": "הפרוטוקולים המדעיים לשינה מושלמת, ריכוז מפלדה והאטת הזדקנות",
+    "description": "האם אתם חווים \"נפילת אנרגיה\" קבועה בשעה 14:00 בצהריים? פרופ' איתן ברק מרכז את פריצות הדרך האחרונות במדעי הגוף ומציג סדרת צעדים פשוטים ליישום במטבח ובחדר השינה שישנו את רמת החיות שלכם מן הקצה אל הקצה.",
+    "categoryId": "cat-mindset",
+    "instructorId": "inst-eitan",
+    "coverImage": "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=800&q=80",
+    "backdropImage": "https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?auto=format&fit=crop&w=1600&q=80",
+    "trailerUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+    "level": "מתקדם",
+    "tags": [
+      "בריאות",
+      "ביו-האקינג",
+      "שינה",
+      "תזונה",
+      "אנרגיה",
+      "ספורט"
+    ],
+    "targetAudience": "אנשים המעוניינים לשדרג את התפקוד הקוגניטיבי והפיזי שלהם באמצעות מדע מדויק.",
+    "whatYouWillLearn": [
+      "פרוטוקול 10-3-2-1-0 לשינה עמוקה ונטולת יקיצות בלילה",
+      "השפעת אור בוקר וחשיפה לקור על ייצור דופמין ומיטוכונדריה",
+      "צום לסירוגין ותזונה מותאמת לאיזון רמות אינסולין וסוכר בדם",
+      "תוספי תזונה חיוניים לעומת גימיקים שיווקיים מיותרים"
+    ],
+    "isPopular": true,
+    "rating": 4.93,
+    "reviewCount": 367,
+    "createdAt": "2026-04-01",
+    "episodes": [
+      {
+        "id": "ep-be-1",
+        "title": "פרק 1: אדריכלות השינה המיטבית",
+        "description": "למה שנת REM ושנה עמוקה קובעות את תוחלת חיינו ואיך לסדר את חדר השינה.",
+        "duration": 1100,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        "episodeNumber": 1,
+        "isFreeSample": true
+      },
+      {
+        "id": "ep-be-2",
+        "title": "פרק 2: המיטוכונדריה. מנועי האנרגיה של הגוף",
+        "description": "תזונה קטוגנית וצום ממושך ככלים להאצת מנגנון ה\"אוּטוֹפָגְיָה\" הניקוי העצמי.",
+        "duration": 1280,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+        "episodeNumber": 2
+      },
+      {
+        "id": "ep-be-3",
+        "title": "פרק 3: תרמותרפיה. אמבטיות קרח וסאונה",
+        "description": "איך זעזוע חום וקור קצר מפעיל חלבוני עמידות לחץ בגופנו.",
+        "duration": 1050,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "episodeNumber": 3
+      }
+    ]
+  },
+  {
+    "id": "course-financial-freedom",
+    "title": "חופש פיננסי והשקעות נבונות",
+    "subtitle": "הפסיכולוגיה של כסף ובניית תיק נכסים יציב בשוק משתנה",
+    "description": "למה רוב האנשים עובדים קשה כל חייהם אך נשארים תלויים במשכורת הבאה? דניאל גולן מציג תוכנית פעולה ברורה בת 5 שלבים למעבר מתודעת הישרדות כלכלית לתודעת צמיחה, אופטימיזציית הוצאות והשקעות חכמות במדדים ונדל\"ן.",
+    "categoryId": "cat-finance",
+    "instructorId": "inst-daniel",
+    "coverImage": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=800&q=80",
+    "backdropImage": "https://images.unsplash.com/photo-1559526324-4b87b5e36e44?auto=format&fit=crop&w=1600&q=80",
+    "trailerUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "level": "למתחילים",
+    "tags": [
+      "כסף",
+      "השקעות",
+      "חופש פיננסי",
+      "כלכלה",
+      "קריירה"
+    ],
+    "targetAudience": "כל אדם או משפחה שרוצים לקבל שליטה אמיתית על עתידם הכלכלי מבלי להיות מומחי שוק ההון.",
+    "whatYouWillLearn": [
+      "לזהות ולשבור אמונות מגבילות עתיקות מבית ההורים על כסף ועושר",
+      "נוסחת ה-50-30-20 לניהול תקציב חודשי בלי להרגיש במחסור",
+      "ריבית דריבית. הפלא השמיני של העולם ואיך לתת לה לעבוד עבורנו",
+      "השקעה פסיבית בקרנות סל (ETF) מול מיתוס טיימינג השוק"
+    ],
+    "isFeatured": true,
+    "rating": 4.96,
+    "reviewCount": 620,
+    "createdAt": "2026-02-15",
+    "episodes": [
+      {
+        "id": "ep-ff-1",
+        "title": "פרק 1: התודעה המנטלית של העושר",
+        "description": "מדוע זכייה בלוטו לא הופכת אנשים לעשירים לטווח ארוך? הכל מתחיל במיינדסט.",
+        "duration": 990,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        "episodeNumber": 1,
+        "isFreeSample": true
+      },
+      {
+        "id": "ep-ff-2",
+        "title": "פרק 2: מיפוי נכסים והתחייבויות",
+        "description": "לעשות צילום מצב פיננסי כנה ואמיץ ולתכנן את היעד ל-10 השנים הבאות.",
+        "duration": 1120,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4",
+        "episodeNumber": 2
+      },
+      {
+        "id": "ep-ff-3",
+        "title": "פרק 3: המדריך למשקיע המתחיל בשוק ההון",
+        "description": "הסבר פשוט ונטול ז'רגון מאיים על מניות, איגורות חוב ומדד ה-S&P 500.",
+        "duration": 1450,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerEscapes.mp4",
+        "episodeNumber": 3
+      }
+    ]
+  },
+  {
+    "id": "short-stage-fright",
+    "title": "להתגבר על פחד קהל ב-8 דקות",
+    "subtitle": "הטכניקה הפיזית והמחשבתית לעלות לבמה באנרגיה של ביטחון כובש",
+    "description": "פחד קהל הוא אחד הפחדים הנפוצים ביותר בעולם. בהרצאת מאסטר ממוקדת בת 8 דקות, תלמדו איך להשתמש באדרנלין של ההתרגשות כדלק לכריזמה במקום כגורם לבלק-אאוט.",
+    "categoryId": "cat-story",
+    "instructorId": "inst-ori",
+    "coverImage": "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=800&q=80",
+    "backdropImage": "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1600&q=80",
+    "trailerUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+    "level": "לכל הרמות",
+    "tags": [
+      "ביטחון עצמי",
+      "עמידה מול קהל",
+      "קצר",
+      "תקשורת",
+      "מיומנויות"
+    ],
+    "targetAudience": "אנשים הנדרשים להציג בישיבות צוות או מול קהל וחווים דפיקות לב מואצות.",
+    "whatYouWillLearn": [
+      "עמידת כוח פיזית לפני העלייה לשידור",
+      "תרגילי חימום קול ונשימה מהירים"
+    ],
+    "isShort": true,
+    "rating": 4.85,
+    "reviewCount": 142,
+    "createdAt": "2026-06-10",
+    "episodes": [
+      {
+        "id": "ep-ssf-1",
+        "title": "פרק יחיד: 8 דקות לביטחון בימת שיא",
+        "description": "הרצאה פרקטית ממוקדת לביצוע מיידי.",
+        "duration": 480,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4",
+        "episodeNumber": 1,
+        "isFreeSample": true
+      }
+    ]
+  },
+  {
+    "id": "short-imposter-syndrome",
+    "title": "תפסיקו להתבייש: תסמונת המתחזה",
+    "subtitle": "איך להכיר בערך של עצמכם מבלי להרגיש שעוד רגע יעלו עליכם",
+    "description": "למה דווקא האנשים המוכשרים ביותר בטוחים שההצלחה שלהם היא מזל מקרי? שיעור ממוקד עם ד\"ר מיכל שוורץ על שחרור הספק העצמי.",
+    "categoryId": "cat-mindset",
+    "instructorId": "inst-michal",
+    "coverImage": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=800&q=80",
+    "backdropImage": "https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=1600&q=80",
+    "trailerUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+    "level": "לכל הרמות",
+    "tags": [
+      "פסיכולוגיה",
+      "ביטחון עצמי",
+      "תסמונת המתחזה",
+      "קצר",
+      "קריירה"
+    ],
+    "targetAudience": "אנשים שמשיגים הצלחות אך מרגישים מבפנים חוסר ביטחון תמידי.",
+    "whatYouWillLearn": [
+      "להבדיל בין ענווה בריאה לספק עצמי משתק",
+      "רישום עובדתי של הישגים אישיים"
+    ],
+    "isShort": true,
+    "isPopular": true,
+    "rating": 4.92,
+    "reviewCount": 230,
+    "createdAt": "2026-06-15",
+    "episodes": [
+      {
+        "id": "ep-sis-1",
+        "title": "פרק יחיד: לפרק את תסמונת המתחזה ב-10 דקות",
+        "description": "שיעור מעורר השראה עם כלים קוגניטיביים מדויקים.",
+        "duration": 610,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+        "episodeNumber": 1,
+        "isFreeSample": true
+      }
+    ]
+  },
+  {
+    "id": "short-morning-routine",
+    "title": "שגרת בוקר של אלופים ב-7 דקות",
+    "subtitle": "איך 15 הדקות הראשונות של היום קובעות את רמת האושר והפוקוס שלנו",
+    "description": "אל תתחילו את היום בגלילה בנייד במיטה. נדב כהן מדריך שגרת בוקר מהירה של הודייה, התמתחות ונשימה שמכיילת את התודעה ליום מנצח.",
+    "categoryId": "cat-mindset",
+    "instructorId": "inst-nadav",
+    "coverImage": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=800&q=80",
+    "backdropImage": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1600&q=80",
+    "trailerUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+    "level": "למתחילים",
+    "tags": [
+      "בריאות",
+      "מיינדפולנס",
+      "שגרת בוקר",
+      "פרודוקטיביות",
+      "קצר"
+    ],
+    "targetAudience": "כל מי שקם עייף ולחוץ ומחפש התחלה רכה ומדויקת.",
+    "whatYouWillLearn": [
+      "נשימת 4-7-8 להתעוררות תאית",
+      "הגדרת \"הכוונה היומית\" מול משימות היום"
+    ],
+    "isShort": true,
+    "rating": 4.89,
+    "reviewCount": 180,
+    "createdAt": "2026-06-18",
+    "episodes": [
+      {
+        "id": "ep-smr-1",
+        "title": "פרק יחיד: 7 דקות של שגרת בוקר מחשבתית",
+        "description": "תרגול מעשי ליד המיטה.",
+        "duration": 420,
+        "videoUrl": "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+        "episodeNumber": 1,
+        "isFreeSample": true
+      }
+    ]
+  }
+];
+export const INSTRUCTORS: any[] = [
+  {
+    "id": "inst-michal",
+    "name": "ד\"ר מיכל שוורץ",
+    "title": "פסיכולוגית קלינית וחוקרת מוח",
+    "avatarUrl": "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?auto=format&fit=crop&w=600&q=80",
+    "bio": "מרצה בינלאומית ומחברת רב המכר \"גמישות מחשבתית\". מתמחה בחקר החוסן המנטלי ויכולת ההתאוששות של המוח האנושי במצבי לחץ ואי ודאות.",
+    "credentials": [
+      "בוגרת הרווארד בפסיכולוגיה קלינית",
+      "יועצת לבכירים בתעשיית ההייטק",
+      "מחברת 3 ספרי עיון פרופילים"
+    ]
+  },
+  {
+    "id": "inst-yael",
+    "name": "יעל בר-און",
+    "title": "מטפלת זוגית ומשפחתית מוסמכת",
+    "avatarUrl": "https://images.unsplash.com/photo-1580489944761-15a19d654956?auto=format&fit=crop&w=600&q=80",
+    "bio": "מעל ל-15 שנות ניסיון בקליניקה פרטית. פיתחה את שיטת \"השיחה הלא מצונזרת\" ליישוב קונפליקטים זוגיים ויצירת אינטימיות עמוקה מחדש.",
+    "credentials": [
+      "מוסמכת מכון אדלר",
+      "מנחת קבוצות ויחסים בינאישיים",
+      "אורחת קבועה בפאנלים תקשורתיים"
+    ]
+  },
+  {
+    "id": "inst-ori",
+    "name": "אורי לוי",
+    "title": "יזם סדרתי ומנטור מנהיגות עסקי",
+    "avatarUrl": "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=600&q=80",
+    "bio": "הקים ומכר שתי חברות הזנק. כיום מלווה מנכ\"לים ומנהלים בכירים בניהול אנרגיה, קבלת החלטות מהירה תחת עומס ואסטרטגיה של צמיחה.",
+    "credentials": [
+      "לשעבר מנכ\"ל ScaleUp Global",
+      "משקיע אנג'ל ב-20+ חברות",
+      "מרצה לחדשנות באוניברסיטת תל אביב"
+    ]
+  },
+  {
+    "id": "inst-nadav",
+    "name": "נדב כהן",
+    "title": "מורה למיינדפולנס וחוקר פילוסופיה מזרחית",
+    "avatarUrl": "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=600&q=80",
+    "bio": "חיה וחינך במנזרים בנפאל והודו במשך עשור. מביא את הכלים העתיקים של השקט וההתבוננות אל לב סביבת העבודה והחיים האינטנסיביים של המערב.",
+    "credentials": [
+      "מוסמך MBSR מאוניברסיטת מסצ'וסטס",
+      "העביר סדנאות ל-50,000+ משתתפים",
+      "מנחה ריטריטים בשתיקה במדבר"
+    ]
+  },
+  {
+    "id": "inst-ronit",
+    "name": "רונית אלמוג",
+    "title": "מומחית להורות מודרנית והתפתחות הילד",
+    "avatarUrl": "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=600&q=80",
+    "bio": "יועצת משפחתית בכירה, מסייעת להורים לבנות מנהיגות שקטה בבית ללא צעקות או עונשים, מתוך הבנה עמוקה של צרכי הילד בעידן המסכים.",
+    "credentials": [
+      "תואר שני בייעוץ חינוכי",
+      "מנחת הורים בכירה",
+      "יוצרת הפודקאסט \"הורים במאה ה-21\""
+    ]
+  },
+  {
+    "id": "inst-eitan",
+    "name": "פרופ' איתן ברק",
+    "title": "רופא מומחה ומייסד המרכז לרפואת אריכות ימים",
+    "avatarUrl": "https://images.unsplash.com/photo-1622253692010-333f2da6031d?auto=format&fit=crop&w=600&q=80",
+    "bio": "חוקר מוביל בתחום הביו-האקינג ומניעת הזדקנות תאית. מנגיש את מדע השינה, התזונה הקטוגנית וחשיפה לקור ככלים יומיומיים לאנרגיית שיא.",
+    "credentials": [
+      "פרופ' מן המניין לרפואה פנימית",
+      "חוקר אורח במכון ויצמן",
+      "יועץ רפואי לספורטאים אולימפיים"
+    ]
+  },
+  {
+    "id": "inst-daniel",
+    "name": "דניאל גולן",
+    "title": "יועץ פיננסי ומומחה לפסיכולוגיה של השקעות",
+    "avatarUrl": "https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=600&q=80",
+    "bio": "עזר לאלפי משפחות ועצמאיים לצאת ממינוס לחופש כלכלי. מאמין שכסף הוא השתקפות של תודעה והרגלים מנטליים לפני שהוא מספר בחשבון הבנק.",
+    "credentials": [
+      "מתכנן פיננסי מוסמך CFP",
+      "מייסד קהילת \"משקיעים בחכמה\"",
+      "סוחר שווקים הון לשעבר"
+    ]
+  }
+];
+export const CATEGORIES: any[] = [
+  {
+    "id": "cat-sales",
+    "name": "מכירות והכנסה",
+    "description": "סגירה, הצעה, מחיר והפיכת שיחה להכנסה.",
+    "icon": "TrendingUp",
+    "sortOrder": 1,
+    "accessLevel": "premium",
+    "coverImage": "https://images.unsplash.com/photo-1556745757-8d76bdb6984b?auto=format&fit=crop&w=1200&q=80",
+    "leadInstructorIds": [
+      "inst-gal"
+    ]
+  },
+  {
+    "id": "cat-marketing",
+    "name": "שיווק ומיתוג",
+    "description": "מיצוב, שפה והפצה שמביאים את האנשים הנכונים.",
+    "icon": "Megaphone",
+    "sortOrder": 2,
+    "accessLevel": "premium",
+    "coverImage": "https://images.unsplash.com/photo-1557804506-669a67965ba0?auto=format&fit=crop&w=1200&q=80",
+    "leadInstructorIds": [
+      "inst-gal"
+    ]
+  },
+  {
+    "id": "cat-story",
+    "name": "תוכן וסטוריטלינג",
+    "description": "סיפור, במה ותוכן שגורמים לאנשים להישאר.",
+    "icon": "BookOpen",
+    "sortOrder": 3,
+    "accessLevel": "premium",
+    "coverImage": "https://images.unsplash.com/photo-1478720568477-152d9b164e26?auto=format&fit=crop&w=1200&q=80",
+    "leadInstructorIds": [
+      "inst-gal"
+    ]
+  },
+  {
+    "id": "cat-product",
+    "name": "מוצר ומודל עסקי",
+    "description": "הצעה, מודל ומערכת שמחזיקים את העסק.",
+    "icon": "Boxes",
+    "sortOrder": 4,
+    "accessLevel": "premium",
+    "coverImage": "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
+    "leadInstructorIds": [
+      "inst-gal",
+      "inst-tami"
+    ]
+  },
+  {
+    "id": "cat-tech",
+    "name": "טכנולוגיה ומערכות",
+    "description": "תשתית, כלים וזרימות עבודה שמריצות את המערכת.",
+    "icon": "Cpu",
+    "sortOrder": 5,
+    "accessLevel": "premium",
+    "coverImage": "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=1200&q=80",
+    "leadInstructorIds": [
+      "inst-tami"
+    ]
+  },
+  {
+    "id": "cat-ai",
+    "name": "AI ואוטומציה",
+    "description": "בינה מלאכותית ותהליכים שחוסכים זמן ומדייקים עבודה.",
+    "icon": "Sparkles",
+    "sortOrder": 6,
+    "accessLevel": "premium",
+    "coverImage": "https://images.unsplash.com/photo-1677442136019-21780ecad995?auto=format&fit=crop&w=1200&q=80",
+    "leadInstructorIds": [
+      "inst-tami"
+    ]
+  },
+  {
+    "id": "cat-community",
+    "name": "קהילה וניהול קהל",
+    "description": "קהילה, קהל ויחסים שמחזיקים תנועה לאורך זמן.",
+    "icon": "Users",
+    "sortOrder": 7,
+    "accessLevel": "premium",
+    "coverImage": "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?auto=format&fit=crop&w=1200&q=80",
+    "leadInstructorIds": [
+      "inst-gal"
+    ]
+  },
+  {
+    "id": "cat-mindset",
+    "name": "תודעה, חוסן והתפתחות אישית",
+    "description": "חוסן, מיקוד והתפתחות שמחזיקים יוצר לאורך הדרך.",
+    "icon": "Brain",
+    "sortOrder": 8,
+    "accessLevel": "premium",
+    "coverImage": "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=80",
+    "leadInstructorIds": [
+      "inst-gal"
+    ]
+  },
+  {
+    "id": "cat-finance",
+    "name": "פיננסים וניהול כסף",
+    "description": "כסף, תזרים והחלטות שמגינות על העסק ועל החופש.",
+    "icon": "Wallet",
+    "sortOrder": 9,
+    "accessLevel": "premium",
+    "coverImage": "https://images.unsplash.com/photo-1579621970563-ebec7560ff3e?auto=format&fit=crop&w=1200&q=80",
+    "leadInstructorIds": [
+      "inst-gal"
+    ]
+  },
+  {
+    "id": "cat-88",
+    "name": "נבחרת 88",
+    "description": "שכבת העומק. תכנים למי שנמצא בנבחרת.",
+    "icon": "Infinity",
+    "sortOrder": 10,
+    "accessLevel": "premium_88",
+    "coverImage": "https://images.unsplash.com/photo-1519681393784-d120267933ba?auto=format&fit=crop&w=1200&q=80",
+    "leadInstructorIds": [
+      "inst-gal",
+      "inst-tami"
+    ]
+  },
+  {
+    "id": "cat-founders",
+    "name": "צוות המיזם",
+    "description": "הידע של מי שעומד מאחורי המערכת.",
+    "icon": "Award",
+    "sortOrder": 11,
+    "accessLevel": "premium",
+    "coverImage": "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&w=1200&q=80",
+    "leadInstructorIds": [
+      "inst-gal",
+      "inst-tami"
+    ]
+  },
+  {
+    "id": "cat-guests",
+    "name": "הרצאות אורחים",
+    "description": "מרצים אורחים שמביאים זווית נוספת לספרייה.",
+    "icon": "Mic",
+    "sortOrder": 12,
+    "accessLevel": "premium",
+    "coverImage": "https://images.unsplash.com/photo-1475721027785-f74eccf877e2?auto=format&fit=crop&w=1200&q=80",
+    "leadInstructorIds": []
+  },
+  {
+    "id": "cat-shorts",
+    "name": "10 דקות",
+    "description": "הרצאות קצרות למי שיש עכשיו רק כמה דקות.",
+    "icon": "Timer",
+    "sortOrder": 13,
+    "accessLevel": "free",
+    "coverImage": "https://images.unsplash.com/photo-1486312338219-ce68d2c6f44d?auto=format&fit=crop&w=1200&q=80",
+    "leadInstructorIds": [
+      "inst-tami"
+    ]
+  },
+  {
+    "id": "cat-paths",
+    "name": "מסלולי עומק",
+    "description": "רצף למידה מסודר, לא הרצאה בודדת.",
+    "icon": "Route",
+    "sortOrder": 14,
+    "accessLevel": "premium",
+    "coverImage": "https://images.unsplash.com/photo-1454165804606-c3d57bc86b40?auto=format&fit=crop&w=1200&q=80",
+    "leadInstructorIds": [
+      "inst-gal",
+      "inst-tami"
+    ]
+  }
+];
+export const FOUNDERS: any[] = [
+  {
+    "id": "gal",
+    "name": "גל אברמוביץ׳",
+    "title": "חזון ומבנה עסקי",
+    "blurb": "מוביל את החזון, השפה והמבנה העסקי של Infinite Masterpiece.",
+    "description": "מוביל את החזון, השפה, התוכן והמבנה העסקי של Infinite Masterpiece.\n\nאחראי להפוך רעיון ממסע השראה למערכת ביצוע, קהילה ותנועה, ולתרגם פוטנציאל יצירתי לתוצאות מדויקות.",
+    "image": "/team/gal.png",
+    "featured": true,
+    "expertise": [
+      "חזון",
+      "מבנה עסקי",
+      "שפה ותוכן"
+    ],
+    "leadCategoryIds": [
+      "cat-sales",
+      "cat-marketing",
+      "cat-story",
+      "cat-product",
+      "cat-88",
+      "cat-founders"
+    ],
+    "portfolio": [
+      {
+        "title": "Infinite Masterpiece",
+        "summary": "מערכת, קהילה ומבנה עסקי סביב יצירה."
+      },
+      {
+        "title": "ספריית אינסוף",
+        "summary": "תוכן והפצה ליוצרים ולנבחרת."
+      }
+    ]
+  },
+  {
+    "id": "tami",
+    "name": "תמי אליאן",
+    "title": "מוצר וטכנולוגיה",
+    "blurb": "מובילה את המוצר, הטכנולוגיה וה־UX. הופכת חזון למערכת שעובדת.",
+    "description": "מובילה את הצד הטכנולוגי, המוצרי וה־UX.\n\nאחראית על האתר, ספריית ה־VOD, מדידה, CRM ואוטומציה, והופכת חזון למוצר שעובד.",
+    "image": "/team/tami.png",
+    "featured": true,
+    "expertise": [
+      "מוצר",
+      "טכנולוגיה",
+      "UX"
+    ],
+    "leadCategoryIds": [
+      "cat-product",
+      "cat-tech",
+      "cat-ai",
+      "cat-founders"
+    ],
+    "portfolio": [
+      {
+        "title": "ספריית VOD",
+        "summary": "מוצר, חוויית שימוש וארכיטקטורה."
+      },
+      {
+        "title": "האתר והמערכת",
+        "summary": "מדידה, CRM ואוטומציה שמחזיקים את התנועה."
+      }
+    ]
+  }
+];
+export const DEFAULT_WEBINAR_CONFIG: any = {
+  "enabled": true,
+  "title": "וובינר פתיחה. Infinite Masterpiece",
+  "date": "26.05.2026",
+  "time": "20:00",
+  "durationMinutes": 150,
+  "location": "אונליין / Zoom",
+  "costLabel": "ללא עלות. הרשמה מוקדמת",
+  "spotsLabel": "הרשמה פתוחה",
+  "whatsappGroupUrl": "https://chat.whatsapp.com/EfdlOMLCGS70nvDoe6LTcT",
+  "calendarLocation": "Zoom",
+  "zoomLink": "",
+  "leaderPrimaryName": "גל אברמוביץ׳",
+  "leaderPrimaryTitle": "Founder / Vision / Strategy / Teaching / Sales",
+  "leaderPrimaryBio": "מוביל את החזון, השפה, השיטה והמסגרת העסקית של Infinite Masterpiece. מהרעיון הגדול ועד הפיילוט הראשון.",
+  "leaderSecondaryName": "תמי אליאן",
+  "leaderSecondaryTitle": "CTO בפועל / אתרים / פלטפורמות / Mobile / Funnel",
+  "leaderSecondaryBio": "מובילה את הצד הטכנולוגי והמוצרי של המיזם: אתר, VOD, דאשבורדים, משפכים, מדידה ואפליקציה.",
+  "heroHeadline": "הכישרון כבר יש. הערב שולחים פעולה אמיתית.",
+  "heroHeadlineVariantB": "הכישרון כבר יש. הערב שולחים פעולה אמיתית.",
+  "heroSubheadline": "ערב חי ליוצרים שרוצים לסגור את הפער בין כישרון להכנסה. שיעור מכירות, משימת ביצוע בזמן אמת, והזמנה לפיילוט של 33 ימים. בלי כרטיס אשראי.",
+  "abTestEnabled": false,
+  "showRegistrationCount": true,
+  "maxSpots": 0,
+  "showSpotsRemaining": false,
+  "socialProofQuotes": [
+    {
+      "quote": "אם הערב ייגמר עם פעולה אחת אמיתית, זה כבר שווה לי להגיע.",
+      "author": "מיכל",
+      "role": "מעצבת תכשיטים"
+    },
+    {
+      "quote": "אני יודע ליצור. אני לא יודע למכור בלי להרגיש זר לעצמי.",
+      "author": "אורי",
+      "role": "מאמן תנועה"
+    },
+    {
+      "quote": "יש לי ערך. חסר לי צעד ברור. בשביל זה אני מגיעה לערב.",
+      "author": "נועה",
+      "role": "מטפלת"
+    }
+  ]
+};
