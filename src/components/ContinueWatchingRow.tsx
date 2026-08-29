@@ -25,7 +25,7 @@ export const ContinueWatchingRow: React.FC = () => {
       aria-label="המשך צפייה — רשימת הרצאות"
     >
       <div className="flex items-center gap-3 px-4 sm:px-8 mb-5">
-        <h2 className="text-lg sm:text-xl font-semibold text-white">המשך צפייה</h2>
+        <h2 className="text-xl sm:text-2xl font-heading font-semibold text-white">המשך צפייה</h2>
         <button
           type="button"
           onClick={() => setView('history')}

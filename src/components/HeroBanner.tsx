@@ -94,14 +94,14 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
 
         {continueWatching && (
           <div className="max-w-sm mb-7">
-            <div className="flex items-center justify-between text-[11px] text-white/55 mb-2" id="hero-progress-label">
+            <div className="flex items-center justify-between text-[11px] text-white/70 mb-2" id="hero-progress-label">
               <span>
                 {formatClock(continueWatching.currentTime)} / {formatClock(continueWatching.duration)}
               </span>
               <span>המשך צפייה</span>
             </div>
             <div
-              className="h-[3px] rounded-full bg-white/15 overflow-hidden"
+              className="h-1 rounded-full bg-white/15 overflow-hidden"
               role="progressbar"
               aria-labelledby="hero-progress-label"
               aria-valuemin={0}

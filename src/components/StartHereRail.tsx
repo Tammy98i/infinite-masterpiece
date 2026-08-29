@@ -25,7 +25,7 @@ export function StartHereRail({ tenMinute, taste, newest }: Props) {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 px-4 sm:px-8">
         {items.map((item) => (
           <div key={item.section} className="min-w-0">
-            <p className="text-[12px] text-[#C8A24C] mb-2">{item.label}</p>
+            <p className="text-[12px] text-white/70 mb-2">{item.label}</p>
             <CourseCard course={item.course} fullWidth sectionName={item.section} />
           </div>
         ))}

@@ -63,6 +63,17 @@ export function getCardAccessState(
   return 'locked';
 }
 
+/** Always-visible card badge. Empty when the lecture is fully open. */
+export function cardBadgeLabel(
+  access: CardAccessState,
+  layout: 'card' | 'continue' = 'card'
+): 'המשך' | 'טעימה' | 'נעול' | '' {
+  if (layout === 'continue') return 'המשך';
+  if (access === 'preview') return 'טעימה';
+  if (access === 'locked') return 'נעול';
+  return '';
+}
+
 export function countFullyOpenCourses(
   courses: Course[],
   user: Pick<UserProfile, 'role' | 'subscriptionPlan' | 'entryTrack' | 'currentPaymentPhase'>

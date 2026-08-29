@@ -20,8 +20,16 @@ import { getRecommendedWithReasons } from '../utils/recommendations';
 import { trackEvent } from '../utils/analytics';
 
 export const HomeView: React.FC = () => {
-  const { courses, getContinueWatchingList, user, setView, catalogStatus, reloadCatalog, weeklyPopularIds } =
-    useApp();
+  const {
+    courses,
+    getContinueWatchingList,
+    user,
+    setView,
+    catalogStatus,
+    reloadCatalog,
+    weeklyPopularIds,
+    myList,
+  } = useApp();
 
   useEffect(() => {
     trackEvent('library_view', { user_state: user.subscriptionPlan });
@@ -30,6 +38,10 @@ export const HomeView: React.FC = () => {
   const continueList = getContinueWatchingList();
   const firstContinue = continueList[0];
   const continueIds = useMemo(() => new Set(continueList.map((c) => c.course.id)), [continueList]);
+  const savedCourses = useMemo(() => {
+    const byId = new Map(courses.map((course) => [course.id, course]));
+    return myList.map((id) => byId.get(id)).filter((course): course is (typeof courses)[number] => Boolean(course));
+  }, [courses, myList]);
 
   const heroCourse =
     firstContinue?.course ||
@@ -149,6 +161,17 @@ export const HomeView: React.FC = () => {
             <StartHereRail {...pickStartHereCourses(courses, user)} />
           )}
         </div>
+
+        {savedCourses.length > 0 ? (
+          <CategoryRow
+            id="rail-list"
+            title="הרשימה שלי"
+            courses={savedCourses.slice(0, 8)}
+            sectionName="my_list"
+            onSeeAll={() => setView('mylist')}
+            seeAllLabel="לכל הרשימה"
+          />
+        ) : null}
 
         {isLoading ? (
           <>
