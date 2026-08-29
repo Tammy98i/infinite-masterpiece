@@ -240,11 +240,11 @@ export function Header() {
                   ספרייה
                 </Link>
               ) : null}
-              {!onWebinar ? <AccountMenu /> : null}
+              <AccountMenu />
             </div>
             <div className="flex items-center gap-2 lg:hidden">
               {compactBarCta()}
-              {!onWebinar ? <AccountMenu /> : null}
+              <AccountMenu />
               <button
                 type="button"
                 className="p-2 text-white/85 hover:text-white transition-colors min-h-11 min-w-11 flex items-center justify-center cursor-pointer"

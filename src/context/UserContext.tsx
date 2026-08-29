@@ -105,22 +105,27 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
+      if (restored) {
+        setAuthToken(restored.token);
+        setUser(fromPayload(restored.user));
+        if (!cancelled) setReady(true);
+        void authApi
+          .me()
+          .then(({ user: next }) => {
+            if (!cancelled) setUser(fromPayload(next));
+          })
+          .catch(() => undefined);
+        return;
+      }
+
       if (getAuthToken()) {
         try {
           const { user: next } = await authApi.me();
           if (!cancelled) setUser(fromPayload(next));
         } catch {
-          if (restored) {
-            setAuthToken(restored.token);
-            if (!cancelled) setUser(fromPayload(restored.user));
-          } else {
-            setAuthToken(null);
-            if (!cancelled) setUser(GUEST_USER);
-          }
+          setAuthToken(null);
+          if (!cancelled) setUser(GUEST_USER);
         }
-      } else if (restored) {
-        setAuthToken(restored.token);
-        setUser(fromPayload(restored.user));
       }
       if (!cancelled) setReady(true);
     };

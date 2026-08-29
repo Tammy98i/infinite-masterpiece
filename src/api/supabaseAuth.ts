@@ -7,6 +7,7 @@ import {
   loadSupabaseConfig,
   refreshAuthProviderFlags,
 } from '../lib/supabase';
+import { configuredAdminEmails } from '../data/adminEmails';
 import { payloadFromSupabase, type ProfileRow } from '../lib/supabaseUser';
 import { toE164IL } from '../utils/phone';
 import { apiRequest, type AuthUserPayload } from './auth';
@@ -112,7 +113,7 @@ export async function sessionFromSupabaseUser(accessToken: string, fullName = ''
         String(user.user_metadata?.full_name || user.user_metadata?.name || ''),
       avatar: typeof user.user_metadata?.avatar_url === 'string' ? user.user_metadata.avatar_url : null,
       profile,
-      extraAdminEmails: '',
+      extraAdminEmails: configuredAdminEmails().join(','),
     }),
   };
 }

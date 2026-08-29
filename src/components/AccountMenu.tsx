@@ -89,7 +89,9 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
       <button
         type="button"
         onClick={() => setOpen((v) => !v)}
-        aria-label="פתיחת החשבון"
+        aria-label={
+          isGuest ? 'פתיחת החשבון' : `חשבון ${user.name}${user.email ? `, ${user.email}` : ''}`
+        }
         aria-expanded={open}
         aria-haspopup="dialog"
         className={`inline-flex items-center gap-2 p-1 pl-3 rounded-full border transition-all min-h-11 ${
@@ -136,8 +138,14 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
               />
               <div className="min-w-0">
                 <div className="font-bold text-white truncate">{user.name}</div>
+                {user.email ? (
+                  <div className="text-[11px] text-white/55 truncate mt-0.5" dir="ltr">
+                    {user.email}
+                  </div>
+                ) : null}
                 <div className="text-[11px] text-primary-light font-semibold mt-0.5">
                   {planLabel(user.subscriptionPlan)}
+                  {user.role === 'admin' ? ' · אדמין' : ''}
                   {isTrial && user.trialEndsAt ? ` · עד ${user.trialEndsAt}` : ''}
                 </div>
               </div>
@@ -165,7 +173,7 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
             </button>
           )}
 
-          {(isGuest || isUnpaid || isTrial) && (
+          {(isGuest || ((isUnpaid || isTrial) && user.role !== 'admin')) && (
             <button
               type="button"
               onClick={goPricing}
