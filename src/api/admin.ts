@@ -152,6 +152,13 @@ export const adminApi = {
       body: JSON.stringify({ status }),
     }),
   users: () => apiRequest<{ users: AdminUserRow[] }>('/api/admin/users'),
+  adminEmails: () =>
+    apiRequest<{ emails: string[]; builtIn: string[]; extra: string[] }>('/api/admin/admin-emails'),
+  saveAdminEmails: (emails: string[]) =>
+    apiRequest<{ emails: string[]; builtIn: string[]; extra: string[] }>('/api/admin/admin-emails', {
+      method: 'PUT',
+      body: JSON.stringify({ emails }),
+    }),
   createUser: (payload: { fullName: string; email: string; password: string }) =>
     apiRequest<{ user: AdminUserRow }>('/api/admin/users', {
       method: 'POST',

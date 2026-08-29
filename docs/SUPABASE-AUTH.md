@@ -12,7 +12,7 @@
 1. כפתור «התחברות עם Google» כשיש URL+anon (build-time `VITE_*` או runtime מ־`GET /api/auth/providers`).
 2. אחרי Google חוזרים ל־`/auth/callback`. מקומית Express מסנכרן ל-SQLite. ב-Vercel יש פונקציות `api/auth/*` בלי SQLite, ואם גם הן חסומות — הסשן נשמר ישירות מ-Supabase בדפדפן.
 3. אפליקציה חיצונית שמתחברת דרך OAuth Server מגיעה ל־`/oauth/consent?authorization_id=…` (אישור / דחייה).
-4. האימייל `tam98iiy@gmail.com` מקבל תפקיד admin כשאין שורת `profiles`. אפשר להוסיף עוד ב־`VITE_ADMIN_EMAILS`.
+4. מיילים כאדמין: באדמין → משתמשים → «מיילים עם הרשאת אדמין», או בקובץ `src/data/adminEmails.ts`.
 5. SQL לפרופילים: [`supabase/profiles.sql`](../supabase/profiles.sql).
 
 ## הקמה (פעם אחת)

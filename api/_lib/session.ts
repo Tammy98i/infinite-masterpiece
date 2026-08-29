@@ -1,6 +1,5 @@
 import { SUPABASE_ANON_KEY, SUPABASE_PROJECT_URL } from '../../src/lib/supabasePublic';
-
-export const FOUNDER_ADMIN_EMAILS = ['tam98iiy@gmail.com'];
+import { BUILT_IN_ADMIN_EMAILS, mergeAdminEmails } from '../../src/data/adminEmails';
 
 export type SessionUser = {
   id: string;
@@ -25,11 +24,11 @@ type ProfileRow = {
 };
 
 function adminEmails() {
-  const extra = String(process.env.ADMIN_EMAILS || process.env.VITE_ADMIN_EMAILS || '')
-    .split(',')
-    .map((item) => item.trim().toLowerCase())
-    .filter(Boolean);
-  return [...new Set([...FOUNDER_ADMIN_EMAILS, ...extra])];
+  return mergeAdminEmails(
+    BUILT_IN_ADMIN_EMAILS,
+    process.env.ADMIN_EMAILS,
+    process.env.VITE_ADMIN_EMAILS
+  );
 }
 
 export function supabaseEnv() {

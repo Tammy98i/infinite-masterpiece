@@ -3,6 +3,14 @@ import { useApp } from '../context/AppContext';
 import { OnboardingCenterView } from './admin/OnboardingCenterView';
 import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/captions';
 import { adminApi, type AdminAnalytics, type AdminAuditLog, type AdminCrmLead, type AdminNotification, type AdminOverview, type AdminPaymentRow, type AdminPremium88Application, type AdminRaffleDashboard, type AdminReadiness, type AdminTrackLead, type AdminTracksDashboard, type AdminUserRow, type AdminWebinarDashboard, type CoursePayload } from '../api/admin';
+import {
+  BUILT_IN_ADMIN_EMAILS,
+  configuredAdminEmails,
+  mergeAdminEmails,
+  parseAdminEmails,
+  persistExtraAdminEmails,
+  setRuntimeAdminEmails,
+} from '../data/adminEmails';
 import { DEFAULT_WEBINAR_CONFIG, type WebinarConfig } from '../constants/webinar';
 import type { LecturerApplication } from '../api/lecturer';
 import type { AccessLevel, Category, Course, Instructor, PublishStatus } from '../types';
@@ -1255,6 +1263,124 @@ function CourseForm({
   );
 }
 
+function AdminEmailsCard({ onChanged }: { onChanged: () => void }) {
+  const [emails, setEmails] = useState<string[]>(() => configuredAdminEmails());
+  const [builtIn, setBuiltIn] = useState<string[]>([...BUILT_IN_ADMIN_EMAILS]);
+  const [draft, setDraft] = useState('');
+  const [pending, setPending] = useState(false);
+  const [error, setError] = useState('');
+
+  const load = async () => {
+    try {
+      const data = await adminApi.adminEmails();
+      setEmails(data.emails);
+      setBuiltIn(data.builtIn);
+      persistExtraAdminEmails(data.extra);
+      setRuntimeAdminEmails(data.emails);
+    } catch {
+      setEmails(configuredAdminEmails());
+      setBuiltIn([...BUILT_IN_ADMIN_EMAILS]);
+    }
+  };
+
+  useEffect(() => {
+    void load();
+  }, []);
+
+  const save = async (merged: string[]) => {
+    setPending(true);
+    setError('');
+    persistExtraAdminEmails(merged);
+    setRuntimeAdminEmails(merged);
+    try {
+      const data = await adminApi.saveAdminEmails(merged);
+      setEmails(data.emails);
+      persistExtraAdminEmails(data.extra);
+    } catch {
+      setEmails(configuredAdminEmails());
+    } finally {
+      setPending(false);
+      onChanged();
+    }
+  };
+
+  const add = () => {
+    const next = parseAdminEmails(draft);
+    if (!next.length) {
+      setError('נא להזין אימייל תקין');
+      return;
+    }
+    void save(mergeAdminEmails(emails, next));
+    setDraft('');
+  };
+
+  return (
+    <div className="border border-white/10 rounded-3xl p-6 grid gap-4 max-w-3xl">
+      <div>
+        <h2 className="text-lg font-light mb-1">מיילים עם הרשאת אדמין</h2>
+        <p className="text-sm text-white/45 font-light">
+          מי שמתחבר עם Google באחד המיילים האלה נכנס כאדמין. אפשר להוסיף כמה כתובות.
+        </p>
+      </div>
+      <ul className="grid gap-2">
+        {emails.map((email) => (
+          <li
+            key={email}
+            className="flex items-center justify-between gap-3 border border-white/10 rounded-2xl px-4 py-2 min-h-11"
+          >
+            <span className="text-sm text-white" dir="ltr">
+              {email}
+              {builtIn.includes(email) ? <span className="text-white/35"> · קבוע</span> : null}
+            </span>
+            {builtIn.includes(email) ? null : (
+              <button
+                type="button"
+                disabled={pending}
+                onClick={() => void save(emails.filter((item) => item !== email))}
+                className="text-xs text-white/45 hover:text-white min-h-11 px-2 cursor-pointer"
+              >
+                הסרה
+              </button>
+            )}
+          </li>
+        ))}
+      </ul>
+      <div className="flex flex-col sm:flex-row gap-3">
+        <label className="block grow">
+          <span className="sr-only">אימייל אדמין חדש</span>
+          <input
+            type="email"
+            dir="ltr"
+            value={draft}
+            onChange={(e) => setDraft(e.target.value)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                e.preventDefault();
+                add();
+              }
+            }}
+            placeholder="name@gmail.com"
+            className={fieldClass}
+          />
+        </label>
+        <button
+          type="button"
+          disabled={pending}
+          onClick={add}
+          className="px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
+        >
+          {pending ? 'שומר...' : 'הוספה'}
+        </button>
+      </div>
+      {error ? (
+        <p className="text-sm text-rose-300" role="alert">
+          {error}
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
 function UsersPanel() {
   const { reloadCatalog } = useApp();
   const [users, setUsers] = useState<AdminUserRow[]>([]);
@@ -1345,6 +1471,8 @@ function UsersPanel() {
   return (
     <div className="grid gap-8">
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+
+      <AdminEmailsCard onChanged={() => void load()} />
 
       <div className="border border-[#C8A24C]/25 rounded-3xl p-6 grid gap-4 max-w-3xl">
         <div>

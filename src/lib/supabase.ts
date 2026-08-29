@@ -1,6 +1,7 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { apiUrl } from './apiBase';
 import { SUPABASE_ANON_KEY, SUPABASE_PROJECT_URL } from './supabasePublic';
+import { setRuntimeAdminEmails } from '../data/adminEmails';
 
 const buildUrl = import.meta.env.VITE_SUPABASE_URL?.trim() || SUPABASE_PROJECT_URL;
 const buildAnon = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() || SUPABASE_ANON_KEY;
@@ -53,13 +54,15 @@ export function oauthRedirectTo() {
 export async function loadSupabaseConfig() {
   if (!configPromise) {
     configPromise = (async () => {
-      if (!isSupabaseAuthEnabled()) {
-        try {
-          const res = await fetch(apiUrl('/api/auth/providers'));
-          const data = (await res.json().catch(() => ({}))) as {
-            supabaseUrl?: string;
-            anonKey?: string;
-          };
+      try {
+        const res = await fetch(apiUrl('/api/auth/providers'));
+        const data = (await res.json().catch(() => ({}))) as {
+          supabaseUrl?: string;
+          anonKey?: string;
+          adminEmails?: string[];
+        };
+        if (Array.isArray(data.adminEmails)) setRuntimeAdminEmails(data.adminEmails);
+        if (!isSupabaseAuthEnabled()) {
           const nextUrl = String(data.supabaseUrl || '').trim();
           const nextAnon = String(data.anonKey || '').trim();
           if (nextUrl && nextAnon) {
@@ -67,9 +70,9 @@ export async function loadSupabaseConfig() {
             runtimeAnon = nextAnon;
             client = null;
           }
-        } catch {
-          /* Vercel without functions, or local API down */
         }
+      } catch {
+        /* Vercel without functions, or local API down */
       }
       await refreshGoogleProviderFlag();
       return isSupabaseAuthEnabled();

@@ -27,6 +27,7 @@ import { listPayments, recordPayment } from '../services/paymentService.js';
 import { authUser } from '../middleware/auth.js';
 import { isStripeEnabled } from '../services/stripeService.js';
 import { isS3Enabled } from '../services/s3Upload.js';
+import { listAdminEmails, saveExtraAdminEmails } from '../services/adminEmailsService.js';
 import { getSetting, setSetting } from '../services/settingsService.js';
 import { adminCreateUser } from '../services/authService.js';
 import { listAuditLogs, writeAudit } from '../services/auditService.js';
@@ -80,6 +81,27 @@ router.get('/readiness', (_req, res) => {
       courses,
       founders: listFounders().map(founderReadiness),
     });
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+});
+
+router.get('/admin-emails', (_req, res) => {
+  res.json(listAdminEmails());
+});
+
+router.put('/admin-emails', (req, res) => {
+  try {
+    const emails = Array.isArray(req.body?.emails) ? req.body.emails.map(String) : [];
+    const result = saveExtraAdminEmails(emails);
+    writeAudit({
+      adminUserId: authUser(req).id,
+      actionType: 'setting_updated',
+      entityType: 'setting',
+      entityId: 'admin_emails',
+      after: { emails: result.emails },
+    });
+    res.json(result);
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }

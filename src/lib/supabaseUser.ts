@@ -1,8 +1,6 @@
 import type { AuthUserPayload } from '../api/auth';
 import type { UserRole } from '../types';
-
-/** Gmail of the product owner — promoted to admin when profiles.role is missing. */
-export const FOUNDER_ADMIN_EMAILS = ['tam98iiy@gmail.com'];
+import { configuredAdminEmails } from '../data/adminEmails';
 
 export type ProfileRow = {
   role?: string | null;
@@ -14,11 +12,7 @@ export type ProfileRow = {
 };
 
 export function adminEmailList(extra = ''): string[] {
-  const fromExtra = extra
-    .split(',')
-    .map((item) => item.trim().toLowerCase())
-    .filter(Boolean);
-  return [...new Set([...FOUNDER_ADMIN_EMAILS, ...fromExtra])];
+  return configuredAdminEmails(extra);
 }
 
 export function roleFromProfile(profileRole: string | undefined | null, email: string, extraAdminEmails = ''): UserRole {

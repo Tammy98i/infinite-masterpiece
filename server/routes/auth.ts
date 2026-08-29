@@ -8,6 +8,8 @@ import {
   userFromToken,
   type DbPlan,
 } from '../services/authService.js';
+import { extraAdminEmails } from '../services/adminEmailsService.js';
+import { BUILT_IN_ADMIN_EMAILS, mergeAdminEmails } from '../../src/data/adminEmails.ts';
 import { syncSupabaseSession, isSupabaseAuthConfigured } from '../services/supabaseAuthService.js';
 import { trackEvent } from '../services/analyticsService.js';
 import { recordPayment } from '../services/paymentService.js';
@@ -17,9 +19,16 @@ const router = Router();
 router.get('/providers', (_req, res) => {
   const url = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '').trim().replace(/\/$/, '');
   const anonKey = (process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || '').trim();
+  const adminEmails = mergeAdminEmails(
+    BUILT_IN_ADMIN_EMAILS,
+    extraAdminEmails(),
+    process.env.ADMIN_EMAILS,
+    process.env.VITE_ADMIN_EMAILS
+  );
   res.json({
     local: true,
     supabase: isSupabaseAuthConfigured(),
+    adminEmails,
     ...(url && anonKey ? { supabaseUrl: url, anonKey } : {}),
   });
 });

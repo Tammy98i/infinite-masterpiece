@@ -4,8 +4,6 @@ import { apiRequest, type AuthUserPayload } from './auth';
 
 export { isSupabaseAuthEnabled };
 
-const extraAdminEmails = import.meta.env.VITE_ADMIN_EMAILS?.trim() || '';
-
 export class EmailConfirmationRequiredError extends Error {
   constructor() {
     super('נרשמת בהצלחה. בדקו את האימייל לאישור החשבון, ואז התחברו.');
@@ -74,7 +72,7 @@ export async function sessionFromSupabaseUser(accessToken: string, fullName = ''
         String(user.user_metadata?.full_name || user.user_metadata?.name || ''),
       avatar: typeof user.user_metadata?.avatar_url === 'string' ? user.user_metadata.avatar_url : null,
       profile,
-      extraAdminEmails,
+      extraAdminEmails: '',
     }),
   };
 }
