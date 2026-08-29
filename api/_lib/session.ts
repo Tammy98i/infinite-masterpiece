@@ -1,5 +1,18 @@
-import { SUPABASE_ANON_KEY, SUPABASE_PROJECT_URL } from '../../src/lib/supabasePublic';
-import { BUILT_IN_ADMIN_EMAILS, mergeAdminEmails } from '../../src/data/adminEmails';
+import { BUILT_IN_ADMIN_EMAILS, mergeAdminEmails, supabaseEnv } from './publicConfig.js';
+
+export { supabaseEnv };
+
+function digitsOnlyPhone(phone: string) {
+  return phone.replace(/[^\d]/g, '');
+}
+
+function formatPhoneDisplay(phone: string) {
+  return phone.trim();
+}
+
+function phonePlaceholderEmail(phone: string) {
+  return `${digitsOnlyPhone(phone)}@phone.infinitemasterpiece.local`;
+}
 
 export type SessionUser = {
   id: string;
@@ -12,6 +25,7 @@ export type SessionUser = {
   isFounder?: boolean;
   staffDesk?: string;
   staffStatus?: 'active' | 'suspended' | 'limited' | '';
+  phone?: string;
 };
 
 type ProfileRow = {
@@ -24,34 +38,26 @@ type ProfileRow = {
 };
 
 function adminEmails() {
-  return mergeAdminEmails(
-    BUILT_IN_ADMIN_EMAILS,
-    process.env.ADMIN_EMAILS,
-    process.env.VITE_ADMIN_EMAILS
-  );
-}
-
-export function supabaseEnv() {
-  const url = (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || SUPABASE_PROJECT_URL)
-    .trim()
-    .replace(/\/$/, '');
-  const anonKey = (process.env.SUPABASE_ANON_KEY || process.env.VITE_SUPABASE_ANON_KEY || SUPABASE_ANON_KEY).trim();
-  return { url, anonKey };
+  return mergeAdminEmails(BUILT_IN_ADMIN_EMAILS, process.env.ADMIN_EMAILS, process.env.VITE_ADMIN_EMAILS);
 }
 
 export function mapUser(input: {
   id: string;
   email?: string | null;
+  phone?: string | null;
   fullName?: string;
   avatar?: string | null;
   profile?: ProfileRow | null;
 }): SessionUser {
-  const email = String(input.email || '')
+  const phone = String(input.phone || '').trim();
+  const rawEmail = String(input.email || '')
     .trim()
     .toLowerCase();
+  const email = rawEmail.includes('@') ? rawEmail : phone ? phonePlaceholderEmail(phone) : '';
   const name =
     input.fullName?.trim() ||
     input.profile?.full_name?.trim() ||
+    (phone ? formatPhoneDisplay(phone) : '') ||
     email.split('@')[0] ||
     'משתמש/ת';
   const plan = input.profile?.subscription_plan;
@@ -78,12 +84,14 @@ export function mapUser(input: {
     isFounder: Boolean(input.profile?.is_founder),
     staffDesk: ['content', 'support', 'sales', 'legal', 'finance', 'community'].includes(desk) ? desk : '',
     staffStatus: (['active', 'suspended', 'limited'].includes(status) ? status : 'active') as SessionUser['staffStatus'],
+    phone: phone || undefined,
   };
 }
 
 type AuthUser = {
   id: string;
   email?: string | null;
+  phone?: string | null;
   user_metadata?: { full_name?: string; name?: string; avatar_url?: string };
 };
 
@@ -123,6 +131,7 @@ export async function sessionFromAccessToken(accessToken: string, fullName = '')
   const user = mapUser({
     id: remote.id,
     email: remote.email,
+    phone: remote.phone,
     fullName: fullName || remote.user_metadata?.full_name || remote.user_metadata?.name || '',
     avatar: remote.user_metadata?.avatar_url || null,
     profile,

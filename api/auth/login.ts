@@ -1,8 +1,9 @@
-import { previewLogin as matchPreview } from '../../src/lib/previewAuth';
+import { jsonBody } from '../_lib/body.js';
+import { previewLogin as matchPreview } from '../_lib/previewLogin.js';
 
 type VercelReq = {
   method?: string;
-  body?: { email?: string; password?: string };
+  body?: unknown;
 };
 
 type VercelRes = {
@@ -16,7 +17,8 @@ export default function handler(req: VercelReq, res: VercelRes) {
     return;
   }
   try {
-    const result = matchPreview(String(req.body?.email || ''), String(req.body?.password || ''));
+    const body = jsonBody(req);
+    const result = matchPreview(String(body.email || ''), String(body.password || ''));
     res.status(200).json(result);
   } catch (err) {
     res.status(401).json({ error: (err as Error).message || 'אימייל או סיסמה שגויים' });
