@@ -45,11 +45,11 @@ function errorMessageFromBody(data: unknown, status: number) {
       ? payload.error.message || payload.error.code
       : payload.error;
   if (status === 401 && (payload.protection?.vercel_auth_enabled || nested === 'Protected deployment')) {
-    return 'הפריוויו של Vercel מוגן, ואין שם שרת התחברות. התחברו מקומית עם npm run dev, או חברו API (ראה docs/SUPABASE-AUTH.md).';
+    return 'הפריוויו של Vercel מוגן. התחברו אחרי שמכבים Deployment Protection, או הריצו npm run dev מקומית.';
   }
   if (typeof nested === 'string' && nested.trim()) return nested;
   if (status === 404 || status === 405) {
-    return 'שרת ההתחברות לא זמין בכתובת הזו. מקומית הריצו npm run dev.';
+    return 'נקודת הקצה לא זמינה בפריסה הזו. בדקו שהפריסה עודכנה, או הריצו npm run dev מקומית.';
   }
   return 'הבקשה נכשלה';
 }

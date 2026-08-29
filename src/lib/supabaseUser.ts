@@ -80,6 +80,7 @@ export function isApiUnavailableMessage(message: string) {
     message.includes('לא ניתן להתחבר') ||
     message.includes('השרת לא זמין') ||
     message.includes('שרת ההתחברות לא זמין') ||
+    message.includes('נקודת הקצה לא זמינה') ||
     message.includes('הריצו npm run server') ||
     message.includes('הריצו npm run dev') ||
     message.includes('פריוויו של Vercel') ||

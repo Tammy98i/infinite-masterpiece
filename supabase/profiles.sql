@@ -29,14 +29,48 @@ create policy "profiles_update_own_name"
   using (auth.uid() = id)
   with check (auth.uid() = id);
 
+-- Avoid recursive RLS: policies call this security-definer helper instead of querying profiles.
+create or replace function public.is_admin()
+returns boolean
+language sql
+security definer
+set search_path = public
+stable
+as $$
+  select
+    exists (
+      select 1
+      from public.profiles
+      where id = auth.uid() and role = 'admin'
+    )
+    or lower(coalesce(auth.jwt() ->> 'email', '')) in (
+      'tam98iiy@gmail.com',
+      'infinite.masterpiece8@gmail.com'
+    );
+$$;
+
+revoke all on function public.is_admin() from public;
+grant execute on function public.is_admin() to authenticated, anon;
+
+drop policy if exists "profiles_admin_select" on public.profiles;
+create policy "profiles_admin_select"
+  on public.profiles for select
+  using (public.is_admin());
+
+drop policy if exists "profiles_admin_update" on public.profiles;
+create policy "profiles_admin_update"
+  on public.profiles for update
+  using (public.is_admin())
+  with check (public.is_admin());
+
 -- Users may only change their own display name; privileged fields stay server-side.
--- service_role (dashboard / admin API) may update role and staff fields.
+-- service_role and signed-in admins may update role and staff fields.
 create or replace function public.protect_profile_privileged_fields()
 returns trigger
 language plpgsql
 as $$
 begin
-  if auth.role() = 'service_role' then
+  if auth.role() = 'service_role' or public.is_admin() then
     new.updated_at = now();
     return new;
   end if;

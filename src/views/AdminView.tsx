@@ -562,7 +562,13 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
       .catch((err) => setError(err instanceof Error ? err.message : 'טעינה נכשלה'));
   }, []);
 
-  if (error) return <p className="text-sm text-rose-300">{error}</p>;
+  if (error) {
+    return (
+      <p className="text-sm text-rose-300" role="alert">
+        {error}
+      </p>
+    );
+  }
   if (!data) return <p className="text-sm text-white/40">טוען...</p>;
 
   const cards = [
