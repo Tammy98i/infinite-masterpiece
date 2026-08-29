@@ -1319,7 +1319,7 @@ function AdminEmailsCard({ onChanged }: { onChanged: () => void }) {
       <div>
         <h2 className="text-lg font-light mb-1">מיילים עם הרשאת אדמין</h2>
         <p className="text-sm text-white/45 font-light">
-          מי שמתחבר עם Google באחד המיילים האלה נכנס כאדמין. אפשר להוסיף כמה כתובות.
+          מי שמתחבר באחד המיילים האלה — באימייל וסיסמה או ב-Google — נכנס כאדמין.
         </p>
       </div>
       <ul className="grid gap-2">
