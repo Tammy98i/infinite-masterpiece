@@ -6,6 +6,20 @@ import {defineConfig} from 'vite';
 export default defineConfig(() => {
   return {
     plugins: [react(), tailwindcss()],
+    build: {
+      chunkSizeWarningLimit: 900,
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            if (id.includes('node_modules/react-dom') || id.includes('node_modules/react/')) return 'react';
+            if (id.includes('node_modules/react-router')) return 'react';
+            if (id.includes('node_modules/@supabase')) return 'supabase';
+            if (id.includes('node_modules/motion') || id.includes('node_modules/lucide-react')) return 'ui';
+            return undefined;
+          },
+        },
+      },
+    },
     resolve: {
       alias: {
         '@': path.resolve(__dirname, '.'),

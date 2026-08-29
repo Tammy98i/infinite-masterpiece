@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { isApiUnavailableMessage, overlayApiUser, payloadFromSupabase, roleFromProfile } from './supabaseUser.ts';
+import { isApiUnavailableMessage, overlayApiUser, payloadFromSupabase, phoneProfileIdentity, roleFromProfile } from './supabaseUser.ts';
 
 test('overlayApiUser keeps the Supabase email and admin role', () => {
   const current = payloadFromSupabase({
@@ -60,6 +60,13 @@ test('treats a network failure without asking to run npm', () => {
 test('built-in operations email is admin even if the profile row is still user', () => {
   assert.equal(roleFromProfile('user', 'infinite.masterpiece8@gmail.com'), 'admin');
   assert.equal(roleFromProfile(null, '  Infinite.Masterpiece8@gmail.com  '), 'admin');
+});
+
+test('phoneProfileIdentity stores a placeholder email and display name', () => {
+  const identity = phoneProfileIdentity('+972501234567', 'דנה כהן');
+  assert.equal(identity.email, '972501234567@phone.infinitemasterpiece.local');
+  assert.equal(identity.fullName, 'דנה כהן');
+  assert.equal(identity.phone, '+972501234567');
 });
 
 test('payloadFromSupabase keeps the email and display name on the session', () => {

@@ -140,7 +140,7 @@ export const AuthModal: React.FC = () => {
   };
 
   const sendOtp = async () => {
-    await startPhoneOtp(phone);
+    await startPhoneOtp(phone, name);
     setOtpSent(true);
     setResendIn(OTP_COOLDOWN_SEC);
     setErrorKind('info');

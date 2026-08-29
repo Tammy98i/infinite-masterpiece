@@ -1,9 +1,8 @@
 import { randomUUID } from 'crypto';
 import { getDb } from '../db/connection.js';
-import { createSession, userFromToken, type AuthUser } from './authService.js';
+import { createSession, userFromId, userFromToken, type AuthUser } from './authService.js';
 import { phonePlaceholderEmail } from '../../src/utils/phone.ts';
 import { BUILT_IN_ADMIN_EMAILS } from '../../src/data/adminEmails.ts';
-import { sessionFromAccessToken } from '../../api/_lib/session.ts';
 
 type SupabaseUserPayload = {
   id: string;
@@ -81,10 +80,7 @@ function upsertLocalUserFromSupabase(input: {
   return id;
 }
 
-export async function syncSupabaseSession(accessToken: string, fullNameHint = '') {
-  if (!supabaseConfigured()) {
-    throw Object.assign(new Error('התחברות חיצונית אינה מוגדרת בשרת'), { status: 503 });
-  }
+async function localUserFromAccessToken(accessToken: string, fullNameHint = '') {
   const remote = await fetchSupabaseUser(accessToken);
   const phone = String(remote.phone || '').trim();
   const email = String(remote.email || '')
@@ -112,10 +108,18 @@ export async function syncSupabaseSession(accessToken: string, fullNameHint = ''
     throw Object.assign(new Error('הגישה הושהתה. פנו לאדמין'), { status: 403 });
   }
 
-  const token = createSession(userId);
-  const user = userFromToken(token);
-  if (!user) throw Object.assign(new Error('כשל ביצירת סשן'), { status: 500 });
-  return { token, user, supabaseUserId: remote.id };
+  const user = userFromId(userId);
+  if (!user) throw Object.assign(new Error('כשל בזיהוי המשתמש'), { status: 500 });
+  return { user, supabaseUserId: remote.id };
+}
+
+export async function syncSupabaseSession(accessToken: string, fullNameHint = '') {
+  if (!supabaseConfigured()) {
+    throw Object.assign(new Error('התחברות חיצונית אינה מוגדרת בשרת'), { status: 503 });
+  }
+  const { user, supabaseUserId } = await localUserFromAccessToken(accessToken, fullNameHint);
+  const token = createSession(user.id);
+  return { token, user, supabaseUserId };
 }
 
 export async function userFromBearer(token: string | undefined): Promise<AuthUser | null> {
@@ -123,19 +127,10 @@ export async function userFromBearer(token: string | undefined): Promise<AuthUse
   if (local) return local;
   if (!token || token.split('.').length < 3) return null;
   try {
-    const { user } = await sessionFromAccessToken(token);
-    return {
-      id: user.id,
-      email: user.email,
-      name: user.name,
-      role: user.role,
-      subscriptionPlan: user.subscriptionPlan,
-      interests: user.interests,
-      avatar: user.avatar,
-      isFounder: user.isFounder,
-      staffDesk: (user.staffDesk || '') as AuthUser['staffDesk'],
-      staffStatus: user.staffStatus === '' ? 'active' : user.staffStatus,
-    };
+    // Keep the browser on the Supabase JWT (Vercel + identity overlay), but map
+    // it to the local SQLite user so progress/list/subscription FKs match.
+    const { user } = await localUserFromAccessToken(token);
+    return user;
   } catch {
     return null;
   }

@@ -55,7 +55,7 @@ interface UserContextType {
   isWelcomeOpen: boolean;
   login: (email: string, password: string) => Promise<AuthUserPayload>;
   register: (name: string, email: string, password: string) => Promise<AuthUserPayload>;
-  startPhoneOtp: (phone: string) => Promise<void>;
+  startPhoneOtp: (phone: string, fullName?: string) => Promise<void>;
   verifyPhoneOtp: (phone: string, code: string, fullName?: string) => Promise<AuthUserPayload>;
   requestPasswordReset: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
@@ -246,8 +246,8 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     return result.user;
   };
 
-  const startPhoneOtp = async (phone: string) => {
-    await supabaseStartPhoneOtp(phone);
+  const startPhoneOtp = async (phone: string, fullName = '') => {
+    await supabaseStartPhoneOtp(phone, fullName);
   };
 
   const verifyPhoneOtp = async (phone: string, code: string, fullName = '') => {

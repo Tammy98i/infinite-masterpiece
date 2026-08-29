@@ -8,7 +8,7 @@ import {
   refreshAuthProviderFlags,
 } from '../lib/supabase';
 import { configuredAdminEmails } from '../data/adminEmails';
-import { payloadFromSupabase, type ProfileRow } from '../lib/supabaseUser';
+import { payloadFromSupabase, phoneProfileIdentity, type ProfileRow } from '../lib/supabaseUser';
 import { hebrewAuthError } from '../lib/hebrewAuthError';
 import { markExpectedPasswordRecovery, markPasswordRecovery, clearPasswordRecovery } from '../lib/passwordRecovery';
 import { shouldExchangeAuthCode } from '../lib/oauthCallback';
@@ -134,7 +134,21 @@ export async function supabaseRegister(fullName: string, email: string, password
   }
 }
 
-export async function supabaseStartPhoneOtp(phone: string) {
+async function persistOwnPhoneProfile(userId: string, phone: string, fullName: string) {
+  const supabase = getSupabase();
+  if (!supabase) return;
+  const identity = phoneProfileIdentity(phone, fullName);
+  await supabase.auth.updateUser({ data: { full_name: identity.fullName } }).catch(() => undefined);
+  await supabase
+    .from('profiles')
+    .update({ full_name: identity.fullName })
+    .eq('id', userId);
+  // Email is blocked when the current value is already set; filling a blank
+  // email is allowed after the SQL trigger in supabase/profiles.sql is applied.
+  await supabase.from('profiles').update({ email: identity.email }).eq('id', userId);
+}
+
+export async function supabaseStartPhoneOtp(phone: string, fullName = '') {
   const supabase = getSupabase();
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
   await loadSupabaseConfig();
@@ -146,7 +160,10 @@ export async function supabaseStartPhoneOtp(phone: string) {
   }
 
   const e164 = requireE164(phone);
-  const { error } = await supabase.auth.signInWithOtp({ phone: e164 });
+  const { error } = await supabase.auth.signInWithOtp({
+    phone: e164,
+    options: fullName.trim() ? { data: { full_name: fullName.trim() } } : undefined,
+  });
   if (error) throw new Error(hebrewAuthError(error.message));
   return e164;
 }
@@ -168,8 +185,8 @@ export async function supabaseVerifyPhoneOtp(phone: string, code: string, fullNa
     throw new Error(hebrewAuthError(error?.message || 'הקוד שגוי. בדקו את ההודעה ונסו שוב'));
   }
 
-  if (fullName.trim() && data.user) {
-    await supabase.auth.updateUser({ data: { full_name: fullName.trim() } }).catch(() => undefined);
+  if (data.user) {
+    await persistOwnPhoneProfile(data.user.id, e164, fullName).catch(() => undefined);
   }
 
   return syncAccessToken(data.session.access_token, fullName);

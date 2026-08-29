@@ -186,6 +186,17 @@ export function clearUserSessions(userId: string) {
   getDb().prepare(`DELETE FROM sessions WHERE user_id = ?`).run(userId);
 }
 
+export function userFromId(userId: string): AuthUser | null {
+  const row = getDb().prepare(`SELECT * FROM users WHERE id = ?`).get(userId) as
+    | Record<string, unknown>
+    | undefined;
+  if (!row) return null;
+  if (Number(row.blocked) === 1 || String(row.staff_status || 'active') === 'suspended') {
+    return null;
+  }
+  return rowToUser(row);
+}
+
 export function userFromToken(token: string | undefined) {
   if (!token) return null;
   const db = getDb();
@@ -197,15 +208,12 @@ export function userFromToken(token: string | undefined) {
     db.prepare(`DELETE FROM sessions WHERE token = ?`).run(token);
     return null;
   }
-  const row = db.prepare(`SELECT * FROM users WHERE id = ?`).get(String(session.user_id)) as
-    | Record<string, unknown>
-    | undefined;
-  if (!row) return null;
-  if (Number(row.blocked) === 1 || String(row.staff_status || 'active') === 'suspended') {
-    db.prepare(`DELETE FROM sessions WHERE user_id = ?`).run(String(row.id));
+  const user = userFromId(String(session.user_id));
+  if (!user) {
+    db.prepare(`DELETE FROM sessions WHERE token = ?`).run(token);
     return null;
   }
-  return rowToUser(row);
+  return user;
 }
 
 export function logoutToken(token: string | undefined) {
@@ -220,8 +228,9 @@ export function updateSubscription(userId: string, plan: DbPlan, trialEndsAt?: s
     trialEndsAt ?? null,
     userId
   );
-  const row = db.prepare(`SELECT * FROM users WHERE id = ?`).get(userId) as Record<string, unknown>;
-  return rowToUser(row);
+  const user = userFromId(userId);
+  if (!user) throw Object.assign(new Error('לא ניתן לעדכן את המנוי'), { status: 404 });
+  return user;
 }
 
 export function updateInterests(userId: string, interests: string[]) {

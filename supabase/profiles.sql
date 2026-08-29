@@ -78,8 +78,11 @@ begin
      or new.subscription_plan is distinct from old.subscription_plan
      or new.staff_desk is distinct from old.staff_desk
      or new.staff_status is distinct from old.staff_status
-     or new.is_founder is distinct from old.is_founder
-     or new.email is distinct from old.email then
+     or new.is_founder is distinct from old.is_founder then
+    raise exception 'לא ניתן לעדכן שדות הרשאה מפרופיל המשתמש';
+  end if;
+  -- Phone OTP users start with a blank email; they may fill it once.
+  if new.email is distinct from old.email and coalesce(old.email, '') <> '' then
     raise exception 'לא ניתן לעדכן שדות הרשאה מפרופיל המשתמש';
   end if;
   new.updated_at = now();
@@ -103,7 +106,14 @@ begin
   insert into public.profiles (id, email, full_name, role)
   values (
     new.id,
-    coalesce(new.email, ''),
+    coalesce(
+      nullif(new.email, ''),
+      case
+        when coalesce(new.phone, '') <> '' then
+          regexp_replace(new.phone, '[^0-9]', '', 'g') || '@phone.infinitemasterpiece.local'
+        else ''
+      end
+    ),
     coalesce(new.raw_user_meta_data->>'full_name', ''),
     case
       when lower(coalesce(new.email, '')) in (

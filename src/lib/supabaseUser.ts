@@ -75,6 +75,14 @@ export function payloadFromSupabase(input: {
   };
 }
 
+/** Name + phone-derived email stored on public.profiles after phone OTP. */
+export function phoneProfileIdentity(phone: string, fullName = '') {
+  const e164 = String(phone || '').trim();
+  const email = phonePlaceholderEmail(e164);
+  const name = fullName.trim() || formatPhoneDisplay(e164);
+  return { email, fullName: name, phone: e164 };
+}
+
 /** Keep the Supabase browser identity when the local/Vercel API returns a different row. */
 export function overlayApiUser(current: AuthUserPayload, next: AuthUserPayload): AuthUserPayload {
   if (current.email && next.email && current.email !== next.email) return current;
