@@ -78,7 +78,10 @@ export function payloadFromSupabase(input: {
 export function isApiUnavailableMessage(message: string) {
   return (
     message.includes('לא ניתן להתחבר') ||
+    message.includes('השרת לא זמין') ||
     message.includes('שרת ההתחברות לא זמין') ||
+    message.includes('הריצו npm run server') ||
+    message.includes('הריצו npm run dev') ||
     message.includes('פריוויו של Vercel') ||
     message.includes('התחברות חיצונית אינה מוגדרת') ||
     message.includes('Protected deployment')

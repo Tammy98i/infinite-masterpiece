@@ -11,7 +11,7 @@
 
 1. חלון התחברות: **אימייל וסיסמה** הוא הנתיב הראשי (`signUp` / `signInWithPassword`, כולל אימות סיסמה ו«שכחתי סיסמה»). טלפון שולח OTP ב-SMS (`signInWithOtp` / `verifyOtp`). Google הוא כפתור משני מתחת למפריד «או».
 2. הסשן נשמר ב-Supabase (`persistSession` + `onAuthStateChange`). רענון הדף לא מנתק. התנתקות: `supabase.auth.signOut()`.
-3. אחרי אישור מייל / איפוס סיסמה / Google חוזרים ל־`/auth/callback`. איפוס סיסמה ממשיך ל־`/auth/reset`. מקומית Express מסנכרן ל-SQLite. ב-Vercel יש פונקציות `api/auth/*` בלי SQLite, ואם גם הן חסומות — הסשן נשמר ישירות מ-Supabase בדפדפן.
+3. אחרי אישור מייל / איפוס סיסמה / Google חוזרים ל־`/auth/callback`. איפוס סיסמה ממשיך ל־`/auth/reset`. מקומית Express מסנכרן ל-SQLite אם הוא רץ (`npm run dev` מפעיל גם את השרת). אם ה-API לא רץ או חסום ב-Vercel — ההתחברות נשמרת ישירות מ-Supabase בדפדפן, בלי לבקש `npm run server`.
 4. אפליקציה חיצונית שמתחברת דרך OAuth Server מגיעה ל־`/oauth/consent?authorization_id=…` (אישור / דחייה).
 5. מיילים כאדמין: באדמין → משתמשים → «מיילים עם הרשאת אדמין», או בקובץ `src/data/adminEmails.ts`.
 6. SQL לפרופילים: [`supabase/profiles.sql`](../supabase/profiles.sql).
