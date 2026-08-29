@@ -5,12 +5,11 @@ import {
   registerUser,
   updateInterests,
   updateSubscription,
-  userFromToken,
   type DbPlan,
 } from '../services/authService.js';
 import { extraAdminEmails } from '../services/adminEmailsService.js';
 import { BUILT_IN_ADMIN_EMAILS, mergeAdminEmails } from '../../src/data/adminEmails.ts';
-import { syncSupabaseSession, isSupabaseAuthConfigured } from '../services/supabaseAuthService.js';
+import { syncSupabaseSession, isSupabaseAuthConfigured, userFromBearer } from '../services/supabaseAuthService.js';
 import { trackEvent } from '../services/analyticsService.js';
 import { recordPayment } from '../services/paymentService.js';
 
@@ -86,8 +85,8 @@ router.post('/logout', (req, res) => {
   res.json({ ok: true });
 });
 
-router.get('/me', (req, res) => {
-  const user = userFromToken(bearer(req));
+router.get('/me', async (req, res) => {
+  const user = await userFromBearer(bearer(req));
   if (!user) {
     res.status(401).json({ error: 'יש להתחבר מחדש' });
     return;
@@ -95,8 +94,8 @@ router.get('/me', (req, res) => {
   res.json({ user });
 });
 
-router.patch('/subscription', (req, res) => {
-  const user = userFromToken(bearer(req));
+router.patch('/subscription', async (req, res) => {
+  const user = await userFromBearer(bearer(req));
   if (!user) {
     res.status(401).json({ error: 'יש להתחבר מחדש' });
     return;
@@ -121,8 +120,8 @@ router.patch('/subscription', (req, res) => {
   res.json({ user: next });
 });
 
-router.patch('/interests', (req, res) => {
-  const user = userFromToken(bearer(req));
+router.patch('/interests', async (req, res) => {
+  const user = await userFromBearer(bearer(req));
   if (!user) {
     res.status(401).json({ error: 'יש להתחבר מחדש' });
     return;

@@ -22,7 +22,7 @@ import {
 } from '../api/supabaseAuth';
 import { isGoogleProviderEnabled, isPhoneProviderEnabled, loadSupabaseConfig } from '../lib/supabase';
 import { previewLogin, previewRegister, previewSessionFromToken, isPreviewToken, isDemoEmail } from '../lib/previewAuth';
-import { isApiUnavailableMessage } from '../lib/supabaseUser';
+import { isApiUnavailableMessage, overlayApiUser } from '../lib/supabaseUser';
 
 const GUEST_USER: UserProfile = {
   id: 'guest',
@@ -112,7 +112,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         void authApi
           .me()
           .then(({ user: next }) => {
-            if (!cancelled) setUser(fromPayload(next));
+            if (!cancelled) setUser(fromPayload(overlayApiUser(restored.user, next)));
           })
           .catch(() => undefined);
         return;
@@ -318,11 +318,16 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser(GUEST_USER);
       return;
     }
+    const restored = await restoreSupabaseBrowserSession();
     try {
       const { user: next } = await authApi.me();
+      if (restored) {
+        setAuthToken(restored.token);
+        setUser(fromPayload(overlayApiUser(restored.user, next)));
+        return;
+      }
       setUser(fromPayload(next));
     } catch {
-      const restored = await restoreSupabaseBrowserSession();
       if (restored) {
         setAuthToken(restored.token);
         setUser(fromPayload(restored.user));

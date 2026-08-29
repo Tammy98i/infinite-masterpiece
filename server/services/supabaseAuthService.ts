@@ -1,7 +1,9 @@
 import { randomUUID } from 'crypto';
 import { getDb } from '../db/connection.js';
-import { createSession, userFromToken } from './authService.js';
+import { createSession, userFromToken, type AuthUser } from './authService.js';
 import { phonePlaceholderEmail } from '../../src/utils/phone.ts';
+import { BUILT_IN_ADMIN_EMAILS } from '../../src/data/adminEmails.ts';
+import { sessionFromAccessToken } from '../../api/_lib/session.ts';
 
 type SupabaseUserPayload = {
   id: string;
@@ -50,6 +52,7 @@ function upsertLocalUserFromSupabase(input: {
   if (bySupabase) {
     db.prepare(
       `UPDATE users SET email = ?, full_name = COALESCE(NULLIF(?, ''), full_name), last_login_at = datetime('now')
+       ${BUILT_IN_ADMIN_EMAILS.includes(email) ? `, role = 'admin'` : ''}
        WHERE id = ?`
     ).run(email, input.fullName, String(bySupabase.id));
     return String(bySupabase.id);
@@ -61,6 +64,7 @@ function upsertLocalUserFromSupabase(input: {
   if (byEmail) {
     db.prepare(
       `UPDATE users SET supabase_user_id = ?, full_name = COALESCE(NULLIF(?, ''), full_name), last_login_at = datetime('now')
+       ${BUILT_IN_ADMIN_EMAILS.includes(email) ? `, role = 'admin'` : ''}
        WHERE id = ?`
     ).run(input.supabaseUserId, input.fullName, String(byEmail.id));
     return String(byEmail.id);
@@ -68,10 +72,11 @@ function upsertLocalUserFromSupabase(input: {
 
   const id = `user-${randomUUID()}`;
   const name = input.fullName.trim() || email.split('@')[0] || 'משתמש/ת';
+  const role = BUILT_IN_ADMIN_EMAILS.includes(email) ? 'admin' : 'user';
   db.prepare(
     `INSERT INTO users (id, email, password_hash, full_name, role, supabase_user_id, last_login_at)
-     VALUES (?, ?, ?, ?, 'user', ?, datetime('now'))`
-  ).run(id, email, `supabase:${input.supabaseUserId}`, name, input.supabaseUserId);
+     VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`
+  ).run(id, email, `supabase:${input.supabaseUserId}`, name, role, input.supabaseUserId);
 
   return id;
 }
@@ -111,4 +116,27 @@ export async function syncSupabaseSession(accessToken: string, fullNameHint = ''
   const user = userFromToken(token);
   if (!user) throw Object.assign(new Error('כשל ביצירת סשן'), { status: 500 });
   return { token, user, supabaseUserId: remote.id };
+}
+
+export async function userFromBearer(token: string | undefined): Promise<AuthUser | null> {
+  const local = userFromToken(token);
+  if (local) return local;
+  if (!token || token.split('.').length < 3) return null;
+  try {
+    const { user } = await sessionFromAccessToken(token);
+    return {
+      id: user.id,
+      email: user.email,
+      name: user.name,
+      role: user.role,
+      subscriptionPlan: user.subscriptionPlan,
+      interests: user.interests,
+      avatar: user.avatar,
+      isFounder: user.isFounder,
+      staffDesk: (user.staffDesk || '') as AuthUser['staffDesk'],
+      staffStatus: user.staffStatus === '' ? 'active' : user.staffStatus,
+    };
+  } catch {
+    return null;
+  }
 }

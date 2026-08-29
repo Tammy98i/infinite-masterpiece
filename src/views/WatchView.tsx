@@ -34,6 +34,7 @@ export const WatchView: React.FC = () => {
     updateProgress,
     watchProgress,
     user,
+    isGuest,
   } = useApp();
   const { muteMedia } = useA11yPrefs();
 
@@ -437,6 +438,11 @@ export const WatchView: React.FC = () => {
           {previewing ? (
             <span className="text-[11px] text-[#C8A24C] border border-[#C8A24C]/40 rounded-full px-2 py-0.5">
               טעימה
+            </span>
+          ) : null}
+          {!isGuest && user.email ? (
+            <span className="hidden sm:inline text-[11px] text-white/45 truncate max-w-[200px]" dir="ltr">
+              {user.email}
             </span>
           ) : null}
         </button>

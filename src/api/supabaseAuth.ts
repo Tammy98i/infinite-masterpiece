@@ -131,24 +131,14 @@ export async function restoreSupabaseBrowserSession() {
 }
 
 async function syncAccessToken(accessToken: string, fullName = '') {
-  const fromSupabase = () => sessionFromSupabaseUser(accessToken, fullName);
-  try {
-    const controller = new AbortController();
-    const timer = setTimeout(() => controller.abort(), 3500);
-    try {
-      return await apiRequest<{ token: string; user: AuthUserPayload }>('/api/auth/supabase', {
-        method: 'POST',
-        body: JSON.stringify({ accessToken, fullName }),
-        signal: controller.signal,
-      });
-    } finally {
-      clearTimeout(timer);
-    }
-  } catch {
-    // Express / Vercel API is optional. After a successful Supabase sign-in the
-    // browser session is enough — never ask the user to run `npm run server`.
-    return fromSupabase();
-  }
+  const fromSupabase = await sessionFromSupabaseUser(accessToken, fullName);
+  // Express / Vercel may mirror the user into a local DB. That row must never
+  // replace the Supabase identity (email, role, id) shown across the site.
+  void apiRequest<{ token: string; user: AuthUserPayload }>('/api/auth/supabase', {
+    method: 'POST',
+    body: JSON.stringify({ accessToken, fullName }),
+  }).catch(() => undefined);
+  return fromSupabase;
 }
 
 export async function supabaseLogin(email: string, password: string) {

@@ -75,6 +75,19 @@ export function payloadFromSupabase(input: {
   };
 }
 
+/** Keep the Supabase browser identity when the local/Vercel API returns a different row. */
+export function overlayApiUser(current: AuthUserPayload, next: AuthUserPayload): AuthUserPayload {
+  if (current.email && next.email && current.email !== next.email) return current;
+  return {
+    ...next,
+    id: current.id || next.id,
+    email: current.email || next.email,
+    name: current.name || next.name,
+    role: current.role === 'admin' || next.role === 'admin' ? 'admin' : next.role || current.role,
+    phone: current.phone || next.phone,
+  };
+}
+
 export function isApiUnavailableMessage(message: string) {
   return (
     message.includes('לא ניתן להתחבר') ||
