@@ -1,4 +1,4 @@
-import { bearer, sessionFromAccessToken, supabaseEnv } from '../_lib/session';
+import { bearer, sessionFromAccessToken, supabaseEnv } from '../_lib/session.js';
 
 type VercelReq = {
   method?: string;

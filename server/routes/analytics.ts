@@ -8,7 +8,8 @@ const router = Router();
 router.post('/', (req, res) => {
   const event = String(req.body?.event || '');
   if (!isAllowedEvent(event)) {
-    res.status(400).json({ error: 'אירוע לא מוכר' });
+    // Analytics should never surface as a user-facing console error.
+    res.status(204).end();
     return;
   }
   const raw = req.body?.properties;
