@@ -438,7 +438,7 @@ export const AuthModal: React.FC = () => {
           </form>
         )}
 
-        {mode !== 'forgot' && googleAuthEnabled ? (
+        {mode !== 'forgot' && (googleAuthEnabled || supabaseAuthEnabled) ? (
           <>
             <div className="my-5 flex items-center gap-3" role="separator" aria-label="או">
               <span className="h-px flex-1 bg-white/10" />

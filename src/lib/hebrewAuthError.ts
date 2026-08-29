@@ -34,6 +34,23 @@ export function hebrewAuthError(message: string) {
     if (text.includes('phone')) return 'הרשמה בטלפון עדיין לא הופעלה ב-Supabase';
     return 'התחברות עם Google עדיין לא הופעלה ב-Supabase';
   }
+  if (
+    text.includes('identity_already_exists') ||
+    (text.includes('identity') && text.includes('already'))
+  ) {
+    return 'החשבון הזה כבר מחובר. היכנסו עם Google או עם האימייל והסיסמה.';
+  }
+  if (
+    text.includes('code verifier') ||
+    text.includes('both auth code and code verifier') ||
+    text.includes('invalid flow state') ||
+    (text.includes('auth code') && text.includes('expired'))
+  ) {
+    return 'ההתחברות עם Google לא הושלמה. נסו שוב.';
+  }
+  if (text.includes('redirect') && (text.includes('not allowed') || text.includes('whitelist') || text.includes('allow'))) {
+    return 'כתובת החזרה מ-Google אינה מורשית ב-Supabase. הוסיפו את /auth/callback ב-URL Configuration.';
+  }
   if (text.includes('otp') && (text.includes('expired') || text.includes('token has expired'))) {
     return 'הקוד פג תוקף. שלחו קוד חדש';
   }

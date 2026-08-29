@@ -16,3 +16,10 @@ test('maps invalid login credentials to Hebrew', () => {
 test('keeps an already-Hebrew message', () => {
   assert.equal(hebrewAuthError('אימייל או סיסמה שגויים'), 'אימייל או סיסמה שגויים');
 });
+
+test('maps a used PKCE code to Hebrew', () => {
+  assert.equal(
+    hebrewAuthError('invalid request: both auth code and code verifier should be non-empty'),
+    'ההתחברות עם Google לא הושלמה. נסו שוב.'
+  );
+});

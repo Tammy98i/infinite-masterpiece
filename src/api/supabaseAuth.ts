@@ -11,6 +11,7 @@ import { configuredAdminEmails } from '../data/adminEmails';
 import { payloadFromSupabase, type ProfileRow } from '../lib/supabaseUser';
 import { hebrewAuthError } from '../lib/hebrewAuthError';
 import { markExpectedPasswordRecovery, markPasswordRecovery, clearPasswordRecovery } from '../lib/passwordRecovery';
+import { shouldExchangeAuthCode } from '../lib/oauthCallback';
 import { toE164IL } from '../utils/phone';
 import { apiRequest, type AuthUserPayload } from './auth';
 
@@ -186,13 +187,28 @@ export async function supabaseStartGoogleOAuth(nextPath?: string) {
   const redirectTo = nextPath
     ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`
     : oauthRedirectTo();
+  const oauthOptions = {
+    redirectTo,
+    scopes: 'email profile',
+    queryParams: { access_type: 'offline' },
+  };
+
+  const { data: current } = await supabase.auth.getSession();
+  if (current.session?.access_token) {
+    const identities = current.session.user.identities || [];
+    const alreadyGoogle = identities.some((item) => item.provider === 'google');
+    if (!alreadyGoogle) {
+      const linked = await supabase.auth.linkIdentity({
+        provider: 'google',
+        options: oauthOptions,
+      });
+      if (!linked.error) return;
+    }
+  }
 
   const { error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: {
-      redirectTo,
-      queryParams: { prompt: 'select_account' },
-    },
+    options: oauthOptions,
   });
   if (error) throw new Error(hebrewAuthError(error.message));
 }
@@ -210,16 +226,17 @@ export async function supabaseCompleteOAuthFromUrl() {
   try {
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
-    if (code) {
-      const { error } = await supabase.auth.exchangeCodeForSession(code);
-      if (error) throw new Error(hebrewAuthError(error.message));
-    }
-
     const oauthError = params.get('error_description') || params.get('error');
     if (oauthError) throw new Error(hebrewAuthError(oauthError));
 
-    const { data, error } = await supabase.auth.getSession();
+    let { data, error } = await supabase.auth.getSession();
     if (error) throw new Error(hebrewAuthError(error.message));
+    if (shouldExchangeAuthCode(Boolean(data.session?.access_token), code) && code) {
+      const exchanged = await supabase.auth.exchangeCodeForSession(code);
+      if (exchanged.error) throw new Error(hebrewAuthError(exchanged.error.message));
+      data = exchanged.data;
+    }
+
     if (!data.session?.access_token) {
       throw new Error('ההתחברות לא הושלמה. נסו שוב.');
     }

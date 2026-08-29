@@ -10,8 +10,8 @@ let runtimeUrl = '';
 let runtimeAnon = '';
 let configPromise: Promise<boolean> | null = null;
 let client: SupabaseClient | null = null;
-let googleProviderEnabled = false;
-let emailProviderEnabled = false;
+let googleProviderEnabled = Boolean(buildUrl && buildAnon);
+let emailProviderEnabled = Boolean(buildUrl && buildAnon);
 let phoneProviderEnabled = false;
 
 function url() {
@@ -55,11 +55,12 @@ export async function refreshAuthProviderFlags() {
     const data = (await res.json().catch(() => ({}))) as {
       external?: { google?: boolean; email?: boolean; phone?: boolean };
     };
-    googleProviderEnabled = Boolean(data.external?.google);
+    googleProviderEnabled = data.external?.google !== false;
     emailProviderEnabled = data.external?.email !== false;
     phoneProviderEnabled = Boolean(data.external?.phone);
   } catch {
-    googleProviderEnabled = false;
+    // Google is on in this project; keep the button if settings fail to load.
+    googleProviderEnabled = isSupabaseAuthEnabled();
     emailProviderEnabled = isSupabaseAuthEnabled();
     phoneProviderEnabled = false;
   }

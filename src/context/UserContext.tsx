@@ -84,7 +84,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [isWelcomeOpen, setWelcomeOpen] = useState(false);
   const [ready, setReady] = useState(false);
   const [supabaseAuthEnabled, setSupabaseAuthEnabled] = useState(isSupabaseAuthEnabled());
-  const [googleAuthEnabled, setGoogleAuthEnabled] = useState(false);
+  const [googleAuthEnabled, setGoogleAuthEnabled] = useState(() => isSupabaseAuthEnabled());
   const [phoneAuthEnabled, setPhoneAuthEnabled] = useState(false);
   const pendingPlanRef = useRef<PlanId | null>(null);
 
