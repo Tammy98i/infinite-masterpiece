@@ -9,11 +9,12 @@
 
 ## מה חובר בקוד
 
-1. חלון התחברות: **אימייל וסיסמה** הוא הנתיב הראשי ב-Supabase (`signInWithPassword` / `signUp`). הרשמה בטלפון שולחת קוד SMS. Google הוא כפתור משני.
-2. אחרי אישור מייל / Google חוזרים ל־`/auth/callback`. מקומית Express מסנכרן ל-SQLite. ב-Vercel יש פונקציות `api/auth/*` בלי SQLite, ואם גם הן חסומות — הסשן נשמר ישירות מ-Supabase בדפדפן.
-3. אפליקציה חיצונית שמתחברת דרך OAuth Server מגיעה ל־`/oauth/consent?authorization_id=…` (אישור / דחייה).
-4. מיילים כאדמין: באדמין → משתמשים → «מיילים עם הרשאת אדמין», או בקובץ `src/data/adminEmails.ts`.
-5. SQL לפרופילים: [`supabase/profiles.sql`](../supabase/profiles.sql).
+1. חלון התחברות: **אימייל וסיסמה** הוא הנתיב הראשי (`signUp` / `signInWithPassword`, כולל אימות סיסמה ו«שכחתי סיסמה»). טלפון שולח OTP ב-SMS (`signInWithOtp` / `verifyOtp`). Google הוא כפתור משני מתחת למפריד «או».
+2. הסשן נשמר ב-Supabase (`persistSession` + `onAuthStateChange`). רענון הדף לא מנתק. התנתקות: `supabase.auth.signOut()`.
+3. אחרי אישור מייל / איפוס סיסמה / Google חוזרים ל־`/auth/callback`. איפוס סיסמה ממשיך ל־`/auth/reset`. מקומית Express מסנכרן ל-SQLite. ב-Vercel יש פונקציות `api/auth/*` בלי SQLite, ואם גם הן חסומות — הסשן נשמר ישירות מ-Supabase בדפדפן.
+4. אפליקציה חיצונית שמתחברת דרך OAuth Server מגיעה ל־`/oauth/consent?authorization_id=…` (אישור / דחייה).
+5. מיילים כאדמין: באדמין → משתמשים → «מיילים עם הרשאת אדמין», או בקובץ `src/data/adminEmails.ts`.
+6. SQL לפרופילים: [`supabase/profiles.sql`](../supabase/profiles.sql).
 
 ## הקמה (פעם אחת)
 
@@ -50,7 +51,7 @@ Authentication → Providers → **Phone**: הפעילו.
 
 ספק ה-SMS בפרויקט הוא Twilio. באותו מסך מלאו Twilio Account SID, Auth Token, ומספר שולח. בלי זה הקוד לא יישלח.
 
-מספרים באתר: נייד ישראלי `05XXXXXXXX` (נשמר כ-`+9725…`).
+מספרים באתר: E.164, למשל `+972501234567`. גם `05XXXXXXXX` מתקבל ומומר אוטומטית.
 
 ### 4. Google (אופציונלי)
 
@@ -73,9 +74,11 @@ Redirect ב-Google Cloud: `https://bjhxluqeyjdioebtuvob.supabase.co/auth/v1/call
 - Site URL: `http://localhost:3000` בפיתוח; בפריסה הדומיין החי.
 - Redirect URLs:
   - `http://localhost:3000/auth/callback`
+  - `http://localhost:3000/auth/reset`
   - `http://localhost:3000/oauth/consent`
   - `https://infinite-masterpiece.vercel.app/auth/callback`
   - `https://*.vercel.app/auth/callback`
+  - `https://*.vercel.app/auth/reset`
   - `https://*.vercel.app/oauth/consent`
 
 הריצי מחדש `npm run dev`, וב-Vercel Redeploy אחרי שמירת המשתנים.

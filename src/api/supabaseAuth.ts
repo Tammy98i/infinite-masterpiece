@@ -8,7 +8,7 @@ import {
   refreshAuthProviderFlags,
 } from '../lib/supabase';
 import { isApiUnavailableMessage, payloadFromSupabase, type ProfileRow } from '../lib/supabaseUser';
-import { isIsraeliMobile, toE164IL } from '../utils/phone';
+import { toE164IL } from '../utils/phone';
 import { apiRequest, type AuthUserPayload } from './auth';
 
 export { isSupabaseAuthEnabled };
@@ -54,7 +54,13 @@ function hebrewAuthError(message: string) {
     return 'הקוד שגוי. בדקו את ההודעה ונסו שוב';
   }
   if (text.includes('invalid phone') || text.includes('phone number')) {
-    return 'נא להזין נייד ישראלי תקין (05XXXXXXXX)';
+    return 'נא להזין מספר בפורמט בינלאומי, למשל +972501234567';
+  }
+  if (text.includes('new password should be different') || text.includes('same password')) {
+    return 'הסיסמה החדשה חייבת להיות שונה מהקודמת';
+  }
+  if (text.includes('unable to send') && text.includes('email')) {
+    return 'לא הצלחנו לשלוח את מייל האיפוס. נסו שוב בעוד רגע';
   }
   if (text.includes('signups not allowed') || text.includes('signup is disabled')) {
     return 'אין חשבון עם הטלפון הזה. הירשמו קודם';
@@ -66,11 +72,10 @@ function hebrewAuthError(message: string) {
 }
 
 function requireE164(phone: string) {
-  if (!isIsraeliMobile(phone)) {
-    throw new Error('נא להזין נייד ישראלי תקין (05XXXXXXXX)');
-  }
   const e164 = toE164IL(phone);
-  if (!e164) throw new Error('נא להזין נייד ישראלי תקין (05XXXXXXXX)');
+  if (!e164) {
+    throw new Error('נא להזין מספר בפורמט בינלאומי, למשל +972501234567');
+  }
   return e164;
 }
 
@@ -169,24 +174,19 @@ export async function supabaseRegister(fullName: string, email: string, password
   return syncAccessToken(data.session.access_token, fullName);
 }
 
-export async function supabaseStartPhoneOtp(phone: string, options?: { fullName?: string; createUser?: boolean }) {
+export async function supabaseStartPhoneOtp(phone: string) {
   const supabase = getSupabase();
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
   await loadSupabaseConfig();
   await refreshAuthProviderFlags();
   if (!isPhoneProviderEnabled()) {
-    throw new Error('הרשמה בטלפון עדיין לא הופעלה ב-Supabase');
+    throw new Error(
+      'הרשמה בטלפון עדיין לא הופעלה. ב-Supabase: Authentication → Providers → Phone, והגדירו ספק SMS (Twilio).'
+    );
   }
 
   const e164 = requireE164(phone);
-  const { error } = await supabase.auth.signInWithOtp({
-    phone: e164,
-    options: {
-      channel: 'sms',
-      shouldCreateUser: options?.createUser !== false,
-      data: options?.fullName ? { full_name: options.fullName } : undefined,
-    },
-  });
+  const { error } = await supabase.auth.signInWithOtp({ phone: e164 });
   if (error) throw new Error(hebrewAuthError(error.message));
   return e164;
 }
@@ -264,8 +264,45 @@ export async function supabaseCompleteOAuthFromUrl() {
   return syncAccessToken(data.session.access_token, fullName);
 }
 
+export async function supabaseRequestPasswordReset(email: string) {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
+  const normalized = email.trim().toLowerCase();
+  if (!normalized.includes('@')) throw new Error('נא להזין אימייל תקין');
+  const { error } = await supabase.auth.resetPasswordForEmail(normalized, {
+    redirectTo: oauthRedirectTo(),
+  });
+  if (error) throw new Error(hebrewAuthError(error.message));
+}
+
+export async function supabaseUpdatePassword(password: string) {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
+  if (password.length < 8) throw new Error('הסיסמה חייבת להיות לפחות 8 תווים');
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) throw new Error(hebrewAuthError(error.message));
+}
+
+export function isPasswordRecoveryRedirect() {
+  if (typeof window === 'undefined') return false;
+  const search = new URLSearchParams(window.location.search);
+  const hash = new URLSearchParams(window.location.hash.replace(/^#/, ''));
+  return search.get('type') === 'recovery' || hash.get('type') === 'recovery';
+}
+
+export function subscribeSupabaseAuth(
+  handler: (event: string, accessToken: string | null) => void
+) {
+  const supabase = getSupabase();
+  if (!supabase) return () => undefined;
+  const { data } = supabase.auth.onAuthStateChange((event, session) => {
+    handler(event, session?.access_token || null);
+  });
+  return () => data.subscription.unsubscribe();
+}
+
 export async function supabaseSignOut() {
   const supabase = getSupabase();
   if (!supabase) return;
-  await supabase.auth.signOut().catch(() => undefined);
+  await supabase.auth.signOut();
 }
