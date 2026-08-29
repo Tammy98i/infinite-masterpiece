@@ -17,7 +17,7 @@ import type { AccessLevel, Category, Course, Instructor, PublishStatus, UserProf
 import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
 import { isApiUnavailableMessage } from '../lib/supabaseUser';
-import { emptyAnalytics, overviewFrom, readinessPayload, usersFromProfiles, type ProfileListRow } from '../../api/_lib/adminDesk';
+import { emptyAnalytics, overviewFrom, readinessPayload, usersFromProfiles, type ProfileListRow } from '../lib/adminFallback';
 
 type Tab =
   | 'overview'
@@ -108,6 +108,10 @@ const STAFF_DESK_LABEL: Record<string, string> = {
 
 function linkUrl(founder: Instructor, label: string) {
   return founder.externalLinks?.find((item) => item.label === label)?.url || '';
+}
+
+function isDeskOffline(message: string) {
+  return isApiUnavailableMessage(message) || message.includes('יש להתחבר מחדש');
 }
 
 function profileRowFromUser(user: UserProfile): ProfileListRow {
@@ -407,7 +411,7 @@ function ReadinessPanel() {
       .then(setData)
       .catch((err) => {
         const message = err instanceof Error ? err.message : 'טעינה נכשלה';
-        if (isApiUnavailableMessage(message)) {
+        if (isDeskOffline(message)) {
           setData(readinessPayload() as AdminReadiness);
           return;
         }
@@ -594,7 +598,7 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
       })
       .catch((err) => {
         const message = err instanceof Error ? err.message : 'טעינה נכשלה';
-        if (isApiUnavailableMessage(message) && user.id !== 'guest') {
+        if (isDeskOffline(message) && user.id !== 'guest') {
           setData(overviewFrom([profileRowFromUser(user)]));
           setAnalytics(emptyAnalytics());
           return;
@@ -826,7 +830,7 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
       .then(setData)
       .catch((err) => {
         const message = err instanceof Error ? err.message : 'טעינה נכשלה';
-        if (isApiUnavailableMessage(message)) {
+        if (isDeskOffline(message)) {
           setData(emptyAnalytics());
           return;
         }
@@ -1452,7 +1456,7 @@ function UsersPanel() {
       .then((res) => setUsers(res.users))
       .catch((err) => {
         const message = err instanceof Error ? err.message : 'טעינה נכשלה';
-        if (isApiUnavailableMessage(message) && user.id !== 'guest') {
+        if (isDeskOffline(message) && user.id !== 'guest') {
           setUsers(usersFromProfiles([profileRowFromUser(user)]));
           return;
         }
