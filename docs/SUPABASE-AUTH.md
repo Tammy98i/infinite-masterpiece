@@ -87,11 +87,17 @@ Redirect ב-Google Cloud: `https://bjhxluqeyjdioebtuvob.supabase.co/auth/v1/call
 
 `admin@infinitemasterpiece.local` הוא סיד מקומי, לא משתמש Google.
 
-ה-Gmail של המייסדת מקבל admin אוטומטית בנתיב Vercel/Supabase. מקומית עם SQLite:
+ה-Gmail של המייסדת ושל חשבון הניהול מקבלים admin אוטומטית בנתיב Vercel/Supabase. מקומית עם SQLite, וב-Supabase:
 
 ```sql
-UPDATE users SET role = 'admin' WHERE email = 'tam98iiy@gmail.com';
-UPDATE public.profiles SET role = 'admin' WHERE email = 'tam98iiy@gmail.com';
+UPDATE users SET role = 'admin' WHERE lower(email) in (
+  'tam98iiy@gmail.com',
+  'infinite.masterpiece8@gmail.com'
+);
+UPDATE public.profiles SET role = 'admin' WHERE lower(email) in (
+  'tam98iiy@gmail.com',
+  'infinite.masterpiece8@gmail.com'
+);
 ```
 
 ## בדיקה מקומית

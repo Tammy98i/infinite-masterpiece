@@ -30,11 +30,16 @@ create policy "profiles_update_own_name"
   with check (auth.uid() = id);
 
 -- Users may only change their own display name; privileged fields stay server-side.
+-- service_role (dashboard / admin API) may update role and staff fields.
 create or replace function public.protect_profile_privileged_fields()
 returns trigger
 language plpgsql
 as $$
 begin
+  if auth.role() = 'service_role' then
+    new.updated_at = now();
+    return new;
+  end if;
   if new.role is distinct from old.role
      or new.subscription_plan is distinct from old.subscription_plan
      or new.staff_desk is distinct from old.staff_desk
@@ -61,11 +66,18 @@ security definer
 set search_path = public
 as $$
 begin
-  insert into public.profiles (id, email, full_name)
+  insert into public.profiles (id, email, full_name, role)
   values (
     new.id,
     coalesce(new.email, ''),
-    coalesce(new.raw_user_meta_data->>'full_name', '')
+    coalesce(new.raw_user_meta_data->>'full_name', ''),
+    case
+      when lower(coalesce(new.email, '')) in (
+        'tam98iiy@gmail.com',
+        'infinite.masterpiece8@gmail.com'
+      ) then 'admin'
+      else 'user'
+    end
   )
   on conflict (id) do nothing;
   return new;
