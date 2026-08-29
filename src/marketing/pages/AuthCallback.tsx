@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import { libraryPath } from '../../utils/libraryPath';
 import { safeNextPath, takeAuthNext } from '../../lib/authRedirect';
+import { shouldOpenPasswordReset } from '../../lib/passwordRecovery';
 import { isPasswordRecoveryRedirect } from '../../api/supabaseAuth';
 
 export function AuthCallback() {
@@ -17,10 +18,10 @@ export function AuthCallback() {
     let cancelled = false;
     const run = async () => {
       try {
-        const recovery = isPasswordRecoveryRedirect();
+        const recoveryFromUrl = isPasswordRecoveryRedirect();
         const next = await completeOAuthLogin();
         if (cancelled) return;
-        if (recovery) {
+        if (shouldOpenPasswordReset(recoveryFromUrl)) {
           navigate('/auth/reset', { replace: true });
           return;
         }

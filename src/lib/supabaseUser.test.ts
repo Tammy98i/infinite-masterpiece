@@ -53,6 +53,10 @@ test('does not treat a wrong password as an API outage', () => {
   assert.equal(isApiUnavailableMessage('אימייל או סיסמה שגויים'), false);
 });
 
+test('treats a network failure without asking to run npm', () => {
+  assert.equal(isApiUnavailableMessage('לא ניתן להתחבר לשרת. נסו שוב בעוד רגע.'), true);
+});
+
 test('built-in operations email is admin even if the profile row is still user', () => {
   assert.equal(roleFromProfile('user', 'infinite.masterpiece8@gmail.com'), 'admin');
   assert.equal(roleFromProfile(null, '  Infinite.Masterpiece8@gmail.com  '), 'admin');
@@ -68,3 +72,4 @@ test('payloadFromSupabase keeps the email and display name on the session', () =
   assert.equal(payload.name, 'Infinite');
   assert.equal(payload.role, 'admin');
 });
+

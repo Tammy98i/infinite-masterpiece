@@ -49,7 +49,7 @@ function errorMessageFromBody(data: unknown, status: number) {
   }
   if (typeof nested === 'string' && nested.trim()) return nested;
   if (status === 404 || status === 405) {
-    return 'נקודת הקצה לא זמינה בפריסה הזו. בדקו שהפריסה עודכנה, או הריצו npm run dev מקומית.';
+    return 'נקודת הקצה לא זמינה בפריסה הזו.';
   }
   return 'הבקשה נכשלה';
 }
@@ -66,7 +66,7 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   try {
     res = await fetch(apiUrl(path), { ...options, headers });
   } catch {
-    throw new Error('לא ניתן להתחבר לשרת. הריצו npm run server ואז נסו שוב.');
+    throw new Error('לא ניתן להתחבר לשרת. נסו שוב בעוד רגע.');
   }
   const data = await res.json().catch(() => ({}));
   if (!res.ok) {

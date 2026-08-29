@@ -1,6 +1,7 @@
 import { useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
+import { clearPasswordRecovery } from '../../lib/passwordRecovery';
 
 export function UpdatePassword() {
   const { updatePassword, isGuest } = useUser();
@@ -21,6 +22,7 @@ export function UpdatePassword() {
     setPending(true);
     try {
       await updatePassword(password);
+      clearPasswordRecovery();
       navigate('/library', { replace: true });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'עדכון הסיסמה נכשל');

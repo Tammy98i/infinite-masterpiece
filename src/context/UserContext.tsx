@@ -23,6 +23,7 @@ import {
 import { isGoogleProviderEnabled, isPhoneProviderEnabled, loadSupabaseConfig } from '../lib/supabase';
 import { previewLogin, previewRegister, previewSessionFromToken, isPreviewToken, isDemoEmail } from '../lib/previewAuth';
 import { isApiUnavailableMessage, overlayApiUser } from '../lib/supabaseUser';
+import { markPasswordRecovery, clearPasswordRecovery } from '../lib/passwordRecovery';
 
 const GUEST_USER: UserProfile = {
   id: 'guest',
@@ -89,12 +90,47 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   useEffect(() => {
     let cancelled = false;
+    const onAuthEvent = (event: string, accessToken: string | null) => {
+      if (cancelled) return;
+      if (event === 'INITIAL_SESSION') return;
+      if (event === 'SIGNED_OUT') {
+        if (isPreviewToken(getAuthToken())) return;
+        clearPasswordRecovery();
+        setAuthToken(null);
+        setUser(GUEST_USER);
+        return;
+      }
+      if (event === 'PASSWORD_RECOVERY' && accessToken) {
+        markPasswordRecovery();
+      }
+      if (
+        (event === 'SIGNED_IN' ||
+          event === 'TOKEN_REFRESHED' ||
+          event === 'USER_UPDATED' ||
+          event === 'PASSWORD_RECOVERY') &&
+        accessToken
+      ) {
+        if (isPreviewToken(getAuthToken())) return;
+        void sessionFromSupabaseUser(accessToken)
+          .then((result) => {
+            if (cancelled) return;
+            setAuthToken(result.token);
+            setUser(fromPayload(result.user));
+          })
+          .catch(() => undefined);
+      }
+    };
+
+    let unsub = () => undefined as void;
     const boot = async () => {
       await loadSupabaseConfig();
       if (cancelled) return;
       setSupabaseAuthEnabled(isSupabaseAuthEnabled());
       setGoogleAuthEnabled(isGoogleProviderEnabled());
       setPhoneAuthEnabled(isPhoneProviderEnabled());
+      // Subscribe after runtime config so recovery events are not missed when
+      // the anon key is loaded from /api/auth/providers.
+      unsub = subscribeSupabaseAuth(onAuthEvent);
 
       const restored = (await restoreSupabaseBrowserSession()) || previewSessionFromToken(getAuthToken());
       if (cancelled) return;
@@ -130,29 +166,6 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!cancelled) setReady(true);
     };
     void boot();
-    const unsub = subscribeSupabaseAuth((event, accessToken) => {
-      if (cancelled) return;
-      if (event === 'INITIAL_SESSION') return;
-      if (event === 'SIGNED_OUT') {
-        if (isPreviewToken(getAuthToken())) return;
-        setAuthToken(null);
-        setUser(GUEST_USER);
-        return;
-      }
-      if (
-        (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') &&
-        accessToken
-      ) {
-        if (isPreviewToken(getAuthToken())) return;
-        void sessionFromSupabaseUser(accessToken)
-          .then((result) => {
-            if (cancelled) return;
-            setAuthToken(result.token);
-            setUser(fromPayload(result.user));
-          })
-          .catch(() => undefined);
-      }
-    });
     return () => {
       cancelled = true;
       unsub();
@@ -267,6 +280,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const logout = () => {
     pendingPlanRef.current = null;
+    clearPasswordRecovery();
     setAuthToken(null);
     setUser(GUEST_USER);
     void supabaseSignOut().catch(() => undefined);

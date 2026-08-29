@@ -9,67 +9,18 @@ import {
 } from '../lib/supabase';
 import { configuredAdminEmails } from '../data/adminEmails';
 import { payloadFromSupabase, type ProfileRow } from '../lib/supabaseUser';
+import { hebrewAuthError } from '../lib/hebrewAuthError';
+import { markExpectedPasswordRecovery, markPasswordRecovery, clearPasswordRecovery } from '../lib/passwordRecovery';
 import { toE164IL } from '../utils/phone';
 import { apiRequest, type AuthUserPayload } from './auth';
 
-export { isSupabaseAuthEnabled };
+export { isSupabaseAuthEnabled, hebrewAuthError };
 
 export class EmailConfirmationRequiredError extends Error {
   constructor() {
     super('נרשמת בהצלחה. בדקו את האימייל לאישור החשבון, ואז התחברו עם האימייל והסיסמה.');
     this.name = 'EmailConfirmationRequiredError';
   }
-}
-
-function hebrewAuthError(message: string) {
-  const text = message.toLowerCase();
-  if (text.includes('invalid login credentials') || text.includes('invalid credentials')) {
-    return 'אימייל או סיסמה שגויים';
-  }
-  if (text.includes('email not confirmed')) {
-    return 'יש לאשר את החשבון דרך האימייל שנשלח אליכם';
-  }
-  if (text.includes('user already registered') || text.includes('already registered')) {
-    return 'כבר קיים חשבון עם האימייל הזה';
-  }
-  if (text.includes('password should be at least') || text.includes('password is known to be weak')) {
-    return 'הסיסמה חייבת להיות לפחות 8 תווים';
-  }
-  if (text.includes('unable to validate email') || text.includes('invalid format')) {
-    return 'נא להזין אימייל תקין';
-  }
-  if (text.includes('signup requires a valid password')) {
-    return 'נא להזין סיסמה';
-  }
-  if (text.includes('too many requests') || text.includes('rate limit')) {
-    return 'יותר מדי ניסיונות. נסו שוב בעוד כמה דקות';
-  }
-  if (text.includes('provider is not enabled') || text.includes('unsupported provider')) {
-    if (text.includes('phone')) return 'הרשמה בטלפון עדיין לא הופעלה ב-Supabase';
-    return 'התחברות עם Google עדיין לא הופעלה ב-Supabase';
-  }
-  if (text.includes('otp') && (text.includes('expired') || text.includes('token has expired'))) {
-    return 'הקוד פג תוקף. שלחו קוד חדש';
-  }
-  if (text.includes('invalid otp') || text.includes('token not found') || text.includes('otp_disabled')) {
-    return 'הקוד שגוי. בדקו את ההודעה ונסו שוב';
-  }
-  if (text.includes('invalid phone') || text.includes('phone number')) {
-    return 'נא להזין מספר בפורמט בינלאומי, למשל +972501234567';
-  }
-  if (text.includes('new password should be different') || text.includes('same password')) {
-    return 'הסיסמה החדשה חייבת להיות שונה מהקודמת';
-  }
-  if (text.includes('unable to send') && text.includes('email')) {
-    return 'לא הצלחנו לשלוח את מייל האיפוס. נסו שוב בעוד רגע';
-  }
-  if (text.includes('signups not allowed') || text.includes('signup is disabled')) {
-    return 'אין חשבון עם הטלפון הזה. הירשמו קודם';
-  }
-  if (text.includes('sms') && (text.includes('error') || text.includes('failed'))) {
-    return 'שליחת ה-SMS נכשלה. בדקו את מספר הטלפון או נסו שוב בעוד רגע';
-  }
-  return message || 'הבקשה נכשלה';
 }
 
 function requireE164(phone: string) {
@@ -145,32 +96,41 @@ export async function supabaseLogin(email: string, password: string) {
   const supabase = getSupabase();
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
 
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
-  if (error || !data.session?.access_token) {
-    throw new Error(hebrewAuthError(error?.message || 'אימייל או סיסמה שגויים'));
+  try {
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+    if (error || !data.session?.access_token) {
+      throw new Error(hebrewAuthError(error?.message || 'אימייל או סיסמה שגויים'));
+    }
+    return await syncAccessToken(data.session.access_token);
+  } catch (err) {
+    if (err instanceof Error && /[\u0590-\u05FF]/.test(err.message)) throw err;
+    throw new Error(hebrewAuthError(err instanceof Error ? err.message : 'אימייל או סיסמה שגויים'));
   }
-
-  return syncAccessToken(data.session.access_token);
 }
 
 export async function supabaseRegister(fullName: string, email: string, password: string) {
   const supabase = getSupabase();
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
 
-  const { data, error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      data: { full_name: fullName },
-      emailRedirectTo: oauthRedirectTo(),
-    },
-  });
-  if (error) throw new Error(hebrewAuthError(error.message));
-  if (!data.session?.access_token) {
-    throw new EmailConfirmationRequiredError();
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: { full_name: fullName },
+        emailRedirectTo: oauthRedirectTo(),
+      },
+    });
+    if (error) throw new Error(hebrewAuthError(error.message));
+    if (!data.session?.access_token) {
+      throw new EmailConfirmationRequiredError();
+    }
+    return await syncAccessToken(data.session.access_token, fullName);
+  } catch (err) {
+    if (err instanceof EmailConfirmationRequiredError) throw err;
+    if (err instanceof Error && /[\u0590-\u05FF]/.test(err.message)) throw err;
+    throw new Error(hebrewAuthError(err instanceof Error ? err.message : 'ההרשמה נכשלה'));
   }
-
-  return syncAccessToken(data.session.access_token, fullName);
 }
 
 export async function supabaseStartPhoneOtp(phone: string) {
@@ -241,26 +201,36 @@ export async function supabaseCompleteOAuthFromUrl() {
   const supabase = getSupabase();
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
 
-  const params = new URLSearchParams(window.location.search);
-  const code = params.get('code');
-  if (code) {
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+  // Subscribe before exchanging so a PKCE recovery link (often `?code=` without
+  // `type=recovery`) still marks the reset flow even if getSession already exists.
+  const { data: authSub } = supabase.auth.onAuthStateChange((event) => {
+    if (event === 'PASSWORD_RECOVERY') markPasswordRecovery();
+  });
+
+  try {
+    const params = new URLSearchParams(window.location.search);
+    const code = params.get('code');
+    if (code) {
+      const { error } = await supabase.auth.exchangeCodeForSession(code);
+      if (error) throw new Error(hebrewAuthError(error.message));
+    }
+
+    const oauthError = params.get('error_description') || params.get('error');
+    if (oauthError) throw new Error(hebrewAuthError(oauthError));
+
+    const { data, error } = await supabase.auth.getSession();
     if (error) throw new Error(hebrewAuthError(error.message));
+    if (!data.session?.access_token) {
+      throw new Error('ההתחברות לא הושלמה. נסו שוב.');
+    }
+
+    const fullName = String(
+      data.session.user.user_metadata?.full_name || data.session.user.user_metadata?.name || ''
+    );
+    return await syncAccessToken(data.session.access_token, fullName);
+  } finally {
+    authSub.subscription.unsubscribe();
   }
-
-  const oauthError = params.get('error_description') || params.get('error');
-  if (oauthError) throw new Error(hebrewAuthError(oauthError));
-
-  const { data, error } = await supabase.auth.getSession();
-  if (error) throw new Error(hebrewAuthError(error.message));
-  if (!data.session?.access_token) {
-    throw new Error('ההתחברות לא הושלמה. נסו שוב.');
-  }
-
-  const fullName = String(
-    data.session.user.user_metadata?.full_name || data.session.user.user_metadata?.name || ''
-  );
-  return syncAccessToken(data.session.access_token, fullName);
 }
 
 export async function supabaseRequestPasswordReset(email: string) {
@@ -268,10 +238,19 @@ export async function supabaseRequestPasswordReset(email: string) {
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
   const normalized = email.trim().toLowerCase();
   if (!normalized.includes('@')) throw new Error('נא להזין אימייל תקין');
-  const { error } = await supabase.auth.resetPasswordForEmail(normalized, {
-    redirectTo: oauthRedirectTo(),
-  });
-  if (error) throw new Error(hebrewAuthError(error.message));
+  markExpectedPasswordRecovery();
+  try {
+    const origin = typeof window !== 'undefined' ? window.location.origin : '';
+    const { error } = await supabase.auth.resetPasswordForEmail(normalized, {
+      // Keep type=recovery on our redirect so PKCE `?code=` still opens /auth/reset.
+      redirectTo: `${origin}/auth/callback?type=recovery`,
+    });
+    if (error) throw new Error(hebrewAuthError(error.message));
+  } catch (err) {
+    clearPasswordRecovery();
+    if (err instanceof Error && /[\u0590-\u05FF]/.test(err.message)) throw err;
+    throw new Error(hebrewAuthError(err instanceof Error ? err.message : 'שליחת קישור האיפוס נכשלה'));
+  }
 }
 
 export async function supabaseUpdatePassword(password: string) {

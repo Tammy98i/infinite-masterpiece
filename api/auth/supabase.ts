@@ -1,8 +1,9 @@
+import { jsonBody } from '../_lib/body';
 import { sessionFromAccessToken } from '../_lib/session';
 
 type VercelReq = {
   method?: string;
-  body?: { accessToken?: string; fullName?: string };
+  body?: unknown;
   headers: Record<string, string | string[] | undefined>;
 };
 
@@ -17,8 +18,9 @@ export default async function handler(req: VercelReq, res: VercelRes) {
     return;
   }
 
-  const accessToken = String(req.body?.accessToken || '');
-  const fullName = String(req.body?.fullName || '');
+  const body = jsonBody(req);
+  const accessToken = String(body.accessToken || '');
+  const fullName = String(body.fullName || '');
   if (!accessToken) {
     res.status(400).json({ error: 'חסר טוקן התחברות' });
     return;

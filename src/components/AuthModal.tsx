@@ -210,8 +210,12 @@ export const AuthModal: React.FC = () => {
     mode === 'forgot'
       ? 'נשלח קישור לאימייל לאיפוס הסיסמה.'
       : mode === 'login'
-        ? 'התחברו עם אימייל וסיסמה, או עם קוד לטלפון.'
-        : 'חשבון חינמי עם אימייל וסיסמה, או עם מספר טלפון.';
+        ? phoneAuthEnabled
+          ? 'התחברו עם אימייל וסיסמה, או עם קוד לטלפון.'
+          : 'התחברו עם האימייל והסיסמה שלכם.'
+        : phoneAuthEnabled
+          ? 'חשבון חינמי עם אימייל וסיסמה, או עם מספר טלפון.'
+          : 'חשבון חינמי עם אימייל וסיסמה.';
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
@@ -241,7 +245,7 @@ export const AuthModal: React.FC = () => {
         </h2>
         <p className="text-sm text-white/50 font-light mb-6">{subtitle}</p>
 
-        {mode !== 'forgot' && supabaseAuthEnabled ? (
+        {mode !== 'forgot' && supabaseAuthEnabled && phoneAuthEnabled ? (
           <div className="mb-6 grid grid-cols-2 gap-2" role="tablist" aria-label="אופן התחברות">
             <MethodTab
               selected={method === 'email'}
@@ -453,7 +457,7 @@ export const AuthModal: React.FC = () => {
           </>
         ) : null}
 
-        {mode === 'login' && method === 'email' ? (
+        {mode === 'login' && method === 'email' && !supabaseAuthEnabled ? (
           <p className="mt-4 text-[11px] text-white/35">
             בפריוו בלי שרת: חשבונות הדמו עובדים כאן (אותו אימייל וסיסמה כמו ב־npm run dev).
           </p>
