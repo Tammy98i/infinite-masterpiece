@@ -24,6 +24,11 @@ function authorized(req: VercelReq) {
   return value === `Bearer ${secret}`;
 }
 
+function readMeetingId(req: VercelReq) {
+  const body = req.body as { meetingId?: string } | undefined;
+  return String(body?.meetingId || '').trim();
+}
+
 export default async function handler(req: VercelReq, res: VercelRes) {
   if (req.method !== 'GET' && req.method !== 'POST') {
     res.status(405).json({ error: 'Method not allowed' });
@@ -38,6 +43,20 @@ export default async function handler(req: VercelReq, res: VercelRes) {
   let eventId = health.eventId;
   let joinUrl = '';
   let created = false;
+  const manualId = readMeetingId(req);
+
+  if (manualId) {
+    eventId = manualId;
+    await persistZoomEventId(manualId, joinUrl);
+    res.status(200).json({
+      ok: true,
+      created: false,
+      manual: true,
+      eventId: manualId,
+      health: await zoomHealthCheck(),
+    });
+    return;
+  }
 
   if (!eventId && health.oauthOk) {
     const start = parseIsraeliDateTime(DEFAULT_WEBINAR_CONFIG.date, DEFAULT_WEBINAR_CONFIG.time);
