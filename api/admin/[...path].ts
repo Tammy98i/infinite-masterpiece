@@ -8,7 +8,7 @@ import {
   usersFromProfiles,
   WRITE_UNAVAILABLE,
 } from '../_lib/adminDesk.js';
-import { listProfiles, mergeCurrentUser, updateProfile } from '../_lib/profiles.js';
+import { listProfiles, mergeCurrentUser, createAdminUser, updateProfile } from '../_lib/profiles.js';
 import { CATEGORIES, COURSES, FOUNDERS } from '../_lib/staticData.js';
 import { webinarAdminPayload } from '../_lib/webinarAdmin.js';
 
@@ -159,6 +159,18 @@ export default async function handler(req: VercelReq, res: VercelRes) {
     }
 
     const userMatch = route.match(/^users\/([^/]+)$/);
+    if (method === 'POST' && route === 'users') {
+      const body = bodyOf(req);
+      const profile = await createAdminUser({
+        fullName: String(body.fullName || body.name || ''),
+        email: String(body.email || ''),
+        password: String(body.password || ''),
+        role: typeof body.role === 'string' ? body.role : undefined,
+        isFounder: typeof body.isFounder === 'boolean' ? body.isFounder : undefined,
+      });
+      json(res, 201, { user: usersFromProfiles([profile])[0] });
+      return;
+    }
     if (method === 'PATCH' && userMatch) {
       const body = bodyOf(req);
       const updated = await updateProfile(token, decodeURIComponent(userMatch[1]), {

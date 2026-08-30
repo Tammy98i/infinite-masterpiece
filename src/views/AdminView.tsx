@@ -1448,6 +1448,8 @@ function UsersPanel() {
   const [newName, setNewName] = useState('');
   const [newEmail, setNewEmail] = useState('');
   const [newPassword, setNewPassword] = useState('');
+  const [newRole, setNewRole] = useState<'student' | 'instructor' | 'admin'>('student');
+  const [newIsFounder, setNewIsFounder] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
 
   const load = () =>
@@ -1497,11 +1499,21 @@ function UsersPanel() {
     setCreating(true);
     setError('');
     try {
-      await adminApi.createUser({ fullName: newName, email: newEmail, password: newPassword });
+      const created = await adminApi.createUser({
+        fullName: newName,
+        email: newEmail,
+        password: newPassword,
+        role: newRole,
+        isFounder: newIsFounder,
+      });
       setNewName('');
       setNewEmail('');
       setNewPassword('');
+      setNewRole('student');
+      setNewIsFounder(false);
       await load();
+      setSelectedId(created.user.id);
+      if (newRole === 'instructor' || newIsFounder) await reloadCatalog();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'יצירה נכשלה');
     } finally {
@@ -1543,7 +1555,7 @@ function UsersPanel() {
         <div>
           <h2 className="text-lg font-light mb-1">הוספת משתמש</h2>
           <p className="text-sm text-white/45 font-light">
-            יצירת חשבון כניסה. אחר כך אפשר לשייך לצוות המיזם או לאשר כמרצה.
+            יצירת חשבון כניסה. אפשר לשייך לצוות או לאשר כמרצה כבר בשלב היצירה.
           </p>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
@@ -1570,6 +1582,25 @@ function UsersPanel() {
               className={fieldClass}
               dir="ltr"
             />
+          </label>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <label className="grid gap-1 text-white/50">
+            תפקיד
+            <select value={newRole} onChange={(e) => setNewRole(e.target.value as typeof newRole)} className={fieldClass}>
+              <option value="student">משתמש</option>
+              <option value="instructor">מרצה</option>
+              <option value="admin">אדמין</option>
+            </select>
+          </label>
+          <label className="flex items-center gap-3 text-sm text-white/70 min-h-11 pt-5">
+            <input
+              type="checkbox"
+              checked={newIsFounder}
+              onChange={(e) => setNewIsFounder(e.target.checked)}
+              className="w-4 h-4 accent-[#C8A24C]"
+            />
+            שיוך לצוות המיזם (מייסד/ת)
           </label>
         </div>
         <button

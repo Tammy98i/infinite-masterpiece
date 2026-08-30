@@ -1,4 +1,5 @@
 import { supabaseEnv, type SessionUser } from './session.js';
+import { supabaseServiceEnv } from './supabaseAdmin.js';
 import type { ProfileListRow } from './adminDesk.js';
 
 export async function listProfiles(accessToken: string): Promise<ProfileListRow[]> {
@@ -95,4 +96,99 @@ export function mergeCurrentUser(profiles: ProfileListRow[], user: SessionUser) 
     },
     ...profiles,
   ];
+}
+
+export async function createAdminUser(input: {
+  fullName: string;
+  email: string;
+  password: string;
+  role?: string;
+  isFounder?: boolean;
+}) {
+  const { url, serviceKey } = supabaseServiceEnv();
+  if (!url || !serviceKey) {
+    throw Object.assign(new Error('חסר SUPABASE_SERVICE_ROLE_KEY בשרת'), { status: 503 });
+  }
+
+  const name = input.fullName.trim();
+  const normalized = input.email.trim().toLowerCase();
+  if (!name) throw Object.assign(new Error('נא להזין שם'), { status: 400 });
+  if (!normalized || !normalized.includes('@')) {
+    throw Object.assign(new Error('נא להזין אימייל תקין'), { status: 400 });
+  }
+  if (input.password.length < 8) {
+    throw Object.assign(new Error('הסיסמה חייבת להיות לפחות 8 תווים'), { status: 400 });
+  }
+
+  const res = await fetch(`${url}/auth/v1/admin/users`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${serviceKey}`,
+      apikey: serviceKey,
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      email: normalized,
+      password: input.password,
+      email_confirm: true,
+      user_metadata: { full_name: name },
+    }),
+  });
+  const data = (await res.json().catch(() => ({}))) as {
+    id?: string;
+    msg?: string;
+    message?: string;
+    error_code?: string;
+  };
+  if (!res.ok) {
+    const raw = data.msg || data.message || '';
+    const message =
+      data.error_code === 'email_exists' || /already registered|already exists/i.test(raw)
+        ? 'כבר קיים חשבון עם האימייל הזה'
+        : raw || 'יצירת המשתמש נכשלה';
+    throw Object.assign(new Error(message), { status: res.status >= 400 && res.status < 500 ? res.status : 502 });
+  }
+  if (!data.id) {
+    throw Object.assign(new Error('יצירת המשתמש נכשלה'), { status: 502 });
+  }
+
+  const role = dbRole(input.role);
+  const wantsFounder = Boolean(input.isFounder);
+  if (role || wantsFounder) {
+    const patch: Record<string, unknown> = {};
+    if (role) patch.role = role;
+    if (wantsFounder) patch.is_founder = true;
+    await fetch(`${url}/rest/v1/profiles?id=eq.${encodeURIComponent(data.id)}`, {
+      method: 'PATCH',
+      headers: {
+        Authorization: `Bearer ${serviceKey}`,
+        apikey: serviceKey,
+        'Content-Type': 'application/json',
+        Prefer: 'return=representation',
+      },
+      body: JSON.stringify(patch),
+    });
+  }
+
+  const profileRes = await fetch(
+    `${url}/rest/v1/profiles?id=eq.${encodeURIComponent(data.id)}&select=id,email,full_name,role,subscription_plan,is_founder,staff_desk,staff_status,created_at&limit=1`,
+    {
+      headers: {
+        Authorization: `Bearer ${serviceKey}`,
+        apikey: serviceKey,
+      },
+    }
+  );
+  const rows = (await profileRes.json().catch(() => [])) as ProfileListRow[];
+  return Array.isArray(rows) && rows[0] ? rows[0] : {
+    id: data.id,
+    email: normalized,
+    full_name: name,
+    role: role || 'user',
+    subscription_plan: 'none',
+    is_founder: wantsFounder,
+    staff_desk: '',
+    staff_status: 'active',
+    created_at: new Date().toISOString(),
+  };
 }
