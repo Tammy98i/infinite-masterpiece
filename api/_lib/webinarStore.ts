@@ -4,7 +4,7 @@ import { isIsraeliMobile, isValidEmail, normalizeEmail } from './phone.js';
 import { DEFAULT_WEBINAR_CONFIG } from './staticData.js';
 import { hasSupabaseService, supabaseRest } from './supabaseAdmin.js';
 import { sendConfirmationEmail } from './webinarMail.js';
-import { zoomConfigured, zoomRegisterParticipant } from './zoom.js';
+import { zoomReady, zoomRegisterParticipant } from './zoom.js';
 
 export const DEFAULT_WEBINAR_ID = 'default';
 
@@ -100,7 +100,7 @@ export async function getPublicConfig(abVariantInput?: string) {
     abVariant,
     activeHeadline,
     supabase: hasSupabaseService(),
-    zoom: zoomConfigured(),
+    zoom: await zoomReady(),
     email: Boolean(process.env.RESEND_API_KEY?.trim()),
   };
 }
@@ -168,7 +168,7 @@ export async function registerWebinar(input: RegisterInput, clientKey = 'anon') 
 
   let zoomRegistrantId = '';
   let zoomJoinUrl = '';
-  if (!isWaitlist && zoomConfigured()) {
+  if (!isWaitlist && (await zoomReady())) {
     try {
       const zoom = await zoomRegisterParticipant({ email, fullName, phone });
       if (zoom) {
