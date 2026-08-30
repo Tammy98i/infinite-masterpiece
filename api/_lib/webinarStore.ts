@@ -235,6 +235,16 @@ export async function registerWebinar(input: RegisterInput, clientKey = 'anon') 
         method: 'PATCH',
         body: JSON.stringify({ confirmation_email_sent_at: now, updated_at: now }),
       });
+    } else {
+      await supabaseRest('webinar_events', {
+        method: 'POST',
+        body: JSON.stringify({
+          event_type: 'EMAIL_CONFIRMATION_FAILED',
+          registration_id: id,
+          webinar_id: DEFAULT_WEBINAR_ID,
+          payload: { email, reason: mail.reason || 'unknown' },
+        }),
+      });
     }
     await supabaseRest('webinar_events', {
       method: 'POST',
