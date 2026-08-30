@@ -323,6 +323,21 @@ export function migrateSchema(db: DatabaseSync) {
     if (!webinarRegs.has('person_picked_at')) {
       db.exec(`ALTER TABLE webinar_registrations ADD COLUMN person_picked_at TEXT`);
     }
+    if (!webinarRegs.has('zoom_registrant_id')) {
+      db.exec(`ALTER TABLE webinar_registrations ADD COLUMN zoom_registrant_id TEXT DEFAULT ''`);
+    }
+    if (!webinarRegs.has('zoom_join_url')) {
+      db.exec(`ALTER TABLE webinar_registrations ADD COLUMN zoom_join_url TEXT DEFAULT ''`);
+    }
+    if (!webinarRegs.has('gclid')) db.exec(`ALTER TABLE webinar_registrations ADD COLUMN gclid TEXT DEFAULT ''`);
+    if (!webinarRegs.has('fbclid')) db.exec(`ALTER TABLE webinar_registrations ADD COLUMN fbclid TEXT DEFAULT ''`);
+    if (!webinarRegs.has('landing_page')) {
+      db.exec(`ALTER TABLE webinar_registrations ADD COLUMN landing_page TEXT DEFAULT ''`);
+    }
+    if (!webinarRegs.has('referrer')) db.exec(`ALTER TABLE webinar_registrations ADD COLUMN referrer TEXT DEFAULT ''`);
+    if (!webinarRegs.has('reminded_15m_at')) {
+      db.exec(`ALTER TABLE webinar_registrations ADD COLUMN reminded_15m_at TEXT`);
+    }
   }
 
   migrateCategoriesToSpec(db);

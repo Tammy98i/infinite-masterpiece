@@ -16,6 +16,11 @@ export type WebinarRegistrationPayload = {
   utmCampaign?: string;
   utmTerm?: string;
   utmContent?: string;
+  gclid?: string;
+  fbclid?: string;
+  landingPage?: string;
+  referrer?: string;
+  website?: string;
   abVariant?: string;
 };
 

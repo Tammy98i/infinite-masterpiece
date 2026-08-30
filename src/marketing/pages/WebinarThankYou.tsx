@@ -77,6 +77,19 @@ export function WebinarThankYou() {
         setPersonPicked(Boolean(registration.personPicked));
       })
       .catch(() => undefined);
+
+    const conversionKey = `webinar-complete:${registrationId}`;
+    try {
+      if (!sessionStorage.getItem(conversionKey)) {
+        sessionStorage.setItem(conversionKey, '1');
+        trackEvent('webinar_registration_completed', { registrationId, page: 'thank_you' });
+        window.fbq?.('track', 'CompleteRegistration', { content_name: 'webinar' });
+        window.gtag?.('event', 'generate_lead', { event_category: 'webinar', registrationId });
+      }
+    } catch {
+      trackEvent('webinar_registration_completed', { registrationId, page: 'thank_you' });
+    }
+    trackEvent('webinar_thank_you_view', { registrationId });
   }, [registrationId]);
 
   useEffect(() => {
