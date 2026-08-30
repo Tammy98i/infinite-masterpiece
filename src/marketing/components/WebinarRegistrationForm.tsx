@@ -136,10 +136,22 @@ export function WebinarRegistrationForm({
         fullName: String(data.get('fullName') || ''),
         phone,
         email: String(data.get('email') || ''),
-        marketingOptIn: data.get('marketingOptIn') !== 'off',
+        marketingOptIn: data.get('marketingOptIn') === 'on',
+        website: String(data.get('website') || ''),
         abVariant,
         ...utmAsRecord(utm),
+        landingPage:
+          utm.landingPage ||
+          (typeof window !== 'undefined' ? `${window.location.pathname}${window.location.search}` : ''),
+        referrer: utm.referrer || (typeof document !== 'undefined' ? document.referrer : ''),
       });
+      if (registration.alreadyRegistered) {
+        trackEvent('webinar_registration_completed', {
+          source: formId,
+          registrationId: registration.id,
+          duplicate: '1',
+        });
+      }
       finishRegistration(
         registration.id,
         registration.fullName,
@@ -178,7 +190,7 @@ export function WebinarRegistrationForm({
       id={formId}
       onSubmit={handleSubmit}
       onFocus={markStarted}
-      className="space-y-4 sm:space-y-5 text-right"
+      className="relative space-y-4 sm:space-y-5 text-right"
       aria-labelledby={`${formId}-title`}
     >
       {!compact ? (
@@ -243,6 +255,12 @@ export function WebinarRegistrationForm({
         />
       </div>
 
+      {/* Honeypot — hidden from humans */}
+      <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden opacity-0">
+        <label htmlFor={`${formId}-website`}>אתר</label>
+        <input id={`${formId}-website`} name="website" type="text" tabIndex={-1} autoComplete="off" />
+      </div>
+
       <label className="flex items-start gap-3 text-sm text-white/45 leading-relaxed cursor-pointer">
         <input
           required
@@ -259,8 +277,13 @@ export function WebinarRegistrationForm({
           <Link to="/privacy" className="text-[#C8A24C] hover:text-[#F7E7B5] underline-offset-2 hover:underline">
             מדיניות פרטיות
           </Link>
-          . עדכוני הוובינר נשלחים כברירת מחדל, עם אפשרות לבטל בכל עת.
+          .
         </span>
+      </label>
+
+      <label className="flex items-start gap-3 text-sm text-white/45 leading-relaxed cursor-pointer">
+        <input type="checkbox" name="marketingOptIn" className="mt-1 accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer" />
+        <span>מאשר/ת לקבל עדכונים על הוובינר ומסלולי Infinite Masterpiece (אפשר לבטל בכל עת).</span>
       </label>
 
       <WebinarTrustStrip config={config} />

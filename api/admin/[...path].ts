@@ -3,7 +3,6 @@ import {
   adminEmailsPayload,
   emptyAnalytics,
   emptyTracks,
-  emptyWebinar,
   overviewFrom,
   readinessPayload,
   usersFromProfiles,
@@ -11,6 +10,7 @@ import {
 } from '../_lib/adminDesk.js';
 import { listProfiles, mergeCurrentUser, updateProfile } from '../_lib/profiles.js';
 import { CATEGORIES, COURSES, FOUNDERS } from '../_lib/staticData.js';
+import { webinarAdminPayload } from '../_lib/webinarAdmin.js';
 
 type VercelReq = {
   method?: string;
@@ -141,7 +141,7 @@ export default async function handler(req: VercelReq, res: VercelRes) {
       return;
     }
     if (method === 'GET' && route === 'webinar') {
-      json(res, 200, emptyWebinar());
+      json(res, 200, await webinarAdminPayload());
       return;
     }
     if (method === 'GET' && route === 'legal') {

@@ -95,6 +95,7 @@ export const ALLOWED_EVENTS = [
   'webinar_fit_cta_clicked',
   'webinar_cta_clicked',
   'webinar_registration_abandoned',
+  'webinar_thank_you_view',
   'webinar_thank_you_step_completed',
   'webinar_exit_intent_shown',
   'webinar_exit_intent_submitted',

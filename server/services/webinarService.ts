@@ -490,6 +490,35 @@ function finalizeWebinarComplete(id: string, fullName: string, phone: string, em
     blocker: '',
     status: 'complete',
   }).catch(() => undefined);
+  void syncZoomRegistrant(id, fullName, phone, email).catch(() => undefined);
+}
+
+async function syncZoomRegistrant(id: string, fullName: string, phone: string, email: string) {
+  try {
+    const { zoomConfigured, zoomRegisterParticipant } = await import('../../api/_lib/zoom.ts');
+    if (!zoomConfigured()) return;
+    const zoom = await zoomRegisterParticipant({ email, fullName, phone });
+    if (!zoom) return;
+    const cols = columnNamesSafe();
+    if (cols.has('zoom_registrant_id')) {
+      getDb()
+        .prepare(
+          `UPDATE webinar_registrations SET zoom_registrant_id = ?, zoom_join_url = ?, updated_at = ? WHERE id = ?`
+        )
+        .run(zoom.registrantId, zoom.joinUrl, new Date().toISOString(), id);
+    }
+  } catch (err) {
+    console.error('[webinar] zoom sync failed', err);
+  }
+}
+
+function columnNamesSafe() {
+  try {
+    const rows = getDb().prepare(`PRAGMA table_info(webinar_registrations)`).all() as Array<{ name: string }>;
+    return new Set(rows.map((row) => row.name));
+  } catch {
+    return new Set<string>();
+  }
 }
 
 export function registerWebinarStepB(input: WebinarRegistrationInput) {
