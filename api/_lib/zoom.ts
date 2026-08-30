@@ -4,13 +4,29 @@ type ZoomTokenCache = { accessToken: string; expiresAt: number };
 
 let tokenCache: ZoomTokenCache | null = null;
 
-export function zoomConfigured() {
+/** 'webinar' when ZOOM_WEBINAR_ID is set, otherwise 'meeting' (temporary mode). */
+export function zoomEventKind(): 'webinar' | 'meeting' {
+  const explicit = String(process.env.ZOOM_EVENT_TYPE || '').trim().toLowerCase();
+  if (explicit === 'meeting') return 'meeting';
+  if (explicit === 'webinar') return 'webinar';
+  return process.env.ZOOM_WEBINAR_ID?.trim() ? 'webinar' : 'meeting';
+}
+
+function zoomEventId() {
+  if (zoomEventKind() === 'webinar') return process.env.ZOOM_WEBINAR_ID?.trim() || '';
+  return process.env.ZOOM_MEETING_ID?.trim() || '';
+}
+
+function zoomAuthConfigured() {
   return Boolean(
     process.env.ZOOM_ACCOUNT_ID?.trim() &&
       process.env.ZOOM_CLIENT_ID?.trim() &&
-      process.env.ZOOM_CLIENT_SECRET?.trim() &&
-      process.env.ZOOM_WEBINAR_ID?.trim()
+      process.env.ZOOM_CLIENT_SECRET?.trim()
   );
+}
+
+export function zoomConfigured() {
+  return Boolean(zoomAuthConfigured() && zoomEventId());
 }
 
 async function zoomAccessToken() {
@@ -45,17 +61,22 @@ export type ZoomRegistrantResult = {
   alreadyRegistered?: boolean;
 };
 
+function registrantsPath(eventId: string) {
+  const base = zoomEventKind() === 'webinar' ? 'webinars' : 'meetings';
+  return `https://api.zoom.us/v2/${base}/${encodeURIComponent(eventId)}/registrants`;
+}
+
 export async function zoomRegisterParticipant(input: {
   email: string;
   fullName: string;
   phone?: string;
 }): Promise<ZoomRegistrantResult | null> {
   if (!zoomConfigured()) return null;
-  const webinarId = process.env.ZOOM_WEBINAR_ID!.trim();
+  const eventId = zoomEventId();
   const token = await zoomAccessToken();
   const [firstName, ...rest] = input.fullName.trim().split(/\s+/);
   const lastName = rest.join(' ') || '-';
-  const res = await fetch(`https://api.zoom.us/v2/webinars/${encodeURIComponent(webinarId)}/registrants`, {
+  const res = await fetch(registrantsPath(eventId), {
     method: 'POST',
     headers: {
       Authorization: `Bearer ${token}`,
@@ -95,12 +116,11 @@ export async function zoomRegisterParticipant(input: {
 
 async function zoomFindRegistrant(email: string): Promise<ZoomRegistrantResult | null> {
   if (!zoomConfigured()) return null;
-  const webinarId = process.env.ZOOM_WEBINAR_ID!.trim();
+  const eventId = zoomEventId();
   const token = await zoomAccessToken();
-  const res = await fetch(
-    `https://api.zoom.us/v2/webinars/${encodeURIComponent(webinarId)}/registrants?status=approved&page_size=30`,
-    { headers: { Authorization: `Bearer ${token}` } }
-  );
+  const res = await fetch(`${registrantsPath(eventId)}?status=approved&page_size=300`, {
+    headers: { Authorization: `Bearer ${token}` },
+  });
   if (!res.ok) return null;
   const data = (await res.json()) as { registrants?: Array<{ id?: string; email?: string; join_url?: string }> };
   const hit = (data.registrants || []).find((row) => String(row.email || '').toLowerCase() === email.toLowerCase());
