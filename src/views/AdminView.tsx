@@ -1,75 +1,21 @@
 ﻿import { useEffect, useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { OnboardingCenterView } from './admin/OnboardingCenterView';
+import { AdminMobileNav, AdminSidebar } from './admin/AdminSidebar';
+import { AdminPageShell } from './admin/AdminPageShell';
+import { NAV_GROUPS, TAB_META, type Tab } from './admin/adminNav';
+import { fieldClass, STAFF_DESK_LABEL, STAFF_DESK_TABS } from './admin/adminConstants';
+import { UsersRolesPermissionsView } from './admin/UsersRolesPermissionsView';
 import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/captions';
-import { adminApi, type AdminAnalytics, type AdminAuditLog, type AdminCrmLead, type AdminNotification, type AdminOverview, type AdminPaymentRow, type AdminPremium88Application, type AdminRaffleDashboard, type AdminReadiness, type AdminTrackLead, type AdminTracksDashboard, type AdminUserRow, type AdminWebinarDashboard, type CoursePayload } from '../api/admin';
-import {
-  BUILT_IN_ADMIN_EMAILS,
-  configuredAdminEmails,
-  mergeAdminEmails,
-  parseAdminEmails,
-  persistExtraAdminEmails,
-  setRuntimeAdminEmails,
-} from '../data/adminEmails';
+import { adminApi, type AdminAnalytics, type AdminAuditLog, type AdminCrmLead, type AdminNotification, type AdminOverview, type AdminPaymentRow, type AdminPremium88Application, type AdminRaffleDashboard, type AdminReadiness, type AdminTrackLead, type AdminTracksDashboard, type AdminWebinarDashboard, type CoursePayload } from '../api/admin';
 import { DEFAULT_WEBINAR_CONFIG, type WebinarConfig } from '../constants/webinar';
 import type { LecturerApplication } from '../api/lecturer';
 import type { AccessLevel, Category, Course, Instructor, PublishStatus, UserProfile } from '../types';
 import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
 import { isApiUnavailableMessage } from '../lib/supabaseUser';
-import { emptyAnalytics, overviewFrom, readinessPayload, usersFromProfiles, type ProfileListRow } from '../lib/adminFallback';
+import { emptyAnalytics, overviewFrom, readinessPayload, type ProfileListRow } from '../lib/adminFallback';
 
-type Tab =
-  | 'overview'
-  | 'users'
-  | 'payments'
-  | 'tracks'
-  | 'content'
-  | 'categories'
-  | 'founders'
-  | 'team'
-  | 'lecturers'
-  | 'premium88'
-  | 'funnel'
-  | 'analytics'
-  | 'raffles'
-  | 'leads'
-  | 'webinar'
-  | 'notifications'
-  | 'settings'
-  | 'legal'
-  | 'audit'
-  | 'onboarding';
-
-type NavItem = {
-  id: Tab;
-  label: string;
-  ready: boolean;
-  badge?: string;
-};
-
-const NAV_ITEMS: NavItem[] = [
-  { id: 'overview', label: 'סקירה', ready: true },
-  { id: 'users', label: 'משתמשים', ready: true },
-  { id: 'payments', label: 'מנויים ותשלומים', ready: true },
-  { id: 'tracks', label: 'מסלולי כניסה', ready: true, badge: 'חדש' },
-  { id: 'content', label: 'תכני VOD', ready: true },
-  { id: 'categories', label: 'קטגוריות', ready: true },
-  { id: 'founders', label: 'צוות מייסדים', ready: true },
-  { id: 'team', label: 'צוות ומרצים', ready: true, badge: 'חדש' },
-  { id: 'lecturers', label: 'בקשות מרצים', ready: true },
-  { id: 'premium88', label: 'נבחרת 88', ready: true },
-  { id: 'funnel', label: 'משפך חינמיים', ready: true },
-  { id: 'analytics', label: 'אנליטיקות', ready: true },
-  { id: 'raffles', label: 'הגרלות', ready: true },
-  { id: 'leads', label: 'לידים ופניות', ready: true },
-  { id: 'webinar', label: 'וובינר', ready: true, badge: 'חדש' },
-  { id: 'notifications', label: 'התראות', ready: true },
-  { id: 'settings', label: 'הגדרות', ready: true },
-  { id: 'legal', label: 'משפטי', ready: true },
-  { id: 'audit', label: 'יומן פעולות', ready: true },
-  { id: 'onboarding', label: 'הדרכות', ready: true },
-];
 
 const STATUS_LABEL: Record<PublishStatus, string> = {
   draft: 'טיוטה',
@@ -85,26 +31,6 @@ const ACCESS_LABEL: Record<AccessLevel, string> = {
   admin_only: 'אדמין בלבד',
 };
 
-const fieldClass =
-  'w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11';
-
-const STAFF_DESK_TABS: Record<string, Tab[]> = {
-  content: ['overview', 'content', 'categories', 'lecturers', 'founders', 'team', 'notifications', 'audit', 'onboarding'],
-  support: ['overview', 'users', 'leads', 'notifications', 'audit', 'team'],
-  sales: ['overview', 'leads', 'webinar', 'tracks', 'payments', 'funnel', 'premium88', 'analytics', 'notifications', 'team'],
-  legal: ['overview', 'legal', 'settings', 'audit', 'notifications', 'team'],
-  finance: ['overview', 'payments', 'tracks', 'analytics', 'notifications', 'audit', 'team'],
-  community: ['overview', 'users', 'leads', 'premium88', 'funnel', 'notifications', 'team'],
-};
-
-const STAFF_DESK_LABEL: Record<string, string> = {
-  content: 'תוכן',
-  support: 'תמיכה',
-  sales: 'מכירות / הצלחה',
-  legal: 'משפטי',
-  finance: 'כספים',
-  community: 'קהילה',
-};
 
 function linkUrl(founder: Instructor, label: string) {
   return founder.externalLinks?.find((item) => item.label === label)?.url || '';
@@ -141,7 +67,12 @@ export function AdminView() {
 
   const staffDesk = user.staffDesk || '';
   const allowedTabs = staffDesk && STAFF_DESK_TABS[staffDesk] ? STAFF_DESK_TABS[staffDesk] : null;
-  const visibleNav = allowedTabs ? NAV_ITEMS.filter((item) => allowedTabs.includes(item.id)) : NAV_ITEMS;
+  const visibleGroups = allowedTabs
+    ? NAV_GROUPS.map((group) => ({
+        ...group,
+        items: group.items.filter((item) => allowedTabs.includes(item.id)),
+      })).filter((group) => group.items.length > 0)
+    : NAV_GROUPS;
 
   useEffect(() => {
     if (isAdmin) trackEvent('admin_opened_dashboard');
@@ -178,55 +109,20 @@ export function AdminView() {
     setMobileNavOpen(false);
   };
 
-  const navButton = (item: NavItem) => {
-    const active = tab === item.id;
-    return (
-      <button
-        key={item.id}
-        type="button"
-        onClick={() => goTab(item.id)}
-        className={`w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm min-h-11 text-right transition-colors ${
-          active
-            ? 'bg-[#C8A24C]/15 text-[#F7E7B5] border border-[#C8A24C]/40'
-            : 'text-white/60 hover:text-white hover:bg-white/[0.04] border border-transparent'
-        }`}
-      >
-        <span className="font-light">{item.label}</span>
-        {item.badge ? (
-          <span className="text-[10px] tracking-wide text-[#C8A24C] border border-[#C8A24C]/40 rounded-full px-2 py-0.5">
-            {item.badge}
-          </span>
-        ) : !item.ready ? (
-          <span className="text-[10px] text-white/30">בקרוב</span>
-        ) : null}
-      </button>
-    );
-  };
+  const tabMeta = TAB_META[tab];
 
   return (
     <div className="min-h-screen bg-[#050505] text-white text-right">
       <div className="flex min-h-screen">
         <aside className="hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
-          <div className="p-5 border-b border-white/10">
-            <p className="text-[11px] uppercase tracking-[0.28em] text-[#C8A24C] mb-2">ניהול</p>
-            <h1 className="text-xl font-light">לוח בקרה</h1>
-            <p className="text-xs text-white/40 mt-2 font-light truncate">{user.name}</p>
-            {user.email ? (
-              <p className="text-[11px] text-white/30 mt-1 truncate" dir="ltr">
-                {user.email}
-              </p>
-            ) : null}
-          </div>
-          <nav className="flex-1 p-3 grid gap-1 content-start">{visibleNav.map(navButton)}</nav>
-          <div className="p-4 border-t border-white/10">
-            <button
-              type="button"
-              onClick={() => setView('home')}
-              className="w-full px-4 py-2.5 rounded-full border border-white/15 text-sm min-h-11 cursor-pointer hover:border-white/40"
-            >
-              לספרייה
-            </button>
-          </div>
+          <AdminSidebar
+            groups={visibleGroups}
+            tab={tab}
+            onNavigate={goTab}
+            userName={user.name}
+            userEmail={user.email}
+            onExit={() => setView('home')}
+          />
         </aside>
 
         <div className="flex-1 min-w-0">
@@ -262,23 +158,23 @@ export function AdminView() {
             </button>
           </header>
 
-          {mobileNavOpen ? (
-            <div className="lg:hidden border-b border-white/10 bg-[#080808] p-3 grid gap-1">
-              {visibleNav.map(navButton)}
-            </div>
-          ) : null}
+          {mobileNavOpen ? <AdminMobileNav groups={visibleGroups} tab={tab} onNavigate={goTab} /> : null}
 
-          <main className="px-4 sm:px-6 lg:px-8 py-8 pb-24 max-w-7xl">
+          <main className="px-4 sm:px-6 lg:px-8 py-6 pb-24 max-w-7xl">
             {staffDesk ? (
               <p className="text-xs text-[#C8A24C]/80 mb-4">
                 מצב צוות מוגבל: {STAFF_DESK_LABEL[staffDesk] || staffDesk}. גישה מלאה רק לאדמין ראשי.
               </p>
             ) : null}
+            {tab === 'access' && <UsersRolesPermissionsView />}
+            {tab === 'users' && <UsersRolesPermissionsView initialSection="accounts" />}
             {tab === 'overview' && (
-              <div className="grid gap-10">
-                <ReadinessPanel />
-                <OverviewPanel onNavigate={goTab} />
-              </div>
+              <AdminPageShell group={tabMeta.group} title={tabMeta.title} description={tabMeta.description}>
+                <div className="grid gap-10">
+                  <ReadinessPanel />
+                  <OverviewPanel onNavigate={goTab} />
+                </div>
+              </AdminPageShell>
             )}
             {tab === 'content' && (
               <ContentPanel
@@ -287,11 +183,18 @@ export function AdminView() {
                 onSaved={() => void reloadCatalog()}
               />
             )}
-            {tab === 'analytics' && <AnalyticsPanel />}
-            {tab === 'funnel' && <AnalyticsPanel focus="funnel" />}
-            {tab === 'users' && <UsersPanel />}
+            {tab === 'analytics' && (
+              <AdminPageShell group={tabMeta.group} title={tabMeta.title} description={tabMeta.description}>
+                <AnalyticsPanel />
+              </AdminPageShell>
+            )}
+            {tab === 'funnel' && (
+              <AdminPageShell group={tabMeta.group} title={tabMeta.title} description={tabMeta.description}>
+                <AnalyticsPanel focus="funnel" />
+              </AdminPageShell>
+            )}
             {tab === 'lecturers' && <LecturerApplicationsPanel />}
-            {tab === 'team' && <TeamStaffPanel />}
+            {tab === 'team' && <UsersRolesPermissionsView initialSection="desks" />}
             {tab === 'founders' && <FoundersPanel />}
             {tab === 'payments' && <PaymentsPanel />}
             {tab === 'tracks' && <TracksPanel />}
@@ -1321,801 +1224,6 @@ function CourseForm({
   );
 }
 
-function AdminEmailsCard({ onChanged }: { onChanged: () => void }) {
-  const [emails, setEmails] = useState<string[]>(() => configuredAdminEmails());
-  const [builtIn, setBuiltIn] = useState<string[]>([...BUILT_IN_ADMIN_EMAILS]);
-  const [draft, setDraft] = useState('');
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState('');
-
-  const load = async () => {
-    try {
-      const data = await adminApi.adminEmails();
-      setEmails(data.emails);
-      setBuiltIn(data.builtIn);
-      persistExtraAdminEmails(data.extra);
-      setRuntimeAdminEmails(data.emails);
-    } catch {
-      setEmails(configuredAdminEmails());
-      setBuiltIn([...BUILT_IN_ADMIN_EMAILS]);
-    }
-  };
-
-  useEffect(() => {
-    void load();
-  }, []);
-
-  const save = async (merged: string[]) => {
-    setPending(true);
-    setError('');
-    persistExtraAdminEmails(merged);
-    setRuntimeAdminEmails(merged);
-    try {
-      const data = await adminApi.saveAdminEmails(merged);
-      setEmails(data.emails);
-      persistExtraAdminEmails(data.extra);
-    } catch {
-      setEmails(configuredAdminEmails());
-    } finally {
-      setPending(false);
-      onChanged();
-    }
-  };
-
-  const add = () => {
-    const next = parseAdminEmails(draft);
-    if (!next.length) {
-      setError('נא להזין אימייל תקין');
-      return;
-    }
-    void save(mergeAdminEmails(emails, next));
-    setDraft('');
-  };
-
-  return (
-    <div className="border border-white/10 rounded-3xl p-6 grid gap-4 max-w-3xl">
-      <div>
-        <h2 className="text-lg font-light mb-1">מיילים עם הרשאת אדמין</h2>
-        <p className="text-sm text-white/45 font-light">
-          מי שמתחבר באחד המיילים האלה — באימייל וסיסמה או ב-Google — נכנס כאדמין.
-        </p>
-      </div>
-      <ul className="grid gap-2">
-        {emails.map((email) => (
-          <li
-            key={email}
-            className="flex items-center justify-between gap-3 border border-white/10 rounded-2xl px-4 py-2 min-h-11"
-          >
-            <span className="text-sm text-white" dir="ltr">
-              {email}
-              {builtIn.includes(email) ? <span className="text-white/35"> · קבוע</span> : null}
-            </span>
-            {builtIn.includes(email) ? null : (
-              <button
-                type="button"
-                disabled={pending}
-                onClick={() => void save(emails.filter((item) => item !== email))}
-                className="text-xs text-white/45 hover:text-white min-h-11 px-2 cursor-pointer"
-              >
-                הסרה
-              </button>
-            )}
-          </li>
-        ))}
-      </ul>
-      <div className="flex flex-col sm:flex-row gap-3">
-        <label className="block grow">
-          <span className="sr-only">אימייל אדמין חדש</span>
-          <input
-            type="email"
-            dir="ltr"
-            value={draft}
-            onChange={(e) => setDraft(e.target.value)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter') {
-                e.preventDefault();
-                add();
-              }
-            }}
-            placeholder="name@gmail.com"
-            className={fieldClass}
-          />
-        </label>
-        <button
-          type="button"
-          disabled={pending}
-          onClick={add}
-          className="px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
-        >
-          {pending ? 'שומר...' : 'הוספה'}
-        </button>
-      </div>
-      {error ? (
-        <p className="text-sm text-rose-300" role="alert">
-          {error}
-        </p>
-      ) : null}
-    </div>
-  );
-}
-
-function UsersPanel() {
-  const { reloadCatalog, user } = useApp();
-  const [users, setUsers] = useState<AdminUserRow[]>([]);
-  const [error, setError] = useState('');
-  const [pendingId, setPendingId] = useState<string | null>(null);
-  const [creating, setCreating] = useState(false);
-  const [newName, setNewName] = useState('');
-  const [newEmail, setNewEmail] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [newRole, setNewRole] = useState<'student' | 'instructor' | 'admin'>('student');
-  const [newIsFounder, setNewIsFounder] = useState(false);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-
-  const load = () =>
-    adminApi
-      .users()
-      .then((res) => setUsers(res.users))
-      .catch((err) => {
-        const message = err instanceof Error ? err.message : 'טעינה נכשלה';
-        if (isDeskOffline(message) && user.id !== 'guest') {
-          setUsers(usersFromProfiles([profileRowFromUser(user)]));
-          return;
-        }
-        setError(message);
-      });
-
-  useEffect(() => {
-    void load();
-  }, []);
-
-  const selected = users.find((row) => row.id === selectedId) || null;
-
-  const patch = async (id: string, next: Parameters<typeof adminApi.updateUser>[1]) => {
-    const row = users.find((item) => item.id === id);
-    if (next.blocked === true && row && !row.blocked) {
-      if (!window.confirm('לחסום את המשתמש?')) return;
-    }
-    if (next.role && row && next.role !== row.role) {
-      if (!window.confirm('לשנות תפקיד למשתמש?')) return;
-    }
-    if (next.subscriptionPlan === 'none' && row && row.subscriptionPlan !== 'none') {
-      if (!window.confirm('לבטל מנוי למשתמש?')) return;
-    }
-    setPendingId(id);
-    setError('');
-    try {
-      await adminApi.updateUser(id, next);
-      await load();
-      if (next.role === 'instructor' || next.isFounder !== undefined) await reloadCatalog();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'הפעולה נכשלה');
-    } finally {
-      setPendingId(null);
-    }
-  };
-
-  const createUser = async () => {
-    setCreating(true);
-    setError('');
-    try {
-      const created = await adminApi.createUser({
-        fullName: newName,
-        email: newEmail,
-        password: newPassword,
-        role: newRole,
-        isFounder: newIsFounder,
-      });
-      setNewName('');
-      setNewEmail('');
-      setNewPassword('');
-      setNewRole('student');
-      setNewIsFounder(false);
-      await load();
-      setSelectedId(created.user.id);
-      if (newRole === 'instructor' || newIsFounder) await reloadCatalog();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'יצירה נכשלה');
-    } finally {
-      setCreating(false);
-    }
-  };
-
-  const exportCsv = () => {
-    const header = 'name,email,role,plan,team,blocked,createdAt';
-    const rows = users.map((row) =>
-      [
-        row.name,
-        row.email,
-        row.role,
-        row.subscriptionPlan,
-        row.isFounder ? '1' : '0',
-        row.blocked ? '1' : '0',
-        row.createdAt,
-      ]
-        .map((cell) => `"${String(cell).replace(/"/g, '""')}"`)
-        .join(',')
-    );
-    const blob = new Blob([`\uFEFF${header}\n${rows.join('\n')}`], { type: 'text/csv;charset=utf-8' });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = 'users.csv';
-    link.click();
-    URL.revokeObjectURL(url);
-  };
-
-  return (
-    <div className="grid gap-8">
-      {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-
-      <AdminEmailsCard onChanged={() => void load()} />
-
-      <div className="border border-[#C8A24C]/25 rounded-3xl p-6 grid gap-4 max-w-3xl">
-        <div>
-          <h2 className="text-lg font-light mb-1">הוספת משתמש</h2>
-          <p className="text-sm text-white/45 font-light">
-            יצירת חשבון כניסה. אפשר לשייך לצוות או לאשר כמרצה כבר בשלב היצירה.
-          </p>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-          <label className="block">
-            <span className="block text-xs text-white/45 mb-1">שם</span>
-            <input value={newName} onChange={(e) => setNewName(e.target.value)} className={fieldClass} />
-          </label>
-          <label className="block">
-            <span className="block text-xs text-white/45 mb-1">אימייל</span>
-            <input
-              type="email"
-              value={newEmail}
-              onChange={(e) => setNewEmail(e.target.value)}
-              className={fieldClass}
-              dir="ltr"
-            />
-          </label>
-          <label className="block">
-            <span className="block text-xs text-white/45 mb-1">סיסמה</span>
-            <input
-              type="password"
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              className={fieldClass}
-              dir="ltr"
-            />
-          </label>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-          <label className="grid gap-1 text-white/50">
-            תפקיד
-            <select value={newRole} onChange={(e) => setNewRole(e.target.value as typeof newRole)} className={fieldClass}>
-              <option value="student">משתמש</option>
-              <option value="instructor">מרצה</option>
-              <option value="admin">אדמין</option>
-            </select>
-          </label>
-          <label className="flex items-center gap-3 text-sm text-white/70 min-h-11 pt-5">
-            <input
-              type="checkbox"
-              checked={newIsFounder}
-              onChange={(e) => setNewIsFounder(e.target.checked)}
-              className="w-4 h-4 accent-[#C8A24C]"
-            />
-            שיוך לצוות המיזם (מייסד/ת)
-          </label>
-        </div>
-        <button
-          type="button"
-          disabled={creating}
-          onClick={() => void createUser()}
-          className="w-full sm:w-auto px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
-        >
-          {creating ? 'יוצר...' : 'יצירת חשבון'}
-        </button>
-      </div>
-
-      <div className="grid gap-6 xl:grid-cols-[1.4fr_0.8fr]">
-      <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <div className="flex justify-end mb-4 p-3">
-          <button
-            type="button"
-            onClick={exportCsv}
-            className="px-4 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer hover:border-white/40"
-          >
-            ייצוא משתמשים
-          </button>
-        </div>
-        <table className="w-full text-sm text-right">
-          <thead className="text-xs text-white/40 border-b border-white/10">
-            <tr>
-              <th className="py-3 px-3 font-normal">שם</th>
-              <th className="py-3 px-3 font-normal">אימייל</th>
-              <th className="py-3 px-3 font-normal">תפקיד</th>
-              <th className="py-3 px-3 font-normal">מנוי</th>
-              <th className="py-3 px-3 font-normal">מסלול</th>
-              <th className="py-3 px-3 font-normal">סטטוס</th>
-            </tr>
-          </thead>
-          <tbody className="divide-y divide-white/10">
-            {users.map((row) => (
-              <tr
-                key={row.id}
-                onClick={() => setSelectedId(row.id)}
-                className={`cursor-pointer ${selectedId === row.id ? 'bg-[#C8A24C]/10' : 'hover:bg-white/[0.03]'}`}
-              >
-                <td className="py-3 px-3">
-                  {row.name}
-                  {row.isFounder ? <span className="text-white/35"> · צוות</span> : null}
-                </td>
-                <td className="py-3 px-3 text-white/55">{row.email}</td>
-                <td className="py-3 px-3 text-white/70">
-                  {row.role === 'admin' ? 'אדמין' : row.role === 'instructor' ? 'מרצה' : 'משתמש'}
-                </td>
-                <td className="py-3 px-3 text-white/55">{row.subscriptionPlan}</td>
-                <td className="py-3 px-3 text-white/55">
-                  {row.entryTrack === 'brave' ? 'אמיצים' : row.entryTrack === 'hesitant' ? 'הססנים' : 'ללא'}
-                </td>
-                <td className="py-3 px-3">{row.blocked ? 'חסום' : 'פעיל'}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
-
-      <aside className="border border-white/10 rounded-2xl p-5 min-h-[320px]">
-        {!selected ? (
-          <p className="text-sm text-white/40">בחרו משתמש מהטבלה.</p>
-        ) : (
-          <div className="grid gap-4 text-sm">
-            <div>
-              <p className="text-[13px] uppercase tracking-[0.25em] text-[#C8A24C] mb-2">כרטיס משתמש</p>
-              <h3 className="text-xl font-light">{selected.name}</h3>
-              <p className="text-white/45 mt-1 break-all">{selected.email}</p>
-            </div>
-            <p>תפקיד: {selected.role === 'admin' ? 'אדמין' : selected.role === 'instructor' ? 'מרצה' : 'משתמש'}</p>
-            <p>מנוי: {selected.subscriptionPlan}</p>
-            <p>
-              מסלול:{' '}
-              {selected.entryTrack === 'brave'
-                ? 'אמיצים'
-                : selected.entryTrack === 'hesitant'
-                  ? 'הססנים'
-                  : 'ללא'}
-            </p>
-            <p>פעימה: {selected.currentPaymentPhase || 0}</p>
-            <p>כרטיסי הגרלה: {selected.raffleTicketsCount || 0}</p>
-            <p>הצטרפות: {selected.createdAt.replace('T', ' ').slice(0, 16)}</p>
-            <p>כניסה אחרונה: {selected.lastLoginAt?.replace('T', ' ').slice(0, 16) || 'אין'}</p>
-
-            <label className="grid gap-1 text-white/50">
-              שינוי תפקיד
-              <select
-                value={selected.role}
-                disabled={pendingId === selected.id}
-                onChange={(e) => void patch(selected.id, { role: e.target.value })}
-                className={fieldClass}
-              >
-                <option value="student">משתמש</option>
-                <option value="instructor">מרצה</option>
-                <option value="admin">אדמין</option>
-              </select>
-            </label>
-            <label className="grid gap-1 text-white/50">
-              מנוי
-              <select
-                value={selected.subscriptionPlan}
-                disabled={pendingId === selected.id}
-                onChange={(e) => void patch(selected.id, { subscriptionPlan: e.target.value })}
-                className={fieldClass}
-              >
-                <option value="none">חינמי</option>
-                <option value="free_trial">ניסיון</option>
-                <option value="monthly">חודשי</option>
-                <option value="annual">שנתי</option>
-                <option value="premium_88">נבחרת 88</option>
-              </select>
-            </label>
-            <label className="grid gap-1 text-white/50">
-              מסלול כניסה
-              <select
-                value={selected.entryTrack || 'none'}
-                disabled={pendingId === selected.id}
-                onChange={(e) =>
-                  void patch(selected.id, {
-                    entryTrack: e.target.value,
-                    currentPaymentPhase: e.target.value === 'brave' ? 1 : selected.currentPaymentPhase || 0,
-                  })
-                }
-                className={fieldClass}
-              >
-                <option value="none">ללא</option>
-                <option value="brave">אמיצים</option>
-                <option value="hesitant">הססנים</option>
-              </select>
-            </label>
-            <div className="flex flex-wrap gap-2 pt-2">
-              <button
-                type="button"
-                disabled={pendingId === selected.id}
-                onClick={() => void patch(selected.id, { blocked: !selected.blocked })}
-                className="px-3 py-2 text-xs border border-white/20 rounded-xl min-h-11"
-              >
-                {selected.blocked ? 'שחרור חסימה' : 'חסימה'}
-              </button>
-              <button
-                type="button"
-                disabled={pendingId === selected.id}
-                onClick={() => {
-                  if (
-                    !window.confirm(
-                      selected.isFounder ? 'להסיר את המשתמש מצוות המיזם?' : 'לשייך את המשתמש לצוות המיזם?'
-                    )
-                  ) {
-                    return;
-                  }
-                  void patch(selected.id, { isFounder: !selected.isFounder });
-                }}
-                className="px-3 py-2 text-xs border border-[#C8A24C]/40 text-[#C8A24C] rounded-xl min-h-11"
-              >
-                {selected.isFounder ? 'הסרה מהצוות' : 'שיוך לצוות'}
-              </button>
-              {selected.role !== 'instructor' && selected.role !== 'admin' ? (
-                <button
-                  type="button"
-                  disabled={pendingId === selected.id}
-                  onClick={() => void patch(selected.id, { role: 'instructor' })}
-                  className="px-3 py-2 text-xs bg-[#C8A24C] text-black rounded-xl min-h-11"
-                >
-                  אישור כמרצה
-                </button>
-              ) : null}
-            </div>
-          </div>
-        )}
-      </aside>
-      </div>
-    </div>
-  );
-}
-
-const APP_STATUS_LABEL: Record<LecturerApplication['status'], string> = {
-  pending: 'ממתינה',
-  approved: 'אושרה',
-  rejected: 'נדחתה',
-  more_info: 'פרטים נוספים',
-};
-
-function TeamStaffPanel() {
-  const { reloadCatalog } = useApp();
-  const [users, setUsers] = useState<AdminUserRow[]>([]);
-  const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [filter, setFilter] = useState<'all' | 'lecturer' | 'staff' | 'founder'>('all');
-  const [error, setError] = useState('');
-  const [pendingId, setPendingId] = useState<string | null>(null);
-
-  const load = () =>
-    adminApi
-      .users()
-      .then((res) => setUsers(res.users))
-      .catch((err) => setError(err instanceof Error ? err.message : 'טעינה נכשלה'));
-
-  useEffect(() => {
-    void load();
-  }, []);
-
-  const rows = users.filter((row) => {
-    const isStaff = row.role === 'admin' || Boolean(row.staffDesk);
-    const isLecturer = row.role === 'instructor';
-    if (filter === 'lecturer') return isLecturer;
-    if (filter === 'staff') return isStaff;
-    if (filter === 'founder') return Boolean(row.isFounder);
-    return isStaff || isLecturer || Boolean(row.isFounder);
-  });
-
-  const selected = users.find((row) => row.id === selectedId) || null;
-
-  const patch = async (id: string, next: Parameters<typeof adminApi.updateUser>[1], confirmMsg?: string) => {
-    if (confirmMsg && !window.confirm(confirmMsg)) return;
-    setPendingId(id);
-    setError('');
-    try {
-      await adminApi.updateUser(id, next);
-      await load();
-      if (next.role === 'instructor' || next.isFounder !== undefined) await reloadCatalog();
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'הפעולה נכשלה');
-    } finally {
-      setPendingId(null);
-    }
-  };
-
-  return (
-    <div className="grid gap-6">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">צוות ומרצים</p>
-        <h2 className="text-2xl font-light">שליטה בהרשאות פנימיות</h2>
-        <p className="text-sm text-white/45 mt-2">
-          אדמין קובע מי מרצה, מי צוות, איזה דסק, ומי חסום או מושהה. מייסד נשאר דגל נפרד.
-        </p>
-      </div>
-      {error ? <p className="text-sm text-rose-300">{error}</p> : null}
-
-      <div className="flex flex-wrap gap-2">
-        {(
-          [
-            ['all', 'הכל'],
-            ['lecturer', 'מרצים'],
-            ['staff', 'צוות'],
-            ['founder', 'מייסדים'],
-          ] as const
-        ).map(([id, label]) => (
-          <button
-            key={id}
-            type="button"
-            onClick={() => setFilter(id)}
-            className={`px-4 py-2 rounded-full text-xs min-h-10 border ${
-              filter === id ? 'bg-[#C8A24C] text-black border-[#C8A24C]' : 'border-white/15 text-white/55'
-            }`}
-          >
-            {label}
-          </button>
-        ))}
-      </div>
-
-      <div className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
-        <div className="overflow-x-auto border border-white/10 rounded-2xl">
-          <table className="w-full text-sm text-right">
-            <thead className="text-xs text-white/40 border-b border-white/10">
-              <tr>
-                <th className="py-3 px-3 font-normal">שם</th>
-                <th className="py-3 px-3 font-normal">תפקיד</th>
-                <th className="py-3 px-3 font-normal">דסק</th>
-                <th className="py-3 px-3 font-normal">סטטוס</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-white/10">
-              {rows.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="py-6 px-3 text-white/40">
-                    אין רשומות בסינון הנוכחי.
-                  </td>
-                </tr>
-              ) : (
-                rows.map((row) => (
-                  <tr
-                    key={row.id}
-                    onClick={() => setSelectedId(row.id)}
-                    className={`cursor-pointer ${selectedId === row.id ? 'bg-[#C8A24C]/10' : 'hover:bg-white/[0.03]'}`}
-                  >
-                    <td className="py-3 px-3">
-                      {row.name}
-                      {row.isFounder ? <span className="text-white/35"> · מייסד</span> : null}
-                      <span className="block text-xs text-white/35">{row.email}</span>
-                    </td>
-                    <td className="py-3 px-3 text-white/60">
-                      {row.role === 'admin' ? 'אדמין' : row.role === 'instructor' ? 'מרצה' : 'משתמש'}
-                    </td>
-                    <td className="py-3 px-3 text-white/55">
-                      {row.staffDesk ? STAFF_DESK_LABEL[row.staffDesk] || row.staffDesk : '—'}
-                    </td>
-                    <td className="py-3 px-3 text-white/55">
-                      {row.blocked
-                        ? 'חסום'
-                        : row.staffStatus === 'suspended'
-                          ? 'מושהה'
-                          : row.staffStatus === 'limited'
-                            ? 'מוגבל'
-                            : 'פעיל'}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        <aside className="border border-white/10 rounded-2xl p-5 min-h-[320px]">
-          {!selected ? (
-            <p className="text-sm text-white/40">בחרו איש צוות או מרצה.</p>
-          ) : (
-            <div className="grid gap-4 text-sm">
-              <div>
-                <p className="text-[13px] uppercase tracking-[0.25em] text-[#C8A24C] mb-2">כרטיס צוות</p>
-                <h3 className="text-xl font-light">{selected.name}</h3>
-                <p className="text-white/45 mt-1 break-all">{selected.email}</p>
-              </div>
-
-              <label className="grid gap-1 text-white/50">
-                תפקיד מערכת
-                <select
-                  value={selected.role}
-                  disabled={pendingId === selected.id}
-                  onChange={(e) =>
-                    void patch(selected.id, { role: e.target.value }, 'לשנות תפקיד למשתמש?')
-                  }
-                  className={fieldClass}
-                >
-                  <option value="student">משתמש</option>
-                  <option value="instructor">מרצה</option>
-                  <option value="admin">אדמין / צוות</option>
-                </select>
-              </label>
-
-              <label className="grid gap-1 text-white/50">
-                דסק צוות
-                <select
-                  value={selected.staffDesk || ''}
-                  disabled={pendingId === selected.id}
-                  onChange={(e) =>
-                    void patch(
-                      selected.id,
-                      {
-                        staffDesk: e.target.value,
-                        role: e.target.value ? 'admin' : selected.role,
-                      },
-                      e.target.value ? 'לשייך לדסק צוות? המשתמש יקבל גישה מוגבלת לאדמין.' : undefined
-                    )
-                  }
-                  className={fieldClass}
-                >
-                  <option value="">ללא (סופר אדמין אם תפקיד אדמין)</option>
-                  <option value="content">תוכן</option>
-                  <option value="support">תמיכה</option>
-                  <option value="sales">מכירות / הצלחה</option>
-                  <option value="legal">משפטי</option>
-                  <option value="finance">כספים</option>
-                  <option value="community">קהילה</option>
-                </select>
-              </label>
-
-              <label className="grid gap-1 text-white/50">
-                סטטוס גישה
-                <select
-                  value={selected.staffStatus || 'active'}
-                  disabled={pendingId === selected.id}
-                  onChange={(e) =>
-                    void patch(
-                      selected.id,
-                      { staffStatus: e.target.value },
-                      e.target.value === 'suspended' ? 'להשהות גישה ולנתק סשנים פעילים?' : undefined
-                    )
-                  }
-                  className={fieldClass}
-                >
-                  <option value="active">פעיל</option>
-                  <option value="limited">גישה מוגבלת</option>
-                  <option value="suspended">מושהה</option>
-                </select>
-              </label>
-
-              <div className="flex flex-wrap gap-2 pt-2">
-                <button
-                  type="button"
-                  disabled={pendingId === selected.id}
-                  onClick={() =>
-                    void patch(
-                      selected.id,
-                      { blocked: !selected.blocked },
-                      selected.blocked ? undefined : 'לחסום את המשתמש ולנתק סשנים?'
-                    )
-                  }
-                  className="px-3 py-2 text-xs border border-white/20 rounded-xl min-h-11"
-                >
-                  {selected.blocked ? 'שחרור חסימה' : 'חסימה'}
-                </button>
-                <button
-                  type="button"
-                  disabled={pendingId === selected.id}
-                  onClick={() =>
-                    void patch(
-                      selected.id,
-                      { isFounder: !selected.isFounder },
-                      selected.isFounder ? 'להסיר דגל מייסד?' : 'לסמן כמייסד?'
-                    )
-                  }
-                  className="px-3 py-2 text-xs border border-[#C8A24C]/40 text-[#C8A24C] rounded-xl min-h-11"
-                >
-                  {selected.isFounder ? 'הסרת מייסד' : 'סימון מייסד'}
-                </button>
-                {selected.role !== 'instructor' ? (
-                  <button
-                    type="button"
-                    disabled={pendingId === selected.id}
-                    onClick={() => void patch(selected.id, { role: 'instructor' }, 'לאשר כמרצה?')}
-                    className="px-3 py-2 text-xs bg-[#C8A24C] text-black rounded-xl min-h-11"
-                  >
-                    אישור כמרצה
-                  </button>
-                ) : (
-                  <button
-                    type="button"
-                    disabled={pendingId === selected.id}
-                    onClick={() =>
-                      void patch(selected.id, { role: 'student', staffDesk: '' }, 'להסיר תפקיד מרצה?')
-                    }
-                    className="px-3 py-2 text-xs border border-white/20 rounded-xl min-h-11"
-                  >
-                    הסרת תפקיד מרצה
-                  </button>
-                )}
-              </div>
-
-              {(selected.role === 'instructor' || selected.role === 'admin') && (
-                <TeamMessageComposer
-                  lecturerUserId={selected.id}
-                  lecturerName={selected.name}
-                  disabled={pendingId === selected.id}
-                />
-              )}
-            </div>
-          )}
-        </aside>
-      </div>
-    </div>
-  );
-}
-
-function TeamMessageComposer({
-  lecturerUserId,
-  lecturerName,
-  disabled,
-}: {
-  lecturerUserId: string;
-  lecturerName: string;
-  disabled?: boolean;
-}) {
-  const [subject, setSubject] = useState('');
-  const [body, setBody] = useState('');
-  const [pending, setPending] = useState(false);
-  const [error, setError] = useState('');
-  const [ok, setOk] = useState('');
-
-  const send = async () => {
-    setPending(true);
-    setError('');
-    setOk('');
-    try {
-      await adminApi.sendTeamMessage({ lecturerUserId, subject, body });
-      setSubject('');
-      setBody('');
-      setOk('ההודעה נשלחה');
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'שליחה נכשלה');
-    } finally {
-      setPending(false);
-    }
-  };
-
-  return (
-    <div className="border-t border-white/10 pt-4 grid gap-3">
-      <p className="text-xs text-white/45">הודעה פנימית אל {lecturerName}</p>
-      <input
-        value={subject}
-        onChange={(e) => setSubject(e.target.value)}
-        placeholder="נושא"
-        className={fieldClass}
-        disabled={disabled || pending}
-      />
-      <textarea
-        rows={3}
-        value={body}
-        onChange={(e) => setBody(e.target.value)}
-        placeholder="תוכן ההודעה"
-        className={fieldClass}
-        disabled={disabled || pending}
-      />
-      {error ? <p className="text-xs text-rose-300">{error}</p> : null}
-      {ok ? <p className="text-xs text-emerald-300">{ok}</p> : null}
-      <button
-        type="button"
-        disabled={disabled || pending || !subject.trim() || !body.trim()}
-        onClick={() => void send()}
-        className="w-fit px-4 py-2 rounded-full bg-[#C8A24C] text-black text-xs min-h-10 disabled:opacity-60"
-      >
-        {pending ? 'שולח...' : 'שליחת הודעה'}
-      </button>
-    </div>
-  );
-}
 
 function LecturerApplicationsPanel() {
   const [applications, setApplications] = useState<LecturerApplication[]>([]);
