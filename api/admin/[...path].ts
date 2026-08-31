@@ -9,7 +9,9 @@ import {
   WRITE_UNAVAILABLE,
 } from '../_lib/adminDesk.js';
 import { listProfiles, mergeCurrentUser, createAdminUser, updateProfile } from '../_lib/profiles.js';
-import { CATEGORIES, COURSES, FOUNDERS } from '../_lib/staticData.js';
+import { createTeamFounder, listTeamFounders, reorderTeamFounders, updateTeamFounder } from '../_lib/foundersStore.js';
+import { createTeamMessage, listTeamMessages } from '../_lib/teamMessagesStore.js';
+import { CATEGORIES, COURSES } from '../_lib/staticData.js';
 import { webinarAdminPayload } from '../_lib/webinarAdmin.js';
 
 type VercelReq = {
@@ -86,16 +88,18 @@ export default async function handler(req: VercelReq, res: VercelRes) {
       return;
     }
     if (method === 'GET' && route === 'founders') {
+      const founders = await listTeamFounders();
       json(res, 200, {
-        founders: FOUNDERS.map((founder) => ({
+        founders: founders.map((founder) => ({
           id: founder.id,
           name: founder.name,
           title: founder.title,
-          avatarUrl: founder.image,
-          bio: founder.description,
-          credentials: founder.expertise,
+          avatarUrl: founder.avatarUrl,
+          bio: founder.bio,
+          credentials: founder.credentials,
           isFounder: true,
-          founderId: founder.id,
+          founderId: founder.founderId,
+          externalLinks: founder.externalLinks || [],
         })),
       });
       return;
@@ -133,7 +137,7 @@ export default async function handler(req: VercelReq, res: VercelRes) {
       return;
     }
     if (method === 'GET' && route === 'team-messages') {
-      json(res, 200, { messages: [] });
+      json(res, 200, { messages: await listTeamMessages() });
       return;
     }
     if (method === 'GET' && route === 'raffles') {
@@ -169,6 +173,89 @@ export default async function handler(req: VercelReq, res: VercelRes) {
         isFounder: typeof body.isFounder === 'boolean' ? body.isFounder : undefined,
       });
       json(res, 201, { user: usersFromProfiles([profile])[0] });
+      return;
+    }
+    if (method === 'POST' && route === 'founders') {
+      const body = bodyOf(req);
+      const founder = await createTeamFounder({
+        name: String(body.name || ''),
+        title: String(body.title || 'יזם'),
+        bio: String(body.bio || ''),
+        avatarUrl: String(body.avatarUrl || ''),
+        profileId: typeof body.profileId === 'string' ? body.profileId : undefined,
+      });
+      json(res, 201, {
+        founder: {
+          id: founder.id,
+          name: founder.name,
+          title: founder.title,
+          avatarUrl: founder.avatarUrl,
+          bio: founder.bio,
+          credentials: founder.credentials,
+          isFounder: true,
+          founderId: founder.founderId,
+          externalLinks: founder.externalLinks || [],
+        },
+      });
+      return;
+    }
+    if (method === 'PATCH' && route === 'founders/order') {
+      const body = bodyOf(req);
+      const ids = Array.isArray(body.ids) ? body.ids.map(String) : [];
+      const founders = await reorderTeamFounders(ids);
+      json(res, 200, {
+        founders: founders.map((founder) => ({
+          id: founder.id,
+          name: founder.name,
+          title: founder.title,
+          avatarUrl: founder.avatarUrl,
+          bio: founder.bio,
+          credentials: founder.credentials,
+          isFounder: true,
+          founderId: founder.founderId,
+          externalLinks: founder.externalLinks || [],
+        })),
+      });
+      return;
+    }
+    const founderMatch = route.match(/^founders\/([^/]+)$/);
+    if (method === 'PATCH' && founderMatch) {
+      const body = bodyOf(req);
+      const founder = await updateTeamFounder(decodeURIComponent(founderMatch[1]), {
+        avatarUrl: typeof body.avatarUrl === 'string' ? body.avatarUrl : undefined,
+        externalLinks: Array.isArray(body.externalLinks)
+          ? (body.externalLinks as Array<{ label: string; url: string }>)
+          : undefined,
+      });
+      json(res, 200, {
+        founder: {
+          id: founder.id,
+          name: founder.name,
+          title: founder.title,
+          avatarUrl: founder.avatarUrl,
+          bio: founder.bio,
+          credentials: founder.credentials,
+          isFounder: true,
+          founderId: founder.founderId,
+          externalLinks: founder.externalLinks || [],
+        },
+      });
+      return;
+    }
+    if (method === 'POST' && route === 'team-messages') {
+      const body = bodyOf(req);
+      const message = await createTeamMessage({
+        toUserId:
+          typeof body.toUserId === 'string'
+            ? body.toUserId
+            : typeof body.lecturerUserId === 'string'
+              ? body.lecturerUserId
+              : undefined,
+        subject: String(body.subject || ''),
+        body: String(body.body || ''),
+        createdBy: user.id,
+      });
+      json(res, 201, { message });
       return;
     }
     if (method === 'PATCH' && userMatch) {

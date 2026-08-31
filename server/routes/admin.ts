@@ -279,7 +279,18 @@ router.post('/users', (req, res) => {
       String(req.body?.email || ''),
       String(req.body?.password || '')
     );
-    const user = listUsers().find((u) => u.id === id);
+    const body = req.body || {};
+    let user = listUsers().find((u) => u.id === id);
+    const patch: Record<string, unknown> = {};
+    if (typeof body.role === 'string' && body.role) patch.role = body.role;
+    if (typeof body.isFounder === 'boolean') patch.isFounder = body.isFounder;
+    if (Object.keys(patch).length) {
+      user = updateUser(id, patch);
+      if (user?.role === 'instructor') ensureLecturerForUser(user.id, user.name);
+      if (body.isFounder !== undefined && user) {
+        syncLecturerFounderFlag(user.id, Boolean(user.isFounder), user.name);
+      }
+    }
     res.status(201).json({ user });
   } catch (err) {
     const status = (err as { status?: number }).status || 500;
