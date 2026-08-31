@@ -1,11 +1,12 @@
 {
   "name": "VOD local preview",
   "install": "npm install",
+  "start": "npm run dev",
   "terminals": [
     {
       "name": "dev",
       "command": "npm run dev",
-      "description": "Local site + API — Vite :3000, Express :3001. Edit files and preview at http://localhost:3000 without deploying to Vercel."
+      "description": "Local site + API — Vite :3000, Express :3001. Use Ports tab → 3000 → Open in Browser, or the forwarded preview URL."
     }
   ],
   "ports": [
