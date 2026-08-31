@@ -1227,6 +1227,13 @@ function CourseForm({
 }
 
 
+const APP_STATUS_LABEL: Record<LecturerApplication['status'], string> = {
+  pending: 'ממתינה',
+  approved: 'אושרה',
+  rejected: 'נדחתה',
+  more_info: 'פרטים נוספים',
+};
+
 function LecturerApplicationsPanel() {
   const [applications, setApplications] = useState<LecturerApplication[]>([]);
   const [error, setError] = useState('');

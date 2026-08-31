@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { Fragment, useMemo, useState } from 'react';
 import { ChevronDown, Search } from 'lucide-react';
 import type { NavGroup, NavItem, Tab } from './adminNav';
 
@@ -114,12 +114,13 @@ export function AdminSidebar({ groups, tab, onNavigate, userName, userEmail, onE
                 {open ? (
                   <div className="grid gap-0.5 mt-0.5">
                     {group.items.map((item) => (
-                      <NavButton
-                        key={item.id}
-                        item={item}
-                        active={tab === item.id}
-                        onClick={() => onNavigate(item.id)}
-                      />
+                      <Fragment key={item.id}>
+                        <NavButton
+                          item={item}
+                          active={tab === item.id}
+                          onClick={() => onNavigate(item.id)}
+                        />
+                      </Fragment>
                     ))}
                   </div>
                 ) : null}
@@ -155,7 +156,9 @@ export function AdminMobileNav({
   return (
     <div className="lg:hidden border-b border-white/10 bg-[#080808] p-3 grid gap-1 max-h-[50vh] overflow-y-auto">
       {items.map((item) => (
-        <NavButton key={item.id} item={item} active={tab === item.id} onClick={() => onNavigate(item.id)} />
+        <Fragment key={item.id}>
+          <NavButton item={item} active={tab === item.id} onClick={() => onNavigate(item.id)} />
+        </Fragment>
       ))}
     </div>
   );

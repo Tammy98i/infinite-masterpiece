@@ -1,3 +1,4 @@
+import { jsonBody } from '../_lib/body.js';
 import { DEFAULT_WEBINAR_CONFIG } from '../_lib/staticData.js';
 import { parseIsraeliDateTime } from '../_lib/webinarTime.js';
 import {
@@ -9,6 +10,7 @@ import {
 
 type VercelReq = {
   method?: string;
+  body?: unknown;
   headers: Record<string, string | string[] | undefined>;
 };
 type VercelRes = {
@@ -25,8 +27,8 @@ function authorized(req: VercelReq) {
 }
 
 function readMeetingId(req: VercelReq) {
-  const body = req.body as { meetingId?: string } | undefined;
-  return String(body?.meetingId || '').trim();
+  const body = jsonBody(req);
+  return String(body.meetingId || '').trim();
 }
 
 export default async function handler(req: VercelReq, res: VercelRes) {
