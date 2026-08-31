@@ -51,6 +51,7 @@ export const ALLOWED_EVENTS = [
   'admin_changed_user_role',
   'admin_granted_access',
   'admin_blocked_user',
+  'admin_deleted_user',
   'admin_published_video',
   'premium_88_page_view',
   'premium_88_cta_clicked',

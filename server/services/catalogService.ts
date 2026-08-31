@@ -553,6 +553,55 @@ export function updateUser(
   return listUsers().find((u) => u.id === id);
 }
 
+export function deleteUser(id: string, actorId: string) {
+  const db = getDb();
+  const row = db.prepare(`SELECT * FROM users WHERE id = ?`).get(id) as SqlRow | undefined;
+  if (!row) throw Object.assign(new Error('המשתמש לא נמצא'), { status: 404 });
+  if (id === actorId) {
+    throw Object.assign(new Error('לא ניתן להסיר את החשבון שבו אתם מחוברים'), { status: 400 });
+  }
+  if (String(row.role) === 'admin') {
+    const remaining = (
+      db.prepare(`SELECT COUNT(*) as c FROM users WHERE role = 'admin'`).get() as { c: number }
+    ).c;
+    if (remaining <= 1) {
+      throw Object.assign(new Error('לא ניתן להסיר את האדמין האחרון במערכת'), { status: 400 });
+    }
+  }
+
+  const snapshot = listUsers().find((u) => u.id === id);
+
+  db.exec('BEGIN');
+  try {
+    db.prepare(`UPDATE lecturers SET user_id = NULL WHERE user_id = ?`).run(id);
+    db.prepare(`UPDATE payment_plans SET user_id = NULL WHERE user_id = ?`).run(id);
+    db.prepare(`UPDATE raffle_tickets SET user_id = NULL WHERE user_id = ?`).run(id);
+    db.prepare(`UPDATE raffles SET winner_user_id = NULL WHERE winner_user_id = ?`).run(id);
+    db.prepare(`UPDATE analytics_events SET user_id = NULL WHERE user_id = ?`).run(id);
+
+    db.prepare(`DELETE FROM sessions WHERE user_id = ?`).run(id);
+    db.prepare(`DELETE FROM video_progress WHERE user_id = ?`).run(id);
+    db.prepare(`DELETE FROM user_list WHERE user_id = ?`).run(id);
+    db.prepare(`DELETE FROM user_onboarding_progress WHERE user_id = ?`).run(id);
+    db.prepare(`DELETE FROM user_onboarding_steps WHERE user_id = ?`).run(id);
+    db.prepare(`DELETE FROM user_bonus_unlocks WHERE user_id = ?`).run(id);
+    db.prepare(`DELETE FROM lecturer_applications WHERE user_id = ?`).run(id);
+    db.prepare(`DELETE FROM content_questions WHERE user_id = ?`).run(id);
+    db.prepare(`DELETE FROM team_messages WHERE lecturer_user_id = ?`).run(id);
+    db.prepare(`DELETE FROM users WHERE id = ?`).run(id);
+    db.exec('COMMIT');
+  } catch (err) {
+    try {
+      db.exec('ROLLBACK');
+    } catch {
+      /* already rolled back */
+    }
+    throw err;
+  }
+
+  return snapshot;
+}
+
 export function setCourseProgramWeek(id: string, week: number) {
   const programWeek = Number(week);
   if (!Number.isInteger(programWeek) || programWeek < 0 || programWeek > 4) {
