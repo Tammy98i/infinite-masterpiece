@@ -6,6 +6,8 @@ import { AdminPageShell } from './admin/AdminPageShell';
 import { NAV_GROUPS, TAB_META, type Tab } from './admin/adminNav';
 import { fieldClass, STAFF_DESK_LABEL, STAFF_DESK_TABS } from './admin/adminConstants';
 import { UsersRolesPermissionsView } from './admin/UsersRolesPermissionsView';
+import { UsersAccountsView } from './admin/UsersAccountsView';
+import { TeamStaffView } from './admin/TeamStaffView';
 import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/captions';
 import { adminApi, type AdminAnalytics, type AdminAuditLog, type AdminCrmLead, type AdminNotification, type AdminOverview, type AdminPaymentRow, type AdminPremium88Application, type AdminRaffleDashboard, type AdminReadiness, type AdminTrackLead, type AdminTracksDashboard, type AdminWebinarDashboard, type CoursePayload } from '../api/admin';
 import { DEFAULT_WEBINAR_CONFIG, type WebinarConfig } from '../constants/webinar';
@@ -167,7 +169,7 @@ export function AdminView() {
               </p>
             ) : null}
             {tab === 'access' && <UsersRolesPermissionsView />}
-            {tab === 'users' && <UsersRolesPermissionsView initialSection="accounts" />}
+            {tab === 'users' && <UsersAccountsView />}
             {tab === 'overview' && (
               <AdminPageShell group={tabMeta.group} title={tabMeta.title} description={tabMeta.description}>
                 <div className="grid gap-10">
@@ -194,7 +196,7 @@ export function AdminView() {
               </AdminPageShell>
             )}
             {tab === 'lecturers' && <LecturerApplicationsPanel />}
-            {tab === 'team' && <UsersRolesPermissionsView initialSection="desks" />}
+            {tab === 'team' && <TeamStaffView />}
             {tab === 'founders' && <FoundersPanel />}
             {tab === 'payments' && <PaymentsPanel />}
             {tab === 'tracks' && <TracksPanel />}
