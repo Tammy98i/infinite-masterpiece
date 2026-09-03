@@ -165,7 +165,7 @@ export function AdminView() {
           <main className="px-4 sm:px-6 lg:px-8 py-6 pb-24 max-w-7xl">
             {staffDesk ? (
               <p className="text-xs text-[#C8A24C]/80 mb-4">
-                מצב צוות מוגבל: {STAFF_DESK_LABEL[staffDesk] || staffDesk}. גישה מלאה רק לאדמין ראשי.
+                מצב צוות מוגבל: {STAFF_DESK_LABEL[staffDesk] || staffDesk}. צפייה בלבד — עריכה זמינה רק לאדמין ראשי.
               </p>
             ) : null}
             {tab === 'access' && <UsersRolesPermissionsView />}
