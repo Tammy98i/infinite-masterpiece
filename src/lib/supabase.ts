@@ -112,7 +112,15 @@ export function getSupabase() {
       auth: {
         persistSession: true,
         autoRefreshToken: true,
-        detectSessionInUrl: true,
+        // Off on purpose: with this on, the SDK also tries to exchange the
+        // PKCE `?code=` in the background as soon as the client is created,
+        // racing the explicit exchange in supabaseCompleteOAuthFromUrl
+        // (src/api/supabaseAuth.ts). A PKCE code is single-use, so whichever
+        // side loses that race gets stuck (getSession() awaiting a consumed
+        // exchange that never resolves for it) — the /auth/callback page
+        // that never leaves "משלימים התחברות...". Only our own explicit
+        // exchangeCodeForSession call may consume the code now.
+        detectSessionInUrl: false,
         flowType: 'pkce',
       },
     });

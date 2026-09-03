@@ -163,12 +163,20 @@ export function TeamStaffView() {
                 <select
                   value={selected.role}
                   disabled={pendingId === selected.id}
-                  onChange={(e) => void patch(selected.id, { role: e.target.value }, 'לשנות תפקיד למשתמש?')}
+                  onChange={(e) =>
+                    void patch(
+                      selected.id,
+                      { role: e.target.value },
+                      e.target.value === 'admin'
+                        ? 'להעניק תפקיד אדמין? זו גישה מלאה לכל ממשק הניהול — לא מוגבלת לדסק.'
+                        : 'לשנות תפקיד למשתמש?'
+                    )
+                  }
                   className={fieldClass}
                 >
                   <option value="student">משתמש</option>
                   <option value="instructor">מרצה</option>
-                  <option value="admin">אדמין / צוות</option>
+                  <option value="admin">אדמין (גישה מלאה)</option>
                 </select>
               </label>
 
@@ -180,19 +188,25 @@ export function TeamStaffView() {
                   onChange={(e) =>
                     void patch(
                       selected.id,
-                      { staffDesk: e.target.value, role: e.target.value ? 'admin' : selected.role },
-                      e.target.value ? 'לשייך לדסק צוות? המשתמש יקבל גישה מוגבלת לאדמין.' : undefined
+                      { staffDesk: e.target.value },
+                      e.target.value
+                        ? 'לשייך לדסק צוות? המשתמש יקבל צפייה בלבד במסכים של הדסק — לא יכולת עריכה, ולא השפעה על תפקיד המערכת שלו.'
+                        : undefined
                     )
                   }
                   className={fieldClass}
                 >
-                  <option value="">ללא (סופר אדמין אם תפקיד אדמין)</option>
+                  <option value="">ללא</option>
                   {Object.entries(STAFF_DESK_LABEL).map(([key, label]) => (
                     <option key={key} value={key}>
                       {label}
                     </option>
                   ))}
                 </select>
+                <span className="text-xs text-white/35 leading-relaxed">
+                  דסק מעניק גישת צפייה בלבד למסכים שלו באדמין — לא יכולת עריכה. עריכה בפועל (משתמשים, תוכן,
+                  תשלומים וכו&apos;) דורשת &quot;תפקיד מערכת&quot; אדמין למעלה, בלי קשר לדסק.
+                </span>
               </label>
 
               <label className="grid gap-1 text-white/50">

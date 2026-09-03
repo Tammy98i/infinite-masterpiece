@@ -23,7 +23,7 @@ import legalRoutes from './routes/legal.js';
 import questionsRoutes from './routes/questions.js';
 import playbackRoutes from './routes/playback.js';
 import webinarRoutes from './routes/webinar.js';
-import { optionalAuth, requireAdmin, requireAuth } from './middleware/auth.js';
+import { optionalAuth, requireAdminOrDesk, requireAdminTab, requireAuth } from './middleware/auth.js';
 import { UPLOADS_DIR, ensureUploadsDir } from './services/uploadService.js';
 import { isS3Enabled } from './services/s3Upload.js';
 import { handleStripeWebhook, processDueInstallments, isStripeEnabled } from './services/stripeService.js';
@@ -101,8 +101,11 @@ app.use('/api/webinar', webinarRoutes);
 app.use('/api/questions', requireAuth, questionsRoutes);
 app.use('/api/library', optionalAuth, playbackRoutes);
 app.use('/api/upload', requireAuth, uploadRoutes);
-app.use('/api/admin/onboarding', requireAdmin, adminOnboardingRoutes);
-app.use('/api/admin', requireAdmin, adminRoutes);
+// requireAdminOrDesk lets a full admin OR any desk-tagged staff member in;
+// requireAdminTab then scopes desk staff to read-only access on the tabs
+// their desk covers (src/data/staffDesks.ts). Full admins are unrestricted.
+app.use('/api/admin/onboarding', requireAdminOrDesk, requireAdminTab('onboarding'), adminOnboardingRoutes);
+app.use('/api/admin', requireAdminOrDesk, adminRoutes);
 
 if (isProduction()) {
   const distPath = path.join(__dirname, '..', 'dist');

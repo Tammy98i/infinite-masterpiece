@@ -19,7 +19,10 @@ export function AuthCallback() {
     const run = async () => {
       try {
         const recoveryFromUrl = isPasswordRecoveryRedirect();
-        const next = await completeOAuthLogin();
+        const timeout = new Promise<never>((_, reject) => {
+          window.setTimeout(() => reject(new Error('ההתחברות לוקחת יותר מדי זמן. נסו שוב.')), 15000);
+        });
+        const next = await Promise.race([completeOAuthLogin(), timeout]);
         if (cancelled) return;
         if (shouldOpenPasswordReset(recoveryFromUrl)) {
           navigate('/auth/reset', { replace: true });

@@ -24,7 +24,7 @@ import { ensureLecturerForUser, listApplications, reviewApplication, syncLecture
 import { getAnalyticsSummary, trackEvent } from '../services/analyticsService.js';
 import { adminSetInstallmentStatus, getTrackDashboard } from '../services/trackService.js';
 import { listPayments, recordPayment } from '../services/paymentService.js';
-import { authUser } from '../middleware/auth.js';
+import { authUser, requireAdminTab } from '../middleware/auth.js';
 import { isStripeEnabled } from '../services/stripeService.js';
 import { isS3Enabled } from '../services/s3Upload.js';
 import { listAdminEmails, saveExtraAdminEmails } from '../services/adminEmailsService.js';
@@ -61,7 +61,7 @@ import { sendWebinarTestEmail } from '../services/webinarEmailService.js';
 
 const router = Router();
 
-router.get('/overview', (_req, res) => {
+router.get('/overview', requireAdminTab('overview'), (_req, res) => {
   try {
     res.json(getOverview());
   } catch (err) {
@@ -69,7 +69,7 @@ router.get('/overview', (_req, res) => {
   }
 });
 
-router.get('/readiness', (_req, res) => {
+router.get('/readiness', requireAdminTab('overview'), (_req, res) => {
   try {
     const courses = listCourseWeekRows();
     const stripeEnabled = isStripeEnabled();
@@ -86,11 +86,11 @@ router.get('/readiness', (_req, res) => {
   }
 });
 
-router.get('/admin-emails', (_req, res) => {
+router.get('/admin-emails', requireAdminTab('access'), (_req, res) => {
   res.json(listAdminEmails());
 });
 
-router.put('/admin-emails', (req, res) => {
+router.put('/admin-emails', requireAdminTab('access'), (req, res) => {
   try {
     const emails = Array.isArray(req.body?.emails) ? req.body.emails.map(String) : [];
     const result = saveExtraAdminEmails(emails);
@@ -107,7 +107,7 @@ router.put('/admin-emails', (req, res) => {
   }
 });
 
-router.patch('/settings', (req, res) => {
+router.patch('/settings', requireAdminTab('settings'), (req, res) => {
   try {
     const key = String(req.body?.key || '');
     const allowed = [
@@ -148,7 +148,7 @@ router.patch('/settings', (req, res) => {
   }
 });
 
-router.get('/legal', (_req, res) => {
+router.get('/legal', requireAdminTab('legal'), (_req, res) => {
   try {
     res.json({
       terms: getSetting('legal_terms'),
@@ -161,7 +161,7 @@ router.get('/legal', (_req, res) => {
   }
 });
 
-router.get('/accessibility-reports', (_req, res) => {
+router.get('/accessibility-reports', requireAdminTab('settings'), (_req, res) => {
   try {
     res.json({ reports: listAccessibilityReports() });
   } catch (err) {
@@ -169,7 +169,7 @@ router.get('/accessibility-reports', (_req, res) => {
   }
 });
 
-router.patch('/accessibility-reports/:id', (req, res) => {
+router.patch('/accessibility-reports/:id', requireAdminTab('settings'), (req, res) => {
   try {
     const status = String(req.body?.status || '') as AccessibilityReportStatus;
     if (!['open', 'in_progress', 'resolved'].includes(status)) {
@@ -195,7 +195,7 @@ router.patch('/accessibility-reports/:id', (req, res) => {
   }
 });
 
-router.get('/analytics', (_req, res) => {
+router.get('/analytics', requireAdminTab('analytics'), (_req, res) => {
   try {
     res.json(getAnalyticsSummary());
   } catch (err) {
@@ -203,7 +203,7 @@ router.get('/analytics', (_req, res) => {
   }
 });
 
-router.get('/courses', (_req, res) => {
+router.get('/courses', requireAdminTab('content'), (_req, res) => {
   try {
     res.json({ courses: listAllCourses() });
   } catch (err) {
@@ -211,7 +211,7 @@ router.get('/courses', (_req, res) => {
   }
 });
 
-router.post('/courses', (req, res) => {
+router.post('/courses', requireAdminTab('content'), (req, res) => {
   try {
     const title = String(req.body?.title || '').trim();
     if (!title) {
@@ -225,7 +225,7 @@ router.post('/courses', (req, res) => {
   }
 });
 
-router.patch('/courses/:id/program-week', (req, res) => {
+router.patch('/courses/:id/program-week', requireAdminTab('content'), (req, res) => {
   try {
     res.json({ course: setCourseProgramWeek(req.params.id, Number(req.body?.programWeek)) });
   } catch (err) {
@@ -234,7 +234,7 @@ router.patch('/courses/:id/program-week', (req, res) => {
   }
 });
 
-router.patch('/courses/:id', (req, res) => {
+router.patch('/courses/:id', requireAdminTab('content'), (req, res) => {
   try {
     const title = String(req.body?.title || '').trim();
     if (!title) {
@@ -248,7 +248,7 @@ router.patch('/courses/:id', (req, res) => {
   }
 });
 
-router.patch('/courses/:id/status', (req, res) => {
+router.patch('/courses/:id/status', requireAdminTab('content'), (req, res) => {
   try {
     const status = String(req.body?.status || '') as PublishStatus;
     const course = setCourseStatus(req.params.id, status);
@@ -264,7 +264,7 @@ router.patch('/courses/:id/status', (req, res) => {
   }
 });
 
-router.get('/users', (_req, res) => {
+router.get('/users', requireAdminTab('users', 'access', 'team'), (_req, res) => {
   try {
     res.json({ users: listUsers() });
   } catch (err) {
@@ -272,7 +272,7 @@ router.get('/users', (_req, res) => {
   }
 });
 
-router.post('/users', (req, res) => {
+router.post('/users', requireAdminTab('users', 'access', 'team'), (req, res) => {
   try {
     const id = adminCreateUser(
       String(req.body?.fullName || req.body?.name || ''),
@@ -298,7 +298,7 @@ router.post('/users', (req, res) => {
   }
 });
 
-router.patch('/users/:id', (req, res) => {
+router.patch('/users/:id', requireAdminTab('users', 'access', 'team'), (req, res) => {
   try {
     const before = listUsers().find((u) => u.id === req.params.id);
     const user = updateUser(req.params.id, req.body || {});
@@ -349,7 +349,7 @@ router.patch('/users/:id', (req, res) => {
   }
 });
 
-router.get('/applications', (_req, res) => {
+router.get('/applications', requireAdminTab('lecturers'), (_req, res) => {
   try {
     res.json({ applications: listApplications() });
   } catch (err) {
@@ -357,7 +357,7 @@ router.get('/applications', (_req, res) => {
   }
 });
 
-router.patch('/applications/:id', (req, res) => {
+router.patch('/applications/:id', requireAdminTab('lecturers'), (req, res) => {
   try {
     const action = String(req.body?.action || '');
     if (action !== 'approved' && action !== 'rejected' && action !== 'more_info') {
@@ -379,7 +379,7 @@ router.patch('/applications/:id', (req, res) => {
   }
 });
 
-router.get('/founders', (_req, res) => {
+router.get('/founders', requireAdminTab('founders'), (_req, res) => {
   try {
     res.json({ founders: listFounders() });
   } catch (err) {
@@ -387,7 +387,7 @@ router.get('/founders', (_req, res) => {
   }
 });
 
-router.post('/founders', (req, res) => {
+router.post('/founders', requireAdminTab('founders'), (req, res) => {
   try {
     const founder = createFounder({
       name: String(req.body?.name || ''),
@@ -402,7 +402,7 @@ router.post('/founders', (req, res) => {
   }
 });
 
-router.patch('/founders/order', (req, res) => {
+router.patch('/founders/order', requireAdminTab('founders'), (req, res) => {
   try {
     const ids = Array.isArray(req.body?.ids) ? req.body.ids.map(String) : [];
     res.json({ founders: reorderFounders(ids) });
@@ -411,7 +411,7 @@ router.patch('/founders/order', (req, res) => {
   }
 });
 
-router.patch('/founders/:id', (req, res) => {
+router.patch('/founders/:id', requireAdminTab('founders'), (req, res) => {
   try {
     const founder = updateFounder(req.params.id, {
       avatarUrl: req.body?.avatarUrl !== undefined ? String(req.body.avatarUrl) : undefined,
@@ -424,7 +424,7 @@ router.patch('/founders/:id', (req, res) => {
   }
 });
 
-router.get('/tracks', (_req, res) => {
+router.get('/tracks', requireAdminTab('tracks'), (_req, res) => {
   try {
     res.json({
       ...getTrackDashboard(),
@@ -435,7 +435,7 @@ router.get('/tracks', (_req, res) => {
   }
 });
 
-router.patch('/tracks/installments/:id', (req, res) => {
+router.patch('/tracks/installments/:id', requireAdminTab('tracks'), (req, res) => {
   try {
     const status = String(req.body?.status || '');
     if (status !== 'paid' && status !== 'failed' && status !== 'due') {
@@ -450,7 +450,7 @@ router.patch('/tracks/installments/:id', (req, res) => {
   }
 });
 
-router.get('/payments', (_req, res) => {
+router.get('/payments', requireAdminTab('payments'), (_req, res) => {
   try {
     res.json({ payments: listPayments() });
   } catch (err) {
@@ -458,7 +458,7 @@ router.get('/payments', (_req, res) => {
   }
 });
 
-router.get('/categories', (_req, res) => {
+router.get('/categories', requireAdminTab('categories'), (_req, res) => {
   try {
     res.json({ categories: listCategoriesAdmin() });
   } catch (err) {
@@ -466,7 +466,7 @@ router.get('/categories', (_req, res) => {
   }
 });
 
-router.post('/categories', (req, res) => {
+router.post('/categories', requireAdminTab('categories'), (req, res) => {
   try {
     const category = createCategory(req.body || {});
     writeAudit({
@@ -483,7 +483,7 @@ router.post('/categories', (req, res) => {
   }
 });
 
-router.patch('/categories/order', (req, res) => {
+router.patch('/categories/order', requireAdminTab('categories'), (req, res) => {
   try {
     const ids = Array.isArray(req.body?.ids) ? req.body.ids.map(String) : [];
     const categories = reorderCategories(ids);
@@ -499,7 +499,7 @@ router.patch('/categories/order', (req, res) => {
   }
 });
 
-router.patch('/categories/:id', (req, res) => {
+router.patch('/categories/:id', requireAdminTab('categories'), (req, res) => {
   try {
     const before = listCategoriesAdmin().find((item) => item.id === req.params.id);
     const category = updateCategory(req.params.id, req.body || {});
@@ -518,7 +518,7 @@ router.patch('/categories/:id', (req, res) => {
   }
 });
 
-router.get('/premium-88', (_req, res) => {
+router.get('/premium-88', requireAdminTab('premium88'), (_req, res) => {
   try {
     res.json({ applications: listPremium88Applications() });
   } catch (err) {
@@ -526,7 +526,7 @@ router.get('/premium-88', (_req, res) => {
   }
 });
 
-router.patch('/premium-88/:id', (req, res) => {
+router.patch('/premium-88/:id', requireAdminTab('premium88'), (req, res) => {
   try {
     const status = String(req.body?.status || '');
     const adminNotes = typeof req.body?.adminNotes === 'string' ? req.body.adminNotes : undefined;
@@ -547,7 +547,7 @@ router.patch('/premium-88/:id', (req, res) => {
   }
 });
 
-router.get('/audit-logs', (_req, res) => {
+router.get('/audit-logs', requireAdminTab('audit'), (_req, res) => {
   try {
     res.json({ logs: listAuditLogs(150) });
   } catch (err) {
@@ -555,7 +555,7 @@ router.get('/audit-logs', (_req, res) => {
   }
 });
 
-router.get('/leads', (_req, res) => {
+router.get('/leads', requireAdminTab('leads'), (_req, res) => {
   try {
     res.json({ leads: listCrmLeads() });
   } catch (err) {
@@ -563,7 +563,7 @@ router.get('/leads', (_req, res) => {
   }
 });
 
-router.get('/notifications', (_req, res) => {
+router.get('/notifications', requireAdminTab('notifications'), (_req, res) => {
   try {
     const notifications = listAdminNotifications();
     res.json({
@@ -578,7 +578,7 @@ router.get('/notifications', (_req, res) => {
   }
 });
 
-router.get('/team-messages', (_req, res) => {
+router.get('/team-messages', requireAdminTab('team'), (_req, res) => {
   try {
     res.json({ messages: listTeamMessagesAdmin() });
   } catch (err) {
@@ -586,7 +586,7 @@ router.get('/team-messages', (_req, res) => {
   }
 });
 
-router.post('/team-messages', (req, res) => {
+router.post('/team-messages', requireAdminTab('team'), (req, res) => {
   try {
     const message = sendTeamMessage(
       authUser(req).id,
@@ -608,7 +608,7 @@ router.post('/team-messages', (req, res) => {
   }
 });
 
-router.get('/raffles', (_req, res) => {
+router.get('/raffles', requireAdminTab('raffles'), (_req, res) => {
   try {
     res.json(getRaffleDashboard());
   } catch (err) {
@@ -616,7 +616,7 @@ router.get('/raffles', (_req, res) => {
   }
 });
 
-router.post('/raffles', (req, res) => {
+router.post('/raffles', requireAdminTab('raffles'), (req, res) => {
   try {
     const raffle = createRaffle(
       {
@@ -633,7 +633,7 @@ router.post('/raffles', (req, res) => {
   }
 });
 
-router.post('/raffles/:id/assign-tickets', (req, res) => {
+router.post('/raffles/:id/assign-tickets', requireAdminTab('raffles'), (req, res) => {
   try {
     const result = assignOpenTicketsToRaffle(req.params.id);
     writeAudit({
@@ -650,7 +650,7 @@ router.post('/raffles/:id/assign-tickets', (req, res) => {
   }
 });
 
-router.post('/raffles/:id/draw', (req, res) => {
+router.post('/raffles/:id/draw', requireAdminTab('raffles'), (req, res) => {
   try {
     const raffle = drawRaffleWinner(req.params.id, authUser(req).id);
     res.json({ raffle });
@@ -660,7 +660,7 @@ router.post('/raffles/:id/draw', (req, res) => {
   }
 });
 
-router.get('/webinar', (_req, res) => {
+router.get('/webinar', requireAdminTab('webinar'), (_req, res) => {
   try {
     res.json({
       config: getWebinarConfig(),
@@ -674,7 +674,7 @@ router.get('/webinar', (_req, res) => {
   }
 });
 
-router.patch('/webinar', (req, res) => {
+router.patch('/webinar', requireAdminTab('webinar'), (req, res) => {
   try {
     const config = saveWebinarConfig(req.body?.config || req.body || {});
     writeAudit({
@@ -690,7 +690,7 @@ router.patch('/webinar', (req, res) => {
   }
 });
 
-router.post('/webinar/test-email', async (req, res) => {
+router.post('/webinar/test-email', requireAdminTab('webinar'), async (req, res) => {
   try {
     const to = String(req.body?.to || '').trim();
     const result = await sendWebinarTestEmail(to);
