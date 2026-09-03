@@ -101,6 +101,11 @@ app.use('/api/webinar', webinarRoutes);
 app.use('/api/questions', requireAuth, questionsRoutes);
 app.use('/api/library', optionalAuth, playbackRoutes);
 app.use('/api/upload', requireAuth, uploadRoutes);
+// requireAdmin only checks role === 'admin' — it does not know about
+// staff desks. src/views/admin/adminConstants.ts's STAFF_DESK_TABS is a
+// UI-only map today; every route below is open to any admin regardless of
+// desk. Do not treat a user with a staffDesk as scoped-access until this
+// router enforces that map per-route.
 app.use('/api/admin/onboarding', requireAdmin, adminOnboardingRoutes);
 app.use('/api/admin', requireAdmin, adminRoutes);
 
