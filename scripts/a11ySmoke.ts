@@ -2,7 +2,7 @@
  * Lightweight accessibility smoke checks (static + optional live fetch).
  * Run with dev server: npm run dev & npm run a11y:smoke
  */
-const BASE = process.env.A11Y_SMOKE_URL || 'http://localhost:3000';
+const BASE = process.env.A11Y_SMOKE_URL || 'http://localhost:3002';
 
 type Check = { name: string; pass: boolean; detail: string };
 

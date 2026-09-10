@@ -10,9 +10,9 @@ Infinite Masterpiece is a single VOD learning platform (React SPA + Express API)
 - Copy `.env.example` to `.env` before running (all integrations can stay empty). Stripe, S3 uploads, email/Resend, CRM webhook, and Gemini are all feature-flagged off when their env vars are blank; the app runs fully without them (leads are captured, uploads go to local disk `server/data/uploads`).
 
 ### Running services
-- `npm run dev` runs **both** processes concurrently via `concurrently`: the Express API on port **3001** and the Vite dev server on port **3000**. Vite proxies `/api` and `/uploads` to the API, so use **http://localhost:3000** in the browser. Run this in a persistent (tmux) terminal since it is long-running.
+- `npm run dev` runs **both** processes concurrently via `concurrently`: the Express API on port **3001** and the Vite dev server on port **3002**. Vite proxies `/api` and `/uploads` to the API, so use **http://localhost:3002** in the browser. Run this in a persistent (tmux) terminal since it is long-running.
 - `npm run server` runs the API alone; `npm run start:prod` runs the production monolith (API + built SPA) on port 3000.
-- Health check: `GET /api/health` (works directly on `:3001` and through the Vite proxy on `:3000`).
+- Health check: `GET /api/health` (works directly on `:3001` and through the Vite proxy on `:3002`).
 
 ### Seeded demo accounts (from `server/db/catalogSeed.ts`)
 - Admin: `admin@infinitemasterpiece.local` / `Masterpiece88`
@@ -21,5 +21,5 @@ Infinite Masterpiece is a single VOD learning platform (React SPA + Express API)
 
 ### Lint / test
 - `npm run lint` is a TypeScript typecheck (`tsc --noEmit`); there is no separate unit-test framework.
-- `npm run a11y:smoke` is an HTTP smoke test that **requires the dev server to already be running** on port 3000 (start `npm run dev` first, then run it in a second terminal).
+- `npm run a11y:smoke` is an HTTP smoke test that **requires the dev server to already be running** on port 3002 (start `npm run dev` first, then run it in a second terminal). Use `A11Y_SMOKE_URL=http://localhost:3002` if the default still points elsewhere.
 - `npm run test:hosting` verifies the Vercel split-hosting config.
