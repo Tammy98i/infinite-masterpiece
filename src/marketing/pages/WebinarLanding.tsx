@@ -26,7 +26,6 @@ import {
 } from '../../constants/webinar';
 import { WebinarRegistrationForm } from '../components/WebinarRegistrationForm';
 import { WebinarStickyCta } from '../components/WebinarStickyCta';
-import { WebinarExitIntent } from '../components/WebinarExitIntent';
 import { WebinarSocialProof, WebinarSectionCta } from '../components/WebinarSocialProof';
 import { trackEvent, trackWebinarCta, scrollToWebinarForm, scrollToWebinarFit } from '../../utils/analytics';
 import { captureUtmFromSearch } from '../../utils/utm';
@@ -433,7 +432,6 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <WebinarExitIntent />
       <WebinarStickyCta />
     </div>
   );
