@@ -163,23 +163,12 @@ export function WebinarLanding() {
           <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[min(900px,90vw)] h-[320px] bg-[radial-gradient(ellipse_at_center,rgba(200,162,76,0.18),transparent_70%)]" />
         </div>
 
-        <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="grid grid-cols-1 xl:grid-cols-[380px_1fr] gap-10 xl:gap-14 items-start">
-            <motion.aside
-              id="webinar-register-hero"
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="order-1 xl:order-1 rounded-3xl border border-[#C8A24C]/30 bg-[#010308]/80 backdrop-blur-xl p-6 shadow-2xl shadow-black/40"
-            >
-              <WebinarRegistrationForm payload={defaultPayload} formId="webinar-register-hero" />
-            </motion.aside>
-
-            <motion.div
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              className="order-2 xl:order-2 text-right"
-            >
+        <div className="relative z-10 max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-right"
+          >
               <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/[0.03] border border-[#C8A24C]/20 mb-8">
                 <span className="w-2 h-2 rounded-full bg-[#C8A24C] animate-pulse" />
                 <span className="text-[11px] tracking-[0.2em] text-white/60 uppercase">Webinar · Pilot Entry</span>
@@ -192,18 +181,18 @@ export function WebinarLanding() {
                 ) : null}
               </h1>
 
-              <p className="text-lg md:text-xl text-white/50 font-light leading-relaxed max-w-2xl mb-10">
+              <p className="text-lg md:text-xl text-white/50 font-light leading-relaxed max-w-2xl mb-10 mr-0 ml-auto">
                 {config.heroSubheadline}
               </p>
 
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10 max-w-3xl">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-10 max-w-3xl mr-0 ml-auto">
                 <DetailTile icon={Calendar} label="תאריך" value={config.date} />
                 <DetailTile icon={Clock} label="שעה" value={config.time} />
                 <DetailTile icon={Timer} label="משך" value={`${config.durationMinutes} דק׳`} />
                 <DetailTile icon={MapPin} label="מיקום" value={config.location} />
               </div>
 
-              <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex flex-col sm:flex-row gap-4 justify-end">
                 <button
                   type="button"
                   onClick={scrollToForm}
@@ -219,8 +208,7 @@ export function WebinarLanding() {
                   רוצה להבין אם זה מתאים לך?
                 </button>
               </div>
-            </motion.div>
-          </div>
+          </motion.div>
         </div>
       </section>
 

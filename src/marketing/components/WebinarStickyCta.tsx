@@ -5,7 +5,7 @@ export function WebinarStickyCta() {
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const target = document.getElementById('webinar-register-hero');
+    const target = document.getElementById('webinar-register-bottom');
     if (!target) {
       setVisible(true);
       return;

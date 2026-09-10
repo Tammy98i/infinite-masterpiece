@@ -53,7 +53,7 @@ export function trackWebinarCta(section: string) {
   trackEvent('webinar_cta_clicked', { section });
 }
 
-export function scrollToWebinarForm(formId = 'webinar-register-hero') {
+export function scrollToWebinarForm(formId = 'webinar-register-bottom') {
   document.getElementById(formId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
