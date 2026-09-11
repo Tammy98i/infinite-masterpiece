@@ -22,6 +22,7 @@ import {
 } from '../api/supabaseAuth';
 import { isGoogleProviderEnabled, isPhoneProviderEnabled, loadSupabaseConfig } from '../lib/supabase';
 import { previewLogin, previewRegister, previewSessionFromToken, isPreviewToken, isDemoEmail } from '../lib/previewAuth';
+import { isPreviewAuthEnabled } from '../lib/previewAuthEnabled';
 import { isApiUnavailableMessage, overlayApiUser } from '../lib/supabaseUser';
 import { markPasswordRecovery, clearPasswordRecovery } from '../lib/passwordRecovery';
 
@@ -132,8 +133,13 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       // the anon key is loaded from /api/auth/providers.
       unsub = subscribeSupabaseAuth(onAuthEvent);
 
-      const restored = (await restoreSupabaseBrowserSession()) || previewSessionFromToken(getAuthToken());
+      const previewRestored = isPreviewAuthEnabled() ? previewSessionFromToken(getAuthToken()) : null;
+      const restored = (await restoreSupabaseBrowserSession()) || previewRestored;
       if (cancelled) return;
+
+      if (isPreviewToken(getAuthToken()) && !isPreviewAuthEnabled()) {
+        setAuthToken(null);
+      }
 
       if (isPreviewToken(getAuthToken()) && restored) {
         setUser(fromPayload(restored.user));
@@ -206,7 +212,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return result.user;
     } catch (err) {
       const message = err instanceof Error ? err.message : '';
-      const canPreview = isApiUnavailableMessage(message) || isDemoEmail(email);
+      const canPreview = isPreviewAuthEnabled() && (isApiUnavailableMessage(message) || isDemoEmail(email));
       if (!canPreview) throw err;
       const result = previewLogin(email, password);
       applySession(result.token, result.user);
@@ -228,7 +234,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       return result.user;
     } catch (err) {
       const message = err instanceof Error ? err.message : '';
-      if (!isApiUnavailableMessage(message)) throw err;
+      if (!isPreviewAuthEnabled() || !isApiUnavailableMessage(message)) throw err;
       const result = previewRegister(name, email, password);
       applySession(result.token, result.user);
       setWelcomeOpen(true);
@@ -313,6 +319,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const refreshUser = useCallback(async () => {
     if (isPreviewToken(getAuthToken())) {
+      if (!isPreviewAuthEnabled()) {
+        setAuthToken(null);
+        setUser(GUEST_USER);
+        return;
+      }
       const restored = previewSessionFromToken(getAuthToken());
       if (restored) {
         setUser(fromPayload(restored.user));

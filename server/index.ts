@@ -6,6 +6,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { getDb } from './db/connection.js';
 import { appUrl, corsOrigins, isProduction } from './config/env.js';
+import { isPreviewAuthEnabled } from '../src/lib/previewAuthEnabled.ts';
 import onboardingRoutes from './routes/onboarding.js';
 import adminOnboardingRoutes from './routes/admin-onboarding.js';
 import authRoutes from './routes/auth.js';
@@ -80,6 +81,10 @@ app.get('/api/health', (_req, res) => {
       stripe: isStripeEnabled(),
       s3: isS3Enabled(),
       resend: isWebinarEmailEnabled(),
+      previewAuth: isPreviewAuthEnabled(),
+      supabase: Boolean(
+        (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '').trim()
+      ),
     });
   } catch (err) {
     res.status(503).json({ status: 'error', message: (err as Error).message });
