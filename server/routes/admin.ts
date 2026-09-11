@@ -25,8 +25,10 @@ import { getAnalyticsSummary, trackEvent } from '../services/analyticsService.js
 import { adminSetInstallmentStatus, getTrackDashboard } from '../services/trackService.js';
 import { listPayments, recordPayment } from '../services/paymentService.js';
 import { authUser } from '../middleware/auth.js';
-import { isStripeEnabled } from '../services/stripeService.js';
+import { isStripeEnabled, isLibraryStripeEnabled } from '../services/stripeService.js';
 import { isS3Enabled } from '../services/s3Upload.js';
+import { productionReadiness } from '../../src/lib/productionReadiness.ts';
+import { isPreviewAuthEnabled } from '../../src/lib/previewAuthEnabled.ts';
 import { listAdminEmails, saveExtraAdminEmails } from '../services/adminEmailsService.js';
 import { getSetting, setSetting } from '../services/settingsService.js';
 import { adminCreateUser } from '../services/authService.js';
@@ -73,6 +75,7 @@ router.get('/readiness', (_req, res) => {
   try {
     const courses = listCourseWeekRows();
     const stripeEnabled = isStripeEnabled();
+    const launch = productionReadiness();
     res.json({
       stripeEnabled,
       billingMode: stripeEnabled ? 'stripe' : 'pilot_manual',
@@ -80,6 +83,11 @@ router.get('/readiness', (_req, res) => {
       raffleTermsApproved: getSetting('raffle_terms_approved') === '1',
       courses,
       founders: listFounders().map(founderReadiness),
+      launchReady: launch.ready,
+      launchMissing: launch.missing,
+      launchWarnings: launch.warnings,
+      previewAuth: isPreviewAuthEnabled(),
+      libraryStripe: isLibraryStripeEnabled(),
     });
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });

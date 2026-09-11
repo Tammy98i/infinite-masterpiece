@@ -2,11 +2,20 @@ import { apiRequest } from './auth';
 import type { EntryTrackId } from '../data/entryTracks';
 
 export const checkoutApi = {
-  status: () => apiRequest<{ enabled: boolean }>('/api/checkout/status'),
+  status: () =>
+    apiRequest<{
+      enabled: boolean;
+      library?: { enabled: boolean; monthlyBeforeVat: number | null; annualBeforeVat: number | null };
+    }>('/api/checkout/status'),
   createSession: (payload: { track: EntryTrackId; email: string; fullName: string; leadId: string }) =>
     apiRequest<{ url: string }>('/api/checkout/session', {
       method: 'POST',
       body: JSON.stringify(payload),
+    }),
+  createLibrarySession: (plan: 'monthly' | 'annual') =>
+    apiRequest<{ url: string }>('/api/checkout/library-session', {
+      method: 'POST',
+      body: JSON.stringify({ plan }),
     }),
 };
 

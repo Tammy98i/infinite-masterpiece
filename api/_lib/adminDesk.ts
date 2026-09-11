@@ -1,6 +1,9 @@
 import { BUILT_IN_ADMIN_EMAILS, mergeAdminEmails } from './publicConfig.js';
 import { CATEGORIES, COURSES, DEFAULT_WEBINAR_CONFIG, FOUNDERS, INSTRUCTORS } from './staticData.js';
 import type { SessionUser } from './session.js';
+import { productionReadiness } from '../../src/lib/productionReadiness.ts';
+import { isPreviewAuthEnabled } from './previewAuthEnabled.js';
+import { libraryCheckoutPublicStatus } from './libraryCheckout.js';
 
 export type ProfileListRow = {
   id: string;
@@ -139,6 +142,7 @@ export function catalogPayload() {
 export function readinessPayload() {
   const stripeEnabled = Boolean(process.env.STRIPE_SECRET_KEY?.trim());
   const s3Enabled = Boolean(process.env.S3_BUCKET?.trim() || process.env.S3_BUCKET_NAME?.trim());
+  const launch = productionReadiness();
   return {
     stripeEnabled,
     billingMode: stripeEnabled ? 'stripe' : 'pilot_manual',
@@ -157,6 +161,11 @@ export function readinessPayload() {
       hasWebsite: false,
       hasInstagram: false,
     })),
+    launchReady: launch.ready,
+    launchMissing: launch.missing,
+    launchWarnings: launch.warnings,
+    previewAuth: isPreviewAuthEnabled(),
+    libraryStripe: libraryCheckoutPublicStatus().enabled,
   };
 }
 

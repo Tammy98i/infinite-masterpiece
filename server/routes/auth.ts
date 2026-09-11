@@ -12,6 +12,7 @@ import { BUILT_IN_ADMIN_EMAILS, mergeAdminEmails } from '../../src/data/adminEma
 import { syncSupabaseSession, isSupabaseAuthConfigured, userFromBearer } from '../services/supabaseAuthService.js';
 import { trackEvent } from '../services/analyticsService.js';
 import { recordPayment } from '../services/paymentService.js';
+import { isStripeEnabled } from '../services/stripeService.js';
 
 const router = Router();
 
@@ -103,6 +104,14 @@ router.patch('/subscription', async (req, res) => {
   const plan = String(req.body?.plan || '') as DbPlan;
   if (!['none', 'free_trial', 'monthly', 'annual', 'premium_88'].includes(plan)) {
     res.status(400).json({ error: 'תוכנית לא תקינה' });
+    return;
+  }
+  if (
+    isStripeEnabled() &&
+    user.role !== 'admin' &&
+    (plan === 'monthly' || plan === 'annual' || plan === 'premium_88')
+  ) {
+    res.status(403).json({ error: 'מנוי משלם נפתח דרך תשלום או על ידי אדמין' });
     return;
   }
   const trialEndsAt = typeof req.body?.trialEndsAt === 'string' ? req.body.trialEndsAt : undefined;

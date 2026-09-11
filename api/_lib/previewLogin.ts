@@ -1,3 +1,5 @@
+import { isPreviewAuthEnabled, PREVIEW_AUTH_DISABLED_MESSAGE } from './previewAuthEnabled.js';
+
 const PREVIEW_PASSWORD = 'Masterpiece88';
 
 type PreviewUser = {
@@ -29,6 +31,9 @@ const STAFF: PreviewUser[] = [
 ];
 
 export function previewLogin(email: string, password: string) {
+  if (!isPreviewAuthEnabled()) {
+    throw new Error(PREVIEW_AUTH_DISABLED_MESSAGE);
+  }
   const normalized = email.trim().toLowerCase();
   const user = STAFF.find((item) => item.email === normalized);
   if (!user || password !== PREVIEW_PASSWORD) {
