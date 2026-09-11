@@ -370,6 +370,29 @@ function ReadinessPanel() {
       </div>
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
+      <div className={`rounded-2xl border p-5 ${data.launchMissing?.length ? 'border-rose-400/40 bg-rose-500/10' : 'border-[#C8A24C]/40 bg-[#C8A24C]/10'}`}>
+        <div className="text-xs text-white/40 mb-2">סביבת פרודקשן</div>
+        <div className="text-lg font-light mb-2">
+          {data.launchReady === false ? 'חסרים ערכים חובה' : 'מוכנות בסיסית תקינה'}
+        </div>
+        {data.previewAuth ? (
+          <p className="text-xs text-white/55 font-light mb-2">כניסת דמו פעילה בסביבה הזו — בפרודקשן חייבת להיות כבויה.</p>
+        ) : (
+          <p className="text-xs text-white/55 font-light mb-2">כניסת דמו כבויה.</p>
+        )}
+        {data.libraryStripe ? (
+          <p className="text-xs text-white/55 font-light mb-2">סליקת מנוי ספרייה מחוברת.</p>
+        ) : (
+          <p className="text-xs text-white/55 font-light mb-2">מנוי ספרייה עדיין בפיילוט (אין מחיר + Stripe).</p>
+        )}
+        {data.launchMissing?.length ? (
+          <p className="text-xs text-rose-200 font-light">חסר: {data.launchMissing.join(', ')}</p>
+        ) : null}
+        {data.launchWarnings?.length ? (
+          <p className="text-xs text-white/45 font-light mt-1">מומלץ למלא: {data.launchWarnings.join(', ')}</p>
+        ) : null}
+      </div>
+
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className={`rounded-2xl border p-5 ${statusClass(data.stripeEnabled)}`}>
           <div className="text-xs text-white/40 mb-2">סליקה</div>

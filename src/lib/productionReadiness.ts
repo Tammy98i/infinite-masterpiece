@@ -19,8 +19,13 @@ export function productionReadiness(env: Record<string, string | undefined> = pr
     if (!present(env, 'RESEND_API_KEY')) warnings.push('RESEND_API_KEY');
     if (!present(env, 'S3_BUCKET')) warnings.push('S3_BUCKET');
     if (!present(env, 'STRIPE_SECRET_KEY')) warnings.push('STRIPE_SECRET_KEY');
-    if (!present(env, 'A11Y_COORDINATOR_NAME') && !present(env, 'VITE_A11Y_COORDINATOR_NAME')) {
-      warnings.push('A11Y_COORDINATOR_NAME');
+    const a11yName = String(env.A11Y_COORDINATOR_NAME || env.VITE_A11Y_COORDINATOR_NAME || '').trim();
+    if (!a11yName || /רכז\/ת|צוות Infinite/i.test(a11yName)) warnings.push('A11Y_COORDINATOR_NAME');
+    if (!present(env, 'A11Y_CONTACT_PHONE', 'VITE_A11Y_CONTACT_PHONE')) warnings.push('A11Y_CONTACT_PHONE');
+    const monthly = Number(env.LIBRARY_MONTHLY_ILS || env.VITE_LIBRARY_MONTHLY_ILS || 0);
+    const annual = Number(env.LIBRARY_ANNUAL_ILS || env.VITE_LIBRARY_ANNUAL_ILS || 0);
+    if (present(env, 'STRIPE_SECRET_KEY') && !(monthly > 0 && annual > 0)) {
+      warnings.push('LIBRARY_MONTHLY_ILS');
     }
   }
 

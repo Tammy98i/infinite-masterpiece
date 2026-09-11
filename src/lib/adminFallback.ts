@@ -118,6 +118,11 @@ export function readinessPayload() {
     billingMode: 'pilot_manual' as const,
     s3Enabled: false,
     raffleTermsApproved: false,
+    launchReady: true,
+    launchMissing: [] as string[],
+    launchWarnings: [] as string[],
+    previewAuth: true,
+    libraryStripe: false,
     courses: COURSES.map((course) => ({
       id: course.id,
       title: course.title,
