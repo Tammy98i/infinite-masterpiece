@@ -27,7 +27,7 @@ import webinarRoutes from './routes/webinar.js';
 import { optionalAuth, requireAdmin, requireAuth } from './middleware/auth.js';
 import { UPLOADS_DIR, ensureUploadsDir } from './services/uploadService.js';
 import { isS3Enabled } from './services/s3Upload.js';
-import { handleStripeWebhook, processDueInstallments, isStripeEnabled } from './services/stripeService.js';
+import { handleStripeWebhook, processDueInstallments, isStripeEnabled, isLibraryStripeEnabled } from './services/stripeService.js';
 import { startWebinarReminderScheduler } from './jobs/webinarReminders.js';
 import { isWebinarEmailEnabled } from './services/webinarEmailService.js';
 
@@ -79,6 +79,7 @@ app.get('/api/health', (_req, res) => {
       env: process.env.NODE_ENV || 'development',
       appUrl: appUrl(),
       stripe: isStripeEnabled(),
+      libraryStripe: isLibraryStripeEnabled(),
       s3: isS3Enabled(),
       resend: isWebinarEmailEnabled(),
       previewAuth: isPreviewAuthEnabled(),

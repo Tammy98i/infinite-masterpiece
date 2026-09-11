@@ -23,6 +23,7 @@ import {
 import { isGoogleProviderEnabled, isPhoneProviderEnabled, loadSupabaseConfig } from '../lib/supabase';
 import { previewLogin, previewRegister, previewSessionFromToken, isPreviewToken, isDemoEmail } from '../lib/previewAuth';
 import { isPreviewAuthEnabled } from '../lib/previewAuthEnabled';
+import { checkoutApi } from '../api/checkout';
 import { isApiUnavailableMessage, overlayApiUser } from '../lib/supabaseUser';
 import { markPasswordRecovery, clearPasswordRecovery } from '../lib/passwordRecovery';
 
@@ -196,6 +197,21 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setAuthModalOpen(false);
     const pending = pendingPlanRef.current;
     pendingPlanRef.current = null;
+    if (pending === 'monthly' || pending === 'annual') {
+      void checkoutApi
+        .status()
+        .then((res) => {
+          if (!res.library?.enabled) {
+            applyPlan(pending, next.id);
+            return;
+          }
+          return checkoutApi.createLibrarySession(pending).then(({ url }) => {
+            window.location.href = url;
+          });
+        })
+        .catch(() => applyPlan(pending, next.id));
+      return;
+    }
     if (pending) applyPlan(pending, next.id);
   };
 

@@ -128,4 +128,4 @@
 
 ## עדיין פתוח (שבוע 2 בקוד)
 
-- Stripe checkout למנוי חודשי/שנתי (כרגע trial + pilot manual)
+- Stripe checkout למנוי חודשי/שנתי כשממלאים `LIBRARY_MONTHLY_ILS` + `LIBRARY_ANNUAL_ILS` + מפתח Stripe (נפרד ממסלול 8888). בלי מחירים — נשאר פיילוט ידני.

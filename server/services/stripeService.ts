@@ -13,6 +13,10 @@ import {
   listDueInstallments,
   markInstallmentStatus,
 } from './trackService.js';
+import { isLibraryPaidPricingReady, libraryPlanAmountBeforeVat, type LibraryPaidPlan } from '../../src/constants/libraryPlans.ts';
+import { updateSubscription } from './authService.js';
+import { recordPayment } from './paymentService.js';
+import { trackEvent } from './analyticsService.js';
 
 function appUrl() {
   return String(process.env.APP_URL || 'http://localhost:3000').replace(/\/$/, '');
@@ -20,6 +24,20 @@ function appUrl() {
 
 export function isStripeEnabled() {
   return Boolean(process.env.STRIPE_SECRET_KEY);
+}
+
+export function isLibraryStripeEnabled() {
+  return isStripeEnabled() && isLibraryPaidPricingReady();
+}
+
+export function libraryCheckoutPublicStatus() {
+  const monthly = libraryPlanAmountBeforeVat('monthly');
+  const annual = libraryPlanAmountBeforeVat('annual');
+  return {
+    enabled: isLibraryStripeEnabled(),
+    monthlyBeforeVat: monthly || null,
+    annualBeforeVat: annual || null,
+  };
 }
 
 function stripeClient() {
@@ -90,6 +108,60 @@ export async function createCheckoutSession(input: {
   return { url: session.url };
 }
 
+export async function createLibraryCheckoutSession(input: { userId: string; email: string; plan: string }) {
+  if (!isLibraryStripeEnabled()) {
+    throw Object.assign(new Error('סליקת מנוי ספרייה עדיין לא מחוברת'), { status: 503 });
+  }
+  const plan: LibraryPaidPlan = input.plan === 'annual' ? 'annual' : input.plan === 'monthly' ? 'monthly' : ('' as LibraryPaidPlan);
+  if (plan !== 'monthly' && plan !== 'annual') {
+    throw Object.assign(new Error('תוכנית מנוי לא תקינה'), { status: 400 });
+  }
+  const email = String(input.email || '').trim().toLowerCase();
+  if (!email) throw Object.assign(new Error('חסר אימייל'), { status: 400 });
+
+  const beforeVat = libraryPlanAmountBeforeVat(plan);
+  const withVat = amountWithVat(beforeVat);
+  const productName = plan === 'annual' ? 'מנוי ספרייה שנתי' : 'מנוי ספרייה חודשי';
+
+  const session = await stripeClient().checkout.sessions.create({
+    mode: 'subscription',
+    locale: 'auto',
+    customer_email: email,
+    client_reference_id: input.userId,
+    success_url: `${appUrl()}/library?membership=success`,
+    cancel_url: `${appUrl()}/library-membership`,
+    line_items: [
+      {
+        quantity: 1,
+        price_data: {
+          currency: 'ils',
+          unit_amount: toAgorot(withVat),
+          recurring: { interval: plan === 'annual' ? 'year' : 'month' },
+          product_data: {
+            name: productName,
+            description: 'מנוי לצפייה בספרייה — נפרד ממסלול האמיצים / ההססנים',
+          },
+        },
+      },
+    ],
+    metadata: {
+      kind: 'library',
+      userId: input.userId,
+      libraryPlan: plan,
+    },
+    subscription_data: {
+      metadata: {
+        kind: 'library',
+        userId: input.userId,
+        libraryPlan: plan,
+      },
+    },
+  });
+
+  if (!session.url) throw Object.assign(new Error('לא נוצר קישור תשלום'), { status: 500 });
+  return { url: session.url };
+}
+
 export async function handleStripeWebhook(rawBody: Buffer, signature: string | undefined) {
   const secret = process.env.STRIPE_WEBHOOK_SECRET;
   if (!isStripeEnabled() || !secret) {
@@ -123,6 +195,17 @@ export async function handleStripeWebhook(rawBody: Buffer, signature: string | u
   if (event.type !== 'checkout.session.completed') return { received: true };
 
   const session = event.data.object as Stripe.Checkout.Session;
+  if (session.metadata?.kind === 'library') {
+    const userId = String(session.metadata.userId || session.client_reference_id || '');
+    const libraryPlan = session.metadata.libraryPlan === 'annual' ? 'annual' : 'monthly';
+    if (userId) {
+      updateSubscription(userId, libraryPlan);
+      recordPayment(userId, libraryPlan, 'stripe');
+      trackEvent('subscription_started', { userId, properties: { plan: libraryPlan, source: 'stripe_library' } });
+    }
+    return { received: true };
+  }
+
   const leadId = String(session.metadata?.leadId || session.client_reference_id || '');
   const planId = String(session.metadata?.planId || '');
   const track = session.metadata?.track === 'brave' ? 'brave' : 'hesitant';
