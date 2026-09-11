@@ -6,6 +6,7 @@ import { seedDatabase } from './seed.js';
 import { seedAdminIfMissing, seedCatalogIfEmpty, seedDemoLecturersIfMissing, seedFounderLecturers } from './catalogSeed.js';
 import { migrateSchema } from './migrate.js';
 import { seedWebinarConfigIfMissing } from '../services/webinarService.js';
+import { isPreviewAuthEnabled } from '../../src/lib/previewAuthEnabled.ts';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DB_PATH = path.join(__dirname, '..', 'data', 'onboarding.db');
@@ -34,8 +35,10 @@ export function getDb(): DatabaseSync {
   }
   seedCatalogIfEmpty(db);
   seedFounderLecturers(db);
-  seedAdminIfMissing(db);
-  seedDemoLecturersIfMissing(db);
+  if (isPreviewAuthEnabled()) {
+    seedAdminIfMissing(db);
+    seedDemoLecturersIfMissing(db);
+  }
   seedWebinarConfigIfMissing();
 
   return db;

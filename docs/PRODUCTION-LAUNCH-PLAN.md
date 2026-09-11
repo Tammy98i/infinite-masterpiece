@@ -7,9 +7,9 @@
 ## התחילו כאן (סדר מומלץ)
 
 1. **לנעול כניסת דמו בפרודקשן** — הקוד חוסם `@infinitemasterpiece.local` כש-`NODE_ENV=production`, אלא אם `ALLOW_PREVIEW_LOGIN=true` בסטaging בלבד. בדקו `GET /api/health` → `previewAuth: false`.
-2. **דומיין קנוני + סודות** — `APP_URL`, Supabase, Resend, Zoom, `SUPABASE_SERVICE_ROLE_KEY`. בלי זה אין הרשמה חיה לוובינר.
-3. **DB וקבצים עמידים** — לא SQLite על דיסק זמני; S3/R2 לוידאו.
-4. **Stripe חי** — קודם מסלול 8888, אחר כך checkout למנוי ספרייה (היום פיילוט ידני).
+2. **דומיין קנוני + סודות** — `APP_URL` חי (לא localhost), Supabase, Resend, Zoom, `SUPABASE_SERVICE_ROLE_KEY`. בדקו `GET /api/health` → `ready` / `missing`.
+3. **DB וקבצים עמידים** — לא SQLite על דיסק זמני; S3/R2 לוידאו. בפרודקשן לא נזרעים חשבונות `@infinitemasterpiece.local`.
+4. **Stripe חי** — מסלול 8888 + מנוי ספרייה (`LIBRARY_*_ILS`). Webhook: `/api/checkout/webhook`.
 5. **תוכן אמיתי + כתוביות VTT** ואז **נגישות/משפט** (`PRODUCTION-A11Y-CHECKLIST.md`).
 
 אל תתחילו מסליקה או מעיצוב חדש לפני 1–2. שלב 2 (תגובות, AI, אפליקציה) לא חלק מההשקה.

@@ -1,4 +1,6 @@
 import { isPreviewAuthEnabled } from './_lib/previewAuthEnabled.js';
+import { productionReadiness } from '../src/lib/productionReadiness.ts';
+import { libraryCheckoutPublicStatus } from './_lib/libraryCheckout.js';
 
 type VercelReq = { method?: string };
 type VercelRes = {
@@ -16,14 +18,20 @@ export default function handler(req: VercelReq, res: VercelRes) {
     return;
   }
 
+  const readiness = productionReadiness();
   res.status(200).json({
     status: 'ok',
     service: 'infinite-masterpiece-vercel',
     env: process.env.NODE_ENV || 'development',
     previewAuth: isPreviewAuthEnabled(),
     stripe: configured('STRIPE_SECRET_KEY'),
+    libraryStripe: libraryCheckoutPublicStatus().enabled,
     supabase: configured('SUPABASE_URL', 'VITE_SUPABASE_URL'),
     resend: configured('RESEND_API_KEY'),
     zoom: configured('ZOOM_ACCOUNT_ID') && configured('ZOOM_CLIENT_ID'),
+    s3: configured('S3_BUCKET'),
+    ready: readiness.ready,
+    missing: readiness.missing,
+    warnings: readiness.warnings,
   });
 }

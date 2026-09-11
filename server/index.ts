@@ -7,6 +7,7 @@ import { fileURLToPath } from 'url';
 import { getDb } from './db/connection.js';
 import { appUrl, corsOrigins, isProduction } from './config/env.js';
 import { isPreviewAuthEnabled } from '../src/lib/previewAuthEnabled.ts';
+import { productionReadiness } from '../src/lib/productionReadiness.ts';
 import onboardingRoutes from './routes/onboarding.js';
 import adminOnboardingRoutes from './routes/admin-onboarding.js';
 import authRoutes from './routes/auth.js';
@@ -73,6 +74,7 @@ getDb();
 app.get('/api/health', (_req, res) => {
   try {
     getDb();
+    const readiness = productionReadiness();
     res.json({
       status: 'ok',
       service: 'infinite-masterpiece-vod',
@@ -86,10 +88,22 @@ app.get('/api/health', (_req, res) => {
       supabase: Boolean(
         (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '').trim()
       ),
+      ready: readiness.ready,
+      missing: readiness.missing,
+      warnings: readiness.warnings,
     });
   } catch (err) {
     res.status(503).json({ status: 'error', message: (err as Error).message });
   }
+});
+
+app.get('/api/ready', (_req, res) => {
+  const readiness = productionReadiness();
+  if (!readiness.ready) {
+    res.status(503).json({ status: 'not_ready', missing: readiness.missing, warnings: readiness.warnings });
+    return;
+  }
+  res.json({ status: 'ready', warnings: readiness.warnings });
 });
 
 app.use('/api/auth', authRoutes);
@@ -130,6 +144,10 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(
     `${isProduction() ? 'Infinite Masterpiece' : 'Onboarding API'} running on http://0.0.0.0:${PORT}`
   );
+  const readiness = productionReadiness();
+  if (!readiness.ready) {
+    console.warn('Production is not ready. Missing:', readiness.missing.join(', ') || '(none)');
+  }
   const runDue = () => {
     void processDueInstallments().catch(() => undefined);
   };
