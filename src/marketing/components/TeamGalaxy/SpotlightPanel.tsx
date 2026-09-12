@@ -7,7 +7,7 @@ import { localizedName, localizedRole } from '../../../constants/teamGalaxySeed'
 interface SpotlightPanelProps {
   member: TeamMember | null;
   settings: { show_impact: boolean; show_quotes: boolean; show_expertise: boolean; show_links?: boolean };
-  variant: 'docked' | 'sheet' | 'inline';
+  variant: 'docked' | 'sheet' | 'inline' | 'modal';
   onClose?: () => void;
   onPrev?: () => void;
   onNext?: () => void;
@@ -28,7 +28,7 @@ export function SpotlightPanel({
   const roleEn = member ? localizedRole(member, 'en') : '';
 
   useEffect(() => {
-    if (variant !== 'sheet' || !member) return;
+    if ((variant !== 'sheet' && variant !== 'modal') || !member) return;
     closeRef.current?.focus();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
@@ -38,7 +38,7 @@ export function SpotlightPanel({
         onClose?.();
       }
       if (e.key !== 'Tab') return;
-      const root = document.getElementById('team-profile-sheet');
+      const root = document.getElementById('team-profile-sheet') || document.getElementById('team-profile-modal');
       if (!root) return;
       const focusable = [...root.querySelectorAll<HTMLElement>(
         'button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])',
@@ -83,6 +83,32 @@ export function SpotlightPanel({
         {body}
         <NavRow onPrev={onPrev} onNext={onNext} />
       </aside>
+    );
+  }
+
+  if (variant === 'modal') {
+    return (
+      <div className="galaxy-spotlight-backdrop flex items-center justify-center p-4" onClick={onClose}>
+        <div
+          id="team-profile-modal"
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby={titleId}
+          className={`relative w-full ${isFounder ? 'max-w-lg' : 'max-w-md'} max-h-[90vh] overflow-y-auto rounded-2xl border border-[#D4AF37]/30 bg-[#080808]`}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            ref={closeRef}
+            type="button"
+            onClick={onClose}
+            className="absolute top-4 left-4 z-10 w-11 h-11 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white"
+            aria-label="סגירה"
+          >
+            <X className="w-4 h-4" />
+          </button>
+          {body}
+        </div>
+      </div>
     );
   }
 
@@ -194,9 +220,15 @@ function SpotlightBody({
       ) : null}
 
       {settings.show_impact ? (
-        <p className="text-xs text-white/45 mb-5 text-center">
-          השפעה {member.impact_score}/100
-        </p>
+        <div className="mb-6">
+          <div className="flex items-center justify-between mb-1.5">
+            <span className="text-[11px] uppercase tracking-wider text-white/40">Impact</span>
+            <span className="text-xs text-[#D4AF37] font-medium">{member.impact_score}/100</span>
+          </div>
+          <div className="galaxy-impact-bar">
+            <div className="galaxy-impact-fill" style={{ width: `${member.impact_score}%` }} />
+          </div>
+        </div>
       ) : null}
 
       {vision ? <Block label={isFounder ? 'חזון' : 'מי אני'} text={vision} /> : null}

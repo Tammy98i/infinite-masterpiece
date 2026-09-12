@@ -38,7 +38,7 @@ export function seedTeamMembersIfEmpty(db: DatabaseSync) {
   `);
 
   for (const m of TEAM_GALAXY_SEED) {
-    const orbit = m.group_key === 'founder' ? 0 : m.group_key === 'leadership' ? 1 : 2;
+    const orbit = m.group_key === 'founder' ? 0 : m.group_key === 'leadership' ? 1 : m.group_key === 'contributor' ? 3 : 2;
     upsert.run(
       m.id,
       m.slug,
