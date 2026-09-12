@@ -33,6 +33,7 @@ import { listAdminEmails, saveExtraAdminEmails } from '../services/adminEmailsSe
 import { getSetting, setSetting } from '../services/settingsService.js';
 import { adminCreateUser } from '../services/authService.js';
 import { listAuditLogs, writeAudit } from '../services/auditService.js';
+import { mountTeamSectionRoutes } from './teamMembers.js';
 import {
   listPremium88Applications,
   reviewPremium88Application,
@@ -715,5 +716,7 @@ router.post('/webinar/test-email', async (req, res) => {
     res.status(status).json({ error: (err as Error).message });
   }
 });
+
+mountTeamSectionRoutes(router);
 
 export default router;

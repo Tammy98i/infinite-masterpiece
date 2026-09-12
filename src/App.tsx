@@ -150,6 +150,8 @@ export default function App() {
         </Route>
 
         <Route path="/library/*" element={<LibraryRoute />} />
+        <Route path="/admin/webinar/team" element={<Navigate to="/library/admin?tab=team-galaxy" replace />} />
+        <Route path="/admin" element={<Navigate to="/library/admin" replace />} />
         <Route path="/login" element={<Navigate to="/library" replace />} />
         <Route path="/dashboard" element={<Navigate to="/library" replace />} />
       </Routes>

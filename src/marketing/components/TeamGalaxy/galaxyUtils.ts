@@ -1,28 +1,30 @@
 import type { TeamMember } from '../../../api/teamMembers';
 
-/** Star diameter in px — founder is significantly larger than all others. */
-export function starDiameter(impact: number, isFounder: boolean): number {
-  if (isFounder) return 140;
-  return 34 + (impact / 100) * 68; // 34px (impact 0) → 102px (impact 100)
+/** Star diameter in px — founder sun, then clearly larger CTO/CCO, then core/contributors. */
+export function starDiameter(impact: number, level: string): number {
+  if (level === 'founder') return 196;
+  if (level === 'leadership') return 124;
+  if (level === 'core') return 40 + (impact / 100) * 28;
+  return 34 + (impact / 100) * 16;
 }
 
 /** Glow size in px — proportional to impact. */
 export function glowSize(impact: number, isFounder: boolean): number {
-  if (isFounder) return 80;
-  return 12 + (impact / 100) * 28;
+  if (isFounder) return 88;
+  return 10 + (impact / 100) * 26;
 }
 
 /** Gold shade by hierarchy level. */
 export function goldColor(level: string): string {
   switch (level) {
     case 'founder':
-      return '#F4D03F'; // Bright Gold
+      return '#F4D03F';
     case 'leadership':
-      return '#D4AF37'; // Deep Metallic Gold
+      return '#D4AF37';
     case 'core':
-      return '#C5A059'; // Soft Gold
+      return '#C5A059';
     default:
-      return '#B8976A'; // Muted Champagne
+      return '#B8976A';
   }
 }
 
@@ -30,31 +32,45 @@ export function goldColor(level: string): string {
 export function frameWidth(level: string): number {
   switch (level) {
     case 'founder':
-      return 3;
+      return 3.5;
     case 'leadership':
-      return 2.5;
+      return 2.75;
     case 'core':
       return 2;
     default:
-      return 1.5;
+      return 1.4;
   }
 }
 
 export interface PositionedStar {
   member: TeamMember;
-  x: number; // px offset from center
-  y: number; // px offset from center
+  x: number;
+  y: number;
   diameter: number;
   isFounder: boolean;
+  /** Degrees, 0 = 3 o'clock, clockwise, y-down. */
+  angleDeg: number;
+  radius: number;
 }
 
-/** Orbit radii in px — relative to a base size, scaled by container. */
-export const ORBIT_RADII = [0, 170, 290, 400];
+export const ORBIT_DURATION_SEC: Record<number, number> = {
+  1: 100,
+  2: 150,
+  3: 220,
+};
 
 /**
- * Calculate star positions within orbits.
- * Stars in each orbit are distributed evenly by angle.
+ * Radii keep a gap between rings after labels (names sit below avatars, always upright).
+ * Inner ring is far enough from the founder disc + CTO/CCO size.
  */
+export const ORBIT_RADII = [0, 310, 455, 590];
+
+function orbitStartDeg(orbit: number): number {
+  if (orbit === 1) return 210;
+  if (orbit === 2) return 18;
+  return 40.5;
+}
+
 export function calculatePositions(
   members: TeamMember[],
   scale: number = 1,
@@ -70,34 +86,38 @@ export function calculatePositions(
   const orbitRadii = ORBIT_RADII.map((r) => r * scale);
 
   for (const [orbit, orbitMembers] of byOrbit) {
+    const sorted = [...orbitMembers].sort((a, b) => a.display_order - b.display_order);
     if (orbit === 0) {
-      // Founder at center
-      const m = orbitMembers[0];
+      const m = sorted[0];
       if (m) {
         stars.push({
           member: m,
           x: 0,
           y: 0,
-          diameter: starDiameter(m.impact_score, true),
+          diameter: starDiameter(m.impact_score, 'founder'),
           isFounder: true,
+          angleDeg: 0,
+          radius: 0,
         });
       }
       continue;
     }
 
     const radius = (ORBIT_RADII[orbit] || 400) * scale;
-    const count = orbitMembers.length;
-    // Offset angle so orbits don't align — visual variety
-    const angleOffset = orbit === 1 ? -Math.PI / 2 : orbit === 2 ? Math.PI / 6 : Math.PI / 3;
+    const count = Math.max(sorted.length, 1);
+    const start = orbitStartDeg(orbit);
 
-    orbitMembers.forEach((m, i) => {
-      const angle = angleOffset + (i / count) * Math.PI * 2;
+    sorted.forEach((m, i) => {
+      const deg = start + (i / count) * 360;
+      const angle = (deg * Math.PI) / 180;
       stars.push({
         member: m,
         x: Math.cos(angle) * radius,
         y: Math.sin(angle) * radius,
-        diameter: starDiameter(m.impact_score, false),
+        diameter: starDiameter(m.impact_score, m.hierarchy_level),
         isFounder: false,
+        angleDeg: deg,
+        radius,
       });
     });
   }
@@ -105,18 +125,11 @@ export function calculatePositions(
   return { stars, orbitRadii };
 }
 
-/** Connection pairs — thin lines between founder and leadership. */
-export function getConnectionLines(stars: PositionedStar[]): Array<{ from: PositionedStar; to: PositionedStar }> {
-  const founder = stars.find((s) => s.isFounder);
-  if (!founder) return [];
-  return stars
-    .filter((s) => !s.isFounder && s.member.hierarchy_level === 'leadership')
-    .map((s) => ({ from: founder, to: s }));
-}
-
-/** Responsive: how many orbits to show at a given viewport width. */
-export function visibleOrbits(viewportWidth: number): number {
-  if (viewportWidth < 768) return 0; // mobile uses separate layout
-  if (viewportWidth < 1100) return 2; // tablet: orbits 0-2
-  return 4; // desktop: all orbits
+export function orbitOffset(baseDeg: number, spinDeg: number, radius: number): { x: number; y: number } {
+  const deg = baseDeg + spinDeg;
+  const angle = (deg * Math.PI) / 180;
+  return {
+    x: Math.cos(angle) * radius,
+    y: Math.sin(angle) * radius,
+  };
 }

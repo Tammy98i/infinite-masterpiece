@@ -1,152 +1,249 @@
-import { motion, AnimatePresence } from 'motion/react';
-import { X } from 'lucide-react';
+import { useEffect, useId, useRef } from 'react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import type { TeamMember } from '../../../api/teamMembers';
-import { TeamPhoto } from '../../../components/TeamPhoto';
-import { goldColor, frameWidth } from './galaxyUtils';
+import { GalaxyPortrait } from './GalaxyPortrait';
+import { localizedName, localizedRole } from '../../../constants/teamGalaxySeed';
 
 interface SpotlightPanelProps {
   member: TeamMember | null;
-  onClose: () => void;
+  settings: { show_impact: boolean; show_quotes: boolean; show_expertise: boolean; show_links?: boolean };
+  variant: 'docked' | 'sheet' | 'inline';
+  onClose?: () => void;
+  onPrev?: () => void;
+  onNext?: () => void;
 }
 
-const FOUNDER_QUOTE = "People don't build great things alone — but one person can ignite the system that makes them possible.";
+export function SpotlightPanel({
+  member,
+  settings,
+  variant,
+  onClose,
+  onPrev,
+  onNext,
+}: SpotlightPanelProps) {
+  const titleId = useId();
+  const closeRef = useRef<HTMLButtonElement>(null);
+  const isFounder = member?.group_key === 'founder' || member?.hierarchy_level === 'founder';
+  const name = member ? localizedName(member, 'he') : '';
+  const roleEn = member ? localizedRole(member, 'en') : '';
 
-export function SpotlightPanel({ member, onClose }: SpotlightPanelProps) {
-  const isFounder = member?.hierarchy_level === 'founder';
+  useEffect(() => {
+    if (variant !== 'sheet' || !member) return;
+    closeRef.current?.focus();
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        onClose?.();
+      }
+      if (e.key !== 'Tab') return;
+      const root = document.getElementById('team-profile-sheet');
+      if (!root) return;
+      const focusable = [...root.querySelectorAll<HTMLElement>(
+        'button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])',
+      )].filter((el) => !el.hasAttribute('disabled'));
+      if (!focusable.length) return;
+      const first = focusable[0];
+      const last = focusable[focusable.length - 1];
+      if (e.shiftKey && document.activeElement === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && document.activeElement === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [variant, member, onClose]);
+
+  if (!member) return null;
+
+  const body = <SpotlightBody member={member} settings={settings} titleId={titleId} />;
+
+  if (variant === 'inline') {
+    return (
+      <aside className="w-full rounded-2xl border border-[#D4AF37]/28 bg-[#080705]/90 p-1" aria-live="polite">
+        {body}
+        <NavRow onPrev={onPrev} onNext={onNext} />
+      </aside>
+    );
+  }
+
+  if (variant === 'docked') {
+    return (
+      <aside
+        className="galaxy-docked-panel rounded-2xl border border-[#D4AF37]/28 bg-[#080705]/90"
+        aria-live="polite"
+      >
+        {body}
+        <NavRow onPrev={onPrev} onNext={onNext} />
+      </aside>
+    );
+  }
 
   return (
-    <AnimatePresence>
-      {member && (
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          className="galaxy-spotlight-backdrop flex items-center justify-center p-4"
-          onClick={onClose}
-        >
-          <motion.div
-            initial={{ scale: 0.9, opacity: 0, y: 20 }}
-            animate={{ scale: 1, opacity: 1, y: 0 }}
-            exit={{ scale: 0.9, opacity: 0, y: 20 }}
-            transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative w-full ${isFounder ? 'max-w-lg' : 'max-w-md'} max-h-[90vh] overflow-y-auto rounded-2xl border border-[#D4AF37]/30 bg-[#080808]`}
-            onClick={(e) => e.stopPropagation()}
+    <div
+      className="fixed inset-0 z-[220] flex items-end justify-center bg-black/70"
+      onClick={onClose}
+    >
+      <div
+        id="team-profile-sheet"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby={titleId}
+        className="relative w-full max-h-[92dvh] rounded-t-3xl border border-[#D4AF37]/25 bg-[#080705] overflow-hidden"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="flex items-center justify-center pt-3">
+          <div className="h-1.5 w-12 rounded-full bg-white/25" aria-hidden />
+        </div>
+        <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 border-b border-white/8 bg-[#080705]">
+          <p className="text-sm text-white">{isFounder ? 'מייסד וחזון' : 'פרופיל'}</p>
+          <button
+            ref={closeRef}
+            type="button"
+            onClick={onClose}
+            className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center text-white"
+            aria-label="סגירה"
           >
-            {/* Close */}
-            <button
-              type="button"
-              onClick={onClose}
-              className="absolute top-4 left-4 z-10 w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-white/50 hover:text-white hover:border-[#D4AF37]/50 transition-colors"
-              aria-label="סגירה"
-            >
-              <X className="w-4 h-4" />
-            </button>
-
-            <div className="p-6 sm:p-8 text-right" dir="rtl">
-              {/* Header */}
-              {isFounder && (
-                <p className="text-[11px] uppercase tracking-[0.3em] text-[#F4D03F] mb-4 text-center">
-                  FOUNDER &amp; VISIONARY
-                </p>
-              )}
-
-              {/* Photo */}
-              <div className="flex justify-center mb-5">
-                <div
-                  className="relative rounded-full overflow-hidden"
-                  style={{
-                    width: isFounder ? 120 : 88,
-                    height: isFounder ? 120 : 88,
-                    border: `${frameWidth(member.hierarchy_level)}px solid ${goldColor(member.hierarchy_level)}`,
-                    boxShadow: isFounder
-                      ? '0 0 40px rgba(244, 208, 63, 0.4)'
-                      : '0 0 20px rgba(200, 162, 76, 0.2)',
-                  }}
-                >
-                  <TeamPhoto
-                    src={member.photo || undefined}
-                    name={member.name}
-                    alt={member.name}
-                    className="w-full h-full"
-                  />
-                </div>
-              </div>
-
-              {/* Name & Role */}
-              <h3 className="text-xl text-white font-heading text-center mb-1">{member.name}</h3>
-              <p className="text-sm text-[#C5A059] text-center mb-5">{member.role}</p>
-
-              {/* Impact Gauge */}
-              <div className="mb-6">
-                <div className="flex items-center justify-between mb-1.5">
-                  <span className="text-[11px] uppercase tracking-wider text-white/40">Impact</span>
-                  <span className="text-xs text-[#D4AF37] font-medium">{member.impact_score}/100</span>
-                </div>
-                <div className="galaxy-impact-bar">
-                  <div
-                    className="galaxy-impact-fill"
-                    style={{ width: `${member.impact_score}%` }}
-                  />
-                </div>
-              </div>
-
-              {/* Sections */}
-              {isFounder ? (
-                <>
-                  <SpotlightSection label="VISION" text={member.bio} />
-                  <SpotlightSection label="CONTRIBUTION" text={member.contribution} />
-                  <SpotlightList label="KEY RESPONSIBILITIES" items={member.responsibilities} />
-                  {member.expertise.length > 0 && (
-                    <SpotlightTags label="EXPERTISE" items={member.expertise} />
-                  )}
-                </>
-              ) : (
-                <>
-                  <SpotlightSection label="מי אני" text={member.bio} />
-                  <SpotlightSection label="התרומה שלי למיזם" text={member.contribution} />
-                  <SpotlightList label="תחומי אחריות" items={member.responsibilities} />
-                  {member.expertise.length > 0 && (
-                    <SpotlightTags label="תחומי מומחיות" items={member.expertise} />
-                  )}
-                </>
-              )}
-
-              {/* Founder closing quote */}
-              {isFounder && (
-                <blockquote className="mt-6 pt-5 border-t border-[#D4AF37]/10 text-center">
-                  <p className="text-sm text-white/50 font-light italic leading-relaxed">
-                    {FOUNDER_QUOTE}
-                  </p>
-                </blockquote>
-              )}
-            </div>
-          </motion.div>
-        </motion.div>
-      )}
-    </AnimatePresence>
-  );
-}
-
-function SpotlightSection({ label, text }: { label: string; text: string }) {
-  if (!text?.trim()) return null;
-  return (
-    <div className="mb-5">
-      <p className="text-[11px] uppercase tracking-[0.2em] text-[#C5A059] mb-2">{label}</p>
-      <p className="text-sm text-white/70 font-light leading-relaxed">{text}</p>
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+        <div className="overflow-y-auto max-h-[calc(92dvh-4.5rem)]">
+          {body}
+          <NavRow onPrev={onPrev} onNext={onNext} />
+        </div>
+      </div>
     </div>
   );
 }
 
-function SpotlightList({ label, items }: { label: string; items: string[] }) {
+function NavRow({ onPrev, onNext }: { onPrev?: () => void; onNext?: () => void }) {
+  if (!onPrev && !onNext) return null;
+  return (
+    <div className="flex items-center justify-between px-5 pb-5">
+      <button
+        type="button"
+        onClick={onPrev}
+        className="w-11 h-11 rounded-full border border-[#D4AF37]/30 text-[#D4AF37] flex items-center justify-center"
+        aria-label="איש צוות קודם"
+      >
+        <ChevronRight className="w-4 h-4" />
+      </button>
+      <button
+        type="button"
+        onClick={onNext}
+        className="w-11 h-11 rounded-full border border-[#D4AF37]/30 text-[#D4AF37] flex items-center justify-center"
+        aria-label="איש צוות הבא"
+      >
+        <ChevronLeft className="w-4 h-4" />
+      </button>
+    </div>
+  );
+}
+
+function SpotlightBody({
+  member,
+  settings,
+  titleId,
+}: {
+  member: TeamMember;
+  settings: SpotlightPanelProps['settings'];
+  titleId: string;
+}) {
+  const isFounder = member.group_key === 'founder' || member.hierarchy_level === 'founder';
+  const name = localizedName(member, 'he');
+  const roleEn = localizedRole(member, 'en');
+  const quote = member.quote || '';
+  const vision = member.vision || (isFounder ? member.bio : '');
+  const bio = isFounder ? '' : member.bio;
+  const closing = member.closing_quote || '';
+
+  return (
+    <div className="p-6 text-right" dir="rtl">
+      {isFounder && (
+        <p className="text-[10px] uppercase tracking-[0.28em] text-[#D4AF37] mb-4 text-center" dir="ltr">
+          Founder &amp; Visionary
+        </p>
+      )}
+      <div className="flex justify-center mb-4">
+        <div
+          className="rounded-full overflow-hidden"
+          style={{
+            width: isFounder ? 112 : 88,
+            height: isFounder ? 112 : 88,
+            border: '2px solid #D4AF37',
+          }}
+        >
+          <GalaxyPortrait src={member.photo || undefined} name={name} alt={member.photo_alt || name} className="w-full h-full text-4xl" />
+        </div>
+      </div>
+      <h3 id={titleId} className="text-xl text-white font-heading text-center mb-1">
+        {name}
+      </h3>
+      <p className="text-sm text-[#C5A059] text-center mb-4" dir="ltr">
+        {roleEn}
+      </p>
+      {settings.show_quotes && quote ? (
+        <p className="text-sm text-white/75 font-light italic text-center leading-relaxed mb-5">“{quote}”</p>
+      ) : null}
+
+      {settings.show_impact ? (
+        <p className="text-xs text-white/45 mb-5 text-center">
+          השפעה {member.impact_score}/100
+        </p>
+      ) : null}
+
+      {vision ? <Block label={isFounder ? 'חזון' : 'מי אני'} text={vision} /> : null}
+      {bio && !isFounder ? <Block label="מי אני" text={bio} /> : null}
+      <Block label={isFounder ? 'התרומה שלי' : 'התרומה שלי למיזם'} text={member.contribution} />
+      <List label="תחומי אחריות" items={member.responsibilities} />
+      {settings.show_expertise ? <Tags items={member.expertise} /> : null}
+      {settings.show_quotes && closing ? (
+        <blockquote className="mt-5 pt-4 border-t border-[#D4AF37]/12 text-center">
+          <p className="text-base text-white/55 font-light italic leading-relaxed">“{closing}”</p>
+        </blockquote>
+      ) : null}
+      {settings.show_links && member.professional_url ? (
+        <p className="mt-4 text-center">
+          <a
+            href={member.professional_url}
+            className="text-base text-[#C5A059] underline min-h-11 inline-flex items-center"
+            target="_blank"
+            rel="noreferrer"
+          >
+            קישור מקצועי
+          </a>
+        </p>
+      ) : null}
+    </div>
+  );
+}
+
+function Block({ label, text }: { label: string; text?: string }) {
+  if (!text?.trim()) return null;
+  return (
+    <div className="mb-5">
+      <p className="text-[12px] text-[#C5A059] mb-2">{label}</p>
+      <p className="text-base text-white/78 font-light leading-relaxed">{text}</p>
+    </div>
+  );
+}
+
+function List({ label, items }: { label: string; items?: string[] }) {
   if (!items?.length) return null;
   return (
     <div className="mb-5">
-      <p className="text-[11px] uppercase tracking-[0.2em] text-[#C5A059] mb-2">{label}</p>
+      <p className="text-[12px] text-[#C5A059] mb-2">{label}</p>
       <ul className="space-y-1.5">
         {items.map((item) => (
-          <li key={item} className="text-sm text-white/70 font-light flex items-start gap-2">
-            <span className="text-[#D4AF37] mt-1 shrink-0">◦</span>
+          <li key={item} className="text-base text-white/78 font-light flex gap-2">
+            <span className="text-[#D4AF37]">◦</span>
             <span>{item}</span>
           </li>
         ))}
@@ -155,21 +252,15 @@ function SpotlightList({ label, items }: { label: string; items: string[] }) {
   );
 }
 
-function SpotlightTags({ label, items }: { label: string; items: string[] }) {
+function Tags({ items }: { items?: string[] }) {
   if (!items?.length) return null;
   return (
-    <div className="mb-5">
-      <p className="text-[11px] uppercase tracking-[0.2em] text-[#C5A059] mb-2">{label}</p>
-      <div className="flex flex-wrap gap-2">
-        {items.map((item) => (
-          <span
-            key={item}
-            className="px-3 py-1 rounded-full border border-[#D4AF37]/20 bg-[#D4AF37]/5 text-xs text-white/60"
-          >
-            {item}
-          </span>
-        ))}
-      </div>
+    <div className="flex flex-wrap gap-2 justify-end">
+      {items.map((item) => (
+        <span key={item} className="px-3 py-1 rounded-full border border-[#D4AF37]/20 text-xs text-white/65">
+          {item}
+        </span>
+      ))}
     </div>
   );
 }

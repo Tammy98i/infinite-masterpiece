@@ -1,4 +1,5 @@
 ﻿import { useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { OnboardingCenterView } from './admin/OnboardingCenterView';
 import { AdminMobileNav, AdminSidebar } from './admin/AdminSidebar';
@@ -65,7 +66,9 @@ function normalizeExternalUrl(raw: string) {
 
 export function AdminView() {
   const { user, isAdmin, setView, categories, instructors, reloadCatalog } = useApp();
-  const [tab, setTab] = useState<Tab>('overview');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const initialTab = searchParams.get('tab');
+  const [tab, setTab] = useState<Tab>(initialTab === 'team-galaxy' ? 'team-galaxy' : 'overview');
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const staffDesk = user.staffDesk || '';
@@ -110,6 +113,11 @@ export function AdminView() {
   const goTab = (id: Tab) => {
     setTab(id);
     setMobileNavOpen(false);
+    if (id === 'team-galaxy') {
+      setSearchParams({ tab: 'team-galaxy' }, { replace: true });
+    } else if (searchParams.get('tab')) {
+      setSearchParams({}, { replace: true });
+    }
   };
 
   const tabMeta = TAB_META[tab];

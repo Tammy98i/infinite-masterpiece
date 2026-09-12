@@ -385,4 +385,45 @@ export function migrateSchema(db: DatabaseSync) {
       }
     }
   }
+
+  const teamCols = columnNames(db, 'team_members');
+  if (teamCols.size > 0) {
+    const extras: Array<[string, string]> = [
+      ['slug', "TEXT DEFAULT ''"],
+      ['name_he', "TEXT DEFAULT ''"],
+      ['name_en', "TEXT DEFAULT ''"],
+      ['role_he', "TEXT DEFAULT ''"],
+      ['role_en', "TEXT DEFAULT ''"],
+      ['photo_alt', "TEXT DEFAULT ''"],
+      ['quote', "TEXT DEFAULT ''"],
+      ['vision', "TEXT DEFAULT ''"],
+      ['closing_quote', "TEXT DEFAULT ''"],
+      ['visual_tier', "TEXT DEFAULT 'medium'"],
+      ['group_key', "TEXT DEFAULT 'core'"],
+      ['featured', 'INTEGER DEFAULT 1'],
+      ['status', "TEXT DEFAULT 'published'"],
+      ['archived', 'INTEGER DEFAULT 0'],
+    ];
+    for (const [col, ddl] of extras) {
+      if (!teamCols.has(col)) db.exec(`ALTER TABLE team_members ADD COLUMN ${col} ${ddl}`);
+    }
+  }
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS webinar_team_section (
+      id TEXT PRIMARY KEY,
+      payload TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+    CREATE TABLE IF NOT EXISTS webinar_team_section_versions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      payload TEXT NOT NULL,
+      created_at TEXT DEFAULT (datetime('now')),
+      created_by TEXT DEFAULT ''
+    );
+  `);
+  const teamColsAfter = columnNames(db, 'team_members');
+  if (teamColsAfter.size > 0 && !teamColsAfter.has('professional_url')) {
+    db.exec(`ALTER TABLE team_members ADD COLUMN professional_url TEXT DEFAULT ''`);
+  }
 }
