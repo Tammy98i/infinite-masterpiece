@@ -1,0 +1,245 @@
+import type { DatabaseSync } from 'node:sqlite';
+
+interface SeedMember {
+  id: string;
+  name: string;
+  role: string;
+  photo: string;
+  bio: string;
+  contribution: string;
+  responsibilities: string[];
+  expertise: string[];
+  impact_score: number;
+  hierarchy_level: 'founder' | 'leadership' | 'core' | 'contributor';
+  orbit: number;
+  display_order: number;
+}
+
+const TEAM_SEED: SeedMember[] = [
+  {
+    id: 'tm-gal',
+    name: 'Gal Abramovitz',
+    role: 'Founder & Visionary',
+    photo: '/team/gal.png',
+    bio: 'מוביל את החזון, השפה, התוכן והמבנה העסקי של Infinite Masterpiece. אחראי להפוך רעיון ממסע השראה למערכת ביצוע, קהילה ותנועה.',
+    contribution: 'מייסד המיזם. מגדיר את הכיוון האסטרטגי, השפה והמבנה העסקי. מתרגם פוטנציאל יצירתי לתוצאות מדויקות.',
+    responsibilities: ['חזון וכיוון אסטרטגי', 'מבנה עסקי', 'שפה ותוכן', 'הובלת התנועה'],
+    expertise: ['חזון', 'מבנה עסקי', 'שפה ותוכן'],
+    impact_score: 100,
+    hierarchy_level: 'founder',
+    orbit: 0,
+    display_order: 0,
+  },
+  {
+    id: 'tm-tami',
+    name: 'Tami Elian',
+    role: 'CTO',
+    photo: '/team/tami.png',
+    bio: 'מובילה את הצד הטכנולוגי, המוצרי וה־UX. אחראית על האתר, ספריית ה־VOD, מדידה, CRM ואוטומציה.',
+    contribution: 'הופכת חזון למוצר שעובד. בונה את המערכות שמחזיקות את התנועה — מחוויית משתמש ועד ארכיטקטורה.',
+    responsibilities: ['מוצר וטכנולוגיה', 'UX', 'ארכיטקטורה', 'מדידה ואוטומציה'],
+    expertise: ['מוצר', 'טכנולוגיה', 'UX'],
+    impact_score: 90,
+    hierarchy_level: 'leadership',
+    orbit: 1,
+    display_order: 0,
+  },
+  {
+    id: 'tm-daniel',
+    name: 'Daniel Cohen',
+    role: 'CCO',
+    photo: '',
+    bio: 'אחראי על השפה הוויזואלית והקריאייטיב של Infinite Masterpiece.',
+    contribution: 'מוביל את הזהות הוויזואלית, התוכן הקריאייטיב וחוויית המותג בכל נקודות המגע.',
+    responsibilities: ['זהות ויזואלית', 'תוכן קריאייטיב', 'חוויית מותג'],
+    expertise: ['קריאייטיב', 'עיצוב', 'מיתוג'],
+    impact_score: 85,
+    hierarchy_level: 'leadership',
+    orbit: 1,
+    display_order: 1,
+  },
+  {
+    id: 'tm-eran',
+    name: 'Eran Levi',
+    role: 'Head of Community',
+    photo: '',
+    bio: 'מוביל את קהילת Infinite Masterpiece ומחבר בין יוצרים.',
+    contribution: 'בונה ומתחזק את הקהילה, מפעיל שיח ושיתוף פעולה בין חברי המערכת.',
+    responsibilities: ['ניהול קהילה', 'הפעלת שיח', 'חיבורים בין יוצרים'],
+    expertise: ['קהילה', 'תקשורת', 'הנעה'],
+    impact_score: 70,
+    hierarchy_level: 'core',
+    orbit: 2,
+    display_order: 0,
+  },
+  {
+    id: 'tm-liat',
+    name: 'Liat Shachar',
+    role: 'Head of Design',
+    photo: '',
+    bio: 'מובילה את מערכת העיצוב והחוויה הוויזואלית.',
+    contribution: 'אחראית על עקביות עיצובית, UX וחוויית משתמש בכל נקודות המגע.',
+    responsibilities: ['מערכת עיצוב', 'UX', 'עקביות ויזואלית'],
+    expertise: ['עיצוב', 'UX', 'מערכות עיצוב'],
+    impact_score: 65,
+    hierarchy_level: 'core',
+    orbit: 2,
+    display_order: 1,
+  },
+  {
+    id: 'tm-dana',
+    name: 'Dana Koren',
+    role: 'Content Strategist',
+    photo: '',
+    bio: 'אחראית על אסטרטגיית התוכן והפצה.',
+    contribution: 'מבנה את מסלולי התוכן ומוודא שכל יצירה מגיעה לקהל הנכון.',
+    responsibilities: ['אסטרטגיית תוכן', 'הפצה', 'מדידת ביצועים'],
+    expertise: ['תוכן', 'אסטרטגיה', 'הפצה'],
+    impact_score: 60,
+    hierarchy_level: 'core',
+    orbit: 2,
+    display_order: 2,
+  },
+  {
+    id: 'tm-yonatan',
+    name: 'Yonatan Amalay',
+    role: 'Tech Lead',
+    photo: '',
+    bio: 'מוביל את הפיתוח הטכני והתשתיות.',
+    contribution: 'אחראי על יציבות המערכת, ביצועים וחדשנות טכנולוגית.',
+    responsibilities: ['פיתוח', 'תשתיות', 'ביצועים'],
+    expertise: ['פיתוח', 'תשתיות', 'ארכיטקטורה'],
+    impact_score: 55,
+    hierarchy_level: 'core',
+    orbit: 2,
+    display_order: 3,
+  },
+  {
+    id: 'tm-shira',
+    name: 'Shira Tal',
+    role: 'Marketing Lead',
+    photo: '',
+    bio: 'מובילה את השיווק וההסעה של המיזם.',
+    contribution: 'אחראית על אסטרטגיית שיווק, קמפיינים והגעה לקהלים חדשים.',
+    responsibilities: ['שיווק', 'קמפיינים', 'הסעה'],
+    expertise: ['שיווק', 'דיגיטל', 'אסטרטגיה'],
+    impact_score: 50,
+    hierarchy_level: 'core',
+    orbit: 2,
+    display_order: 4,
+  },
+  {
+    id: 'tm-creators',
+    name: 'Creators',
+    role: 'Content Creators',
+    photo: '',
+    bio: 'צוות יוצרים המפיק תוכן מקצועי לפלטפורמה.',
+    contribution: 'יוצרים ומפיקים תוכן וידאו, כתיבה ועיצוב לכל ערוצי המיזם.',
+    responsibilities: ['הפקת תוכן', 'וידאו', 'כתיבה'],
+    expertise: ['יצירה', 'הפקה'],
+    impact_score: 40,
+    hierarchy_level: 'contributor',
+    orbit: 3,
+    display_order: 0,
+  },
+  {
+    id: 'tm-designers',
+    name: 'Designers',
+    role: 'Design Team',
+    photo: '',
+    bio: 'צוות מעצבים האחראי על הוויזואליה בכל הפלטפורמה.',
+    contribution: 'מעצבים חוויות, ממשקים ותוכן ויזואלי איכותי.',
+    responsibilities: ['עיצוב ממשק', 'גרפיקה', 'תוכן ויזואלי'],
+    expertise: ['עיצוב', 'גרפיקה'],
+    impact_score: 35,
+    hierarchy_level: 'contributor',
+    orbit: 3,
+    display_order: 1,
+  },
+  {
+    id: 'tm-ambassadors',
+    name: 'Ambassadors',
+    role: 'Brand Ambassadors',
+    photo: '',
+    bio: 'שגרירי המותג שמרחיבים את ההשפעה.',
+    contribution: 'מייצגים את Infinite Masterpiece ומביאים קהלים חדשים.',
+    responsibilities: ['ייצוג המותג', 'הרחבת השפעה'],
+    expertise: ['קהילה', 'הסעה'],
+    impact_score: 35,
+    hierarchy_level: 'contributor',
+    orbit: 3,
+    display_order: 2,
+  },
+  {
+    id: 'tm-legal',
+    name: 'Legal',
+    role: 'Legal & Compliance',
+    photo: '',
+    bio: 'צוות משפטי האחראי על תקנונים, פרטיות והיבטים משפטיים.',
+    contribution: 'מבטיח עמידה ברגולציה, תקנונים והגנת מידע.',
+    responsibilities: ['תקנונים', 'פרטיות', 'היבטים משפטיים'],
+    expertise: ['משפט', 'רגולציה'],
+    impact_score: 30,
+    hierarchy_level: 'contributor',
+    orbit: 3,
+    display_order: 3,
+  },
+  {
+    id: 'tm-finance',
+    name: 'Finance',
+    role: 'Finance & Operations',
+    photo: '',
+    bio: 'צוות פיננסי האחראי על ניהול תקציב ותזרים.',
+    contribution: 'מנהל את ההיבטים הפיננסיים של המערכת ומבטיח יציבות עסקית.',
+    responsibilities: ['תקציב', 'תזרים', 'דוחות'],
+    expertise: ['פיננסים', 'תפעול'],
+    impact_score: 30,
+    hierarchy_level: 'contributor',
+    orbit: 3,
+    display_order: 4,
+  },
+  {
+    id: 'tm-hr',
+    name: 'HR',
+    role: 'Human Resources',
+    photo: '',
+    bio: 'צוות משאבי אנוש האחראי על גיוס וניהול צוות.',
+    contribution: 'מגייס, מלווה ומפתח את הצוות האנושי של המיזם.',
+    responsibilities: ['גיוס', 'פיתוח צוות', 'ליווי'],
+    expertise: ['משאבי אנוש', 'גיוס'],
+    impact_score: 25,
+    hierarchy_level: 'contributor',
+    orbit: 3,
+    display_order: 5,
+  },
+];
+
+export function seedTeamMembersIfEmpty(db: DatabaseSync) {
+  const count = db.prepare(`SELECT COUNT(*) as c FROM team_members`).get() as { c: number };
+  if (count.c > 0) return;
+
+  const insert = db.prepare(`
+    INSERT INTO team_members (
+      id, name, role, photo, bio, contribution, responsibilities, expertise,
+      impact_score, hierarchy_level, orbit, active, display_order
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 1, ?)
+  `);
+
+  for (const m of TEAM_SEED) {
+    insert.run(
+      m.id,
+      m.name,
+      m.role,
+      m.photo,
+      m.bio,
+      m.contribution,
+      JSON.stringify(m.responsibilities),
+      JSON.stringify(m.expertise),
+      m.impact_score,
+      m.hierarchy_level,
+      m.orbit,
+      m.display_order,
+    );
+  }
+  console.log(`Team members seeded: ${TEAM_SEED.length} entries`);
+}

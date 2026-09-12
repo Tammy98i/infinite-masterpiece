@@ -37,6 +37,7 @@ import { trackEvent, trackWebinarCta, scrollToWebinarForm, scrollToWebinarFit } 
 import { captureUtmFromSearch } from '../../utils/utm';
 import { getWebinarPhase } from '../../utils/webinarTime';
 import { TeamPhoto } from '../../components/TeamPhoto';
+import { TeamGalaxy } from '../components/TeamGalaxy/TeamGalaxy';
 
 const bottleneckIcons = [Tag, Handshake, Megaphone, Network, Target];
 
@@ -364,6 +365,8 @@ export function WebinarLanding() {
           <p className="mt-3 text-[11px] text-white/35 font-light leading-relaxed">{WEBINAR_TRACKS_FINE_PRINT}</p>
         </div>
       </section>
+
+      <TeamGalaxy />
 
       <section id="webinar-fit" ref={fitRef} className="py-20 md:py-24 border-t border-white/[0.04]">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
