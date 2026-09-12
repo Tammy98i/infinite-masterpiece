@@ -1,4 +1,5 @@
 import type { AuthUserPayload } from '../api/auth';
+import { isPreviewAuthEnabled, PREVIEW_AUTH_DISABLED_MESSAGE } from './previewAuthEnabled';
 
 export const PREVIEW_TOKEN_PREFIX = 'preview:';
 export const PREVIEW_PASSWORD = 'Masterpiece88';
@@ -82,6 +83,9 @@ export function previewSessionFromToken(token: string | null | undefined) {
 }
 
 export function previewLogin(email: string, password: string) {
+  if (!isPreviewAuthEnabled()) {
+    throw new Error(PREVIEW_AUTH_DISABLED_MESSAGE);
+  }
   const normalized = email.trim().toLowerCase();
   const user = allUsers().find((item) => item.email === normalized);
   if (!user || password !== PREVIEW_PASSWORD) {
@@ -91,6 +95,9 @@ export function previewLogin(email: string, password: string) {
 }
 
 export function previewRegister(fullName: string, email: string, password: string) {
+  if (!isPreviewAuthEnabled()) {
+    throw new Error(PREVIEW_AUTH_DISABLED_MESSAGE);
+  }
   const normalized = email.trim().toLowerCase();
   if (!normalized.includes('@')) throw new Error('נא להזין אימייל תקין');
   if (password.length < 8) throw new Error('הסיסמה חייבת להיות לפחות 8 תווים');

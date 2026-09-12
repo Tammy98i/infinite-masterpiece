@@ -1,5 +1,6 @@
 import { randomBytes, randomUUID, scryptSync, timingSafeEqual } from 'crypto';
 import { getDb } from '../db/connection.js';
+import { isPreviewAuthEnabled, PREVIEW_AUTH_DISABLED_MESSAGE } from '../../src/lib/previewAuthEnabled.ts';
 import { resolveLecturerReferralId } from './lecturerService.js';
 
 const SESSION_DAYS = 30;
@@ -164,6 +165,9 @@ export function adminCreateUser(fullName: string, email: string, password: strin
 
 export function loginUser(email: string, password: string) {
   const normalized = email.trim().toLowerCase();
+  if (normalized.endsWith('@infinitemasterpiece.local') && !isPreviewAuthEnabled()) {
+    throw Object.assign(new Error(PREVIEW_AUTH_DISABLED_MESSAGE), { status: 403 });
+  }
   const db = getDb();
   const row = db.prepare(`SELECT * FROM users WHERE lower(email) = ?`).get(normalized) as
     | Record<string, unknown>

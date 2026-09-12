@@ -6,6 +6,7 @@ import {
   lookupWebinarRegistration,
   setWebinarPersonPicked,
 } from '../services/webinarService.js';
+import { getPublicTeamPayload } from '../services/teamService.js';
 
 const router = Router();
 
@@ -13,6 +14,15 @@ router.get('/config', (req, res) => {
   try {
     const abVariant = typeof req.query.abVariant === 'string' ? req.query.abVariant : undefined;
     res.json(getWebinarPublicPayload(abVariant));
+  } catch (err) {
+    res.status(500).json({ error: (err as Error).message });
+  }
+});
+
+router.get('/team', (req, res) => {
+  try {
+    const locale = typeof req.query.locale === 'string' ? req.query.locale : 'he';
+    res.json(getPublicTeamPayload(locale));
   } catch (err) {
     res.status(500).json({ error: (err as Error).message });
   }

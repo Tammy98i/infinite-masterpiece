@@ -16,6 +16,7 @@ import { useWebinarPhase } from '../hooks/useWebinarPhase';
 
 const WEBINAR_NAV = [
   { name: 'הצוות', to: '/webinar#hosts' },
+  { name: 'האנשים', to: '/webinar#webinar-people' },
   { name: 'התאמה', to: '/webinar#webinar-fit' },
   { name: 'שאלות נפוצות', to: '/webinar#webinar-faq' },
 ];

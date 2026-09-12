@@ -340,6 +340,27 @@ export function migrateSchema(db: DatabaseSync) {
     }
   }
 
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS team_members (
+      id TEXT PRIMARY KEY,
+      name TEXT NOT NULL,
+      role TEXT NOT NULL DEFAULT '',
+      photo TEXT DEFAULT '',
+      bio TEXT DEFAULT '',
+      contribution TEXT DEFAULT '',
+      responsibilities TEXT DEFAULT '[]',
+      expertise TEXT DEFAULT '[]',
+      impact_score INTEGER NOT NULL DEFAULT 50,
+      hierarchy_level TEXT NOT NULL DEFAULT 'contributor',
+      orbit INTEGER NOT NULL DEFAULT 3,
+      active INTEGER NOT NULL DEFAULT 1,
+      display_order INTEGER NOT NULL DEFAULT 0,
+      created_at TEXT DEFAULT (datetime('now')),
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+    CREATE INDEX IF NOT EXISTS idx_team_members_active ON team_members(active, orbit, display_order);
+  `);
+
   migrateCategoriesToSpec(db);
 
   const episodes = columnNames(db, 'episodes');
@@ -363,5 +384,46 @@ export function migrateSchema(db: DatabaseSync) {
         update.run(JSON.stringify(captionTracksForEpisode(row.id)), row.id);
       }
     }
+  }
+
+  const teamCols = columnNames(db, 'team_members');
+  if (teamCols.size > 0) {
+    const extras: Array<[string, string]> = [
+      ['slug', "TEXT DEFAULT ''"],
+      ['name_he', "TEXT DEFAULT ''"],
+      ['name_en', "TEXT DEFAULT ''"],
+      ['role_he', "TEXT DEFAULT ''"],
+      ['role_en', "TEXT DEFAULT ''"],
+      ['photo_alt', "TEXT DEFAULT ''"],
+      ['quote', "TEXT DEFAULT ''"],
+      ['vision', "TEXT DEFAULT ''"],
+      ['closing_quote', "TEXT DEFAULT ''"],
+      ['visual_tier', "TEXT DEFAULT 'medium'"],
+      ['group_key', "TEXT DEFAULT 'core'"],
+      ['featured', 'INTEGER DEFAULT 1'],
+      ['status', "TEXT DEFAULT 'published'"],
+      ['archived', 'INTEGER DEFAULT 0'],
+    ];
+    for (const [col, ddl] of extras) {
+      if (!teamCols.has(col)) db.exec(`ALTER TABLE team_members ADD COLUMN ${col} ${ddl}`);
+    }
+  }
+
+  db.exec(`
+    CREATE TABLE IF NOT EXISTS webinar_team_section (
+      id TEXT PRIMARY KEY,
+      payload TEXT NOT NULL DEFAULT '{}',
+      updated_at TEXT DEFAULT (datetime('now'))
+    );
+    CREATE TABLE IF NOT EXISTS webinar_team_section_versions (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      payload TEXT NOT NULL,
+      created_at TEXT DEFAULT (datetime('now')),
+      created_by TEXT DEFAULT ''
+    );
+  `);
+  const teamColsAfter = columnNames(db, 'team_members');
+  if (teamColsAfter.size > 0 && !teamColsAfter.has('professional_url')) {
+    db.exec(`ALTER TABLE team_members ADD COLUMN professional_url TEXT DEFAULT ''`);
   }
 }

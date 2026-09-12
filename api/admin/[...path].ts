@@ -13,6 +13,7 @@ import { createTeamFounder, listTeamFounders, reorderTeamFounders, updateTeamFou
 import { createTeamMessage, listTeamMessages } from '../_lib/teamMessagesStore.js';
 import { CATEGORIES, COURSES } from '../_lib/staticData.js';
 import { webinarAdminPayload } from '../_lib/webinarAdmin.js';
+import { TEAM_SECTION_DEFAULTS, teamGalaxyPublicMembers } from '../../src/constants/teamGalaxySeed.ts';
 
 type VercelReq = {
   method?: string;
@@ -142,6 +143,18 @@ export default async function handler(req: VercelReq, res: VercelRes) {
     }
     if (method === 'GET' && route === 'raffles') {
       json(res, 200, { termsApproved: false, unassignedTickets: 0, raffles: [], tickets: [] });
+      return;
+    }
+    if (method === 'GET' && route === 'team-members') {
+      json(res, 200, teamGalaxyPublicMembers());
+      return;
+    }
+    if (method === 'GET' && route === 'webinar-team-section') {
+      json(res, 200, {
+        draft: TEAM_SECTION_DEFAULTS,
+        live: TEAM_SECTION_DEFAULTS,
+        versions: [],
+      });
       return;
     }
     if (method === 'GET' && route === 'webinar') {

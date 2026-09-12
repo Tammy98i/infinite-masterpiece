@@ -1,5 +1,6 @@
 import { jsonBody } from '../_lib/body.js';
 import { previewLogin as matchPreview } from '../_lib/previewLogin.js';
+import { isPreviewAuthEnabled, PREVIEW_AUTH_DISABLED_MESSAGE } from '../_lib/previewAuthEnabled.js';
 
 type VercelReq = {
   method?: string;
@@ -17,6 +18,10 @@ export default function handler(req: VercelReq, res: VercelRes) {
     return;
   }
   try {
+    if (!isPreviewAuthEnabled()) {
+      res.status(403).json({ error: PREVIEW_AUTH_DISABLED_MESSAGE });
+      return;
+    }
     const body = jsonBody(req);
     const result = matchPreview(String(body.email || ''), String(body.password || ''));
     res.status(200).json(result);

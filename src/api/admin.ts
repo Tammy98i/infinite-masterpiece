@@ -515,6 +515,11 @@ export interface AdminReadiness {
   raffleTermsApproved: boolean;
   courses: AdminCourseWeekRow[];
   founders: AdminFounderReadiness[];
+  launchReady?: boolean;
+  launchMissing?: string[];
+  launchWarnings?: string[];
+  previewAuth?: boolean;
+  libraryStripe?: boolean;
 }
 
 export interface AdminTrackInstallment {

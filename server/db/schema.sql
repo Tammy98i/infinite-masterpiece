@@ -401,3 +401,23 @@ CREATE TABLE IF NOT EXISTS team_messages (
 
 CREATE INDEX IF NOT EXISTS idx_team_messages_lecturer ON team_messages(lecturer_user_id, created_at);
 
+CREATE TABLE IF NOT EXISTS team_members (
+  id TEXT PRIMARY KEY,
+  name TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT '',
+  photo TEXT DEFAULT '',
+  bio TEXT DEFAULT '',
+  contribution TEXT DEFAULT '',
+  responsibilities TEXT DEFAULT '[]',
+  expertise TEXT DEFAULT '[]',
+  impact_score INTEGER NOT NULL DEFAULT 50,
+  hierarchy_level TEXT NOT NULL DEFAULT 'contributor',
+  orbit INTEGER NOT NULL DEFAULT 3,
+  active INTEGER NOT NULL DEFAULT 1,
+  display_order INTEGER NOT NULL DEFAULT 0,
+  created_at TEXT DEFAULT (datetime('now')),
+  updated_at TEXT DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_team_members_active ON team_members(active, orbit, display_order);
+

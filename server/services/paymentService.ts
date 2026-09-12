@@ -11,7 +11,7 @@ export interface PaymentRow {
   createdAt: string;
 }
 
-export function recordPayment(userId: string, plan: string, source: 'user' | 'admin') {
+export function recordPayment(userId: string, plan: string, source: 'user' | 'admin' | 'stripe') {
   try {
     getDb()
       .prepare(`INSERT INTO payments (id, user_id, plan, source, created_at) VALUES (?, ?, ?, ?, ?)`)

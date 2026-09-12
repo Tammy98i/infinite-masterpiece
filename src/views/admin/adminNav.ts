@@ -15,6 +15,7 @@ import {
   Scale,
   Settings,
   Shield,
+  Sparkles,
   UserCog,
   Users,
   UsersRound,
@@ -32,6 +33,7 @@ export type Tab =
   | 'categories'
   | 'founders'
   | 'team'
+  | 'team-galaxy'
   | 'lecturers'
   | 'premium88'
   | 'funnel'
@@ -84,6 +86,7 @@ export const NAV_GROUPS: NavGroup[] = [
       },
       { id: 'users', label: 'משתמשים', ready: true, icon: Users, keywords: 'users משתמשים' },
       { id: 'team', label: 'צוות ומרצים', ready: true, icon: UserCog, badge: 'חדש', keywords: 'team staff desk' },
+      { id: 'team-galaxy', label: 'שקופית הצוות', ready: true, icon: Sparkles, badge: 'חדש', keywords: 'galaxy team webinar אנשים' },
       { id: 'founders', label: 'צוות מייסדים', ready: true, icon: Crown, keywords: 'founders מייסדים' },
       { id: 'lecturers', label: 'בקשות מרצים', ready: true, icon: GraduationCap, keywords: 'lecturer בקשות' },
     ],
@@ -135,6 +138,7 @@ export const TAB_META: Record<
   },
   users: { title: 'משתמשים', description: 'רשימת משתמשים, מנויים ושיוך לצוות', group: 'אנשים והרשאות' },
   team: { title: 'צוות ומרצים', description: 'דסקים פנימיים, סטטוס גישה והודעות לצוות', group: 'אנשים והרשאות' },
+  'team-galaxy': { title: 'שקופית הצוות', description: 'ניהול אנשי הצוות, טיוטה ופרסום שקופית הוובינר', group: 'אנשים והרשאות' },
   founders: { title: 'צוות מייסדים', description: 'תמונות, ביו וקישורים בעמוד הציבורי', group: 'אנשים והרשאות' },
   lecturers: { title: 'בקשות מרצים', description: 'אישור והפעלת מרצים חדשים', group: 'אנשים והרשאות' },
   payments: { title: 'מנויים ותשלומים', description: 'חיובים, מנויים ותשלומי מסלול', group: 'מסחר והכנסות' },

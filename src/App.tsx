@@ -55,6 +55,7 @@ function ScrollManager() {
       const aliases: Record<string, string> = {
         'webinar-register-hero': 'webinar-register',
         'about-creation': 'hosts',
+        'webinar-people': 'webinar-people',
         pilot: 'tracks',
       };
       const id = aliases[rawId] || rawId;
@@ -139,6 +140,7 @@ export default function App() {
           <Route path="/accessibility" element={<AccessibilityStatement />} />
           <Route path="/library-membership" element={<LibraryMembership />} />
           <Route path="/webinar" element={<WebinarLanding />} />
+          <Route path="/webinar/webinar-people" element={<WebinarLanding />} />
           <Route path="/webinar/thank-you" element={<WebinarThankYou />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/auth/reset" element={<UpdatePassword />} />
@@ -148,6 +150,8 @@ export default function App() {
         </Route>
 
         <Route path="/library/*" element={<LibraryRoute />} />
+        <Route path="/admin/webinar/team" element={<Navigate to="/library/admin?tab=team-galaxy" replace />} />
+        <Route path="/admin" element={<Navigate to="/library/admin" replace />} />
         <Route path="/login" element={<Navigate to="/library" replace />} />
         <Route path="/dashboard" element={<Navigate to="/library" replace />} />
       </Routes>

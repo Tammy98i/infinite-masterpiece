@@ -6,6 +6,8 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import { getDb } from './db/connection.js';
 import { appUrl, corsOrigins, isProduction } from './config/env.js';
+import { isPreviewAuthEnabled } from '../src/lib/previewAuthEnabled.ts';
+import { productionReadiness } from '../src/lib/productionReadiness.ts';
 import onboardingRoutes from './routes/onboarding.js';
 import adminOnboardingRoutes from './routes/admin-onboarding.js';
 import authRoutes from './routes/auth.js';
@@ -23,10 +25,11 @@ import legalRoutes from './routes/legal.js';
 import questionsRoutes from './routes/questions.js';
 import playbackRoutes from './routes/playback.js';
 import webinarRoutes from './routes/webinar.js';
+import teamMembersRoutes from './routes/teamMembers.js';
 import { optionalAuth, requireAdmin, requireAuth } from './middleware/auth.js';
 import { UPLOADS_DIR, ensureUploadsDir } from './services/uploadService.js';
 import { isS3Enabled } from './services/s3Upload.js';
-import { handleStripeWebhook, processDueInstallments, isStripeEnabled } from './services/stripeService.js';
+import { handleStripeWebhook, processDueInstallments, isStripeEnabled, isLibraryStripeEnabled } from './services/stripeService.js';
 import { startWebinarReminderScheduler } from './jobs/webinarReminders.js';
 import { isWebinarEmailEnabled } from './services/webinarEmailService.js';
 
@@ -72,18 +75,36 @@ getDb();
 app.get('/api/health', (_req, res) => {
   try {
     getDb();
+    const readiness = productionReadiness();
     res.json({
       status: 'ok',
       service: 'infinite-masterpiece-vod',
       env: process.env.NODE_ENV || 'development',
       appUrl: appUrl(),
       stripe: isStripeEnabled(),
+      libraryStripe: isLibraryStripeEnabled(),
       s3: isS3Enabled(),
       resend: isWebinarEmailEnabled(),
+      previewAuth: isPreviewAuthEnabled(),
+      supabase: Boolean(
+        (process.env.SUPABASE_URL || process.env.VITE_SUPABASE_URL || '').trim()
+      ),
+      ready: readiness.ready,
+      missing: readiness.missing,
+      warnings: readiness.warnings,
     });
   } catch (err) {
     res.status(503).json({ status: 'error', message: (err as Error).message });
   }
+});
+
+app.get('/api/ready', (_req, res) => {
+  const readiness = productionReadiness();
+  if (!readiness.ready) {
+    res.status(503).json({ status: 'not_ready', missing: readiness.missing, warnings: readiness.warnings });
+    return;
+  }
+  res.json({ status: 'ready', warnings: readiness.warnings });
 });
 
 app.use('/api/auth', authRoutes);
@@ -98,6 +119,14 @@ app.use('/api/checkout', checkoutRoutes);
 app.use('/api/premium-88', premium88Routes);
 app.use('/api/legal', legalRoutes);
 app.use('/api/webinar', webinarRoutes);
+app.use('/api/team-members', (req, res, next) => {
+  if (req.method !== 'GET' && req.method !== 'HEAD') {
+    res.status(405).json({ error: 'Method not allowed' });
+    return;
+  }
+  next();
+}, teamMembersRoutes);
+app.use('/api/admin/team-members', requireAdmin, teamMembersRoutes);
 app.use('/api/questions', requireAuth, questionsRoutes);
 app.use('/api/library', optionalAuth, playbackRoutes);
 app.use('/api/upload', requireAuth, uploadRoutes);
@@ -124,6 +153,10 @@ app.listen(PORT, '0.0.0.0', () => {
   console.log(
     `${isProduction() ? 'Infinite Masterpiece' : 'Onboarding API'} running on http://0.0.0.0:${PORT}`
   );
+  const readiness = productionReadiness();
+  if (!readiness.ready) {
+    console.warn('Production is not ready. Missing:', readiness.missing.join(', ') || '(none)');
+  }
   const runDue = () => {
     void processDueInstallments().catch(() => undefined);
   };

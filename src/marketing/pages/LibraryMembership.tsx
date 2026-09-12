@@ -1,22 +1,61 @@
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useUser } from '../../context/UserContext';
 import { LIBRARY_PLANS } from '../../constants/libraryPlans';
+import { checkoutApi } from '../../api/checkout';
 import { trackEvent } from '../../utils/analytics';
 import { hasFullLibraryAccess } from '../../utils/access';
+import { amountWithVat } from '../../data/entryTracks';
+
+function priceLabel(beforeVat: number | null | undefined, fallback: string) {
+  if (!beforeVat) return fallback;
+  const withVat = amountWithVat(beforeVat);
+  return `₪${withVat.toLocaleString('he-IL')} כולל מע״מ`;
+}
 
 export function LibraryMembership() {
   const { user, isGuest, startTrialOrSubscribe } = useUser();
   const navigate = useNavigate();
   const hasAccess = hasFullLibraryAccess(user);
+  const [libraryStripe, setLibraryStripe] = useState(false);
+  const [monthlyBeforeVat, setMonthlyBeforeVat] = useState<number | null>(null);
+  const [annualBeforeVat, setAnnualBeforeVat] = useState<number | null>(null);
+  const [busy, setBusy] = useState<'monthly' | 'annual' | null>(null);
+  const [error, setError] = useState('');
 
-  const choose = (plan: 'free_trial' | 'monthly' | 'annual') => {
+  useEffect(() => {
+    checkoutApi
+      .status()
+      .then((res) => {
+        setLibraryStripe(Boolean(res.library?.enabled));
+        setMonthlyBeforeVat(res.library?.monthlyBeforeVat ?? null);
+        setAnnualBeforeVat(res.library?.annualBeforeVat ?? null);
+      })
+      .catch(() => undefined);
+  }, []);
+
+  const choose = async (plan: 'free_trial' | 'monthly' | 'annual') => {
+    setError('');
     trackEvent('upgrade_clicked', { source: 'library_membership', plan });
     if (plan === 'free_trial') {
       trackEvent('trial_started', { source: 'library_membership' });
-    } else {
-      trackEvent('subscription_started', { source: 'library_membership', plan });
+      startTrialOrSubscribe(plan);
+      if (!isGuest) navigate('/library');
+      return;
+    }
+    if (libraryStripe && !isGuest) {
+      setBusy(plan);
+      try {
+        const { url } = await checkoutApi.createLibrarySession(plan);
+        window.location.href = url;
+      } catch (err) {
+        setBusy(null);
+        setError(err instanceof Error ? err.message : 'לא ניתן לפתוח תשלום');
+      }
+      return;
     }
     startTrialOrSubscribe(plan);
+    if (!isGuest && !libraryStripe) navigate('/library');
   };
 
   return (
@@ -45,10 +84,18 @@ export function LibraryMembership() {
         </div>
       ) : null}
 
+      {error ? <p className="text-sm text-red-300 mb-4">{error}</p> : null}
+
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
         {(['trial', 'monthly', 'annual'] as const).map((key) => {
           const plan = LIBRARY_PLANS[key];
           const trialUsed = !isGuest && user.subscriptionPlan !== 'none' && key === 'trial';
+          const label =
+            key === 'monthly'
+              ? priceLabel(monthlyBeforeVat, plan.priceLabel)
+              : key === 'annual'
+                ? priceLabel(annualBeforeVat, plan.priceLabel)
+                : plan.priceLabel;
           return (
             <div
               key={key}
@@ -56,21 +103,20 @@ export function LibraryMembership() {
             >
               <h2 className="text-lg font-medium text-white mb-1">{plan.title}</h2>
               <p className="text-xs text-white/45 mb-4 flex-1">{plan.subtitle}</p>
-              <p className="text-2xl text-[#F7E7B5] mb-4">{plan.priceLabel}</p>
+              <p className="text-2xl text-[#F7E7B5] mb-4">{label}</p>
               <button
                 type="button"
-                disabled={hasAccess || trialUsed}
-                onClick={() => {
-                  choose(plan.id);
-                  if (!isGuest) navigate('/library');
-                }}
-                className="btn-gold text-black w-full py-3 text-sm"
+                disabled={hasAccess || trialUsed || busy !== null}
+                onClick={() => void choose(plan.id)}
+                className="btn-gold text-black w-full py-3 text-sm cursor-pointer"
               >
-                {plan.cta}
+                {busy === plan.id ? 'פותחים תשלום…' : plan.cta}
               </button>
               {key !== 'trial' ? (
                 <p className="text-[11px] text-white/30 mt-3 leading-relaxed">
-                  סליקה ב-Stripe תופעל בשלב ההשקה. בפיילוט — אדמין יכול לפתוח גישה ידנית.
+                  {libraryStripe
+                    ? 'תשלום ב-Stripe למנוי ספרייה בלבד — לא מסלול 8888.'
+                    : 'סליקה ב-Stripe תופעל כשייקבעו מחירים ומפתח live. בפיילוט — אדמין יכול לפתוח גישה ידנית.'}
                 </p>
               ) : null}
             </div>

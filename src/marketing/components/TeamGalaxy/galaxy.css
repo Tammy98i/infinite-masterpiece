@@ -1,0 +1,66 @@
+/* Team Galaxy — portraits on the space backdrop */
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.08); }
+}
+
+.galaxy-founder-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(244, 208, 63, 0.35) 0%, rgba(212, 175, 55, 0.15) 40%, transparent 70%);
+  animation: glow-pulse 5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.galaxy-star-glow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(200, 162, 76, 0.25) 0%, transparent 60%);
+  pointer-events: none;
+}
+
+.galaxy-spotlight-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(5, 5, 5, 0.85);
+  backdrop-filter: blur(8px);
+}
+
+.galaxy-impact-bar {
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(200, 162, 76, 0.15);
+  overflow: hidden;
+}
+
+.galaxy-impact-fill {
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(90deg, #B8976A, #D4AF37, #F4D03F);
+}
+
+.galaxy-mobile-card {
+  scroll-snap-align: center;
+}
+
+.galaxy-mobile-scroller {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.galaxy-mobile-scroller::-webkit-scrollbar {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .galaxy-founder-glow {
+    animation: none !important;
+  }
+}

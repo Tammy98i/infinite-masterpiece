@@ -6,11 +6,11 @@
     {
       "name": "dev",
       "command": "npm run dev",
-      "description": "Local site + API — Vite :3000, Express :3001. Use Ports tab → 3000 → Open in Browser, or the forwarded preview URL."
+      "description": "Local site + API — Vite :3002, Express :3001. Use Ports tab → 3002 → Open in Browser, or the forwarded preview URL."
     }
   ],
   "ports": [
-    { "name": "site", "port": 3000 },
+    { "name": "site", "port": 3002 },
     { "name": "api", "port": 3001 }
   ]
 }
