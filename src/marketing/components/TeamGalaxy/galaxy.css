@@ -1,32 +1,8 @@
-/* Team Galaxy — luxury cosmic universe */
-
-@keyframes galaxy-twinkle {
-  0%, 100% { opacity: 0.15; }
-  50% { opacity: 0.5; }
-}
+/* Team Galaxy — portraits on the space backdrop */
 
 @keyframes glow-pulse {
   0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
   50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.08); }
-}
-
-.galaxy-bg-star {
-  position: absolute;
-  width: 2px;
-  height: 2px;
-  border-radius: 50%;
-  background: #D4AF37;
-  animation: galaxy-twinkle 4s ease-in-out infinite;
-}
-
-.galaxy-orbit-ring {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  border-radius: 50%;
-  border: 1px solid rgba(200, 162, 76, 0.12);
-  pointer-events: none;
 }
 
 .galaxy-founder-glow {
@@ -84,7 +60,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .galaxy-bg-star,
   .galaxy-founder-glow {
     animation: none !important;
   }

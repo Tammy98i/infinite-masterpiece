@@ -11,7 +11,7 @@ import {
 import { GalaxyPortrait } from './GalaxyPortrait';
 import { StarNode } from './StarNode';
 import { SpotlightPanel } from './SpotlightPanel';
-import { calculatePositions, getConnectionLines, starDiameter, goldColor } from './galaxyUtils';
+import { calculatePositions, starDiameter, goldColor } from './galaxyUtils';
 import './galaxy.css';
 
 function useViewportWidth() {
@@ -86,25 +86,11 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
   const scale = isMobile ? 1 : Math.min(1, Math.max(0.58, (viewportWidth - 96) / 1180));
 
   const { stars, orbitRadii } = useMemo(() => calculatePositions(members, scale), [members, scale]);
-  const connections = useMemo(() => getConnectionLines(stars), [stars]);
 
   const containerSize = useMemo(() => {
     const maxR = orbitRadii[3] || 500;
     return maxR * 2 + 160;
   }, [orbitRadii]);
-
-  const bgStars = useMemo(
-    () =>
-      Array.from({ length: 35 }).map((_, i) => ({
-        id: i,
-        left: ((i * 37) % 100),
-        top: ((i * 53) % 100),
-        delay: (i % 5) * 0.7,
-        duration: 3 + (i % 4),
-        size: 1 + (i % 3) * 0.6,
-      })),
-    [],
-  );
 
   const starDelays = useMemo(() => {
     const counters = new Map<number, number>();
@@ -150,41 +136,13 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
     );
   }
 
-  const center = containerSize / 2;
-
   return (
     <section
       ref={sectionRef}
       id="webinar-people"
-      className="relative py-20 md:py-28 border-t border-white/[0.04] overflow-x-hidden"
+      className="relative bg-transparent py-20 md:py-28 overflow-x-hidden"
       dir="rtl"
     >
-      <div className="absolute inset-0 bg-[#050505]" aria-hidden />
-      <div
-        className="absolute inset-0 pointer-events-none"
-        aria-hidden
-        style={{
-          background: 'radial-gradient(ellipse at center, rgba(200,162,76,0.04) 0%, transparent 60%)',
-        }}
-      />
-
-      <div className="absolute inset-0 pointer-events-none" aria-hidden>
-        {bgStars.map((s) => (
-          <div
-            key={s.id}
-            className="galaxy-bg-star"
-            style={{
-              left: `${s.left}%`,
-              top: `${s.top}%`,
-              width: s.size,
-              height: s.size,
-              animationDelay: `${s.delay}s`,
-              animationDuration: `${s.duration}s`,
-            }}
-          />
-        ))}
-      </div>
-
       <div className="relative z-10 text-center mb-8 md:mb-12 px-4">
         <motion.p
           initial={{ opacity: 0 }}
@@ -215,40 +173,6 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
 
       <div className="relative z-10 flex justify-center px-4 overflow-x-hidden">
         <div className="relative mx-auto" style={{ width: containerSize, height: containerSize, maxWidth: '100%' }}>
-          {orbitRadii.slice(1).map((r, i) => (
-            <motion.div
-              key={`orbit-${i}`}
-              initial={{ scale: 0, opacity: 0 }}
-              animate={inView ? { scale: 1, opacity: 1 } : {}}
-              transition={{ duration: 0.8, delay: 0.5 + i * 0.15, ease: [0.16, 1, 0.3, 1] }}
-              className="galaxy-orbit-ring"
-              style={{ width: r * 2, height: r * 2 }}
-            />
-          ))}
-
-          {inView && (
-            <svg
-              className="absolute inset-0 w-full h-full pointer-events-none"
-              viewBox={`0 0 ${containerSize} ${containerSize}`}
-              aria-hidden
-            >
-              {connections.map((conn, i) => (
-                <motion.line
-                  key={i}
-                  x1={center + conn.from.x}
-                  y1={center + conn.from.y}
-                  x2={center + conn.to.x}
-                  y2={center + conn.to.y}
-                  stroke="rgba(200,162,76,0.12)"
-                  strokeWidth="0.5"
-                  initial={{ pathLength: 0, opacity: 0 }}
-                  animate={{ pathLength: 1, opacity: 1 }}
-                  transition={{ duration: 0.8, delay: 1.5 }}
-                />
-              ))}
-            </svg>
-          )}
-
           {inView &&
             stars.map((star) => (
               <Fragment key={star.member.id}>
@@ -260,31 +184,6 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
                 />
               </Fragment>
             ))}
-
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={inView ? { opacity: 1 } : {}}
-            transition={{ duration: 0.6, delay: 2.2 }}
-            className="absolute bottom-2 left-2 flex flex-col gap-1.5 text-[10px] text-white/40"
-            dir="ltr"
-          >
-            <div className="flex items-center gap-2">
-              <span className="text-[#F4D03F] text-base leading-none">☀</span>
-              <span>Founder</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[#D4AF37] text-sm leading-none">✦</span>
-              <span>Leadership</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[#C5A059] text-xs leading-none">✦</span>
-              <span>Core Team</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span className="text-[#B8976A] text-[10px] leading-none">●</span>
-              <span>Contributors</span>
-            </div>
-          </motion.div>
         </div>
       </div>
 
@@ -314,11 +213,9 @@ function TeamGalaxyMobile({
     <section
       ref={sectionRef}
       id="webinar-people"
-      className="relative py-16 border-t border-white/[0.04] overflow-x-hidden"
+      className="relative bg-transparent py-16 overflow-x-hidden"
       dir="rtl"
     >
-      <div className="absolute inset-0 bg-[#050505]" aria-hidden />
-
       <div className="relative z-10 text-center mb-10 px-4">
         <p className="text-[11px] uppercase tracking-[0.28em] text-[#C5A059]/90 mb-2" dir="ltr">
           {settings.title_en}
