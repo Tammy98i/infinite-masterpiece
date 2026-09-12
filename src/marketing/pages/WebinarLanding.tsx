@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
 import { Check, ChevronDown, Handshake, Megaphone, Network, Tag, Target, X } from 'lucide-react';
 import { webinarApi } from '../../api/webinar';
@@ -37,6 +37,7 @@ import { trackEvent, trackWebinarCta, scrollToWebinarForm, scrollToWebinarFit } 
 import { captureUtmFromSearch } from '../../utils/utm';
 import { getWebinarPhase } from '../../utils/webinarTime';
 import { TeamPhoto } from '../../components/TeamPhoto';
+import { TeamGalaxy } from '../components/TeamGalaxy/TeamGalaxy';
 
 const bottleneckIcons = [Tag, Handshake, Megaphone, Network, Target];
 
@@ -115,6 +116,7 @@ function WebinarRegisterCard({
 }
 
 export function WebinarLanding() {
+  const location = useLocation();
   const [payload, setPayload] = useState<WebinarPublicPayload>(() => ({
     config: DEFAULT_WEBINAR_CONFIG,
     registrationCount: 0,
@@ -140,6 +142,16 @@ export function WebinarLanding() {
       })
       .catch(() => setConfigReady(true));
   }, []);
+
+  useEffect(() => {
+    const fromPath = location.pathname.includes('/webinar-people');
+    const fromHash = location.hash.replace('#', '') === 'webinar-people';
+    if (!fromPath && !fromHash) return;
+    const timer = window.setTimeout(() => {
+      document.getElementById('webinar-people')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 80);
+    return () => window.clearTimeout(timer);
+  }, [location.pathname, location.hash]);
 
   useEffect(() => {
     const id = window.setInterval(() => setNow(Date.now()), 60_000);
@@ -364,6 +376,8 @@ export function WebinarLanding() {
           <p className="mt-3 text-[11px] text-white/35 font-light leading-relaxed">{WEBINAR_TRACKS_FINE_PRINT}</p>
         </div>
       </section>
+
+      <TeamGalaxy />
 
       <section id="webinar-fit" ref={fitRef} className="py-20 md:py-24 border-t border-white/[0.04]">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
