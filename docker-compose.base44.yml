@@ -2,7 +2,7 @@ services:
   app:
     image: node:22-alpine
     working_dir: /app
-    command: sh -c "npm install && npm run dev"
+    command: sh -c "npm install && (npm run server &) && while ! wget -qO- http://127.0.0.1:3001/api/health 2>/dev/null; do sleep 1; done && exec npx vite --port=3000 --host=0.0.0.0"
     ports:
       - "3000:3000"
     volumes:
@@ -12,10 +12,11 @@ services:
       - NODE_ENV=development
       - API_PORT=3001
       - CHOKIDAR_USEPOLLING=true
+      - NODE_OPTIONS=--disable-warning=ExperimentalWarning
       - __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS
       - BASE44_PUBLIC_HOST_SUFFIX
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3001/api/health"]
       interval: 15s
       timeout: 5s
       retries: 5
