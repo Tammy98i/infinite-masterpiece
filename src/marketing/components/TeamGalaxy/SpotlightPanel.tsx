@@ -32,31 +32,51 @@ export function SpotlightPanel({
     closeRef.current?.focus();
     const previousOverflow = document.body.style.overflow;
     document.body.style.overflow = 'hidden';
+    const rootId = variant === 'modal' ? 'team-profile-modal' : 'team-profile-sheet';
+    const getRoot = () => document.getElementById(rootId);
+    const focusables = () => {
+      const root = getRoot();
+      if (!root) return [];
+      return [...root.querySelectorAll<HTMLElement>(
+        'button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])',
+      )].filter((el) => !el.hasAttribute('disabled') && el.tabIndex !== -1);
+    };
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         e.preventDefault();
         onClose?.();
+        return;
       }
       if (e.key !== 'Tab') return;
-      const root = document.getElementById('team-profile-sheet') || document.getElementById('team-profile-modal');
-      if (!root) return;
-      const focusable = [...root.querySelectorAll<HTMLElement>(
-        'button, [href], input, textarea, select, [tabindex]:not([tabindex="-1"])',
-      )].filter((el) => !el.hasAttribute('disabled'));
-      if (!focusable.length) return;
-      const first = focusable[0];
-      const last = focusable[focusable.length - 1];
-      if (e.shiftKey && document.activeElement === first) {
+      const items = focusables();
+      if (!items.length) {
+        e.preventDefault();
+        return;
+      }
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      const root = getRoot();
+      if (e.shiftKey && (active === first || !active || !root?.contains(active))) {
         e.preventDefault();
         last.focus();
-      } else if (!e.shiftKey && document.activeElement === last) {
+      } else if (!e.shiftKey && (active === last || !active || !root?.contains(active))) {
         e.preventDefault();
         first.focus();
       }
     };
-    document.addEventListener('keydown', onKey);
+    const onFocusIn = (e: FocusEvent) => {
+      const root = getRoot();
+      if (!root) return;
+      if (e.target instanceof Node && !root.contains(e.target)) {
+        focusables()[0]?.focus();
+      }
+    };
+    document.addEventListener('keydown', onKey, true);
+    document.addEventListener('focusin', onFocusIn);
     return () => {
-      document.removeEventListener('keydown', onKey);
+      document.removeEventListener('keydown', onKey, true);
+      document.removeEventListener('focusin', onFocusIn);
       document.body.style.overflow = previousOverflow;
     };
   }, [variant, member, onClose]);
@@ -77,9 +97,21 @@ export function SpotlightPanel({
   if (variant === 'docked') {
     return (
       <aside
-        className="galaxy-docked-panel rounded-2xl border border-[#D4AF37]/28 bg-[#080705]/90"
-        aria-live="polite"
+        id="team-profile-modal"
+        className="galaxy-docked-panel relative rounded-[22px]"
+        role="dialog"
+        aria-modal="false"
+        aria-labelledby={titleId}
       >
+        <button
+          ref={closeRef}
+          type="button"
+          onClick={onClose}
+          className="absolute top-3 left-3 z-10 w-11 h-11 rounded-full border border-[#D4AF37]/25 flex items-center justify-center text-[#E8D9B0]/80 hover:text-[#F7F1E4]"
+          aria-label="סגירה"
+        >
+          <X className="w-4 h-4" />
+        </button>
         {body}
         <NavRow onPrev={onPrev} onNext={onNext} />
       </aside>
@@ -191,9 +223,9 @@ function SpotlightBody({
   const closing = member.closing_quote || '';
 
   return (
-    <div className="p-6 text-right" dir="rtl">
+    <div className="p-7 text-left" dir="ltr">
       {isFounder && (
-        <p className="text-[10px] uppercase tracking-[0.28em] text-[#D4AF37] mb-4 text-center" dir="ltr">
+        <p className="text-[10px] uppercase tracking-[0.28em] text-[#D4AF37] mb-4 text-center">
           Founder &amp; Visionary
         </p>
       )}
@@ -203,27 +235,28 @@ function SpotlightBody({
           style={{
             width: isFounder ? 112 : 88,
             height: isFounder ? 112 : 88,
-            border: '2px solid #D4AF37',
+            border: '1.6px solid #D4AF37',
+            boxShadow: '0 0 28px rgba(212,175,55,0.22)',
           }}
         >
           <GalaxyPortrait src={member.photo || undefined} name={name} alt={member.photo_alt || name} className="w-full h-full text-4xl" />
         </div>
       </div>
-      <h3 id={titleId} className="text-xl text-white font-heading text-center mb-1">
+      <h3 id={titleId} className="text-xl text-[#F7F1E4] font-heading text-center mb-1">
         {name}
       </h3>
-      <p className="text-sm text-[#C5A059] text-center mb-4" dir="ltr">
+      <p className="text-sm text-[#C5A059] text-center mb-5 uppercase tracking-[0.12em]">
         {roleEn}
       </p>
       {settings.show_quotes && quote ? (
-        <p className="text-sm text-white/75 font-light italic text-center leading-relaxed mb-5">“{quote}”</p>
+        <p className="text-sm text-[#F7F1E4]/75 font-light italic text-center leading-relaxed mb-5">“{quote}”</p>
       ) : null}
 
       {settings.show_impact ? (
         <div className="mb-6">
           <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[11px] uppercase tracking-wider text-white/40">Impact</span>
-            <span className="text-xs text-[#D4AF37] font-medium">{member.impact_score}/100</span>
+            <span className="text-[10px] uppercase tracking-[0.18em] text-[#B8976A]">Impact</span>
+            <span className="text-[11px] text-[#D4AF37]">{member.impact_score}</span>
           </div>
           <div className="galaxy-impact-bar">
             <div className="galaxy-impact-fill" style={{ width: `${member.impact_score}%` }} />
@@ -231,10 +264,10 @@ function SpotlightBody({
         </div>
       ) : null}
 
-      {vision ? <Block label={isFounder ? 'חזון' : 'מי אני'} text={vision} /> : null}
-      {bio && !isFounder ? <Block label="מי אני" text={bio} /> : null}
-      <Block label={isFounder ? 'התרומה שלי' : 'התרומה שלי למיזם'} text={member.contribution} />
-      <List label="תחומי אחריות" items={member.responsibilities} />
+      {vision ? <Block label="Who I am" text={vision} /> : null}
+      {bio && !isFounder ? <Block label="Who I am" text={bio} /> : null}
+      <Block label="My contribution" text={member.contribution} />
+      <List label="Key responsibilities" items={member.responsibilities} />
       {settings.show_expertise ? <Tags items={member.expertise} /> : null}
       {settings.show_quotes && closing ? (
         <blockquote className="mt-5 pt-4 border-t border-[#D4AF37]/12 text-center">
@@ -261,8 +294,8 @@ function Block({ label, text }: { label: string; text?: string }) {
   if (!text?.trim()) return null;
   return (
     <div className="mb-5">
-      <p className="text-[12px] text-[#C5A059] mb-2">{label}</p>
-      <p className="text-base text-white/78 font-light leading-relaxed">{text}</p>
+      <p className="text-[11px] uppercase tracking-[0.16em] text-[#C5A059] mb-2">{label}</p>
+      <p className="text-[15px] text-[#F7F1E4]/80 font-light leading-relaxed">{text}</p>
     </div>
   );
 }
@@ -271,11 +304,11 @@ function List({ label, items }: { label: string; items?: string[] }) {
   if (!items?.length) return null;
   return (
     <div className="mb-5">
-      <p className="text-[12px] text-[#C5A059] mb-2">{label}</p>
+      <p className="text-[11px] uppercase tracking-[0.16em] text-[#C5A059] mb-2">{label}</p>
       <ul className="space-y-1.5">
         {items.map((item) => (
-          <li key={item} className="text-base text-white/78 font-light flex gap-2">
-            <span className="text-[#D4AF37]">◦</span>
+          <li key={item} className="text-[15px] text-[#F7F1E4]/80 font-light flex gap-2">
+            <span className="text-[#D4AF37]">·</span>
             <span>{item}</span>
           </li>
         ))}

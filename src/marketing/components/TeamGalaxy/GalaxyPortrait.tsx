@@ -1,4 +1,4 @@
-import { useState, type ReactElement } from 'react';
+import { useEffect, useState } from 'react';
 
 type Props = {
   src?: string;
@@ -13,16 +13,19 @@ function monogram(name: string): string {
   return (name.trim().charAt(0) || '·').toUpperCase();
 }
 
-export function GalaxyPortrait({ src, name, alt, className }: Props): ReactElement {
-  const [failed, setFailed] = useState(!src);
+export function GalaxyPortrait({ src, name, alt, className }: Props) {
+  const [failed, setFailed] = useState(false);
+
+  useEffect(() => {
+    setFailed(false);
+  }, [src]);
 
   if (!src || failed) {
     return (
       <div
         className={`relative flex items-center justify-center overflow-hidden ${className ?? ''}`}
         style={{
-          background:
-            'radial-gradient(circle at 50% 40%, rgba(212,175,55,0.18) 0%, #0c0a08 72%)',
+          background: 'radial-gradient(circle at 50% 40%, rgba(212,175,55,0.18) 0%, #0c0a08 72%)',
         }}
         role={alt ? 'img' : undefined}
         aria-label={alt}
