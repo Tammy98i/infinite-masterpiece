@@ -26,13 +26,12 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
 
   return (
     <div
-      className={`absolute ${reducedMotion ? '' : 'galaxy-star-idle'}`}
+      className="absolute"
       style={{
         left: `calc(50% + ${star.x}px)`,
         top: `calc(50% + ${star.y}px)`,
         transform: 'translate(-50%, -50%)',
         zIndex: isFounder ? 24 : selected ? 20 : innerLead ? 16 : leadership ? 13 : 10,
-        animationDelay: `${(member.display_order ?? 0) * 0.35}s`,
       }}
     >
     <motion.button
@@ -46,8 +45,8 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
       aria-label={`${name}, ${role}`}
     >
       <motion.span
-        className="relative flex items-center justify-center"
-        style={{ width: diameter, height: diameter }}
+        className={`relative flex items-center justify-center ${reducedMotion ? '' : 'galaxy-star-idle'}`}
+        style={{ width: diameter, height: diameter, animationDelay: `${(member.display_order ?? 0) * 0.35}s` }}
         whileHover={reducedMotion ? undefined : { scale: 1.06 }}
         transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
       >

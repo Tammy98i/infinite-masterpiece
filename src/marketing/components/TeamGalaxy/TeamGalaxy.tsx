@@ -14,14 +14,16 @@ import { SpotlightPanel } from './SpotlightPanel';
 import { calculatePositions, goldColor, isCtoOrCco, isLeadership, starDiameter } from './galaxyUtils';
 import './galaxy.css';
 
-function useViewportWidth() {
-  const [w, setW] = useState(() => (typeof window !== 'undefined' ? window.innerWidth : 1200));
+function useViewport() {
+  const read = () =>
+    typeof window !== 'undefined' ? { w: window.innerWidth, h: window.innerHeight } : { w: 1200, h: 800 };
+  const [v, setV] = useState(read);
   useEffect(() => {
-    const handler = () => setW(window.innerWidth);
+    const handler = () => setV({ w: window.innerWidth, h: window.innerHeight });
     window.addEventListener('resize', handler);
     return () => window.removeEventListener('resize', handler);
   }, []);
-  return w;
+  return v;
 }
 
 function useReducedMotion() {
@@ -56,7 +58,7 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
   const [inView, setInView] = useState(Boolean(preview));
   const sectionRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
-  const viewportWidth = useViewportWidth();
+  const viewport = useViewport();
   const reducedMotion = useReducedMotion();
 
   useEffect(() => {
@@ -106,9 +108,14 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
     return () => observer.disconnect();
   }, [preview]);
 
-  const isMobile = viewportWidth < 768;
-  const isTablet = viewportWidth >= 768 && viewportWidth < 1100;
-  const scale = isMobile ? 1 : isTablet ? Math.min(0.78, Math.max(0.62, (viewportWidth - 48) / 1180)) : Math.min(1, Math.max(0.7, (viewportWidth - 420) / 1180));
+  const isMobile = viewport.w < 768;
+  const isTablet = viewport.w >= 768 && viewport.w < 1100;
+  const scale = isMobile
+    ? 1
+    : Math.min(
+        isTablet ? 0.82 : 1,
+        Math.max(0.72, (viewport.w - (isTablet ? 64 : 360)) / 1280),
+      );
 
   const { stars, orbitRadii } = useMemo(() => calculatePositions(members, scale), [members, scale]);
   const containerSize = useMemo(() => {
@@ -188,7 +195,7 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
   const center = containerSize / 2;
 
   return (
-    <section ref={sectionRef} id="webinar-people" className="galaxy-stage relative overflow-hidden pt-16 pb-10 md:pt-20 md:pb-12" dir="rtl">
+    <section ref={sectionRef} id="webinar-people" className="galaxy-stage relative overflow-hidden scroll-mt-28 pt-24 pb-24 md:pt-28 md:pb-28" dir="rtl">
       <div className="galaxy-vignette" aria-hidden />
       {dust.map((s) => (
         <span
@@ -304,7 +311,7 @@ function TeamGalaxyMobile({
   const rest = members.filter((m) => m !== founder && !leadership.includes(m));
 
   return (
-    <section ref={sectionRef} id="webinar-people" className="galaxy-stage relative py-12 overflow-x-hidden" dir="rtl">
+    <section ref={sectionRef} id="webinar-people" className="galaxy-stage relative py-16 overflow-x-hidden scroll-mt-24" dir="rtl">
       <div className="galaxy-vignette" aria-hidden />
       <div className="relative z-10 text-center mb-8 px-4">
         <h2 className="text-[26px] font-heading text-[#F7F1E4] uppercase tracking-[0.12em]" dir="ltr">
