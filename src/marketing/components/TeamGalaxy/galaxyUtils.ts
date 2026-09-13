@@ -101,7 +101,7 @@ export function calculatePositions(
           member: m,
           x: 0,
           y: 0,
-          diameter: starDiameter(m.impact_score, m, true),
+        diameter: starDiameter(m.impact_score, m, true) * scale,
           isFounder: true,
         });
       }
@@ -123,7 +123,7 @@ export function calculatePositions(
         member: m,
         x: Math.cos(angle) * radius,
         y: Math.sin(angle) * radius * ELLIPSE_Y,
-        diameter: starDiameter(m.impact_score, m, false),
+        diameter: starDiameter(m.impact_score, m, false) * scale,
         isFounder: false,
       });
     });

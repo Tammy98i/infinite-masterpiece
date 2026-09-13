@@ -114,13 +114,14 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
     ? 1
     : Math.min(
         isTablet ? 0.82 : 1,
-        Math.max(0.72, (viewport.w - (isTablet ? 64 : 360)) / 1280),
+        Math.max(0.62, (viewport.w - (isTablet ? 48 : 280)) / 1280),
+        Math.max(0.62, (viewport.h - 160) / 1080),
       );
 
   const { stars, orbitRadii } = useMemo(() => calculatePositions(members, scale), [members, scale]);
   const containerSize = useMemo(() => {
     const maxR = orbitRadii[3] || 518;
-    return maxR * 2 + 180;
+    return maxR * 2 + 120;
   }, [orbitRadii]);
 
   const dust = useMemo(
@@ -195,7 +196,7 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
   const center = containerSize / 2;
 
   return (
-    <section ref={sectionRef} id="webinar-people" className="galaxy-stage relative overflow-hidden scroll-mt-28 pt-24 pb-24 md:pt-28 md:pb-28" dir="rtl">
+    <section ref={sectionRef} id="webinar-people" className="galaxy-stage relative overflow-hidden scroll-mt-24 min-h-[100svh]" dir="rtl">
       <div className="galaxy-vignette" aria-hidden />
       {dust.map((s) => (
         <span
@@ -212,12 +213,12 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         />
       ))}
 
-      <div className="relative z-10 text-center px-4 mb-4">
+      <div className="absolute z-20 top-20 md:top-24 left-0 right-0 text-center px-4 pointer-events-none">
         <motion.h2
           initial={reducedMotion ? false : { opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
-          className="font-heading text-[28px] md:text-[42px] text-[#F7F1E4] tracking-[0.14em] uppercase"
+          className="font-heading text-[26px] md:text-[40px] text-[#F7F1E4] tracking-[0.14em] uppercase"
           dir="ltr"
         >
           {settings.title_en}
@@ -226,14 +227,14 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
           initial={reducedMotion ? false : { opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
           transition={{ duration: 0.7, delay: 0.15 }}
-          className="mt-2 text-[14px] md:text-[16px] font-light tracking-[0.08em] text-[#E8D9B0]/80"
+          className="mt-2 text-[13px] md:text-[16px] font-light tracking-[0.08em] text-[#E8D9B0]/80"
           dir="ltr"
         >
           {settings.subtitle_en}
         </motion.p>
       </div>
 
-      <div className={`relative z-10 flex items-start justify-center gap-6 px-4 ${selected ? 'lg:pl-2' : ''}`} dir="ltr">
+      <div className={`relative z-10 flex items-center justify-center gap-6 px-4 min-h-[100svh] pt-8 pb-20 ${selected ? 'lg:pl-2' : ''}`} dir="ltr">
         <div className="relative mx-auto" style={{ width: containerSize, height: containerSize, maxWidth: '100%' }}>
           {orbitRadii.slice(1).map((r, i) => (
             <motion.div
