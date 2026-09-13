@@ -22,6 +22,7 @@ export type WebinarRegistrationPayload = {
   referrer?: string;
   website?: string;
   abVariant?: string;
+  intent?: 'register' | 'waitlist';
 };
 
 export type WebinarRegistrationResult = {

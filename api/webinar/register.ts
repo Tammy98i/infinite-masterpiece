@@ -38,6 +38,7 @@ export default async function handler(req: VercelReq, res: VercelRes) {
         landingPage: String(body.landingPage || ''),
         referrer: String(body.referrer || ''),
         website: String(body.website || ''),
+        intent: body.intent === 'waitlist' ? 'waitlist' : 'register',
       },
       parseClientKey(req)
     );

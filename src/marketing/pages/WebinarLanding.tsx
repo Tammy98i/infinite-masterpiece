@@ -1,34 +1,32 @@
 import { useEffect, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Check, ChevronDown, Handshake, Megaphone, Network, Tag, Target, X } from 'lucide-react';
+import { Check, ChevronDown, Crosshair, Layers, TrendingUp, Users, X } from 'lucide-react';
 import { webinarApi } from '../../api/webinar';
 import {
   DEFAULT_WEBINAR_CONFIG,
-  WEBINAR_FAQ,
   splitHeroHeadline,
   type WebinarPublicPayload,
 } from '../../constants/webinar';
 import {
   WEBINAR_AUDIENCE_LABEL,
-  WEBINAR_BOTTLENECKS,
   WEBINAR_CTA_ENDED,
-  WEBINAR_CTA_FIT,
-  WEBINAR_CTA_FIT_LINK,
-  WEBINAR_CTA_NEXT_CYCLE,
-  WEBINAR_CTA_NOT_REGISTERED,
-  WEBINAR_CTA_PRIMARY,
-  WEBINAR_ENDED_NOTE,
-  WEBINAR_FIT_NO,
-  WEBINAR_FIT_YES,
   WEBINAR_GLEB,
-  WEBINAR_HOLDING_LINE,
   WEBINAR_PUNCHLINE,
   WEBINAR_REGISTER_ID,
   WEBINAR_TASK_STEPS,
   WEBINAR_TRACKS_FINE_PRINT,
   webinarLiveEnter,
 } from '../../constants/webinarPage';
+import {
+  WEBINAR_BUILD_BRIDGE,
+  WEBINAR_BUILD_TOGETHER,
+  WEBINAR_FAQ_PREVIEW_COUNT,
+  WEBINAR_FIT_NO_SHORT,
+  WEBINAR_FIT_YES_SHORT,
+  webinarCopy,
+  webinarFaqForPhase,
+} from '../../constants/webinarPhaseCopy';
 import { WebinarRegistrationForm } from '../components/WebinarRegistrationForm';
 import { WebinarStickyCta } from '../components/WebinarStickyCta';
 import { WebinarSectionCta } from '../components/WebinarSocialProof';
@@ -39,32 +37,35 @@ import { getWebinarPhase } from '../../utils/webinarTime';
 import { TeamPhoto } from '../../components/TeamPhoto';
 import { TeamGalaxy } from '../components/TeamGalaxy/TeamGalaxy';
 
-const bottleneckIcons = [Tag, Handshake, Megaphone, Network, Target];
+const buildIcons = [Crosshair, Layers, Users, TrendingUp];
 
 function FaqItem({ q, a, ...props }: { q: string; a: string } & HTMLAttributes<HTMLDetailsElement>) {
   return (
-    <details {...props} className="group glass-card p-5">
-      <summary className="flex items-center justify-between gap-4 cursor-pointer list-none text-white font-light min-h-11">
+    <details {...props} className="group rounded-3xl border border-white/10 bg-[#07070c]/80 px-5">
+      <summary className="flex items-center justify-between gap-4 cursor-pointer list-none text-white font-light min-h-[4.25rem] py-3 text-[16px]">
         <span>{q}</span>
-        <ChevronDown className="w-4 h-4 text-[#C8A24C] group-open:rotate-180 transition-transform duration-200 shrink-0" />
+        <ChevronDown className="w-5 h-5 text-[#C8A24C] group-open:rotate-180 transition-transform duration-200 shrink-0" aria-hidden />
       </summary>
-      <p className="mt-4 text-sm text-white/50 font-light leading-relaxed">{a}</p>
+      <p className="pb-5 text-[16px] text-white/75 font-light leading-relaxed">{a}</p>
     </details>
   );
 }
 
 function SectionLabel({ children }: { children: ReactNode }) {
-  return <p className="text-[11px] uppercase tracking-[0.25em] text-[#C8A24C] mb-4">{children}</p>;
+  return <p className="text-[11px] uppercase tracking-[0.25em] text-[#C8A24C] mb-3">{children}</p>;
 }
 
 function SectionTitle({ children }: { children: ReactNode }) {
-  return <h2 className="text-3xl md:text-5xl font-heading text-white mb-6 leading-tight mx-auto max-w-3xl">{children}</h2>;
+  return (
+    <h2 className="text-[28px] md:text-4xl font-heading text-white mb-4 leading-tight mx-auto max-w-[720px] tracking-normal">
+      {children}
+    </h2>
+  );
 }
 
-const REGISTER_CARD_CLASS =
-  'glass-card shadow-2xl shadow-black/40 p-5 sm:p-8 lg:p-10';
+const REGISTER_CARD_CLASS = 'rounded-3xl border border-[#C8A24C]/25 bg-[#07070c]/80 p-5 sm:p-8 lg:p-10';
 
-function HostFaces() {
+function HostFaces({ live }: { live: boolean }) {
   const hosts = [
     { name: 'גל', src: '/team/gal.png' },
     { name: 'תמי', src: '/team/tami.png' },
@@ -84,34 +85,8 @@ function HostFaces() {
           </span>
         ))}
       </div>
-      <p className="text-xs sm:text-sm text-white/50 font-light">גל, תמי וגלב בלייב</p>
+      <p className="text-xs sm:text-sm text-white/60 font-light">{live ? 'גל, תמי וגלב בלייב' : 'גל, תמי וגלב'}</p>
     </div>
-  );
-}
-
-function WebinarRegisterCard({
-  payload,
-  formId,
-  headlineParts,
-}: {
-  payload: WebinarPublicPayload;
-  formId: string;
-  headlineParts: { line1: string; line2: string };
-}) {
-  return (
-    <>
-      <p className="text-lg sm:text-xl md:text-2xl text-white font-light leading-snug mb-4 sm:mb-5 text-right">
-        {headlineParts.line1}
-        {headlineParts.line2 ? (
-          <>
-            {' '}
-            <span className="text-gold-gradient font-medium">{headlineParts.line2}</span>
-          </>
-        ) : null}
-      </p>
-      <HostFaces />
-      <WebinarRegistrationForm payload={payload} formId={formId} />
-    </>
   );
 }
 
@@ -130,6 +105,7 @@ export function WebinarLanding() {
   const fitTracked = useRef(false);
   const [now, setNow] = useState(() => Date.now());
   const [configReady, setConfigReady] = useState(false);
+  const [faqExpanded, setFaqExpanded] = useState(false);
 
   useEffect(() => {
     captureUtmFromSearch(window.location.search);
@@ -163,7 +139,7 @@ export function WebinarLanding() {
     if (!node) return;
     const observer = new IntersectionObserver(
       (entries) => {
-        if (fitTracked.current || !entries.some((e) => e.isIntersecting)) return;
+        if (fitTracked.current || !entries.some((entry) => entry.isIntersecting)) return;
         fitTracked.current = true;
         trackEvent('webinar_fit_section_viewed');
         observer.disconnect();
@@ -175,10 +151,16 @@ export function WebinarLanding() {
   }, []);
 
   const { config, activeHeadline } = payload;
-  const headlineParts = splitHeroHeadline(activeHeadline);
   const eventPhase = configReady
     ? getWebinarPhase(config.date, config.time, config.durationMinutes, now)
     : 'upcoming';
+  const copy = webinarCopy(eventPhase);
+  const faqs = webinarFaqForPhase(eventPhase);
+  const visibleFaqs = faqExpanded ? faqs : faqs.slice(0, WEBINAR_FAQ_PREVIEW_COUNT);
+  const cmsHeadline = splitHeroHeadline(activeHeadline);
+  const headlineParts = copy.heroHeadline
+    ? splitHeroHeadline(copy.heroHeadline)
+    : cmsHeadline;
   const eventNight = eventPhase === 'live';
   const eventEnded = eventPhase === 'ended';
   const liveEnter = webinarLiveEnter(config.zoomLink, config.whatsappGroupUrl);
@@ -209,248 +191,245 @@ export function WebinarLanding() {
     },
   ];
 
+  const heroCta = () => {
+    if (eventEnded) {
+      return (
+        <>
+          <button type="button" onClick={() => scrollToForm('hero')} className="btn-gold text-black px-10 py-4">
+            {copy.primaryCta}
+          </button>
+          <p className="text-sm text-white/60 font-light max-w-md text-center">{copy.heroMicro}</p>
+        </>
+      );
+    }
+    if (eventNight) {
+      return liveEnter.href ? (
+        <a
+          href={liveEnter.href}
+          target="_blank"
+          rel="noreferrer"
+          onClick={() => trackWebinarCta('hero_enter')}
+          className="btn-gold text-black px-10 py-4"
+        >
+          {liveEnter.label}
+        </a>
+      ) : (
+        <p className="text-sm text-[#F7E7B5] font-medium min-h-11 inline-flex items-center">{liveEnter.label}</p>
+      );
+    }
+    return (
+      <button type="button" onClick={() => scrollToForm('hero')} className="btn-gold text-black px-10 py-4">
+        {copy.primaryCta}
+      </button>
+    );
+  };
+
   return (
     <div className="w-full pb-28">
-      <section id="webinar-hero" className="relative min-h-0 md:min-h-screen flex items-center pt-20 pb-8 md:pt-24 md:pb-16 overflow-hidden">
+      <section id="webinar-hero" className="relative flex items-center pt-8 pb-12 md:pt-12 md:pb-20 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/40 via-transparent to-[#010308]/55" />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[min(900px,90vw)] h-[320px] bg-[radial-gradient(ellipse_at_center,rgba(200,162,76,0.18),transparent_70%)]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/30 via-transparent to-[#010308]/40" />
         </div>
-
         <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="flex justify-center">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center flex flex-col items-center"
-            >
-              <div className="inline-flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-1.5 rounded-full border border-[#C8A24C]/50 bg-[#C8A24C]/15 mb-8">
-                <span className={`w-2 h-2 rounded-full ${eventNight ? 'bg-emerald-400' : 'bg-[#C8A24C]'}`} aria-hidden />
-                <span className="text-[11px] text-[#F7E7B5] font-medium">
-                  {eventNight ? 'הערב החי עכשיו' : eventEnded ? WEBINAR_CTA_ENDED : 'ערב חי'}, {config.date}, {config.time}
-                </span>
-                {eventNight || eventEnded ? null : <WebinarCountdown date={config.date} time={config.time} />}
-              </div>
+          <motion.div
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            className="text-center flex flex-col items-center"
+          >
+            <div className="inline-flex flex-wrap items-center justify-center gap-x-3 gap-y-1 px-4 py-1.5 rounded-full border border-[#C8A24C]/50 bg-[#C8A24C]/15 mb-6">
+              <span className={`w-2 h-2 rounded-full ${eventNight ? 'bg-emerald-400' : 'bg-[#C8A24C]'}`} aria-hidden />
+              <span className="text-[11px] text-[#F7E7B5] font-medium">
+                {eventNight ? 'הערב החי עכשיו' : eventEnded ? WEBINAR_CTA_ENDED : 'ערב חי'}
+                {eventEnded ? '' : `, ${config.date}, ${config.time}`}
+              </span>
+              {eventNight || eventEnded ? null : <WebinarCountdown date={config.date} time={config.time} />}
+            </div>
 
-              <h1 className="text-[32px] sm:text-4xl md:text-6xl xl:text-7xl font-heading tracking-tight leading-[1.15] mb-4 md:mb-6">
-                <span className="text-white block">{headlineParts.line1}</span>
-                {headlineParts.line2 ? (
-                  <span className="text-gold-gradient font-medium block mt-2">{headlineParts.line2}</span>
-                ) : null}
-              </h1>
+            <h1 className="text-[30px] sm:text-[34px] md:text-6xl xl:text-7xl font-heading tracking-tight leading-[1.18] mb-4 md:mb-6 max-w-[18ch] md:max-w-none">
+              <span className="text-white block">{headlineParts.line1}</span>
+              {headlineParts.line2 ? (
+                <span className="text-gold-gradient font-medium block mt-2">{headlineParts.line2}</span>
+              ) : null}
+            </h1>
 
-              <p className="text-base md:text-xl text-white/50 font-light leading-relaxed max-w-2xl mb-3 md:mb-5">
-                {config.heroSubheadline}
-              </p>
-              <p className="text-sm md:text-lg text-[#F7E7B5] font-medium mb-3 md:mb-6">{WEBINAR_PUNCHLINE}</p>
-              <p className="text-sm text-white/45 font-light mb-5 md:mb-8">
-                {config.location}, {config.durationMinutes} דקות, {WEBINAR_AUDIENCE_LABEL}
-              </p>
+            <p className="text-[16px] md:text-xl text-white/70 font-light leading-relaxed max-w-[720px] mb-4">
+              {copy.heroSubheadline || config.heroSubheadline}
+            </p>
+            {eventEnded ? null : (
+              <>
+                <p className="text-sm md:text-lg text-[#F7E7B5] font-medium mb-3">{WEBINAR_PUNCHLINE}</p>
+                <p className="text-sm text-white/55 font-light mb-6">
+                  {config.location}, {config.durationMinutes} דקות, {WEBINAR_AUDIENCE_LABEL}
+                </p>
+              </>
+            )}
 
-              <div className="flex flex-col items-center gap-3">
-                {eventEnded ? (
-                  <>
-                    <Link to="/pricing" className="btn-gold text-black">
-                      {WEBINAR_CTA_NEXT_CYCLE}
-                    </Link>
-                    <p className="text-sm text-white/70 font-medium max-w-md min-h-11 inline-flex items-center text-center">
-                      {WEBINAR_CTA_ENDED}. {WEBINAR_ENDED_NOTE}
-                    </p>
-                  </>
-                ) : eventNight ? (
-                  liveEnter.href ? (
-                    <a
-                      href={liveEnter.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={() => trackWebinarCta('hero_enter')}
-                      className="btn-gold text-black px-10 py-4"
-                    >
-                      {liveEnter.label}
-                    </a>
-                  ) : (
-                    <p className="text-sm text-[#F7E7B5] font-medium min-h-11 inline-flex items-center">
-                      {liveEnter.label}
-                    </p>
-                  )
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => scrollToForm('hero')}
-                    className="btn-gold text-black px-10 py-4"
-                  >
-                    {WEBINAR_CTA_PRIMARY}
-                  </button>
-                )}
-                {eventEnded ? null : eventNight ? (
-                  <button
-                    type="button"
-                    onClick={() => scrollToForm('hero_unregistered')}
-                    className="text-sm text-white/45 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
-                  >
-                    {WEBINAR_CTA_NOT_REGISTERED}
-                  </button>
-                ) : (
-                  <a
-                    href="#webinar-fit"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      scrollToWebinarFit();
-                    }}
-                    className="text-sm text-white/45 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
-                  >
-                    {WEBINAR_CTA_FIT_LINK}
-                  </a>
-                )}
-              </div>
-            </motion.div>
-          </div>
+            <div className="flex flex-col items-center gap-3 mt-2">
+              {heroCta()}
+              {eventEnded ? null : eventNight ? (
+                <button
+                  type="button"
+                  onClick={() => scrollToForm('hero_unregistered')}
+                  className="text-sm text-white/55 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer"
+                >
+                  {copy.fitLink}
+                </button>
+              ) : (
+                <a
+                  href="#webinar-fit"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    scrollToWebinarFit();
+                  }}
+                  className="text-sm text-white/55 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer"
+                >
+                  {copy.fitLink}
+                </a>
+              )}
+            </div>
+          </motion.div>
         </div>
       </section>
 
-      <section id="problem" className="py-20 md:py-24 border-t border-white/[0.04]">
+      <section id="problem" className="relative py-12 md:py-20 bg-[#07070c]/86">
         <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <SectionLabel>הבעיה</SectionLabel>
+          <SectionLabel>מה בונים יחד</SectionLabel>
           <SectionTitle>
             הבעיה היא לא שאין לך כישרון.
             <br />
-            <span className="text-white/40">הבעיה היא שאין סביבו מערכת.</span>
+            <span className="text-white/45">הבעיה היא שאין סביבו מערכת.</span>
           </SectionTitle>
-          <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">{WEBINAR_HOLDING_LINE}</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {WEBINAR_BOTTLENECKS.map((item, index) => {
-              const Icon = bottleneckIcons[index];
+          <div className="relative grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+            {WEBINAR_BUILD_TOGETHER.map((item, index) => {
+              const Icon = buildIcons[index];
               return (
-                <div
-                  key={item.title}
-                  className="glass-card p-5"
-                >
-                  <Icon className="w-6 h-6 text-[#C8A24C] mb-4" strokeWidth={1.5} aria-hidden />
-                  <h3 className="text-white mb-2">{item.title}</h3>
-                  <p className="text-sm text-white/50 font-light">{item.text}</p>
+                <div key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.03] px-5 py-5 text-right">
+                  <p className="text-[11px] text-[#C8A24C] mb-2">{String(index + 1).padStart(2, '0')}</p>
+                  <Icon className="w-6 h-6 text-[#C8A24C] mb-3" strokeWidth={1.5} aria-hidden />
+                  <h3 className="text-white mb-1">{item.title}</h3>
+                  <p className="text-[16px] text-white/65 font-light">{item.text}</p>
                 </div>
               );
             })}
           </div>
+          <p className="text-[16px] text-[#F7E7B5] font-light mt-8 max-w-[720px] mx-auto">{WEBINAR_BUILD_BRIDGE}</p>
         </div>
       </section>
 
-      <section id="hosts" className="py-20 md:py-24 border-t border-white/[0.04]">
+      <section id="hosts" className="py-12 md:py-20">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <SectionLabel>הערב החי</SectionLabel>
+          <SectionLabel>{copy.hostsLabel}</SectionLabel>
           <SectionTitle>לא באים רק ללמוד. באים לבצע.</SectionTitle>
-          <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">
-            גל, תמי וגלב בלייב. שיעור מכירות, משימת ביצוע, ואז פעולה שנשלחת לעולם.
-          </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <p className="text-white/65 font-light leading-relaxed max-w-[720px] mx-auto mb-8 text-[16px]">{copy.hostsLead}</p>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10 items-stretch">
             {hosts.map((leader) => (
-              <article key={leader.name} className="glass-card overflow-hidden">
+              <article key={leader.name} className="rounded-3xl border border-white/10 bg-[#07070c]/70 overflow-hidden flex flex-col h-full">
                 <div className="aspect-[4/3] overflow-hidden bg-[#0b1020]">
-                  <TeamPhoto
-                    src={leader.image}
-                    name={leader.name}
-                    alt={leader.name}
-                    className="w-full h-full text-6xl"
-                  />
+                  <TeamPhoto src={leader.image} name={leader.name} alt={leader.name} className="w-full h-full text-6xl" />
                 </div>
-                <div className="p-6">
+                <div className="p-5 text-center flex-1">
                   <h3 className="text-xl text-white mb-1">{leader.name}</h3>
-                  <p className="text-sm text-[#C8A24C] mb-3">{leader.title}</p>
-                  <p className="text-sm text-white/50 font-light leading-relaxed">{leader.bio}</p>
+                  <p className="text-sm text-[#C8A24C] mb-3 line-clamp-2 min-h-[2.5rem]">{leader.title}</p>
+                  <p className="text-[16px] text-white/65 font-light leading-relaxed line-clamp-3">{leader.bio}</p>
                 </div>
               </article>
             ))}
           </div>
-          <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          <h3 className="text-xl md:text-2xl font-heading text-white mb-6">{copy.stepsTitle}</h3>
+          <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
             {WEBINAR_TASK_STEPS.map((item, index) => (
-              <li key={item.title} className="glass-card p-5">
-                <p className="text-[11px] text-[#C8A24C] mb-3">{String(index + 1).padStart(2, '0')}</p>
+              <li key={item.title} className="rounded-3xl border border-white/10 bg-white/[0.03] p-5 text-right">
+                <p className="text-[11px] text-[#C8A24C] mb-2">{String(index + 1).padStart(2, '0')}</p>
                 <h3 className="text-white mb-2">{item.title}</h3>
-                <p className="text-sm text-white/50 font-light leading-relaxed">{item.text}</p>
+                <p className="text-[16px] text-white/65 font-light leading-relaxed">{item.text}</p>
               </li>
             ))}
           </ol>
-          <p id="tracks" className="text-sm text-[#F7E7B5]/80 font-light leading-relaxed max-w-2xl mx-auto">
-            שני מסלולי כניסה לפיילוט, אמיצים והססנים, יוצגו בסוף הערב. לא נדרש להחליט עכשיו.
-          </p>
-          <p className="mt-3 text-[11px] text-white/35 font-light leading-relaxed">{WEBINAR_TRACKS_FINE_PRINT}</p>
+          <p className="text-sm text-white/50 font-light leading-relaxed max-w-[720px] mx-auto">{WEBINAR_TRACKS_FINE_PRINT}</p>
         </div>
       </section>
 
       <TeamGalaxy />
 
-      <section id="webinar-fit" ref={fitRef} className="py-20 md:py-24 border-t border-white/[0.04]">
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10">
+      <section id="webinar-fit" ref={fitRef} className="relative py-12 md:py-20 bg-[#07070c]/86">
+        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-8">
             <SectionLabel>התאמה</SectionLabel>
-            <SectionTitle>הוובינר הזה מתאים לך אם…</SectionTitle>
+            <SectionTitle>למי זה מתאים</SectionTitle>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_80px_1fr] gap-6 items-stretch">
-            <div className="glass-card p-6 text-right">
-              <h3 className="text-lg text-white mb-4 font-light text-center">מתאים אם…</h3>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-5 items-stretch">
+            <div className="rounded-3xl border border-[#C8A24C]/30 bg-[#C8A24C]/8 p-6 text-right">
+              <h3 className="text-lg text-white mb-4 font-light text-center">מתאים לך אם…</h3>
               <ul className="space-y-3">
-                {WEBINAR_FIT_YES.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm text-white/65 font-light">
-                    <Check className="w-4 h-4 text-[#C8A24C] shrink-0 mt-0.5" aria-hidden />
+                {WEBINAR_FIT_YES_SHORT.map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-[16px] text-white/80 font-light">
+                    <Check className="w-5 h-5 text-[#C8A24C] shrink-0 mt-0.5" aria-hidden />
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
-            <div className="hidden lg:flex items-stretch justify-center" aria-hidden>
-              <div className="w-px bg-gradient-to-b from-transparent via-[#F7E7B5]/70 to-transparent" />
-            </div>
-            <div className="rounded-3xl border border-rose-500/20 bg-rose-500/5 p-6 text-right">
-              <h3 className="text-lg text-white mb-4 font-light text-center">לא מתאים אם…</h3>
+            <div className="rounded-3xl border border-rose-400/25 bg-black/35 p-6 text-right">
+              <h3 className="text-lg text-white mb-4 font-light text-center">פחות מתאים אם…</h3>
               <ul className="space-y-3">
-                {WEBINAR_FIT_NO.map((item) => (
-                  <li key={item} className="flex items-start gap-3 text-sm text-white/55 font-light">
-                    <X className="w-4 h-4 text-rose-300 shrink-0 mt-0.5" aria-hidden />
+                {WEBINAR_FIT_NO_SHORT.map((item) => (
+                  <li key={item} className="flex items-start gap-3 text-[16px] text-white/75 font-light">
+                    <X className="w-5 h-5 text-rose-300 shrink-0 mt-0.5" aria-hidden />
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
           </div>
-          {eventEnded ? null : (
-            <WebinarSectionCta label={WEBINAR_CTA_FIT} section="fit" onClick={() => scrollToForm('fit')} />
-          )}
+          <WebinarSectionCta label={copy.fitCta} section="fit" onClick={() => scrollToForm('fit')} />
         </div>
       </section>
 
-      <section id="webinar-faq" className="py-20 md:py-24 border-t border-white/[0.04]">
+      <section id="webinar-faq" className="relative py-12 md:py-20 bg-[#07070c]/86">
         <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8">
+          <div className="text-center mb-6">
             <SectionLabel>שאלות</SectionLabel>
             <SectionTitle>שאלות נפוצות</SectionTitle>
           </div>
           <div className="space-y-3">
-            {WEBINAR_FAQ.map((item) => (
+            {visibleFaqs.map((item) => (
               <FaqItem key={item.q} q={item.q} a={item.a} />
             ))}
           </div>
+          {faqs.length > WEBINAR_FAQ_PREVIEW_COUNT ? (
+            <button
+              type="button"
+              className="mt-5 mx-auto block text-[16px] text-[#C8A24C] min-h-11"
+              onClick={() => setFaqExpanded((open) => !open)}
+              aria-expanded={faqExpanded}
+            >
+              {faqExpanded ? 'הסתרת שאלות נוספות' : 'הצגת שאלות נוספות'}
+            </button>
+          ) : null}
         </div>
       </section>
 
-      <section id="webinar-register-bottom" className="relative py-20 md:py-28 border-t border-white/[0.04] overflow-hidden">
+      <section id="webinar-register-bottom" className="relative py-12 md:py-20 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#010308]/20 to-[#010308]/50" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(200,162,76,0.16),transparent_70%)]" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(200,162,76,0.14),transparent_70%)]" />
         </div>
         <div className="relative z-10 max-w-[920px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4 max-w-2xl mx-auto">
-            זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.
-          </p>
-          <p className="text-sm sm:text-base text-[#C8A24C] font-light mb-8">מחכים לך בוובינר. גל, תמי וגלב.</p>
           <aside
             id={WEBINAR_REGISTER_ID}
-            aria-label="הרשמה לוובינר"
-            className={`${REGISTER_CARD_CLASS} mx-auto w-full max-w-xl md:max-w-2xl lg:max-w-3xl text-start scroll-mt-24`}
+            aria-label={copy.registerAria}
+            className={`${REGISTER_CARD_CLASS} mx-auto w-full max-w-xl md:max-w-2xl text-start scroll-mt-24`}
           >
-            <WebinarRegisterCard
+            <HostFaces live={eventNight} />
+            <WebinarRegistrationForm
               payload={payload}
               formId={`${WEBINAR_REGISTER_ID}-form`}
-              headlineParts={headlineParts}
+              waitlist={copy.waitlistMode || payload.isWaitlist}
+              copy={{
+                eyebrow: copy.formEyebrow,
+                title: copy.formTitle,
+                submit: copy.formSubmit,
+                trust: copy.formTrust,
+              }}
             />
           </aside>
           <p className="flex flex-wrap items-center justify-center gap-4 text-xs text-[#C8A24C]/80 font-light mt-8">
@@ -467,16 +446,16 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      {eventEnded ? null : (
-        <WebinarStickyCta
-          date={config.date}
-          time={config.time}
-          registrationCount={payload.registrationCount}
-          eventNight={eventNight}
-          zoomLink={config.zoomLink}
-          whatsappGroupUrl={config.whatsappGroupUrl}
-        />
-      )}
+      <WebinarStickyCta
+        date={config.date}
+        time={config.time}
+        registrationCount={payload.registrationCount}
+        phase={eventPhase}
+        zoomLink={config.zoomLink}
+        whatsappGroupUrl={config.whatsappGroupUrl}
+        ctaLabel={copy.stickyCta}
+        ctaLabelShort={copy.stickyCtaShort}
+      />
     </div>
   );
 }

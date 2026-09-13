@@ -1,15 +1,19 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Infinity as InfinityIcon } from 'lucide-react';
 import { WEBINAR_REGISTER_ID } from '../../constants/webinarPage';
+import { webinarCopy } from '../../constants/webinarPhaseCopy';
+import { useWebinarPhase } from '../hooks/useWebinarPhase';
 
 export function Footer() {
   const location = useLocation();
   const onWebinar = location.pathname.startsWith('/webinar');
+  const { phase } = useWebinarPhase();
+  const copy = webinarCopy(phase);
 
   if (onWebinar) {
     return (
       <footer
-        className="relative bg-[#010308]/78 backdrop-blur-xl overflow-hidden pt-12 pb-12 border-t border-white/[0.08]"
+        className="relative bg-[#010308]/78 backdrop-blur-xl overflow-hidden pt-8 pb-24 border-t border-white/[0.08]"
         role="contentinfo"
         aria-label="תחתית האתר"
       >
@@ -22,7 +26,7 @@ export function Footer() {
               to={`/webinar#${WEBINAR_REGISTER_ID}`}
               className="hover:text-[#F7E7B5] min-h-11 inline-flex items-center"
             >
-              הרשמה
+              {copy.footerRegister}
             </Link>
             <Link to="/webinar#webinar-faq" className="hover:text-white min-h-11 inline-flex items-center">
               שאלות

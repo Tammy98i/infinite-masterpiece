@@ -15,19 +15,29 @@ type Props = {
   payload: WebinarPublicPayload;
   formId?: string;
   compact?: boolean;
+  waitlist?: boolean;
+  copy?: {
+    eyebrow: string;
+    title: string;
+    submit: string;
+    trust: string;
+  };
   onComplete?: (registrationId: string) => void;
 };
 
 const fieldClass =
-  'w-full bg-[#010308]/60 border border-[#C8A24C]/25 rounded-xl px-4 py-3 sm:px-5 sm:py-3.5 text-white text-base text-right focus:outline-none focus:border-[#C8A24C] focus:ring-1 focus:ring-[#C8A24C]/40 min-h-11';
+  'w-full bg-[#010308]/60 border border-[#C8A24C]/25 rounded-[14px] px-4 py-3 sm:px-5 sm:py-3.5 text-white text-base text-right focus:outline-none focus:border-[#C8A24C] focus:ring-1 focus:ring-[#C8A24C]/40 min-h-11';
 
 export function WebinarRegistrationForm({
   payload,
   formId = 'webinar-register',
   compact,
+  waitlist,
+  copy,
   onComplete,
 }: Props) {
   const { config, registrationCount, spotsRemaining, isWaitlist, abVariant } = payload;
+  const waitlistMode = Boolean(waitlist || isWaitlist);
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const [error, setError] = useState('');
@@ -123,8 +133,20 @@ export function WebinarRegistrationForm({
     markStarted();
 
     const data = new FormData(e.currentTarget);
-    const phone = String(data.get('phone') || '');
-    if (!isIsraeliMobile(phone)) {
+    const phone = String(data.get('phone') || '').trim();
+    const email = String(data.get('email') || '').trim();
+    if (waitlistMode) {
+      if (!phone && !email) {
+        setError('נא למלא טלפון או אימייל');
+        setSubmitting(false);
+        return;
+      }
+      if (phone && !isIsraeliMobile(phone)) {
+        setError('נא להזין מספר נייד ישראלי');
+        setSubmitting(false);
+        return;
+      }
+    } else if (!isIsraeliMobile(phone)) {
       setError('נא להזין מספר נייד ישראלי');
       setSubmitting(false);
       return;
@@ -135,10 +157,11 @@ export function WebinarRegistrationForm({
         step: 'a',
         fullName: String(data.get('fullName') || ''),
         phone,
-        email: String(data.get('email') || ''),
+        email,
         marketingOptIn: data.get('marketingOptIn') === 'on',
         website: String(data.get('website') || ''),
         abVariant,
+        intent: waitlistMode ? 'waitlist' : 'register',
         ...utmAsRecord(utm),
         landingPage:
           utm.landingPage ||
@@ -196,16 +219,18 @@ export function WebinarRegistrationForm({
       {!compact ? (
         <div className="mb-2">
           <p id={`${formId}-title`} className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-[#C8A24C] mb-2">
-            {isWaitlist ? 'רשימת המתנה' : 'הרשמה לוובינר'}
+            {copy?.eyebrow || (waitlistMode ? 'רשימת המתנה' : 'הרשמה לוובינר')}
           </p>
           <h2 className="text-xl sm:text-2xl md:text-3xl font-light text-white mb-1">
-            {isWaitlist ? 'הצטרפ/י לרשימת המתנה' : 'נרשמים לערב החי'}
+            {copy?.title || (waitlistMode ? 'הצטרפ/י לרשימת המתנה' : 'נרשמים לערב החי')}
           </h2>
-          <WebinarUrgencyStrip
-            config={config}
-            registrationCount={registrationCount}
-            spotsRemaining={spotsRemaining}
-          />
+          {waitlistMode ? null : (
+            <WebinarUrgencyStrip
+              config={config}
+              registrationCount={registrationCount}
+              spotsRemaining={spotsRemaining}
+            />
+          )}
         </div>
       ) : null}
 
@@ -218,10 +243,10 @@ export function WebinarRegistrationForm({
         </div>
         <div>
           <label htmlFor={`${formId}-phone`} className="text-sm text-white/60 mb-1.5 block text-right">
-            טלפון *
+            טלפון {waitlistMode ? '' : '*'}
           </label>
           <input
-            required
+            required={!waitlistMode}
             id={`${formId}-phone`}
             name="phone"
             type="tel"
@@ -240,10 +265,10 @@ export function WebinarRegistrationForm({
 
       <div>
           <label htmlFor={`${formId}-email`} className="text-sm text-white/60 mb-1.5 block text-right">
-          אימייל *
+          {waitlistMode ? 'אימייל' : 'אימייל *'}
         </label>
         <input
-          required
+          required={!waitlistMode}
           id={`${formId}-email`}
           name="email"
           type="email"
@@ -254,6 +279,9 @@ export function WebinarRegistrationForm({
           onChange={(event) => setPrefillEmail(event.target.value)}
         />
       </div>
+      {waitlistMode ? (
+        <p className="text-sm text-white/45 font-light">מספיק טלפון או אימייל — נעדכן בערוץ שהשארתם.</p>
+      ) : null}
 
       {/* Honeypot — hidden from humans */}
       <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden opacity-0">
@@ -266,7 +294,7 @@ export function WebinarRegistrationForm({
           required
           type="checkbox"
           name="termsAccepted"
-          className="mt-1 accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer"
+          className="mt-1 accent-[#C8A24C] min-w-11 min-h-11 cursor-pointer shrink-0"
         />
         <span>
           אישור{' '}
@@ -282,11 +310,17 @@ export function WebinarRegistrationForm({
       </label>
 
       <label className="flex items-start gap-3 text-sm text-white/45 leading-relaxed cursor-pointer">
-        <input type="checkbox" name="marketingOptIn" className="mt-1 accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer" />
+        <input type="checkbox" name="marketingOptIn" className="mt-1 accent-[#C8A24C] min-w-11 min-h-11 cursor-pointer shrink-0" />
         <span>מאשר/ת לקבל עדכונים על הוובינר ומסלולי Infinite Masterpiece (אפשר לבטל בכל עת).</span>
       </label>
 
-      <WebinarTrustStrip config={config} />
+      {waitlistMode ? (
+        <p className="text-[16px] text-white/55 font-light leading-relaxed">
+          {copy?.trust || 'ללא תשלום וללא התחייבות. אפשר להסיר את עצמך בכל עת.'}
+        </p>
+      ) : (
+        <WebinarTrustStrip config={config} />
+      )}
 
       {error ? (
         <p className="text-sm text-rose-300" role="alert">
@@ -299,7 +333,7 @@ export function WebinarRegistrationForm({
         disabled={busy || !config.enabled}
         className="btn-gold text-black w-full py-4 sm:py-5 text-base"
       >
-        {submitting ? 'שולח…' : isWaitlist ? 'הצטרפות לרשימת המתנה' : 'כן. אני מגיע/ה לערב החי'}
+        {submitting ? 'שולח…' : copy?.submit || (waitlistMode ? 'כן, עדכנו אותי' : 'כן. אני מגיע/ה לערב החי')}
       </button>
 
       <p className="text-center">
