@@ -379,7 +379,7 @@ function MobileStar({
   const role = localizedRole(member, 'en') || member.role;
 
   return (
-    <button type="button" onClick={onClick} className="flex flex-col items-center cursor-pointer min-h-11 min-w-11" aria-pressed={Boolean(selected)}>
+    <button type="button" onClick={onClick} className="flex flex-col items-center cursor-pointer min-h-11 min-w-11" aria-pressed={Boolean(selected)} aria-label={`${name}, ${role}`}>
       <span className="relative flex items-center justify-center" style={{ width: d, height: d }}>
         {isFounder ? (
           <>
