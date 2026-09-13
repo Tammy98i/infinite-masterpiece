@@ -11,7 +11,7 @@ import {
 import { GalaxyPortrait } from './GalaxyPortrait';
 import { StarNode } from './StarNode';
 import { SpotlightPanel } from './SpotlightPanel';
-import { calculatePositions, goldColor, isLeadership, starDiameter } from './galaxyUtils';
+import { calculatePositions, goldColor, isCtoOrCco, isLeadership, starDiameter } from './galaxyUtils';
 import './galaxy.css';
 
 function useViewportWidth() {
@@ -147,11 +147,20 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
     triggerRef.current?.focus();
   };
 
+  useEffect(() => {
+    if (!selected) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selected]);
+
   const spotlight = (
     <SpotlightPanel
       member={selected}
       settings={{
-        show_impact: true,
+        show_impact: settings.show_impact,
         show_quotes: settings.show_quotes,
         show_expertise: settings.show_expertise,
         show_links: settings.show_links,
@@ -179,7 +188,7 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
   const center = containerSize / 2;
 
   return (
-    <section ref={sectionRef} id="webinar-people" className="galaxy-stage relative overflow-hidden py-14 md:py-16" dir="rtl">
+    <section ref={sectionRef} id="webinar-people" className="galaxy-stage relative overflow-hidden pt-16 pb-10 md:pt-20 md:pb-12" dir="rtl">
       <div className="galaxy-vignette" aria-hidden />
       {dust.map((s) => (
         <span
@@ -201,7 +210,7 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
           initial={reducedMotion ? false : { opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
-          className="font-heading text-[28px] md:text-[42px] text-[#F7F1E4] tracking-[0.04em]"
+          className="font-heading text-[28px] md:text-[42px] text-[#F7F1E4] tracking-[0.14em] uppercase"
           dir="ltr"
         >
           {settings.title_en}
@@ -217,7 +226,7 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         </motion.p>
       </div>
 
-      <div className={`relative z-10 flex items-start justify-center gap-6 px-4 ${selected ? 'xl:pr-[min(380px,36vw)]' : ''}`}>
+      <div className={`relative z-10 flex items-start justify-center gap-6 px-4 ${selected ? 'lg:pl-2' : ''}`} dir="ltr">
         <div className="relative mx-auto" style={{ width: containerSize, height: containerSize, maxWidth: '100%' }}>
           {orbitRadii.slice(1).map((r, i) => (
             <motion.div
@@ -289,17 +298,16 @@ function TeamGalaxyMobile({
   selectedId?: string;
 }) {
   const founder = members.find((m) => m.hierarchy_level === 'founder' || m.group_key === 'founder');
-  const leadership = members.filter((m) => m !== founder && isLeadership(m));
+  const leadership = members
+    .filter((m) => m !== founder && isLeadership(m))
+    .sort((a, b) => Number(isCtoOrCco(b)) - Number(isCtoOrCco(a)));
   const rest = members.filter((m) => m !== founder && !leadership.includes(m));
 
   return (
     <section ref={sectionRef} id="webinar-people" className="galaxy-stage relative py-12 overflow-x-hidden" dir="rtl">
       <div className="galaxy-vignette" aria-hidden />
       <div className="relative z-10 text-center mb-8 px-4">
-        <p className="text-[11px] uppercase tracking-[0.32em] text-[#D4AF37] mb-2" dir="ltr">
-          {settings.title_en}
-        </p>
-        <h2 className="text-[26px] font-heading text-[#F7F1E4]" dir="ltr">
+        <h2 className="text-[26px] font-heading text-[#F7F1E4] uppercase tracking-[0.12em]" dir="ltr">
           {settings.title_en}
         </h2>
         <p className="text-[14px] text-[#E8D9B0]/80 font-light mt-2 tracking-[0.06em]" dir="ltr">
@@ -317,7 +325,12 @@ function TeamGalaxyMobile({
         <div className="relative z-10 flex justify-center gap-5 mb-8 px-4 flex-wrap">
           {leadership.map((m) => (
             <div key={m.id}>
-              <MobileStar member={m} onClick={() => onSelect(m)} selected={selectedId === m.id} />
+              <MobileStar
+                member={m}
+                size={isCtoOrCco(m) ? 86 : 64}
+                onClick={() => onSelect(m)}
+                selected={selectedId === m.id}
+              />
             </div>
           ))}
         </div>
@@ -359,16 +372,24 @@ function MobileStar({
 
   return (
     <button type="button" onClick={onClick} className="flex flex-col items-center cursor-pointer min-h-11 min-w-11" aria-pressed={Boolean(selected)}>
+      <span className="relative flex items-center justify-center" style={{ width: d, height: d }}>
+        {isFounder ? (
+          <>
+            <span className="galaxy-founder-corona" style={{ width: d * 2.4, height: d * 2.4 }} />
+            <span className="galaxy-founder-glow" style={{ width: d * 2, height: d * 2 }} />
+          </>
+        ) : null}
       <span
         className="relative rounded-full overflow-hidden"
         style={{
           width: d,
           height: d,
           border: `1.6px solid ${color}`,
-          boxShadow: `0 0 ${isFounder ? 28 : 12}px rgba(212,175,55,${isFounder ? 0.45 : 0.2})`,
+          boxShadow: `inset 0 0 14px rgba(244,208,63,0.2), 0 0 ${isFounder ? 28 : 12}px rgba(212,175,55,${isFounder ? 0.45 : 0.2})`,
         }}
       >
         <GalaxyPortrait src={member.photo || undefined} name={name} alt={member.photo_alt || name} className="w-full h-full" />
+      </span>
       </span>
       <span className="text-[#F7F1E4] text-[15px] font-medium mt-1.5 text-center max-w-[96px] leading-snug">{name}</span>
       <span className="text-[12px] text-center max-w-[96px] leading-snug" style={{ color }} dir="ltr">

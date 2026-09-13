@@ -58,15 +58,24 @@ export interface PositionedStar {
 }
 
 /** Radii sized for 22 people with label breathing room. */
-export const ORBIT_RADII = [0, 228, 372, 518];
+export const ORBIT_RADII = [0, 252, 392, 538];
 export const ELLIPSE_Y = 0.86;
 
 function leadershipAngle(member: TeamMember, fallbackIndex: number, count: number): number {
   const role = roleBlob(member);
-  if (/\bCTO\b/.test(role)) return (-Math.PI * 2) / 3;
-  if (/\bCCO\b/.test(role)) return -Math.PI / 3.2;
-  if (count <= 1) return Math.PI * 0.55;
-  return Math.PI * (0.28 + (fallbackIndex / Math.max(count - 1, 1)) * 0.7);
+  if (/\bCTO\b/.test(role)) return Math.PI;
+  if (/\bCCO\b/.test(role)) return 0;
+  if (count <= 1) return Math.PI / 2;
+  const others = Math.max(count - 2, 1);
+  const slot = Math.min(fallbackIndex, others - 1);
+  return Math.PI * (0.42 + (slot / Math.max(others - 1, 1)) * 0.36);
+}
+
+function orbitRadiusFor(member: TeamMember, orbit: number): number {
+  const base = ORBIT_RADII[orbit] || ORBIT_RADII[3];
+  if (orbit !== 1) return base;
+  if (isCtoOrCco(member)) return base;
+  return base * 1.14;
 }
 
 export function calculatePositions(
@@ -99,7 +108,6 @@ export function calculatePositions(
       continue;
     }
 
-    const radius = (ORBIT_RADII[orbit] || 518) * scale;
     const count = Math.max(sorted.length, 1);
 
     sorted.forEach((m, i) => {
@@ -110,6 +118,7 @@ export function calculatePositions(
         const angleOffset = orbit === 2 ? Math.PI / 10 : Math.PI / 5;
         angle = angleOffset + (i / count) * Math.PI * 2;
       }
+      const radius = orbitRadiusFor(m, orbit) * scale;
       stars.push({
         member: m,
         x: Math.cos(angle) * radius,

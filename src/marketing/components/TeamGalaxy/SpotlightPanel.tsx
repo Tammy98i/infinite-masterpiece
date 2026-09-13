@@ -252,18 +252,6 @@ function SpotlightBody({
         <p className="text-sm text-[#F7F1E4]/75 font-light italic text-center leading-relaxed mb-5">“{quote}”</p>
       ) : null}
 
-      {settings.show_impact ? (
-        <div className="mb-6">
-          <div className="flex items-center justify-between mb-1.5">
-            <span className="text-[10px] uppercase tracking-[0.18em] text-[#B8976A]">Impact</span>
-            <span className="text-[11px] text-[#D4AF37]">{member.impact_score}</span>
-          </div>
-          <div className="galaxy-impact-bar">
-            <div className="galaxy-impact-fill" style={{ width: `${member.impact_score}%` }} />
-          </div>
-        </div>
-      ) : null}
-
       {vision ? <Block label="Who I am" text={vision} /> : null}
       {bio && !isFounder ? <Block label="Who I am" text={bio} /> : null}
       <Block label="My contribution" text={member.contribution} />
@@ -284,6 +272,11 @@ function SpotlightBody({
           >
             קישור מקצועי
           </a>
+        </p>
+      ) : null}
+      {typeof member.impact_score === 'number' ? (
+        <p className="mt-8 pt-4 border-t border-[#D4AF37]/12 text-center text-[10px] uppercase tracking-[0.2em] text-[#B8976A]/85">
+          Impact {member.impact_score}
         </p>
       ) : null}
     </div>
@@ -320,12 +313,15 @@ function List({ label, items }: { label: string; items?: string[] }) {
 function Tags({ items }: { items?: string[] }) {
   if (!items?.length) return null;
   return (
-    <div className="flex flex-wrap gap-2 justify-end">
-      {items.map((item) => (
-        <span key={item} className="px-3 py-1 rounded-full border border-[#D4AF37]/20 text-xs text-white/65">
-          {item}
-        </span>
-      ))}
+    <div className="mb-5">
+      <p className="text-[11px] uppercase tracking-[0.16em] text-[#C5A059] mb-2">Expertise</p>
+      <div className="flex flex-wrap gap-2">
+        {items.map((item) => (
+          <span key={item} className="px-3 py-1 rounded-full border border-[#D4AF37]/20 text-xs text-[#E8D9B0]/75">
+            {item}
+          </span>
+        ))}
+      </div>
     </div>
   );
 }

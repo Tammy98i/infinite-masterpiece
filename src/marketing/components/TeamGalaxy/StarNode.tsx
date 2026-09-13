@@ -25,12 +25,8 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
   const innerLead = isCtoOrCco(member);
 
   return (
-    <motion.button
-      type="button"
-      initial={reducedMotion ? false : { opacity: 0, scale: 0.72 }}
-      animate={{ opacity: dimmed ? 0.38 : 1, scale: 1 }}
-      transition={{ duration: reducedMotion ? 0 : 0.85, delay: reducedMotion ? 0 : delay, ease: [0.16, 1, 0.3, 1] }}
-      className="absolute flex flex-col items-center cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 rounded-full galaxy-star-idle"
+    <div
+      className={`absolute ${reducedMotion ? '' : 'galaxy-star-idle'}`}
       style={{
         left: `calc(50% + ${star.x}px)`,
         top: `calc(50% + ${star.y}px)`,
@@ -38,6 +34,13 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
         zIndex: isFounder ? 24 : selected ? 20 : innerLead ? 16 : leadership ? 13 : 10,
         animationDelay: `${(member.display_order ?? 0) * 0.35}s`,
       }}
+    >
+    <motion.button
+      type="button"
+      initial={reducedMotion ? false : { opacity: 0, scale: 0.72 }}
+      animate={{ opacity: dimmed ? 0.38 : 1, scale: 1 }}
+      transition={{ duration: reducedMotion ? 0 : 0.85, delay: reducedMotion ? 0 : delay, ease: [0.16, 1, 0.3, 1] }}
+      className="flex flex-col items-center cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 rounded-full"
       onClick={() => onClick(member)}
       aria-pressed={Boolean(selected)}
       aria-label={`${name}, ${role}`}
@@ -64,19 +67,24 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
                 opacity: selected ? 0.7 : innerLead ? 0.55 : 0.32,
               }}
             />
-            {innerLead ? <span className="galaxy-starburst" aria-hidden /> : null}
+            {innerLead ? (
+              <>
+                <span className="galaxy-lead-halo" aria-hidden />
+                <span className="galaxy-starburst" aria-hidden />
+              </>
+            ) : null}
           </>
         )}
 
         <span
-          className="relative rounded-full overflow-hidden"
+          className="relative rounded-full overflow-hidden galaxy-portrait-frame"
           style={{
             width: diameter,
             height: diameter,
             border: `${frame + (selected ? 0.5 : 0)}px solid ${color}`,
             boxShadow: selected
-              ? `0 0 ${glow}px rgba(244, 208, 63, 0.55)`
-              : `0 0 ${glow}px rgba(212, 175, 55, ${isFounder ? 0.55 : innerLead ? 0.4 : 0.18})`,
+              ? `inset 0 0 18px rgba(244, 208, 63, 0.28), 0 0 ${glow}px rgba(244, 208, 63, 0.55)`
+              : `inset 0 0 ${isFounder ? 22 : 12}px rgba(244, 208, 63, ${isFounder ? 0.28 : 0.14}), 0 0 ${glow}px rgba(212, 175, 55, ${isFounder ? 0.55 : innerLead ? 0.4 : 0.18})`,
           }}
         >
           <GalaxyPortrait src={member.photo || undefined} name={name} alt={member.photo_alt || name} className="w-full h-full" />
@@ -86,7 +94,7 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
       <span className="mt-2 text-center pointer-events-none block">
         <span
           className="block font-medium leading-tight whitespace-nowrap text-[#F7F1E4]"
-          style={{ fontSize: isFounder ? 15 : innerLead ? 12.5 : leadership ? 11.5 : 10.5 }}
+          style={{ fontSize: isFounder ? 18 : innerLead ? 13 : leadership ? 11.5 : 10.5 }}
         >
           {name}
         </span>
@@ -99,5 +107,6 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
         </span>
       </span>
     </motion.button>
+    </div>
   );
 }
