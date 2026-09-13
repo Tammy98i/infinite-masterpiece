@@ -380,7 +380,16 @@ function MobileStar({
 
   return (
     <button type="button" onClick={onClick} className="flex flex-col items-center cursor-pointer min-h-11 min-w-11" aria-pressed={Boolean(selected)} aria-label={`${name}, ${role}`}>
-      <span className="relative flex items-center justify-center" style={{ width: d, height: d }}>
+      <span
+        className={`relative flex items-center justify-center ${selected ? '' : 'galaxy-star-idle'}`}
+        style={{
+          width: d,
+          height: d,
+          ['--hx' as string]: isFounder ? '2px' : '3px',
+          ['--hy' as string]: isFounder ? '3px' : '5px',
+          ['--hd' as string]: isFounder ? '11s' : '9s',
+        }}
+      >
         {isFounder ? (
           <>
             <span className="galaxy-founder-corona" style={{ width: d * 2.4, height: d * 2.4 }} />

@@ -23,15 +23,23 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
   const role = localizedRole(member, 'en') || member.role;
   const leadership = isLeadership(member);
   const innerLead = isCtoOrCco(member);
+  const seed = member.display_order ?? 0;
+  const hoverX = isFounder ? 2 : innerLead ? 5 : 6 + (seed % 5);
+  const hoverY = isFounder ? 3 : innerLead ? 6 : 7 + (seed % 4);
+  const hoverDur = isFounder ? 12 : 8 + (seed % 6);
 
   return (
     <div
-      className="absolute"
+      className={`absolute ${reducedMotion ? '' : 'galaxy-star-idle'} ${selected ? 'is-anchored' : ''}`}
       style={{
         left: `calc(50% + ${star.x}px)`,
         top: `calc(50% + ${star.y}px)`,
         transform: 'translate(-50%, -50%)',
         zIndex: isFounder ? 24 : selected ? 20 : innerLead ? 16 : leadership ? 13 : 10,
+        ['--hx' as string]: `${hoverX}px`,
+        ['--hy' as string]: `${hoverY}px`,
+        ['--hd' as string]: `${hoverDur}s`,
+        animationDelay: `${-(seed * 1.1)}s`,
       }}
     >
     <motion.button
@@ -45,8 +53,8 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
       aria-label={`${name}, ${role}`}
     >
       <motion.span
-        className={`relative flex items-center justify-center ${reducedMotion ? '' : 'galaxy-star-idle'}`}
-        style={{ width: diameter, height: diameter, animationDelay: `${(member.display_order ?? 0) * 0.35}s` }}
+        className="relative flex items-center justify-center"
+        style={{ width: diameter, height: diameter }}
         whileHover={reducedMotion ? undefined : { scale: 1.06 }}
         transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
       >
