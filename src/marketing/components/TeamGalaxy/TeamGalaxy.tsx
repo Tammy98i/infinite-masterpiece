@@ -121,7 +121,7 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
   const { stars, orbitRadii } = useMemo(() => calculatePositions(members, scale), [members, scale]);
   const containerSize = useMemo(() => {
     const maxR = orbitRadii[3] || 518;
-    return maxR * 2 + 120;
+    return maxR * 2 + 168;
   }, [orbitRadii]);
 
   const dust = useMemo(
@@ -381,14 +381,8 @@ function MobileStar({
   return (
     <button type="button" onClick={onClick} className="flex flex-col items-center cursor-pointer min-h-11 min-w-11" aria-pressed={Boolean(selected)} aria-label={`${name}, ${role}`}>
       <span
-        className={`relative flex items-center justify-center ${selected ? '' : 'galaxy-star-idle'}`}
-        style={{
-          width: d,
-          height: d,
-          ['--hx' as string]: isFounder ? '2px' : '3px',
-          ['--hy' as string]: isFounder ? '3px' : '5px',
-          ['--hd' as string]: isFounder ? '11s' : '9s',
-        }}
+        className="relative flex items-center justify-center"
+        style={{ width: d, height: d }}
       >
         {isFounder ? (
           <>

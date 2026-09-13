@@ -1,4 +1,5 @@
 import { motion } from 'motion/react';
+import type { CSSProperties } from 'react';
 import { GalaxyPortrait } from './GalaxyPortrait';
 import type { PositionedStar } from './galaxyUtils';
 import { goldColor, frameWidth, glowSize, isCtoOrCco, isLeadership } from './galaxyUtils';
@@ -14,6 +15,25 @@ interface StarNodeProps {
   reducedMotion?: boolean;
 }
 
+function labelPlacement(x: number, y: number, isFounder: boolean): CSSProperties {
+  if (isFounder || (Math.abs(x) < 8 && Math.abs(y) < 8)) {
+    return { top: '100%', left: '50%', transform: 'translate(-50%, 8px)', textAlign: 'center' };
+  }
+  const angle = Math.atan2(y, x);
+  const cos = Math.cos(angle);
+  const sin = Math.sin(angle);
+  if (sin > 0.55) {
+    return { top: '100%', left: '50%', transform: 'translate(-50%, 8px)', textAlign: 'center' };
+  }
+  if (sin < -0.55) {
+    return { bottom: '100%', left: '50%', transform: 'translate(-50%, -8px)', textAlign: 'center' };
+  }
+  if (cos >= 0) {
+    return { left: '100%', top: '50%', transform: 'translate(10px, -50%)', textAlign: 'left' };
+  }
+  return { right: '100%', top: '50%', transform: 'translate(-10px, -50%)', textAlign: 'right' };
+}
+
 export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion }: StarNodeProps) {
   const { member, diameter, isFounder } = star;
   const color = goldColor(member.hierarchy_level);
@@ -23,91 +43,74 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
   const role = localizedRole(member, 'en') || member.role;
   const leadership = isLeadership(member);
   const innerLead = isCtoOrCco(member);
-  const seed = member.display_order ?? 0;
-  const hoverX = isFounder ? 2 : innerLead ? 5 : 6 + (seed % 5);
-  const hoverY = isFounder ? 3 : innerLead ? 6 : 7 + (seed % 4);
-  const hoverDur = isFounder ? 12 : 8 + (seed % 6);
+  const labelStyle = labelPlacement(star.x, star.y, isFounder);
 
   return (
     <div
-      className={`absolute ${reducedMotion ? '' : 'galaxy-star-idle'} ${selected ? 'is-anchored' : ''}`}
+      className="absolute"
       style={{
         left: `calc(50% + ${star.x}px)`,
         top: `calc(50% + ${star.y}px)`,
+        width: diameter,
+        height: diameter,
         transform: 'translate(-50%, -50%)',
         zIndex: isFounder ? 24 : selected ? 20 : innerLead ? 16 : leadership ? 13 : 10,
-        ['--hx' as string]: `${hoverX}px`,
-        ['--hy' as string]: `${hoverY}px`,
-        ['--hd' as string]: `${hoverDur}s`,
-        animationDelay: `${-(seed * 1.1)}s`,
       }}
     >
     <motion.button
       type="button"
-      initial={reducedMotion ? false : { opacity: 0, scale: 0.72 }}
-      animate={{ opacity: dimmed ? 0.38 : 1, scale: 1 }}
-      transition={{ duration: reducedMotion ? 0 : 0.85, delay: reducedMotion ? 0 : delay, ease: [0.16, 1, 0.3, 1] }}
-      className="flex flex-col items-center cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 rounded-full"
+      initial={reducedMotion ? false : { opacity: 0 }}
+      animate={{ opacity: dimmed ? 0.42 : 1 }}
+      transition={{ duration: reducedMotion ? 0 : 0.45, delay: reducedMotion ? 0 : delay }}
+      className="relative w-full h-full cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 rounded-full"
       onClick={() => onClick(member)}
       aria-pressed={Boolean(selected)}
       aria-label={`${name}, ${role}`}
     >
       <motion.span
-        className="relative flex items-center justify-center"
-        style={{ width: diameter, height: diameter }}
-        whileHover={reducedMotion ? undefined : { scale: 1.06 }}
-        transition={{ duration: 0.35, ease: [0.16, 1, 0.3, 1] }}
+        className="relative flex items-center justify-center w-full h-full"
+        whileHover={reducedMotion ? undefined : { scale: 1.05 }}
+        transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       >
         {isFounder ? (
           <>
-            <span className="galaxy-founder-corona" style={{ width: diameter * 2.55, height: diameter * 2.55 }} />
-            <span className="galaxy-founder-glow" style={{ width: diameter * 2.1, height: diameter * 2.1 }} />
-            <span className="galaxy-founder-rays" aria-hidden />
+            <span className="galaxy-founder-corona" style={{ width: diameter * 2.2, height: diameter * 2.2 }} />
+            <span className="galaxy-founder-glow" style={{ width: diameter * 1.85, height: diameter * 1.85 }} />
           </>
         ) : (
-          <>
-            <span
-              className="galaxy-star-glow"
-              style={{
-                width: diameter + glow * 2,
-                height: diameter + glow * 2,
-                opacity: selected ? 0.7 : innerLead ? 0.55 : 0.32,
-              }}
-            />
-            {innerLead ? (
-              <>
-                <span className="galaxy-lead-halo" aria-hidden />
-                <span className="galaxy-starburst" aria-hidden />
-              </>
-            ) : null}
-          </>
+          <span
+            className="galaxy-star-glow"
+            style={{
+              width: diameter + glow * 1.4,
+              height: diameter + glow * 1.4,
+              opacity: selected ? 0.55 : innerLead ? 0.4 : 0.22,
+            }}
+          />
         )}
 
         <span
-          className="relative rounded-full overflow-hidden galaxy-portrait-frame"
+          className="relative rounded-full overflow-hidden"
           style={{
             width: diameter,
             height: diameter,
             border: `${frame + (selected ? 0.5 : 0)}px solid ${color}`,
-            boxShadow: selected
-              ? `inset 0 0 18px rgba(244, 208, 63, 0.28), 0 0 ${glow}px rgba(244, 208, 63, 0.55)`
-              : `inset 0 0 ${isFounder ? 22 : 12}px rgba(244, 208, 63, ${isFounder ? 0.28 : 0.14}), 0 0 ${glow}px rgba(212, 175, 55, ${isFounder ? 0.55 : innerLead ? 0.4 : 0.18})`,
+            boxShadow: `0 0 ${Math.max(8, glow * 0.45)}px rgba(212, 175, 55, ${isFounder ? 0.35 : innerLead ? 0.22 : 0.12})`,
           }}
         >
           <GalaxyPortrait src={member.photo || undefined} name={name} alt={member.photo_alt || name} className="w-full h-full" />
         </span>
       </motion.span>
 
-      <span className="mt-2 text-center pointer-events-none block">
+      <span className="absolute pointer-events-none max-w-[140px]" style={labelStyle}>
         <span
           className="block font-medium leading-tight whitespace-nowrap text-[#F7F1E4]"
-          style={{ fontSize: isFounder ? 18 : innerLead ? 13 : leadership ? 11.5 : 10.5 }}
+          style={{ fontSize: isFounder ? 16 : innerLead ? 13 : leadership ? 11.5 : 10.5 }}
         >
           {name}
         </span>
         <span
           className="block leading-tight whitespace-nowrap"
-          style={{ fontSize: isFounder ? 11 : 9, color, letterSpacing: isFounder ? '0.14em' : '0.04em' }}
+          style={{ fontSize: isFounder ? 11 : 9, color, letterSpacing: isFounder ? '0.12em' : '0.03em' }}
           dir="ltr"
         >
           {isFounder ? 'FOUNDER & VISIONARY' : role}

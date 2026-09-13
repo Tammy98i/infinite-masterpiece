@@ -115,8 +115,8 @@ export function calculatePositions(
       if (orbit === 1) {
         angle = leadershipAngle(m, i, count);
       } else {
-        const angleOffset = orbit === 2 ? Math.PI / 10 : Math.PI / 5;
-        angle = angleOffset + (i / count) * Math.PI * 2;
+        const start = orbit === 2 ? -Math.PI / 2 + Math.PI / 8 : -Math.PI / 2 + Math.PI / 5;
+        angle = start + ((i + 0.5) / count) * Math.PI * 2;
       }
       const radius = orbitRadiusFor(m, orbit) * scale;
       stars.push({

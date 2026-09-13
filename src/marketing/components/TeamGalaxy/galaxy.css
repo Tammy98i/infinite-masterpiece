@@ -107,8 +107,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(244, 208, 63, 0.42) 0%, rgba(212, 175, 55, 0.16) 42%, transparent 72%);
-  animation: glow-pulse 6.5s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(244, 208, 63, 0.32) 0%, rgba(212, 175, 55, 0.12) 42%, transparent 72%);
   pointer-events: none;
 }
 
@@ -118,8 +117,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(247, 231, 181, 0.2) 0%, transparent 68%);
-  animation: corona-breathe 8s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(247, 231, 181, 0.16) 0%, transparent 68%);
   pointer-events: none;
 }
 
