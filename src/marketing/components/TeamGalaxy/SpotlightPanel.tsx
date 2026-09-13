@@ -288,7 +288,9 @@ function Block({ label, text }: { label: string; text?: string }) {
   return (
     <div className="mb-5">
       <p className="text-[11px] uppercase tracking-[0.16em] text-[#C5A059] mb-2">{label}</p>
-      <p className="text-[15px] text-[#F7F1E4]/80 font-light leading-relaxed">{text}</p>
+      <p className="text-[15px] text-[#F7F1E4]/80 font-light leading-relaxed" dir="rtl">
+        {text}
+      </p>
     </div>
   );
 }
@@ -302,7 +304,7 @@ function List({ label, items }: { label: string; items?: string[] }) {
         {items.map((item) => (
           <li key={item} className="text-[15px] text-[#F7F1E4]/80 font-light flex gap-2">
             <span className="text-[#D4AF37]">·</span>
-            <span>{item}</span>
+            <span dir="rtl">{item}</span>
           </li>
         ))}
       </ul>
@@ -317,7 +319,7 @@ function Tags({ items }: { items?: string[] }) {
       <p className="text-[11px] uppercase tracking-[0.16em] text-[#C5A059] mb-2">Expertise</p>
       <div className="flex flex-wrap gap-2">
         {items.map((item) => (
-          <span key={item} className="px-3 py-1 rounded-full border border-[#D4AF37]/20 text-xs text-[#E8D9B0]/75">
+          <span key={item} className="px-3 py-1 rounded-full border border-[#D4AF37]/20 text-xs text-[#E8D9B0]/75" dir="rtl">
             {item}
           </span>
         ))}

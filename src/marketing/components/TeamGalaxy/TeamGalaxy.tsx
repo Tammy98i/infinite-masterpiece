@@ -234,7 +234,7 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         </motion.p>
       </div>
 
-      <div className={`relative z-10 flex items-center justify-center gap-6 px-4 min-h-[100svh] pt-8 pb-20 ${selected ? 'lg:pl-2' : ''}`} dir="ltr">
+      <div className={`relative z-10 flex items-center justify-center gap-6 px-4 min-h-[100svh] pt-28 pb-24 ${selected ? 'lg:pl-2' : ''}`} dir="ltr">
         <div className="relative mx-auto" style={{ width: containerSize, height: containerSize, maxWidth: '100%' }}>
           {orbitRadii.slice(1).map((r, i) => (
             <motion.div
