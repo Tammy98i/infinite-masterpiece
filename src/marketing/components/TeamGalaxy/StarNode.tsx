@@ -15,8 +15,8 @@ interface StarNodeProps {
   reducedMotion?: boolean;
 }
 
-function labelPlacement(x: number, y: number, isFounder: boolean): CSSProperties {
-  if (isFounder || (Math.abs(x) < 8 && Math.abs(y) < 8)) {
+function labelPlacement(x: number, y: number, isFounder: boolean, innerLead: boolean): CSSProperties {
+  if (isFounder || innerLead || (Math.abs(x) < 8 && Math.abs(y) < 8)) {
     return { top: '100%', left: '50%', transform: 'translate(-50%, 8px)', textAlign: 'center' };
   }
   const angle = Math.atan2(y, x);
@@ -43,7 +43,7 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
   const role = localizedRole(member, 'en') || member.role;
   const leadership = isLeadership(member);
   const innerLead = isCtoOrCco(member);
-  const labelStyle = labelPlacement(star.x, star.y, isFounder);
+  const labelStyle = labelPlacement(star.x, star.y, isFounder, innerLead);
 
   return (
     <div
