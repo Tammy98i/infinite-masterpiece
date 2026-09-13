@@ -22,7 +22,7 @@ function labelPlacement(x: number, y: number, isFounder: boolean, innerLead: boo
   const angle = Math.atan2(y, x);
   const cos = Math.cos(angle);
   const sin = Math.sin(angle);
-  if (sin > 0.55) {
+  if (Math.abs(sin) < 0.38 || sin > 0.55) {
     return { top: '100%', left: '50%', transform: 'translate(-50%, 8px)', textAlign: 'center' };
   }
   if (sin < -0.55) {
