@@ -1,0 +1,17 @@
+{
+  "remote.autoForwardPorts": true,
+  "remote.autoForwardPortsSource": "hybrid",
+  "remote.localPortHost": "all",
+  "remote.portsAttributes": {
+    "3001": {
+      "label": "API",
+      "onAutoForward": "silent",
+      "protocol": "http"
+    },
+    "3002": {
+      "label": "site",
+      "onAutoForward": "notify",
+      "protocol": "http"
+    }
+  }
+}

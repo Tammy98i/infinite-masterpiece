@@ -149,9 +149,9 @@ if (isProduction()) {
   }
 }
 
-app.listen(PORT, '0.0.0.0', () => {
+app.listen(PORT, '::', () => {
   console.log(
-    `${isProduction() ? 'Infinite Masterpiece' : 'Onboarding API'} running on http://0.0.0.0:${PORT}`
+    `${isProduction() ? 'Infinite Masterpiece' : 'Onboarding API'} running on http://localhost:${PORT}`
   );
   const readiness = productionReadiness();
   if (!readiness.ready) {

@@ -26,6 +26,11 @@ export default defineConfig(() => {
       },
     },
     server: {
+      // Dual-stack (::) so localhost / ::1 and 127.0.0.1 both hit Vite.
+      // host 0.0.0.0 is IPv4-only and Chromium then reports localhost refused (-102).
+      host: '::',
+      port: 3002,
+      strictPort: true,
       hmr: process.env.DISABLE_HMR !== 'true',
       watch: process.env.DISABLE_HMR === 'true' ? null : {},
       allowedHosts: true,
