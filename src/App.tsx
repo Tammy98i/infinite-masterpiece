@@ -1,6 +1,7 @@
 ﻿import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Outlet, Navigate, useLocation } from 'react-router-dom';
 import { Layout } from './marketing/components/Layout';
+import { WebinarLayout } from './marketing/components/WebinarLayout';
 import { Home } from './marketing/pages/Home';
 import { Premium88 } from './marketing/pages/Premium88';
 import { FounderPage } from './marketing/pages/FounderPage';
@@ -38,6 +39,17 @@ const PublicLayoutWrapper = () => {
         <Outlet />
       </div>
     </Layout>
+  );
+};
+
+const WebinarLayoutWrapper = () => {
+  const location = useLocation();
+  return (
+    <WebinarLayout>
+      <div key={location.pathname} className="page-fade">
+        <Outlet />
+      </div>
+    </WebinarLayout>
   );
 };
 
@@ -139,14 +151,17 @@ export default function App() {
           <Route path="/privacy" element={<Privacy />} />
           <Route path="/accessibility" element={<AccessibilityStatement />} />
           <Route path="/library-membership" element={<LibraryMembership />} />
-          <Route path="/webinar" element={<WebinarLanding />} />
-          <Route path="/webinar/webinar-people" element={<WebinarLanding />} />
-          <Route path="/webinar/thank-you" element={<WebinarThankYou />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/auth/reset" element={<UpdatePassword />} />
           <Route path="/oauth/consent" element={<OAuthConsent />} />
           <Route path="/hesitation" element={<Hesitation />} />
           <Route path="/hesitation-success" element={<HesitationSuccess />} />
+        </Route>
+
+        <Route element={<WebinarLayoutWrapper />}>
+          <Route path="/webinar" element={<WebinarLanding />} />
+          <Route path="/webinar/webinar-people" element={<WebinarLanding />} />
+          <Route path="/webinar/thank-you" element={<WebinarThankYou />} />
         </Route>
 
         <Route path="/library/*" element={<LibraryRoute />} />
