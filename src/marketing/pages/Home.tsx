@@ -14,7 +14,8 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { EntryTrackCards } from '../components/EntryTrackCards';
-import { WEBINAR_CTA_ENDED, WEBINAR_CTA_HEADER, WEBINAR_CTA_NEXT_CYCLE } from '../../constants/webinarPage';
+import { WEBINAR_CTA_ENDED, WEBINAR_CTA_HEADER, WEBINAR_REGISTER_ID } from '../../constants/webinarPage';
+import { WEBINAR_WAITLIST_CTA } from '../../constants/webinarPhaseCopy';
 import { useWebinarPhase } from '../hooks/useWebinarPhase';
 
 const MotionDiv = motion.div;
@@ -23,7 +24,7 @@ const MOTION = { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const };
 
 export function Home() {
   const { phase } = useWebinarPhase();
-  const homeCta = phase === 'ended' ? WEBINAR_CTA_NEXT_CYCLE : WEBINAR_CTA_HEADER;
+  const homeCta = phase === 'ended' ? WEBINAR_WAITLIST_CTA : WEBINAR_CTA_HEADER;
   return (
     <div className="w-full">
       {/* 1. HERO */}
@@ -62,7 +63,7 @@ export function Home() {
 
               <div className="flex flex-col items-center gap-4 w-full sm:w-auto">
                 <Link
-                  to={phase === 'ended' ? '/pricing' : '/webinar'}
+                  to={phase === 'ended' ? `/webinar#${WEBINAR_REGISTER_ID}` : '/webinar'}
                   className="btn-gold text-black text-lg w-full sm:w-auto px-12 py-5 rounded-[22px] flex items-center justify-center gap-3 group"
                 >
                   <span>{homeCta}</span>

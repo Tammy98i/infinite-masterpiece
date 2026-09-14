@@ -1,15 +1,31 @@
 import type { TeamMember } from '../../../api/teamMembers';
 
-export function starDiameter(impact: number, levelOrFounder: string | boolean): number {
-  if (levelOrFounder === true || levelOrFounder === 'founder') return 140;
-  if (levelOrFounder === 'leadership') return 108;
-  if (levelOrFounder === 'core') return 42 + (impact / 100) * 28;
-  return 32 + (impact / 100) * 16;
+function roleBlob(member: TeamMember): string {
+  return `${member.role_en || ''} ${member.role || ''} ${member.role_he || ''}`.toUpperCase();
 }
 
-export function glowSize(impact: number, isFounder: boolean): number {
-  if (isFounder) return 80;
-  return 12 + (impact / 100) * 28;
+export function isCtoOrCco(member: TeamMember): boolean {
+  const role = roleBlob(member);
+  return /\bCTO\b/.test(role) || /\bCCO\b/.test(role);
+}
+
+export function isLeadership(member: TeamMember): boolean {
+  return member.hierarchy_level === 'leadership' || member.group_key === 'leadership';
+}
+
+export function starDiameter(impact: number, member: TeamMember, isFounder: boolean): number {
+  if (isFounder) return 176;
+  if (isCtoOrCco(member)) return 96;
+  if (isLeadership(member)) return 72;
+  if (member.hierarchy_level === 'core' || member.group_key === 'core') return 46 + (impact / 100) * 18;
+  return 34 + (impact / 100) * 12;
+}
+
+export function glowSize(impact: number, isFounder: boolean, member?: TeamMember): number {
+  if (isFounder) return 96;
+  if (member && isCtoOrCco(member)) return 36;
+  if (member && isLeadership(member)) return 22;
+  return 10 + (impact / 100) * 16;
 }
 
 export function goldColor(level: string): string {
@@ -25,17 +41,12 @@ export function goldColor(level: string): string {
   }
 }
 
-export function frameWidth(level: string): number {
-  switch (level) {
-    case 'founder':
-      return 3;
-    case 'leadership':
-      return 2.5;
-    case 'core':
-      return 2;
-    default:
-      return 1.5;
-  }
+export function frameWidth(level: string, member?: TeamMember): number {
+  if (level === 'founder') return 2.4;
+  if (member && isCtoOrCco(member)) return 2.2;
+  if (level === 'leadership') return 1.8;
+  if (level === 'core') return 1.4;
+  return 1.1;
 }
 
 export interface PositionedStar {
@@ -46,8 +57,26 @@ export interface PositionedStar {
   isFounder: boolean;
 }
 
-/** Radii sized for 22 people: ~3 inner, ~8 core, ~10 outer. */
-export const ORBIT_RADII = [0, 210, 355, 500];
+/** Radii sized for 22 people with label breathing room. */
+export const ORBIT_RADII = [0, 228, 340, 450];
+export const ELLIPSE_Y = 0.86;
+
+function leadershipAngle(member: TeamMember, fallbackIndex: number, count: number): number {
+  const role = roleBlob(member);
+  if (/\bCTO\b/.test(role)) return Math.PI;
+  if (/\bCCO\b/.test(role)) return 0;
+  if (count <= 1) return Math.PI / 2;
+  const others = Math.max(count - 2, 1);
+  const slot = Math.min(fallbackIndex, others - 1);
+  return Math.PI * (0.42 + (slot / Math.max(others - 1, 1)) * 0.36);
+}
+
+function orbitRadiusFor(member: TeamMember, orbit: number): number {
+  const base = ORBIT_RADII[orbit] || ORBIT_RADII[3];
+  if (orbit !== 1) return base;
+  if (isCtoOrCco(member)) return base;
+  return base * 1.14;
+}
 
 export function calculatePositions(
   members: TeamMember[],
@@ -72,24 +101,29 @@ export function calculatePositions(
           member: m,
           x: 0,
           y: 0,
-          diameter: starDiameter(m.impact_score, 'founder'),
+        diameter: starDiameter(m.impact_score, m, true) * scale,
           isFounder: true,
         });
       }
       continue;
     }
 
-    const radius = (ORBIT_RADII[orbit] || 500) * scale;
     const count = Math.max(sorted.length, 1);
-    const angleOffset = orbit === 1 ? -Math.PI / 2 : orbit === 2 ? Math.PI / 6 : Math.PI / 3;
 
     sorted.forEach((m, i) => {
-      const angle = angleOffset + (i / count) * Math.PI * 2;
+      let angle: number;
+      if (orbit === 1) {
+        angle = leadershipAngle(m, i, count);
+      } else {
+        const angleOffset = orbit === 2 ? Math.PI / 10 : Math.PI / 5;
+        angle = angleOffset + (i / count) * Math.PI * 2;
+      }
+      const radius = orbitRadiusFor(m, orbit) * scale;
       stars.push({
         member: m,
         x: Math.cos(angle) * radius,
-        y: Math.sin(angle) * radius,
-        diameter: starDiameter(m.impact_score, m.hierarchy_level),
+        y: Math.sin(angle) * radius * ELLIPSE_Y,
+        diameter: starDiameter(m.impact_score, m, false) * scale,
         isFounder: false,
       });
     });
@@ -101,7 +135,5 @@ export function calculatePositions(
 export function getConnectionLines(stars: PositionedStar[]): Array<{ from: PositionedStar; to: PositionedStar }> {
   const founder = stars.find((s) => s.isFounder);
   if (!founder) return [];
-  return stars
-    .filter((s) => !s.isFounder && (s.member.hierarchy_level === 'leadership' || s.member.group_key === 'leadership'))
-    .map((s) => ({ from: founder, to: s }));
+  return stars.filter((s) => !s.isFounder && isLeadership(s.member)).map((s) => ({ from: founder, to: s }));
 }

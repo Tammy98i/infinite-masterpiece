@@ -155,6 +155,7 @@ export interface WebinarRegistrationInput {
   utmTerm?: string;
   utmContent?: string;
   abVariant?: string;
+  intent?: 'register' | 'waitlist';
 }
 
 function getRegistrationById(id: string) {
@@ -368,18 +369,34 @@ export function registerWebinarStepA(input: WebinarRegistrationInput) {
   }
 
   const fullName = String(input.fullName || '').trim();
-  const phone = String(input.phone || '').trim();
-  const email = String(input.email || '').trim().toLowerCase();
-  if (!fullName || !phone || !email) {
-    throw Object.assign(new Error('נא למלא שם, טלפון ואימייל'), { status: 400 });
+  let phone = String(input.phone || '').trim();
+  let email = String(input.email || '').trim().toLowerCase();
+  const waitlistIntent = input.intent === 'waitlist';
+  if (!fullName) {
+    throw Object.assign(new Error('נא למלא שם מלא'), { status: 400 });
   }
-  validateEmail(email);
-  if (!isIsraeliMobile(phone)) {
-    throw Object.assign(new Error('נא להזין מספר נייד ישראלי'), { status: 400 });
+  if (waitlistIntent) {
+    if (!phone && !email) {
+      throw Object.assign(new Error('נא למלא טלפון או אימייל'), { status: 400 });
+    }
+    if (phone && !isIsraeliMobile(phone)) {
+      throw Object.assign(new Error('נא להזין מספר נייד ישראלי'), { status: 400 });
+    }
+    if (email) validateEmail(email);
+    else email = `waitlist.${phone.replace(/\D/g, '')}@noreply.local`;
+    if (!phone) phone = '-';
+  } else {
+    if (!phone || !email) {
+      throw Object.assign(new Error('נא למלא שם, טלפון ואימייל'), { status: 400 });
+    }
+    validateEmail(email);
+    if (!isIsraeliMobile(phone)) {
+      throw Object.assign(new Error('נא להזין מספר נייד ישראלי'), { status: 400 });
+    }
   }
 
   const completeCount = countCompleteWebinarRegistrations();
-  const isWaitlist = config.maxSpots > 0 && completeCount >= config.maxSpots;
+  const isWaitlist = waitlistIntent || (config.maxSpots > 0 && completeCount >= config.maxSpots);
   const now = new Date().toISOString();
   const abVariant = resolveAbVariant(input.abVariant);
 
@@ -478,6 +495,10 @@ export function registerWebinarStepA(input: WebinarRegistrationInput) {
 }
 
 function finalizeWebinarComplete(id: string, fullName: string, phone: string, email: string) {
+  if (email.endsWith('@noreply.local')) {
+    trackEvent('webinar_registration_completed', { properties: { registrationId: id, waitlist: '1' } });
+    return;
+  }
   trackEvent('webinar_registration_completed', { properties: { registrationId: id } });
   void sendWebinarConfirmationEmail({ fullName, email, registrationId: id }).catch(() => undefined);
   void postWebinarWebhook({

@@ -1,8 +1,104 @@
-/* Team Galaxy — portraits on the space backdrop */
+/* Team Galaxy — Infinite Masterpiece golden universe */
+
+@keyframes galaxy-twinkle {
+  0%, 100% { opacity: 0.12; }
+  50% { opacity: 0.55; }
+}
 
 @keyframes glow-pulse {
-  0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(1); }
-  50% { opacity: 0.8; transform: translate(-50%, -50%) scale(1.08); }
+  0%, 100% { opacity: 0.55; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.9; transform: translate(-50%, -50%) scale(1.045); }
+}
+
+@keyframes corona-breathe {
+  0%, 100% { opacity: 0.35; transform: translate(-50%, -50%) scale(1); }
+  50% { opacity: 0.62; transform: translate(-50%, -50%) scale(1.06); }
+}
+
+@keyframes gold-drift {
+  0% { transform: translateY(0); opacity: 0.15; }
+  50% { opacity: 0.4; }
+  100% { transform: translateY(-18px); opacity: 0.12; }
+}
+
+@keyframes star-hover {
+  0%, 100% { translate: 0 0; }
+  20% { translate: var(--hx, 4px) calc(var(--hy, 5px) * -1); }
+  45% { translate: calc(var(--hx, 4px) * -0.55) var(--hy, 5px); }
+  72% { translate: calc(var(--hx, 4px) * -1) calc(var(--hy, 5px) * 0.4); }
+}
+
+.galaxy-star-idle {
+  animation: star-hover var(--hd, 11s) ease-in-out infinite;
+  will-change: translate;
+}
+
+.galaxy-star-idle.is-anchored {
+  animation-play-state: paused;
+  translate: 0 0;
+}
+
+.galaxy-stage {
+  position: relative;
+  background:
+    radial-gradient(ellipse 42% 36% at 50% 46%, rgba(244, 208, 63, 0.14) 0%, transparent 58%),
+    radial-gradient(ellipse 70% 48% at 50% 52%, rgba(184, 151, 106, 0.06) 0%, transparent 70%),
+    radial-gradient(ellipse 90% 80% at 50% 50%, #0a0906 0%, #05040a 62%, #010103 100%);
+}
+
+.galaxy-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(ellipse at center, transparent 38%, rgba(2, 1, 5, 0.55) 78%, #020105 100%);
+}
+
+.galaxy-bg-star {
+  position: absolute;
+  border-radius: 50%;
+  background: #d4af37;
+  animation: galaxy-twinkle 5.5s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.galaxy-gold-dust {
+  position: absolute;
+  width: 2px;
+  height: 2px;
+  border-radius: 50%;
+  background: #f4d03f;
+  pointer-events: none;
+  animation: gold-drift 14s ease-in-out infinite;
+}
+
+.galaxy-orbit-ring {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%) scaleY(0.86);
+  border-radius: 50%;
+  border: 1px solid rgba(212, 175, 55, 0.09);
+  pointer-events: none;
+  mask-image: radial-gradient(ellipse at center, #000 55%, transparent 100%);
+}
+
+.galaxy-lead-halo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 168%;
+  height: 168%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  border: 1px solid rgba(244, 208, 63, 0.22);
+  box-shadow: 0 0 22px rgba(212, 175, 55, 0.18);
+  pointer-events: none;
+}
+
+.galaxy-orbit-ring.is-faded {
+  border-style: dashed;
+  border-color: rgba(184, 151, 106, 0.12);
+  opacity: 0.7;
 }
 
 .galaxy-founder-glow {
@@ -11,9 +107,48 @@
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(244, 208, 63, 0.35) 0%, rgba(212, 175, 55, 0.15) 40%, transparent 70%);
-  animation: glow-pulse 5s ease-in-out infinite;
+  background: radial-gradient(circle, rgba(244, 208, 63, 0.5) 0%, rgba(212, 175, 55, 0.18) 40%, transparent 72%);
   pointer-events: none;
+}
+
+.galaxy-founder-corona {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(247, 231, 181, 0.28) 0%, transparent 68%);
+  pointer-events: none;
+}
+
+.galaxy-founder-rays {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 118%;
+  height: 118%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  background: conic-gradient(
+    from 0deg,
+    transparent 0deg,
+    rgba(244, 208, 63, 0.16) 8deg,
+    transparent 16deg,
+    transparent 45deg,
+    rgba(247, 231, 181, 0.12) 52deg,
+    transparent 62deg,
+    transparent 120deg,
+    rgba(212, 175, 55, 0.14) 128deg,
+    transparent 140deg,
+    transparent 210deg,
+    rgba(244, 208, 63, 0.12) 218deg,
+    transparent 230deg,
+    transparent 300deg,
+    rgba(247, 231, 181, 0.1) 308deg,
+    transparent 320deg
+  );
+  opacity: 0.55;
+  mix-blend-mode: screen;
 }
 
 .galaxy-star-glow {
@@ -22,29 +157,65 @@
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(200, 162, 76, 0.25) 0%, transparent 60%);
+  background: radial-gradient(circle, rgba(212, 175, 55, 0.28) 0%, transparent 62%);
   pointer-events: none;
+}
+
+.galaxy-starburst {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 148%;
+  height: 148%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  background: conic-gradient(
+    from 18deg,
+    transparent 0deg,
+    rgba(244, 208, 63, 0.2) 6deg,
+    transparent 14deg,
+    transparent 90deg,
+    rgba(212, 175, 55, 0.16) 96deg,
+    transparent 108deg,
+    transparent 180deg,
+    rgba(247, 231, 181, 0.14) 186deg,
+    transparent 198deg,
+    transparent 270deg,
+    rgba(212, 175, 55, 0.16) 276deg,
+    transparent 288deg
+  );
+  opacity: 0.5;
 }
 
 .galaxy-spotlight-backdrop {
   position: fixed;
   inset: 0;
   z-index: 200;
-  background: rgba(5, 5, 5, 0.85);
-  backdrop-filter: blur(8px);
+  background: rgba(5, 4, 8, 0.78);
+  backdrop-filter: blur(10px);
+}
+
+.galaxy-docked-panel {
+  width: min(360px, 34vw);
+  max-height: min(780px, calc(100vh - 7rem));
+  overflow-y: auto;
+  background: rgba(8, 7, 5, 0.88);
+  backdrop-filter: blur(18px);
+  border: 1px solid rgba(212, 175, 55, 0.28);
+  box-shadow: 0 0 40px rgba(212, 175, 55, 0.08);
 }
 
 .galaxy-impact-bar {
-  height: 4px;
+  height: 3px;
   border-radius: 2px;
-  background: rgba(200, 162, 76, 0.15);
+  background: rgba(200, 162, 76, 0.14);
   overflow: hidden;
 }
 
 .galaxy-impact-fill {
   height: 100%;
   border-radius: 2px;
-  background: linear-gradient(90deg, #B8976A, #D4AF37, #F4D03F);
+  background: linear-gradient(90deg, #b8976a, #d4af37, #f4d03f);
 }
 
 .galaxy-mobile-card {
@@ -60,7 +231,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .galaxy-founder-glow {
+  .galaxy-bg-star,
+  .galaxy-founder-glow,
+  .galaxy-founder-corona,
+  .galaxy-gold-dust,
+  .galaxy-star-idle {
     animation: none !important;
   }
 }

@@ -144,8 +144,9 @@ html.a11y-contrast-mono #a11y-widget-trigger {
 /* Widget UI */
 #a11y-widget-trigger {
   position: fixed;
-  bottom: 5.5rem;
-  inset-inline-start: 1.25rem;
+  bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
+  inset-inline-end: 1rem;
+  inset-inline-start: auto;
   z-index: 9990;
   display: flex;
   align-items: center;
@@ -163,8 +164,8 @@ html.a11y-contrast-mono #a11y-widget-trigger {
 
 @media (min-width: 768px) {
   #a11y-widget-trigger {
-    bottom: 1.5rem;
-    inset-inline-start: 1.5rem;
+    bottom: calc(5.75rem + env(safe-area-inset-bottom, 0px));
+    inset-inline-end: 1.25rem;
   }
 }
 

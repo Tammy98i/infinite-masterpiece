@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, Fragment, type ReactNode, type RefObject } from 'react';
+import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode, type RefObject } from 'react';
 import { motion } from 'motion/react';
 import { teamMembersApi, type TeamMember } from '../../../api/teamMembers';
 import {
@@ -11,24 +11,38 @@ import {
 import { GalaxyPortrait } from './GalaxyPortrait';
 import { StarNode } from './StarNode';
 import { SpotlightPanel } from './SpotlightPanel';
-import { calculatePositions, starDiameter, goldColor } from './galaxyUtils';
+import { calculatePositions, goldColor, isCtoOrCco, isLeadership, starDiameter } from './galaxyUtils';
 import './galaxy.css';
 
-function useViewportWidth() {
-  const [w, setW] = useState(() => (typeof window !== 'undefined' ? window.innerWidth : 1200));
+function useViewport() {
+  const read = () =>
+    typeof window !== 'undefined' ? { w: window.innerWidth, h: window.innerHeight } : { w: 1200, h: 800 };
+  const [v, setV] = useState(read);
   useEffect(() => {
-    const handler = () => setW(window.innerWidth);
+    const handler = () => setV({ w: window.innerWidth, h: window.innerHeight });
     window.addEventListener('resize', handler);
     return () => window.removeEventListener('resize', handler);
   }, []);
-  return w;
+  return v;
+}
+
+function useReducedMotion() {
+  const [reduced, setReduced] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => setReduced(mq.matches || document.documentElement.classList.contains('a11y-reduce-motion'));
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+  return reduced;
 }
 
 function entranceDelay(orbit: number, indexInOrbit: number): number {
-  if (orbit === 0) return 0.3;
-  if (orbit === 1) return 0.8 + indexInOrbit * 0.12;
-  if (orbit === 2) return 1.3 + indexInOrbit * 0.06;
-  return 1.8 + indexInOrbit * 0.05;
+  if (orbit === 0) return 0.45;
+  if (orbit === 1) return 1.15 + indexInOrbit * 0.12;
+  if (orbit === 2) return 1.7 + indexInOrbit * 0.07;
+  return 2.2 + indexInOrbit * 0.05;
 }
 
 type PreviewPayload = {
@@ -44,7 +58,8 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
   const [inView, setInView] = useState(Boolean(preview));
   const sectionRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
-  const viewportWidth = useViewportWidth();
+  const viewport = useViewport();
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     if (preview) {
@@ -64,7 +79,18 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
       });
   }, [preview, seedMembers]);
 
-  const members = preview?.members ?? fetchedMembers;
+  const members = useMemo((): TeamMember[] => {
+    const source = preview?.members ?? fetchedMembers;
+    const seedById = new Map<string, TeamMember>(seedMembers.map((m) => [m.id, m]));
+    return source.map((m) => {
+      const seed = seedById.get(m.id);
+      return {
+        ...m,
+        photo: m.photo || seed?.photo || '',
+        photo_alt: m.photo_alt || seed?.photo_alt || '',
+      };
+    });
+  }, [preview?.members, fetchedMembers, seedMembers]);
 
   useEffect(() => {
     const node = sectionRef.current;
@@ -82,15 +108,34 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
     return () => observer.disconnect();
   }, [preview]);
 
-  const isMobile = viewportWidth < 768;
-  const scale = isMobile ? 1 : Math.min(1, Math.max(0.58, (viewportWidth - 96) / 1180));
+  const isMobile = viewport.w < 768;
+  const isTablet = viewport.w >= 768 && viewport.w < 1100;
+  const scale = isMobile
+    ? 1
+    : Math.min(
+        isTablet ? 0.78 : 0.88,
+        Math.max(0.55, (viewport.w - 80) / 1280),
+        Math.max(0.55, (viewport.h - 250) / 920),
+      );
 
   const { stars, orbitRadii } = useMemo(() => calculatePositions(members, scale), [members, scale]);
-
   const containerSize = useMemo(() => {
-    const maxR = orbitRadii[3] || 500;
-    return maxR * 2 + 160;
+    const maxR = orbitRadii[3] || 518;
+    return maxR * 2 + 110;
   }, [orbitRadii]);
+
+  const dust = useMemo(
+    () =>
+      Array.from({ length: 42 }).map((_, i) => ({
+        id: i,
+        left: (i * 37) % 100,
+        top: (i * 53) % 100,
+        delay: (i % 7) * 0.6,
+        duration: 8 + (i % 6),
+        size: i % 5 === 0 ? 2.2 : 1.2,
+      })),
+    [],
+  );
 
   const starDelays = useMemo(() => {
     const counters = new Map<number, number>();
@@ -104,11 +149,46 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
     return delays;
   }, [stars]);
 
-  const select = (m: TeamMember) => setSelected(m);
+  const browseOrder = useMemo(
+    () => [...members].sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0)),
+    [members],
+  );
+
+  const select = (m: TeamMember, trigger?: HTMLButtonElement | null) => {
+    if (trigger) triggerRef.current = trigger;
+    setSelected(m);
+  };
   const close = () => {
     setSelected(null);
     triggerRef.current?.focus();
   };
+  const step = (dir: 1 | -1) => {
+    if (!selected || browseOrder.length < 2) return;
+    const i = browseOrder.findIndex((m) => m.id === selected.id);
+    const next = browseOrder[(i + dir + browseOrder.length) % browseOrder.length];
+    if (next) setSelected(next);
+  };
+
+  useEffect(() => {
+    if (!selected) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+        return;
+      }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        step(1);
+      }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        step(-1);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [selected, browseOrder]);
 
   const spotlight = (
     <SpotlightPanel
@@ -119,8 +199,10 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         show_expertise: settings.show_expertise,
         show_links: settings.show_links,
       }}
-      variant={isMobile ? 'sheet' : 'modal'}
+      variant={isMobile ? 'sheet' : 'docked'}
       onClose={close}
+      onPrev={() => step(-1)}
+      onNext={() => step(1)}
     />
   );
 
@@ -132,47 +214,70 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         onSelect={select}
         sectionRef={sectionRef}
         spotlight={spotlight}
+        selectedId={selected?.id}
       />
     );
   }
 
   return (
-    <section
-      ref={sectionRef}
-      id="webinar-people"
-      className="relative bg-transparent py-20 md:py-28 overflow-x-hidden"
-      dir="rtl"
-    >
-      <div className="relative z-10 text-center mb-8 md:mb-12 px-4">
-        <motion.p
-          initial={{ opacity: 0 }}
-          animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.5 }}
-          className="text-[11px] uppercase tracking-[0.28em] text-[#C5A059]/90 mb-3"
+    <section ref={sectionRef} id="webinar-people" className="galaxy-stage relative overflow-hidden scroll-mt-24" dir="rtl">
+      <div className="galaxy-vignette" aria-hidden />
+      {dust.map((s) => (
+        <span
+          key={s.id}
+          className={s.id % 3 === 0 ? 'galaxy-gold-dust' : 'galaxy-bg-star'}
+          style={{
+            left: `${s.left}%`,
+            top: `${s.top}%`,
+            width: s.size,
+            height: s.size,
+            animationDelay: `${s.delay}s`,
+            animationDuration: `${s.duration}s`,
+          }}
+        />
+      ))}
+
+      <div className="relative z-20 text-center px-4 pt-20 pb-1">
+        <motion.h2
+          initial={reducedMotion ? false : { opacity: 0, y: 16 }}
+          animate={inView ? { opacity: 1, y: 0 } : {}}
+          transition={{ duration: 0.7 }}
+          className="font-heading text-[26px] md:text-[38px] text-[#F7F1E4] tracking-[0.12em] uppercase"
           dir="ltr"
         >
           {settings.title_en}
-        </motion.p>
-        <motion.h2
-          initial={{ opacity: 0, y: 20 }}
-          animate={inView ? { opacity: 1, y: 0 } : {}}
-          transition={{ duration: 0.6 }}
-          className="text-2xl md:text-4xl font-heading text-white"
-        >
-          {settings.title_he}
         </motion.h2>
         <motion.p
-          initial={{ opacity: 0 }}
+          initial={reducedMotion ? false : { opacity: 0 }}
           animate={inView ? { opacity: 1 } : {}}
-          transition={{ duration: 0.6, delay: 0.2 }}
-          className="text-base text-white/70 mt-3 font-light"
+          transition={{ duration: 0.7, delay: 0.15 }}
+          className="mt-2 text-[13px] md:text-[16px] font-light tracking-[0.08em] text-[#E8D9B0]/80"
+          dir="ltr"
         >
-          {settings.subtitle_he}
+          {settings.subtitle_en}
         </motion.p>
+        <p className="mt-3 text-[13px] text-[#C5A059]">לחצו על אדם כדי להכיר</p>
       </div>
 
-      <div className="relative z-10 flex justify-center px-4 overflow-x-hidden">
-        <div className="relative mx-auto" style={{ width: containerSize, height: containerSize, maxWidth: '100%' }}>
+      <div className="relative z-10 flex items-center justify-center px-4 pt-1 pb-24">
+        <div
+          className="relative mx-auto"
+          style={{ width: containerSize, height: containerSize, maxWidth: '100%' }}
+          onClick={(e) => {
+            if (selected && e.target === e.currentTarget) close();
+          }}
+        >
+          {orbitRadii.slice(1).map((r, i) => (
+            <motion.div
+              key={r}
+              initial={reducedMotion ? false : { scale: 0.92, opacity: 0 }}
+              animate={inView ? { scale: 1, opacity: 1 } : {}}
+              transition={{ duration: 0.9, delay: reducedMotion ? 0 : 0.85 + i * 0.16, ease: [0.16, 1, 0.3, 1] }}
+              className={`galaxy-orbit-ring ${i === 1 ? 'is-faded' : ''}`}
+              style={{ width: r * 2, height: r * 2 }}
+            />
+          ))}
+
           {inView &&
             stars.map((star) => (
               <Fragment key={star.member.id}>
@@ -181,13 +286,23 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
                   onClick={select}
                   delay={starDelays.get(star.member.id) || 0}
                   selected={selected?.id === star.member.id}
+                  dimmed={Boolean(selected && selected.id !== star.member.id)}
+                  reducedMotion={reducedMotion}
                 />
               </Fragment>
             ))}
         </div>
+
+        {selected ? (
+          <div className="hidden lg:block absolute top-8 right-4 z-30">{spotlight}</div>
+        ) : null}
       </div>
 
-      {spotlight}
+      {selected && !isMobile ? <div className="lg:hidden relative z-20 px-4 mt-4">{spotlight}</div> : null}
+
+      <p className="relative z-10 mt-2 mb-6 px-6 text-center text-[13px] text-[#B8976A]/85">
+        גודל הכוכב משקף את עוצמת התרומה
+      </p>
     </section>
   );
 }
@@ -198,63 +313,66 @@ function TeamGalaxyMobile({
   onSelect,
   sectionRef,
   spotlight,
+  selectedId,
 }: {
   members: TeamMember[];
   settings: TeamSectionSettings;
-  onSelect: (m: TeamMember) => void;
+  onSelect: (m: TeamMember, trigger?: HTMLButtonElement | null) => void;
   sectionRef: RefObject<HTMLElement | null>;
   spotlight: ReactNode;
+  selectedId?: string;
 }) {
   const founder = members.find((m) => m.hierarchy_level === 'founder' || m.group_key === 'founder');
-  const leadership = members.filter((m) => m.hierarchy_level === 'leadership' || m.group_key === 'leadership');
+  const leadership = members
+    .filter((m) => m !== founder && isLeadership(m))
+    .sort((a, b) => Number(isCtoOrCco(b)) - Number(isCtoOrCco(a)));
   const rest = members.filter((m) => m !== founder && !leadership.includes(m));
 
   return (
-    <section
-      ref={sectionRef}
-      id="webinar-people"
-      className="relative bg-transparent py-16 overflow-x-hidden"
-      dir="rtl"
-    >
-      <div className="relative z-10 text-center mb-10 px-4">
-        <p className="text-[11px] uppercase tracking-[0.28em] text-[#C5A059]/90 mb-2" dir="ltr">
+    <section ref={sectionRef} id="webinar-people" className="galaxy-stage relative py-16 overflow-x-hidden scroll-mt-24" dir="rtl">
+      <div className="galaxy-vignette" aria-hidden />
+      <div className="relative z-10 text-center mb-8 px-4">
+        <h2 className="text-[26px] font-heading text-[#F7F1E4] uppercase tracking-[0.12em]" dir="ltr">
           {settings.title_en}
+        </h2>
+        <p className="text-[14px] text-[#E8D9B0]/80 font-light mt-2 tracking-[0.06em]" dir="ltr">
+          {settings.subtitle_en}
         </p>
-        <h2 className="text-[28px] font-heading text-white">{settings.title_he}</h2>
-        <p className="text-base text-white/70 font-light mt-2">{settings.subtitle_he}</p>
+        <p className="mt-3 text-[13px] text-[#C5A059]">{settings.mobile_hint}</p>
       </div>
 
-      {founder && (
-        <div className="relative z-10 flex justify-center mb-10">
-          <MobileStar member={founder} size={96} onClick={() => onSelect(founder)} />
+      {founder ? (
+        <div className="relative z-10 flex justify-center mb-8">
+          <MobileStar member={founder} size={120} onClick={(el) => onSelect(founder, el)} selected={selectedId === founder.id} />
         </div>
-      )}
+      ) : null}
 
-      {leadership.length > 0 && (
-        <div className="relative z-10 flex justify-center gap-6 mb-10 px-4 flex-wrap">
+      {leadership.length > 0 ? (
+        <div className="relative z-10 flex justify-center gap-5 mb-8 px-4 flex-wrap">
           {leadership.map((m) => (
             <div key={m.id}>
-              <MobileStar member={m} onClick={() => onSelect(m)} />
+              <MobileStar
+                member={m}
+                size={isCtoOrCco(m) ? 86 : 64}
+                onClick={(el) => onSelect(m, el)}
+                selected={selectedId === m.id}
+              />
             </div>
           ))}
         </div>
-      )}
+      ) : null}
 
-      {rest.length > 0 && (
+      {rest.length > 0 ? (
         <div className="relative z-10">
-          <p className="text-center text-base text-white/45 mb-4">{settings.mobile_hint}</p>
-          <div
-            className="flex gap-5 overflow-x-auto px-4 pb-6 galaxy-mobile-scroller"
-            style={{ scrollSnapType: 'x mandatory' }}
-          >
+          <div className="flex gap-5 overflow-x-auto px-4 pb-6 galaxy-mobile-scroller" style={{ scrollSnapType: 'x mandatory' }}>
             {rest.map((m) => (
               <div key={m.id} className="galaxy-mobile-card shrink-0">
-                <MobileStar member={m} onClick={() => onSelect(m)} />
+                <MobileStar member={m} onClick={(el) => onSelect(m, el)} selected={selectedId === m.id} />
               </div>
             ))}
           </div>
         </div>
-      )}
+      ) : null}
 
       {spotlight}
     </section>
@@ -265,33 +383,47 @@ function MobileStar({
   member,
   onClick,
   size,
+  selected,
 }: {
   member: TeamMember;
-  onClick: () => void;
+  onClick: (trigger: HTMLButtonElement) => void;
   size?: number;
+  selected?: boolean;
 }) {
-  const d = size ?? Math.min(starDiameter(member.impact_score, member.hierarchy_level), 72);
+  const isFounder = member.hierarchy_level === 'founder' || member.group_key === 'founder';
+  const d = size ?? Math.min(starDiameter(member.impact_score, member, isFounder), 76);
   const color = goldColor(member.hierarchy_level);
   const name = localizedName(member, 'he') || member.name;
   const role = localizedRole(member, 'en') || member.role;
 
   return (
-    <button type="button" onClick={onClick} className="flex flex-col items-center cursor-pointer min-h-11 min-w-11">
-      <div
+    <button type="button" onClick={(e) => onClick(e.currentTarget)} className="flex flex-col items-center cursor-pointer min-h-11 min-w-11" aria-pressed={Boolean(selected)} aria-label={`${name}, ${role}`}>
+      <span
+        className="relative flex items-center justify-center"
+        style={{ width: d, height: d }}
+      >
+        {isFounder ? (
+          <>
+            <span className="galaxy-founder-corona" style={{ width: d * 2.4, height: d * 2.4 }} />
+            <span className="galaxy-founder-glow" style={{ width: d * 2, height: d * 2 }} />
+          </>
+        ) : null}
+      <span
         className="relative rounded-full overflow-hidden"
         style={{
           width: d,
           height: d,
-          border: `2px solid ${color}`,
-          boxShadow: `0 0 ${d * 0.2}px rgba(200,162,76,0.2)`,
+          border: `1.6px solid ${color}`,
+          boxShadow: `inset 0 0 14px rgba(244,208,63,0.2), 0 0 ${isFounder ? 28 : 12}px rgba(212,175,55,${isFounder ? 0.45 : 0.2})`,
         }}
       >
         <GalaxyPortrait src={member.photo || undefined} name={name} alt={member.photo_alt || name} className="w-full h-full" />
-      </div>
-      <p className="text-white text-[16px] font-medium mt-1.5 text-center max-w-[96px] leading-snug">{name}</p>
-      <p className="text-sm text-center max-w-[96px] leading-snug" style={{ color }} dir="ltr">
-        {role}
-      </p>
+      </span>
+      </span>
+      <span className="text-[#F7F1E4] text-[15px] font-medium mt-1.5 text-center max-w-[96px] leading-snug">{name}</span>
+      <span className="text-[12px] text-center max-w-[96px] leading-snug" style={{ color }} dir="ltr">
+        {isFounder ? 'FOUNDER & VISIONARY' : role}
+      </span>
     </button>
   );
 }

@@ -1,17 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, type ReactNode } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, X, Infinity as InfinityIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { AccountMenu } from '../../components/AccountMenu';
 import { scrollToWebinarForm, trackWebinarCta } from '../../utils/analytics';
-import {
-  WEBINAR_CTA_HEADER,
-  WEBINAR_CTA_NEXT_CYCLE,
-  WEBINAR_CTA_NEXT_CYCLE_SHORT,
-  WEBINAR_CTA_SHORT,
-  WEBINAR_REGISTER_ID,
-} from '../../constants/webinarPage';
+import { WEBINAR_REGISTER_ID } from '../../constants/webinarPage';
+import { webinarCopy } from '../../constants/webinarPhaseCopy';
 import { useWebinarPhase } from '../hooks/useWebinarPhase';
 
 const WEBINAR_NAV = [
@@ -31,17 +26,21 @@ export function Header() {
   const onWebinarLanding = location.pathname === '/webinar';
   const onWebinar = location.pathname.startsWith('/webinar');
   const { phase, liveEnter } = useWebinarPhase();
+  const copy = webinarCopy(phase);
 
   const headerCtaClass = 'btn-gold text-black text-sm px-5 py-3';
+  const compactBarCtaClass = 'btn-gold text-black text-[12px] px-3 py-2 shrink-0 max-w-[9.5rem] leading-tight text-center';
 
-  const headerCta = () => {
-    if (phase === 'ended') {
-      return (
-        <Link to="/pricing" className={headerCtaClass}>
-          {WEBINAR_CTA_NEXT_CYCLE}
-        </Link>
-      );
+  const goToWebinarForm = () => {
+    trackWebinarCta('header');
+    if (onWebinarLanding) {
+      scrollToWebinarForm();
+      return;
     }
+    window.location.assign(`/webinar#${WEBINAR_REGISTER_ID}`);
+  };
+
+  const renderPhaseCta = (className: string, label: string, liveLabel?: string): ReactNode => {
     if (phase === 'live' && liveEnter.href) {
       return (
         <a
@@ -49,106 +48,22 @@ export function Header() {
           target="_blank"
           rel="noreferrer"
           onClick={() => trackWebinarCta('header_enter')}
-          className={headerCtaClass}
+          className={className}
         >
-          {liveEnter.label}
+          {liveLabel || liveEnter.label}
         </a>
       );
     }
-    if (onWebinarLanding) {
+    if (onWebinarLanding || phase === 'ended') {
       return (
-        <button type="button" onClick={goToWebinarForm} className={headerCtaClass}>
-          {WEBINAR_CTA_HEADER}
+        <button type="button" onClick={goToWebinarForm} className={className}>
+          {label}
         </button>
       );
     }
     return (
-      <Link to={onWebinar ? `/webinar#${WEBINAR_REGISTER_ID}` : '/webinar'} className={headerCtaClass}>
-        {WEBINAR_CTA_HEADER}
-      </Link>
-    );
-  };
-
-  const compactBarCtaClass = 'btn-gold text-black text-[12px] px-3 py-2 shrink-0';
-
-  const compactBarCta = () => {
-    if (phase === 'ended') {
-      return (
-        <Link to="/pricing" className={compactBarCtaClass}>
-          {WEBINAR_CTA_NEXT_CYCLE_SHORT}
-        </Link>
-      );
-    }
-    if (phase === 'live' && liveEnter.href) {
-      return (
-        <a
-          href={liveEnter.href}
-          target="_blank"
-          rel="noreferrer"
-          onClick={() => trackWebinarCta('header_enter')}
-          className={compactBarCtaClass}
-        >
-          {WEBINAR_CTA_SHORT}
-        </a>
-      );
-    }
-    if (onWebinarLanding) {
-      return (
-        <button type="button" onClick={goToWebinarForm} className={compactBarCtaClass}>
-          {WEBINAR_CTA_SHORT}
-        </button>
-      );
-    }
-    return (
-      <Link to={onWebinar ? `/webinar#${WEBINAR_REGISTER_ID}` : '/webinar'} className={compactBarCtaClass}>
-        {WEBINAR_CTA_SHORT}
-      </Link>
-    );
-  };
-
-  const mobileHeaderCta = () => {
-    const close = () => setMobileMenuOpen(false);
-    const mobileClass = 'btn-gold text-black text-base block w-full text-center px-8 py-4';
-    if (phase === 'ended') {
-      return (
-        <Link to="/pricing" onClick={close} className={mobileClass}>
-          {WEBINAR_CTA_NEXT_CYCLE}
-        </Link>
-      );
-    }
-    if (phase === 'live' && liveEnter.href) {
-      return (
-        <a
-          href={liveEnter.href}
-          target="_blank"
-          rel="noreferrer"
-          onClick={() => {
-            close();
-            trackWebinarCta('header_enter');
-          }}
-          className={mobileClass}
-        >
-          {liveEnter.label}
-        </a>
-      );
-    }
-    if (onWebinar) {
-      return (
-        <button
-          type="button"
-          onClick={() => {
-            close();
-            goToWebinarForm();
-          }}
-          className={mobileClass}
-        >
-          {WEBINAR_CTA_HEADER}
-        </button>
-      );
-    }
-    return (
-      <Link to="/webinar" onClick={close} className={mobileClass}>
-        {WEBINAR_CTA_HEADER}
+      <Link to={onWebinar ? `/webinar#${WEBINAR_REGISTER_ID}` : '/webinar'} className={className}>
+        {label}
       </Link>
     );
   };
@@ -170,14 +85,24 @@ export function Header() {
   ];
   const navLinks = onWebinar ? WEBINAR_NAV : defaultNavLinks;
 
-  const goToWebinarForm = () => {
-    trackWebinarCta('header');
-    if (onWebinarLanding) {
-      scrollToWebinarForm();
-      return;
-    }
-    window.location.assign(`/webinar#${WEBINAR_REGISTER_ID}`);
-  };
+  const logo = (compact: boolean) => (
+    <Link to="/" className={cn('flex items-center group min-h-11', compact ? 'gap-2' : 'gap-3 sm:gap-4')}>
+      <InfinityIcon
+        className={cn('text-[#F7E7B5] opacity-80 group-hover:opacity-100 transition-opacity duration-300', compact ? 'w-6 h-6' : 'w-8 h-8')}
+        strokeWidth={1}
+      />
+      <span
+        className={cn(
+          'font-light tracking-[0.2em] text-white/90 leading-tight uppercase text-center',
+          compact ? 'text-[11px]' : 'text-[13px] sm:text-[15px] tracking-[0.25em] text-right',
+        )}
+      >
+        Infinite
+        {compact ? ' ' : <br />}
+        <span className="font-medium">Masterpiece</span>
+      </span>
+    </Link>
+  );
 
   return (
     <header
@@ -190,76 +115,61 @@ export function Header() {
           : 'bg-gradient-to-b from-[#010308]/80 via-[#010308]/35 to-transparent border-b border-transparent'
       )}
     >
-      <div className="mx-auto grid h-full w-full max-w-[1400px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-6 lg:px-8">
-          <Link to="/" className="flex items-center gap-3 sm:gap-4 group shrink-0 min-h-11">
-            <InfinityIcon className="w-8 h-8 text-[#F7E7B5] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
-            <div className="flex flex-col">
-              <span className="font-light text-[13px] sm:text-[15px] tracking-[0.25em] text-white/90 leading-tight uppercase">
-                Infinite
-                <br/>
-                <span className="font-medium">Masterpiece</span>
-              </span>
-            </div>
-          </Link>
-
-          <nav className="hidden lg:flex items-center justify-center gap-6 xl:gap-10 min-w-0" aria-label="ניווט ראשי">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.to}
-                className={cn(
-                  'text-[13px] font-light tracking-wide transition-colors duration-300',
-                  onWebinar
-                    ? 'text-white/85 hover:text-white'
-                    : 'accent' in link && link.accent
-                    ? onWebinar && link.to === '/webinar'
-                      ? 'text-[#F7E7B5] font-medium'
-                      : onPremium88 && link.to === '/premium-88'
+      <div className="hidden lg:grid mx-auto h-full w-full max-w-[1400px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-6 lg:px-8">
+        {logo(false)}
+        <nav className="flex items-center justify-center gap-6 xl:gap-10 min-w-0" aria-label="ניווט ראשי">
+          {navLinks.map((link) => (
+            <Link
+              key={link.name}
+              to={link.to}
+              className={cn(
+                'text-[13px] font-light tracking-wide transition-colors duration-300',
+                onWebinar
+                  ? 'text-white/85 hover:text-white'
+                  : 'accent' in link && link.accent
+                    ? onPremium88 && link.to === '/premium-88'
                       ? 'text-[#F7E7B5] font-medium'
                       : 'text-[#C8A24C] hover:text-[#F7E7B5]'
                     : link.to === '/pricing' && onPricing
-                    ? 'text-white font-medium'
-                    : link.to === '/journey' && onJourney
-                    ? 'text-white font-medium'
-                    : 'text-white/85 hover:text-white'
-                )}
-              >
-                {link.name}
-              </Link>
-            ))}
-          </nav>
-
-          <div className="flex items-center justify-end gap-2 sm:gap-3 shrink-0">
-            <div className="hidden lg:flex items-center gap-3">
-              {headerCta()}
-              {!onWebinar ? (
-                <Link
-                  to="/library"
-                  className="px-5 py-3 rounded-full text-sm font-medium text-white/85 hover:text-[#C8A24C] transition-colors duration-500 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#010308]"
-                  aria-label="כניסה לספרייה אינסופית. קורסים והרצאות אונליין"
-                >
-                  ספרייה
-                </Link>
-              ) : null}
-              <AccountMenu />
-            </div>
-            <div className="flex items-center gap-2 lg:hidden">
-              {compactBarCta()}
-              <AccountMenu />
-              <button
-                type="button"
-                className="p-2 text-white/85 hover:text-white transition-colors min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                aria-label="תפריט ניווט"
-                aria-expanded={mobileMenuOpen}
-              >
-                {mobileMenuOpen ? <X className="w-6 h-6" strokeWidth={1.5} /> : <Menu className="w-6 h-6" strokeWidth={1.5} />}
-              </button>
-            </div>
-          </div>
+                      ? 'text-white font-medium'
+                      : link.to === '/journey' && onJourney
+                        ? 'text-white font-medium'
+                        : 'text-white/85 hover:text-white'
+              )}
+            >
+              {link.name}
+            </Link>
+          ))}
+        </nav>
+        <div className="flex items-center justify-end gap-3 shrink-0">
+          {renderPhaseCta(headerCtaClass, copy.headerCta)}
+          {!onWebinar ? (
+            <Link
+              to="/library"
+              className="px-5 py-3 rounded-full text-sm font-medium text-white/85 hover:text-[#C8A24C] transition-colors duration-500 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#010308]"
+              aria-label="כניסה לספרייה אינסופית. קורסים והרצאות אונליין"
+            >
+              ספרייה
+            </Link>
+          ) : null}
+          <AccountMenu />
+        </div>
       </div>
 
-      {/* Mobile Nav */}
+      <div className="lg:hidden grid h-full w-full grid-cols-[2.75rem_minmax(0,1fr)_auto] items-center gap-2 px-3">
+        <button
+          type="button"
+          className="p-2 text-white/85 hover:text-white transition-colors min-h-11 min-w-11 flex items-center justify-center cursor-pointer justify-self-start"
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          aria-label="תפריט ניווט"
+          aria-expanded={mobileMenuOpen}
+        >
+          {mobileMenuOpen ? <X className="w-6 h-6" strokeWidth={1.5} /> : <Menu className="w-6 h-6" strokeWidth={1.5} />}
+        </button>
+        <div className="flex justify-center min-w-0">{logo(true)}</div>
+        {renderPhaseCta(compactBarCtaClass, copy.headerCtaShort)}
+      </div>
+
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
@@ -275,7 +185,7 @@ export function Header() {
                   key={link.name}
                   to={link.to}
                   className={cn(
-                    'text-lg font-light',
+                    'text-lg font-light min-h-11 inline-flex items-center',
                     'accent' in link && link.accent ? 'text-[#F7E7B5]' : 'text-white/90 hover:text-white'
                   )}
                   onClick={() => setMobileMenuOpen(false)}
@@ -284,7 +194,34 @@ export function Header() {
                 </Link>
               ))}
               <div className="pt-6 border-t border-white/[0.05] flex flex-col gap-4">
-                {mobileHeaderCta()}
+                <div className="flex justify-center">
+                  <AccountMenu />
+                </div>
+                {phase === 'live' && liveEnter.href ? (
+                  <a
+                    href={liveEnter.href}
+                    target="_blank"
+                    rel="noreferrer"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      trackWebinarCta('header_enter');
+                    }}
+                    className="btn-gold text-black text-base block w-full text-center px-8 py-4"
+                  >
+                    {liveEnter.label}
+                  </a>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      goToWebinarForm();
+                    }}
+                    className="btn-gold text-black text-base w-full px-8 py-4"
+                  >
+                    {copy.headerCta}
+                  </button>
+                )}
                 {!onWebinar ? (
                   <Link
                     to="/library"

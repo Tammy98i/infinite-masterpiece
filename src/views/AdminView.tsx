@@ -10,6 +10,7 @@ import { UsersRolesPermissionsView } from './admin/UsersRolesPermissionsView';
 import { UsersAccountsView } from './admin/UsersAccountsView';
 import { TeamStaffView } from './admin/TeamStaffView';
 import { TeamGalaxyAdminView } from './admin/TeamGalaxyAdminView';
+import { WebinarHostsEditor } from './admin/WebinarHostsEditor';
 import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/captions';
 import { adminApi, type AdminAnalytics, type AdminAuditLog, type AdminCrmLead, type AdminNotification, type AdminOverview, type AdminPaymentRow, type AdminPremium88Application, type AdminRaffleDashboard, type AdminReadiness, type AdminTrackLead, type AdminTracksDashboard, type AdminWebinarDashboard, type CoursePayload } from '../api/admin';
 import { DEFAULT_WEBINAR_CONFIG, type WebinarConfig } from '../constants/webinar';
@@ -67,8 +68,9 @@ function normalizeExternalUrl(raw: string) {
 export function AdminView() {
   const { user, isAdmin, setView, categories, instructors, reloadCatalog } = useApp();
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = searchParams.get('tab');
-  const [tab, setTab] = useState<Tab>(initialTab === 'team-galaxy' ? 'team-galaxy' : 'overview');
+  const tabFromUrl = searchParams.get('tab');
+  const initialTab: Tab = tabFromUrl && tabFromUrl in TAB_META ? (tabFromUrl as Tab) : 'overview';
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const staffDesk = user.staffDesk || '';
@@ -113,11 +115,11 @@ export function AdminView() {
   const goTab = (id: Tab) => {
     setTab(id);
     setMobileNavOpen(false);
-    if (id === 'team-galaxy') {
-      setSearchParams({ tab: 'team-galaxy' }, { replace: true });
-    } else if (searchParams.get('tab')) {
-      setSearchParams({}, { replace: true });
+    if (id === 'overview') {
+      if (searchParams.get('tab')) setSearchParams({}, { replace: true });
+      return;
     }
+    setSearchParams({ tab: id }, { replace: true });
   };
 
   const tabMeta = TAB_META[tab];
@@ -3101,7 +3103,7 @@ function WebinarPanel() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">וובינר</p>
-          <h2 className="text-2xl font-light">הגדרות ולידים</h2>
+          <h2 className="text-2xl font-light">תאריך, מנחים וצוות</h2>
           <p className="text-sm text-white/45 mt-2">
             {data?.totalRegistrations ?? 0} נרשמים ·{' '}
             <a href="/webinar" target="_blank" rel="noreferrer" className="text-[#C8A24C] hover:underline">
@@ -3193,7 +3195,7 @@ function WebinarPanel() {
       ) : null}
 
       <section className="grid gap-4 border border-white/10 rounded-2xl p-5">
-        <h3 className="text-lg font-light">פרטי הוובינר</h3>
+        <h3 className="text-lg font-light">תאריך ושעה</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <label className="grid gap-1 text-sm">
             <span className="text-white/50">כותרת</span>
@@ -3295,60 +3297,14 @@ function WebinarPanel() {
         </div>
       </section>
 
+      <WebinarHostsEditor />
+
       <section className="grid gap-4 border border-white/10 rounded-2xl p-5">
-        <h3 className="text-lg font-light">מובילי הוובינר</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <label className="grid gap-1 text-sm">
-            <span className="text-white/50">שם מוביל ראשי</span>
-            <input
-              value={config.leaderPrimaryName}
-              onChange={(e) => updateConfig('leaderPrimaryName', e.target.value)}
-              className={fieldClass}
-            />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-white/50">תפקיד מוביל ראשי</span>
-            <input
-              value={config.leaderPrimaryTitle}
-              onChange={(e) => updateConfig('leaderPrimaryTitle', e.target.value)}
-              className={fieldClass}
-            />
-          </label>
-          <label className="grid gap-1 text-sm md:col-span-2">
-            <span className="text-white/50">תיאור מוביל ראשי</span>
-            <textarea
-              value={config.leaderPrimaryBio}
-              onChange={(e) => updateConfig('leaderPrimaryBio', e.target.value)}
-              rows={3}
-              className={fieldClass}
-            />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-white/50">שם מוביל/ה שני/ה</span>
-            <input
-              value={config.leaderSecondaryName}
-              onChange={(e) => updateConfig('leaderSecondaryName', e.target.value)}
-              className={fieldClass}
-            />
-          </label>
-          <label className="grid gap-1 text-sm">
-            <span className="text-white/50">תפקיד מוביל/ה שני/ה</span>
-            <input
-              value={config.leaderSecondaryTitle}
-              onChange={(e) => updateConfig('leaderSecondaryTitle', e.target.value)}
-              className={fieldClass}
-            />
-          </label>
-          <label className="grid gap-1 text-sm md:col-span-2">
-            <span className="text-white/50">תיאור מוביל/ה שני/ה</span>
-            <textarea
-              value={config.leaderSecondaryBio}
-              onChange={(e) => updateConfig('leaderSecondaryBio', e.target.value)}
-              rows={3}
-              className={fieldClass}
-            />
-          </label>
+        <div>
+          <h3 className="text-lg font-light">צוות הוובינר</h3>
+          <p className="text-sm text-white/45 mt-1">הוספה, הסרה ועריכה של אנשי הצוות ואנשי המפתח. מנחה מסומן למעלה בבלוק המנחים.</p>
         </div>
+        <TeamGalaxyAdminView />
       </section>
 
       <section className="grid gap-4 border border-white/10 rounded-2xl p-5">

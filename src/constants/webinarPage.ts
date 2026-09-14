@@ -16,9 +16,9 @@ export const WEBINAR_CTA_ENTER = 'כניסה לערב החי';
 export const WEBINAR_CTA_NOT_REGISTERED = 'עדיין לא נרשמת? הרשמה למטה';
 export const WEBINAR_CTA_ZOOM_WHATSAPP = 'הקישור בוואטסאפ';
 export const WEBINAR_CTA_ENDED = 'הערב החי הסתיים';
-export const WEBINAR_CTA_NEXT_CYCLE = 'בדיקת התאמה למחזור הבא';
-export const WEBINAR_CTA_NEXT_CYCLE_SHORT = 'מחזור הבא';
-export const WEBINAR_ENDED_NOTE = 'אם תהיה הקלטה, נעדכן. תודה שהגעתם.';
+export const WEBINAR_CTA_NEXT_CYCLE = 'עדכנו אותי על המחזור הבא';
+export const WEBINAR_CTA_NEXT_CYCLE_SHORT = 'עדכנו אותי';
+export const WEBINAR_ENDED_NOTE = 'השאירו פרטים ונעדכן על המחזור הבא או על הקלטה, אם תהיה.';
 
 export function webinarLiveEnter(zoomLink: string, whatsappGroupUrl: string) {
   const zoom = zoomLink.trim();
@@ -138,8 +138,8 @@ export const WEBINAR_FIT_NO = [
 
 export const WEBINAR_GLEB = {
   name: 'גלב סמירנוב',
-  title: 'CCO בפועל / קריאייטיב / תוכן / צילום / מותג',
-  bio: 'מוביל את שכבת הקריאייטיב, השפה הוויזואלית, התוכן והמותג.',
+  title: 'CCO · קריאייטיב ומותג',
+  bio: 'מוביל את השפה הוויזואלית, התוכן והמותג של המיזם.',
 };
 
 export const WEBINAR_ECOSYSTEM = [

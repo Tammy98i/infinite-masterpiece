@@ -41,6 +41,7 @@ export type RegisterInput = {
   landingPage?: string;
   referrer?: string;
   website?: string; // honeypot
+  intent?: 'register' | 'waitlist';
 };
 
 const rateBucket = new Map<string, { count: number; resetAt: number }>();
@@ -134,14 +135,24 @@ export async function registerWebinar(input: RegisterInput, clientKey = 'anon') 
   }
 
   const fullName = String(input.fullName || '').trim();
-  const phone = String(input.phone || '').trim();
-  const email = normalizeEmail(input.email || '');
-  if (!fullName || !phone || !email) throw httpError('נא למלא שם, טלפון ואימייל');
-  if (!isValidEmail(email)) throw httpError('כתובת אימייל לא תקינה');
-  if (!isIsraeliMobile(phone)) throw httpError('נא להזין מספר נייד ישראלי');
+  let phone = String(input.phone || '').trim();
+  let email = normalizeEmail(input.email || '');
+  const waitlistIntent = input.intent === 'waitlist';
+  if (!fullName) throw httpError('נא למלא שם מלא');
+  if (waitlistIntent) {
+    if (!phone && !email) throw httpError('נא למלא טלפון או אימייל');
+    if (phone && !isIsraeliMobile(phone)) throw httpError('נא להזין מספר נייד ישראלי');
+    if (email && !isValidEmail(email)) throw httpError('כתובת אימייל לא תקינה');
+    if (!email) email = `waitlist.${phone.replace(/\D/g, '')}@noreply.local`;
+    if (!phone) phone = '-';
+  } else {
+    if (!phone || !email) throw httpError('נא למלא שם, טלפון ואימייל');
+    if (!isValidEmail(email)) throw httpError('כתובת אימייל לא תקינה');
+    if (!isIsraeliMobile(phone)) throw httpError('נא להזין מספר נייד ישראלי');
+  }
 
   const publicPayload = await getPublicConfig(input.abVariant);
-  const isWaitlist = Boolean(publicPayload.isWaitlist);
+  const isWaitlist = waitlistIntent || Boolean(publicPayload.isWaitlist);
   const status = isWaitlist ? 'waitlist' : 'registered';
   const now = new Date().toISOString();
 
@@ -222,7 +233,7 @@ export async function registerWebinar(input: RegisterInput, clientKey = 'anon') 
 
   if (!write.ok) throw httpError(write.error || 'שמירת ההרשמה נכשלה', 503);
 
-  if (status === 'registered') {
+  if (status === 'registered' && !email.endsWith('@noreply.local')) {
     const mail = await sendConfirmationEmail({
       fullName,
       email,

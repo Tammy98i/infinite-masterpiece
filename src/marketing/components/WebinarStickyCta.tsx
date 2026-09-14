@@ -1,31 +1,35 @@
 import { useEffect, useState } from 'react';
 import { trackWebinarCta, scrollToWebinarForm } from '../../utils/analytics';
 import { WebinarCountdown } from './WebinarCountdown';
-import {
-  WEBINAR_CTA_NOT_REGISTERED,
-  WEBINAR_CTA_PRIMARY,
-  WEBINAR_CTA_SHORT,
-  webinarLiveEnter,
-} from '../../constants/webinarPage';
+import { webinarLiveEnter } from '../../constants/webinarPage';
+import type { WebinarPhase } from '../../utils/webinarTime';
 
 type Props = {
   date: string;
   time: string;
   registrationCount?: number;
+  phase?: WebinarPhase;
   eventNight?: boolean;
   zoomLink?: string;
   whatsappGroupUrl?: string;
+  ctaLabel: string;
+  ctaLabelShort: string;
 };
 
 export function WebinarStickyCta({
   date,
   time,
   registrationCount = 0,
+  phase,
   eventNight = false,
   zoomLink = '',
   whatsappGroupUrl = '',
+  ctaLabel,
+  ctaLabelShort,
 }: Props) {
   const [visible, setVisible] = useState(false);
+  const live = phase ? phase === 'live' : eventNight;
+  const ended = phase === 'ended';
   const liveEnter = webinarLiveEnter(zoomLink, whatsappGroupUrl);
 
   useEffect(() => {
@@ -67,9 +71,9 @@ export function WebinarStickyCta({
       <div className="max-w-[1100px] mx-auto flex items-center gap-3">
         <div className="min-w-0 flex-1 text-center sm:text-right">
           <p className="text-xs text-white/70 truncate">
-            {eventNight ? 'הערב החי עכשיו' : `${date}, ${time}`}
+            {live ? 'הערב החי עכשיו' : ended ? 'המחזור החי הסתיים' : `${date}, ${time}`}
           </p>
-          {eventNight ? null : (
+          {live || ended ? null : (
             <div className="flex items-center gap-3 min-w-0">
               <WebinarCountdown date={date} time={time} className="truncate" />
               {registrationCount > 0 ? (
@@ -78,7 +82,7 @@ export function WebinarStickyCta({
             </div>
           )}
         </div>
-        {eventNight && liveEnter.href ? (
+        {live && liveEnter.href ? (
           <a
             href={liveEnter.href}
             target="_blank"
@@ -92,19 +96,13 @@ export function WebinarStickyCta({
           <button
             type="button"
             onClick={() => {
-              trackWebinarCta(eventNight ? 'sticky_unregistered' : 'sticky');
+              trackWebinarCta(live ? 'sticky_unregistered' : 'sticky');
               scrollToWebinarForm();
             }}
             className={ctaClass}
           >
-            {eventNight ? (
-              <span>{WEBINAR_CTA_NOT_REGISTERED}</span>
-            ) : (
-              <>
-                <span className="sm:hidden">{WEBINAR_CTA_SHORT}</span>
-                <span className="hidden sm:inline">{WEBINAR_CTA_PRIMARY}</span>
-              </>
-            )}
+            <span className="sm:hidden">{ctaLabelShort}</span>
+            <span className="hidden sm:inline">{ctaLabel}</span>
           </button>
         )}
       </div>

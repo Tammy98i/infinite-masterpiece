@@ -43,12 +43,14 @@ export function isWebinarEventWindow(date: string, time: string, durationMinutes
   return now >= dayStart.getTime() && now <= end;
 }
 
+export type WebinarPhase = 'upcoming' | 'live' | 'ended';
+
 export function getWebinarPhase(
   date: string,
   time: string,
   durationMinutes: number,
   now = Date.now()
-): 'upcoming' | 'live' | 'ended' {
+): WebinarPhase {
   if (isWebinarEventWindow(date, time, durationMinutes, now)) return 'live';
   const start = parseIsraeliDateTime(date, time);
   if (!start) return 'upcoming';

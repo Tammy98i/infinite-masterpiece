@@ -83,13 +83,11 @@ export const DEFAULT_WEBINAR_CONFIG: WebinarConfig = {
   calendarLocation: 'Zoom',
   zoomLink: '',
   leaderPrimaryName: 'גל אברמוביץ׳',
-  leaderPrimaryTitle: 'Founder / Vision / Strategy / Teaching / Sales',
-  leaderPrimaryBio:
-    'מוביל את החזון, השפה, השיטה והמסגרת העסקית של Infinite Masterpiece. מהרעיון הגדול ועד הפיילוט הראשון.',
+  leaderPrimaryTitle: 'Founder · חזון ואסטרטגיה',
+  leaderPrimaryBio: 'מוביל את החזון, השפה והמסגרת העסקית — מהרעיון ועד הפיילוט.',
   leaderSecondaryName: 'תמי אליאן',
-  leaderSecondaryTitle: 'CTO בפועל / אתרים / פלטפורמות / Mobile / Funnel',
-  leaderSecondaryBio:
-    'מובילה את הצד הטכנולוגי והמוצרי של המיזם: אתר, VOD, דאשבורדים, משפכים, מדידה ואפליקציה.',
+  leaderSecondaryTitle: 'CTO · מוצר ופלטפורמה',
+  leaderSecondaryBio: 'מובילה את האתר, ה־VOD, המשפכים והמדידה של המיזם.',
   heroHeadline: 'הכישרון כבר יש. הערב שולחים פעולה אמיתית.',
   heroHeadlineVariantB: 'הכישרון כבר יש. הערב שולחים פעולה אמיתית.',
   heroSubheadline:

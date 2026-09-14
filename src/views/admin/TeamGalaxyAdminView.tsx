@@ -7,11 +7,11 @@ import { fieldClass } from './adminConstants';
 import { TeamGalaxy } from '../../marketing/components/TeamGalaxy/TeamGalaxy';
 
 const GROUPS = [
-  { value: 'founder', label: 'Founder' },
-  { value: 'leadership', label: 'Leadership' },
-  { value: 'core', label: 'Core Team' },
-  { value: 'contributor', label: 'Contributor' },
-  { value: 'ecosystem', label: 'Ecosystem' },
+  { value: 'founder', label: 'מייסד' },
+  { value: 'leadership', label: 'אנשי מפתח' },
+  { value: 'core', label: 'צוות ליבה' },
+  { value: 'contributor', label: 'שותפים' },
+  { value: 'ecosystem', label: 'אקוסיסטם' },
 ];
 
 const TIERS = [
@@ -45,7 +45,7 @@ const EMPTY_FORM: Partial<TeamMember> = {
   group_key: 'core',
   hierarchy_level: 'core',
   visual_tier: 'medium',
-  featured: true,
+  featured: false,
   status: 'draft',
   display_order: 0,
   orbit: 2,
@@ -409,7 +409,7 @@ export function TeamGalaxyAdminView() {
               <Field label="קישור מקצועי"><input className={fieldClass} dir="ltr" value={editing.professional_url || ''} onChange={(e) => setEditing({ ...editing, professional_url: e.target.value })} /></Field>
               <label className="flex items-center gap-2 text-sm text-white/70 min-h-11">
                 <input type="checkbox" className="accent-[#C8A24C]" checked={editing.featured !== false} onChange={(e) => setEditing({ ...editing, featured: e.target.checked })} />
-                מופיע בצוות המוביל
+                מנחה בוובינר
               </label>
             </div>
             <div className="flex gap-3 mt-6">

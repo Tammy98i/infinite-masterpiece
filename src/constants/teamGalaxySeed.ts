@@ -168,7 +168,7 @@ export const TEAM_GALAXY_SEED: TeamGalaxySeedMember[] = [
     impact_score: 72,
     group_key: 'leadership',
     visual_tier: 'large',
-    featured: true,
+    featured: false,
     display_order: 3,
   }),
   person({
@@ -186,7 +186,7 @@ export const TEAM_GALAXY_SEED: TeamGalaxySeedMember[] = [
     impact_score: 65,
     group_key: 'core',
     visual_tier: 'medium',
-    featured: true,
+    featured: false,
     display_order: 4,
   }),
   person({
@@ -204,7 +204,7 @@ export const TEAM_GALAXY_SEED: TeamGalaxySeedMember[] = [
     impact_score: 62,
     group_key: 'core',
     visual_tier: 'medium',
-    featured: true,
+    featured: false,
     display_order: 5,
   }),
   person({
@@ -222,7 +222,7 @@ export const TEAM_GALAXY_SEED: TeamGalaxySeedMember[] = [
     impact_score: 58,
     group_key: 'core',
     visual_tier: 'medium',
-    featured: true,
+    featured: false,
     display_order: 6,
   }),
   person({
@@ -240,7 +240,7 @@ export const TEAM_GALAXY_SEED: TeamGalaxySeedMember[] = [
     impact_score: 54,
     group_key: 'core',
     visual_tier: 'medium',
-    featured: true,
+    featured: false,
     display_order: 7,
   }),
   person({
@@ -258,7 +258,7 @@ export const TEAM_GALAXY_SEED: TeamGalaxySeedMember[] = [
     impact_score: 56,
     group_key: 'core',
     visual_tier: 'medium',
-    featured: true,
+    featured: false,
     display_order: 8,
   }),
   person({
@@ -276,7 +276,7 @@ export const TEAM_GALAXY_SEED: TeamGalaxySeedMember[] = [
     impact_score: 50,
     group_key: 'core',
     visual_tier: 'medium',
-    featured: true,
+    featured: false,
     display_order: 9,
   }),
   person({

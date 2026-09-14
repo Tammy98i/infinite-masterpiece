@@ -6,8 +6,6 @@ import { isWebinarEmailEnabled } from './webinarMail.js';
 
 export async function webinarAdminPayload() {
   const emailEnabled = isWebinarEmailEnabled();
-  const zoomOk = zoomConfigured() || Boolean(DEFAULT_WEBINAR_CONFIG.zoomLink?.trim());
-  const hasWhatsapp = Boolean(DEFAULT_WEBINAR_CONFIG.whatsappGroupUrl.trim());
   const supabaseOk = hasSupabaseService();
 
   let registrations: Array<Record<string, unknown>> = [];
@@ -17,6 +15,10 @@ export async function webinarAdminPayload() {
     );
     if (res.ok && Array.isArray(res.data)) registrations = res.data;
   }
+
+  const config = { ...DEFAULT_WEBINAR_CONFIG };
+  const hasWhatsapp = Boolean(String(config.whatsappGroupUrl || '').trim());
+  const zoomOk = zoomConfigured() || Boolean(String(config.zoomLink || '').trim());
 
   const items = [
     {
@@ -56,7 +58,7 @@ export async function webinarAdminPayload() {
   }
 
   return {
-    config: DEFAULT_WEBINAR_CONFIG,
+    config,
     registrations: registrations.map((row) => ({
       id: row.id,
       fullName: row.full_name,
