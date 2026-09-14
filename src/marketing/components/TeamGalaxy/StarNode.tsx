@@ -8,7 +8,7 @@ import type { TeamMember } from '../../../api/teamMembers';
 
 interface StarNodeProps {
   star: PositionedStar;
-  onClick: (member: TeamMember) => void;
+  onClick: (member: TeamMember, trigger: HTMLButtonElement) => void;
   delay: number;
   selected?: boolean;
   dimmed?: boolean;
@@ -44,6 +44,7 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
   const leadership = isLeadership(member);
   const innerLead = isCtoOrCco(member);
   const labelStyle = labelPlacement(star.x, star.y, isFounder, innerLead);
+  const hit = Math.max(diameter, 44);
 
   return (
     <div
@@ -51,8 +52,8 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
       style={{
         left: `calc(50% + ${star.x}px)`,
         top: `calc(50% + ${star.y}px)`,
-        width: diameter,
-        height: diameter,
+        width: hit,
+        height: hit,
         transform: 'translate(-50%, -50%)',
         zIndex: isFounder ? 24 : selected ? 20 : innerLead ? 16 : leadership ? 13 : 10,
       }}
@@ -62,8 +63,11 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
       initial={reducedMotion ? false : { opacity: 0 }}
       animate={{ opacity: dimmed ? 0.42 : 1 }}
       transition={{ duration: reducedMotion ? 0 : 0.45, delay: reducedMotion ? 0 : delay }}
-      className="relative w-full h-full cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 rounded-full"
-      onClick={() => onClick(member)}
+      className="relative w-full h-full cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 rounded-full min-h-11 min-w-11"
+      onClick={(e) => {
+        e.stopPropagation();
+        onClick(member, e.currentTarget);
+      }}
       aria-pressed={Boolean(selected)}
       aria-label={`${name}, ${role}`}
     >

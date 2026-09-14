@@ -252,10 +252,10 @@ function SpotlightBody({
         <p className="text-sm text-[#F7F1E4]/75 font-light italic text-center leading-relaxed mb-5">“{quote}”</p>
       ) : null}
 
-      {vision ? <Block label="Who I am" text={vision} /> : null}
-      {bio && !isFounder ? <Block label="Who I am" text={bio} /> : null}
-      <Block label="My contribution" text={member.contribution} />
-      <List label="Key responsibilities" items={member.responsibilities} />
+      {vision ? <Block label="מי אני" text={vision} /> : null}
+      {bio && !isFounder ? <Block label="מי אני" text={bio} /> : null}
+      <Block label="התרומה שלי" text={member.contribution} />
+      <List label="תחומי אחריות" items={member.responsibilities} />
       {settings.show_expertise ? <Tags items={member.expertise} /> : null}
       {settings.show_quotes && closing ? (
         <blockquote className="mt-5 pt-4 border-t border-[#D4AF37]/12 text-center">
@@ -274,9 +274,9 @@ function SpotlightBody({
           </a>
         </p>
       ) : null}
-      {typeof member.impact_score === 'number' ? (
-        <p className="mt-8 pt-4 border-t border-[#D4AF37]/12 text-center text-[10px] uppercase tracking-[0.2em] text-[#B8976A]/85">
-          Impact {member.impact_score}
+      {settings.show_impact && typeof member.impact_score === 'number' ? (
+        <p className="mt-8 pt-4 border-t border-[#D4AF37]/12 text-center text-[10px] tracking-[0.12em] text-[#B8976A]/85">
+          תרומה {member.impact_score}
         </p>
       ) : null}
     </div>
@@ -287,7 +287,7 @@ function Block({ label, text }: { label: string; text?: string }) {
   if (!text?.trim()) return null;
   return (
     <div className="mb-5">
-      <p className="text-[11px] uppercase tracking-[0.16em] text-[#C5A059] mb-2">{label}</p>
+      <p className="text-[11px] tracking-[0.12em] text-[#C5A059] mb-2">{label}</p>
       <p className="text-[15px] text-[#F7F1E4]/80 font-light leading-relaxed" dir="rtl">
         {text}
       </p>
@@ -299,7 +299,7 @@ function List({ label, items }: { label: string; items?: string[] }) {
   if (!items?.length) return null;
   return (
     <div className="mb-5">
-      <p className="text-[11px] uppercase tracking-[0.16em] text-[#C5A059] mb-2">{label}</p>
+      <p className="text-[11px] tracking-[0.12em] text-[#C5A059] mb-2">{label}</p>
       <ul className="space-y-1.5">
         {items.map((item) => (
           <li key={item} className="text-[15px] text-[#F7F1E4]/80 font-light flex gap-2">
@@ -316,7 +316,7 @@ function Tags({ items }: { items?: string[] }) {
   if (!items?.length) return null;
   return (
     <div className="mb-5">
-      <p className="text-[11px] uppercase tracking-[0.16em] text-[#C5A059] mb-2">Expertise</p>
+      <p className="text-[11px] tracking-[0.12em] text-[#C5A059] mb-2">מומחיות</p>
       <div className="flex flex-wrap gap-2">
         {items.map((item) => (
           <span key={item} className="px-3 py-1 rounded-full border border-[#D4AF37]/20 text-xs text-[#E8D9B0]/75" dir="rtl">

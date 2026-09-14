@@ -149,20 +149,46 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
     return delays;
   }, [stars]);
 
-  const select = (m: TeamMember) => setSelected(m);
+  const browseOrder = useMemo(
+    () => [...members].sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0)),
+    [members],
+  );
+
+  const select = (m: TeamMember, trigger?: HTMLButtonElement | null) => {
+    if (trigger) triggerRef.current = trigger;
+    setSelected(m);
+  };
   const close = () => {
     setSelected(null);
     triggerRef.current?.focus();
+  };
+  const step = (dir: 1 | -1) => {
+    if (!selected || browseOrder.length < 2) return;
+    const i = browseOrder.findIndex((m) => m.id === selected.id);
+    const next = browseOrder[(i + dir + browseOrder.length) % browseOrder.length];
+    if (next) setSelected(next);
   };
 
   useEffect(() => {
     if (!selected) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') close();
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        close();
+        return;
+      }
+      if (e.key === 'ArrowLeft') {
+        e.preventDefault();
+        step(1);
+      }
+      if (e.key === 'ArrowRight') {
+        e.preventDefault();
+        step(-1);
+      }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [selected]);
+  }, [selected, browseOrder]);
 
   const spotlight = (
     <SpotlightPanel
@@ -175,6 +201,8 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
       }}
       variant={isMobile ? 'sheet' : 'docked'}
       onClose={close}
+      onPrev={() => step(-1)}
+      onNext={() => step(1)}
     />
   );
 
@@ -232,10 +260,17 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         >
           {settings.subtitle_en}
         </motion.p>
+        <p className="mt-3 text-[13px] text-[#C5A059]">לחצו על אדם כדי להכיר</p>
       </div>
 
       <div className={`relative z-10 flex items-center justify-center gap-6 px-4 min-h-[100svh] pt-28 pb-24 ${selected ? 'lg:pl-2' : ''}`} dir="ltr">
-        <div className="relative mx-auto" style={{ width: containerSize, height: containerSize, maxWidth: '100%' }}>
+        <div
+          className="relative mx-auto"
+          style={{ width: containerSize, height: containerSize, maxWidth: '100%' }}
+          onClick={() => {
+            if (selected) close();
+          }}
+        >
           {orbitRadii.slice(1).map((r, i) => (
             <motion.div
               key={r}
@@ -282,9 +317,8 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
 
       {selected && !isMobile ? <div className="lg:hidden relative z-20 px-4 mt-4">{spotlight}</div> : null}
 
-      <p className="relative z-10 mt-4 mb-2 px-6 text-center text-[10px] tracking-[0.16em] uppercase text-[#B8976A]/80" dir="ltr">
-        Founder — Sun · Leadership — Large star · Core — Medium · Contributors — Small
-        <span className="block mt-1 font-light tracking-[0.12em] normal-case">Star size represents contribution &amp; impact</span>
+      <p className="relative z-10 mt-2 mb-6 px-6 text-center text-[13px] text-[#B8976A]/85">
+        גודל הכוכב משקף את עוצמת התרומה
       </p>
     </section>
   );
@@ -300,7 +334,7 @@ function TeamGalaxyMobile({
 }: {
   members: TeamMember[];
   settings: TeamSectionSettings;
-  onSelect: (m: TeamMember) => void;
+  onSelect: (m: TeamMember, trigger?: HTMLButtonElement | null) => void;
   sectionRef: RefObject<HTMLElement | null>;
   spotlight: ReactNode;
   selectedId?: string;
@@ -321,11 +355,12 @@ function TeamGalaxyMobile({
         <p className="text-[14px] text-[#E8D9B0]/80 font-light mt-2 tracking-[0.06em]" dir="ltr">
           {settings.subtitle_en}
         </p>
+        <p className="mt-3 text-[13px] text-[#C5A059]">{settings.mobile_hint}</p>
       </div>
 
       {founder ? (
         <div className="relative z-10 flex justify-center mb-8">
-          <MobileStar member={founder} size={120} onClick={() => onSelect(founder)} selected={selectedId === founder.id} />
+          <MobileStar member={founder} size={120} onClick={(el) => onSelect(founder, el)} selected={selectedId === founder.id} />
         </div>
       ) : null}
 
@@ -336,7 +371,7 @@ function TeamGalaxyMobile({
               <MobileStar
                 member={m}
                 size={isCtoOrCco(m) ? 86 : 64}
-                onClick={() => onSelect(m)}
+                onClick={(el) => onSelect(m, el)}
                 selected={selectedId === m.id}
               />
             </div>
@@ -349,7 +384,7 @@ function TeamGalaxyMobile({
           <div className="flex gap-5 overflow-x-auto px-4 pb-6 galaxy-mobile-scroller" style={{ scrollSnapType: 'x mandatory' }}>
             {rest.map((m) => (
               <div key={m.id} className="galaxy-mobile-card shrink-0">
-                <MobileStar member={m} onClick={() => onSelect(m)} selected={selectedId === m.id} />
+                <MobileStar member={m} onClick={(el) => onSelect(m, el)} selected={selectedId === m.id} />
               </div>
             ))}
           </div>
@@ -368,7 +403,7 @@ function MobileStar({
   selected,
 }: {
   member: TeamMember;
-  onClick: () => void;
+  onClick: (trigger: HTMLButtonElement) => void;
   size?: number;
   selected?: boolean;
 }) {
@@ -379,7 +414,7 @@ function MobileStar({
   const role = localizedRole(member, 'en') || member.role;
 
   return (
-    <button type="button" onClick={onClick} className="flex flex-col items-center cursor-pointer min-h-11 min-w-11" aria-pressed={Boolean(selected)} aria-label={`${name}, ${role}`}>
+    <button type="button" onClick={(e) => onClick(e.currentTarget)} className="flex flex-col items-center cursor-pointer min-h-11 min-w-11" aria-pressed={Boolean(selected)} aria-label={`${name}, ${role}`}>
       <span
         className="relative flex items-center justify-center"
         style={{ width: d, height: d }}
