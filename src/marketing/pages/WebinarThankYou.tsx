@@ -330,10 +330,10 @@ export function WebinarThankYou() {
           </ol>
 
           <Link
-            to="/"
+            to="/webinar"
             className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 text-sm text-white/75 hover:text-white min-h-11 cursor-pointer transition-colors duration-200 mb-3"
           >
-            חזרה לאתר
+            חזרה לוובינר
           </Link>
 
           <button

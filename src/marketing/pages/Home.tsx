@@ -14,17 +14,12 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { EntryTrackCards } from '../components/EntryTrackCards';
-import { WEBINAR_CTA_ENDED, WEBINAR_CTA_HEADER, WEBINAR_REGISTER_ID } from '../../constants/webinarPage';
-import { WEBINAR_WAITLIST_CTA } from '../../constants/webinarPhaseCopy';
-import { useWebinarPhase } from '../hooks/useWebinarPhase';
 
 const MotionDiv = motion.div;
 const MotionSection = motion.section;
 const MOTION = { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const };
 
 export function Home() {
-  const { phase } = useWebinarPhase();
-  const homeCta = phase === 'ended' ? WEBINAR_WAITLIST_CTA : WEBINAR_CTA_HEADER;
   return (
     <div className="w-full">
       {/* 1. HERO */}
@@ -63,24 +58,18 @@ export function Home() {
 
               <div className="flex flex-col items-center gap-4 w-full sm:w-auto">
                 <Link
-                  to={phase === 'ended' ? `/webinar#${WEBINAR_REGISTER_ID}` : '/webinar'}
+                  to="/pricing"
                   className="btn-gold text-black text-lg w-full sm:w-auto px-12 py-5 rounded-[22px] flex items-center justify-center gap-3 group"
                 >
-                  <span>{homeCta}</span>
+                  <span>בחירת מסלול</span>
                   <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-500" />
                 </Link>
-                {phase === 'ended' ? (
-                  <p className="text-white/70 text-sm font-medium min-h-11 inline-flex items-center">
-                    {WEBINAR_CTA_ENDED}
-                  </p>
-                ) : (
-                  <a
-                    href="/#pricing"
-                    className="text-white/45 hover:text-[#C8A24C] transition-colors duration-500 text-sm font-light min-h-11 inline-flex items-center"
-                  >
-                    למסלול האמיצים והססנים
-                  </a>
-                )}
+                <a
+                  href="/#pricing"
+                  className="text-white/45 hover:text-[#C8A24C] transition-colors duration-500 text-sm font-light min-h-11 inline-flex items-center"
+                >
+                  למסלול האמיצים והססנים
+                </a>
                 <Link
                   to="/library"
                   className="text-white/30 hover:text-[#C8A24C] transition-colors duration-500 text-sm font-light min-h-11 inline-flex items-center"
