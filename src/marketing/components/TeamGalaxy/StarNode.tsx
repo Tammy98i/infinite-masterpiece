@@ -15,23 +15,8 @@ interface StarNodeProps {
   reducedMotion?: boolean;
 }
 
-function labelPlacement(x: number, y: number, isFounder: boolean, innerLead: boolean): CSSProperties {
-  if (isFounder || innerLead || (Math.abs(x) < 8 && Math.abs(y) < 8)) {
-    return { top: '100%', left: '50%', transform: 'translate(-50%, 8px)', textAlign: 'center' };
-  }
-  const angle = Math.atan2(y, x);
-  const cos = Math.cos(angle);
-  const sin = Math.sin(angle);
-  if (Math.abs(sin) < 0.38 || sin > 0.55) {
-    return { top: '100%', left: '50%', transform: 'translate(-50%, 8px)', textAlign: 'center' };
-  }
-  if (sin < -0.55) {
-    return { bottom: '100%', left: '50%', transform: 'translate(-50%, -8px)', textAlign: 'center' };
-  }
-  if (cos >= 0) {
-    return { left: '100%', top: '50%', transform: 'translate(10px, -50%)', textAlign: 'left' };
-  }
-  return { right: '100%', top: '50%', transform: 'translate(-10px, -50%)', textAlign: 'right' };
+function labelPlacement(): CSSProperties {
+  return { top: '100%', left: '50%', transform: 'translate(-50%, 8px)', textAlign: 'center' };
 }
 
 export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion }: StarNodeProps) {
@@ -43,8 +28,7 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
   const role = localizedRole(member, 'en') || member.role;
   const leadership = isLeadership(member);
   const innerLead = isCtoOrCco(member);
-  const labelStyle = labelPlacement(star.x, star.y, isFounder, innerLead);
-  const hit = Math.max(diameter, 44);
+  const labelStyle = labelPlacement();
 
   return (
     <div
@@ -52,8 +36,8 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
       style={{
         left: `calc(50% + ${star.x}px)`,
         top: `calc(50% + ${star.y}px)`,
-        width: hit,
-        height: hit,
+        width: diameter,
+        height: diameter,
         transform: 'translate(-50%, -50%)',
         zIndex: isFounder ? 24 : selected ? 20 : innerLead ? 16 : leadership ? 13 : 10,
       }}
@@ -61,9 +45,9 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
     <motion.button
       type="button"
       initial={reducedMotion ? false : { opacity: 0 }}
-      animate={{ opacity: dimmed ? 0.42 : 1 }}
+      animate={{ opacity: dimmed ? 0.7 : 1 }}
       transition={{ duration: reducedMotion ? 0 : 0.45, delay: reducedMotion ? 0 : delay }}
-      className="relative w-full h-full cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 rounded-full min-h-11 min-w-11"
+      className="relative w-full h-full cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 rounded-full after:absolute after:inset-[-12px] after:content-[''] after:rounded-full"
       onClick={(e) => {
         e.stopPropagation();
         onClick(member, e.currentTarget);

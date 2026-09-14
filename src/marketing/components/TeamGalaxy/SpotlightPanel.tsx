@@ -24,8 +24,6 @@ export function SpotlightPanel({
   const titleId = useId();
   const closeRef = useRef<HTMLButtonElement>(null);
   const isFounder = member?.group_key === 'founder' || member?.hierarchy_level === 'founder';
-  const name = member ? localizedName(member, 'he') : '';
-  const roleEn = member ? localizedRole(member, 'en') : '';
 
   useEffect(() => {
     if ((variant !== 'sheet' && variant !== 'modal') || !member) return;
@@ -113,7 +111,9 @@ export function SpotlightPanel({
           <X className="w-4 h-4" />
         </button>
         {body}
-        <NavRow onPrev={onPrev} onNext={onNext} />
+        <div className="sticky bottom-0 bg-[#080705]/95 pt-1">
+          <NavRow onPrev={onPrev} onNext={onNext} />
+        </div>
       </aside>
     );
   }
@@ -216,17 +216,17 @@ function SpotlightBody({
 }) {
   const isFounder = member.group_key === 'founder' || member.hierarchy_level === 'founder';
   const name = localizedName(member, 'he');
-  const roleEn = localizedRole(member, 'en');
+  const roleHe = localizedRole(member, 'he');
   const quote = member.quote || '';
   const vision = member.vision || (isFounder ? member.bio : '');
   const bio = isFounder ? '' : member.bio;
   const closing = member.closing_quote || '';
 
   return (
-    <div className="p-7 text-left" dir="ltr">
+    <div className="p-7 text-right" dir="rtl">
       {isFounder && (
-        <p className="text-[10px] uppercase tracking-[0.28em] text-[#D4AF37] mb-4 text-center">
-          Founder &amp; Visionary
+        <p className="text-[10px] tracking-[0.2em] text-[#D4AF37] mb-4 text-center">
+          מייסד וחזון
         </p>
       )}
       <div className="flex justify-center mb-4">
@@ -245,8 +245,8 @@ function SpotlightBody({
       <h3 id={titleId} className="text-xl text-[#F7F1E4] font-heading text-center mb-1">
         {name}
       </h3>
-      <p className="text-sm text-[#C5A059] text-center mb-5 uppercase tracking-[0.12em]">
-        {roleEn}
+      <p className="text-sm text-[#C5A059] text-center mb-5 tracking-[0.06em]">
+        {roleHe}
       </p>
       {settings.show_quotes && quote ? (
         <p className="text-sm text-[#F7F1E4]/75 font-light italic text-center leading-relaxed mb-5">“{quote}”</p>

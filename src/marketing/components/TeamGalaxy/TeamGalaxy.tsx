@@ -219,12 +219,8 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
     );
   }
 
-  const selectedStar = selected ? stars.find((s) => s.member.id === selected.id) : null;
-  const founderStar = stars.find((s) => s.isFounder);
-  const center = containerSize / 2;
-
   return (
-    <section ref={sectionRef} id="webinar-people" className="galaxy-stage relative overflow-hidden scroll-mt-24 min-h-[100svh]" dir="rtl">
+    <section ref={sectionRef} id="webinar-people" className="galaxy-stage relative overflow-hidden scroll-mt-24" dir="rtl">
       <div className="galaxy-vignette" aria-hidden />
       {dust.map((s) => (
         <span
@@ -241,12 +237,12 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         />
       ))}
 
-      <div className="absolute z-20 top-20 md:top-24 left-0 right-0 text-center px-4 pointer-events-none">
+      <div className="relative z-20 text-center px-4 pt-24 pb-2">
         <motion.h2
           initial={reducedMotion ? false : { opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
           transition={{ duration: 0.7 }}
-          className="font-heading text-[26px] md:text-[40px] text-[#F7F1E4] tracking-[0.14em] uppercase"
+          className="font-heading text-[26px] md:text-[38px] text-[#F7F1E4] tracking-[0.12em] uppercase"
           dir="ltr"
         >
           {settings.title_en}
@@ -263,7 +259,7 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         <p className="mt-3 text-[13px] text-[#C5A059]">לחצו על אדם כדי להכיר</p>
       </div>
 
-      <div className={`relative z-10 flex items-center justify-center gap-6 px-4 min-h-[100svh] pt-28 pb-24 ${selected ? 'lg:pl-2' : ''}`} dir="ltr">
+      <div className="relative z-10 flex items-center justify-center px-4 pt-2 pb-20 min-h-[720px]">
         <div
           className="relative mx-auto"
           style={{ width: containerSize, height: containerSize, maxWidth: '100%' }}
@@ -282,19 +278,6 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
             />
           ))}
 
-          {inView && selectedStar && founderStar && selectedStar !== founderStar ? (
-            <svg className="absolute inset-0 w-full h-full pointer-events-none" viewBox={`0 0 ${containerSize} ${containerSize}`} aria-hidden>
-              <line
-                x1={center}
-                y1={center}
-                x2={center + selectedStar.x}
-                y2={center + selectedStar.y}
-                stroke="rgba(212,175,55,0.35)"
-                strokeWidth="0.8"
-              />
-            </svg>
-          ) : null}
-
           {inView &&
             stars.map((star) => (
               <Fragment key={star.member.id}>
@@ -311,7 +294,7 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         </div>
 
         {selected ? (
-          <div className="hidden lg:block sticky top-28 shrink-0">{spotlight}</div>
+          <div className="hidden lg:block absolute top-8 right-4 z-30">{spotlight}</div>
         ) : null}
       </div>
 

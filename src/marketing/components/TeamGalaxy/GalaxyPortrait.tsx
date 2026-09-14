@@ -25,13 +25,13 @@ export function GalaxyPortrait({ src, name, alt, className }: Props) {
       <div
         className={`relative flex items-center justify-center overflow-hidden ${className ?? ''}`}
         style={{
-          background: 'radial-gradient(circle at 50% 40%, rgba(212,175,55,0.18) 0%, #0c0a08 72%)',
+          background: 'radial-gradient(circle at 50% 40%, rgba(212,175,55,0.1) 0%, #080705 70%)',
         }}
         role={alt ? 'img' : undefined}
         aria-label={alt}
         aria-hidden={!alt}
       >
-        <span className="font-heading text-[#F7E7B5] text-[0.42em] tracking-[0.12em]">{monogram(name)}</span>
+        <span className="font-heading text-[#E8D9B0]/70 text-[0.34em] tracking-[0.08em]">{monogram(name)}</span>
       </div>
     );
   }

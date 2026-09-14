@@ -107,7 +107,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(244, 208, 63, 0.32) 0%, rgba(212, 175, 55, 0.12) 42%, transparent 72%);
+  background: radial-gradient(circle, rgba(244, 208, 63, 0.5) 0%, rgba(212, 175, 55, 0.18) 40%, transparent 72%);
   pointer-events: none;
 }
 
@@ -117,7 +117,7 @@
   left: 50%;
   transform: translate(-50%, -50%);
   border-radius: 50%;
-  background: radial-gradient(circle, rgba(247, 231, 181, 0.16) 0%, transparent 68%);
+  background: radial-gradient(circle, rgba(247, 231, 181, 0.28) 0%, transparent 68%);
   pointer-events: none;
 }
 
@@ -197,9 +197,9 @@
 
 .galaxy-docked-panel {
   width: min(360px, 34vw);
-  max-height: min(820px, calc(100vh - 8rem));
+  max-height: min(780px, calc(100vh - 7rem));
   overflow-y: auto;
-  background: rgba(8, 7, 5, 0.78);
+  background: rgba(8, 7, 5, 0.88);
   backdrop-filter: blur(18px);
   border: 1px solid rgba(212, 175, 55, 0.28);
   box-shadow: 0 0 40px rgba(212, 175, 55, 0.08);
