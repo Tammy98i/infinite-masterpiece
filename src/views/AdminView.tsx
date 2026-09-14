@@ -68,8 +68,9 @@ function normalizeExternalUrl(raw: string) {
 export function AdminView() {
   const { user, isAdmin, setView, categories, instructors, reloadCatalog } = useApp();
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = searchParams.get('tab');
-  const [tab, setTab] = useState<Tab>(initialTab === 'team-galaxy' ? 'team-galaxy' : 'overview');
+  const tabFromUrl = searchParams.get('tab');
+  const initialTab: Tab = tabFromUrl && tabFromUrl in TAB_META ? (tabFromUrl as Tab) : 'overview';
+  const [tab, setTab] = useState<Tab>(initialTab);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
 
   const staffDesk = user.staffDesk || '';
@@ -114,11 +115,11 @@ export function AdminView() {
   const goTab = (id: Tab) => {
     setTab(id);
     setMobileNavOpen(false);
-    if (id === 'team-galaxy') {
-      setSearchParams({ tab: 'team-galaxy' }, { replace: true });
-    } else if (searchParams.get('tab')) {
-      setSearchParams({}, { replace: true });
+    if (id === 'overview') {
+      if (searchParams.get('tab')) setSearchParams({}, { replace: true });
+      return;
     }
+    setSearchParams({ tab: id }, { replace: true });
   };
 
   const tabMeta = TAB_META[tab];
