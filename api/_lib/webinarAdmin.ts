@@ -3,7 +3,6 @@ import { hasSupabaseService, supabaseRest } from './supabaseAdmin.js';
 import { DEFAULT_WEBINAR_ID } from './webinarStore.js';
 import { zoomConfigured } from './zoom.js';
 import { isWebinarEmailEnabled } from './webinarMail.js';
-import { getPublicConfig } from './webinarStore.js';
 
 export async function webinarAdminPayload() {
   const emailEnabled = isWebinarEmailEnabled();
@@ -17,8 +16,7 @@ export async function webinarAdminPayload() {
     if (res.ok && Array.isArray(res.data)) registrations = res.data;
   }
 
-  const publicPayload = await getPublicConfig();
-  const config = publicPayload.config || DEFAULT_WEBINAR_CONFIG;
+  const config = { ...DEFAULT_WEBINAR_CONFIG };
   const hasWhatsapp = Boolean(String(config.whatsappGroupUrl || '').trim());
   const zoomOk = zoomConfigured() || Boolean(String(config.zoomLink || '').trim());
 

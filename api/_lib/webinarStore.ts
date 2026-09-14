@@ -5,7 +5,6 @@ import { DEFAULT_WEBINAR_CONFIG } from './staticData.js';
 import { hasSupabaseService, supabaseRest } from './supabaseAdmin.js';
 import { sendConfirmationEmail } from './webinarMail.js';
 import { zoomReady, zoomRegisterParticipant } from './zoom.js';
-import { stripTeamCms } from './teamCmsStore.js';
 
 export const DEFAULT_WEBINAR_ID = 'default';
 
@@ -76,7 +75,7 @@ export async function getPublicConfig(abVariantInput?: string) {
   );
   if (webinar.ok && Array.isArray(webinar.data) && webinar.data[0]) {
     const row = webinar.data[0];
-    Object.assign(config, stripTeamCms((row.config || {}) as Record<string, unknown>));
+    Object.assign(config, row.config || {});
     if (row.title) config.title = row.title;
     if (row.join_url) config.zoomLink = row.join_url;
   }
