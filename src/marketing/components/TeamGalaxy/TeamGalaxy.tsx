@@ -267,8 +267,8 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         <div
           className="relative mx-auto"
           style={{ width: containerSize, height: containerSize, maxWidth: '100%' }}
-          onClick={() => {
-            if (selected) close();
+          onClick={(e) => {
+            if (selected && e.target === e.currentTarget) close();
           }}
         >
           {orbitRadii.slice(1).map((r, i) => (
