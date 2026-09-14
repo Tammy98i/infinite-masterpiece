@@ -29,7 +29,7 @@ export function seedTeamMembersIfEmpty(db: DatabaseSync) {
       hierarchy_level = excluded.hierarchy_level,
       group_key = excluded.group_key,
       visual_tier = excluded.visual_tier,
-      featured = excluded.featured,
+      featured = team_members.featured,
       status = excluded.status,
       orbit = excluded.orbit,
       active = excluded.active,
@@ -74,6 +74,12 @@ export function seedTeamMembersIfEmpty(db: DatabaseSync) {
     `UPDATE team_members SET archived = 0 WHERE id IN (${keep.map(() => '?').join(', ')})`,
   ).run(...keep);
   db.prepare(`UPDATE team_members SET archived = 1, status = 'hidden' WHERE id = 'tm-daniel'`).run();
+
+  const featuredCount = db.prepare(`SELECT COUNT(*) as c FROM team_members WHERE featured = 1 AND archived = 0`).get() as { c: number };
+  if (Number(featuredCount?.c) >= 8) {
+    db.prepare(`UPDATE team_members SET featured = 0 WHERE archived = 0`).run();
+    db.prepare(`UPDATE team_members SET featured = 1 WHERE id IN ('tm-gal', 'tm-tami', 'tm-gleb')`).run();
+  }
 
   const insertSection = db.prepare(`
     INSERT INTO webinar_team_section (id, payload, updated_at)

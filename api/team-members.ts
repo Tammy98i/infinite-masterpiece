@@ -1,3 +1,4 @@
+import { publicTeamPayload } from './_lib/teamCmsStore.js';
 import { teamGalaxyPublicMembers } from '../src/constants/teamGalaxySeed.ts';
 
 type VercelReq = { method?: string; query?: Record<string, string | string[] | undefined>; url?: string };
@@ -6,10 +7,15 @@ type VercelRes = {
   json: (body: unknown) => void;
 };
 
-export default function handler(req: VercelReq, res: VercelRes) {
+export default async function handler(req: VercelReq, res: VercelRes) {
   if (req.method && req.method !== 'GET') {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
-  res.status(200).json(teamGalaxyPublicMembers());
+  try {
+    const payload = await publicTeamPayload();
+    res.status(200).json(payload.members);
+  } catch {
+    res.status(200).json(teamGalaxyPublicMembers());
+  }
 }

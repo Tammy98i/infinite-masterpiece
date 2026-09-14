@@ -11,7 +11,6 @@ import {
 import {
   WEBINAR_AUDIENCE_LABEL,
   WEBINAR_CTA_ENDED,
-  WEBINAR_GLEB,
   WEBINAR_PUNCHLINE,
   WEBINAR_REGISTER_ID,
   WEBINAR_TASK_STEPS,
@@ -34,6 +33,13 @@ import { WebinarCountdown } from '../components/WebinarCountdown';
 import { trackEvent, trackWebinarCta, scrollToWebinarForm, scrollToWebinarFit } from '../../utils/analytics';
 import { captureUtmFromSearch } from '../../utils/utm';
 import { getWebinarPhase } from '../../utils/webinarTime';
+import { teamMembersApi, type TeamMember } from '../../api/teamMembers';
+import {
+  TEAM_SECTION_DEFAULTS,
+  teamGalaxyPublicMembers,
+  type TeamSectionSettings,
+} from '../../constants/teamGalaxySeed';
+import { fillHostsLead, hostCard, hostFirstName, joinHebrewNames, webinarHosts } from '../../constants/webinarHosts';
 import { TeamPhoto } from '../../components/TeamPhoto';
 import { TeamGalaxy } from '../components/TeamGalaxy/TeamGalaxy';
 
@@ -65,27 +71,25 @@ function SectionTitle({ children }: { children: ReactNode }) {
 
 const REGISTER_CARD_CLASS = 'rounded-3xl border border-[#C8A24C]/25 bg-[#07070c]/80 p-5 sm:p-8 lg:p-10';
 
-function HostFaces({ live }: { live: boolean }) {
-  const hosts = [
-    { name: 'גל', src: '/team/gal.png' },
-    { name: 'תמי', src: '/team/tami.png' },
-    { name: 'גלב', src: '/team/gleb.png' },
-  ];
+function HostFaces({ live, members }: { live: boolean; members: TeamMember[] }) {
+  const hosts = webinarHosts(members).map(hostCard);
+  const names = joinHebrewNames(webinarHosts(members).map((member) => hostFirstName(member)));
+  if (!hosts.length) return null;
   return (
     <div className="flex items-center justify-center gap-3 mb-5 sm:mb-6">
       <div className="flex -space-x-3 space-x-reverse sm:-space-x-4">
         {hosts.map((host) => (
-          <span key={host.name} className="inline-flex">
+          <span key={host.id} className="inline-flex">
             <TeamPhoto
-              src={host.src}
+              src={host.image}
               name={host.name}
-              alt={host.name}
+              alt={host.alt}
               className="w-[72px] h-[72px] rounded-full border-2 border-[#C8A24C] text-base"
             />
           </span>
         ))}
       </div>
-      <p className="text-xs sm:text-sm text-white/60 font-light">{live ? 'גל, תמי וגלב בלייב' : 'גל, תמי וגלב'}</p>
+      <p className="text-xs sm:text-sm text-white/60 font-light">{live ? `${names} בלייב` : names}</p>
     </div>
   );
 }
@@ -104,6 +108,8 @@ export function WebinarLanding() {
   const fitRef = useRef<HTMLElement>(null);
   const fitTracked = useRef(false);
   const [now, setNow] = useState(() => Date.now());
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>(() => teamGalaxyPublicMembers() as TeamMember[]);
+  const [teamSettings, setTeamSettings] = useState<TeamSectionSettings>(TEAM_SECTION_DEFAULTS);
   const [configReady, setConfigReady] = useState(false);
   const [faqExpanded, setFaqExpanded] = useState(false);
 
@@ -117,6 +123,13 @@ export function WebinarLanding() {
         setConfigReady(true);
       })
       .catch(() => setConfigReady(true));
+    teamMembersApi
+      .publicSection('he')
+      .then((res) => {
+        if (res.members?.length) setTeamMembers(res.members);
+        if (res.settings) setTeamSettings({ ...TEAM_SECTION_DEFAULTS, ...res.settings });
+      })
+      .catch(() => undefined);
   }, []);
 
   useEffect(() => {
@@ -155,6 +168,8 @@ export function WebinarLanding() {
     ? getWebinarPhase(config.date, config.time, config.durationMinutes, now)
     : 'upcoming';
   const copy = webinarCopy(eventPhase);
+  const hosts = webinarHosts(teamMembers).map(hostCard);
+  const hostsLead = fillHostsLead(copy.hostsLead, teamMembers);
   const faqs = webinarFaqForPhase(eventPhase);
   const visibleFaqs = faqExpanded ? faqs : faqs.slice(0, WEBINAR_FAQ_PREVIEW_COUNT);
   const cmsHeadline = splitHeroHeadline(activeHeadline);
@@ -169,27 +184,6 @@ export function WebinarLanding() {
     trackWebinarCta(section);
     scrollToWebinarForm();
   };
-
-  const hosts = [
-    {
-      name: config.leaderPrimaryName,
-      title: config.leaderPrimaryTitle,
-      bio: config.leaderPrimaryBio,
-      image: '/team/gal.png',
-    },
-    {
-      name: config.leaderSecondaryName,
-      title: config.leaderSecondaryTitle,
-      bio: config.leaderSecondaryBio,
-      image: '/team/tami.png',
-    },
-    {
-      name: WEBINAR_GLEB.name,
-      title: WEBINAR_GLEB.title,
-      bio: WEBINAR_GLEB.bio,
-      image: '/team/gleb.png',
-    },
-  ];
 
   const heroCta = () => {
     if (eventEnded) {
@@ -320,12 +314,12 @@ export function WebinarLanding() {
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>{copy.hostsLabel}</SectionLabel>
           <SectionTitle>לא באים רק ללמוד. באים לבצע.</SectionTitle>
-          <p className="text-white/65 font-light leading-relaxed max-w-[720px] mx-auto mb-8 text-[16px]">{copy.hostsLead}</p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-10 items-stretch">
+          <p className="text-white/65 font-light leading-relaxed max-w-[720px] mx-auto mb-8 text-[16px]">{hostsLead}</p>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 mb-10 items-stretch">
             {hosts.map((leader) => (
-              <article key={leader.name} className="rounded-3xl border border-white/10 bg-[#07070c]/70 overflow-hidden flex flex-col h-full">
+              <article key={leader.id} className="rounded-3xl border border-white/10 bg-[#07070c]/70 overflow-hidden flex flex-col h-full">
                 <div className="aspect-[4/3] overflow-hidden bg-[#0b1020]">
-                  <TeamPhoto src={leader.image} name={leader.name} alt={leader.name} className="w-full h-full text-6xl" />
+                  <TeamPhoto src={leader.image} name={leader.name} alt={leader.alt} className="w-full h-full text-6xl" />
                 </div>
                 <div className="p-5 text-center flex-1">
                   <h3 className="text-xl text-white mb-1">{leader.name}</h3>
@@ -349,7 +343,7 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <TeamGalaxy />
+      <TeamGalaxy preview={{ settings: teamSettings, members: teamMembers }} />
 
       <section id="webinar-fit" ref={fitRef} className="relative py-12 md:py-20 bg-[#07070c]/86">
         <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -419,7 +413,7 @@ export function WebinarLanding() {
             aria-label={copy.registerAria}
             className={`${REGISTER_CARD_CLASS} mx-auto w-full max-w-xl md:max-w-2xl text-start scroll-mt-24`}
           >
-            <HostFaces live={eventNight} />
+            <HostFaces live={eventNight} members={teamMembers} />
             <WebinarRegistrationForm
               payload={payload}
               formId={`${WEBINAR_REGISTER_ID}-form`}

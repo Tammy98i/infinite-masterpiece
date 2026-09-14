@@ -13,7 +13,17 @@ import { createTeamFounder, listTeamFounders, reorderTeamFounders, updateTeamFou
 import { createTeamMessage, listTeamMessages } from '../_lib/teamMessagesStore.js';
 import { CATEGORIES, COURSES } from '../_lib/staticData.js';
 import { webinarAdminPayload } from '../_lib/webinarAdmin.js';
-import { TEAM_SECTION_DEFAULTS, teamGalaxyPublicMembers } from '../../src/constants/teamGalaxySeed.ts';
+import {
+  adminTeamPayload,
+  archiveRemoteTeamMember,
+  createRemoteTeamMember,
+  duplicateRemoteTeamMember,
+  publishTeamSection,
+  reorderRemoteTeamMembers,
+  saveRemoteWebinarConfig,
+  saveTeamSectionDraft,
+  updateRemoteTeamMember,
+} from '../_lib/teamCmsStore.js';
 
 type VercelReq = {
   method?: string;
@@ -146,14 +156,15 @@ export default async function handler(req: VercelReq, res: VercelRes) {
       return;
     }
     if (method === 'GET' && route === 'team-members') {
-      json(res, 200, teamGalaxyPublicMembers());
+      json(res, 200, (await adminTeamPayload()).members);
       return;
     }
     if (method === 'GET' && route === 'webinar-team-section') {
+      const payload = await adminTeamPayload();
       json(res, 200, {
-        draft: TEAM_SECTION_DEFAULTS,
-        live: TEAM_SECTION_DEFAULTS,
-        versions: [],
+        draft: payload.draft,
+        live: payload.live,
+        versions: payload.versions,
       });
       return;
     }
@@ -283,6 +294,48 @@ export default async function handler(req: VercelReq, res: VercelRes) {
       });
       const row = updated || profiles.find((item) => item.id === userMatch[1]);
       json(res, 200, { user: usersFromProfiles(row ? [row] : [])[0] });
+      return;
+    }
+
+    if (method === 'PATCH' && route === 'webinar') {
+      const body = bodyOf(req);
+      const config = await saveRemoteWebinarConfig((body.config || body) as Record<string, unknown>);
+      json(res, 200, { config });
+      return;
+    }
+    if (method === 'POST' && route === 'team-members') {
+      const member = await createRemoteTeamMember(bodyOf(req) as never);
+      json(res, 201, member);
+      return;
+    }
+    if (method === 'PUT' && route === 'team-members/reorder') {
+      const idsRaw = bodyOf(req).ids;
+      const ids = Array.isArray(idsRaw) ? idsRaw.map(String) : [];
+      await reorderRemoteTeamMembers(ids);
+      json(res, 200, { success: true });
+      return;
+    }
+    if (method === 'PUT' && route === 'webinar-team-section') {
+      json(res, 200, await saveTeamSectionDraft(bodyOf(req) as never));
+      return;
+    }
+    if (method === 'POST' && route === 'webinar-team-section/publish') {
+      json(res, 200, await publishTeamSection());
+      return;
+    }
+    const teamDup = route.match(/^team-members\/([^/]+)\/duplicate$/);
+    if (method === 'POST' && teamDup) {
+      json(res, 201, await duplicateRemoteTeamMember(decodeURIComponent(teamDup[1])));
+      return;
+    }
+    const teamMatch = route.match(/^team-members\/([^/]+)$/);
+    if (method === 'PUT' && teamMatch) {
+      json(res, 200, await updateRemoteTeamMember(decodeURIComponent(teamMatch[1]), bodyOf(req) as never));
+      return;
+    }
+    if (method === 'DELETE' && teamMatch) {
+      await archiveRemoteTeamMember(decodeURIComponent(teamMatch[1]));
+      json(res, 200, { success: true });
       return;
     }
 

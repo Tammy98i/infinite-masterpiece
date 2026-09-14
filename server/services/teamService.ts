@@ -197,7 +197,7 @@ function mergeInput(existing: TeamMember | null, input: TeamMemberInput) {
     hierarchy_level: input.hierarchy_level ?? existing?.hierarchy_level ?? group_key,
     group_key,
     visual_tier: input.visual_tier ?? existing?.visual_tier ?? 'medium',
-    featured: input.featured ?? existing?.featured ?? true,
+    featured: input.featured ?? existing?.featured ?? false,
     status,
     archived: input.archived ?? existing?.archived ?? false,
     orbit: input.orbit ?? existing?.orbit ?? 2,
