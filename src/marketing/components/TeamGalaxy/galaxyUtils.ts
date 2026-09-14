@@ -58,7 +58,7 @@ export interface PositionedStar {
 }
 
 /** Radii sized for 22 people with label breathing room. */
-export const ORBIT_RADII = [0, 252, 392, 538];
+export const ORBIT_RADII = [0, 228, 340, 450];
 export const ELLIPSE_Y = 0.86;
 
 function leadershipAngle(member: TeamMember, fallbackIndex: number, count: number): number {

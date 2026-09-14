@@ -113,15 +113,15 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
   const scale = isMobile
     ? 1
     : Math.min(
-        isTablet ? 0.82 : 1,
-        Math.max(0.62, (viewport.w - (isTablet ? 48 : 280)) / 1280),
-        Math.max(0.62, (viewport.h - 160) / 1080),
+        isTablet ? 0.78 : 0.88,
+        Math.max(0.55, (viewport.w - 80) / 1280),
+        Math.max(0.55, (viewport.h - 250) / 920),
       );
 
   const { stars, orbitRadii } = useMemo(() => calculatePositions(members, scale), [members, scale]);
   const containerSize = useMemo(() => {
     const maxR = orbitRadii[3] || 518;
-    return maxR * 2 + 168;
+    return maxR * 2 + 110;
   }, [orbitRadii]);
 
   const dust = useMemo(
@@ -237,7 +237,7 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         />
       ))}
 
-      <div className="relative z-20 text-center px-4 pt-24 pb-2">
+      <div className="relative z-20 text-center px-4 pt-20 pb-1">
         <motion.h2
           initial={reducedMotion ? false : { opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -259,7 +259,7 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         <p className="mt-3 text-[13px] text-[#C5A059]">לחצו על אדם כדי להכיר</p>
       </div>
 
-      <div className="relative z-10 flex items-center justify-center px-4 pt-2 pb-20 min-h-[720px]">
+      <div className="relative z-10 flex items-center justify-center px-4 pt-1 pb-24">
         <div
           className="relative mx-auto"
           style={{ width: containerSize, height: containerSize, maxWidth: '100%' }}
