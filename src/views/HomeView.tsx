@@ -18,6 +18,8 @@ import {
 } from '../utils/libraryHome';
 import { getRecommendedWithReasons } from '../utils/recommendations';
 import { trackEvent } from '../utils/analytics';
+import { LibraryQuickActions } from '../components/LibraryQuickActions';
+import { CatalogLoadingNotice } from '../components/CatalogLoadingNotice';
 
 export const HomeView: React.FC = () => {
   const {
@@ -146,6 +148,8 @@ export const HomeView: React.FC = () => {
 
       <div className="relative z-10 -mt-16 md:-mt-24">
         <LibraryPlanBanner />
+        <LibraryQuickActions />
+        {isLoading ? <CatalogLoadingNotice /> : null}
 
         {catalogStatus === 'error' && (
           <SectionError

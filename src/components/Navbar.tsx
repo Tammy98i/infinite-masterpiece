@@ -44,6 +44,18 @@ export const Navbar: React.FC = () => {
   }, []);
 
   useEffect(() => {
+    const openSearch = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+      if (event.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
+        event.preventDefault();
+        setIsSearchOpen(true);
+      }
+    };
+    window.addEventListener('keydown', openSearch);
+    return () => window.removeEventListener('keydown', openSearch);
+  }, []);
+
+  useEffect(() => {
     if (isSearchOpen && searchInputRef.current) {
       searchInputRef.current.focus();
     }
@@ -245,11 +257,13 @@ export const Navbar: React.FC = () => {
                     setIsSearchOpen(true);
                   }}
                   data-onboarding="search"
-                  className="p-2.5 rounded-full text-zinc-300 hover:text-white hover:bg-white/10 transition-colors min-h-11 min-w-11 flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C]"
+                  className="px-3 rounded-full border border-white/10 text-zinc-300 hover:text-white hover:border-[#C8A24C]/40 hover:bg-white/5 transition-colors min-h-11 min-w-11 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C]"
                   title="חיפוש בספרייה"
                   aria-label="חיפוש בספרייה"
                 >
                   <Search className="w-5 h-5" />
+                  <span className="hidden lg:inline text-sm">חיפוש</span>
+                  <kbd className="hidden xl:inline text-[10px] text-white/30">/</kbd>
                 </button>
               )}
             </div>
