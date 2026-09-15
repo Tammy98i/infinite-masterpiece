@@ -31,6 +31,7 @@ export type Tab =
   | 'content'
   | 'categories'
   | 'founders'
+  | 'galaxy'
   | 'team'
   | 'lecturers'
   | 'premium88'
@@ -85,6 +86,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { id: 'users', label: 'משתמשים', ready: true, icon: Users, keywords: 'users משתמשים' },
       { id: 'team', label: 'צוות ומרצים', ready: true, icon: UserCog, badge: 'חדש', keywords: 'team staff desk' },
       { id: 'founders', label: 'צוות מייסדים', ready: true, icon: Crown, keywords: 'founders מייסדים' },
+      { id: 'galaxy', label: 'גלקסיית הצוות', ready: true, icon: UsersRound, keywords: 'galaxy team members impact השפעה' },
       { id: 'lecturers', label: 'בקשות מרצים', ready: true, icon: GraduationCap, keywords: 'lecturer בקשות' },
     ],
   },
@@ -136,6 +138,7 @@ export const TAB_META: Record<
   users: { title: 'משתמשים', description: 'רשימת משתמשים, מנויים ושיוך לצוות', group: 'אנשים והרשאות' },
   team: { title: 'צוות ומרצים', description: 'דסקים פנימיים, סטטוס גישה והודעות לצוות', group: 'אנשים והרשאות' },
   founders: { title: 'צוות מייסדים', description: 'תמונות, ביו וקישורים בעמוד הציבורי', group: 'אנשים והרשאות' },
+  galaxy: { title: 'גלקסיית הצוות', description: 'פרופילים, תמונות, השפעה ומסלולים בוובינר', group: 'אנשים והרשאות' },
   lecturers: { title: 'בקשות מרצים', description: 'אישור והפעלת מרצים חדשים', group: 'אנשים והרשאות' },
   payments: { title: 'מנויים ותשלומים', description: 'חיובים, מנויים ותשלומי מסלול', group: 'מסחר והכנסות' },
   tracks: { title: 'מסלולי כניסה', description: 'אמיצים, הססנים ומעקב תשלומים', group: 'מסחר והכנסות' },

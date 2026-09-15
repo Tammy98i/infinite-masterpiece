@@ -8,6 +8,7 @@ import { fieldClass, STAFF_DESK_LABEL, STAFF_DESK_TABS } from './admin/adminCons
 import { UsersRolesPermissionsView } from './admin/UsersRolesPermissionsView';
 import { UsersAccountsView } from './admin/UsersAccountsView';
 import { TeamStaffView } from './admin/TeamStaffView';
+import { TeamMembersPanel } from './admin/TeamMembersPanel';
 import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/captions';
 import { adminApi, type AdminAnalytics, type AdminAuditLog, type AdminCrmLead, type AdminNotification, type AdminOverview, type AdminPaymentRow, type AdminPremium88Application, type AdminRaffleDashboard, type AdminReadiness, type AdminTrackLead, type AdminTracksDashboard, type AdminWebinarDashboard, type CoursePayload } from '../api/admin';
 import { DEFAULT_WEBINAR_CONFIG, type WebinarConfig } from '../constants/webinar';
@@ -197,6 +198,7 @@ export function AdminView() {
             )}
             {tab === 'lecturers' && <LecturerApplicationsPanel />}
             {tab === 'team' && <TeamStaffView />}
+            {tab === 'galaxy' && <TeamMembersPanel />}
             {tab === 'founders' && <FoundersPanel />}
             {tab === 'payments' && <PaymentsPanel />}
             {tab === 'tracks' && <TracksPanel />}

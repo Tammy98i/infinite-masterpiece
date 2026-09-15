@@ -5,6 +5,7 @@ import { fileURLToPath } from 'url';
 import { seedDatabase } from './seed.js';
 import { seedAdminIfMissing, seedCatalogIfEmpty, seedDemoLecturersIfMissing, seedFounderLecturers } from './catalogSeed.js';
 import { migrateSchema } from './migrate.js';
+import { initializeTeamMembers } from './teamMembers.js';
 import { seedWebinarConfigIfMissing } from '../services/webinarService.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -37,6 +38,7 @@ export function getDb(): DatabaseSync {
   seedAdminIfMissing(db);
   seedDemoLecturersIfMissing(db);
   seedWebinarConfigIfMissing();
+  initializeTeamMembers(db);
 
   return db;
 }

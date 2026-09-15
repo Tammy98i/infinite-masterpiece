@@ -29,4 +29,13 @@ docker compose -f docker-compose.base44.yml up -d
 ## Notes
 - SQLite DB persists in the `vod-data` Docker volume across restarts.
 - The repo's own `docker-compose.yml` builds a production image — do NOT use it for dev (it freezes source).
-- `npm run lint` = `tsc --noEmit`; `npm test` runs unit tests via `tsx --test`.
+- `npm run lint` = `tsc --noEmit`; `npm test` includes the galaxy math/validation and in-memory SQLite CRUD tests.
+
+## Team galaxy
+- `/webinar#team-universe` renders the team galaxy; Admin → גלקסיית הצוות manages the separate `team_members` collection.
+- `initializeTeamMembers` runs after founder/catalog seeding. A `site_settings.team_members_imported` marker makes this a one-time import; CMS edits and hidden members survive restarts. Only existing founder records plus the webinar's Gleb profile are imported. Initial impact scores are editable presentation defaults, not verified measurements.
+- Public `GET /api/team-members` returns active members only. `/api/admin/team-members` GET/POST/PUT uses the existing server-side admin authentication and audit log. Only one active founder is allowed. Images use the existing authenticated `/api/upload` flow.
+- Gleb's image is absent from the repository: the new profile starts with an empty photo and renders a gold monogram, not a stock image.
+- The Base44 Compose command now uses `tsx watch` alongside Vite so API source edits reload too.
+- Explicitly empty VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY must remain empty, not fall back to the project's published Supabase defaults. Otherwise local demo login returns a client-only preview token that cannot authorize API writes. With local defaults, sign out of any old preview-only session and log in again to get a real SQLite session.
+- These endpoints are implemented for the Express runtime used by Compose; the separate Vercel serverless API tree does not provide the new Team Members endpoints.

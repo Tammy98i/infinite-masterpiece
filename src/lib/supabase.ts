@@ -3,8 +3,10 @@ import { apiUrl } from './apiBase';
 import { SUPABASE_ANON_KEY, SUPABASE_PROJECT_URL } from './supabasePublic';
 import { setRuntimeAdminEmails } from '../data/adminEmails';
 
-const buildUrl = import.meta.env.VITE_SUPABASE_URL?.trim() || SUPABASE_PROJECT_URL;
-const buildAnon = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() || SUPABASE_ANON_KEY;
+// Explicitly empty values opt into local auth (e.g. the Compose preview).
+// Keep the existing published defaults only when the variables are absent.
+const buildUrl = import.meta.env.VITE_SUPABASE_URL?.trim() ?? SUPABASE_PROJECT_URL;
+const buildAnon = import.meta.env.VITE_SUPABASE_ANON_KEY?.trim() ?? SUPABASE_ANON_KEY;
 
 let runtimeUrl = '';
 let runtimeAnon = '';
