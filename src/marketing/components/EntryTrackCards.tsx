@@ -24,7 +24,7 @@ export function EntryTrackCards() {
 
   return (
     <div className="w-full max-w-4xl mx-auto">
-      <div className="grid grid-cols-2 gap-4 text-center items-stretch">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center items-stretch">
         <article className="glass-card flex flex-col p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3 min-h-8 mb-3">
             <h3 className="text-lg sm:text-xl font-heading text-white">מסלול האמיצים</h3>

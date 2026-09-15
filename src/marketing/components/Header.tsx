@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, X, Infinity as InfinityIcon } from 'lucide-react';
+import { Menu, Search, X, Infinity as InfinityIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
 import { motion, AnimatePresence } from 'motion/react';
 import { AccountMenu } from '../../components/AccountMenu';
@@ -13,6 +13,7 @@ import {
   WEBINAR_REGISTER_ID,
 } from '../../constants/webinarPage';
 import { useWebinarPhase } from '../hooks/useWebinarPhase';
+import { SiteSearch } from './SiteSearch';
 
 const WEBINAR_NAV = [
   { name: 'הצוות', to: '/webinar#hosts' },
@@ -23,6 +24,7 @@ const WEBINAR_NAV = [
 export function Header() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
   const onPremium88 = location.pathname === '/premium-88';
   const onPricing = location.pathname === '/pricing';
@@ -153,11 +155,20 @@ export function Header() {
   };
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    const handleSearch = (event: KeyboardEvent) => {
+      const target = event.target as HTMLElement;
+      if ((event.key === '/' || ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k')) && !['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
+        event.preventDefault();
+        setSearchOpen(true);
+      }
     };
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    window.addEventListener('keydown', handleSearch);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('keydown', handleSearch);
+    };
   }, []);
 
   const defaultNavLinks: Array<{ name: string; to: string; accent?: boolean }> = [
@@ -179,6 +190,7 @@ export function Header() {
   };
 
   return (
+    <>
     <header
       role="banner"
       aria-label="כותרת האתר"
@@ -229,6 +241,7 @@ export function Header() {
           </nav>
 
           <div className="flex items-center justify-end gap-2 sm:gap-3 shrink-0">
+            <button type="button" onClick={() => setSearchOpen(true)} className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-white/60 transition-colors hover:bg-white/5 hover:text-white" aria-label="חיפוש באתר"><Search className="h-5 w-5" strokeWidth={1.5} /></button>
             <div className="hidden lg:flex items-center gap-3">
               {headerCta()}
               {!onWebinar ? (
@@ -299,5 +312,7 @@ export function Header() {
         )}
       </AnimatePresence>
     </header>
+    <SiteSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
+    </>
   );
 }

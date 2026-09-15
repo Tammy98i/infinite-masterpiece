@@ -11,11 +11,14 @@ import {
   PlaySquare,
   UserCircle,
   LineChart,
+  ChevronDown,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { EntryTrackCards } from '../components/EntryTrackCards';
 import { WEBINAR_CTA_ENDED, WEBINAR_CTA_HEADER, WEBINAR_CTA_NEXT_CYCLE } from '../../constants/webinarPage';
 import { useWebinarPhase } from '../hooks/useWebinarPhase';
+import { SectionNav } from '../components/SectionNav';
+import { FAQS } from './FAQPage';
 
 const MotionDiv = motion.div;
 const MotionSection = motion.section;
@@ -91,6 +94,15 @@ export function Home() {
           </div>
         </div>
       </section>
+
+      <SectionNav items={[
+        { id: 'what-is-it', label: 'במה זה שונה' },
+        { id: 'depth-layer', label: 'נבחרת 88' },
+        { id: 'infinite-library', label: 'הפלטפורמה' },
+        { id: 'pricing', label: 'מסלולים ומחיר' },
+        { id: 'who-is-it-for', label: 'דרך מדורגת' },
+        { id: 'home-faq', label: 'שאלות' },
+      ]} />
 
       {/* 2. UNIQUE VALUE */}
       <MotionSection
@@ -303,6 +315,15 @@ export function Home() {
               ואחר כך 80, 800 ו־8,000 לפי שלבי המיזם
             </span>
           </Link>
+        </div>
+      </MotionSection>
+
+      <MotionSection initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, margin: '-80px' }} transition={MOTION} id="home-faq" className="section-block relative">
+        <div className="mx-auto max-w-[800px] px-4 sm:px-6 lg:px-8">
+          <p className="mb-4 text-[13px] font-semibold uppercase tracking-[.3em] text-[#C8A24C]">בהירות לפני החלטה</p>
+          <h2 className="mb-10 text-3xl font-heading text-white md:text-5xl">שאלות שכדאי לשאול</h2>
+          <div className="space-y-3 text-right">{FAQS.slice(0, 4).map(item => <details key={item.q} className="group glass-card p-5"><summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 text-white"><span>{item.q}</span><ChevronDown className="h-4 w-4 shrink-0 text-[#C8A24C] transition-transform group-open:rotate-180" /></summary><p className="mt-4 text-sm font-light leading-relaxed text-white/50">{item.a}</p></details>)}</div>
+          <Link to="/faq" className="mt-8 inline-flex min-h-11 items-center text-sm text-[#C8A24C] hover:text-[#F7E7B5]">לכל השאלות הנפוצות</Link>
         </div>
       </MotionSection>
     </div>

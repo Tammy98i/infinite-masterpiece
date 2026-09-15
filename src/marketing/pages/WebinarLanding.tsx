@@ -68,7 +68,7 @@ function HostFaces() {
   const hosts = [
     { name: 'גל', src: '/team/gal.png' },
     { name: 'תמי', src: '/team/tami.png' },
-    { name: 'גלב', src: '/team/gleb.png' },
+    { name: 'גלב', src: undefined },
   ];
   return (
     <div className="flex items-center justify-center gap-3 mb-5 sm:mb-6">
@@ -194,7 +194,7 @@ export function WebinarLanding() {
       name: WEBINAR_GLEB.name,
       title: WEBINAR_GLEB.title,
       bio: WEBINAR_GLEB.bio,
-      image: '/team/gleb.png',
+      image: undefined,
     },
   ];
 

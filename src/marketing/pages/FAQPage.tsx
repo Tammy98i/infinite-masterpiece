@@ -1,9 +1,9 @@
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { ChevronDown, Infinity } from 'lucide-react';
+import { ChevronDown, Infinity, Search, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
-const faqs = [
+export const FAQS = [
   {
     q: "מה זה Infinite Masterpiece?",
     a: "Infinite Masterpiece היא מערכת־על ליוצרים, אמנים ואנשים יצירתיים. זה לא עוד 'קורס דיגיטלי', אלא תוכנית ליווי ביצועית בת 33 ימים שנועדה לבנות מערכת הכנסה ושיווק מסודרת סביב הכישרון שלך."
@@ -44,6 +44,11 @@ const faqs = [
 
 export function FAQPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(0);
+  const [query, setQuery] = useState('');
+  const filteredFaqs = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    return normalized ? FAQS.filter(item => `${item.q} ${item.a}`.toLowerCase().includes(normalized)) : FAQS;
+  }, [query]);
 
   return (
     <div className="min-h-screen relative pt-32 pb-48">
@@ -60,8 +65,15 @@ export function FAQPage() {
           </p>
         </div>
 
+        <label className="relative mb-8 block">
+          <span className="sr-only">חיפוש בשאלות נפוצות</span>
+          <Search className="pointer-events-none absolute start-5 top-1/2 h-5 w-5 -translate-y-1/2 text-[#C8A24C]" />
+          <input value={query} onChange={event => { setQuery(event.target.value); setOpenIndex(null); }} placeholder="חיפוש לפי נושא או שאלה…" className="min-h-14 w-full rounded-2xl border border-white/10 bg-white/[0.03] py-3 pe-12 ps-14 text-white outline-none placeholder:text-white/35 focus:border-[#C8A24C]/60" />
+          {query ? <button type="button" onClick={() => setQuery('')} className="absolute end-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center text-white/40 hover:text-white" aria-label="ניקוי חיפוש"><X size={17} /></button> : null}
+        </label>
+        <p className="mb-4 text-sm text-white/40" role="status">{filteredFaqs.length} שאלות</p>
         <div className="space-y-4 mb-32">
-          {faqs.map((faq, idx) => (
+          {filteredFaqs.map((faq, idx) => (
             <div 
               key={idx}
               className="glass-card overflow-hidden transition-colors hover:border-[#C8A24C]/50"
@@ -93,6 +105,7 @@ export function FAQPage() {
               </AnimatePresence>
             </div>
           ))}
+          {filteredFaqs.length === 0 ? <div className="glass-card p-10 text-center"><p className="text-white/55">לא נמצאה תשובה מתאימה.</p><Link to="/webinar" className="mt-4 inline-flex min-h-11 items-center text-[#C8A24C] hover:text-[#F7E7B5]">אפשר לשאול אותנו בערב החי</Link></div> : null}
         </div>
 
         {/* Hesitation CTA in FAQ */}
