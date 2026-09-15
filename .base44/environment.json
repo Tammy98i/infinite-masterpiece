@@ -1,0 +1,48 @@
+{
+  "previewPort": 3000,
+  "healthPath": "/api/health",
+  "startCommand": "docker compose -f docker-compose.base44.yml up -d",
+  "secrets": [
+    {
+      "name": "GEMINI_API_KEY",
+      "description": "Google Gemini API key for AI features. Get it from Google AI Studio (aistudio.google.com) → Get API Key. A dev placeholder is set so the app boots; replace with a real key to enable AI features.",
+      "requiredAtBoot": false,
+      "generatedForDevelopment": true
+    },
+    {
+      "name": "STRIPE_SECRET_KEY",
+      "description": "Stripe secret key for checkout. Leave empty for lead-only capture. Get from Stripe Dashboard → Developers → API keys.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "STRIPE_WEBHOOK_SECRET",
+      "description": "Stripe webhook signing secret for checkout webhooks. Get from Stripe Dashboard → Developers → Webhooks.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "STRIPE_PUBLISHABLE_KEY",
+      "description": "Stripe publishable key for client-side checkout. Get from Stripe Dashboard → Developers → API keys.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "RESEND_API_KEY",
+      "description": "Resend API key for webinar email notifications. Get from Resend Dashboard → API Keys.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "VITE_SUPABASE_URL",
+      "description": "Supabase project URL for auth. Get from Supabase Dashboard → Project Settings → API.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "VITE_SUPABASE_ANON_KEY",
+      "description": "Supabase anon key for client-side auth. Get from Supabase Dashboard → Project Settings → API.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "SUPABASE_SERVICE_ROLE_KEY",
+      "description": "Supabase service role key for server-side operations. Get from Supabase Dashboard → Project Settings → API.",
+      "requiredAtBoot": false
+    }
+  ]
+}
