@@ -1,7 +1,7 @@
 import type { Tab } from './adminNav';
 
 export const fieldClass =
-  'w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11';
+  'w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white placeholder:text-white/30 focus:border-[#C8A24C] focus:ring-1 focus:ring-[#C8A24C]/30 focus:outline-none min-h-11 disabled:cursor-not-allowed disabled:opacity-55';
 
 export const STAFF_DESK_TABS: Record<string, Tab[]> = {
   content: ['overview', 'content', 'categories', 'lecturers', 'founders', 'team', 'access', 'notifications', 'audit', 'onboarding'],

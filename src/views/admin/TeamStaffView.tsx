@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { RefreshCw } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { adminApi, type AdminUserRow } from '../../api/admin';
@@ -6,6 +6,8 @@ import { AdminPageShell } from './AdminPageShell';
 import { TeamMessageComposer } from './TeamMessageComposer';
 import { TAB_META } from './adminNav';
 import { fieldClass, STAFF_DESK_LABEL } from './adminConstants';
+import { AdminListControls } from './AdminListControls';
+import { AdminStatusBadge } from './AdminStatusBadge';
 
 type StaffFilter = 'all' | 'lecturer' | 'staff' | 'founder';
 
@@ -17,6 +19,7 @@ export function TeamStaffView() {
   const [filter, setFilter] = useState<StaffFilter>('all');
   const [error, setError] = useState('');
   const [pendingId, setPendingId] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
 
   const load = () =>
     adminApi
@@ -28,14 +31,17 @@ export function TeamStaffView() {
     void load();
   }, []);
 
-  const rows = users.filter((row) => {
+  const rows = useMemo(() => users.filter((row) => {
+    const normalized = query.trim().toLowerCase();
+    const matchesQuery = !normalized || `${row.name} ${row.email} ${row.staffDesk || ''}`.toLowerCase().includes(normalized);
+    if (!matchesQuery) return false;
     const isStaff = row.role === 'admin' || Boolean(row.staffDesk);
     const isLecturer = row.role === 'instructor';
     if (filter === 'lecturer') return isLecturer;
     if (filter === 'staff') return isStaff;
     if (filter === 'founder') return Boolean(row.isFounder);
     return isStaff || isLecturer || Boolean(row.isFounder);
-  });
+  }), [users, filter, query]);
 
   const selected = users.find((row) => row.id === selectedId) || null;
 
@@ -69,7 +75,8 @@ export function TeamStaffView() {
     <AdminPageShell group={meta.group} title={meta.title} description={meta.description} actions={headerActions}>
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
-      <div className="flex flex-wrap gap-2">
+      <AdminListControls query={query} onQueryChange={setQuery} placeholder="חיפוש איש צוות, מרצה או דסק…" count={rows.length} total={users.filter(row => row.role === 'admin' || row.role === 'instructor' || Boolean(row.staffDesk) || Boolean(row.isFounder)).length}>
+        <div className="flex flex-wrap gap-2">
         {(
           [
             ['all', 'הכל'],
@@ -91,7 +98,8 @@ export function TeamStaffView() {
             {label}
           </button>
         ))}
-      </div>
+        </div>
+      </AdminListControls>
 
       <div className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
         <div className="overflow-x-auto border border-white/10 rounded-2xl bg-white/[0.02]">
@@ -130,13 +138,9 @@ export function TeamStaffView() {
                     <td className="py-3 px-3 text-white/60">{row.role === 'admin' ? 'אדמין' : row.role === 'instructor' ? 'מרצה' : 'משתמש'}</td>
                     <td className="py-3 px-3 text-white/55">{row.staffDesk ? STAFF_DESK_LABEL[row.staffDesk] || row.staffDesk : '—'}</td>
                     <td className="py-3 px-3 text-white/55">
-                      {row.blocked
-                        ? 'חסום'
-                        : row.staffStatus === 'suspended'
-                          ? 'מושהה'
-                          : row.staffStatus === 'limited'
-                            ? 'מוגבל'
-                            : 'פעיל'}
+                      <AdminStatusBadge tone={row.blocked || row.staffStatus === 'suspended' ? 'danger' : row.staffStatus === 'limited' ? 'warning' : 'success'}>
+                        {row.blocked ? 'חסום' : row.staffStatus === 'suspended' ? 'מושהה' : row.staffStatus === 'limited' ? 'מוגבל' : 'פעיל'}
+                      </AdminStatusBadge>
                     </td>
                   </tr>
                 ))

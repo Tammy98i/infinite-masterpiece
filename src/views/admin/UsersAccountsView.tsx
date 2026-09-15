@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Plus, RefreshCw } from 'lucide-react';
 import { useApp } from '../../context/AppContext';
 import { adminApi, type AdminUserRow } from '../../api/admin';
@@ -8,6 +8,8 @@ import { AdminEmailsCard } from './AdminEmailsCard';
 import { AdminPageShell } from './AdminPageShell';
 import { TAB_META } from './adminNav';
 import { fieldClass, PLAN_LABEL, ROLE_LABEL } from './adminConstants';
+import { AdminListControls } from './AdminListControls';
+import { AdminStatusBadge } from './AdminStatusBadge';
 
 function profileRowFromAppUser(user: ReturnType<typeof useApp>['user']): ProfileListRow {
   return {
@@ -35,6 +37,9 @@ export function UsersAccountsView() {
   const [newRole, setNewRole] = useState<'student' | 'instructor' | 'admin'>('student');
   const [newIsFounder, setNewIsFounder] = useState(false);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [query, setQuery] = useState('');
+  const [roleFilter, setRoleFilter] = useState('all');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const load = () =>
     adminApi
@@ -52,6 +57,16 @@ export function UsersAccountsView() {
   useEffect(() => {
     void load();
   }, []);
+
+  const filteredUsers = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    return users.filter((row) => {
+      const matchesQuery = !normalized || `${row.name} ${row.email}`.toLowerCase().includes(normalized);
+      const matchesRole = roleFilter === 'all' || row.role === roleFilter;
+      const matchesStatus = statusFilter === 'all' || (statusFilter === 'blocked' ? row.blocked : !row.blocked);
+      return matchesQuery && matchesRole && matchesStatus;
+    });
+  }, [users, query, roleFilter, statusFilter]);
 
   const selected = users.find((row) => row.id === selectedId) || null;
 
@@ -76,6 +91,10 @@ export function UsersAccountsView() {
   };
 
   const createUser = async () => {
+    if (!newName.trim() || !newEmail.trim() || newPassword.length < 8) {
+      setError('יש להזין שם, אימייל וסיסמה בת 8 תווים לפחות.');
+      return;
+    }
     setCreating(true);
     setError('');
     try {
@@ -196,6 +215,15 @@ export function UsersAccountsView() {
         </button>
       </div>
 
+      <AdminListControls query={query} onQueryChange={setQuery} placeholder="חיפוש משתמש לפי שם או אימייל…" count={filteredUsers.length} total={users.length}>
+        <select value={roleFilter} onChange={event => setRoleFilter(event.target.value)} className="min-h-11 rounded-xl border border-white/10 bg-[#0a0a0a] px-3 text-sm text-white/70" aria-label="סינון לפי תפקיד">
+          <option value="all">כל התפקידים</option><option value="student">משתמשים</option><option value="instructor">מרצים</option><option value="admin">אדמינים</option>
+        </select>
+        <select value={statusFilter} onChange={event => setStatusFilter(event.target.value)} className="min-h-11 rounded-xl border border-white/10 bg-[#0a0a0a] px-3 text-sm text-white/70" aria-label="סינון לפי סטטוס">
+          <option value="all">כל הסטטוסים</option><option value="active">פעילים</option><option value="blocked">חסומים</option>
+        </select>
+      </AdminListControls>
+
       <div className="grid gap-6 xl:grid-cols-[1.4fr_0.85fr]">
         <div className="overflow-x-auto border border-white/10 rounded-2xl bg-white/[0.02]">
           <table className="w-full text-sm text-right">
@@ -209,7 +237,7 @@ export function UsersAccountsView() {
               </tr>
             </thead>
             <tbody>
-              {users.map((row, index) => (
+              {filteredUsers.length === 0 ? <tr><td colSpan={5} className="px-4 py-10 text-center text-white/40">לא נמצאו משתמשים לפי הסינון הנוכחי.</td></tr> : filteredUsers.map((row, index) => (
                 <tr
                   key={row.id}
                   onClick={() => setSelectedId(row.id)}
@@ -229,7 +257,7 @@ export function UsersAccountsView() {
                   <td className="py-3 px-3 text-white/55">
                     {row.entryTrack === 'brave' ? 'אמיצים' : row.entryTrack === 'hesitant' ? 'הססנים' : 'ללא'}
                   </td>
-                  <td className="py-3 px-3">{row.blocked ? 'חסום' : 'פעיל'}</td>
+                  <td className="py-3 px-3"><AdminStatusBadge tone={row.blocked ? 'danger' : 'success'}>{row.blocked ? 'חסום' : 'פעיל'}</AdminStatusBadge></td>
                 </tr>
               ))}
             </tbody>

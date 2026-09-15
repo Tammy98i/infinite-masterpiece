@@ -1,4 +1,5 @@
-﻿import { useEffect, useRef, useState } from 'react';
+﻿import { useEffect, useMemo, useRef, useState } from 'react';
+import { Search } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { OnboardingCenterView } from './admin/OnboardingCenterView';
 import { AdminMobileNav, AdminSidebar } from './admin/AdminSidebar';
@@ -9,6 +10,9 @@ import { UsersRolesPermissionsView } from './admin/UsersRolesPermissionsView';
 import { UsersAccountsView } from './admin/UsersAccountsView';
 import { TeamStaffView } from './admin/TeamStaffView';
 import { TeamMembersPanel } from './admin/TeamMembersPanel';
+import { AdminCommandPalette } from './admin/AdminCommandPalette';
+import { AdminListControls } from './admin/AdminListControls';
+import { useUnsavedChanges } from '../hooks/useUnsavedChanges';
 import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/captions';
 import { adminApi, type AdminAnalytics, type AdminAuditLog, type AdminCrmLead, type AdminNotification, type AdminOverview, type AdminPaymentRow, type AdminPremium88Application, type AdminRaffleDashboard, type AdminReadiness, type AdminTrackLead, type AdminTracksDashboard, type AdminWebinarDashboard, type CoursePayload } from '../api/admin';
 import { DEFAULT_WEBINAR_CONFIG, type WebinarConfig } from '../constants/webinar';
@@ -67,6 +71,8 @@ export function AdminView() {
   const { user, isAdmin, setView, categories, instructors, reloadCatalog } = useApp();
   const [tab, setTab] = useState<Tab>('overview');
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [commandOpen, setCommandOpen] = useState(false);
+  const [recentTabs, setRecentTabs] = useState<Tab[]>(['overview']);
 
   const staffDesk = user.staffDesk || '';
   const allowedTabs = staffDesk && STAFF_DESK_TABS[staffDesk] ? STAFF_DESK_TABS[staffDesk] : null;
@@ -80,6 +86,17 @@ export function AdminView() {
   useEffect(() => {
     if (isAdmin) trackEvent('admin_opened_dashboard');
   }, [isAdmin]);
+
+  useEffect(() => {
+    const openSearch = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
+        event.preventDefault();
+        setCommandOpen(true);
+      }
+    };
+    window.addEventListener('keydown', openSearch);
+    return () => window.removeEventListener('keydown', openSearch);
+  }, []);
 
   useEffect(() => {
     if (allowedTabs && !allowedTabs.includes(tab)) {
@@ -109,6 +126,7 @@ export function AdminView() {
 
   const goTab = (id: Tab) => {
     setTab(id);
+    setRecentTabs((current) => [id, ...current.filter((item) => item !== id)].slice(0, 5));
     setMobileNavOpen(false);
   };
 
@@ -152,13 +170,18 @@ export function AdminView() {
                 </p>
               </div>
             </div>
-            <button
-              type="button"
-              onClick={() => setView('home')}
-              className="lg:hidden px-3 py-2 rounded-full border border-white/15 text-sm min-h-11"
-            >
-              ספרייה
-            </button>
+            <div className="flex items-center gap-2">
+              <button type="button" onClick={() => setCommandOpen(true)} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 px-3 text-xs text-white/60 hover:border-[#C8A24C]/40 hover:text-white" aria-label="מעבר מהיר באדמין">
+                <Search size={15} /><span className="hidden sm:inline">מעבר מהיר</span><kbd className="hidden xl:inline text-[10px] text-white/30">⌘K</kbd>
+              </button>
+              <button
+                type="button"
+                onClick={() => setView('home')}
+                className="lg:hidden px-3 py-2 rounded-full border border-white/15 text-sm min-h-11"
+              >
+                ספרייה
+              </button>
+            </div>
           </header>
 
           {mobileNavOpen ? <AdminMobileNav groups={visibleGroups} tab={tab} onNavigate={goTab} /> : null}
@@ -215,6 +238,7 @@ export function AdminView() {
           </main>
         </div>
       </div>
+      <AdminCommandPalette open={commandOpen} recent={recentTabs} onClose={() => setCommandOpen(false)} onNavigate={goTab} />
     </div>
   );
 }
@@ -880,6 +904,8 @@ function ContentPanel({
   const [editing, setEditing] = useState<Course | 'new' | null>(null);
   const [error, setError] = useState('');
   const [pending, setPending] = useState(false);
+  const [query, setQuery] = useState('');
+  const [statusFilter, setStatusFilter] = useState('all');
 
   const load = () =>
     adminApi
@@ -913,6 +939,11 @@ function ContentPanel({
     onSaved();
   };
 
+  const filteredCourses = useMemo(() => {
+    const normalized = query.trim().toLowerCase();
+    return courses.filter((course) => (!normalized || `${course.title} ${course.subtitle || ''}`.toLowerCase().includes(normalized)) && (statusFilter === 'all' || course.status === statusFilter));
+  }, [courses, query, statusFilter]);
+
   if (editing) {
     const course = editing === 'new' ? null : editing;
     return (
@@ -941,8 +972,13 @@ function ContentPanel({
         </button>
       </div>
       {error && <p className="text-sm text-rose-300 mb-4">{error}</p>}
+      <AdminListControls query={query} onQueryChange={setQuery} placeholder="חיפוש הרצאה לפי שם…" count={filteredCourses.length} total={courses.length}>
+        <select value={statusFilter} onChange={event => setStatusFilter(event.target.value)} className="min-h-11 rounded-xl border border-white/10 bg-[#0a0a0a] px-3 text-sm text-white/70" aria-label="סינון הרצאות לפי סטטוס">
+          <option value="all">כל הסטטוסים</option>{Object.entries(STATUS_LABEL).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
+        </select>
+      </AdminListControls>
       <div className="divide-y divide-white/10 border-t border-white/10">
-        {courses.map((course) => (
+        {filteredCourses.length === 0 ? <p className="py-10 text-center text-sm text-white/40">לא נמצאו הרצאות לפי הסינון הנוכחי.</p> : filteredCourses.map((course) => (
           <div key={course.id} className="py-4 flex flex-col sm:flex-row sm:items-center gap-3">
             <button
               type="button"
@@ -1017,6 +1053,8 @@ function CourseForm({
   const [status, setStatus] = useState<PublishStatus>(course?.status || 'draft');
   const [accessLevel, setAccessLevel] = useState<AccessLevel>(course?.accessLevel || 'premium');
   const [programWeek, setProgramWeek] = useState(course?.programWeek || 0);
+  const [dirty, setDirty] = useState(false);
+  const canLeave = useUnsavedChanges(dirty);
   const [episodes, setEpisodes] = useState(
     course?.episodes.length
       ? course.episodes.map((ep) => ({
@@ -1033,8 +1071,10 @@ function CourseForm({
 
   return (
     <form
+      onChange={() => setDirty(true)}
       onSubmit={(e) => {
         e.preventDefault();
+        setDirty(false);
         onSave({
           title,
           subtitle,
@@ -1055,9 +1095,12 @@ function CourseForm({
       }}
       className="grid gap-5 max-w-3xl"
     >
-      <button type="button" onClick={onCancel} className="text-sm text-white/45 hover:text-white text-right cursor-pointer">
-        חזרה לרשימה
-      </button>
+      <div className="flex items-center justify-between gap-3">
+        <button type="button" onClick={() => { if (canLeave()) onCancel(); }} className="text-sm text-white/45 hover:text-white text-right cursor-pointer min-h-11">
+          חזרה לרשימה
+        </button>
+        {dirty ? <span className="rounded-full border border-[#C8A24C]/25 bg-[#C8A24C]/10 px-3 py-1 text-xs text-[#F7E7B5]" role="status">שינויים שלא נשמרו</span> : null}
+      </div>
       <label className="block">
         <span className="block text-xs text-white/45 mb-1">שם</span>
         <input required value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
