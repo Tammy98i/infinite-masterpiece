@@ -28,6 +28,16 @@
   72% { translate: calc(var(--hx, 4px) * -1) calc(var(--hy, 5px) * 0.4); }
 }
 
+@keyframes orbit-drift {
+  from { transform: translate(-50%, -50%) scaleY(0.86) rotate(0deg); }
+  to { transform: translate(-50%, -50%) scaleY(0.86) rotate(360deg); }
+}
+
+@keyframes ray-drift {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
 .galaxy-star-idle {
   animation: star-hover var(--hd, 11s) ease-in-out infinite;
   will-change: translate;
@@ -80,6 +90,7 @@
   border: 1px solid rgba(212, 175, 55, 0.09);
   pointer-events: none;
   mask-image: radial-gradient(ellipse at center, #000 55%, transparent 100%);
+  animation: orbit-drift 220s linear infinite;
 }
 
 .galaxy-lead-halo {
@@ -109,6 +120,7 @@
   border-radius: 50%;
   background: radial-gradient(circle, rgba(244, 208, 63, 0.5) 0%, rgba(212, 175, 55, 0.18) 40%, transparent 72%);
   pointer-events: none;
+  animation: glow-pulse 7.5s ease-in-out infinite;
 }
 
 .galaxy-founder-corona {
@@ -149,6 +161,7 @@
   );
   opacity: 0.55;
   mix-blend-mode: screen;
+  animation: ray-drift 90s linear infinite;
 }
 
 .galaxy-star-glow {
@@ -230,10 +243,55 @@
   display: none;
 }
 
+.galaxy-legend {
+  position: absolute;
+  bottom: 1.5rem;
+  right: 1.25rem;
+  z-index: 20;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(212, 175, 55, 0.18);
+  background: rgba(8, 7, 5, 0.55);
+  backdrop-filter: blur(12px);
+  text-align: right;
+}
+
+.galaxy-legend-item {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.55rem;
+  color: #e8d9b0;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  line-height: 1.8;
+}
+
+.galaxy-legend-mark {
+  color: #d4af37;
+  font-size: 11px;
+}
+
+.galaxy-eco-label {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: rgba(184, 151, 106, 0.72);
+  white-space: nowrap;
+}
+
+.galaxy-stage.is-page {
+  min-height: calc(100vh - 5rem);
+}
+
 @media (prefers-reduced-motion: reduce) {
   .galaxy-bg-star,
   .galaxy-founder-glow,
   .galaxy-founder-corona,
+  .galaxy-founder-rays,
+  .galaxy-orbit-ring,
   .galaxy-gold-dust,
   .galaxy-star-idle {
     animation: none !important;

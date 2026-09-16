@@ -25,6 +25,7 @@ import { A11yWidget } from './a11y/A11yWidget';
 import { MotionA11yProvider } from './a11y/MotionA11yProvider';
 import { AccessibilityStatement } from './marketing/pages/AccessibilityStatement';
 import { LibraryMembership } from './marketing/pages/LibraryMembership';
+import { People } from './marketing/pages/People';
 import { WebinarLanding } from './marketing/pages/WebinarLanding';
 import { WebinarThankYou } from './marketing/pages/WebinarThankYou';
 import { AuthCallback } from './marketing/pages/AuthCallback';
@@ -140,6 +141,7 @@ export default function App() {
         <Route element={<PublicLayoutWrapper />}>
           <Route path="/" element={<Home />} />
           <Route path="/journey" element={<Journey />} />
+          <Route path="/team" element={<People />} />
           <Route path="/premium-88" element={<Premium88 />} />
           <Route path="/premium-88/:founderId" element={<FounderPage />} />
           <Route path="/faq" element={<FAQPage />} />

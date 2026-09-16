@@ -8,7 +8,8 @@ import type { TeamMember } from '../../../api/teamMembers';
 
 interface StarNodeProps {
   star: PositionedStar;
-  onClick: (member: TeamMember, trigger: HTMLButtonElement) => void;
+  onClick: (member: TeamMember, trigger?: HTMLButtonElement | null) => void;
+  onHover?: (member: TeamMember | null) => void;
   delay: number;
   selected?: boolean;
   dimmed?: boolean;
@@ -19,7 +20,7 @@ function labelPlacement(): CSSProperties {
   return { top: '100%', left: '50%', transform: 'translate(-50%, 8px)', textAlign: 'center' };
 }
 
-export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion }: StarNodeProps) {
+export function StarNode({ star, onClick, onHover, delay, selected, dimmed, reducedMotion }: StarNodeProps) {
   const { member, diameter, isFounder } = star;
   const color = goldColor(member.hierarchy_level);
   const frame = frameWidth(member.hierarchy_level, member);
@@ -44,14 +45,26 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
     >
     <motion.button
       type="button"
-      initial={reducedMotion ? false : { opacity: 0 }}
-      animate={{ opacity: dimmed ? 0.7 : 1 }}
-      transition={{ duration: reducedMotion ? 0 : 0.45, delay: reducedMotion ? 0 : delay }}
-      className="relative w-full h-full cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 rounded-full after:absolute after:inset-[-12px] after:content-[''] after:rounded-full"
+      initial={reducedMotion ? false : { opacity: 0, scale: 0.92 }}
+      animate={{ opacity: dimmed ? 0.55 : 1, scale: 1 }}
+      transition={{ duration: reducedMotion ? 0 : 0.7, delay: reducedMotion ? 0 : delay, ease: [0.16, 1, 0.3, 1] }}
+      className={`relative w-full h-full cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 rounded-full after:absolute after:inset-[-12px] after:content-[''] after:rounded-full ${reducedMotion || selected ? '' : 'galaxy-star-idle'}`}
+      style={
+        reducedMotion || selected
+          ? undefined
+          : ({
+              '--hx': `${(star.x > 0 ? 1 : -1) * (3 + (Math.abs(star.x) % 5))}px`,
+              '--hy': `${(star.y > 0 ? 1 : -1) * (2 + (Math.abs(star.y) % 4))}px`,
+              '--hd': `${10 + (Math.abs(star.x + star.y) % 8)}s`,
+            } as CSSProperties)
+      }
       onClick={(e) => {
         e.stopPropagation();
         onClick(member, e.currentTarget);
       }}
+      onMouseEnter={() => onHover?.(member)}
+      onMouseLeave={() => onHover?.(null)}
+      onFocus={() => onHover?.(member)}
       aria-pressed={Boolean(selected)}
       aria-label={`${name}, ${role}`}
     >
@@ -62,8 +75,9 @@ export function StarNode({ star, onClick, delay, selected, dimmed, reducedMotion
       >
         {isFounder ? (
           <>
-            <span className="galaxy-founder-corona" style={{ width: diameter * 2.2, height: diameter * 2.2 }} />
-            <span className="galaxy-founder-glow" style={{ width: diameter * 1.85, height: diameter * 1.85 }} />
+            <span className="galaxy-founder-corona" style={{ width: diameter * 2.35, height: diameter * 2.35 }} />
+            <span className="galaxy-founder-rays" style={{ width: diameter * 2.55, height: diameter * 2.55 }} />
+            <span className="galaxy-founder-glow" style={{ width: diameter * 1.95, height: diameter * 1.95 }} />
           </>
         ) : (
           <span

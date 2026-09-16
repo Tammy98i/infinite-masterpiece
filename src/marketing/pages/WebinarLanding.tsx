@@ -343,7 +343,7 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <TeamGalaxy preview={{ settings: teamSettings, members: teamMembers }} />
+      <TeamGalaxy preview={{ settings: teamSettings, members: teamMembers }} sectionId="webinar-people" />
 
       <section id="webinar-fit" ref={fitRef} className="relative py-12 md:py-20 bg-[#07070c]/86">
         <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8">

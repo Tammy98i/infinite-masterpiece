@@ -49,14 +49,14 @@ export interface TeamSectionSettings {
 
 export const TEAM_SECTION_DEFAULTS: TeamSectionSettings = {
   title_he: 'האנשים שמאחורי החזון',
-  title_en: 'The people behind the vision',
-  subtitle_he: 'כוחות שונים. מערכת אחת. השפעה משותפת.',
+  title_en: 'The People Behind the Vision',
+  subtitle_he: 'כל אחד מביא כוח אחר. יחד הם יוצרים מערכת אחת.',
   subtitle_en: 'Different strengths. One system. Infinite impact.',
   ecosystem_label_he: 'האקוסיסטם שלנו',
   ecosystem_label_en: 'Our ecosystem',
   mobile_hint: 'החליקו או הקישו לפתיחת פרופיל',
   show_all_label: 'הצגת כל הצוות',
-  show_impact: false,
+  show_impact: true,
   show_quotes: true,
   show_expertise: true,
   show_links: false,
