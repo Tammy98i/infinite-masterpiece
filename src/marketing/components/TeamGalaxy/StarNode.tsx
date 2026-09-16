@@ -48,16 +48,7 @@ export function StarNode({ star, onClick, onHover, delay, selected, dimmed, redu
       initial={reducedMotion ? false : { opacity: 0, scale: 0.92 }}
       animate={{ opacity: dimmed ? 0.55 : 1, scale: 1 }}
       transition={{ duration: reducedMotion ? 0 : 0.7, delay: reducedMotion ? 0 : delay, ease: [0.16, 1, 0.3, 1] }}
-      className={`relative w-full h-full cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 rounded-full after:absolute after:inset-[-12px] after:content-[''] after:rounded-full ${reducedMotion || selected ? '' : 'galaxy-star-idle'}`}
-      style={
-        reducedMotion || selected
-          ? undefined
-          : ({
-              '--hx': `${(star.x > 0 ? 1 : -1) * (3 + (Math.abs(star.x) % 5))}px`,
-              '--hy': `${(star.y > 0 ? 1 : -1) * (2 + (Math.abs(star.y) % 4))}px`,
-              '--hd': `${10 + (Math.abs(star.x + star.y) % 8)}s`,
-            } as CSSProperties)
-      }
+      className="relative w-full h-full cursor-pointer group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D4AF37]/70 rounded-full after:absolute after:inset-[-12px] after:content-[''] after:rounded-full"
       onClick={(e) => {
         e.stopPropagation();
         onClick(member, e.currentTarget);
@@ -69,7 +60,16 @@ export function StarNode({ star, onClick, onHover, delay, selected, dimmed, redu
       aria-label={`${name}, ${role}`}
     >
       <motion.span
-        className="relative flex items-center justify-center w-full h-full"
+        className={`relative flex items-center justify-center w-full h-full ${reducedMotion || selected || isFounder ? '' : 'galaxy-star-idle'}`}
+        style={
+          reducedMotion || selected || isFounder
+            ? undefined
+            : ({
+                '--hx': `${(star.x > 0 ? 1 : -1) * (3 + (Math.abs(star.x) % 5))}px`,
+                '--hy': `${(star.y > 0 ? 1 : -1) * (2 + (Math.abs(star.y) % 4))}px`,
+                '--hd': `${10 + (Math.abs(star.x + star.y) % 8)}s`,
+              } as CSSProperties)
+        }
         whileHover={reducedMotion ? undefined : { scale: 1.05 }}
         transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
       >

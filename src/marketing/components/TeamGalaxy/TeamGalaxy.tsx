@@ -377,7 +377,7 @@ export function TeamGalaxy({
         </div>
 
         {selected ? (
-          <div className="hidden lg:block absolute top-8 right-4 z-30">{spotlight}</div>
+          <div className="z-30 max-lg:relative max-lg:px-4 max-lg:mt-4 lg:absolute lg:top-8 lg:right-4">{spotlight}</div>
         ) : null}
       </div>
 
@@ -410,8 +410,6 @@ export function TeamGalaxy({
           Star size = Impact level
         </p>
       </div>
-
-      {selected && !isMobile ? <div className="lg:hidden relative z-20 px-4 mt-4">{spotlight}</div> : null}
 
       <p className="relative z-10 mt-2 mb-6 px-6 text-center text-[13px] text-[#B8976A]/85">
         גודל הכוכב משקף את עוצמת התרומה
