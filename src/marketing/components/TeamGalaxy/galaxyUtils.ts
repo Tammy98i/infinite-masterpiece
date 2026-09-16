@@ -13,12 +13,31 @@ export function isLeadership(member: TeamMember): boolean {
   return member.hierarchy_level === 'leadership' || member.group_key === 'leadership';
 }
 
+export function clampImpact(impact: number): number {
+  if (!Number.isFinite(impact)) return 0;
+  return Math.max(0, Math.min(100, impact));
+}
+
+/** Higher impact = larger star. Founder and C-level keep a visual floor so hierarchy stays readable. */
 export function starDiameter(impact: number, member: TeamMember, isFounder: boolean): number {
-  if (isFounder) return 176;
-  if (isCtoOrCco(member)) return 96;
-  if (isLeadership(member)) return 72;
-  if (member.hierarchy_level === 'core' || member.group_key === 'core') return 46 + (impact / 100) * 18;
-  return 34 + (impact / 100) * 12;
+  const score = clampImpact(impact);
+  if (isFounder) return 92 + score * 0.88;
+  if (isCtoOrCco(member)) return 52 + score * 0.5;
+  if (isLeadership(member)) return 42 + score * 0.4;
+  if (member.hierarchy_level === 'core' || member.group_key === 'core') return 30 + score * 0.38;
+  return 24 + score * 0.34;
+}
+
+/** Compact sizes for the mobile stack while keeping impact hierarchy readable. */
+export function mobileStarDiameter(member: TeamMember, isFounder: boolean): number {
+  const desktop = starDiameter(member.impact_score, member, isFounder);
+  if (isFounder) return Math.min(124, Math.max(108, desktop * 0.68));
+  if (isCtoOrCco(member)) return Math.min(88, Math.max(76, desktop * 0.86));
+  if (isLeadership(member)) return Math.min(68, Math.max(56, desktop * 0.82));
+  if (member.hierarchy_level === 'core' || member.group_key === 'core') {
+    return Math.min(62, Math.max(46, 28 + clampImpact(member.impact_score) * 0.42));
+  }
+  return Math.min(52, Math.max(40, 22 + clampImpact(member.impact_score) * 0.4));
 }
 
 export function glowSize(impact: number, isFounder: boolean, member?: TeamMember): number {
@@ -81,16 +100,19 @@ function orbitRadiusFor(member: TeamMember, orbit: number): number {
 export function calculatePositions(
   members: TeamMember[],
   scale: number = 1,
+  options?: { maxOrbit?: number },
 ): { stars: PositionedStar[]; orbitRadii: number[] } {
   const byOrbit = new Map<number, TeamMember[]>();
+  const maxOrbit = options?.maxOrbit ?? 3;
   for (const m of members) {
     const orbit = m.orbit ?? 2;
+    if (orbit > maxOrbit) continue;
     if (!byOrbit.has(orbit)) byOrbit.set(orbit, []);
     byOrbit.get(orbit)!.push(m);
   }
 
   const stars: PositionedStar[] = [];
-  const orbitRadii = ORBIT_RADII.map((r) => r * scale);
+  const orbitRadii = ORBIT_RADII.slice(0, maxOrbit + 1).map((r) => r * scale);
 
   for (const [orbit, orbitMembers] of byOrbit) {
     const sorted = [...orbitMembers].sort((a, b) => (a.display_order ?? 0) - (b.display_order ?? 0));

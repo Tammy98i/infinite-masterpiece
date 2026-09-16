@@ -7,6 +7,7 @@ import { AccountMenu } from '../../components/AccountMenu';
 
 const NAV_LINKS = [
   { name: 'תהליך', to: '/journey' },
+  { name: 'האנשים', to: '/team' },
   { name: 'צוות המיזם', to: '/premium-88' },
   { name: 'מחירון', to: '/pricing' },
   { name: 'שאלות', to: '/faq' },
@@ -19,6 +20,7 @@ export function Header() {
   const onPremium88 = location.pathname === '/premium-88';
   const onPricing = location.pathname === '/pricing';
   const onJourney = location.pathname === '/journey';
+  const onTeam = location.pathname === '/team';
 
   const headerCtaClass = 'btn-gold text-black text-sm px-5 py-3';
   const compactBarCtaClass =
@@ -57,7 +59,8 @@ export function Header() {
       'text-[13px] font-light tracking-wide transition-colors duration-300',
       (to === '/premium-88' && onPremium88) ||
         (to === '/pricing' && onPricing) ||
-        (to === '/journey' && onJourney)
+        (to === '/journey' && onJourney) ||
+        (to === '/team' && onTeam)
         ? 'text-white font-medium'
         : 'text-white/85 hover:text-white',
     );

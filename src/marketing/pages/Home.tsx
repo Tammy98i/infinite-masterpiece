@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { EntryTrackCards } from '../components/EntryTrackCards';
+import { TeamGalaxy } from '../components/TeamGalaxy/TeamGalaxy';
 
 const MotionDiv = motion.div;
 const MotionSection = motion.section;
@@ -261,6 +262,8 @@ export function Home() {
           <EntryTrackCards />
         </div>
       </MotionSection>
+
+      <TeamGalaxy variant="embed" sectionId="people-galaxy" />
 
       {/* HESITATION */}
       <MotionSection

@@ -81,16 +81,39 @@ export function SpotlightPanel({
 
   if (!member) return null;
 
-  const body = <SpotlightBody member={member} settings={settings} titleId={titleId} />;
-
   if (variant === 'inline') {
+    const name = localizedName(member, 'he');
+    const roleHe = localizedRole(member, 'he');
+    const line = member.contribution || member.bio || member.quote || '';
     return (
-      <aside className="w-full rounded-2xl border border-[#D4AF37]/28 bg-[#080705]/90 p-1" aria-live="polite">
-        {body}
-        <NavRow onPrev={onPrev} onNext={onNext} />
+      <aside
+        id="team-profile-card"
+        className="relative z-10 mx-4 mt-2 mb-6 px-4 py-4 text-center border-t border-[#D4AF37]/18"
+        aria-live="polite"
+        aria-labelledby={titleId}
+      >
+        <h3 id={titleId} className="text-[17px] text-[#F7F1E4] font-heading">
+          {name}
+        </h3>
+        <p className="mt-1 text-[13px] text-[#C5A059]">{roleHe}</p>
+        {line ? (
+          <p className="mt-3 text-[15px] text-[#F7F1E4]/75 font-light leading-relaxed line-clamp-3" dir="rtl">
+            {line}
+          </p>
+        ) : null}
+        {settings.show_impact && typeof member.impact_score === 'number' ? (
+          <p className="mt-3 text-[11px] tracking-[0.14em] text-[#C5A059]/90">
+            Impact {member.impact_score}
+          </p>
+        ) : null}
+        <div className="mt-3 flex justify-center">
+          <NavRow onPrev={onPrev} onNext={onNext} />
+        </div>
       </aside>
     );
   }
+
+  const body = <SpotlightBody member={member} settings={settings} titleId={titleId} />;
 
   if (variant === 'docked') {
     return (
@@ -225,8 +248,8 @@ function SpotlightBody({
   return (
     <div className="p-7 text-right" dir="rtl">
       {isFounder && (
-        <p className="text-[10px] tracking-[0.2em] text-[#D4AF37] mb-4 text-center">
-          מייסד וחזון
+        <p className="text-[10px] tracking-[0.28em] text-[#D4AF37] mb-4 text-center uppercase">
+          Founder & Visionary
         </p>
       )}
       <div className="flex justify-center mb-4">
@@ -252,10 +275,10 @@ function SpotlightBody({
         <p className="text-sm text-[#F7F1E4]/75 font-light italic text-center leading-relaxed mb-5">“{quote}”</p>
       ) : null}
 
-      {vision ? <Block label="מי אני" text={vision} /> : null}
+      {vision ? <Block label={isFounder ? 'VISION' : 'מי אני'} text={vision} /> : null}
       {bio && !isFounder ? <Block label="מי אני" text={bio} /> : null}
-      <Block label="התרומה שלי" text={member.contribution} />
-      <List label="תחומי אחריות" items={member.responsibilities} />
+      <Block label={isFounder ? 'CONTRIBUTION' : 'התרומה שלי'} text={member.contribution} />
+      <List label={isFounder ? 'KEY RESPONSIBILITIES' : 'תחומי אחריות'} items={member.responsibilities} />
       {settings.show_expertise ? <Tags items={member.expertise} /> : null}
       {settings.show_quotes && closing ? (
         <blockquote className="mt-5 pt-4 border-t border-[#D4AF37]/12 text-center">
@@ -275,9 +298,15 @@ function SpotlightBody({
         </p>
       ) : null}
       {settings.show_impact && typeof member.impact_score === 'number' ? (
-        <p className="mt-8 pt-4 border-t border-[#D4AF37]/12 text-center text-[10px] tracking-[0.12em] text-[#B8976A]/85">
-          תרומה {member.impact_score}
-        </p>
+        <div className="mt-8 pt-4 border-t border-[#D4AF37]/12">
+          <p className="text-center text-[10px] tracking-[0.18em] text-[#C5A059] mb-2">IMPACT</p>
+          <div className="galaxy-impact-bar mx-auto max-w-[180px]" aria-hidden>
+            <div className="galaxy-impact-fill" style={{ width: `${Math.max(0, Math.min(100, member.impact_score))}%` }} />
+          </div>
+          <p className="mt-2 text-center text-[12px] tracking-[0.12em] text-[#E8D9B0]/80">
+            {member.impact_score} / 100
+          </p>
+        </div>
       ) : null}
     </div>
   );

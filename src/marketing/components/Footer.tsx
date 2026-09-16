@@ -44,6 +44,11 @@ export function Footer() {
                 </a>
               </li>
               <li>
+                <Link to="/team" className="hover:text-white transition-colors">
+                  האנשים שמאחורי החזון
+                </Link>
+              </li>
+              <li>
                 <Link to="/premium-88" className="hover:text-white transition-colors">
                   צוות המיזם
                 </Link>

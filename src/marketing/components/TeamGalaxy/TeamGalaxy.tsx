@@ -11,7 +11,13 @@ import {
 import { GalaxyPortrait } from './GalaxyPortrait';
 import { StarNode } from './StarNode';
 import { SpotlightPanel } from './SpotlightPanel';
-import { calculatePositions, goldColor, isCtoOrCco, isLeadership, starDiameter } from './galaxyUtils';
+import {
+  calculatePositions,
+  getConnectionLines,
+  goldColor,
+  isCtoOrCco,
+  mobileStarDiameter,
+} from './galaxyUtils';
 import './galaxy.css';
 
 function useViewport() {
@@ -50,11 +56,21 @@ type PreviewPayload = {
   members?: TeamMember[];
 };
 
-export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
+export function TeamGalaxy({
+  preview,
+  variant = 'embed',
+  sectionId,
+}: {
+  preview?: PreviewPayload;
+  variant?: 'embed' | 'stage';
+  sectionId?: string;
+}) {
   const seedMembers = useMemo(() => teamGalaxyPublicMembers() as TeamMember[], []);
   const [fetchedMembers, setFetchedMembers] = useState<TeamMember[]>(seedMembers);
   const [settings, setSettings] = useState<TeamSectionSettings>(preview?.settings ?? TEAM_SECTION_DEFAULTS);
-  const [selected, setSelected] = useState<TeamMember | null>(null);
+  const [pinned, setPinned] = useState<TeamMember | null>(null);
+  const [hovered, setHovered] = useState<TeamMember | null>(null);
+  const selected = pinned || hovered;
   const [inView, setInView] = useState(Boolean(preview));
   const sectionRef = useRef<HTMLElement>(null);
   const triggerRef = useRef<HTMLButtonElement | null>(null);
@@ -113,15 +129,21 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
   const scale = isMobile
     ? 1
     : Math.min(
-        isTablet ? 0.78 : 0.88,
+        isTablet ? 0.78 : variant === 'stage' ? 0.92 : 0.88,
         Math.max(0.55, (viewport.w - 80) / 1280),
         Math.max(0.55, (viewport.h - 250) / 920),
       );
+  const maxOrbit = isTablet ? 2 : 3;
 
-  const { stars, orbitRadii } = useMemo(() => calculatePositions(members, scale), [members, scale]);
+  const { stars, orbitRadii } = useMemo(
+    () => calculatePositions(members, scale, { maxOrbit }),
+    [members, scale, maxOrbit],
+  );
+  const connections = useMemo(() => getConnectionLines(stars), [stars]);
+  const anchorId = sectionId || (variant === 'stage' ? 'people-galaxy' : 'webinar-people');
   const containerSize = useMemo(() => {
-    const maxR = orbitRadii[3] || 518;
-    return maxR * 2 + 110;
+    const maxR = orbitRadii[orbitRadii.length - 1] || 518;
+    return maxR * 2 + 140;
   }, [orbitRadii]);
 
   const dust = useMemo(
@@ -154,19 +176,27 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
     [members],
   );
 
+  const previewMember = (m: TeamMember | null) => {
+    if (!pinned) setHovered(m);
+  };
   const select = (m: TeamMember, trigger?: HTMLButtonElement | null) => {
     if (trigger) triggerRef.current = trigger;
-    setSelected(m);
+    setPinned((current) => (current?.id === m.id ? null : m));
+    setHovered(null);
   };
   const close = () => {
-    setSelected(null);
+    setPinned(null);
+    setHovered(null);
     triggerRef.current?.focus();
   };
   const step = (dir: 1 | -1) => {
     if (!selected || browseOrder.length < 2) return;
     const i = browseOrder.findIndex((m) => m.id === selected.id);
     const next = browseOrder[(i + dir + browseOrder.length) % browseOrder.length];
-    if (next) setSelected(next);
+    if (next) {
+      setPinned(next);
+      setHovered(null);
+    }
   };
 
   useEffect(() => {
@@ -199,7 +229,7 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         show_expertise: settings.show_expertise,
         show_links: settings.show_links,
       }}
-      variant={isMobile ? 'sheet' : 'docked'}
+      variant={isMobile ? 'inline' : 'docked'}
       onClose={close}
       onPrev={() => step(-1)}
       onNext={() => step(1)}
@@ -215,12 +245,19 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         sectionRef={sectionRef}
         spotlight={spotlight}
         selectedId={selected?.id}
+        sectionId={anchorId}
+        variant={variant}
       />
     );
   }
 
   return (
-    <section ref={sectionRef} id="webinar-people" className="galaxy-stage relative overflow-hidden scroll-mt-24" dir="rtl">
+    <section
+      ref={sectionRef}
+      id={anchorId}
+      className={`galaxy-stage relative overflow-hidden scroll-mt-24 ${variant === 'stage' ? 'is-page' : ''}`}
+      dir="rtl"
+    >
       <div className="galaxy-vignette" aria-hidden />
       {dust.map((s) => (
         <span
@@ -237,7 +274,10 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         />
       ))}
 
-      <div className="relative z-20 text-center px-4 pt-20 pb-1">
+      <div className="relative z-20 text-center px-4 pt-16 pb-1">
+        <p className="text-[10px] tracking-[0.42em] text-[#C5A059]/80 uppercase mb-3" dir="ltr">
+          Infinite Masterpiece
+        </p>
         <motion.h2
           initial={reducedMotion ? false : { opacity: 0, y: 16 }}
           animate={inView ? { opacity: 1, y: 0 } : {}}
@@ -256,27 +296,47 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         >
           {settings.subtitle_en}
         </motion.p>
-        <p className="mt-3 text-[13px] text-[#C5A059]">לחצו על אדם כדי להכיר</p>
+        <p className="mt-3 text-[15px] text-[#F7F1E4]/70">{settings.title_he}</p>
+        <p className="mt-1 text-[13px] text-[#C5A059]">{settings.subtitle_he}</p>
+        <p className="mt-3 text-[13px] text-[#C5A059]/80">לחצו או רחפו על אדם כדי להכיר</p>
       </div>
 
-      <div className="relative z-10 flex items-center justify-center px-4 pt-1 pb-24">
+      <div className="relative z-10 flex items-center justify-center px-4 pt-1 pb-28">
         <div
           className="relative mx-auto"
           style={{ width: containerSize, height: containerSize, maxWidth: '100%' }}
           onClick={(e) => {
-            if (selected && e.target === e.currentTarget) close();
+            if (pinned && e.target === e.currentTarget) close();
+          }}
+          onMouseLeave={() => {
+            if (!pinned) setHovered(null);
           }}
         >
           {orbitRadii.slice(1).map((r, i) => (
             <motion.div
               key={r}
-              initial={reducedMotion ? false : { scale: 0.92, opacity: 0 }}
-              animate={inView ? { scale: 1, opacity: 1 } : {}}
+              initial={reducedMotion ? false : { opacity: 0 }}
+              animate={inView ? { opacity: 1 } : {}}
               transition={{ duration: 0.9, delay: reducedMotion ? 0 : 0.85 + i * 0.16, ease: [0.16, 1, 0.3, 1] }}
               className={`galaxy-orbit-ring ${i === 1 ? 'is-faded' : ''}`}
-              style={{ width: r * 2, height: r * 2 }}
+              style={{ width: r * 2, height: r * 2, animationDuration: `${180 + i * 40}s` }}
             />
           ))}
+
+          <svg className="absolute inset-0 w-full h-full pointer-events-none" aria-hidden>
+            {inView &&
+              connections.map((line) => (
+                <line
+                  key={`${line.from.member.id}-${line.to.member.id}`}
+                  x1={containerSize / 2 + line.from.x}
+                  y1={containerSize / 2 + line.from.y}
+                  x2={containerSize / 2 + line.to.x}
+                  y2={containerSize / 2 + line.to.y}
+                  stroke="rgba(212,175,55,0.16)"
+                  strokeWidth="1"
+                />
+              ))}
+          </svg>
 
           {inView &&
             stars.map((star) => (
@@ -284,9 +344,10 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
                 <StarNode
                   star={star}
                   onClick={select}
+                  onHover={previewMember}
                   delay={starDelays.get(star.member.id) || 0}
                   selected={selected?.id === star.member.id}
-                  dimmed={Boolean(selected && selected.id !== star.member.id)}
+                  dimmed={Boolean(pinned && pinned.id !== star.member.id)}
                   reducedMotion={reducedMotion}
                 />
               </Fragment>
@@ -294,11 +355,39 @@ export function TeamGalaxy({ preview }: { preview?: PreviewPayload }) {
         </div>
 
         {selected ? (
-          <div className="hidden lg:block absolute top-8 right-4 z-30">{spotlight}</div>
+          <div className="z-30 max-lg:relative max-lg:px-4 max-lg:mt-4 lg:absolute lg:top-8 lg:right-4">{spotlight}</div>
         ) : null}
       </div>
 
-      {selected && !isMobile ? <div className="lg:hidden relative z-20 px-4 mt-4">{spotlight}</div> : null}
+      <div className="galaxy-legend hidden md:block" aria-label="מקרא גודל הכוכבים">
+        <p className="galaxy-legend-item">
+          <span>מייסד</span>
+          <span className="galaxy-legend-mark" aria-hidden>
+            ✦
+          </span>
+        </p>
+        <p className="galaxy-legend-item">
+          <span>הנהלה</span>
+          <span className="galaxy-legend-mark" aria-hidden>
+            ✦
+          </span>
+        </p>
+        <p className="galaxy-legend-item">
+          <span>צוות ליבה</span>
+          <span className="galaxy-legend-mark" aria-hidden>
+            ✦
+          </span>
+        </p>
+        <p className="galaxy-legend-item">
+          <span>שותפים</span>
+          <span className="galaxy-legend-mark" aria-hidden>
+            ✦
+          </span>
+        </p>
+        <p className="mt-2 pt-2 border-t border-[#D4AF37]/15 text-[10px] tracking-[0.08em] text-[#C5A059]/90" dir="ltr">
+          Star size = Impact level
+        </p>
+      </div>
 
       <p className="relative z-10 mt-2 mb-6 px-6 text-center text-[13px] text-[#B8976A]/85">
         גודל הכוכב משקף את עוצמת התרומה
@@ -314,6 +403,8 @@ function TeamGalaxyMobile({
   sectionRef,
   spotlight,
   selectedId,
+  sectionId,
+  variant,
 }: {
   members: TeamMember[];
   settings: TeamSectionSettings;
@@ -321,39 +412,51 @@ function TeamGalaxyMobile({
   sectionRef: RefObject<HTMLElement | null>;
   spotlight: ReactNode;
   selectedId?: string;
+  sectionId: string;
+  variant: 'embed' | 'stage';
 }) {
   const founder = members.find((m) => m.hierarchy_level === 'founder' || m.group_key === 'founder');
-  const leadership = members
-    .filter((m) => m !== founder && isLeadership(m))
-    .sort((a, b) => Number(isCtoOrCco(b)) - Number(isCtoOrCco(a)));
-  const rest = members.filter((m) => m !== founder && !leadership.includes(m));
+  const innerLead = members
+    .filter((m) => m !== founder && isCtoOrCco(m))
+    .sort((a, b) => (b.impact_score ?? 0) - (a.impact_score ?? 0));
+  const rest = members
+    .filter((m) => m !== founder && !innerLead.includes(m))
+    .sort((a, b) => (b.impact_score ?? 0) - (a.impact_score ?? 0));
 
   return (
-    <section ref={sectionRef} id="webinar-people" className="galaxy-stage relative py-16 overflow-x-hidden scroll-mt-24" dir="rtl">
+    <section
+      ref={sectionRef}
+      id={sectionId}
+      className={`galaxy-stage relative py-16 overflow-x-hidden scroll-mt-24 ${variant === 'stage' ? 'is-page' : ''}`}
+      dir="rtl"
+    >
       <div className="galaxy-vignette" aria-hidden />
       <div className="relative z-10 text-center mb-8 px-4">
+        <p className="text-[10px] tracking-[0.42em] text-[#C5A059]/80 uppercase mb-3" dir="ltr">
+          Infinite Masterpiece
+        </p>
         <h2 className="text-[26px] font-heading text-[#F7F1E4] uppercase tracking-[0.12em]" dir="ltr">
           {settings.title_en}
         </h2>
         <p className="text-[14px] text-[#E8D9B0]/80 font-light mt-2 tracking-[0.06em]" dir="ltr">
           {settings.subtitle_en}
         </p>
-        <p className="mt-3 text-[13px] text-[#C5A059]">{settings.mobile_hint}</p>
+        <p className="mt-3 text-[15px] text-[#F7F1E4]/70">{settings.title_he}</p>
+        <p className="mt-2 text-[13px] text-[#C5A059]">{settings.mobile_hint}</p>
       </div>
 
       {founder ? (
         <div className="relative z-10 flex justify-center mb-8">
-          <MobileStar member={founder} size={120} onClick={(el) => onSelect(founder, el)} selected={selectedId === founder.id} />
+          <MobileStar member={founder} onClick={(el) => onSelect(founder, el)} selected={selectedId === founder.id} />
         </div>
       ) : null}
 
-      {leadership.length > 0 ? (
-        <div className="relative z-10 flex justify-center gap-5 mb-8 px-4 flex-wrap">
-          {leadership.map((m) => (
+      {innerLead.length > 0 ? (
+        <div className="galaxy-mobile-inner relative z-10">
+          {innerLead.map((m) => (
             <div key={m.id}>
               <MobileStar
                 member={m}
-                size={isCtoOrCco(m) ? 86 : 64}
                 onClick={(el) => onSelect(m, el)}
                 selected={selectedId === m.id}
               />
@@ -362,8 +465,11 @@ function TeamGalaxyMobile({
         </div>
       ) : null}
 
+      {spotlight}
+
       {rest.length > 0 ? (
         <div className="relative z-10">
+          <p className="galaxy-mobile-rest-label">שאר הצוות · גודל הכוכב = רמת ההשפעה</p>
           <div className="flex gap-5 overflow-x-auto px-4 pb-6 galaxy-mobile-scroller" style={{ scrollSnapType: 'x mandatory' }}>
             {rest.map((m) => (
               <div key={m.id} className="galaxy-mobile-card shrink-0">
@@ -373,8 +479,6 @@ function TeamGalaxyMobile({
           </div>
         </div>
       ) : null}
-
-      {spotlight}
     </section>
   );
 }
@@ -391,10 +495,10 @@ function MobileStar({
   selected?: boolean;
 }) {
   const isFounder = member.hierarchy_level === 'founder' || member.group_key === 'founder';
-  const d = size ?? Math.min(starDiameter(member.impact_score, member, isFounder), 76);
+  const d = size ?? mobileStarDiameter(member, isFounder);
   const color = goldColor(member.hierarchy_level);
   const name = localizedName(member, 'he') || member.name;
-  const role = localizedRole(member, 'en') || member.role;
+  const role = localizedRole(member, 'he') || localizedRole(member, 'en') || member.role;
 
   return (
     <button type="button" onClick={(e) => onClick(e.currentTarget)} className="flex flex-col items-center cursor-pointer min-h-11 min-w-11" aria-pressed={Boolean(selected)} aria-label={`${name}, ${role}`}>
@@ -402,12 +506,18 @@ function MobileStar({
         className="relative flex items-center justify-center"
         style={{ width: d, height: d }}
       >
-        {isFounder ? (
-          <>
-            <span className="galaxy-founder-corona" style={{ width: d * 2.4, height: d * 2.4 }} />
-            <span className="galaxy-founder-glow" style={{ width: d * 2, height: d * 2 }} />
-          </>
-        ) : null}
+          {isFounder ? (
+            <>
+              <span className="galaxy-founder-corona" style={{ width: d * 2.4, height: d * 2.4 }} />
+              <span className="galaxy-founder-rays" style={{ width: d * 2.6, height: d * 2.6 }} />
+              <span className="galaxy-founder-glow" style={{ width: d * 2, height: d * 2 }} />
+            </>
+          ) : (
+            <span
+              className="galaxy-star-glow"
+              style={{ width: d * 1.45, height: d * 1.45, opacity: selected ? 0.5 : 0.22 }}
+            />
+          )}
       <span
         className="relative rounded-full overflow-hidden"
         style={{

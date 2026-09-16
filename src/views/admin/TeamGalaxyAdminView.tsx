@@ -389,7 +389,11 @@ export function TeamGalaxyAdminView() {
               <div className="md:col-span-2"><Field label="חזון"><textarea className={fieldClass} rows={2} value={editing.vision || ''} onChange={(e) => setEditing({ ...editing, vision: e.target.value })} /></Field></div>
               <div className="md:col-span-2"><Field label="ציטוט מסכם"><input className={fieldClass} value={editing.closing_quote || ''} onChange={(e) => setEditing({ ...editing, closing_quote: e.target.value })} /></Field></div>
               <Field label="קבוצה">
-                <select className={fieldClass} value={editing.group_key || 'core'} onChange={(e) => setEditing({ ...editing, group_key: e.target.value, hierarchy_level: e.target.value })}>
+                <select className={fieldClass} value={editing.group_key || 'core'} onChange={(e) => {
+                  const group_key = e.target.value;
+                  const orbit = group_key === 'founder' ? 0 : group_key === 'leadership' ? 1 : group_key === 'contributor' || group_key === 'ecosystem' ? 3 : 2;
+                  setEditing({ ...editing, group_key, hierarchy_level: group_key, orbit });
+                }}>
                   {GROUPS.map((g) => <option key={g.value} value={g.value}>{g.label}</option>)}
                 </select>
               </Field>
@@ -400,6 +404,12 @@ export function TeamGalaxyAdminView() {
               </Field>
               <Field label="ציון Impact">
                 <input type="number" min={0} max={100} className={fieldClass} value={editing.impact_score ?? 50} onChange={(e) => setEditing({ ...editing, impact_score: Number(e.target.value) })} />
+              </Field>
+              <Field label="מסלול (Orbit)">
+                <input type="number" min={0} max={3} className={fieldClass} value={editing.orbit ?? 2} onChange={(e) => setEditing({ ...editing, orbit: Number(e.target.value) })} />
+              </Field>
+              <Field label="סדר תצוגה">
+                <input type="number" min={0} className={fieldClass} value={editing.display_order ?? 0} onChange={(e) => setEditing({ ...editing, display_order: Number(e.target.value) })} />
               </Field>
               <Field label="סטטוס">
                 <select className={fieldClass} value={editing.status || 'draft'} onChange={(e) => setEditing({ ...editing, status: e.target.value, active: e.target.value === 'published' })}>

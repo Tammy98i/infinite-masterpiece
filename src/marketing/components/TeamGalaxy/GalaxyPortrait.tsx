@@ -10,7 +10,7 @@ type Props = {
 function monogram(name: string): string {
   const parts = name.trim().split(/\s+/).filter(Boolean);
   if (parts.length >= 2) return `${parts[0][0] ?? ''}${parts[1][0] ?? ''}`.slice(0, 2);
-  return (name.trim().charAt(0) || '·').toUpperCase();
+  return (name.trim().charAt(0) || '✦').toUpperCase();
 }
 
 export function GalaxyPortrait({ src, name, alt, className }: Props) {
@@ -23,15 +23,15 @@ export function GalaxyPortrait({ src, name, alt, className }: Props) {
   if (!src || failed) {
     return (
       <div
-        className={`relative flex items-center justify-center overflow-hidden ${className ?? ''}`}
-        style={{
-          background: 'radial-gradient(circle at 50% 40%, rgba(212,175,55,0.1) 0%, #080705 70%)',
-        }}
+        className={`galaxy-portrait-placeholder relative flex items-center justify-center overflow-hidden ${className ?? ''}`}
         role={alt ? 'img' : undefined}
         aria-label={alt}
         aria-hidden={!alt}
       >
-        <span className="font-heading text-[#E8D9B0]/70 text-[0.34em] tracking-[0.08em]">{monogram(name)}</span>
+        <span className="galaxy-portrait-star" aria-hidden>
+          ✦
+        </span>
+        <span className="relative font-heading text-[#E8D9B0] text-[0.32em] tracking-[0.12em]">{monogram(name)}</span>
       </div>
     );
   }
