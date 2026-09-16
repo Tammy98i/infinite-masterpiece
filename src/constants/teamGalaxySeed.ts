@@ -54,7 +54,7 @@ export const TEAM_SECTION_DEFAULTS: TeamSectionSettings = {
   subtitle_en: 'Different strengths. One system. Infinite impact.',
   ecosystem_label_he: 'האקוסיסטם שלנו',
   ecosystem_label_en: 'Our ecosystem',
-  mobile_hint: 'החליקו או הקישו לפתיחת פרופיל',
+  mobile_hint: 'הקישו על כוכב. החליקו בין אנשים.',
   show_all_label: 'הצגת כל הצוות',
   show_impact: true,
   show_quotes: true,

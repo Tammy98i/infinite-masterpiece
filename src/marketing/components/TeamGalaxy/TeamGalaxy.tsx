@@ -423,12 +423,6 @@ function TeamGalaxyMobile({
     .filter((m) => m !== founder && !innerLead.includes(m))
     .sort((a, b) => (b.impact_score ?? 0) - (a.impact_score ?? 0));
 
-  useEffect(() => {
-    if (!selectedId) return;
-    const node = document.getElementById('team-profile-card');
-    node?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-  }, [selectedId]);
-
   return (
     <section
       ref={sectionRef}
@@ -471,6 +465,8 @@ function TeamGalaxyMobile({
         </div>
       ) : null}
 
+      {spotlight}
+
       {rest.length > 0 ? (
         <div className="relative z-10">
           <p className="galaxy-mobile-rest-label">שאר הצוות · גודל הכוכב = רמת ההשפעה</p>
@@ -483,8 +479,6 @@ function TeamGalaxyMobile({
           </div>
         </div>
       ) : null}
-
-      {spotlight}
     </section>
   );
 }

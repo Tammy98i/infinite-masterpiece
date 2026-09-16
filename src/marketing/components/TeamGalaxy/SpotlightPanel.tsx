@@ -81,30 +81,39 @@ export function SpotlightPanel({
 
   if (!member) return null;
 
-  const body = <SpotlightBody member={member} settings={settings} titleId={titleId} />;
-
   if (variant === 'inline') {
+    const name = localizedName(member, 'he');
+    const roleHe = localizedRole(member, 'he');
+    const line = member.contribution || member.bio || member.quote || '';
     return (
       <aside
         id="team-profile-card"
-        className="relative z-20 mx-4 mb-8 rounded-[22px] border border-[#D4AF37]/28 bg-[#080705]/92"
+        className="relative z-10 mx-4 mt-2 mb-6 px-4 py-4 text-center border-t border-[#D4AF37]/18"
         aria-live="polite"
         aria-labelledby={titleId}
       >
-        <button
-          ref={closeRef}
-          type="button"
-          onClick={onClose}
-          className="absolute top-3 left-3 z-10 w-11 h-11 rounded-full border border-[#D4AF37]/25 flex items-center justify-center text-[#E8D9B0]/80"
-          aria-label="סגירה"
-        >
-          <X className="w-4 h-4" />
-        </button>
-        {body}
-        <NavRow onPrev={onPrev} onNext={onNext} />
+        <h3 id={titleId} className="text-[17px] text-[#F7F1E4] font-heading">
+          {name}
+        </h3>
+        <p className="mt-1 text-[13px] text-[#C5A059]">{roleHe}</p>
+        {line ? (
+          <p className="mt-3 text-[15px] text-[#F7F1E4]/75 font-light leading-relaxed line-clamp-3" dir="rtl">
+            {line}
+          </p>
+        ) : null}
+        {settings.show_impact && typeof member.impact_score === 'number' ? (
+          <p className="mt-3 text-[11px] tracking-[0.14em] text-[#C5A059]/90">
+            Impact {member.impact_score}
+          </p>
+        ) : null}
+        <div className="mt-3 flex justify-center">
+          <NavRow onPrev={onPrev} onNext={onNext} />
+        </div>
       </aside>
     );
   }
+
+  const body = <SpotlightBody member={member} settings={settings} titleId={titleId} />;
 
   if (variant === 'docked') {
     return (
