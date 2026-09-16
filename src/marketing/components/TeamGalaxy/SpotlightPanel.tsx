@@ -85,7 +85,21 @@ export function SpotlightPanel({
 
   if (variant === 'inline') {
     return (
-      <aside className="w-full rounded-2xl border border-[#D4AF37]/28 bg-[#080705]/90 p-1" aria-live="polite">
+      <aside
+        id="team-profile-card"
+        className="relative z-20 mx-4 mb-8 rounded-[22px] border border-[#D4AF37]/28 bg-[#080705]/92"
+        aria-live="polite"
+        aria-labelledby={titleId}
+      >
+        <button
+          ref={closeRef}
+          type="button"
+          onClick={onClose}
+          className="absolute top-3 left-3 z-10 w-11 h-11 rounded-full border border-[#D4AF37]/25 flex items-center justify-center text-[#E8D9B0]/80"
+          aria-label="סגירה"
+        >
+          <X className="w-4 h-4" />
+        </button>
         {body}
         <NavRow onPrev={onPrev} onNext={onNext} />
       </aside>

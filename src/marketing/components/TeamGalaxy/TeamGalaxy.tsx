@@ -229,7 +229,7 @@ export function TeamGalaxy({
         show_expertise: settings.show_expertise,
         show_links: settings.show_links,
       }}
-      variant={isMobile ? 'sheet' : 'docked'}
+      variant={isMobile ? 'inline' : 'docked'}
       onClose={close}
       onPrev={() => step(-1)}
       onNext={() => step(1)}
@@ -422,6 +422,12 @@ function TeamGalaxyMobile({
   const rest = members
     .filter((m) => m !== founder && !innerLead.includes(m))
     .sort((a, b) => (b.impact_score ?? 0) - (a.impact_score ?? 0));
+
+  useEffect(() => {
+    if (!selectedId) return;
+    const node = document.getElementById('team-profile-card');
+    node?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, [selectedId]);
 
   return (
     <section
