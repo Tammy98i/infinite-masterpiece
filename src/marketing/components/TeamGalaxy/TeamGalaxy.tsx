@@ -126,6 +126,8 @@ export function TeamGalaxy({
 
   const isMobile = viewport.w < 768;
   const isTablet = viewport.w >= 768 && viewport.w < 1100;
+  // Webinar/home stay on the page: never a docked overlay. /team may still dock on desktop.
+  const inPageCaption = variant !== 'stage' || isMobile;
   const scale = isMobile
     ? 1
     : Math.min(
@@ -181,7 +183,7 @@ export function TeamGalaxy({
   };
   const select = (m: TeamMember, trigger?: HTMLButtonElement | null) => {
     if (trigger) triggerRef.current = trigger;
-    if (isMobile) {
+    if (inPageCaption) {
       setPinned(m);
       setHovered(null);
       return;
@@ -203,21 +205,6 @@ export function TeamGalaxy({
       setHovered(null);
     }
   };
-
-  useEffect(() => {
-    if (!isMobile || !pinned) return;
-    const frame = window.requestAnimationFrame(() => {
-      const card = document.getElementById('team-profile-card');
-      const sticky = document.querySelector<HTMLElement>('.fixed.bottom-0.z-40');
-      if (!card) return;
-      const cr = card.getBoundingClientRect();
-      const stickyTop = sticky?.getBoundingClientRect().top ?? window.innerHeight;
-      if (cr.bottom > stickyTop - 10) {
-        window.scrollBy({ top: cr.bottom - stickyTop + 14, behavior: 'smooth' });
-      }
-    });
-    return () => window.cancelAnimationFrame(frame);
-  }, [isMobile, pinned?.id]);
 
   useEffect(() => {
     if (!selected) return;
@@ -249,7 +236,7 @@ export function TeamGalaxy({
         show_expertise: settings.show_expertise,
         show_links: settings.show_links,
       }}
-      variant={isMobile ? 'inline' : 'docked'}
+      variant={inPageCaption ? 'inline' : 'docked'}
       onClose={close}
       onPrev={() => step(-1)}
       onNext={() => step(1)}
@@ -267,6 +254,7 @@ export function TeamGalaxy({
         selectedId={selected?.id}
         sectionId={anchorId}
         variant={variant}
+        hideRest={Boolean(selected?.id)}
       />
     );
   }
@@ -275,7 +263,7 @@ export function TeamGalaxy({
     <section
       ref={sectionRef}
       id={anchorId}
-      className={`galaxy-stage relative overflow-hidden scroll-mt-24 ${variant === 'stage' ? 'is-page' : ''}`}
+      className={`galaxy-stage relative overflow-hidden scroll-mt-24 ${variant === 'stage' ? 'is-page' : 'is-embed'}`}
       dir="rtl"
     >
       <div className="galaxy-vignette" aria-hidden />
@@ -321,12 +309,12 @@ export function TeamGalaxy({
         <p className="mt-3 text-[13px] text-[#C5A059]/80">לחצו או רחפו על אדם כדי להכיר</p>
       </div>
 
-      <div className="relative z-10 flex items-center justify-center px-4 pt-1 pb-28">
+      <div className={`relative z-10 flex flex-col items-center justify-center px-4 pt-1 ${inPageCaption ? 'pb-8' : 'pb-28'}`}>
         <div
           className="relative mx-auto"
           style={{ width: containerSize, height: containerSize, maxWidth: '100%' }}
           onClick={(e) => {
-            if (pinned && e.target === e.currentTarget) close();
+            if (!inPageCaption && pinned && e.target === e.currentTarget) close();
           }}
           onMouseLeave={() => {
             if (!pinned) setHovered(null);
@@ -374,7 +362,10 @@ export function TeamGalaxy({
             ))}
         </div>
 
-        {selected ? (
+        {selected && inPageCaption ? (
+          <div className="relative z-10 w-full max-w-md mt-2 mb-4">{spotlight}</div>
+        ) : null}
+        {selected && !inPageCaption ? (
           <div className="z-30 max-lg:relative max-lg:px-4 max-lg:mt-4 lg:absolute lg:top-8 lg:right-4">{spotlight}</div>
         ) : null}
       </div>
@@ -425,6 +416,7 @@ function TeamGalaxyMobile({
   selectedId,
   sectionId,
   variant,
+  hideRest,
 }: {
   members: TeamMember[];
   settings: TeamSectionSettings;
@@ -434,6 +426,7 @@ function TeamGalaxyMobile({
   selectedId?: string;
   sectionId: string;
   variant: 'embed' | 'stage';
+  hideRest?: boolean;
 }) {
   const founder = members.find((m) => m.hierarchy_level === 'founder' || m.group_key === 'founder');
   const innerLead = members
@@ -489,7 +482,7 @@ function TeamGalaxyMobile({
 
       {spotlight}
 
-      {rest.length > 0 ? (
+      {rest.length > 0 && !hideRest ? (
         <div className="relative z-10">
           <p className="galaxy-mobile-rest-label">שאר הצוות · גודל הכוכב = רמת ההשפעה</p>
           <div className="flex gap-5 overflow-x-auto px-4 pb-6 galaxy-mobile-scroller" style={{ scrollSnapType: 'x mandatory' }}>

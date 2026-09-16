@@ -221,8 +221,9 @@
 .galaxy-caption-dock {
   position: relative;
   z-index: 10;
-  margin: 0.1rem 1rem 0.85rem;
-  padding: 0.7rem 0.9rem 0.45rem;
+  margin: 0.1rem auto 0.85rem;
+  max-width: 22rem;
+  padding: 0.85rem 1rem 0.55rem;
   text-align: center;
   border: 1px solid rgba(212, 175, 55, 0.34);
   border-radius: 14px;
@@ -265,6 +266,10 @@
 
 .galaxy-stage.is-embed-mobile {
   padding-bottom: calc(7.25rem + env(safe-area-inset-bottom));
+}
+
+.galaxy-stage:not(.is-page) {
+  padding-bottom: calc(6.5rem + env(safe-area-inset-bottom));
 }
 
 .galaxy-impact-bar {
