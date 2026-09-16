@@ -20,6 +20,7 @@ import type { LecturerApplication } from '../api/lecturer';
 import type { AccessLevel, Category, Course, Instructor, PublishStatus, UserProfile } from '../types';
 import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
+import { ConfirmDialog } from '../components/ConfirmDialog';
 import { isApiUnavailableMessage } from '../lib/supabaseUser';
 import { emptyAnalytics, overviewFrom, readinessPayload, type ProfileListRow } from '../lib/adminFallback';
 
@@ -906,6 +907,8 @@ function ContentPanel({
   const [pending, setPending] = useState(false);
   const [query, setQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState('all');
+  const [selectedIds, setSelectedIds] = useState<Set<string>>(() => new Set());
+  const [bulkStatus, setBulkStatus] = useState<PublishStatus | null>(null);
 
   const load = () =>
     adminApi
@@ -939,10 +942,42 @@ function ContentPanel({
     onSaved();
   };
 
+  const [bulkFeedback, setBulkFeedback] = useState('');
+  const bulkInFlight = useRef(false);
+
+  const applyBulkStatus = async () => {
+    if (!bulkStatus || selectedIds.size === 0 || bulkInFlight.current) return;
+    bulkInFlight.current = true;
+    setPending(true);
+    setError('');
+    setBulkFeedback('');
+    const ids = [...selectedIds];
+    try {
+      const results = await Promise.allSettled(ids.map(id => adminApi.setCourseStatus(id, bulkStatus)));
+      const failedIds = ids.filter((_, index) => results[index].status === 'rejected');
+      const updatedCount = ids.length - failedIds.length;
+      setSelectedIds(new Set(failedIds));
+      setBulkStatus(null);
+      setBulkFeedback(`${updatedCount} הרצאות עודכנו לסטטוס „${STATUS_LABEL[bulkStatus]}”.`);
+      if (failedIds.length) setError(`עדכון ${failedIds.length} הרצאות נכשל. הן נשארו מסומנות לניסיון נוסף.`);
+      await load();
+      onSaved();
+    } finally {
+      bulkInFlight.current = false;
+      setPending(false);
+    }
+  };
+
   const filteredCourses = useMemo(() => {
     const normalized = query.trim().toLowerCase();
     return courses.filter((course) => (!normalized || `${course.title} ${course.subtitle || ''}`.toLowerCase().includes(normalized)) && (statusFilter === 'all' || course.status === statusFilter));
   }, [courses, query, statusFilter]);
+  const allFilteredSelected = filteredCourses.length > 0 && filteredCourses.every(course => selectedIds.has(course.id));
+  const toggleSelected = (id: string) => setSelectedIds(current => {
+    const next = new Set(current);
+    if (next.has(id)) next.delete(id); else next.add(id);
+    return next;
+  });
 
   if (editing) {
     const course = editing === 'new' ? null : editing;
@@ -971,15 +1006,37 @@ function ContentPanel({
           הרצאה חדשה
         </button>
       </div>
-      {error && <p className="text-sm text-rose-300 mb-4">{error}</p>}
+      {error && <p role="alert" className="text-sm text-rose-300 mb-4">{error}</p>}
+      {bulkFeedback && <p role="status" className="text-sm text-[#C8A24C] mb-4">{bulkFeedback}</p>}
       <AdminListControls query={query} onQueryChange={setQuery} placeholder="חיפוש הרצאה לפי שם…" count={filteredCourses.length} total={courses.length}>
         <select value={statusFilter} onChange={event => setStatusFilter(event.target.value)} className="min-h-11 rounded-xl border border-white/10 bg-[#0a0a0a] px-3 text-sm text-white/70" aria-label="סינון הרצאות לפי סטטוס">
           <option value="all">כל הסטטוסים</option>{Object.entries(STATUS_LABEL).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
         </select>
       </AdminListControls>
+      <div className="sticky top-[9.5rem] z-10 mt-3 flex flex-wrap items-center gap-2 rounded-2xl border border-white/10 bg-[#090909]/95 p-3 shadow-xl backdrop-blur-md">
+        <label className="flex min-h-11 cursor-pointer items-center gap-2 px-2 text-sm text-white/65">
+          <input type="checkbox" checked={allFilteredSelected} disabled={pending || filteredCourses.length === 0} ref={input => { if (input) input.indeterminate = !allFilteredSelected && filteredCourses.some(course => selectedIds.has(course.id)); }} onChange={() => setSelectedIds(current => {
+            const next = new Set(current);
+            if (allFilteredSelected) filteredCourses.forEach(course => next.delete(course.id)); else filteredCourses.forEach(course => next.add(course.id));
+            return next;
+          })} className="h-4 w-4 accent-[#C8A24C]" />
+          בחירת הכל בתצוגה
+        </label>
+        <span className="text-xs text-white/35">{selectedIds.size ? `${selectedIds.size} נבחרו` : 'לא נבחרו הרצאות'}</span>
+        {selectedIds.size > 0 ? <div className="flex flex-wrap gap-2 sm:ms-auto">
+          <button type="button" onClick={() => setBulkStatus('published')} className="min-h-10 rounded-xl bg-[#C8A24C] px-4 text-xs font-medium text-black">פרסום נבחרים</button>
+          <button type="button" onClick={() => setBulkStatus('draft')} className="min-h-10 rounded-xl border border-white/15 px-4 text-xs text-white/70">העברה לטיוטה</button>
+          <button type="button" onClick={() => setBulkStatus('blocked')} className="min-h-10 rounded-xl border border-rose-400/30 px-4 text-xs text-rose-300">חסימת נבחרים</button>
+          <button type="button" onClick={() => setSelectedIds(new Set())} className="min-h-10 px-3 text-xs text-white/40 hover:text-white">ניקוי בחירה</button>
+        </div> : null}
+      </div>
       <div className="divide-y divide-white/10 border-t border-white/10">
         {filteredCourses.length === 0 ? <p className="py-10 text-center text-sm text-white/40">לא נמצאו הרצאות לפי הסינון הנוכחי.</p> : filteredCourses.map((course) => (
           <div key={course.id} className="py-4 flex flex-col sm:flex-row sm:items-center gap-3">
+            <label className="flex min-h-11 min-w-11 items-center justify-start sm:justify-center gap-2 text-xs text-white/50">
+              <input type="checkbox" aria-label={`בחירת הרצאה: ${course.title}`} checked={selectedIds.has(course.id)} disabled={pending} onChange={() => toggleSelected(course.id)} className="h-4 w-4 accent-[#C8A24C]" />
+              <span className="sm:hidden">בחירת הרצאה</span>
+            </label>
             <button
               type="button"
               onClick={() => setEditing(course)}
@@ -1023,6 +1080,16 @@ function ContentPanel({
           </div>
         ))}
       </div>
+      <ConfirmDialog
+        open={bulkStatus !== null}
+        title="אישור שינוי סטטוס קבוצתי"
+        description={`הסטטוס של ${selectedIds.size} הרצאות שנבחרו ישתנה ל„${bulkStatus ? STATUS_LABEL[bulkStatus] : ''}”. הבחירה כוללת גם הרצאות שמוסתרות בסינון הנוכחי. ${bulkStatus === 'published' ? 'ההרצאות יוצגו בספרייה בהתאם להרשאות הגישה שלהן.' : 'ההרצאות לא יוצגו עוד בספרייה הציבורית.'}`}
+        confirmLabel="אישור ועדכון"
+        tone={bulkStatus === 'blocked' ? 'danger' : 'default'}
+        pending={pending}
+        onConfirm={() => void applyBulkStatus()}
+        onClose={() => { if (!bulkInFlight.current) setBulkStatus(null); }}
+      />
     </div>
   );
 }
