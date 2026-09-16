@@ -205,6 +205,21 @@ export function TeamGalaxy({
   };
 
   useEffect(() => {
+    if (!isMobile || !pinned) return;
+    const frame = window.requestAnimationFrame(() => {
+      const card = document.getElementById('team-profile-card');
+      const sticky = document.querySelector<HTMLElement>('.fixed.bottom-0.z-40');
+      if (!card) return;
+      const cr = card.getBoundingClientRect();
+      const stickyTop = sticky?.getBoundingClientRect().top ?? window.innerHeight;
+      if (cr.bottom > stickyTop - 10) {
+        window.scrollBy({ top: cr.bottom - stickyTop + 14, behavior: 'smooth' });
+      }
+    });
+    return () => window.cancelAnimationFrame(frame);
+  }, [isMobile, pinned?.id]);
+
+  useEffect(() => {
     if (!selected) return;
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
@@ -438,7 +453,7 @@ function TeamGalaxyMobile({
       dir="rtl"
     >
       <div className="galaxy-vignette" aria-hidden />
-      <div className="relative z-10 text-center mb-8 px-4">
+      <div className="relative z-10 text-center mb-5 px-4">
         <p className="text-[10px] tracking-[0.42em] text-[#C5A059]/80 uppercase mb-3" dir="ltr">
           Infinite Masterpiece
         </p>
@@ -453,7 +468,7 @@ function TeamGalaxyMobile({
       </div>
 
       {founder ? (
-        <div className="relative z-10 flex justify-center mb-8">
+        <div className="relative z-10 flex justify-center mb-4">
           <MobileStar member={founder} onClick={(el) => onSelect(founder, el)} selected={selectedId === founder.id} />
         </div>
       ) : null}

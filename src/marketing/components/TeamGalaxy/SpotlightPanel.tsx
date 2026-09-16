@@ -192,7 +192,7 @@ function CaptionDock({
         {localizedRole(member, 'en') || roleHe}
       </p>
       {line ? (
-        <p className="mt-2.5 text-[14px] text-[#F7F1E4]/75 font-light leading-relaxed line-clamp-3" dir="rtl">
+        <p className="mt-2 text-[14px] text-[#F7F1E4]/75 font-light leading-snug line-clamp-2" dir="rtl">
           {line}
         </p>
       ) : null}
@@ -211,7 +211,7 @@ function CaptionDock({
 function NavRow({ onPrev, onNext, compact }: { onPrev?: () => void; onNext?: () => void; compact?: boolean }) {
   if (!onPrev && !onNext) return null;
   return (
-    <div className={compact ? 'mt-2 flex items-center justify-center gap-10' : 'flex items-center justify-between px-5 pb-5'}>
+    <div className={compact ? 'mt-0.5 flex items-center justify-center gap-8' : 'flex items-center justify-between px-5 pb-5'}>
       <button
         type="button"
         onClick={onPrev}

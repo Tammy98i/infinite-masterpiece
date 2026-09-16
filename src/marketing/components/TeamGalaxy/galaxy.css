@@ -221,8 +221,8 @@
 .galaxy-caption-dock {
   position: relative;
   z-index: 10;
-  margin: 0.15rem 1rem 1.1rem;
-  padding: 0.95rem 1rem 0.7rem;
+  margin: 0.1rem 1rem 0.85rem;
+  padding: 0.7rem 0.9rem 0.45rem;
   text-align: center;
   border: 1px solid rgba(212, 175, 55, 0.34);
   border-radius: 14px;
