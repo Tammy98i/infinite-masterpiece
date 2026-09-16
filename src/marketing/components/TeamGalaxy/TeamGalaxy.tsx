@@ -181,6 +181,11 @@ export function TeamGalaxy({
   };
   const select = (m: TeamMember, trigger?: HTMLButtonElement | null) => {
     if (trigger) triggerRef.current = trigger;
+    if (isMobile) {
+      setPinned(m);
+      setHovered(null);
+      return;
+    }
     setPinned((current) => (current?.id === m.id ? null : m));
     setHovered(null);
   };
@@ -427,7 +432,9 @@ function TeamGalaxyMobile({
     <section
       ref={sectionRef}
       id={sectionId}
-      className={`galaxy-stage relative py-16 overflow-x-hidden scroll-mt-24 ${variant === 'stage' ? 'is-page' : ''}`}
+      className={`galaxy-stage relative pt-16 overflow-x-hidden scroll-mt-24 ${
+        variant === 'stage' ? 'is-page pb-16' : 'is-embed-mobile'
+      }`}
       dir="rtl"
     >
       <div className="galaxy-vignette" aria-hidden />
@@ -501,7 +508,13 @@ function MobileStar({
   const role = localizedRole(member, 'he') || localizedRole(member, 'en') || member.role;
 
   return (
-    <button type="button" onClick={(e) => onClick(e.currentTarget)} className="flex flex-col items-center cursor-pointer min-h-11 min-w-11" aria-pressed={Boolean(selected)} aria-label={`${name}, ${role}`}>
+    <button
+      type="button"
+      onClick={(e) => onClick(e.currentTarget)}
+      className={`galaxy-mobile-star flex flex-col items-center cursor-pointer min-h-11 min-w-11${selected ? ' is-selected' : ''}`}
+      aria-pressed={Boolean(selected)}
+      aria-label={`${name}, ${role}`}
+    >
       <span
         className="relative flex items-center justify-center"
         style={{ width: d, height: d }}
@@ -515,11 +528,11 @@ function MobileStar({
           ) : (
             <span
               className="galaxy-star-glow"
-              style={{ width: d * 1.45, height: d * 1.45, opacity: selected ? 0.5 : 0.22 }}
+              style={{ width: selected ? d * 1.85 : d * 1.45, height: selected ? d * 1.85 : d * 1.45, opacity: selected ? 0.72 : 0.22 }}
             />
           )}
       <span
-        className="relative rounded-full overflow-hidden"
+        className="galaxy-star-face relative rounded-full overflow-hidden"
         style={{
           width: d,
           height: d,

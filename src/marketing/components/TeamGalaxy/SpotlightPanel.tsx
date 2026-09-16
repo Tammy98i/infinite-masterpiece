@@ -81,35 +81,16 @@ export function SpotlightPanel({
 
   if (!member) return null;
 
-  if (variant === 'inline') {
-    const name = localizedName(member, 'he');
-    const roleHe = localizedRole(member, 'he');
-    const line = member.contribution || member.bio || member.quote || '';
+  // Mobile stays on the page: caption dock only. Never a sheet/overlay.
+  if (variant === 'inline' || variant === 'sheet') {
     return (
-      <aside
-        id="team-profile-card"
-        className="relative z-10 mx-4 mt-2 mb-6 px-4 py-4 text-center border-t border-[#D4AF37]/18"
-        aria-live="polite"
-        aria-labelledby={titleId}
-      >
-        <h3 id={titleId} className="text-[17px] text-[#F7F1E4] font-heading">
-          {name}
-        </h3>
-        <p className="mt-1 text-[13px] text-[#C5A059]">{roleHe}</p>
-        {line ? (
-          <p className="mt-3 text-[15px] text-[#F7F1E4]/75 font-light leading-relaxed line-clamp-3" dir="rtl">
-            {line}
-          </p>
-        ) : null}
-        {settings.show_impact && typeof member.impact_score === 'number' ? (
-          <p className="mt-3 text-[11px] tracking-[0.14em] text-[#C5A059]/90">
-            Impact {member.impact_score}
-          </p>
-        ) : null}
-        <div className="mt-3 flex justify-center">
-          <NavRow onPrev={onPrev} onNext={onNext} />
-        </div>
-      </aside>
+      <CaptionDock
+        member={member}
+        settings={settings}
+        titleId={titleId}
+        onPrev={onPrev}
+        onNext={onNext}
+      />
     );
   }
 
@@ -168,46 +149,69 @@ export function SpotlightPanel({
   }
 
   return (
-    <div
-      className="fixed inset-0 z-[220] flex items-end justify-center bg-black/70"
-      onClick={onClose}
-    >
-      <div
-        id="team-profile-sheet"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby={titleId}
-        className="relative w-full max-h-[92dvh] rounded-t-3xl border border-[#D4AF37]/25 bg-[#080705] overflow-hidden"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="flex items-center justify-center pt-3">
-          <div className="h-1.5 w-12 rounded-full bg-white/25" aria-hidden />
-        </div>
-        <div className="sticky top-0 z-10 flex items-center justify-between px-4 py-3 border-b border-white/8 bg-[#080705]">
-          <p className="text-sm text-white">{isFounder ? 'מייסד וחזון' : 'פרופיל'}</p>
-          <button
-            ref={closeRef}
-            type="button"
-            onClick={onClose}
-            className="w-11 h-11 rounded-full border border-white/15 flex items-center justify-center text-white"
-            aria-label="סגירה"
-          >
-            <X className="w-5 h-5" />
-          </button>
-        </div>
-        <div className="overflow-y-auto max-h-[calc(92dvh-4.5rem)]">
-          {body}
-          <NavRow onPrev={onPrev} onNext={onNext} />
-        </div>
-      </div>
-    </div>
+    <CaptionDock
+      member={member}
+      settings={settings}
+      titleId={titleId}
+      onPrev={onPrev}
+      onNext={onNext}
+    />
   );
 }
 
-function NavRow({ onPrev, onNext }: { onPrev?: () => void; onNext?: () => void }) {
+function CaptionDock({
+  member,
+  settings,
+  titleId,
+  onPrev,
+  onNext,
+}: {
+  member: TeamMember;
+  settings: SpotlightPanelProps['settings'];
+  titleId: string;
+  onPrev?: () => void;
+  onNext?: () => void;
+}) {
+  const name = localizedName(member, 'he');
+  const roleHe = localizedRole(member, 'he');
+  const line = member.contribution || member.bio || member.quote || '';
+  const score = typeof member.impact_score === 'number' ? member.impact_score : null;
+  const ticksOn = score == null ? 0 : Math.round((Math.max(0, Math.min(100, score)) / 100) * 10);
+
+  return (
+    <aside
+      id="team-profile-card"
+      className="galaxy-caption-dock"
+      aria-live="polite"
+      aria-labelledby={titleId}
+    >
+      <h3 id={titleId} className="text-[17px] text-[#F7F1E4] font-heading leading-snug">
+        {name}
+      </h3>
+      <p className="mt-1 text-[12px] tracking-[0.16em] uppercase text-[#C5A059]" dir="ltr">
+        {localizedRole(member, 'en') || roleHe}
+      </p>
+      {line ? (
+        <p className="mt-2.5 text-[14px] text-[#F7F1E4]/75 font-light leading-relaxed line-clamp-3" dir="rtl">
+          {line}
+        </p>
+      ) : null}
+      {settings.show_impact && score != null ? (
+        <div className="galaxy-caption-dock-impact" aria-label={`Impact ${score}`}>
+          {Array.from({ length: 10 }).map((_, i) => (
+            <span key={i} className={`galaxy-caption-dock-tick${i < ticksOn ? ' is-on' : ''}`} />
+          ))}
+        </div>
+      ) : null}
+      <NavRow onPrev={onPrev} onNext={onNext} compact />
+    </aside>
+  );
+}
+
+function NavRow({ onPrev, onNext, compact }: { onPrev?: () => void; onNext?: () => void; compact?: boolean }) {
   if (!onPrev && !onNext) return null;
   return (
-    <div className="flex items-center justify-between px-5 pb-5">
+    <div className={compact ? 'mt-2 flex items-center justify-center gap-10' : 'flex items-center justify-between px-5 pb-5'}>
       <button
         type="button"
         onClick={onPrev}
