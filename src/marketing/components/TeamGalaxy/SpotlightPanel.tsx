@@ -203,7 +203,22 @@ function CaptionDock({
           ))}
         </div>
       ) : null}
-      <NavRow onPrev={onPrev} onNext={onNext} compact />
+      <button
+        type="button"
+        onClick={onPrev}
+        className="absolute top-1/2 right-1 -translate-y-1/2 w-11 h-11 rounded-full text-[#D4AF37] flex items-center justify-center"
+        aria-label="איש צוות קודם"
+      >
+        <ChevronRight className="w-4 h-4" />
+      </button>
+      <button
+        type="button"
+        onClick={onNext}
+        className="absolute top-1/2 left-1 -translate-y-1/2 w-11 h-11 rounded-full text-[#D4AF37] flex items-center justify-center"
+        aria-label="איש צוות הבא"
+      >
+        <ChevronLeft className="w-4 h-4" />
+      </button>
     </aside>
   );
 }

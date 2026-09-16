@@ -440,28 +440,32 @@ function TeamGalaxyMobile({
     <section
       ref={sectionRef}
       id={sectionId}
-      className={`galaxy-stage relative pt-16 overflow-x-hidden scroll-mt-24 ${
-        variant === 'stage' ? 'is-page pb-16' : 'is-embed-mobile'
-      }`}
+      className={`galaxy-stage relative overflow-x-hidden scroll-mt-24 ${
+        selectedId ? 'pt-10' : 'pt-16'
+      } ${variant === 'stage' ? 'is-page pb-16' : 'is-embed-mobile'}`}
       dir="rtl"
     >
       <div className="galaxy-vignette" aria-hidden />
-      <div className="relative z-10 text-center mb-5 px-4">
-        <p className="text-[10px] tracking-[0.42em] text-[#C5A059]/80 uppercase mb-3" dir="ltr">
+      <div className="relative z-10 text-center mb-4 px-4">
+        <p className="text-[10px] tracking-[0.42em] text-[#C5A059]/80 uppercase mb-2" dir="ltr">
           Infinite Masterpiece
         </p>
-        <h2 className="text-[26px] font-heading text-[#F7F1E4] uppercase tracking-[0.12em]" dir="ltr">
+        <h2 className="text-[22px] font-heading text-[#F7F1E4] uppercase tracking-[0.12em]" dir="ltr">
           {settings.title_en}
         </h2>
-        <p className="text-[14px] text-[#E8D9B0]/80 font-light mt-2 tracking-[0.06em]" dir="ltr">
-          {settings.subtitle_en}
-        </p>
-        <p className="mt-3 text-[15px] text-[#F7F1E4]/70">{settings.title_he}</p>
-        <p className="mt-2 text-[13px] text-[#C5A059]">{settings.mobile_hint}</p>
+        {selectedId ? null : (
+          <>
+            <p className="text-[14px] text-[#E8D9B0]/80 font-light mt-2 tracking-[0.06em]" dir="ltr">
+              {settings.subtitle_en}
+            </p>
+            <p className="mt-3 text-[15px] text-[#F7F1E4]/70">{settings.title_he}</p>
+            <p className="mt-2 text-[13px] text-[#C5A059]">{settings.mobile_hint}</p>
+          </>
+        )}
       </div>
 
       {founder ? (
-        <div className="relative z-10 flex justify-center mb-4">
+        <div className="relative z-10 flex justify-center mb-2">
           <MobileStar member={founder} onClick={(el) => onSelect(founder, el)} selected={selectedId === founder.id} />
         </div>
       ) : null}
