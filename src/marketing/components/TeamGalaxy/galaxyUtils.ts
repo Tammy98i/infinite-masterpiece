@@ -28,6 +28,18 @@ export function starDiameter(impact: number, member: TeamMember, isFounder: bool
   return 24 + score * 0.34;
 }
 
+/** Compact sizes for the mobile stack while keeping impact hierarchy readable. */
+export function mobileStarDiameter(member: TeamMember, isFounder: boolean): number {
+  const desktop = starDiameter(member.impact_score, member, isFounder);
+  if (isFounder) return Math.min(124, Math.max(108, desktop * 0.68));
+  if (isCtoOrCco(member)) return Math.min(88, Math.max(76, desktop * 0.86));
+  if (isLeadership(member)) return Math.min(68, Math.max(56, desktop * 0.82));
+  if (member.hierarchy_level === 'core' || member.group_key === 'core') {
+    return Math.min(62, Math.max(46, 28 + clampImpact(member.impact_score) * 0.42));
+  }
+  return Math.min(52, Math.max(40, 22 + clampImpact(member.impact_score) * 0.4));
+}
+
 export function glowSize(impact: number, isFounder: boolean, member?: TeamMember): number {
   if (isFounder) return 96;
   if (member && isCtoOrCco(member)) return 36;

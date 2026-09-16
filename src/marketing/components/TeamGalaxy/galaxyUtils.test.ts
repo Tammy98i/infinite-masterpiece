@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { teamGalaxyPublicMembers } from '../../../constants/teamGalaxySeed.ts';
-import { calculatePositions, isCtoOrCco, starDiameter } from './galaxyUtils.ts';
+import { calculatePositions, isCtoOrCco, mobileStarDiameter, starDiameter } from './galaxyUtils.ts';
 
 test('founder is the largest star and sits at the origin', () => {
   const members = teamGalaxyPublicMembers();
@@ -42,4 +42,17 @@ test('tablet maxOrbit hides contributor stars', () => {
   const compact = calculatePositions(members, 1, { maxOrbit: 2 });
   assert.ok(all.stars.length > compact.stars.length);
   assert.ok(compact.stars.every((s) => (s.member.orbit ?? 2) <= 2));
+});
+
+test('mobile star sizes keep founder then C-level then core', () => {
+  const members = teamGalaxyPublicMembers();
+  const founder = members.find((m) => m.group_key === 'founder');
+  const cto = members.find((m) => /CTO/i.test(m.role_en));
+  const core = members.filter((m) => m.group_key === 'core');
+  assert.ok(founder && cto && core.length);
+  const founderD = mobileStarDiameter(founder, true);
+  const ctoD = mobileStarDiameter(cto, false);
+  const coreD = Math.max(...core.map((m) => mobileStarDiameter(m, false)));
+  assert.ok(founderD > ctoD + 12);
+  assert.ok(ctoD > coreD);
 });

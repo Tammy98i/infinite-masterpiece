@@ -242,6 +242,36 @@
 .galaxy-mobile-scroller::-webkit-scrollbar {
   display: none;
 }
+.galaxy-portrait-placeholder {
+  background:
+    radial-gradient(circle at 50% 38%, rgba(247, 231, 181, 0.16) 0%, rgba(12, 10, 8, 0.92) 58%, #070605 100%);
+  box-shadow: inset 0 0 0 1px rgba(212, 175, 55, 0.22);
+}
+
+.galaxy-portrait-star {
+  position: absolute;
+  color: rgba(212, 175, 55, 0.28);
+  font-size: 0.72em;
+  line-height: 1;
+  pointer-events: none;
+}
+
+.galaxy-mobile-inner {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 1.75rem;
+  padding: 0 1rem;
+  margin-bottom: 1.75rem;
+}
+
+.galaxy-mobile-rest-label {
+  text-align: center;
+  font-size: 11px;
+  letter-spacing: 0.14em;
+  color: rgba(197, 160, 89, 0.85);
+  margin-bottom: 0.75rem;
+}
 
 .galaxy-legend {
   position: absolute;

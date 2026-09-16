@@ -2,7 +2,6 @@ import { Fragment, useEffect, useMemo, useRef, useState, type ReactNode, type Re
 import { motion } from 'motion/react';
 import { teamMembersApi, type TeamMember } from '../../../api/teamMembers';
 import {
-  TEAM_ECOSYSTEM,
   TEAM_SECTION_DEFAULTS,
   localizedName,
   localizedRole,
@@ -17,8 +16,7 @@ import {
   getConnectionLines,
   goldColor,
   isCtoOrCco,
-  isLeadership,
-  starDiameter,
+  mobileStarDiameter,
 } from './galaxyUtils';
 import './galaxy.css';
 
@@ -57,8 +55,6 @@ type PreviewPayload = {
   settings?: TeamSectionSettings;
   members?: TeamMember[];
 };
-
-const ECO_ANGLES = [200, 248, 292, 338, 28, 72];
 
 export function TeamGalaxy({
   preview,
@@ -255,8 +251,6 @@ export function TeamGalaxy({
     );
   }
 
-  const outerR = (orbitRadii[orbitRadii.length - 1] || 450) + 36;
-
   return (
     <section
       ref={sectionRef}
@@ -344,22 +338,6 @@ export function TeamGalaxy({
               ))}
           </svg>
 
-          {!isTablet &&
-            TEAM_ECOSYSTEM.map((eco, i) => {
-              const angle = (ECO_ANGLES[i] * Math.PI) / 180;
-              const x = Math.cos(angle) * outerR;
-              const y = Math.sin(angle) * outerR * 0.86;
-              return (
-                <span
-                  key={eco.id}
-                  className="galaxy-eco-label"
-                  style={{ left: `calc(50% + ${x}px)`, top: `calc(50% + ${y}px)` }}
-                >
-                  {eco.label_en}
-                </span>
-              );
-            })}
-
           {inView &&
             stars.map((star) => (
               <Fragment key={star.member.id}>
@@ -438,10 +416,12 @@ function TeamGalaxyMobile({
   variant: 'embed' | 'stage';
 }) {
   const founder = members.find((m) => m.hierarchy_level === 'founder' || m.group_key === 'founder');
-  const leadership = members
-    .filter((m) => m !== founder && isLeadership(m))
-    .sort((a, b) => Number(isCtoOrCco(b)) - Number(isCtoOrCco(a)));
-  const rest = members.filter((m) => m !== founder && !leadership.includes(m));
+  const innerLead = members
+    .filter((m) => m !== founder && isCtoOrCco(m))
+    .sort((a, b) => (b.impact_score ?? 0) - (a.impact_score ?? 0));
+  const rest = members
+    .filter((m) => m !== founder && !innerLead.includes(m))
+    .sort((a, b) => (b.impact_score ?? 0) - (a.impact_score ?? 0));
 
   return (
     <section
@@ -471,9 +451,9 @@ function TeamGalaxyMobile({
         </div>
       ) : null}
 
-      {leadership.length > 0 ? (
-        <div className="relative z-10 flex justify-center gap-5 mb-8 px-4 flex-wrap">
-          {leadership.map((m) => (
+      {innerLead.length > 0 ? (
+        <div className="galaxy-mobile-inner relative z-10">
+          {innerLead.map((m) => (
             <div key={m.id}>
               <MobileStar
                 member={m}
@@ -487,6 +467,7 @@ function TeamGalaxyMobile({
 
       {rest.length > 0 ? (
         <div className="relative z-10">
+          <p className="galaxy-mobile-rest-label">שאר הצוות · גודל הכוכב = רמת ההשפעה</p>
           <div className="flex gap-5 overflow-x-auto px-4 pb-6 galaxy-mobile-scroller" style={{ scrollSnapType: 'x mandatory' }}>
             {rest.map((m) => (
               <div key={m.id} className="galaxy-mobile-card shrink-0">
@@ -514,11 +495,10 @@ function MobileStar({
   selected?: boolean;
 }) {
   const isFounder = member.hierarchy_level === 'founder' || member.group_key === 'founder';
-  const computed = starDiameter(member.impact_score, member, isFounder);
-  const d = size ?? (isFounder ? Math.min(computed, 128) : Math.min(computed, 86));
+  const d = size ?? mobileStarDiameter(member, isFounder);
   const color = goldColor(member.hierarchy_level);
   const name = localizedName(member, 'he') || member.name;
-  const role = localizedRole(member, 'en') || member.role;
+  const role = localizedRole(member, 'he') || localizedRole(member, 'en') || member.role;
 
   return (
     <button type="button" onClick={(e) => onClick(e.currentTarget)} className="flex flex-col items-center cursor-pointer min-h-11 min-w-11" aria-pressed={Boolean(selected)} aria-label={`${name}, ${role}`}>
