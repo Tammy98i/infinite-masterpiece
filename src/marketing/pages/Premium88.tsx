@@ -12,7 +12,7 @@ export function Premium88() {
   return (
     <div className="min-h-screen text-white selection:bg-[#C8A24C]/30">
       <section className="relative pt-32 pb-16 lg:pt-40 lg:pb-20">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-10 text-center">
           <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-6 font-semibold">
             האנשים שמאחורי שכבת העומק
           </p>
@@ -26,7 +26,7 @@ export function Premium88() {
       </section>
 
       <section className="pb-20 relative z-10">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-10">
           <FounderRoster />
         </div>
       </section>

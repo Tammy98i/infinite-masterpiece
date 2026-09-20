@@ -23,7 +23,7 @@ export const ProfileView: React.FC = () => {
 
   return (
     <div className="min-h-screen text-white pt-24 pb-28">
-      <div className="max-w-3xl mx-auto px-4 sm:px-8 text-right">
+      <div className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-10 text-right">
         <button
           type="button"
           onClick={() => setView('home')}
@@ -103,7 +103,7 @@ export const ProfileView: React.FC = () => {
             <PlansGrid />
           </section>
         ) : (
-          <section className="mb-14 border border-white/10 rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+          <section className="mb-16 border border-white/10 rounded-2xl p-7 md:p-9 flex flex-col sm:flex-row sm:items-center justify-between gap-8">
             <div>
               <h2 className="text-sm text-white/40 mb-1">מנוי</h2>
               <p className="text-lg font-medium">{planLabel(user.subscriptionPlan)}</p>

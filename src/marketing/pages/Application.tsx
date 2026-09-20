@@ -77,11 +77,11 @@ export function Application() {
 
   return (
     <div className="min-h-screen bg-transparent pt-32 pb-24">
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="bg-white/5 border border-white/10 backdrop-blur-sm rounded-3xl p-8 md:p-12 shadow-xl shadow-black/50"
+          className="bg-white/5 border border-white/10 backdrop-blur-sm rounded-3xl p-8 md:p-12 lg:p-14 shadow-xl shadow-black/50"
         >
           <div className="text-center mb-10">
             <h1 className="text-3xl font-bold text-white mb-4">

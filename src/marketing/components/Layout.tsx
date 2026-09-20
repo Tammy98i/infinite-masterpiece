@@ -44,7 +44,7 @@ export function Layout({ children }: LayoutProps) {
           דילוג לתוכן הראשי
         </a>
         <Header />
-        <main id="main-content" className={`flex-1 w-full text-center ${isHome ? '' : 'pt-20'}`} tabIndex={-1}>
+        <main id="main-content" className={`flex-1 w-full text-center ${isHome ? '' : 'pt-24'}`} tabIndex={-1}>
           {children}
         </main>
         <ConversionBand />

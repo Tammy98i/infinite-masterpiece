@@ -67,7 +67,7 @@ export function Hesitation() {
       <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/25 via-transparent to-[#010308]/35" />
       <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[40vw] h-[40vw] bg-[#C8A24C]/5 blur-[120px] rounded-full pointer-events-none" />
 
-      <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6">
+      <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-8 lg:px-10">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -96,7 +96,7 @@ export function Hesitation() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="bg-white/[0.01] border border-[#C8A24C]/20 backdrop-blur-2xl rounded-[32px] p-8 md:p-12"
+          className="bg-white/[0.01] border border-[#C8A24C]/20 backdrop-blur-2xl rounded-[32px] p-8 md:p-12 lg:p-14"
         >
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

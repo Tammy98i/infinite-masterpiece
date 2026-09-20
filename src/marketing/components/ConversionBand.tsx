@@ -19,8 +19,8 @@ export function ConversionBand() {
   if (HIDDEN_ROUTES.some((route) => pathname.startsWith(route))) return null;
 
   return (
-    <section className="conversion-band px-4 py-10 sm:px-6 md:py-14 lg:px-8" aria-labelledby="conversion-band-title">
-      <div className="mx-auto flex max-w-[1180px] flex-col items-center justify-between gap-8 rounded-[28px] border border-[#C8A24C]/25 bg-[#05070d]/88 px-6 py-9 text-center shadow-[0_28px_80px_rgba(0,0,0,0.32)] backdrop-blur-2xl md:flex-row md:px-10 md:py-10 md:text-right">
+    <section className="conversion-band px-4 py-14 sm:px-8 md:py-20 lg:px-10" aria-labelledby="conversion-band-title">
+      <div className="mx-auto flex max-w-[1280px] flex-col items-center justify-between gap-10 rounded-[28px] border border-[#C8A24C]/25 bg-[#05070d]/88 px-7 py-11 text-center shadow-[0_28px_80px_rgba(0,0,0,0.32)] backdrop-blur-2xl md:flex-row md:px-12 md:py-12 md:text-right">
         <div className="max-w-2xl">
           <p className="mb-3 text-[11px] font-semibold uppercase tracking-[0.25em] text-[#C8A24C]">הצעד הבא שלך</p>
           <h2 id="conversion-band-title" className="mb-3 text-2xl font-heading text-white sm:text-3xl">היצירה כבר קיימת. עכשיו בונים סביבה מערכת.</h2>

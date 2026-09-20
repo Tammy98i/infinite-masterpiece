@@ -76,10 +76,10 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
   return (
     <section
       id={id}
-      className="py-8 select-none relative group/row scroll-mt-24"
+      className="library-spacious-section py-10 select-none relative group/row scroll-mt-24"
       aria-label={`${title} — רשימת הרצאות`}
     >
-      <div className="flex items-center gap-3 px-4 sm:px-8 mb-5">
+      <div className="mx-auto flex max-w-[1400px] items-center gap-4 px-4 sm:px-8 lg:px-10 mb-7">
         <h2 className="text-lg sm:text-xl font-semibold text-white tracking-tight">{title}</h2>
         {onSeeAll && (
           <button
@@ -118,7 +118,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
               scroll('prev');
             }
           }}
-          className={`flex gap-3 sm:gap-4 overflow-x-auto px-4 sm:px-8 pb-2 pt-2 scroll-smooth snap-x snap-mandatory carousel-scroll focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-inset ${
+          className={`mx-auto flex max-w-[1400px] gap-4 sm:gap-6 overflow-x-auto px-4 sm:px-8 lg:px-10 pb-3 pt-2 scroll-smooth snap-x snap-mandatory carousel-scroll focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-inset ${
             ranked ? 'pt-4' : ''
           }`}
         >

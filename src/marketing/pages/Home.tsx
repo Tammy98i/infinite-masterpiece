@@ -97,7 +97,7 @@ export function Home() {
         className="section-block relative z-10"
         id="depth-layer"
       >
-        <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-10 text-center">
           <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-4 font-semibold">
             שכבת העומק
           </p>
@@ -107,7 +107,7 @@ export function Home() {
           </p>
           <p className="text-sm text-white/35 font-light mb-10">בנוסף למסלול הראשי. 8,888 ₪ לפני מע״מ.</p>
 
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-6 gap-y-3 text-sm text-white/70 font-light mb-10 text-center">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-x-8 gap-y-4 text-sm text-white/70 font-light mb-12 text-center">
             {['Hot Seats', 'Micro-Pods', 'Mastermind', 'ניתוח אישי', 'גישה למומחים', 'ליווי הטמעה'].map(
               (item) => (
                 <span key={item}>{item}</span>

@@ -53,7 +53,7 @@ export function Journey() {
 
       <section className="pb-20 md:pb-28">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
             {STEPS.map((step, idx) => (
               <motion.div
                 key={step.num}
@@ -61,7 +61,7 @@ export function Journey() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: '-40px' }}
                 transition={{ duration: 0.6, delay: idx * 0.08 }}
-                className="relative bg-white/[0.02] border border-white/[0.04] backdrop-blur-3xl rounded-[32px] p-10 hover:bg-white/[0.04] transition-all duration-700 shadow-[0_24px_48px_rgba(0,0,0,0.2)] group flex flex-col h-full overflow-hidden"
+                className="relative bg-white/[0.02] border border-white/[0.04] backdrop-blur-3xl rounded-[32px] p-10 xl:p-12 hover:bg-white/[0.04] transition-all duration-700 shadow-[0_24px_48px_rgba(0,0,0,0.2)] group flex flex-col h-full overflow-hidden"
               >
                 <div className="absolute inset-0 bg-gradient-to-br from-[#C8A24C]/0 via-transparent to-[#C8A24C]/0 group-hover:from-[#C8A24C]/5 transition-all duration-700" />
                 <div className="relative z-10">

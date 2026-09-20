@@ -228,7 +228,7 @@ export function Header() {
           : 'bg-gradient-to-b from-[#010308]/80 via-[#010308]/35 to-transparent border-b border-transparent'
       )}
     >
-      <div className="header-row mx-auto grid h-full w-full max-w-[1280px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-6 lg:px-8">
+      <div className="header-row mx-auto grid h-full w-full max-w-[1400px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 px-4 sm:px-8 lg:px-10">
           <Link to="/" className="header-logo flex items-center gap-3 sm:gap-4 group shrink-0 min-h-11">
             <InfinityIcon className="w-8 h-8 text-[#F7E7B5] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
             <div className="flex flex-col">

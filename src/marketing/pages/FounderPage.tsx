@@ -58,7 +58,7 @@ export function FounderPage() {
   return (
     <div className="min-h-screen text-white selection:bg-[#C8A24C]/30">
       <section className="pt-28 pb-20 lg:pt-36 lg:pb-28">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-10">
           <Link
             to="/premium-88"
             className="inline-flex items-center gap-1.5 text-sm text-white/45 hover:text-white mb-12 min-h-11 cursor-pointer transition-colors duration-200"
@@ -67,7 +67,7 @@ export function FounderPage() {
             צוות המיזם
           </Link>
 
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-24 items-start">
             <div className="lg:col-span-6 text-center">
               <h1 className="text-4xl md:text-5xl font-heading text-white tracking-tight mb-4">
                 {founder.name}

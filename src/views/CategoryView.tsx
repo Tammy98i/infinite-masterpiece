@@ -30,9 +30,9 @@ export const CategoryView: React.FC = () => {
   const filteredCourses = filterCatalogCourses(baseCourses, user, activeFilter, selectedInstructor);
 
   return (
-    <div className="min-h-screen text-white pt-28 pb-20 px-4 sm:px-8 max-w-7xl mx-auto">
+    <div className="min-h-screen text-white pt-32 pb-28 px-4 sm:px-8 lg:px-10 max-w-[1400px] mx-auto">
       <div
-        className="rounded-3xl p-8 mb-10 relative overflow-hidden text-right border border-white/10"
+        className="rounded-3xl p-8 md:p-12 mb-14 relative overflow-hidden text-right border border-white/10"
         style={
           currentCategory.coverImage
             ? {
