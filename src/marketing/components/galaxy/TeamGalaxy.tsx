@@ -3,8 +3,8 @@ import { motion } from 'motion/react';
 import { ChevronLeft, ChevronRight, Infinity as InfinityIcon, Pause, Play, Sparkles, Sun } from 'lucide-react';
 import { teamMembersApi } from '../../../api/teamMembers';
 import { sortTeam, starDiameter, starPosition, type TeamMember } from '../../../lib/teamMembers';
+import { InlineStarDetails } from './InlineStarDetails';
 import { StarPortrait } from './StarPortrait';
-import { TeamSpotlight } from './TeamSpotlight';
 import './TeamGalaxy.css';
 
 export function TeamGalaxy() {
@@ -13,7 +13,6 @@ export function TeamGalaxy() {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
   const [paused, setPaused] = useState(false);
-  const [pinned, setPinned] = useState(false);
   const [page, setPage] = useState(0);
   const [compact, setCompact] = useState(() => window.matchMedia('(max-width: 1023px)').matches);
   const lastTrigger = useRef<HTMLButtonElement | null>(null);
@@ -43,29 +42,38 @@ export function TeamGalaxy() {
   const safePage = Math.min(page, pageCount - 1);
   const visible = satellites.slice(safePage * capacity, (safePage + 1) * capacity);
   const profile = members.find(member => member.id === selected);
-  const close = () => { setPinned(false); setSelected(null); lastTrigger.current?.focus({ preventScroll: true }); };
-  const step = (direction: number) => {
-    if (!members.length) return;
-    const index = members.findIndex(member => member.id === selected);
-    const next = members[(index + direction + members.length) % members.length];
-    setPinned(true);
-    setSelected(next.id);
-    const satelliteIndex = satellites.findIndex(member => member.id === next.id);
-    if (satelliteIndex >= 0) setPage(Math.floor(satelliteIndex / capacity));
+  const close = (restoreFocus = true) => {
+    setSelected(null);
+    if (restoreFocus) lastTrigger.current?.focus({ preventScroll: true });
   };
   const renderStar = (member: TeamMember, slot: number) => {
     const sun = member.hierarchy_level === 'founder';
-    const position = starPosition(member, slot);
-    return <motion.div key={member.id} className={`galaxy-star-anchor ${sun ? 'galaxy-sun' : ''}`}
-      style={{ left: `${position.x}%`, top: `${position.y}%`, '--star-size': `${starDiameter(member)}px`, '--star-glow': `${10 + member.impact_score * 0.28}px` } as CSSProperties}
-      initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.2 }} transition={{ duration: 1.2, delay: sun ? 0 : 0.65 + slot * 0.15 }}>
+    const featured = sun || /תמי|tami|גלב|gleb/i.test(member.name);
+    const isSelected = selected === member.id;
+    const naturalPosition = starPosition(member, slot);
+    const position = isSelected
+      ? { x: 50, y: 38 }
+      : profile && sun
+        ? { x: 16, y: 50 }
+        : naturalPosition;
+    const diameter = starDiameter(member) + (featured && !sun ? 16 : 0);
+    return <motion.div key={member.id}
+      className={`galaxy-star-anchor ${sun ? 'galaxy-sun' : ''} ${featured ? 'galaxy-featured' : ''} ${isSelected ? 'is-selected' : ''}`}
+      style={{ left: `${position.x}%`, top: `${position.y}%`, '--star-size': `${diameter}px`, '--star-glow': `${10 + member.impact_score * 0.28}px` } as CSSProperties}
+      initial={{ opacity: 0 }} animate={{ left: `${position.x}%`, top: `${position.y}%`, opacity: profile && !isSelected ? 0.32 : 1 }}
+      transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: isSelected ? 0 : sun ? 0 : Math.min(slot * 0.04, 0.28) }}>
       <button type="button" className="galaxy-star" data-member-id={member.id} data-impact={member.impact_score}
-        aria-label={`הצגת פרופיל ${member.name}`} aria-expanded={selected === member.id} aria-controls="team-spotlight"
-        onPointerEnter={event => { if (event.pointerType === 'mouse' && !pinned) setSelected(member.id); }}
-        onClick={event => { lastTrigger.current = event.currentTarget; setPinned(true); setSelected(member.id); }}>
+        aria-label={isSelected ? `סגירת פרטי ${member.name}` : `הצגת פרטי ${member.name}`} aria-expanded={isSelected}
+        aria-controls={isSelected ? `team-inline-details-${member.id}` : undefined}
+        onClick={event => {
+          lastTrigger.current = event.currentTarget;
+          setSelected(current => current === member.id ? null : member.id);
+        }}>
         <span className="galaxy-stellar-body"><StarPortrait member={member} /><span className="galaxy-flare" aria-hidden="true">✦</span></span>
         <span className="galaxy-star-name" dir="auto">{member.name}</span>
-        <span className="galaxy-star-role" dir="auto">{sun ? 'FOUNDER / VISIONARY' : member.role}</span>
+        {isSelected
+          ? <InlineStarDetails member={member} />
+          : <span className="galaxy-star-role" dir="auto">{sun ? 'FOUNDER / VISIONARY' : member.role}</span>}
       </button>
     </motion.div>;
   };
@@ -83,10 +91,15 @@ export function TeamGalaxy() {
       {error && <p className="galaxy-message" role="status">{error}</p>}
       <div className="galaxy-layout" dir="ltr">
         <div className="galaxy-map-wrap">
-          <div className="galaxy-map" onTouchStart={event => { touchStart.current = event.touches[0].clientX; }}
+          <div className={`galaxy-map ${profile ? 'has-selection' : ''}`}
+            onClick={event => {
+              if (event.target instanceof Element && !event.target.closest('.galaxy-star') && profile) close(false);
+            }}
+            onTouchStart={event => { touchStart.current = event.touches[0].clientX; }}
             onTouchEnd={event => {
               const start = touchStart.current; touchStart.current = null;
               if (start !== null && Math.abs(event.changedTouches[0].clientX - start) > 55) {
+                setSelected(null);
                 setPage(current => (current + (event.changedTouches[0].clientX < start ? 1 : -1) + pageCount) % pageCount);
               }
             }}>
@@ -105,14 +118,12 @@ export function TeamGalaxy() {
             <button type="button" className="galaxy-motion-toggle" onClick={() => setPaused(value => !value)} aria-pressed={paused} aria-label={paused ? 'הפעלת תנועת הכוכבים' : 'השהיית תנועת הכוכבים'}>{paused ? <Play size={16} /> : <Pause size={16} />}</button>
           </div>
           {pageCount > 1 && <nav className="galaxy-paging" aria-label="מסלולי צוות">
-            <button type="button" aria-label="מסלול קודם" onClick={() => setPage((safePage - 1 + pageCount) % pageCount)}><ChevronLeft size={18} /></button>
+            <button type="button" aria-label="מסלול קודם" onClick={() => { setSelected(null); setPage((safePage - 1 + pageCount) % pageCount); }}><ChevronLeft size={18} /></button>
             <span role="status">{safePage + 1} / {pageCount} · {compact ? 'החליקו או הקישו להמשך הצוות' : 'לגלות עוד אנשים במערכת'}</span>
-            <button type="button" aria-label="מסלול הבא" onClick={() => setPage((safePage + 1) % pageCount)}><ChevronRight size={18} /></button>
+            <button type="button" aria-label="מסלול הבא" onClick={() => { setSelected(null); setPage((safePage + 1) % pageCount); }}><ChevronRight size={18} /></button>
           </nav>}
         </div>
-        <div className="galaxy-panel-slot">
-          {profile ? <TeamSpotlight member={profile} onClose={close} onStep={step} /> : <div className="galaxy-idle"><Sun size={36} strokeWidth={0.8} /><p className="galaxy-eyebrow">EVERY PERSON. A FORCE.</p><h3>האנשים שמאחורי החזון</h3><p>בחרו כוכב וגלו את האדם,<br />את הכוח ואת התרומה למערכת.</p><span>INFINITE PEOPLE.<br />INFINITE POSSIBILITIES.</span></div>}
-        </div>
+
       </div>
       <p className="galaxy-bottom-note">מערכת אחת. כוחות שונים. השפעה אינסופית.</p>
     </>}

@@ -14,7 +14,7 @@
 .galaxy-dust { position: absolute; inset: 0; pointer-events: none; z-index: -1; }
 .galaxy-dust i { position: absolute; width: 2px; height: 2px; background: #ddbf78; border-radius: 50%; opacity: .28; animation: galaxy-twinkle 9s ease-in-out infinite; }
 .galaxy-dust i:nth-child(7n) { box-shadow: 0 0 8px #b7904366; width: 3px; height: 3px; }
-.galaxy-layout { display: grid; grid-template-columns: minmax(0, 1fr) 300px; align-items: start; gap: 28px; max-width: 1380px; margin: auto; }
+.galaxy-layout { display: block; max-width: 1180px; margin: auto; }
 .galaxy-map-wrap { min-width: 0; }
 .galaxy-map { position: relative; height: 590px; touch-action: pan-y; }
 .galaxy-orbits { position: absolute; inset: 0; pointer-events: none; }
@@ -27,10 +27,10 @@
 .galaxy-orbit-1 > span { animation-delay: -60s; animation-duration: 180s; }
 .galaxy-orbit-2 > span { animation-delay: -30s; animation-duration: 210s; opacity: .5; }
 .galaxy-orbit-3 > span { animation-delay: -80s; animation-duration: 240s; opacity: .4; }
-.galaxy-star-anchor { position: absolute; transform: translate(-50%, -50%); z-index: 2; }
+.galaxy-star-anchor { position: absolute; width: 0; height: 0; z-index: 2; }
 .galaxy-star-anchor:has(:focus-visible), .galaxy-star-anchor:hover { z-index: 3; }
-.galaxy-star { display: flex; flex-direction: column; align-items: center; position: relative; border: 0; background: transparent; cursor: pointer; color: #dfc47d; padding: 0; min-width: 44px; min-height: 44px; }
-.galaxy-stellar-body { display: block; position: relative; width: calc(var(--star-size) * var(--star-scale)); height: calc(var(--star-size) * var(--star-scale)); border-radius: 50%; box-shadow: 0 0 var(--star-glow) #b7904333, 0 0 3px #dfc47d; transition: width .6s, height .6s, box-shadow .4s; }
+.galaxy-star { display: flex; flex-direction: column; align-items: center; position: relative; transform: translate(-50%, -50%); border: 0; background: transparent; cursor: pointer; color: #dfc47d; padding: 0; min-width: 44px; min-height: 44px; }
+.galaxy-stellar-body { display: block; position: relative; width: calc(var(--star-size) * var(--star-scale)); height: calc(var(--star-size) * var(--star-scale)); border-radius: 50%; box-shadow: 0 0 var(--star-glow) #b7904333, 0 0 3px #dfc47d; transition: width .6s, height .6s, box-shadow .4s, transform .5s, filter .5s; }
 .galaxy-stellar-body::before { content: ''; position: absolute; inset: -8px; border: 1px solid #b7904338; border-radius: 50%; animation: galaxy-glow 10s ease-in-out infinite; pointer-events: none; }
 .galaxy-portrait { display: flex; width: 100%; height: 100%; padding: 4px; border: 1px solid #b79043bb; border-radius: 50%; background: #11100b; position: relative; overflow: hidden; }
 .galaxy-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 20%; border-radius: 50%; }
@@ -38,6 +38,21 @@
 .galaxy-flare { position: absolute; top: -21px; left: 50%; transform: translateX(-50%); font-size: 28px; color: #dfc47d; text-shadow: 0 0 14px #b79043; pointer-events: none; }
 .galaxy-star-name { position: absolute; top: calc(100% + 14px); width: 165px; font-size: 16px; font-weight: 400; line-height: 1.3; text-align: center; color: #f7f4eb; }
 .galaxy-star-role { position: absolute; top: calc(100% + 39px); width: 180px; font-size: 10px; font-weight: 300; line-height: 1.6; text-align: center; color: #ddbf78; }
+.galaxy-featured .galaxy-stellar-body::before { border-color: #dfc47d70; box-shadow: 0 0 24px #b790432b; }
+.galaxy-featured .galaxy-star-name { color: #fff8e7; font-weight: 500; }
+.galaxy-map.has-selection { min-height: 610px; }
+.galaxy-star-anchor.is-selected { z-index: 10; }
+.galaxy-star-anchor.is-selected .galaxy-stellar-body { width: 158px; height: 158px; box-shadow: 0 0 42px #b790436b, 0 0 115px #b790432e, 0 0 5px #dfc47d; }
+.galaxy-star-anchor.is-selected.galaxy-featured .galaxy-stellar-body { width: 176px; height: 176px; }
+.galaxy-star-anchor.is-selected.galaxy-sun .galaxy-stellar-body { width: 194px; height: 194px; }
+.galaxy-star-anchor.is-selected .galaxy-stellar-body::before { inset: -16px; border-color: #dfc47d8c; animation-duration: 5s; }
+.galaxy-star-anchor.is-selected .galaxy-star-name { top: calc(100% + 18px); width: 280px; font-family: Georgia, 'Times New Roman', serif; font-size: 27px; color: #f7f4eb; }
+.galaxy-inline-details { position: absolute; top: calc(100% + 58px); left: 50%; transform: translateX(-50%); display: grid; justify-items: center; gap: 8px; width: min(360px, 72vw); text-align: center; pointer-events: none; }
+.galaxy-inline-role { color: #dfc47d; font-size: 11px; line-height: 1.5; letter-spacing: .08em; }
+.galaxy-inline-bio { color: #f7f4ebbd; font-size: 13px; line-height: 1.7; max-width: 340px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.galaxy-map.has-selection .galaxy-star-anchor:not(.is-selected) { opacity: .32 !important; }
+.galaxy-map.has-selection .galaxy-star-anchor:not(.is-selected) .galaxy-stellar-body { transform: scale(.84); filter: saturate(.6); }
+.galaxy-map.has-selection .galaxy-manifesto { opacity: .18; }
 .galaxy-sun { z-index: 3; }
 .galaxy-sun .galaxy-stellar-body { box-shadow: 0 0 45px #b7904350, 0 0 100px #b790431f, 0 0 4px #dfc47d; }
 .galaxy-sun .galaxy-stellar-body::before { inset: -14px; border-color: #b7904370; box-shadow: 0 0 26px #b7904324; }
