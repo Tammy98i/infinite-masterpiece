@@ -7,8 +7,8 @@
   --color-primary-light: #dfc47d;
   --color-primary-dark: #8f6d32;
   --color-primary-muted: #b7904333;
-  --color-surface: #0d0b08;
-  --color-surface-elevated: #15110d;
+  --color-surface: #050a14;
+  --color-surface-elevated: #0a1220;
   --font-heading: "Noto Sans Hebrew", "Noto Sans", "Arial Hebrew", ui-sans-serif, system-ui, sans-serif;
   --font-body: "IBM Plex Sans Hebrew", "IBM Plex Sans", "Arial Hebrew", ui-sans-serif, system-ui, sans-serif;
   --font-accent: "Rubik", ui-sans-serif, system-ui, sans-serif;
@@ -21,14 +21,14 @@
 html {
   scroll-behavior: smooth;
   direction: rtl;
-  background-color: #0d0b08;
+  background-color: #050a14;
 }
 
 @layer base {
   body {
     font-family: var(--font-body);
-    background-color: #0d0b08;
-    color: #f2ede3;
+    background-color: #050a14;
+    color: #e0edff;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
@@ -47,7 +47,7 @@ html {
   }
 }
 
-.site-backdrop-layout { position: relative; isolation: isolate; min-height: 100vh; background: #0d0b08; }
+.site-backdrop-layout { position: relative; isolation: isolate; min-height: 100vh; background: #050a14; }
 .site-backdrop-content { position: relative; z-index: 10; }
 
 .page-fade {
@@ -124,7 +124,7 @@ html.a11y-reduce-motion .page-fade {
 }
 
 .glass {
-  background: rgba(242, 237, 227, 0.035);
+  background: rgba(224, 237, 255, 0.035);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(223, 196, 125, 0.2);
@@ -199,7 +199,7 @@ html.a11y-reduce-motion .page-fade {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #0d0b08;
+  background: #050a14;
 }
 ::-webkit-scrollbar-thumb {
   background: #1a1f2e;
@@ -218,14 +218,14 @@ html.a11y-reduce-motion .page-fade {
 .sky-readable h2,
 .sky-readable h3,
 .sky-readable h4 {
-  color: #f2ede3;
+  color: #e0edff;
   text-shadow:
-    0 1px 2px rgba(1, 3, 8, 0.9),
-    0 4px 22px rgba(1, 3, 8, 0.75);
+    0 1px 2px rgba(5, 10, 20, 0.9),
+    0 4px 22px rgba(5, 10, 20, 0.75);
 }
 
 .sky-readable .text-gold-gradient {
-  text-shadow: 0 2px 16px rgba(1, 3, 8, 0.75);
+  text-shadow: 0 2px 16px rgba(5, 10, 20, 0.75);
 }
 
 .sky-readable p,
@@ -236,7 +236,7 @@ html.a11y-reduce-motion .page-fade {
 .sky-readable summary,
 .sky-readable dt {
   font-weight: 500;
-  text-shadow: 0 1px 12px rgba(1, 3, 8, 0.72);
+  text-shadow: 0 1px 12px rgba(5, 10, 20, 0.72);
 }
 
 .sky-readable .font-light,
@@ -282,7 +282,7 @@ html.a11y-reduce-motion .page-fade {
 }
 
 .sky-readable a:not(.text-black) {
-  text-shadow: 0 1px 10px rgba(1, 3, 8, 0.65);
+  text-shadow: 0 1px 10px rgba(5, 10, 20, 0.65);
 }
 
 .sky-readable .text-black {
@@ -292,7 +292,7 @@ html.a11y-reduce-motion .page-fade {
 
 .sky-readable .hover\:text-white:hover,
 .sky-readable .hover\:text-zinc-200:hover {
-  color: #f2ede3;
+  color: #e0edff;
 }
 
 .sky-readable .hover\:text-\[\#b79043\]:hover,
@@ -309,7 +309,7 @@ html.a11y-reduce-motion .page-fade {
 .sky-readable .bg-white\/\[0\.03\],
 .sky-readable .bg-white\/\[0\.04\],
 .sky-readable .bg-white\/\[0\.05\] {
-  background-color: rgb(1 3 8 / 0.64);
+  background-color: rgb(5 10 20 / 0.64);
   backdrop-filter: blur(14px);
   -webkit-backdrop-filter: blur(14px);
 }
@@ -336,7 +336,7 @@ html.a11y-contrast-high .sky-readable .text-white\/40,
 html.a11y-contrast-high .sky-readable .text-white\/45,
 html.a11y-contrast-high .sky-readable .text-white\/50,
 html.a11y-contrast-high .sky-readable .text-white\/55 {
-  color: #f2ede3;
+  color: #e0edff;
 }
 
 .btn-gold {
@@ -379,7 +379,7 @@ html.a11y-contrast-high .sky-readable .text-white\/55 {
 }
 
 .glass-card {
-  background: linear-gradient(145deg, rgb(7 10 17 / 0.88), rgb(1 3 8 / 0.72));
+  background: linear-gradient(145deg, rgb(7 10 17 / 0.88), rgb(5 10 20 / 0.72));
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
   border: 1px solid rgba(183, 144, 67, 0.22);
@@ -425,7 +425,7 @@ html.a11y-contrast-high .sky-readable .text-white\/55 {
 .conversion-band {
   position: relative;
   z-index: 10;
-  background: linear-gradient(180deg, transparent, rgba(1, 3, 8, 0.38));
+  background: linear-gradient(180deg, transparent, rgba(5, 10, 20, 0.38));
 }
 
 .section-block {
