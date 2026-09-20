@@ -48,7 +48,7 @@ export function Footer() {
 
   return (
     <footer className="relative bg-[#010308]/78 backdrop-blur-xl overflow-hidden pt-20 pb-12 border-t border-white/[0.08]" role="contentinfo" aria-label="תחתית האתר">
-      <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="relative z-10 max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-10 text-right mb-16">
           <div>
             <h3 className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-4">המסלול</h3>
