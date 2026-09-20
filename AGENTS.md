@@ -40,10 +40,9 @@ docker compose -f docker-compose.base44.yml up -d
 - Explicitly empty VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY must remain empty, not fall back to the project's published Supabase defaults. Otherwise local demo login returns a client-only preview token that cannot authorize API writes. With local defaults, sign out of any old preview-only session and log in again to get a real SQLite session.
 - These endpoints are implemented for the Express runtime used by Compose; the separate Vercel serverless API tree does not provide the new Team Members endpoints.
 
-## Homepage video hero
-- `VideoHero` owns the font-aware entrance and removes the static QuietBoot cover on home only. Its animation classes live on `.video-home` so the existing Header participates without duplicating search/account/navigation logic.
-- Hero CSS is scoped to home; keep page scrolling available for the sections below it. The Header folds at 1160px on home only. Keep burger clicks stopped from reaching the outside-click listener (the icon swaps during that same click).
-- `SiteBackdropLayout` in `Layout.tsx` wraps both public and library routes in `App.tsx` with one persistent static `SkyBackdrop` (user-provided minimalist starfield hosted on `media.base44.com`, `68f8c5a13_image.png`) and its readability overlays. Do not add per-view backdrops.
-- `VideoHero` alone mounts the `VideoBackground` cross-fade pair, absolutely positioned and clipped within the homepage hero. Its shade still increases on home scroll; the video unmounts on navigation. Page shells remain transparent to the global stars; cards, dialogs and actual lesson playback retain their own surfaces.
-- Reduced motion includes both the OS preference and the accessibility widget's `a11y-reduce-motion` class. Both video copies pause at time zero and are hidden so the poster is shown. Hidden tabs pause background playback; fonts use the existing Hebrew stack.
-- Verify at 1280×800, 1160px, 372px, 320px and short landscape, including menu Escape/outside-click closure. A hidden preview can suspend video playback; checking loaded metadata alone does not verify the cross-fade.
+## Homepage SpaceEdu hero
+- `SpaceHero` replaces the former homepage `VideoHero` and owns its isolated SpaceEdu navigation, planet-switching state, lazy video loading, entrance sequence, and responsive composition. The regular site Header is hidden on home only; all other routes retain it unchanged.
+- Earth is the initial feature; Venus and Mars occupy the left/right slots. Each slot contains all three preloaded cut-out images and switches visibility by class, while non-featured video clips receive a `src` only after selection.
+- `SiteBackdropLayout` still provides the persistent static `SkyBackdrop` (user-provided minimalist starfield hosted on `media.base44.com`, `68f8c5a13_image.png`) behind every route. The three planet clips are scoped to the homepage hero and unmount on navigation.
+- Reduced motion includes both the OS preference and the accessibility widget's `a11y-reduce-motion` class: clips are hidden in favor of the selected poster and planet transforms/entrance animations are disabled.
+- Verify the reversible Earth → Venus → Mars → Earth cycle, initial one-video loading, menu Escape/outside-click closure, and layouts at desktop, tablet, narrow phone, and short landscape.

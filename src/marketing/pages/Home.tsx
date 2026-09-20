@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { EntryTrackCards } from '../components/EntryTrackCards';
-import { VideoHero } from '../components/VideoHero';
+import { SpaceHero } from '../components/SpaceHero';
 import { SectionNav } from '../components/SectionNav';
 import { FAQS } from './FAQPage';
 
@@ -25,7 +25,7 @@ const MOTION = { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const };
 export function Home() {
   return (
     <div className="w-full">
-      <VideoHero />
+      <SpaceHero />
 
       <SectionNav items={[
         { id: 'what-is-it', label: 'במה זה שונה' },
