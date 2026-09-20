@@ -13,8 +13,8 @@ export function SkyBackdrop({ className = '' }: Props) {
         height={768}
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="absolute inset-0 bg-[#010308]/58" />
-      <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/55 via-transparent to-[#010308]/72" />
+      <div className="absolute inset-0 bg-black/20 backdrop-blur-[1.5px]" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/42 via-transparent to-[#010308]/62" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(1,3,8,0.45)_100%)]" />
     </div>
   );
