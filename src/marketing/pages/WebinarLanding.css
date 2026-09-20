@@ -1,13 +1,13 @@
 .webinar-stage-page {
-  --stage-navy: #061326;
-  --stage-navy-deep: #020b18;
-  --stage-ink: #0b1624;
-  --stage-paper: #d7e3ee;
-  --stage-paper-alt: #c7d5e2;
+  --stage-navy: #0a1220;
+  --stage-navy-deep: #050a14;
+  --stage-ink: #e0edff;
+  --stage-paper: #0a1220;
+  --stage-paper-alt: #07101d;
   --stage-gold: #b79043;
   --stage-gold-light: #dfc47d;
   background: var(--stage-navy-deep);
-  color: #e0edff;
+  color: var(--stage-ink);
   direction: rtl;
 }
 
@@ -173,10 +173,10 @@
   text-shadow: none;
 }
 .webinar-stage-page :is(#problem, #hosts, #webinar-fit) .text-\[\#b79043\],
-.webinar-stage-page :is(#problem, #hosts, #webinar-fit) .text-\[\#dfc47d\] { color: #8d692f; }
+.webinar-stage-page :is(#problem, #hosts, #webinar-fit) .text-\[\#dfc47d\] { color: var(--stage-gold-light); }
 .webinar-stage-page :is(#problem, #hosts, #webinar-fit) > div { max-width: 1040px; }
 .webinar-stage-page :is(#problem, #hosts, #webinar-fit) h2 { max-width: 650px; margin-bottom: 16px; font-size: clamp(26px, 3vw, 40px); line-height: 1.12; }
-.webinar-stage-page :is(#problem, #hosts, #webinar-fit) .text-\[11px\] { color: #8d692f; }
+.webinar-stage-page :is(#problem, #hosts, #webinar-fit) .text-\[11px\] { color: var(--stage-gold-light); }
 
 .webinar-stage-page #problem { min-height: 280px; display: grid; align-items: center; padding-block: 44px; }
 .webinar-stage-page #problem > div > p:not(:first-child) { margin-inline: auto; margin-bottom: 26px; max-width: 680px; font-size: 13px; }
@@ -188,24 +188,24 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  border: 1px solid rgba(12, 29, 46, .15);
+  border: 1px solid rgba(223, 196, 125, .22);
   border-radius: 999px;
-  background: rgba(255, 255, 255, .72);
+  background: rgba(224, 237, 255, .035);
   box-shadow: none;
 }
-.webinar-stage-page #problem .glass-card svg { width: 15px; height: 15px; margin: 0; color: #8d692f; }
+.webinar-stage-page #problem .glass-card svg { width: 15px; height: 15px; margin: 0; color: var(--stage-gold-light); }
 .webinar-stage-page #problem .glass-card h3 { margin: 0; font-size: 12px; }
 .webinar-stage-page #problem .glass-card p { display: none; }
 
 .webinar-stage-page #hosts { padding-block: 52px; }
 .webinar-stage-page #hosts .grid { gap: 14px; }
 .webinar-stage-page #hosts article.glass-card { padding: 0; border: 0; border-radius: 2px; background: transparent; box-shadow: none; overflow: visible; }
-.webinar-stage-page #hosts article > div:first-child { aspect-ratio: 2 / 1; background: #261b13; }
+.webinar-stage-page #hosts article > div:first-child { aspect-ratio: 2 / 1; background: #050a14; }
 .webinar-stage-page #hosts article > div:first-child > * { border-radius: 2px; }
 .webinar-stage-page #hosts article > div:last-child { padding: 14px 8px; }
 .webinar-stage-page #hosts article h3 { font-size: 18px; margin-bottom: 2px; }
 .webinar-stage-page #hosts article p { font-size: 11px; line-height: 1.55; }
-.webinar-stage-page #hosts ol { margin-bottom: 14px; gap: 0; border-top: 1px solid rgba(11, 22, 36, .16); }
+.webinar-stage-page #hosts ol { margin-bottom: 14px; gap: 0; border-top: 1px solid rgba(223, 196, 125, .18); }
 .webinar-stage-page #hosts ol .glass-card { padding: 18px 16px 4px; border: 0; border-radius: 0; background: transparent; box-shadow: none; }
 .webinar-stage-page #hosts ol h3 { font-size: 13px; }
 .webinar-stage-page #hosts ol p { font-size: 10px; }
@@ -228,26 +228,26 @@
 .webinar-stage-page #webinar-fit .glass-card,
 .webinar-stage-page #webinar-fit .rounded-3xl {
   padding: 24px;
-  border: 0;
-  border-radius: 0;
-  background: transparent;
+  border: 1px solid rgba(223, 196, 125, .16);
+  border-radius: 4px;
+  background: rgba(224, 237, 255, .025);
   box-shadow: none;
 }
 .webinar-stage-page #webinar-fit li { font-size: 12px; }
-.webinar-stage-page #webinar-fit .text-rose-300 { color: #8e4c4c; }
+.webinar-stage-page #webinar-fit .text-rose-300 { color: #e2a0a0; }
 .webinar-stage-page #webinar-fit .btn-gold { border-radius: 3px; }
 
 .webinar-stage-page #webinar-faq {
-  background: #6f8294;
-  color: #f4f8fc;
+  background: #07101d;
+  color: var(--stage-ink);
 }
 .webinar-stage-page #webinar-faq > div { max-width: 900px; }
 .webinar-stage-page #webinar-faq h2 { font-size: clamp(28px, 3vw, 40px); }
 .webinar-stage-page #webinar-faq .glass-card {
   padding: 0 16px;
-  border: 1px solid rgba(224, 237, 255, .35);
+  border: 1px solid rgba(223, 196, 125, .24);
   border-radius: 2px;
-  background: transparent;
+  background: rgba(224, 237, 255, .025);
   box-shadow: none;
 }
 .webinar-stage-page #webinar-faq summary { min-height: 48px; font-size: 13px; text-shadow: none; }
