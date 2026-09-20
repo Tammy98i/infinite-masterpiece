@@ -1,3 +1,57 @@
-/* Homepage-specific overrides intentionally left empty.
-   The original black-and-gold presentation is defined by SpaceHero.css
-   and the shared marketing styles. */
+/* Homepage-only presentation for the premium tabbed layout. */
+.video-home .home-premium-slider { background: #f4efe6; overflow: clip; }
+
+/* Preserve the planet video and layer a soft gold ring behind the hero copy. */
+.video-home .space-copy::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 50%;
+  top: calc(340 * var(--u));
+  width: min(54vw, calc(650 * var(--u)));
+  aspect-ratio: 1.7;
+  transform: translate(-50%, -50%) rotate(-7deg);
+  border: clamp(18px, 2.8vw, 42px) solid rgba(223, 180, 82, .58);
+  border-radius: 50%;
+  filter: blur(17px);
+  opacity: .82;
+  box-shadow: 0 0 68px rgba(200, 162, 76, .28), inset 0 0 48px rgba(247, 231, 181, .18);
+  pointer-events: none;
+}
+
+.video-home .space-copy { isolation: isolate; }
+.video-home .space-sky::after {
+  background: radial-gradient(circle at 50% 38%, rgba(200, 162, 76, .06), transparent 38%), linear-gradient(180deg, rgba(1, 3, 8, .3), rgba(1, 3, 8, .14) 54%, rgba(1, 3, 8, .62));
+}
+
+/* Match the mockup's curved closing statement while retaining existing links. */
+.video-home .conversion-band { padding: 4.5rem 1rem 0; background: #f4efe6; }
+.video-home .conversion-band > div {
+  max-width: 1400px;
+  min-height: 330px;
+  border: 0;
+  border-radius: 7rem 7rem 0 0;
+  background: radial-gradient(circle at 50% 0, #291d0f, #100c08 56%, #080604);
+  box-shadow: none;
+}
+.video-home .conversion-band h2 { color: #e4bd64; font-size: clamp(2.2rem, 4vw, 3.8rem); }
+.video-home .conversion-band p { color: rgba(248, 241, 229, .68); }
+.video-home footer { border-top: 0; background: #080604; }
+
+@media (max-width: 579px), (max-height: 620px) {
+  .video-home .space-copy::before {
+    top: calc(255 * var(--u));
+    width: min(88vw, calc(390 * var(--u)));
+    border-width: 18px;
+    filter: blur(13px);
+  }
+}
+
+@media (max-width: 640px) {
+  .video-home .conversion-band { padding-top: 3rem; }
+  .video-home .conversion-band > div { min-height: 390px; border-radius: 3rem 3rem 0 0; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .video-home .space-copy::before { filter: blur(13px); }
+}
