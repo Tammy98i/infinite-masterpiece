@@ -15,9 +15,12 @@ html, body, #root { width: 100%; min-height: 100%; margin: 0; }
 body { background: var(--editorial-ink); }
 
 .editorial-sky-backdrop { background: var(--editorial-ink); }
-.editorial-sky-image { opacity: .075; filter: grayscale(1) contrast(1.08); }
+.editorial-sky-image { opacity: .72; filter: saturate(.82) contrast(1.06); }
+.editorial-sky-blackout { background: rgba(0, 0, 0, .5); }
 .editorial-sky-shade {
-  background: radial-gradient(circle at 50% 8%, rgba(183, 144, 67, .08), transparent 38%), rgba(13, 11, 8, .9);
+  background:
+    radial-gradient(circle at 50% 42%, transparent 18%, rgba(0, 0, 0, .26) 72%, rgba(0, 0, 0, .55) 100%),
+    linear-gradient(180deg, rgba(0, 0, 0, .18), rgba(0, 0, 0, .42));
   backdrop-filter: none;
 }
 
