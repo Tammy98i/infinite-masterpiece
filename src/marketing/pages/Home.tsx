@@ -18,13 +18,14 @@ import { EntryTrackCards } from '../components/EntryTrackCards';
 import { SpaceHero } from '../components/SpaceHero';
 import { SectionNav } from '../components/SectionNav';
 import { FAQS } from './FAQPage';
+import './Home.css';
 
 const MotionSection = motion.section;
 const MOTION = { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const };
 
 export function Home() {
   return (
-    <div className="w-full">
+    <div className="home-prestige w-full">
       <SpaceHero />
 
       <SectionNav items={[

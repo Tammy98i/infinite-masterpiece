@@ -180,13 +180,12 @@ export function SpaceHero() {
         </header>
 
         <div className="space-copy" dir="rtl">
-          <div className="space-col space-eyebrow"><span className="space-ent-mask"><span className="space-ent-line"><i />The Masterpiece Framework</span></span></div>
           <h1 className="space-col space-title" id="space-hero-title">
-            <span className="space-ent-mask"><span className="space-ent-line">יש לך יצירה.</span></span>
-            <span className="space-ent-mask space-title-wide"><span className="space-ent-line">עכשיו בונים לה מערכת הכנסה.</span></span>
+            <span className="space-ent-mask"><span className="space-ent-line">The Masterpiece</span></span>
+            <span className="space-ent-mask space-title-wide"><span className="space-ent-line">Framework</span></span>
           </h1>
           <div className="space-col space-rule"><span /></div>
-          <p className="space-col space-lede">הבעיה היא לא שאין לך כישרון. הבעיה היא שאין סביב הכישרון שלך מערכת עסקית.<br /> אנו הופכים יצירה לעסק, השפעה וחופש.</p>
+          <p className="space-col space-lede"><strong>יש לך יצירה. עכשיו בונים לה מערכת הכנסה.</strong><br />הבעיה היא לא שאין לך כישרון. הבעיה היא שאין סביב הכישרון שלך מערכת עסקית.<br /> אנו הופכים יצירה לעסק, השפעה וחופש.</p>
           <div className="space-col space-cta">
             <PlanetSlot side="l" planet={left} onSelect={selectPlanet} />
             <PlanetSlot side="r" planet={right} onSelect={selectPlanet} />
