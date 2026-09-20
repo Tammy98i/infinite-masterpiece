@@ -19,7 +19,7 @@ services:
     command: sh -c "npm install --no-audit --no-fund && npx concurrently -k -n api,web 'tsx watch server/index.ts' 'vite --port=3000 --host=0.0.0.0'"
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3000/api/health"]
+      test: ["CMD", "wget", "-qO-", "http://127.0.0.1:3001/api/health"]
       interval: 15s
       timeout: 5s
       retries: 5
