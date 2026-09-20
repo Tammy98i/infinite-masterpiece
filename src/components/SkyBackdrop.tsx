@@ -7,7 +7,7 @@ export function SkyBackdrop({ className = '' }: Props) {
   return (
     <div className={`fixed inset-0 z-0 pointer-events-none overflow-hidden ${className}`} aria-hidden="true">
       <img
-        src="https://media.base44.com/images/public/6aa94dfb715e7d446231f544/68f8c5a13_image.png"
+        src="https://media.base44.com/images/public/6aa94dfb715e7d446231f544/8726a79f8_image.png"
         alt=""
         width={1024}
         height={768}
