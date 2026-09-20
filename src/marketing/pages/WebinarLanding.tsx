@@ -38,6 +38,7 @@ import { captureUtmFromSearch } from '../../utils/utm';
 import { getWebinarPhase } from '../../utils/webinarTime';
 import { TeamPhoto } from '../../components/TeamPhoto';
 import { TeamGalaxy } from '../components/galaxy/TeamGalaxy';
+import './WebinarLanding.css';
 
 const bottleneckIcons = [Tag, Handshake, Megaphone, Network, Target];
 
@@ -199,102 +200,58 @@ export function WebinarLanding() {
   ];
 
   return (
-    <div className="w-full pb-28">
-      <section id="webinar-hero" className="relative min-h-0 md:min-h-screen flex items-center pt-20 pb-8 md:pt-24 md:pb-16 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" aria-hidden>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#0d0b08]/40 via-transparent to-[#0d0b08]/55" />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[min(900px,90vw)] h-[320px] bg-[radial-gradient(ellipse_at_center,rgba(183, 144, 67,0.18),transparent_70%)]" />
-        </div>
-
-        <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
-          <div className="flex justify-center">
-            <motion.div
-              initial={{ opacity: 0, y: 24 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="text-center flex flex-col items-center"
-            >
-              <div className="inline-flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-1.5 rounded-full border border-[#b79043]/50 bg-[#b79043]/15 mb-8">
-                <span className={`w-2 h-2 rounded-full ${eventNight ? 'bg-emerald-400' : 'bg-[#b79043]'}`} aria-hidden />
-                <span className="text-[11px] text-[#dfc47d] font-medium">
-                  {eventNight ? 'הערב החי עכשיו' : eventEnded ? WEBINAR_CTA_ENDED : 'ערב חי'}, {config.date}, {config.time}
-                </span>
-                {eventNight || eventEnded ? null : <WebinarCountdown date={config.date} time={config.time} />}
-              </div>
-
-              <h1 className="text-[32px] sm:text-4xl md:text-6xl xl:text-7xl font-heading tracking-tight leading-[1.15] mb-4 md:mb-6">
-                <span className="text-white block">{headlineParts.line1}</span>
-                {headlineParts.line2 ? (
-                  <span className="text-gold-gradient font-medium block mt-2">{headlineParts.line2}</span>
-                ) : null}
-              </h1>
-
-              <p className="text-base md:text-xl text-white/50 font-light leading-relaxed max-w-2xl mb-3 md:mb-5">
-                {config.heroSubheadline}
-              </p>
-              <p className="text-sm md:text-lg text-[#dfc47d] font-medium mb-3 md:mb-6">{WEBINAR_PUNCHLINE}</p>
-              <p className="text-sm text-white/45 font-light mb-5 md:mb-8">
-                {config.location}, {config.durationMinutes} דקות, {WEBINAR_AUDIENCE_LABEL}
-              </p>
-
-              <div className="flex flex-col items-center gap-3">
-                {eventEnded ? (
-                  <>
-                    <Link to="/pricing" className="btn-gold text-black">
-                      {WEBINAR_CTA_NEXT_CYCLE}
-                    </Link>
-                    <p className="text-sm text-white/70 font-medium max-w-md min-h-11 inline-flex items-center text-center">
-                      {WEBINAR_CTA_ENDED}. {WEBINAR_ENDED_NOTE}
-                    </p>
-                  </>
-                ) : eventNight ? (
-                  liveEnter.href ? (
-                    <a
-                      href={liveEnter.href}
-                      target="_blank"
-                      rel="noreferrer"
-                      onClick={() => trackWebinarCta('hero_enter')}
-                      className="btn-gold text-black px-10 py-4"
-                    >
-                      {liveEnter.label}
-                    </a>
-                  ) : (
-                    <p className="text-sm text-[#dfc47d] font-medium min-h-11 inline-flex items-center">
-                      {liveEnter.label}
-                    </p>
-                  )
-                ) : (
-                  <button
-                    type="button"
-                    onClick={() => scrollToForm('hero')}
-                    className="btn-gold text-black px-10 py-4"
-                  >
-                    {WEBINAR_CTA_PRIMARY}
-                  </button>
-                )}
-                {eventEnded ? null : eventNight ? (
-                  <button
-                    type="button"
-                    onClick={() => scrollToForm('hero_unregistered')}
-                    className="text-sm text-white/45 hover:text-[#dfc47d] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
-                  >
-                    {WEBINAR_CTA_NOT_REGISTERED}
-                  </button>
-                ) : (
-                  <a
-                    href="#webinar-fit"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      scrollToWebinarFit();
-                    }}
-                    className="text-sm text-white/45 hover:text-[#dfc47d] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
-                  >
-                    {WEBINAR_CTA_FIT_LINK}
-                  </a>
-                )}
-              </div>
-            </motion.div>
+    <div className="webinar-stage-page w-full pb-28">
+      <section id="webinar-hero" className="webinar-stage-hero relative overflow-hidden">
+        <div className="webinar-stage-atmosphere" aria-hidden />
+        <motion.div
+          initial={{ opacity: 0, y: 24 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="webinar-stage-shell"
+        >
+          <div className="webinar-stage-event">
+            <span className={`webinar-stage-dot ${eventNight ? 'is-live' : ''}`} aria-hidden />
+            <span>{eventNight ? 'הערב החי עכשיו' : eventEnded ? WEBINAR_CTA_ENDED : 'ערב חי'}, {config.date}, {config.time}</span>
+            {eventNight || eventEnded ? null : <WebinarCountdown date={config.date} time={config.time} />}
           </div>
-        </div>
+
+          <div className="webinar-stage-cast" aria-label="מנחי הערב">
+            {hosts.map((host) => (
+              <figure key={host.name} className="webinar-stage-person">
+                <TeamPhoto src={host.image} name={host.name} alt={host.name} className="webinar-stage-portrait" />
+                <figcaption>{host.name}</figcaption>
+              </figure>
+            ))}
+          </div>
+
+          <div className="webinar-stage-copy">
+            <h1>
+              <span>{headlineParts.line1}</span>
+              {headlineParts.line2 ? <span className="text-gold-gradient">{headlineParts.line2}</span> : null}
+            </h1>
+            <p className="webinar-stage-subheadline">{config.heroSubheadline}</p>
+            <p className="webinar-stage-punchline">{WEBINAR_PUNCHLINE}</p>
+            <p className="webinar-stage-meta">{config.location} · {config.durationMinutes} דקות · {WEBINAR_AUDIENCE_LABEL}</p>
+            <div className="webinar-stage-actions">
+              {eventEnded ? (
+                <>
+                  <Link to="/pricing" className="btn-gold text-black">{WEBINAR_CTA_NEXT_CYCLE}</Link>
+                  <p>{WEBINAR_CTA_ENDED}. {WEBINAR_ENDED_NOTE}</p>
+                </>
+              ) : eventNight ? (
+                liveEnter.href ? (
+                  <a href={liveEnter.href} target="_blank" rel="noreferrer" onClick={() => trackWebinarCta('hero_enter')} className="btn-gold text-black">{liveEnter.label}</a>
+                ) : <p>{liveEnter.label}</p>
+              ) : (
+                <button type="button" onClick={() => scrollToForm('hero')} className="btn-gold text-black">{WEBINAR_CTA_PRIMARY}</button>
+              )}
+              {eventEnded ? null : eventNight ? (
+                <button type="button" onClick={() => scrollToForm('hero_unregistered')} className="webinar-stage-secondary">{WEBINAR_CTA_NOT_REGISTERED}</button>
+              ) : (
+                <a href="#webinar-fit" onClick={(event) => { event.preventDefault(); scrollToWebinarFit(); }} className="webinar-stage-secondary">{WEBINAR_CTA_FIT_LINK}</a>
+              )}
+            </div>
+          </div>
+        </motion.div>
       </section>
 
       <section id="problem" className="py-20 md:py-24 border-t border-white/[0.04]">
@@ -434,7 +391,7 @@ export function WebinarLanding() {
           <aside
             id={WEBINAR_REGISTER_ID}
             aria-label="הרשמה לוובינר"
-            className={`${REGISTER_CARD_CLASS} mx-auto w-full max-w-xl md:max-w-2xl lg:max-w-3xl text-start scroll-mt-24`}
+            className={`${REGISTER_CARD_CLASS} webinar-stage-register-card mx-auto w-full max-w-xl md:max-w-2xl lg:max-w-3xl text-start scroll-mt-24`}
           >
             <WebinarRegisterCard
               payload={payload}
