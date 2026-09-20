@@ -1,10 +1,10 @@
 import { ReactNode, useEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
-import { VideoBackground } from '../../components/VideoBackground';
+import { SkyBackdrop } from '../../components/SkyBackdrop';
 import { Header } from './Header';
 import { Footer } from './Footer';
 
-/** Outside both route families: navigation never remounts or duplicates the video. */
+/** One static starfield persists behind both public and library routes. */
 export function SiteBackdropLayout() {
   const isHome = useLocation().pathname === '/';
   const shell = useRef<HTMLDivElement>(null);
@@ -23,7 +23,7 @@ export function SiteBackdropLayout() {
 
   return (
     <div ref={shell} className="site-backdrop-layout">
-      <VideoBackground />
+      <SkyBackdrop />
       <div className="site-backdrop-content"><Outlet /></div>
     </div>
   );

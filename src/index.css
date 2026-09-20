@@ -46,6 +46,9 @@ html {
   }
 }
 
+.site-backdrop-layout { position: relative; isolation: isolate; min-height: 100vh; background: #010308; }
+.site-backdrop-content { position: relative; z-index: 10; }
+
 .page-fade {
   animation: page-fade 0.45s cubic-bezier(0.16, 1, 0.3, 1);
 }

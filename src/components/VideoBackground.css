@@ -1,14 +1,12 @@
-.site-backdrop-layout { position: relative; isolation: isolate; min-height: 100vh; background: #000; }
-.site-backdrop-content { position: relative; z-index: 10; }
-.site-video-background { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: #000; }
+.site-video-background { position: absolute; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: #000; }
 .site-video-frame { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: max(100vw, calc(100dvh * 1.6)); height: max(62.5vw, 100dvh); }
 .site-video, .site-video-poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: 51% 8%; display: block; }
 .site-video { opacity: 0; transition: opacity .9s linear; }
 .site-video.is-active { opacity: 1; z-index: 1; }
 .site-video.is-outgoing { opacity: 1; z-index: 0; }
 .site-video-shade { position: absolute; inset: 0; }
-/* The hero keeps its original light shade; deeper content uses the readability plate. */
-.site-backdrop-layout:has(.video-home) .site-video-shade { opacity: var(--home-backdrop-shade, 0); }
+/* Darken only the local hero video as home scrolls. */
+.video-hero .site-video-shade { opacity: var(--home-backdrop-shade, 0); }
 .site-video-background[data-reduced="true"] .site-video,
 html.a11y-reduce-motion .site-video { visibility: hidden; transition: none; }
 @media (prefers-reduced-motion: reduce) {

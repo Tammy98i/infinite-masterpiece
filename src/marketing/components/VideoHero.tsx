@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
 import { WEBINAR_CTA_ENDED, WEBINAR_CTA_HEADER, WEBINAR_CTA_NEXT_CYCLE } from '../../constants/webinarPage';
 import { useWebinarPhase } from '../hooks/useWebinarPhase';
+import { VideoBackground } from '../../components/VideoBackground';
 import './VideoHero.css';
 
 export function VideoHero() {
@@ -48,6 +49,7 @@ export function VideoHero() {
 
   return (
     <section ref={rootRef} className="video-hero" aria-labelledby="home-hero-title">
+      <VideoBackground />
       <div className="vh-shade" aria-hidden="true" />
       <div className="vh-inner">
         <div className="vh-eyebrow" dir="ltr"><span />The Masterpiece Framework</div>
