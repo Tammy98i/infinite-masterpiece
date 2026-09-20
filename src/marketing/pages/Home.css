@@ -1,5 +1,5 @@
 /* Homepage-only presentation for the premium tabbed layout. */
-.video-home .home-premium-slider { background: #f4efe6; overflow: clip; }
+.video-home .home-premium-slider { background: #0d0b08; overflow: clip; }
 
 /* Preserve the planet video and layer a soft gold ring behind the hero copy. */
 .video-home .space-copy::before {
@@ -26,7 +26,7 @@
 }
 
 /* Match the mockup's curved closing statement while retaining existing links. */
-.video-home .conversion-band { padding: 4.5rem 1rem 0; background: #f4efe6; }
+.video-home .conversion-band { padding: 4.5rem 1rem 0; background: #0d0b08; }
 .video-home .conversion-band > div {
   max-width: 1400px;
   min-height: 330px;

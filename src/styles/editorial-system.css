@@ -117,10 +117,10 @@ body { background: var(--editorial-ink); }
   background: rgba(242, 237, 227, .035) !important;
 }
 
-/* Homepage tabs become an editorial index, not a row of floating pills. */
-.video-home .tabbed-slider { background: var(--editorial-cream); }
+/* Homepage tabs use one restrained dark editorial language. */
+.video-home .tabbed-slider { background: var(--editorial-ink); }
 .video-home .tabbed-tabs-wrap {
-  border-bottom: 1px solid rgba(183, 144, 67, .32);
+  border-bottom: 1px solid rgba(183, 144, 67, .28);
   background: rgba(13, 11, 8, .97);
   backdrop-filter: blur(16px);
 }
@@ -137,12 +137,14 @@ body { background: var(--editorial-ink); }
   background: transparent;
   box-shadow: inset 0 -1px var(--editorial-gold-light);
 }
-.video-home .tabbed-panel {
+.video-home .tabbed-panel,
+.video-home .tabbed-panel--cream,
+.video-home .tabbed-panel--dark {
   border-radius: 0;
+  color: var(--editorial-cream);
+  background: var(--editorial-ink);
   background-image: none;
 }
-.video-home .tabbed-panel--cream { background: var(--editorial-cream); }
-.video-home .tabbed-panel--dark { background: var(--editorial-ink-soft); }
 .video-home .tabbed-number-grid article,
 .video-home .tabbed-team-grid article,
 .video-home .tabbed-platform-grid article { border-radius: var(--editorial-radius); box-shadow: none; }
