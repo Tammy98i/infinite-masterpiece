@@ -13,7 +13,7 @@ export function SkyBackdrop({ className = '' }: Props) {
         height={768}
         className="absolute inset-0 h-full w-full object-cover object-center"
       />
-      <div className="absolute inset-0 bg-[#010308]/55" />
+      <div className="absolute inset-0 bg-[#010308]/55 backdrop-blur-[2px]" />
     </div>
   );
 }
