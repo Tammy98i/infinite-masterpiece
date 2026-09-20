@@ -16,7 +16,7 @@ export function Checkout() {
     <div className="min-h-screen bg-transparent pt-32 pb-24">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="text-center mb-14">
-          <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-4 font-semibold">
+          <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-4 font-semibold">
             בחירת מסלול
           </p>
           <h1 className="text-3xl md:text-4xl font-heading text-white mb-4">

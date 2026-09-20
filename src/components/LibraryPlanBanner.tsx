@@ -29,7 +29,7 @@ export function LibraryPlanBanner() {
 
   return (
     <div className="px-4 sm:px-8 mb-5" role="region" aria-label="סטטוס גישה לספרייה">
-      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 rounded-xl border border-[#C8A24C]/30 border-r-4 border-r-[#C8A24C] bg-black/80 backdrop-blur-md px-5 py-3.5 text-right">
+      <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 rounded-xl border border-[#b79043]/30 border-r-4 border-r-[#b79043] bg-black/80 backdrop-blur-md px-5 py-3.5 text-right">
         <div className="min-w-0">
           {isTrial ? (
             <>
@@ -47,7 +47,7 @@ export function LibraryPlanBanner() {
                 חלק מהספרייה פתוח לצפייה. גישה מלאה — במנוי לספרייה.
               </p>
               {openCount > 0 && (
-                <p className="text-[13px] text-[#C8A24C]/90 mt-1">
+                <p className="text-[13px] text-[#b79043]/90 mt-1">
                   {openCount === 1 ? 'הרצאה מלאה אחת פתוחה כרגע' : `${openCount} הרצאות מלאות פתוחות כרגע`}
                 </p>
               )}
@@ -57,7 +57,7 @@ export function LibraryPlanBanner() {
         <button
           type="button"
           onClick={goLibraryAccess}
-          className="shrink-0 px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm font-semibold hover:bg-[#F7E7B5] min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          className="shrink-0 px-5 py-2.5 rounded-full bg-[#b79043] text-black text-sm font-semibold hover:bg-[#dfc47d] min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
           פתיחת גישה
         </button>

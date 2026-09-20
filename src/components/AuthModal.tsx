@@ -13,7 +13,7 @@ type Method = 'email' | 'phone';
 const OTP_COOLDOWN_SEC = 60;
 
 const fieldClass =
-  'w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11';
+  'w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#b79043] focus:outline-none min-h-11';
 
 export const AuthModal: React.FC = () => {
   const {
@@ -430,7 +430,7 @@ export const AuthModal: React.FC = () => {
                   setError('');
                   setErrorKind('error');
                 }}
-                className="w-full text-sm text-[#C8A24C] hover:text-[#F7E7B5] min-h-11 cursor-pointer"
+                className="w-full text-sm text-[#b79043] hover:text-[#dfc47d] min-h-11 cursor-pointer"
               >
                 שכחתי סיסמה
               </button>
@@ -522,7 +522,7 @@ function MethodTab({
 function AuthAlert({ kind, message }: { kind: 'error' | 'info'; message: string }) {
   if (!message) return null;
   return (
-    <p className={`text-sm ${kind === 'info' ? 'text-[#F7E7B5]' : 'text-rose-300'}`} role="alert">
+    <p className={`text-sm ${kind === 'info' ? 'text-[#dfc47d]' : 'text-rose-300'}`} role="alert">
       {message}
     </p>
   );

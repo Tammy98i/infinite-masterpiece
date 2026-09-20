@@ -57,7 +57,7 @@ export const InstructorProfileView: React.FC = () => {
           <div>
             <h1 className="text-3xl sm:text-4xl font-semibold leading-tight mb-2">{instructor.name}</h1>
             <p className="text-sm text-white/45">
-              {instructor.isFounder ? <span className="text-[#C8A24C]/80">צוות המיזם · </span> : null}
+              {instructor.isFounder ? <span className="text-[#b79043]/80">צוות המיזם · </span> : null}
               {instructor.title}
             </p>
           </div>
@@ -80,7 +80,7 @@ export const InstructorProfileView: React.FC = () => {
         {instructor.founderId ? (
           <Link
             to={`/premium-88/${instructor.founderId}`}
-            className="inline-flex text-sm text-[#C8A24C] hover:text-[#F7E7B5] mb-12 min-h-11 items-center"
+            className="inline-flex text-sm text-[#b79043] hover:text-[#dfc47d] mb-12 min-h-11 items-center"
           >
             עמוד בצוות המיזם
           </Link>

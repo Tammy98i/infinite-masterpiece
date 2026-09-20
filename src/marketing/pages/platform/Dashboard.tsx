@@ -17,7 +17,7 @@ export function Dashboard() {
         <button
           key={r}
           onClick={() => setRole(r)}
-          className={`px-4 py-2 rounded-xl text-xs font-medium transition-colors ${role === r ? 'bg-[#C8A24C] text-black' : 'bg-white/[0.05] text-white/60 hover:bg-white/[0.1] hover:text-white'}`}
+          className={`px-4 py-2 rounded-xl text-xs font-medium transition-colors ${role === r ? 'bg-[#b79043] text-black' : 'bg-white/[0.05] text-white/60 hover:bg-white/[0.1] hover:text-white'}`}
         >
           {r === 'FREE' && 'חינמי'}
           {r === 'STUDENT' && 'משלם (רגיל)'}
@@ -49,9 +49,9 @@ export function Dashboard() {
           </p>
         </div>
         <div className="flex items-center gap-4 bg-white/[0.03] border border-white/[0.05] rounded-2xl p-4">
-          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#C8A24C] to-[#010308] p-0.5">
-            <div className="w-full h-full rounded-full bg-[#010308] flex items-center justify-center">
-              <span className="text-[#C8A24C] font-bold text-lg">{user.progressScore}</span>
+          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-[#b79043] to-[#0d0b08] p-0.5">
+            <div className="w-full h-full rounded-full bg-[#0d0b08] flex items-center justify-center">
+              <span className="text-[#b79043] font-bold text-lg">{user.progressScore}</span>
             </div>
           </div>
           <div>
@@ -93,15 +93,15 @@ export function Dashboard() {
           </div>
           
           <div className="w-full md:w-auto flex flex-col gap-4">
-            <div className="bg-[#010308]/50 backdrop-blur-md rounded-2xl p-6 border border-white/[0.05]">
+            <div className="bg-[#0d0b08]/50 backdrop-blur-md rounded-2xl p-6 border border-white/[0.05]">
               <div className="text-[11px] uppercase tracking-widest text-white/40 mb-4">הפוד שלך. Pod Alpha</div>
               <div className="flex items-center gap-4">
                 <div className="flex -space-x-2 -space-x-reverse">
                   {[1,2,3,4].map(i => (
-                    <div key={i} className="w-8 h-8 rounded-full border border-[#010308] bg-slate-800" />
+                    <div key={i} className="w-8 h-8 rounded-full border border-[#0d0b08] bg-slate-800" />
                   ))}
                 </div>
-                <Link to="/pod" className="text-xs text-[#C8A24C] hover:text-[#F7E7B5]">לפגישת הפוד הבאה &larr;</Link>
+                <Link to="/pod" className="text-xs text-[#b79043] hover:text-[#dfc47d]">לפגישת הפוד הבאה &larr;</Link>
               </div>
             </div>
             {isPremium && (
@@ -150,10 +150,10 @@ export function Dashboard() {
           ].map((item, i) => (
             <div key={i} className="bg-white/[0.01] border border-white/[0.03] rounded-2xl p-6 hover:border-white/[0.1] transition-colors cursor-pointer group">
               <div className="flex justify-between items-start mb-4">
-                <span className="text-[11px] uppercase tracking-widest text-[#C8A24C]">{item.day}</span>
+                <span className="text-[11px] uppercase tracking-widest text-[#b79043]">{item.day}</span>
                 {item.type === 'זום' ? <Calendar className="w-5 h-5 text-white/30" /> : <PlaySquare className="w-5 h-5 text-white/30" />}
               </div>
-              <h4 className="text-lg text-white font-medium mb-2 group-hover:text-[#C8A24C] transition-colors">{item.title}</h4>
+              <h4 className="text-lg text-white font-medium mb-2 group-hover:text-[#b79043] transition-colors">{item.title}</h4>
               <p className="text-sm text-white/40">{item.duration}</p>
             </div>
           ))}
@@ -165,7 +165,7 @@ export function Dashboard() {
   const renderFreeDashboard = () => (
     <div className="flex flex-col items-center justify-center py-20 text-center">
       <div className="w-24 h-24 rounded-full bg-white/[0.02] border border-white/[0.05] flex items-center justify-center mb-8">
-        <Lock className="w-10 h-10 text-[#C8A24C]/50" strokeWidth={1} />
+        <Lock className="w-10 h-10 text-[#b79043]/50" strokeWidth={1} />
       </div>
       <h2 className="text-3xl font-light text-white mb-4">הגעת לאזור האישי</h2>
       <p className="text-white/50 max-w-lg mb-10 leading-relaxed font-light">
@@ -177,15 +177,15 @@ export function Dashboard() {
       
       <div className="mt-20 w-full max-w-3xl text-right">
         <h3 className="text-xl font-light text-white mb-6">תכנים פתוחים עבורך:</h3>
-        <div className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-6 flex justify-between items-center group cursor-pointer hover:border-[#C8A24C]/30 transition-colors">
+        <div className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-6 flex justify-between items-center group cursor-pointer hover:border-[#b79043]/30 transition-colors">
           <div className="flex items-center gap-4">
-            <PlaySquare className="w-8 h-8 text-[#C8A24C]" strokeWidth={1} />
+            <PlaySquare className="w-8 h-8 text-[#b79043]" strokeWidth={1} />
             <div>
               <div className="text-white font-medium text-lg">שיחת הבהירות שלך (הקלטה)</div>
               <div className="text-white/40 text-sm">סיכום וידאו מהשיחה עם הצוות שלנו</div>
             </div>
           </div>
-          <button className="text-[#C8A24C] text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">צפייה</button>
+          <button className="text-[#b79043] text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity">צפייה</button>
         </div>
       </div>
     </div>
@@ -207,10 +207,10 @@ export function Dashboard() {
         <div className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
             <div className="text-sm text-white/50 uppercase tracking-widest">משימות לבדיקה</div>
-            <CheckSquare className="w-5 h-5 text-[#C8A24C]" />
+            <CheckSquare className="w-5 h-5 text-[#b79043]" />
           </div>
           <div className="text-4xl font-light text-white mb-2">18</div>
-          <div className="text-xs text-[#C8A24C]">דורש התייחסות דחופה</div>
+          <div className="text-xs text-[#b79043]">דורש התייחסות דחופה</div>
         </div>
         <div className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-6">
           <div className="flex items-center justify-between mb-4">
@@ -241,7 +241,7 @@ export function Dashboard() {
                 <div className="text-white/40 text-sm">הגיש: משימת מכירות. יום 14</div>
               </div>
             </div>
-            <button className="bg-white/[0.05] text-white border border-white/[0.1] px-6 py-2 rounded-xl text-sm hover:bg-[#C8A24C] hover:text-black hover:border-[#C8A24C] transition-colors">
+            <button className="bg-white/[0.05] text-white border border-white/[0.1] px-6 py-2 rounded-xl text-sm hover:bg-[#b79043] hover:text-black hover:border-[#b79043] transition-colors">
               בדיקה ומתן פידבק
             </button>
           </div>
@@ -267,7 +267,7 @@ export function Dashboard() {
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-12">
         {[
           { label: "סה״כ משתמשים", value: "342", color: "text-white" },
-          { label: "מנויי 88 פרימיום", value: "88/88", color: "text-[#C8A24C]" },
+          { label: "מנויי 88 פרימיום", value: "88/88", color: "text-[#b79043]" },
           { label: "הכנסות חודשיות", value: "₪450K", color: "text-green-400" },
           { label: "הססנים פעילים", value: "45", color: "text-purple-400" }
         ].map((stat, i) => (
@@ -285,7 +285,7 @@ export function Dashboard() {
             {['Pod Alpha. קפטן אורי', 'Pod Beta. קפטן שירה'].map((pod, i) => (
               <div key={i} className="flex justify-between items-center p-4 rounded-xl bg-white/[0.02]">
                 <span className="text-white/70">{pod}</span>
-                <span className="text-[#C8A24C]">98% שביעות רצון</span>
+                <span className="text-[#b79043]">98% שביעות רצון</span>
               </div>
             ))}
           </div>

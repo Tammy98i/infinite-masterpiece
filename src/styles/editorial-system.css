@@ -25,10 +25,43 @@ body { background: var(--editorial-ink); }
 }
 
 .editorial-marketing-shell,
-.vod-app { color: var(--editorial-cream); }
+.vod-app {
+  color: var(--editorial-cream);
+  background: var(--editorial-ink);
+}
+
+.editorial-marketing-shell.sky-readable,
+.vod-app.sky-readable { color: var(--editorial-cream); }
+
+.editorial-marketing-shell main,
+.vod-app main { color: var(--editorial-cream); }
 
 .editorial-marketing-shell:not(.video-home) main {
-  background: linear-gradient(180deg, #100d09 0%, var(--editorial-ink) 48rem);
+  background: var(--editorial-ink);
+}
+
+/* Normalize legacy utility surfaces into the editorial palette. */
+:is(.editorial-marketing-shell, .vod-app) :is(.text-white, .text-zinc-100, .text-zinc-200) { color: var(--editorial-cream); }
+:is(.editorial-marketing-shell, .vod-app) [class*='bg-white'] {
+  background-color: rgba(242, 237, 227, .035) !important;
+}
+:is(.editorial-marketing-shell, .vod-app) .text-black { color: var(--editorial-cream) !important; }
+:is(.editorial-marketing-shell, .vod-app) :is(.btn-gold, .tabbed-button, .skip-link),
+.video-home :is(.space-cta > a, .space-enroll) { color: var(--editorial-ink) !important; }
+:is(.editorial-marketing-shell, .vod-app) :is([class*='border-white'], [class*='divide-white']) {
+  border-color: var(--editorial-rule) !important;
+}
+:is(.editorial-marketing-shell, .vod-app) :is([class*='bg-slate-'], [class*='bg-zinc-'], [class*='bg-gray-'], [class*='bg-neutral-']) {
+  background-color: var(--editorial-ink-soft) !important;
+}
+:is(.editorial-marketing-shell, .vod-app) :is(input, textarea, select) {
+  color: var(--editorial-cream);
+  caret-color: var(--editorial-gold-light);
+}
+:is(.editorial-marketing-shell, .vod-app) :is(input, textarea)::placeholder { color: rgba(242, 237, 227, .42); }
+:is(.editorial-marketing-shell, .vod-app) ::selection {
+  color: var(--editorial-ink);
+  background: var(--editorial-gold-light);
 }
 
 .editorial-marketing-shell.sky-readable :is(h1, h2, h3, h4),

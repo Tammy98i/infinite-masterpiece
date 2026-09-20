@@ -114,7 +114,7 @@ export function AdminEmailsCard({ onChanged }: { onChanged?: () => void }) {
           type="button"
           disabled={pending}
           onClick={add}
-          className="px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
+          className="px-6 py-3 rounded-full bg-[#b79043] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
         >
           {pending ? 'שומר...' : 'הוספה'}
         </button>

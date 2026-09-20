@@ -54,7 +54,7 @@ export const ProfileView: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setAuthModalOpen(true)}
-                className="px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 cursor-pointer"
+                className="px-5 py-2.5 rounded-full bg-[#b79043] text-black text-sm min-h-11 cursor-pointer"
               >
                 התחברות
               </button>
@@ -145,7 +145,7 @@ export const ProfileView: React.FC = () => {
                       setSelectedInterests((prev) => (on ? prev.filter((t) => t !== tag) : [...prev, tag]))
                     }
                     className={`px-3 py-2 rounded-full text-sm min-h-11 border ${
-                      on ? 'border-[#C8A24C] text-[#C8A24C]' : 'border-white/10 text-white/55 hover:border-white/30'
+                      on ? 'border-[#b79043] text-[#b79043]' : 'border-white/10 text-white/55 hover:border-white/30'
                     }`}
                   >
                     {tag}

@@ -177,13 +177,13 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
             <button
               type="button"
               onClick={goPricing}
-              className="w-full mb-4 text-right rounded-2xl border border-[#C8A24C]/40 bg-[#C8A24C]/10 p-4 hover:border-[#F7E7B5] transition-colors"
+              className="w-full mb-4 text-right rounded-2xl border border-[#b79043]/40 bg-[#b79043]/10 p-4 hover:border-[#dfc47d] transition-colors"
             >
               <div className="text-sm font-semibold text-white mb-1">פתיחת גישה</div>
               <p className="text-[11px] text-white/50 font-light leading-relaxed">
                 מסלול האמיצים או מסלול ההססנים. 8,888 ₪ לפני מע״מ.
               </p>
-              <div className="mt-2.5 text-[11px] font-semibold text-[#C8A24C]">בחירת מסלול</div>
+              <div className="mt-2.5 text-[11px] font-semibold text-[#b79043]">בחירת מסלול</div>
             </button>
           )}
 
@@ -193,7 +193,7 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
                 <button
                   type="button"
                   onClick={goAdmin}
-                  className="w-full flex items-center justify-start gap-2 px-3 py-2.5 rounded-xl text-sm text-[#C8A24C] hover:bg-white/5 min-h-11"
+                  className="w-full flex items-center justify-start gap-2 px-3 py-2.5 rounded-xl text-sm text-[#b79043] hover:bg-white/5 min-h-11"
                 >
                   <Shield className="w-4 h-4" />
                   ניהול
@@ -203,7 +203,7 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
                 <button
                   type="button"
                   onClick={goLecturer}
-                  className="w-full flex items-center justify-start gap-2 px-3 py-2.5 rounded-xl text-sm text-[#C8A24C] hover:bg-white/5 min-h-11"
+                  className="w-full flex items-center justify-start gap-2 px-3 py-2.5 rounded-xl text-sm text-[#b79043] hover:bg-white/5 min-h-11"
                 >
                   <Mic className="w-4 h-4" />
                   אזור מרצה

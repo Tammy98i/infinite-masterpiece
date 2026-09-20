@@ -114,7 +114,7 @@ export const HomeView: React.FC = () => {
           <button
             type="button"
             onClick={() => void reloadCatalog()}
-            className="px-6 py-3 rounded-full bg-[#C8A24C] text-black font-semibold min-h-11"
+            className="px-6 py-3 rounded-full bg-[#b79043] text-black font-semibold min-h-11"
           >
             טעינה מחדש
           </button>

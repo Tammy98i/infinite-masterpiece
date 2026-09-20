@@ -28,7 +28,7 @@ export function AccessEndCard({ source, courseTitle, onDismiss }: Props) {
 
   return (
     <div
-      className="absolute inset-0 z-30 flex items-center justify-center bg-[#010308]/80 px-6"
+      className="absolute inset-0 z-30 flex items-center justify-center bg-[#0d0b08]/80 px-6"
       role="dialog"
       aria-modal="true"
       aria-labelledby="access-end-title"
@@ -49,7 +49,7 @@ export function AccessEndCard({ source, courseTitle, onDismiss }: Props) {
           <button
             type="button"
             onClick={goFit}
-            className="w-full py-3 rounded-full border border-[#C8A24C]/50 text-[#F7E7B5] text-sm min-h-11 cursor-pointer hover:border-[#F7E7B5]"
+            className="w-full py-3 rounded-full border border-[#b79043]/50 text-[#dfc47d] text-sm min-h-11 cursor-pointer hover:border-[#dfc47d]"
           >
             בדיקת התאמה
           </button>

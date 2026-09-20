@@ -23,7 +23,7 @@ export function Library() {
           <input 
             type="text" 
             placeholder="חיפוש שיעור או נושא..." 
-            className="w-full md:w-80 bg-white/[0.03] border border-white/[0.05] rounded-full py-3 pr-12 pl-4 text-white focus:outline-none focus:border-[#C8A24C]/50 transition-colors"
+            className="w-full md:w-80 bg-white/[0.03] border border-white/[0.05] rounded-full py-3 pr-12 pl-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors"
           />
         </div>
       </div>
@@ -34,7 +34,7 @@ export function Library() {
             key={i}
             className={`whitespace-nowrap px-6 py-2 rounded-full text-sm transition-colors ${
               i === 0 
-                ? 'bg-[#C8A24C] text-black font-medium' 
+                ? 'bg-[#b79043] text-black font-medium' 
                 : 'bg-white/[0.03] text-white/60 hover:bg-white/[0.08] hover:text-white border border-white/[0.05]'
             }`}
           >
@@ -46,22 +46,22 @@ export function Library() {
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         {lessons.map((lesson) => (
           <div key={lesson.id} className="bg-white/[0.02] border border-white/[0.05] rounded-3xl overflow-hidden group">
-            <div className="aspect-video bg-[#010308] relative flex items-center justify-center border-b border-white/[0.05]">
+            <div className="aspect-video bg-[#0d0b08] relative flex items-center justify-center border-b border-white/[0.05]">
               {lesson.locked ? (
                 <Lock className="w-8 h-8 text-white/20" strokeWidth={1} />
               ) : (
-                <PlaySquare className="w-10 h-10 text-white/30 group-hover:text-[#C8A24C] transition-colors group-hover:scale-110 duration-500" strokeWidth={1} />
+                <PlaySquare className="w-10 h-10 text-white/30 group-hover:text-[#b79043] transition-colors group-hover:scale-110 duration-500" strokeWidth={1} />
               )}
               {/* Progress bar line at bottom of image */}
               {!lesson.locked && lesson.progress > 0 && (
                 <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10">
-                  <div className="h-full bg-[#C8A24C]" style={{ width: `${lesson.progress}%` }} />
+                  <div className="h-full bg-[#b79043]" style={{ width: `${lesson.progress}%` }} />
                 </div>
               )}
             </div>
             <div className="p-6">
               <div className="flex justify-between items-start mb-3">
-                <span className="text-[11px] uppercase tracking-widest text-[#C8A24C]">{lesson.category}</span>
+                <span className="text-[11px] uppercase tracking-widest text-[#b79043]">{lesson.category}</span>
               </div>
               <h3 className={`text-lg font-medium mb-4 ${lesson.locked ? 'text-white/40' : 'text-white'}`}>
                 {lesson.title}

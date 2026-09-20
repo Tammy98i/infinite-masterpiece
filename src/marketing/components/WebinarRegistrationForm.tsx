@@ -19,7 +19,7 @@ type Props = {
 };
 
 const fieldClass =
-  'w-full bg-[#010308]/60 border border-[#C8A24C]/25 rounded-xl px-4 py-3 sm:px-5 sm:py-3.5 text-white text-base text-right focus:outline-none focus:border-[#C8A24C] focus:ring-1 focus:ring-[#C8A24C]/40 min-h-11';
+  'w-full bg-[#0d0b08]/60 border border-[#b79043]/25 rounded-xl px-4 py-3 sm:px-5 sm:py-3.5 text-white text-base text-right focus:outline-none focus:border-[#b79043] focus:ring-1 focus:ring-[#b79043]/40 min-h-11';
 
 export function WebinarRegistrationForm({
   payload,
@@ -195,7 +195,7 @@ export function WebinarRegistrationForm({
     >
       {!compact ? (
         <div className="mb-2">
-          <p id={`${formId}-title`} className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-[#C8A24C] mb-2">
+          <p id={`${formId}-title`} className="text-[11px] sm:text-xs uppercase tracking-[0.2em] text-[#b79043] mb-2">
             {isWaitlist ? 'רשימת המתנה' : 'הרשמה לוובינר'}
           </p>
           <h2 className="text-xl sm:text-2xl md:text-3xl font-light text-white mb-1">
@@ -266,15 +266,15 @@ export function WebinarRegistrationForm({
           required
           type="checkbox"
           name="termsAccepted"
-          className="mt-1 accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer"
+          className="mt-1 accent-[#b79043] min-w-4 min-h-4 cursor-pointer"
         />
         <span>
           אישור{' '}
-          <Link to="/terms" className="text-[#C8A24C] hover:text-[#F7E7B5] underline-offset-2 hover:underline">
+          <Link to="/terms" className="text-[#b79043] hover:text-[#dfc47d] underline-offset-2 hover:underline">
             תנאי שימוש
           </Link>{' '}
           ו
-          <Link to="/privacy" className="text-[#C8A24C] hover:text-[#F7E7B5] underline-offset-2 hover:underline">
+          <Link to="/privacy" className="text-[#b79043] hover:text-[#dfc47d] underline-offset-2 hover:underline">
             מדיניות פרטיות
           </Link>
           .
@@ -282,7 +282,7 @@ export function WebinarRegistrationForm({
       </label>
 
       <label className="flex items-start gap-3 text-sm text-white/45 leading-relaxed cursor-pointer">
-        <input type="checkbox" name="marketingOptIn" className="mt-1 accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer" />
+        <input type="checkbox" name="marketingOptIn" className="mt-1 accent-[#b79043] min-w-4 min-h-4 cursor-pointer" />
         <span>מאשר/ת לקבל עדכונים על הוובינר ומסלולי Infinite Masterpiece (אפשר לבטל בכל עת).</span>
       </label>
 
@@ -307,7 +307,7 @@ export function WebinarRegistrationForm({
           type="button"
           disabled={busy}
           onClick={() => void handleAlreadyRegistered()}
-          className="text-sm text-white/45 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer disabled:opacity-50 transition-colors duration-200"
+          className="text-sm text-white/45 hover:text-[#dfc47d] min-h-11 inline-flex items-center cursor-pointer disabled:opacity-50 transition-colors duration-200"
         >
           {lookingUp ? 'בודקים…' : 'כבר נרשמתי'}
         </button>

@@ -382,7 +382,7 @@ export const CourseDetailView: React.FC = () => {
         <button
           type="button"
           onClick={() => setView('home')}
-          className="px-6 py-3 rounded-full bg-[#C8A24C] text-black font-semibold min-h-11"
+          className="px-6 py-3 rounded-full bg-[#b79043] text-black font-semibold min-h-11"
         >
           חזרה לספרייה
         </button>
@@ -426,7 +426,7 @@ export const CourseDetailView: React.FC = () => {
               type="button"
               onClick={() => setView('instructor', { instructorId: instructor.id })}
               aria-label={`${instructor.name}, ${instructor.title}`}
-              className="inline-flex items-center gap-3 mb-6 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] rounded-full"
+              className="inline-flex items-center gap-3 mb-6 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded-full"
             >
               <img
                 src={instructor.avatarUrl}
@@ -458,7 +458,7 @@ export const CourseDetailView: React.FC = () => {
               aria-valuetext={`${Math.round(timeProgress)} אחוז מהקורס`}
             >
               <div
-                className={`h-full transition-all ${timeProgress > 0 ? 'bg-[#C8A24C]' : 'bg-transparent'}`}
+                className={`h-full transition-all ${timeProgress > 0 ? 'bg-[#b79043]' : 'bg-transparent'}`}
                 style={{ width: `${timeProgress}%` }}
               />
             </div>
@@ -468,7 +468,7 @@ export const CourseDetailView: React.FC = () => {
             <button
               type="button"
               onClick={handlePrimaryCta}
-              className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-semibold min-h-11 hover:bg-[#F7E7B5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full bg-[#b79043] text-black text-sm font-semibold min-h-11 hover:bg-[#dfc47d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
             >
               <Play className="w-4 h-4 fill-black" />
               {cta?.label || 'התחילו לצפות'}
@@ -476,10 +476,10 @@ export const CourseDetailView: React.FC = () => {
             <button
               type="button"
               onClick={handleListToggle}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-white/30 text-white text-sm font-medium min-h-11 hover:border-white/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C]"
+              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-white/30 text-white text-sm font-medium min-h-11 hover:border-white/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
             >
               {isSaved ? (
-                <BookmarkCheck className="w-4 h-4 text-[#C8A24C]" />
+                <BookmarkCheck className="w-4 h-4 text-[#b79043]" />
               ) : (
                 <Bookmark className="w-4 h-4" />
               )}
@@ -580,7 +580,7 @@ export const CourseDetailView: React.FC = () => {
                           if (v.paused) void v.play();
                           else v.pause();
                         }}
-                        className="w-11 h-11 rounded-full bg-[#C8A24C] text-black flex items-center justify-center"
+                        className="w-11 h-11 rounded-full bg-[#b79043] text-black flex items-center justify-center"
                         aria-label={isPlaying ? 'השהיה' : 'הפעלה'}
                       >
                         {isPlaying ? (
@@ -598,7 +598,7 @@ export const CourseDetailView: React.FC = () => {
                           onClick={() => setCaptionsOn((v) => !v)}
                           className={`px-3 py-2 rounded-full text-[12px] min-h-11 border ${
                             captionsOn
-                              ? 'border-[#C8A24C] text-[#F7E7B5]'
+                              ? 'border-[#b79043] text-[#dfc47d]'
                               : 'border-white/20 text-white/50'
                           }`}
                           aria-pressed={captionsOn}
@@ -636,7 +636,7 @@ export const CourseDetailView: React.FC = () => {
                       if (activeEpisode) void startPlayback(activeEpisode.id, cta?.mode === 'resume' ? 'resume' : 'play');
                       else handlePrimaryCta();
                     }}
-                    className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-[#C8A24C] text-black flex items-center justify-center hover:bg-[#F7E7B5] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                    className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-[#b79043] text-black flex items-center justify-center hover:bg-[#dfc47d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
                     aria-label={cta?.label || 'התחילו לצפות'}
                   >
                     <Play className="w-7 h-7 fill-black ml-1" />
@@ -703,9 +703,9 @@ export const CourseDetailView: React.FC = () => {
                         setChapterInUrl(ep.id);
                         if (playerOn) void startPlayback(ep.id);
                       }}
-                      className={`w-full text-right rounded-xl border p-3 sm:p-4 transition-colors min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] ${
+                      className={`w-full text-right rounded-xl border p-3 sm:p-4 transition-colors min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] ${
                         isActive
-                          ? 'border-[#C8A24C] bg-[#C8A24C]/10'
+                          ? 'border-[#b79043] bg-[#b79043]/10'
                           : 'border-white/10 bg-white/[0.02] hover:border-white/25'
                       }`}
                     >
@@ -720,10 +720,10 @@ export const CourseDetailView: React.FC = () => {
                           <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[13px] text-white/50">
                             <span className="tabular-nums">{formatClock(ep.duration)}</span>
                             {access === 'open' && (
-                              <span className="text-[#C8A24C]">פתוח</span>
+                              <span className="text-[#b79043]">פתוח</span>
                             )}
                             {access === 'preview' && (
-                              <span className="text-[#F7E7B5]">טעימה</span>
+                              <span className="text-[#dfc47d]">טעימה</span>
                             )}
                             {access === 'locked' && (
                               <span className="inline-flex items-center gap-1 text-white/45">
@@ -744,7 +744,7 @@ export const CourseDetailView: React.FC = () => {
                           {partial > 0 && !done && (
                             <div className="mt-2 h-0.5 rounded-full bg-white/10 overflow-hidden">
                               <div
-                                className="h-full bg-[#C8A24C]"
+                                className="h-full bg-[#b79043]"
                                 style={{ width: `${partial}%` }}
                                 aria-hidden
                               />
@@ -756,7 +756,7 @@ export const CourseDetailView: React.FC = () => {
                             <Lock className="w-4 h-4 text-white/35" aria-hidden />
                           ) : (
                             <Play
-                              className={`w-4 h-4 ${isActive ? 'text-[#C8A24C] fill-[#C8A24C]' : 'text-white/40'}`}
+                              className={`w-4 h-4 ${isActive ? 'text-[#b79043] fill-[#b79043]' : 'text-white/40'}`}
                               aria-hidden
                             />
                           )}
@@ -796,8 +796,8 @@ export const CourseDetailView: React.FC = () => {
                   setInfoTab(infoTab === 'course' ? 'instructor' : 'course');
                 }
               }}
-              className={`px-4 py-2 rounded-full text-sm min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] ${
-                infoTab === id ? 'bg-[#C8A24C] text-black font-semibold' : 'text-white/55 hover:text-white'
+              className={`px-4 py-2 rounded-full text-sm min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] ${
+                infoTab === id ? 'bg-[#b79043] text-black font-semibold' : 'text-white/55 hover:text-white'
               }`}
             >
               {label}
@@ -822,7 +822,7 @@ export const CourseDetailView: React.FC = () => {
               <ul className="mt-5 space-y-2 text-[14px] text-white/60">
                 {course.whatYouWillLearn.map((item) => (
                   <li key={item} className="flex gap-2">
-                    <Check className="w-4 h-4 text-[#C8A24C] shrink-0 mt-0.5" aria-hidden />
+                    <Check className="w-4 h-4 text-[#b79043] shrink-0 mt-0.5" aria-hidden />
                     <span>{item}</span>
                   </li>
                 ))}
@@ -850,11 +850,11 @@ export const CourseDetailView: React.FC = () => {
                 <button
                   type="button"
                   onClick={() => setView('instructor', { instructorId: instructor.id })}
-                  className="text-base font-medium text-white hover:text-[#C8A24C] min-h-11"
+                  className="text-base font-medium text-white hover:text-[#b79043] min-h-11"
                 >
                   {instructor.name}
                 </button>
-                <p className="text-[13px] text-[#C8A24C]/90 mt-1">{instructor.title}</p>
+                <p className="text-[13px] text-[#b79043]/90 mt-1">{instructor.title}</p>
                 {instructor.bio && (
                   <p className="text-[14px] text-white/55 font-light leading-relaxed mt-3">{instructor.bio}</p>
                 )}

@@ -12,12 +12,12 @@ export function WebinarSocialProof({ quotes }: { quotes: WebinarSocialProofQuote
         >
           <div className="flex items-center justify-center gap-3 mb-3">
             <span
-              className="w-9 h-9 rounded-full border border-[#C8A24C]/40 bg-[#C8A24C]/10 text-[#F7E7B5] text-sm flex items-center justify-center shrink-0"
+              className="w-9 h-9 rounded-full border border-[#b79043]/40 bg-[#b79043]/10 text-[#dfc47d] text-sm flex items-center justify-center shrink-0"
               aria-hidden
             >
               {item.author.slice(0, 1)}
             </span>
-            <footer className="text-xs text-[#C8A24C]">
+            <footer className="text-xs text-[#b79043]">
               {item.author}
               {item.role ? <span className="block text-white/35 mt-0.5">{item.role}</span> : null}
             </footer>

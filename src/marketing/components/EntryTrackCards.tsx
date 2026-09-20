@@ -9,7 +9,7 @@ function FeatureList({ items }: { items: string[] }) {
     <ul className="grid gap-2 text-center mb-6">
       {items.map((item) => (
         <li key={item} className="flex items-start justify-center gap-2 text-[13px] text-white/60 font-light">
-          <Check className="w-3.5 h-3.5 text-[#C8A24C] shrink-0 mt-0.5" strokeWidth={1.5} />
+          <Check className="w-3.5 h-3.5 text-[#b79043] shrink-0 mt-0.5" strokeWidth={1.5} />
           <span>{item}</span>
         </li>
       ))}
@@ -28,7 +28,7 @@ export function EntryTrackCards() {
         <article className="glass-card flex flex-col p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3 min-h-8 mb-3">
             <h3 className="text-lg sm:text-xl font-heading text-white">מסלול האמיצים</h3>
-            <span className="shrink-0 px-2.5 py-1 rounded-full bg-[#C8A24C] text-black text-[10px] font-semibold tracking-wide">
+            <span className="shrink-0 px-2.5 py-1 rounded-full bg-[#b79043] text-black text-[10px] font-semibold tracking-wide">
               מומלץ
             </span>
           </div>
@@ -79,7 +79,7 @@ export function EntryTrackCards() {
           <Link
             to="/hesitation"
             onClick={() => trackEvent('hesitant_track_clicked')}
-            className="mt-auto inline-flex justify-center items-center w-full py-3 px-4 rounded-full text-white border border-[#C8A24C]/40 hover:border-[#F7E7B5] hover:text-[#F7E7B5] font-medium text-sm min-h-11"
+            className="mt-auto inline-flex justify-center items-center w-full py-3 px-4 rounded-full text-white border border-[#b79043]/40 hover:border-[#dfc47d] hover:text-[#dfc47d] font-medium text-sm min-h-11"
           >
             אני מתחיל/ה ב־8 ₪
           </Link>

@@ -172,7 +172,7 @@ export function AdminView() {
               </div>
             </div>
             <div className="flex items-center gap-2">
-              <button type="button" onClick={() => setCommandOpen(true)} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 px-3 text-xs text-white/60 hover:border-[#C8A24C]/40 hover:text-white" aria-label="מעבר מהיר באדמין">
+              <button type="button" onClick={() => setCommandOpen(true)} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 px-3 text-xs text-white/60 hover:border-[#b79043]/40 hover:text-white" aria-label="מעבר מהיר באדמין">
                 <Search size={15} /><span className="hidden sm:inline">מעבר מהיר</span><kbd className="hidden xl:inline text-[10px] text-white/30">⌘K</kbd>
               </button>
               <button
@@ -189,7 +189,7 @@ export function AdminView() {
 
           <main className="px-4 sm:px-6 lg:px-8 py-6 pb-24 max-w-7xl">
             {staffDesk ? (
-              <p className="text-xs text-[#C8A24C]/80 mb-4">
+              <p className="text-xs text-[#b79043]/80 mb-4">
                 מצב צוות מוגבל: {STAFF_DESK_LABEL[staffDesk] || staffDesk}. גישה מלאה רק לאדמין ראשי.
               </p>
             ) : null}
@@ -274,7 +274,7 @@ function NotificationsPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) 
     <div className="grid gap-6 max-w-3xl">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">התראות</p>
+          <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">התראות</p>
           <h2 className="text-2xl font-light">תור פעולות לטיפול</h2>
           <p className="text-sm text-white/45 mt-2">
             סיכום אוטומטי מהמערכת. שליחה במייל או וואטסאפ תגיע בשלב הבא.
@@ -305,7 +305,7 @@ function NotificationsPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) 
                       item.severity === 'high'
                         ? 'text-rose-300'
                         : item.severity === 'medium'
-                          ? 'text-[#C8A24C]'
+                          ? 'text-[#b79043]'
                           : 'text-white/40'
                     }`}
                   >
@@ -319,7 +319,7 @@ function NotificationsPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) 
               <button
                 type="button"
                 onClick={() => onNavigate(item.tab as Tab)}
-                className="px-4 py-2 rounded-full bg-[#C8A24C] text-black text-xs min-h-11 shrink-0"
+                className="px-4 py-2 rounded-full bg-[#b79043] text-black text-xs min-h-11 shrink-0"
               >
                 מעבר לטיפול
               </button>
@@ -385,12 +385,12 @@ function ReadinessPanel() {
   };
 
   const statusClass = (ok: boolean) =>
-    ok ? 'border-[#C8A24C]/40 bg-[#C8A24C]/10' : 'border-white/10 bg-white/[0.03]';
+    ok ? 'border-[#b79043]/40 bg-[#b79043]/10' : 'border-white/10 bg-white/[0.03]';
 
   return (
     <div className="grid gap-6">
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">מוכנות להשקה</p>
+        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">מוכנות להשקה</p>
         <p className="text-sm text-white/45 font-light">
           מפתחות, תמונות ושמות אמיתיים נשארים אצלכם. כאן רואים מה חסר, ומשבצים הרצאות קיימות לשבועות 3 ו־4.
         </p>
@@ -501,7 +501,7 @@ function ReadinessPanel() {
             return (
               <div key={founder.id} className="flex items-center justify-between gap-3 text-sm">
                 <span>{founder.name}</span>
-                <span className={missing.length ? 'text-white/40 font-light' : 'text-[#C8A24C]'}>
+                <span className={missing.length ? 'text-white/40 font-light' : 'text-[#b79043]'}>
                   {missing.length ? `חסר: ${missing.join(', ')}` : 'מוכן'}
                 </span>
               </div>
@@ -592,7 +592,7 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
   return (
     <div className="grid gap-8">
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">תמונת מצב</p>
+        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">תמונת מצב</p>
         <h2 className="text-2xl font-light">מה קורה במערכת עכשיו</h2>
       </div>
 
@@ -612,7 +612,7 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
             <button
               type="button"
               onClick={() => onNavigate('funnel')}
-              className="text-xs text-[#C8A24C] hover:text-[#F7E7B5]"
+              className="text-xs text-[#b79043] hover:text-[#dfc47d]"
             >
               פירוט
             </button>
@@ -629,7 +629,7 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
                   </div>
                   <div className="h-2 rounded-full bg-white/5 overflow-hidden">
                     <div
-                      className="h-full rounded-full bg-gradient-to-l from-[#C8A24C] to-[#5b4b9a]"
+                      className="h-full rounded-full bg-gradient-to-l from-[#b79043] to-[#5b4b9a]"
                       style={{ width: `${Math.max(6, (step.value / funnelMax) * 100)}%` }}
                     />
                   </div>
@@ -697,7 +697,7 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
                 key={action.label}
                 type="button"
                 onClick={() => onNavigate(action.tab)}
-                className="text-right border border-white/10 rounded-2xl p-4 hover:border-[#C8A24C]/40 transition-colors min-h-11"
+                className="text-right border border-white/10 rounded-2xl p-4 hover:border-[#b79043]/40 transition-colors min-h-11"
               >
                 <div className="text-sm text-white mb-1">{action.label}</div>
                 <div className="text-xs text-white/40 font-light">{action.hint}</div>
@@ -1001,13 +1001,13 @@ function ContentPanel({
         <button
           type="button"
           onClick={() => setEditing('new')}
-          className="px-4 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 cursor-pointer hover:bg-[#F7E7B5]"
+          className="px-4 py-2.5 rounded-full bg-[#b79043] text-black text-sm min-h-11 cursor-pointer hover:bg-[#dfc47d]"
         >
           הרצאה חדשה
         </button>
       </div>
       {error && <p role="alert" className="text-sm text-rose-300 mb-4">{error}</p>}
-      {bulkFeedback && <p role="status" className="text-sm text-[#C8A24C] mb-4">{bulkFeedback}</p>}
+      {bulkFeedback && <p role="status" className="text-sm text-[#b79043] mb-4">{bulkFeedback}</p>}
       <AdminListControls query={query} onQueryChange={setQuery} placeholder="חיפוש הרצאה לפי שם…" count={filteredCourses.length} total={courses.length}>
         <select value={statusFilter} onChange={event => setStatusFilter(event.target.value)} className="min-h-11 rounded-xl border border-white/10 bg-[#0a0a0a] px-3 text-sm text-white/70" aria-label="סינון הרצאות לפי סטטוס">
           <option value="all">כל הסטטוסים</option>{Object.entries(STATUS_LABEL).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
@@ -1019,12 +1019,12 @@ function ContentPanel({
             const next = new Set(current);
             if (allFilteredSelected) filteredCourses.forEach(course => next.delete(course.id)); else filteredCourses.forEach(course => next.add(course.id));
             return next;
-          })} className="h-4 w-4 accent-[#C8A24C]" />
+          })} className="h-4 w-4 accent-[#b79043]" />
           בחירת הכל בתצוגה
         </label>
         <span className="text-xs text-white/35">{selectedIds.size ? `${selectedIds.size} נבחרו` : 'לא נבחרו הרצאות'}</span>
         {selectedIds.size > 0 ? <div className="flex flex-wrap gap-2 sm:ms-auto">
-          <button type="button" onClick={() => setBulkStatus('published')} className="min-h-10 rounded-xl bg-[#C8A24C] px-4 text-xs font-medium text-black">פרסום נבחרים</button>
+          <button type="button" onClick={() => setBulkStatus('published')} className="min-h-10 rounded-xl bg-[#b79043] px-4 text-xs font-medium text-black">פרסום נבחרים</button>
           <button type="button" onClick={() => setBulkStatus('draft')} className="min-h-10 rounded-xl border border-white/15 px-4 text-xs text-white/70">העברה לטיוטה</button>
           <button type="button" onClick={() => setBulkStatus('blocked')} className="min-h-10 rounded-xl border border-rose-400/30 px-4 text-xs text-rose-300">חסימת נבחרים</button>
           <button type="button" onClick={() => setSelectedIds(new Set())} className="min-h-10 px-3 text-xs text-white/40 hover:text-white">ניקוי בחירה</button>
@@ -1034,7 +1034,7 @@ function ContentPanel({
         {filteredCourses.length === 0 ? <p className="py-10 text-center text-sm text-white/40">לא נמצאו הרצאות לפי הסינון הנוכחי.</p> : filteredCourses.map((course) => (
           <div key={course.id} className="py-4 flex flex-col sm:flex-row sm:items-center gap-3">
             <label className="flex min-h-11 min-w-11 items-center justify-start sm:justify-center gap-2 text-xs text-white/50">
-              <input type="checkbox" aria-label={`בחירת הרצאה: ${course.title}`} checked={selectedIds.has(course.id)} disabled={pending} onChange={() => toggleSelected(course.id)} className="h-4 w-4 accent-[#C8A24C]" />
+              <input type="checkbox" aria-label={`בחירת הרצאה: ${course.title}`} checked={selectedIds.has(course.id)} disabled={pending} onChange={() => toggleSelected(course.id)} className="h-4 w-4 accent-[#b79043]" />
               <span className="sm:hidden">בחירת הרצאה</span>
             </label>
             <button
@@ -1166,7 +1166,7 @@ function CourseForm({
         <button type="button" onClick={() => { if (canLeave()) onCancel(); }} className="text-sm text-white/45 hover:text-white text-right cursor-pointer min-h-11">
           חזרה לרשימה
         </button>
-        {dirty ? <span className="rounded-full border border-[#C8A24C]/25 bg-[#C8A24C]/10 px-3 py-1 text-xs text-[#F7E7B5]" role="status">שינויים שלא נשמרו</span> : null}
+        {dirty ? <span className="rounded-full border border-[#b79043]/25 bg-[#b79043]/10 px-3 py-1 text-xs text-[#dfc47d]" role="status">שינויים שלא נשמרו</span> : null}
       </div>
       <label className="block">
         <span className="block text-xs text-white/45 mb-1">שם</span>
@@ -1259,7 +1259,7 @@ function CourseForm({
           <button
             type="button"
             onClick={() => setEpisodes((prev) => [...prev, emptyEpisode()])}
-            className="text-sm text-[#C8A24C] cursor-pointer min-h-11"
+            className="text-sm text-[#b79043] cursor-pointer min-h-11"
           >
             הוספת פרק
           </button>
@@ -1330,7 +1330,7 @@ function CourseForm({
       <button
         type="submit"
         disabled={pending}
-        className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer hover:bg-[#F7E7B5] disabled:opacity-60"
+        className="w-full py-3 rounded-full bg-[#b79043] text-black text-sm font-medium min-h-11 cursor-pointer hover:bg-[#dfc47d] disabled:opacity-60"
       >
         {pending ? 'שומר...' : 'שמירה'}
       </button>
@@ -1403,7 +1403,7 @@ function LecturerApplicationsPanel() {
                 {app.phone ? ` · ${app.phone}` : ''}
               </p>
             </div>
-            <span className="text-xs text-[#C8A24C]">{APP_STATUS_LABEL[app.status]}</span>
+            <span className="text-xs text-[#b79043]">{APP_STATUS_LABEL[app.status]}</span>
           </div>
           <p className="text-sm text-white/70">
             <span className="text-white/40">תחום: </span>
@@ -1442,13 +1442,13 @@ function LecturerApplicationsPanel() {
               href={app.sampleVideo}
               target="_blank"
               rel="noreferrer"
-              className="text-sm text-[#C8A24C] hover:text-[#F7E7B5] break-all"
+              className="text-sm text-[#b79043] hover:text-[#dfc47d] break-all"
             >
               וידאו דוגמה
             </a>
           ) : null}
           {app.adminNote ? (
-            <p className="text-sm text-[#C8A24C]">הערה קודמת: {app.adminNote}</p>
+            <p className="text-sm text-[#b79043]">הערה קודמת: {app.adminNote}</p>
           ) : null}
           {(app.status === 'pending' || app.status === 'more_info') && (
             <>
@@ -1466,7 +1466,7 @@ function LecturerApplicationsPanel() {
                   type="button"
                   disabled={pendingId === app.id}
                   onClick={() => void review(app.id, 'approved')}
-                  className="px-4 py-2 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 cursor-pointer disabled:opacity-60"
+                  className="px-4 py-2 rounded-full bg-[#b79043] text-black text-sm min-h-11 cursor-pointer disabled:opacity-60"
                 >
                   אישור
                 </button>
@@ -1527,7 +1527,7 @@ function FounderAddForm({ onCreated }: { onCreated: (founder: Instructor) => voi
       <button
         type="button"
         onClick={() => setOpen(true)}
-        className="px-4 py-2.5 rounded-full border border-[#C8A24C]/40 text-sm text-[#C8A24C] min-h-11 cursor-pointer"
+        className="px-4 py-2.5 rounded-full border border-[#b79043]/40 text-sm text-[#b79043] min-h-11 cursor-pointer"
       >
         הוספת איש צוות
       </button>
@@ -1535,7 +1535,7 @@ function FounderAddForm({ onCreated }: { onCreated: (founder: Instructor) => voi
   }
 
   return (
-    <div className="border border-[#C8A24C]/25 rounded-3xl p-6 grid gap-4">
+    <div className="border border-[#b79043]/25 rounded-3xl p-6 grid gap-4">
       <p className="text-sm text-white/50 font-light leading-relaxed">
         לכל יזם: שם, תפקיד ותמונה. ביו אפשר להוסיף אחר כך.
       </p>
@@ -1558,7 +1558,7 @@ function FounderAddForm({ onCreated }: { onCreated: (founder: Instructor) => voi
           type="button"
           disabled={pending}
           onClick={() => void save()}
-          className="px-5 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
+          className="px-5 py-3 rounded-full bg-[#b79043] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
         >
           {pending ? 'שומר...' : 'הוספה'}
         </button>
@@ -1956,7 +1956,7 @@ function TracksPanel() {
         <button
           type="button"
           onClick={() => exportJoinersCsv(filtered)}
-          className="self-start border border-white/15 px-4 py-2 text-sm text-white/70 hover:border-[#C8A24C]/50 hover:text-[#C8A24C] transition-colors"
+          className="self-start border border-white/15 px-4 py-2 text-sm text-white/70 hover:border-[#b79043]/50 hover:text-[#b79043] transition-colors"
         >
           ייצוא CSV
         </button>
@@ -2030,7 +2030,7 @@ function TracksPanel() {
                     <tr
                       key={row.id}
                       onClick={() => setSelectedId(row.id)}
-                      className={`cursor-pointer transition-colors ${active ? 'bg-[#C8A24C]/10' : 'hover:bg-white/[0.03]'}`}
+                      className={`cursor-pointer transition-colors ${active ? 'bg-[#b79043]/10' : 'hover:bg-white/[0.03]'}`}
                     >
                       <td className="py-3 px-3 text-white/55">{row.createdAt.replace('T', ' ').slice(0, 16)}</td>
                       <td className="py-3 px-3">{trackLabel(row.trackType)}</td>
@@ -2055,7 +2055,7 @@ function TracksPanel() {
           ) : (
             <div className="grid gap-5">
               <div>
-                <p className="text-[13px] uppercase tracking-[0.25em] text-[#C8A24C] mb-2">כרטיס מצטרף</p>
+                <p className="text-[13px] uppercase tracking-[0.25em] text-[#b79043] mb-2">כרטיס מצטרף</p>
                 <h3 className="text-xl font-light">{selected.name}</h3>
                 <p className="text-sm text-white/45 mt-1">
                   {trackLabel(selected.trackType)} · {selected.status}
@@ -2129,7 +2129,7 @@ function TracksPanel() {
                               type="button"
                               disabled={pendingId === item.id}
                               onClick={() => void setInstallment(item.id, 'paid')}
-                              className="px-3 py-1.5 text-xs border border-[#C8A24C]/50 text-[#C8A24C] hover:bg-[#C8A24C]/10 disabled:opacity-50"
+                              className="px-3 py-1.5 text-xs border border-[#b79043]/50 text-[#b79043] hover:bg-[#b79043]/10 disabled:opacity-50"
                             >
                               סומן כשולם
                             </button>
@@ -2268,7 +2268,7 @@ function CategoriesPanel() {
   return (
     <div className="grid gap-8">
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">קטגוריות</p>
+        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">קטגוריות</p>
         <h2 className="text-2xl font-light">ניהול קטגוריות VOD</h2>
       </div>
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
@@ -2299,7 +2299,7 @@ function CategoriesPanel() {
           type="button"
           disabled={pending || !name.trim()}
           onClick={() => void create()}
-          className="px-4 py-3 rounded-xl bg-[#C8A24C] text-black text-sm min-h-11 disabled:opacity-50"
+          className="px-4 py-3 rounded-xl bg-[#b79043] text-black text-sm min-h-11 disabled:opacity-50"
         >
           הוספה
         </button>
@@ -2410,7 +2410,7 @@ function Premium88Panel() {
   return (
     <div className="grid gap-8">
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">נבחרת 88</p>
+        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">נבחרת 88</p>
         <h2 className="text-2xl font-light">מועמדויות</h2>
         <p className="text-sm text-white/45 mt-2 font-light">
           מועמדויות מטופס `/application?type=88`. נפרד ממסלולי כניסה וממנוי הספרייה.
@@ -2441,7 +2441,7 @@ function Premium88Panel() {
                   <tr
                     key={row.id}
                     onClick={() => setSelectedId(row.id)}
-                    className={`cursor-pointer ${selectedId === row.id ? 'bg-[#C8A24C]/10' : 'hover:bg-white/[0.03]'}`}
+                    className={`cursor-pointer ${selectedId === row.id ? 'bg-[#b79043]/10' : 'hover:bg-white/[0.03]'}`}
                   >
                     <td className="py-3 px-3 text-white/55">{row.createdAt.replace('T', ' ').slice(0, 16)}</td>
                     <td className="py-3 px-3">{row.fullName}</td>
@@ -2477,7 +2477,7 @@ function Premium88Panel() {
                     type="button"
                     disabled={pendingId === selected.id}
                     onClick={() => void review(selected.id, status)}
-                    className="px-3 py-1.5 text-xs border border-white/20 text-white/70 hover:border-[#C8A24C]/50 hover:text-[#C8A24C] disabled:opacity-50"
+                    className="px-3 py-1.5 text-xs border border-white/20 text-white/70 hover:border-[#b79043]/50 hover:text-[#b79043] disabled:opacity-50"
                   >
                     {P88_STATUS_LABEL[status]}
                   </button>
@@ -2507,7 +2507,7 @@ function AuditLogsPanel() {
   return (
     <div className="grid gap-6">
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">יומן פעולות</p>
+        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">יומן פעולות</p>
         <h2 className="text-2xl font-light">פעולות רגישות באדמין</h2>
       </div>
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
@@ -2622,14 +2622,14 @@ function RafflesPanel() {
     <div className="grid gap-8">
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">הגרלות</p>
+        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">הגרלות</p>
         <h2 className="text-2xl font-light">ניהול הגרלות וכרטיסים</h2>
         <p className="text-sm text-white/45 mt-2">
           תקנון מאושר: {data.termsApproved ? 'כן' : 'לא'} · כרטיסים ללא שיוך: {data.unassignedTickets}
         </p>
       </div>
 
-      <div className="border border-[#C8A24C]/25 rounded-3xl p-6 grid gap-4 max-w-3xl">
+      <div className="border border-[#b79043]/25 rounded-3xl p-6 grid gap-4 max-w-3xl">
         <h3 className="text-lg font-light">הגרלה חדשה</h3>
         <label className="grid gap-1 text-xs text-white/45">
           שם
@@ -2658,7 +2658,7 @@ function RafflesPanel() {
           type="button"
           disabled={busy || !title.trim()}
           onClick={() => void create()}
-          className="w-fit px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 disabled:opacity-60"
+          className="w-fit px-6 py-3 rounded-full bg-[#b79043] text-black text-sm font-medium min-h-11 disabled:opacity-60"
         >
           {busy ? 'יוצר...' : 'יצירת הגרלה'}
         </button>
@@ -2707,7 +2707,7 @@ function RafflesPanel() {
                             type="button"
                             disabled={pendingId === row.id || !data.termsApproved}
                             onClick={() => void draw(row.id)}
-                            className="px-3 py-1.5 text-xs bg-[#C8A24C] text-black rounded-xl min-h-10 disabled:opacity-50"
+                            className="px-3 py-1.5 text-xs bg-[#b79043] text-black rounded-xl min-h-10 disabled:opacity-50"
                             title={!data.termsApproved ? 'נדרש אישור תקנון הגרלות בהגדרות' : undefined}
                           >
                             הגרלת זוכה
@@ -2802,7 +2802,7 @@ function LeadsPanel() {
     <div className="grid gap-6">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">לידים ופניות</p>
+          <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">לידים ופניות</p>
           <h2 className="text-2xl font-light">CRM מאוחד</h2>
           <p className="text-sm text-white/45 mt-2">{filtered.length} רשומות</p>
         </div>
@@ -2952,7 +2952,7 @@ function LegalPanel() {
   return (
     <div className="grid gap-8 max-w-4xl">
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">משפטי</p>
+        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">משפטי</p>
         <h2 className="text-2xl font-light">תקנון, פרטיות והגרלות</h2>
         <p className="text-sm text-white/45 mt-2">הטקסטים מוצגים בעמודי האתר הציבוריים.</p>
       </div>
@@ -2966,7 +2966,7 @@ function LegalPanel() {
           type="button"
           disabled={saving === 'legal_terms'}
           onClick={() => void save('legal_terms', terms)}
-          className="w-fit px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 disabled:opacity-60"
+          className="w-fit px-5 py-2.5 rounded-full bg-[#b79043] text-black text-sm min-h-11 disabled:opacity-60"
         >
           {saving === 'legal_terms' ? 'שומר...' : 'שמירת תקנון'}
         </button>
@@ -2979,7 +2979,7 @@ function LegalPanel() {
           type="button"
           disabled={saving === 'legal_privacy'}
           onClick={() => void save('legal_privacy', privacy)}
-          className="w-fit px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 disabled:opacity-60"
+          className="w-fit px-5 py-2.5 rounded-full bg-[#b79043] text-black text-sm min-h-11 disabled:opacity-60"
         >
           {saving === 'legal_privacy' ? 'שומר...' : 'שמירת פרטיות'}
         </button>
@@ -2993,7 +2993,7 @@ function LegalPanel() {
             type="button"
             disabled={saving === 'legal_raffle'}
             onClick={() => void save('legal_raffle', raffle)}
-            className="w-fit px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 disabled:opacity-60"
+            className="w-fit px-5 py-2.5 rounded-full bg-[#b79043] text-black text-sm min-h-11 disabled:opacity-60"
           >
             {saving === 'legal_raffle' ? 'שומר...' : 'שמירת תקנון הגרלות'}
           </button>
@@ -3179,11 +3179,11 @@ function WebinarPanel() {
     <div className="grid gap-8 max-w-5xl">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
-          <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">וובינר</p>
+          <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">וובינר</p>
           <h2 className="text-2xl font-light">הגדרות ולידים</h2>
           <p className="text-sm text-white/45 mt-2">
             {data?.totalRegistrations ?? 0} נרשמים ·{' '}
-            <a href="/webinar" target="_blank" rel="noreferrer" className="text-[#C8A24C] hover:underline">
+            <a href="/webinar" target="_blank" rel="noreferrer" className="text-[#b79043] hover:underline">
               צפייה בדף
             </a>
           </p>
@@ -3192,7 +3192,7 @@ function WebinarPanel() {
           type="button"
           onClick={() => void saveConfig()}
           disabled={saving}
-          className="px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 disabled:opacity-60"
+          className="px-5 py-2.5 rounded-full bg-[#b79043] text-black text-sm min-h-11 disabled:opacity-60"
         >
           {saving ? 'שומר…' : 'שמירת הגדרות'}
         </button>
@@ -3201,7 +3201,7 @@ function WebinarPanel() {
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
       {data?.readiness ? (
-        <section className="grid gap-3 border border-[#C8A24C]/25 rounded-2xl p-5 bg-[#C8A24C]/5">
+        <section className="grid gap-3 border border-[#b79043]/25 rounded-2xl p-5 bg-[#b79043]/5">
           <h3 className="text-lg font-light">מוכנות משפך הוובינר</h3>
           <p className="text-sm text-white/50">
             {data.readiness.ready
@@ -3211,7 +3211,7 @@ function WebinarPanel() {
           <ul className="grid gap-2">
             {data.readiness.items.map((item) => (
               <li key={item.id} className="flex items-start gap-3 text-sm">
-                <span className={item.ok ? 'text-[#F7E7B5]' : 'text-rose-300'}>
+                <span className={item.ok ? 'text-[#dfc47d]' : 'text-rose-300'}>
                   {item.ok ? 'מוכן' : item.required ? 'חסר' : 'אופציונלי'}
                 </span>
                 <span>
@@ -3237,12 +3237,12 @@ function WebinarPanel() {
               type="button"
               onClick={() => void sendTestEmail()}
               disabled={testEmailBusy}
-              className="px-5 py-2.5 rounded-full border border-[#C8A24C]/40 text-[#F7E7B5] text-sm min-h-11 cursor-pointer hover:bg-[#C8A24C]/10 disabled:opacity-60"
+              className="px-5 py-2.5 rounded-full border border-[#b79043]/40 text-[#dfc47d] text-sm min-h-11 cursor-pointer hover:bg-[#b79043]/10 disabled:opacity-60"
             >
               {testEmailBusy ? 'שולח…' : 'שליחת מייל בדיקה'}
             </button>
           </div>
-          {testEmailResult ? <p className="text-sm text-[#F7E7B5] font-light">{testEmailResult}</p> : null}
+          {testEmailResult ? <p className="text-sm text-[#dfc47d] font-light">{testEmailResult}</p> : null}
         </section>
       ) : null}
 
@@ -3330,15 +3330,15 @@ function WebinarPanel() {
             />
           </label>
           <label className="flex items-center gap-3 text-sm">
-            <input type="checkbox" checked={config.showRegistrationCount} onChange={(e) => updateConfig('showRegistrationCount', e.target.checked)} className="accent-[#C8A24C]" />
+            <input type="checkbox" checked={config.showRegistrationCount} onChange={(e) => updateConfig('showRegistrationCount', e.target.checked)} className="accent-[#b79043]" />
             <span>הצג מונה נרשמים</span>
           </label>
           <label className="flex items-center gap-3 text-sm">
-            <input type="checkbox" checked={config.showSpotsRemaining} onChange={(e) => updateConfig('showSpotsRemaining', e.target.checked)} className="accent-[#C8A24C]" />
+            <input type="checkbox" checked={config.showSpotsRemaining} onChange={(e) => updateConfig('showSpotsRemaining', e.target.checked)} className="accent-[#b79043]" />
             <span>הצג מקומות שנותרו</span>
           </label>
           <label className="flex items-center gap-3 text-sm md:col-span-2">
-            <input type="checkbox" checked={config.abTestEnabled} onChange={(e) => updateConfig('abTestEnabled', e.target.checked)} className="accent-[#C8A24C]" />
+            <input type="checkbox" checked={config.abTestEnabled} onChange={(e) => updateConfig('abTestEnabled', e.target.checked)} className="accent-[#b79043]" />
             <span>A/B כותרת (Variant B)</span>
           </label>
           <label className="grid gap-1 text-sm md:col-span-2">
@@ -3367,7 +3367,7 @@ function WebinarPanel() {
               type="checkbox"
               checked={config.enabled}
               onChange={(e) => updateConfig('enabled', e.target.checked)}
-              className="accent-[#C8A24C]"
+              className="accent-[#b79043]"
             />
             <span>הרשמה פתוחה</span>
           </label>
@@ -3457,7 +3457,7 @@ function WebinarPanel() {
               type="button"
               onClick={() => setStatusFilter(key)}
               className={`px-3 py-1.5 rounded-full text-xs border min-h-9 ${
-                statusFilter === key ? 'border-[#C8A24C] text-[#C8A24C]' : 'border-white/15 text-white/60'
+                statusFilter === key ? 'border-[#b79043] text-[#b79043]' : 'border-white/15 text-white/60'
               }`}
             >
               {key === 'all' ? 'הכל' : statusLabel(key)}

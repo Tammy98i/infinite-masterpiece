@@ -91,7 +91,7 @@ export function TeamStaffView() {
             onClick={() => setFilter(id)}
             className={`px-4 py-2 rounded-xl text-xs min-h-10 border cursor-pointer transition-colors ${
               filter === id
-                ? 'bg-[#C8A24C]/15 text-[#F7E7B5] border-[#C8A24C]/40'
+                ? 'bg-[#b79043]/15 text-[#dfc47d] border-[#b79043]/40'
                 : 'border-white/10 text-white/55 hover:border-white/25'
             }`}
           >
@@ -125,8 +125,8 @@ export function TeamStaffView() {
                     key={row.id}
                     onClick={() => setSelectedId(row.id)}
                     className={`cursor-pointer border-b border-white/5 ${
-                      selectedId === row.id ? 'bg-[#C8A24C]/10' : index % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.015]'
-                    } hover:bg-[#C8A24C]/5 transition-colors`}
+                      selectedId === row.id ? 'bg-[#b79043]/10' : index % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.015]'
+                    } hover:bg-[#b79043]/5 transition-colors`}
                   >
                     <td className="py-3 px-3">
                       {row.name}
@@ -155,7 +155,7 @@ export function TeamStaffView() {
           ) : (
             <div className="grid gap-4 text-sm">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-2">כרטיס צוות</p>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[#b79043] mb-2">כרטיס צוות</p>
                 <h3 className="text-xl font-light">{selected.name}</h3>
                 <p className="text-white/45 mt-1 break-all text-xs" dir="ltr">
                   {selected.email}
@@ -240,7 +240,7 @@ export function TeamStaffView() {
                       selected.isFounder ? 'להסיר דגל מייסד?' : 'לסמן כמייסד?'
                     )
                   }
-                  className="px-3 py-2 text-xs border border-[#C8A24C]/40 text-[#C8A24C] rounded-xl min-h-10 cursor-pointer"
+                  className="px-3 py-2 text-xs border border-[#b79043]/40 text-[#b79043] rounded-xl min-h-10 cursor-pointer"
                 >
                   {selected.isFounder ? 'הסרת מייסד' : 'סימון מייסד'}
                 </button>
@@ -249,7 +249,7 @@ export function TeamStaffView() {
                     type="button"
                     disabled={pendingId === selected.id}
                     onClick={() => void patch(selected.id, { role: 'instructor' }, 'לאשר כמרצה?')}
-                    className="px-3 py-2 text-xs bg-[#C8A24C] text-black rounded-xl min-h-10 cursor-pointer"
+                    className="px-3 py-2 text-xs bg-[#b79043] text-black rounded-xl min-h-10 cursor-pointer"
                   >
                     אישור כמרצה
                   </button>

@@ -26,7 +26,7 @@ function FounderCell({
     <div className="text-center">
       <Link
         to={`/premium-88/${founder.id}`}
-        className="group block w-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#010308] rounded-lg"
+        className="group block w-full cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d0b08] rounded-lg"
       >
         <img
           src={photoUrl || founder.image}
@@ -34,7 +34,7 @@ function FounderCell({
           className={`${photo} rounded-full object-cover grayscale mx-auto mb-4 transition-opacity duration-200 group-hover:opacity-90`}
         />
         <h2 className="text-base md:text-lg font-medium text-white mb-1">{founder.name}</h2>
-        <p className="text-[#C8A24C] text-[11px] md:text-xs tracking-widest mb-2 font-medium">
+        <p className="text-[#b79043] text-[11px] md:text-xs tracking-widest mb-2 font-medium">
           {founder.title}
         </p>
         <p className="text-sm text-white/45 font-light leading-relaxed line-clamp-1">
@@ -59,7 +59,7 @@ function FounderCell({
         {lectureCount > 0 && (
           <Link
             to={`/premium-88/${founder.id}#lectures`}
-            className="text-xs text-[#C8A24C] hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer"
+            className="text-xs text-[#b79043] hover:text-[#dfc47d] min-h-11 inline-flex items-center cursor-pointer"
           >
             צפייה בהרצאות
           </Link>

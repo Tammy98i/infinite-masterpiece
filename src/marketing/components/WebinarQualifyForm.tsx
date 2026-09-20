@@ -36,7 +36,7 @@ export function WebinarQualifyForm({ registrationId, onComplete }: Props) {
   };
 
   const fieldClass =
-    'w-full bg-[#010308]/60 border border-[#C8A24C]/25 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#C8A24C] min-h-11';
+    'w-full bg-[#0d0b08]/60 border border-[#b79043]/25 rounded-xl px-4 py-3 text-white text-sm focus:outline-none focus:border-[#b79043] min-h-11';
 
   return (
     <form onSubmit={handleSubmit} className="space-y-3 text-center">

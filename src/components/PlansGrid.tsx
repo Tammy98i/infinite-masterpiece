@@ -9,7 +9,7 @@ export function PlansGrid() {
       </p>
       <Link
         to="/pricing"
-        className="inline-flex justify-center items-center min-h-11 px-6 rounded-full bg-[#C8A24C] text-black text-sm font-semibold hover:bg-[#F7E7B5]"
+        className="inline-flex justify-center items-center min-h-11 px-6 rounded-full bg-[#b79043] text-black text-sm font-semibold hover:bg-[#dfc47d]"
       >
         בחירת מסלול
       </Link>

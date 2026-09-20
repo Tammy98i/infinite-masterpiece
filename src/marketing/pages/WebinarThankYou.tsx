@@ -43,7 +43,7 @@ function StepIndex({ done, n }: { done: boolean; n: number }) {
   return (
     <span
       className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm ${
-        done ? 'bg-[#C8A24C] text-black' : 'border border-[#C8A24C]/50 text-[#F7E7B5]'
+        done ? 'bg-[#b79043] text-black' : 'border border-[#b79043]/50 text-[#dfc47d]'
       }`}
       aria-hidden
     >
@@ -153,15 +153,15 @@ export function WebinarThankYou() {
 
   return (
     <div className="min-h-screen relative pt-32 pb-32 flex items-center justify-center">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/35 via-transparent to-[#010308]/50" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0d0b08]/35 via-transparent to-[#0d0b08]/50" />
 
       <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 text-center">
         <motion.div
           initial={{ opacity: 0, scale: 0.96 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="rounded-3xl border border-[#C8A24C]/25 bg-[#C8A24C]/5 p-8 md:p-12 text-center"
+          className="rounded-3xl border border-[#b79043]/25 bg-[#b79043]/5 p-8 md:p-12 text-center"
         >
-          <p className="text-[11px] uppercase tracking-[0.25em] text-[#C8A24C] mb-4">
+          <p className="text-[11px] uppercase tracking-[0.25em] text-[#b79043] mb-4">
             {isWaitlist ? 'נרשמת לרשימת המתנה' : 'נרשמת לוובינר'}
           </p>
           <h1 className="text-3xl md:text-4xl font-light text-white mb-4">
@@ -195,18 +195,18 @@ export function WebinarThankYou() {
             <li
               className={`rounded-2xl border px-5 py-4 ${
                 localSteps.calendar
-                  ? 'border-[#C8A24C]/50 bg-[#C8A24C]/10'
-                  : 'border-[#C8A24C]/25 bg-[#010308]/40'
+                  ? 'border-[#b79043]/50 bg-[#b79043]/10'
+                  : 'border-[#b79043]/25 bg-[#0d0b08]/40'
               }`}
             >
               <div className="flex items-start gap-3">
                 <StepIndex done={localSteps.calendar} n={1} />
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-2 text-white mb-1">
-                    <CalendarPlus className="w-4 h-4 text-[#C8A24C]" aria-hidden />
+                    <CalendarPlus className="w-4 h-4 text-[#b79043]" aria-hidden />
                     הוספה ליומן
                     {localSteps.calendar ? (
-                      <span className="text-[11px] text-[#F7E7B5]">בוצע</span>
+                      <span className="text-[11px] text-[#dfc47d]">בוצע</span>
                     ) : null}
                   </p>
                   <p className="text-xs text-white/45 font-light mb-3">
@@ -230,7 +230,7 @@ export function WebinarThankYou() {
                         target="_blank"
                         rel="noreferrer"
                         onClick={() => markCalendar('google')}
-                        className="hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
+                        className="hover:text-[#dfc47d] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
                       >
                         Google
                       </a>
@@ -241,7 +241,7 @@ export function WebinarThankYou() {
                         markCalendar('ics');
                         downloadIcs(calendarConfig);
                       }}
-                      className="hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
+                      className="hover:text-[#dfc47d] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
                     >
                       Apple / Outlook
                     </button>
@@ -251,7 +251,7 @@ export function WebinarThankYou() {
                       href={zoomLink}
                       target="_blank"
                       rel="noreferrer"
-                      className="mt-2 inline-flex items-center gap-2 text-[11px] text-white/40 hover:text-[#F7E7B5] min-h-11 cursor-pointer transition-colors duration-200"
+                      className="mt-2 inline-flex items-center gap-2 text-[11px] text-white/40 hover:text-[#dfc47d] min-h-11 cursor-pointer transition-colors duration-200"
                     >
                       <Video className="w-4 h-4" aria-hidden />
                       קישור Zoom
@@ -264,18 +264,18 @@ export function WebinarThankYou() {
             <li
               className={`rounded-2xl border px-5 py-4 ${
                 localSteps.whatsapp
-                  ? 'border-[#C8A24C]/50 bg-[#C8A24C]/10'
-                  : 'border-[#C8A24C]/25 bg-[#010308]/40'
+                  ? 'border-[#b79043]/50 bg-[#b79043]/10'
+                  : 'border-[#b79043]/25 bg-[#0d0b08]/40'
               }`}
             >
               <div className="flex items-start gap-3">
                 <StepIndex done={localSteps.whatsapp} n={2} />
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-2 text-white mb-1">
-                    <MessageCircle className="w-4 h-4 text-[#C8A24C]" aria-hidden />
+                    <MessageCircle className="w-4 h-4 text-[#b79043]" aria-hidden />
                     קבוצת עדכונים שקטה
                     {localSteps.whatsapp ? (
-                      <span className="text-[11px] text-[#F7E7B5]">בוצע</span>
+                      <span className="text-[11px] text-[#dfc47d]">בוצע</span>
                     ) : null}
                   </p>
                   <p className="text-xs text-white/45 font-light mb-3">נעדכן רק כשיש משהו שחשוב לדעת.</p>
@@ -299,17 +299,17 @@ export function WebinarThankYou() {
             <li
               className={`rounded-2xl border px-5 py-4 ${
                 personPicked
-                  ? 'border-[#C8A24C]/50 bg-[#C8A24C]/10'
-                  : 'border-[#C8A24C]/25 bg-[#010308]/40'
+                  ? 'border-[#b79043]/50 bg-[#b79043]/10'
+                  : 'border-[#b79043]/25 bg-[#0d0b08]/40'
               }`}
             >
               <div className="flex items-start gap-3">
                 <StepIndex done={personPicked} n={3} />
                 <div className="min-w-0 flex-1">
                   <p className="flex items-center gap-2 text-white mb-1">
-                    <UserRound className="w-4 h-4 text-[#C8A24C]" aria-hidden />
+                    <UserRound className="w-4 h-4 text-[#b79043]" aria-hidden />
                     אדם אחד
-                    {personPicked ? <span className="text-[11px] text-[#F7E7B5]">בוצע</span> : null}
+                    {personPicked ? <span className="text-[11px] text-[#dfc47d]">בוצע</span> : null}
                   </p>
                   <p id="webinar-person-hint" className="text-xs text-white/45 font-light mb-3">
                     שם, וואטסאפ, ומשפט אחד על מה שאת/ה מציע/ה. זה אדם להצעה שלך, לא הזמנת חבר לוובינר.
@@ -320,9 +320,9 @@ export function WebinarThankYou() {
                       checked={personPicked}
                       aria-describedby="webinar-person-hint"
                       onChange={(e) => persistPersonPicked(e.target.checked)}
-                      className="accent-[#C8A24C] min-w-4 min-h-4 cursor-pointer"
+                      className="accent-[#b79043] min-w-4 min-h-4 cursor-pointer"
                     />
-                    <span className="text-sm text-[#F7E7B5]">בחרתי אדם</span>
+                    <span className="text-sm text-[#dfc47d]">בחרתי אדם</span>
                   </label>
                 </div>
               </div>

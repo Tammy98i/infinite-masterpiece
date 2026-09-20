@@ -79,7 +79,7 @@ export function FileUploadField({ kind, label, value, onChange, disabled, hidePr
         disabled={disabled}
         onChange={(e) => onChange(e.target.value)}
         placeholder="או קישור"
-        className="mt-3 w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11"
+        className="mt-3 w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#b79043] focus:outline-none min-h-11"
       />
       {error ? <p className="text-sm text-rose-300 mt-2">{error}</p> : null}
     </div>

@@ -125,7 +125,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
     >
       {rank != null && (
         <span
-          className="absolute left-0 bottom-10 z-0 text-7xl sm:text-8xl font-accent font-bold leading-none text-[#C8A24C]/30 pointer-events-none select-none"
+          className="absolute left-0 bottom-10 z-0 text-7xl sm:text-8xl font-accent font-bold leading-none text-[#b79043]/30 pointer-events-none select-none"
           aria-hidden
         >
           {rank}
@@ -142,7 +142,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
             type="button"
             onClick={handleCardClick}
             aria-label={ariaTitle}
-            className="block w-full text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-inset"
+            className="block w-full text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-inset"
           >
             <div className="relative aspect-[16/9] bg-zinc-900">
               <img
@@ -178,9 +178,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                 <span
                   className={`absolute top-2 start-2 z-10 inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-medium ${
                     badge === 'המשך'
-                      ? 'border border-[#C8A24C]/70 bg-black/75 text-[#F7E7B5]'
+                      ? 'border border-[#b79043]/70 bg-black/75 text-[#dfc47d]'
                       : badge === 'טעימה'
-                        ? 'border border-[#C8A24C]/60 bg-black/70 text-[#F7E7B5]'
+                        ? 'border border-[#b79043]/60 bg-black/70 text-[#dfc47d]'
                         : 'bg-black/75 text-white/90'
                   }`}
                 >
@@ -211,7 +211,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                   aria-valuemax={100}
                   aria-valuenow={Math.round(showProgress)}
                 >
-                  <div className="h-full bg-[#C8A24C]" style={{ width: `${showProgress}%` }} />
+                  <div className="h-full bg-[#b79043]" style={{ width: `${showProgress}%` }} />
                 </div>
               )}
             </div>
@@ -221,7 +221,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
             <button
               type="button"
               onClick={handlePlayClick}
-              className="absolute start-2 bottom-14 z-10 w-11 h-11 rounded-full bg-white text-black flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C]"
+              className="absolute start-2 bottom-14 z-10 w-11 h-11 rounded-full bg-white text-black flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
               aria-label={`המשיכו לצפות ב־${course.title}`}
             >
               <Play className="w-4 h-4 fill-black ms-0.5" aria-hidden />
@@ -231,7 +231,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
           <button
             type="button"
             onClick={handleListClick}
-            className="absolute end-2 top-2 z-10 w-11 h-11 rounded-full border border-white/35 bg-black/55 text-white flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C]"
+            className="absolute end-2 top-2 z-10 w-11 h-11 rounded-full border border-white/35 bg-black/55 text-white flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
             aria-label={isSaved ? `הסרה של ${course.title} מהרשימה` : `הוספת ${course.title} לרשימה`}
             aria-pressed={isSaved}
           >

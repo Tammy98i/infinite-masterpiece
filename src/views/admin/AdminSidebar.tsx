@@ -19,14 +19,14 @@ function NavButton({ item, active, onClick }: { item: NavItem; active: boolean; 
       onClick={onClick}
       className={`w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm min-h-11 text-right transition-colors duration-200 cursor-pointer ${
         active
-          ? 'bg-[#C8A24C]/15 text-[#F7E7B5] border border-[#C8A24C]/40'
+          ? 'bg-[#b79043]/15 text-[#dfc47d] border border-[#b79043]/40'
           : 'text-white/60 hover:text-white hover:bg-white/[0.04] border border-transparent'
       }`}
     >
       <Icon className="w-4 h-4 shrink-0 opacity-80" aria-hidden />
       <span className="font-light flex-1 truncate">{item.label}</span>
       {item.badge ? (
-        <span className="text-[10px] tracking-wide text-[#C8A24C] border border-[#C8A24C]/40 rounded-full px-2 py-0.5 shrink-0">
+        <span className="text-[10px] tracking-wide text-[#b79043] border border-[#b79043]/40 rounded-full px-2 py-0.5 shrink-0">
           {item.badge}
         </span>
       ) : !item.ready ? (
@@ -74,7 +74,7 @@ export function AdminSidebar({ groups, tab, onNavigate, userName, userEmail, onE
   return (
     <>
       <div className="p-5 border-b border-white/10">
-        <p className="text-[11px] uppercase tracking-[0.28em] text-[#C8A24C] mb-2">ניהול</p>
+        <p className="text-[11px] uppercase tracking-[0.28em] text-[#b79043] mb-2">ניהול</p>
         <h2 className="text-xl font-light">לוח בקרה</h2>
         <p className="text-xs text-white/45 mt-2 font-light truncate">{userName}</p>
         {userEmail ? (
@@ -92,7 +92,7 @@ export function AdminSidebar({ groups, tab, onNavigate, userName, userEmail, onE
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="חיפוש..."
-            className="w-full bg-zinc-900/80 border border-white/10 rounded-xl py-2.5 ps-9 pe-3 text-sm text-white placeholder:text-white/35 focus:border-[#C8A24C] focus:outline-none min-h-11"
+            className="w-full bg-zinc-900/80 border border-white/10 rounded-xl py-2.5 ps-9 pe-3 text-sm text-white placeholder:text-white/35 focus:border-[#b79043] focus:outline-none min-h-11"
           />
         </label>
       </div>

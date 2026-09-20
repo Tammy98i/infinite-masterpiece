@@ -200,7 +200,7 @@ export function UsersAccountsView() {
             </select>
           </label>
           <label className="flex items-center gap-3 text-sm text-white/70 min-h-11 pt-5">
-            <input type="checkbox" checked={newIsFounder} onChange={(e) => setNewIsFounder(e.target.checked)} className="w-4 h-4 accent-[#C8A24C]" />
+            <input type="checkbox" checked={newIsFounder} onChange={(e) => setNewIsFounder(e.target.checked)} className="w-4 h-4 accent-[#b79043]" />
             שיוך לצוות המיזם
           </label>
         </div>
@@ -208,7 +208,7 @@ export function UsersAccountsView() {
           type="button"
           disabled={creating}
           onClick={() => void createUser()}
-          className="inline-flex items-center gap-2 w-full sm:w-auto px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
+          className="inline-flex items-center gap-2 w-full sm:w-auto px-6 py-3 rounded-full bg-[#b79043] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
         >
           <Plus className="w-4 h-4" />
           {creating ? 'יוצר...' : 'יצירת חשבון'}
@@ -242,15 +242,15 @@ export function UsersAccountsView() {
                   key={row.id}
                   onClick={() => setSelectedId(row.id)}
                   className={`cursor-pointer border-b border-white/5 ${
-                    selectedId === row.id ? 'bg-[#C8A24C]/10' : index % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.015]'
-                  } hover:bg-[#C8A24C]/5 transition-colors`}
+                    selectedId === row.id ? 'bg-[#b79043]/10' : index % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.015]'
+                  } hover:bg-[#b79043]/5 transition-colors`}
                 >
                   <td className="py-3 px-3">
                     <span className="block">{row.name}</span>
                     <span className="block text-xs text-white/35 truncate max-w-[180px]" dir="ltr">
                       {row.email}
                     </span>
-                    {row.isFounder ? <span className="text-[10px] text-[#C8A24C]/80">צוות</span> : null}
+                    {row.isFounder ? <span className="text-[10px] text-[#b79043]/80">צוות</span> : null}
                   </td>
                   <td className="py-3 px-3 text-white/65">{ROLE_LABEL[row.role] || row.role}</td>
                   <td className="py-3 px-3 text-white/55">{PLAN_LABEL[row.subscriptionPlan] || row.subscriptionPlan}</td>
@@ -270,7 +270,7 @@ export function UsersAccountsView() {
           ) : (
             <div className="grid gap-4 text-sm">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-2">כרטיס משתמש</p>
+                <p className="text-[11px] uppercase tracking-[0.2em] text-[#b79043] mb-2">כרטיס משתמש</p>
                 <h3 className="text-xl font-light">{selected.name}</h3>
                 <p className="text-white/45 mt-1 break-all text-xs" dir="ltr">
                   {selected.email}
@@ -345,7 +345,7 @@ export function UsersAccountsView() {
                     if (!window.confirm(selected.isFounder ? 'להסיר מצוות המיזם?' : 'לשייך לצוות המיזם?')) return;
                     void patch(selected.id, { isFounder: !selected.isFounder });
                   }}
-                  className="px-3 py-2 text-xs border border-[#C8A24C]/40 text-[#C8A24C] rounded-xl min-h-10 cursor-pointer"
+                  className="px-3 py-2 text-xs border border-[#b79043]/40 text-[#b79043] rounded-xl min-h-10 cursor-pointer"
                 >
                   {selected.isFounder ? 'הסרה מהצוות' : 'שיוך לצוות'}
                 </button>
@@ -354,7 +354,7 @@ export function UsersAccountsView() {
                     type="button"
                     disabled={pendingId === selected.id}
                     onClick={() => void patch(selected.id, { role: 'instructor' })}
-                    className="px-3 py-2 text-xs bg-[#C8A24C] text-black rounded-xl min-h-10 cursor-pointer"
+                    className="px-3 py-2 text-xs bg-[#b79043] text-black rounded-xl min-h-10 cursor-pointer"
                   >
                     אישור כמרצה
                   </button>

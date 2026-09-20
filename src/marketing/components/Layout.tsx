@@ -37,7 +37,7 @@ interface LayoutProps {
 export function Layout({ children }: LayoutProps) {
   const isHome = useLocation().pathname === '/';
   return (
-    <div className={`${isHome ? 'video-home ' : ''}editorial-marketing-shell marketing-shell sky-readable min-h-screen flex flex-col relative bg-transparent text-white selection:bg-[#D4AF37]/30 selection:text-white`}>
+    <div className={`${isHome ? 'video-home ' : ''}editorial-marketing-shell marketing-shell sky-readable min-h-screen flex flex-col relative bg-transparent text-white selection:bg-[#b79043]/30 selection:text-white`}>
 
       <div className="relative z-10 flex flex-col min-h-screen">
         <a href="#main-content" className="skip-link">

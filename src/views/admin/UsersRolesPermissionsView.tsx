@@ -215,7 +215,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
           <button
             type="button"
             onClick={() => setDrawerOpen(true)}
-            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#C8A24C] text-black text-xs font-medium min-h-10 cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-[#b79043] text-black text-xs font-medium min-h-10 cursor-pointer"
           >
             <Plus className="w-3.5 h-3.5" />
             משתמש חדש
@@ -237,7 +237,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
             onClick={() => setSection(item.id)}
             className={`px-4 py-2.5 rounded-xl text-sm min-h-10 border transition-colors cursor-pointer ${
               section === item.id
-                ? 'bg-[#C8A24C]/15 text-[#F7E7B5] border-[#C8A24C]/40'
+                ? 'bg-[#b79043]/15 text-[#dfc47d] border-[#b79043]/40'
                 : 'border-white/10 text-white/55 hover:border-white/25 hover:text-white'
             }`}
           >
@@ -274,15 +274,15 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
                       key={row.id}
                       onClick={() => setSelectedId(row.id)}
                       className={`cursor-pointer border-b border-white/5 ${
-                        selectedId === row.id ? 'bg-[#C8A24C]/10' : index % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.015]'
-                      } hover:bg-[#C8A24C]/5 transition-colors`}
+                        selectedId === row.id ? 'bg-[#b79043]/10' : index % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.015]'
+                      } hover:bg-[#b79043]/5 transition-colors`}
                     >
                       <td className="py-3 px-3">
                         <span className="block">{row.name}</span>
                         <span className="block text-xs text-white/35 truncate max-w-[200px]" dir="ltr">
                           {row.email}
                         </span>
-                        {row.isFounder ? <span className="text-[10px] text-[#C8A24C]/80">צוות</span> : null}
+                        {row.isFounder ? <span className="text-[10px] text-[#b79043]/80">צוות</span> : null}
                       </td>
                       <td className="py-3 px-3 text-white/65">{ROLE_LABEL[row.role] || row.role}</td>
                       <td className="py-3 px-3 text-white/55">{PLAN_LABEL[row.subscriptionPlan] || row.subscriptionPlan}</td>
@@ -300,7 +300,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
             ) : (
               <div className="grid gap-4 text-sm">
                 <div>
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-2">פרטי חשבון</p>
+                  <p className="text-[11px] uppercase tracking-[0.2em] text-[#b79043] mb-2">פרטי חשבון</p>
                   <h3 className="text-xl font-light">{selected.name}</h3>
                   <p className="text-white/45 mt-1 break-all text-xs" dir="ltr">
                     {selected.email}
@@ -352,7 +352,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
                       onChange={() =>
                         void patch(selected.id, { isFounder: !selected.isFounder })
                       }
-                      className="w-4 h-4 accent-[#C8A24C]"
+                      className="w-4 h-4 accent-[#b79043]"
                     />
                     שיוך לצוות המיזם
                   </label>
@@ -410,7 +410,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
                       type="button"
                       disabled={pendingId === selected.id}
                       onClick={() => void patch(selected.id, { role: 'instructor' })}
-                      className="px-3 py-2 text-xs bg-[#C8A24C] text-black rounded-xl min-h-10 cursor-pointer"
+                      className="px-3 py-2 text-xs bg-[#b79043] text-black rounded-xl min-h-10 cursor-pointer"
                     >
                       אישור כמרצה
                     </button>
@@ -449,7 +449,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
               <tbody>
                 {ROLE_MATRIX.map((row, index) => (
                   <tr key={row.role} className={index % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.02]'}>
-                    <td className="py-3 px-4 font-light text-[#F7E7B5]/90">{row.role}</td>
+                    <td className="py-3 px-4 font-light text-[#dfc47d]/90">{row.role}</td>
                     <td className="py-3 px-4 text-white/55">{row.library}</td>
                     <td className="py-3 px-4 text-white/55">{row.admin}</td>
                     <td className="py-3 px-4 text-white/55">{row.upload}</td>
@@ -470,7 +470,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {Object.entries(STAFF_DESK_LABEL).map(([deskId, label]) => (
               <div key={deskId} className="border border-white/10 rounded-2xl p-4 bg-white/[0.02]">
-                <h3 className="text-base font-light text-[#F7E7B5]/90 mb-2">{label}</h3>
+                <h3 className="text-base font-light text-[#dfc47d]/90 mb-2">{label}</h3>
                 <p className="text-xs text-white/40 mb-3">{STAFF_DESK_TABS[deskId]?.length || 0} לשוניות בלוח</p>
                 <ul className="text-xs text-white/55 grid gap-1">
                   {(STAFF_DESK_TABS[deskId] || []).slice(0, 8).map((tabId) => (
@@ -551,7 +551,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
                   type="checkbox"
                   checked={newIsFounder}
                   onChange={(e) => setNewIsFounder(e.target.checked)}
-                  className="w-4 h-4 accent-[#C8A24C]"
+                  className="w-4 h-4 accent-[#b79043]"
                 />
                 שיוך לצוות המיזם
               </label>
@@ -559,7 +559,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
                 type="button"
                 disabled={creating}
                 onClick={() => void createUser()}
-                className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
+                className="w-full py-3 rounded-full bg-[#b79043] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
               >
                 {creating ? 'יוצר...' : 'יצירת חשבון'}
               </button>

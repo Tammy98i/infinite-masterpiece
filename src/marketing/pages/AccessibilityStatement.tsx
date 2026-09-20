@@ -103,7 +103,7 @@ export function AccessibilityStatement() {
               {phoneHref && phoneDisplay ? (
                 <li>
                   <span className="text-white/70">טלפון: </span>
-                  <a href={phoneHref} dir="ltr" className="text-[#C8A24C] hover:text-[#F7E7B5]">
+                  <a href={phoneHref} dir="ltr" className="text-[#b79043] hover:text-[#dfc47d]">
                     {phoneDisplay}
                   </a>
                 </li>
@@ -116,7 +116,7 @@ export function AccessibilityStatement() {
                 <span className="text-white/70">דוא&quot;ל: </span>
                 <a
                   href={`mailto:${config?.email || 'negishot@infinite-masterpiece.co.il'}`}
-                  className="text-[#C8A24C] hover:text-[#F7E7B5]"
+                  className="text-[#b79043] hover:text-[#dfc47d]"
                 >
                   {config?.email || 'negishot@infinite-masterpiece.co.il'}
                 </a>
@@ -145,7 +145,7 @@ export function AccessibilityStatement() {
                 אם לא קיבלתם מענה מספק, ניתן לפנות לנציבות שוויון זכויות לאנשים עם מוגבלות —
                 <a
                   href="https://www.gov.il/he/departments/moj_disability_rights/govil-landing-page"
-                  className="text-[#C8A24C] hover:text-[#F7E7B5] underline ms-1"
+                  className="text-[#b79043] hover:text-[#dfc47d] underline ms-1"
                   target="_blank"
                   rel="noopener noreferrer"
                 >
@@ -168,7 +168,7 @@ export function AccessibilityStatement() {
           </section>
 
           <p>
-            <Link to="/" className="text-[#C8A24C] hover:text-[#F7E7B5] underline">
+            <Link to="/" className="text-[#b79043] hover:text-[#dfc47d] underline">
               חזרה לדף הבית
             </Link>
           </p>

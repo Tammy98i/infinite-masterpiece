@@ -67,7 +67,7 @@ export function AuthRequiredDialog({
           <button
             type="button"
             onClick={onLogin}
-            className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 hover:bg-[#F7E7B5]"
+            className="w-full py-3 rounded-full bg-[#b79043] text-black text-sm font-medium min-h-11 hover:bg-[#dfc47d]"
           >
             התחברות
           </button>

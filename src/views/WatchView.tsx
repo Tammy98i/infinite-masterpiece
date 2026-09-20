@@ -352,7 +352,7 @@ export const WatchView: React.FC = () => {
                   setPlaybackError(err instanceof Error ? err.message : 'לא הצלחנו להפעיל את הפרק')
                 );
             }}
-            className="px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm font-semibold min-h-11"
+            className="px-5 py-2.5 rounded-full bg-[#b79043] text-black text-sm font-semibold min-h-11"
           >
             ניסיון נוסף
           </button>
@@ -436,7 +436,7 @@ export const WatchView: React.FC = () => {
             פרק {episode.episodeNumber} · {episodeName(episode.title)}
           </span>
           {previewing ? (
-            <span className="text-[11px] text-[#C8A24C] border border-[#C8A24C]/40 rounded-full px-2 py-0.5">
+            <span className="text-[11px] text-[#b79043] border border-[#b79043]/40 rounded-full px-2 py-0.5">
               טעימה
             </span>
           ) : null}
@@ -453,7 +453,7 @@ export const WatchView: React.FC = () => {
               type="button"
               onClick={() => setCaptionsOn((v) => !v)}
               className={`px-3 py-2 rounded-full text-[12px] min-h-11 border cursor-pointer ${
-                captionsOn ? 'border-[#C8A24C] text-[#F7E7B5]' : 'border-white/20 text-white/50'
+                captionsOn ? 'border-[#b79043] text-[#dfc47d]' : 'border-white/20 text-white/50'
               }`}
               aria-pressed={captionsOn}
             >
@@ -463,7 +463,7 @@ export const WatchView: React.FC = () => {
           <button
             type="button"
             onClick={() => cycleSpeed(playbackRate >= 2 ? -1 : 1)}
-            className="px-3 py-2 rounded-full text-[12px] min-h-11 border border-white/20 text-white/70 hover:border-[#C8A24C] cursor-pointer"
+            className="px-3 py-2 rounded-full text-[12px] min-h-11 border border-white/20 text-white/70 hover:border-[#b79043] cursor-pointer"
             aria-label={`מהירות ${playbackRate}`}
           >
             {playbackRate}x
@@ -520,7 +520,7 @@ export const WatchView: React.FC = () => {
                   isActive ? 'bg-white/5' : 'hover:bg-white/[0.03]'
                 }`}
               >
-                <span className={`w-5 text-xs tabular-nums ${isActive ? 'text-[#C8A24C]' : 'text-white/35'}`}>
+                <span className={`w-5 text-xs tabular-nums ${isActive ? 'text-[#b79043]' : 'text-white/35'}`}>
                   {ep.episodeNumber}
                 </span>
                 <span className={`flex-1 min-w-0 text-sm leading-snug ${isActive ? 'text-white' : 'text-white/70'}`}>
@@ -549,7 +549,7 @@ export const WatchView: React.FC = () => {
             <button
               type="button"
               onClick={() => playEpisode(nextEpisode.id)}
-              className="px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11"
+              className="px-6 py-3 rounded-full bg-[#b79043] text-black text-sm font-medium min-h-11"
             >
               {nextLocked ? 'פתיחת גישה' : 'לפרק הבא'}
             </button>
@@ -573,7 +573,7 @@ export const WatchView: React.FC = () => {
               step={0.1}
               value={currentTime}
               onChange={(e) => seekTo(Number(e.target.value))}
-              className="w-full h-1 appearance-none bg-white/20 rounded-full accent-[#C8A24C] cursor-pointer"
+              className="w-full h-1 appearance-none bg-white/20 rounded-full accent-[#b79043] cursor-pointer"
             />
           </label>
           <span className="text-[11px] text-white/45 tabular-nums shrink-0">

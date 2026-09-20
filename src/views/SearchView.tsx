@@ -77,12 +77,12 @@ export const SearchView: React.FC = () => {
               }
             }}
             placeholder="שם הרצאה, מרצה או נושא"
-            className="w-full bg-zinc-900 border border-[#C8A24C]/50 rounded-full py-4 pr-12 pl-6 text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#C8A24C]/40 min-h-11"
+            className="w-full bg-zinc-900 border border-[#b79043]/50 rounded-full py-4 pr-12 pl-6 text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 min-h-11"
             autoFocus
             aria-label="חיפוש בספרייה"
             enterKeyHint="search"
           />
-          <Search className="w-5 h-5 text-[#C8A24C] absolute right-4 pointer-events-none" />
+          <Search className="w-5 h-5 text-[#b79043] absolute right-4 pointer-events-none" />
         </div>
       </div>
 
@@ -90,7 +90,7 @@ export const SearchView: React.FC = () => {
         <div>
           <h2 className="text-lg font-semibold mb-4 text-right border-b border-white/10 pb-3 flex items-center justify-between gap-3">
             <span>תוצאות עבור {query}</span>
-            <span className="text-sm font-medium text-[#C8A24C]">{results.length === baseResults.length ? results.length : `${results.length} מתוך ${baseResults.length}`}</span>
+            <span className="text-sm font-medium text-[#b79043]">{results.length === baseResults.length ? results.length : `${results.length} מתוך ${baseResults.length}`}</span>
           </h2>
           <SearchFilters value={filters} onChange={setFilters} activeCount={activeFilterCount} />
 
@@ -106,7 +106,7 @@ export const SearchView: React.FC = () => {
                       type="button"
                       onClick={() => openResult(course.id)}
                       aria-label={course.title}
-                      className="w-full min-w-0 flex items-center gap-3 sm:gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-3 text-right hover:border-[#C8A24C]/50 transition-colors duration-500 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] cursor-pointer"
+                      className="w-full min-w-0 flex items-center gap-3 sm:gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-3 text-right hover:border-[#b79043]/50 transition-colors duration-500 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] cursor-pointer"
                     >
                       <img
                         src={course.coverImage}
@@ -147,7 +147,7 @@ export const SearchView: React.FC = () => {
                       else if (item.type === 'instructor') setView('instructor', { instructorId: item.id });
                       else setView('category', { categoryId: item.id });
                     }}
-                    className="px-4 py-2 rounded-full border border-white/15 text-sm text-white/70 hover:border-[#C8A24C] hover:text-[#F7E7B5] min-h-11 cursor-pointer"
+                    className="px-4 py-2 rounded-full border border-white/15 text-sm text-white/70 hover:border-[#b79043] hover:text-[#dfc47d] min-h-11 cursor-pointer"
                   >
                     {item.label}
                   </button>
@@ -164,7 +164,7 @@ export const SearchView: React.FC = () => {
                   key={topic.id}
                   type="button"
                   onClick={() => setView('category', { categoryId: topic.id })}
-                  className="px-4 py-2 rounded-full border border-white/15 text-sm text-white/70 hover:border-[#C8A24C] hover:text-[#F7E7B5] min-h-11 cursor-pointer"
+                  className="px-4 py-2 rounded-full border border-white/15 text-sm text-white/70 hover:border-[#b79043] hover:text-[#dfc47d] min-h-11 cursor-pointer"
                 >
                   {topic.name}
                 </button>
@@ -181,7 +181,7 @@ export const SearchView: React.FC = () => {
                 key={topic.id}
                 type="button"
                 onClick={() => setView('category', { categoryId: topic.id })}
-                className="px-4 py-2 rounded-full border border-white/15 text-sm text-white/70 hover:border-[#C8A24C] hover:text-[#F7E7B5] min-h-11 cursor-pointer"
+                className="px-4 py-2 rounded-full border border-white/15 text-sm text-white/70 hover:border-[#b79043] hover:text-[#dfc47d] min-h-11 cursor-pointer"
               >
                 {topic.name}
               </button>

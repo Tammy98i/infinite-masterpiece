@@ -59,7 +59,7 @@ export function UpdatePassword() {
             autoComplete="new-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11"
+            className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#b79043] focus:outline-none min-h-11"
           />
         </label>
         <label className="block text-center">
@@ -71,7 +71,7 @@ export function UpdatePassword() {
             autoComplete="new-password"
             value={passwordConfirm}
             onChange={(e) => setPasswordConfirm(e.target.value)}
-            className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11"
+            className="w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#b79043] focus:outline-none min-h-11"
           />
         </label>
         {error ? (

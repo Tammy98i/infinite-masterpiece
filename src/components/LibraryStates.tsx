@@ -39,7 +39,7 @@ export function SectionError({
         <button
           type="button"
           onClick={onRetry}
-          className="shrink-0 px-4 py-2 rounded-full border border-white/20 text-sm text-white/80 hover:border-[#C8A24C] min-h-11 cursor-pointer"
+          className="shrink-0 px-4 py-2 rounded-full border border-white/20 text-sm text-white/80 hover:border-[#b79043] min-h-11 cursor-pointer"
         >
           ניסיון נוסף
         </button>
@@ -67,7 +67,7 @@ export function EmptyState({
         <button
           type="button"
           onClick={onAction}
-          className="px-8 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-semibold min-h-11 cursor-pointer hover:bg-[#F7E7B5] transition-colors duration-500"
+          className="px-8 py-3 rounded-full bg-[#b79043] text-black text-sm font-semibold min-h-11 cursor-pointer hover:bg-[#dfc47d] transition-colors duration-500"
         >
           {actionLabel}
         </button>
@@ -79,7 +79,7 @@ export function EmptyState({
 export function PlayerSkeleton() {
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black" aria-busy="true" aria-label="טוען נגן">
-      <div className="w-16 h-16 rounded-full border border-[#C8A24C]/30 bg-white/[0.03] animate-pulse" />
+      <div className="w-16 h-16 rounded-full border border-[#b79043]/30 bg-white/[0.03] animate-pulse" />
       <p className="text-sm text-white/45">טוען נגן</p>
     </div>
   );

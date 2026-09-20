@@ -29,7 +29,7 @@ export const LecturersRow: React.FC = () => {
         <button
           type="button"
           onClick={() => setView('instructors')}
-          className="text-sm text-white/55 hover:text-white transition-colors min-h-11 px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] rounded"
+          className="text-sm text-white/55 hover:text-white transition-colors min-h-11 px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded"
         >
           לכל המרצים
         </button>
@@ -54,7 +54,7 @@ export const LecturersRow: React.FC = () => {
               setView('instructor', { instructorId: inst.id });
             }}
             aria-label={`${inst.name}, ${inst.title}`}
-            className="text-right group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505] rounded-xl min-h-11"
+            className="text-right group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505] rounded-xl min-h-11"
           >
             <div className="aspect-square overflow-hidden rounded-xl border border-white/10 mb-3">
               <img
@@ -65,7 +65,7 @@ export const LecturersRow: React.FC = () => {
               />
             </div>
             <div className="text-[15px] font-medium text-white truncate">{inst.name}</div>
-            <div className="text-[13px] text-[#C8A24C]/90 mt-0.5 truncate">{inst.title}</div>
+            <div className="text-[13px] text-[#b79043]/90 mt-0.5 truncate">{inst.title}</div>
             <div className="text-[13px] text-white/45 mt-1">
               {count === 0 ? 'אין הרצאות עדיין' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`}
             </div>

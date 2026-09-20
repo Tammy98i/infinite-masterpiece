@@ -65,7 +65,7 @@ export function AccessibilityReportForm() {
           autoComplete="name"
           value={fullName}
           onChange={(event) => setFullName(event.target.value)}
-          className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-white min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C]"
+          className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-white min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
         />
       </div>
 
@@ -82,7 +82,7 @@ export function AccessibilityReportForm() {
           dir="ltr"
           value={email}
           onChange={(event) => setEmail(event.target.value)}
-          className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-white min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C]"
+          className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-white min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
         />
       </div>
 
@@ -98,7 +98,7 @@ export function AccessibilityReportForm() {
           dir="ltr"
           value={phone}
           onChange={(event) => setPhone(event.target.value)}
-          className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-white min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C]"
+          className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-white min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
         />
       </div>
 
@@ -114,14 +114,14 @@ export function AccessibilityReportForm() {
           rows={5}
           value={message}
           onChange={(event) => setMessage(event.target.value)}
-          className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C]"
+          className="w-full rounded-xl border border-white/15 bg-black/40 px-4 py-3 text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
         />
       </div>
 
       <button
         type="submit"
         disabled={submitting}
-        className="w-fit px-6 py-3 rounded-full bg-[#C8A24C] text-black font-medium min-h-11 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#010308]"
+        className="w-fit px-6 py-3 rounded-full bg-[#b79043] text-black font-medium min-h-11 disabled:opacity-60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d0b08]"
       >
         {submitting ? 'שולח…' : 'שליחת פנייה'}
       </button>

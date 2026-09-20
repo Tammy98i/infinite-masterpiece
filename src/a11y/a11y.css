@@ -152,10 +152,10 @@ html.a11y-contrast-mono #a11y-widget-trigger {
   justify-content: center;
   width: 3rem;
   height: 3rem;
-  border: 1px solid rgba(200, 162, 76, 0.4);
+  border: 1px solid rgba(183, 144, 67, 0.4);
   border-radius: 9999px;
   background: #0a0a0a;
-  color: #f7e7b5;
+  color: #dfc47d;
   box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
   cursor: pointer;
   transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.45s cubic-bezier(0.16, 1, 0.3, 1);
@@ -232,7 +232,7 @@ html.a11y-contrast-mono #a11y-widget-trigger {
 }
 
 .a11y-panel-close:focus-visible {
-  outline: 2px solid #c8a24c;
+  outline: 2px solid #b79043;
   outline-offset: 2px;
 }
 
@@ -270,14 +270,14 @@ html.a11y-contrast-mono #a11y-widget-trigger {
 }
 
 .a11y-toggle-card:focus-visible {
-  outline: 2px solid #c8a24c;
+  outline: 2px solid #b79043;
   outline-offset: 2px;
 }
 
 .a11y-toggle-card[aria-pressed='true'],
 .a11y-toggle-card.a11y-cycling-active {
-  border-color: #c8a24c;
-  box-shadow: inset 0 0 0 1px #c8a24c;
+  border-color: #b79043;
+  box-shadow: inset 0 0 0 1px #b79043;
 }
 
 .a11y-toggle-label {
@@ -311,7 +311,7 @@ html.a11y-contrast-mono #a11y-widget-trigger {
 }
 
 .a11y-reset-btn:focus-visible {
-  outline: 2px solid #c8a24c;
+  outline: 2px solid #b79043;
   outline-offset: 2px;
 }
 
@@ -324,13 +324,13 @@ html.a11y-contrast-mono #a11y-widget-trigger {
 
 .a11y-panel-link {
   font-size: 0.8125rem;
-  color: #c8a24c;
+  color: #b79043;
   text-align: center;
   text-decoration: underline;
 }
 
 .a11y-panel-link:focus-visible {
-  outline: 2px solid #c8a24c;
+  outline: 2px solid #b79043;
   outline-offset: 2px;
 }
 
@@ -353,9 +353,9 @@ html.a11y-contrast-mono #a11y-widget-trigger {
 }
 
 .a11y-panel-tab[aria-selected='true'] {
-  border-color: #c8a24c;
+  border-color: #b79043;
   color: #fff;
-  background: rgba(200, 162, 76, 0.12);
+  background: rgba(183, 144, 67, 0.12);
 }
 
 .a11y-outline-section {
@@ -390,7 +390,7 @@ html.a11y-contrast-mono #a11y-widget-trigger {
 }
 
 .a11y-outline-item:focus-visible {
-  outline: 2px solid #c8a24c;
+  outline: 2px solid #b79043;
   outline-offset: 2px;
 }
 

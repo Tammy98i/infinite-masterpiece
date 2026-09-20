@@ -64,8 +64,8 @@ export function Hesitation() {
 
   return (
     <div className="min-h-screen relative pt-24 pb-32">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/25 via-transparent to-[#010308]/35" />
-      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[40vw] h-[40vw] bg-[#C8A24C]/5 blur-[120px] rounded-full pointer-events-none" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0d0b08]/25 via-transparent to-[#0d0b08]/35" />
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[40vw] h-[40vw] bg-[#b79043]/5 blur-[120px] rounded-full pointer-events-none" />
 
       <div className="relative z-10 max-w-5xl mx-auto px-4 sm:px-8 lg:px-10">
         <motion.div
@@ -74,7 +74,7 @@ export function Hesitation() {
           transition={{ duration: 0.8 }}
           className="text-center mb-12"
         >
-          <Compass className="w-10 h-10 text-[#C8A24C]/60 mx-auto mb-6" strokeWidth={1} />
+          <Compass className="w-10 h-10 text-[#b79043]/60 mx-auto mb-6" strokeWidth={1} />
           <h1 className="text-3xl md:text-5xl font-light text-white mb-6 tracking-tight">
             מסלול ההססנים
           </h1>
@@ -96,42 +96,42 @@ export function Hesitation() {
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
-          className="bg-white/[0.01] border border-[#C8A24C]/20 backdrop-blur-2xl rounded-[32px] p-8 md:p-12 lg:p-14"
+          className="bg-white/[0.01] border border-[#b79043]/20 backdrop-blur-2xl rounded-[32px] p-8 md:p-12 lg:p-14"
         >
           <form onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">שם מלא</label>
-                <input required name="fullName" type="text" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#C8A24C]/50 transition-colors min-h-11" />
+                <input required name="fullName" type="text" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors min-h-11" />
               </div>
               <div className="space-y-2">
                 <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">טלפון נייד</label>
-                <input required name="phone" type="tel" dir="ltr" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#C8A24C]/50 transition-colors text-center min-h-11" />
+                <input required name="phone" type="tel" dir="ltr" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors text-center min-h-11" />
               </div>
             </div>
 
             <div className="space-y-2">
               <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">אימייל</label>
-              <input required name="email" type="email" dir="ltr" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#C8A24C]/50 transition-colors text-center min-h-11" />
+              <input required name="email" type="email" dir="ltr" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors text-center min-h-11" />
             </div>
 
             <div className="space-y-2">
               <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">תחום יצירה / עיסוק</label>
-              <input required name="field" type="text" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#C8A24C]/50 transition-colors min-h-11" placeholder="לדוגמה: צלם, מעצב, מאמן, מוזיקאי" />
+              <input required name="field" type="text" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors min-h-11" placeholder="לדוגמה: צלם, מעצב, מאמן, מוזיקאי" />
             </div>
 
             <div className="space-y-2">
               <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">על מה ההתלבטות שלך?</label>
-              <select required name="hesitationReason" defaultValue="" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#C8A24C]/50 transition-colors appearance-none cursor-pointer min-h-11">
+              <select required name="hesitationReason" defaultValue="" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors appearance-none cursor-pointer min-h-11">
                 <option value="" disabled>בחר/י את הסיבה המרכזית</option>
-                <option value="price" className="bg-[#010308] text-white">המחיר. זה כרגע גדול עליי</option>
-                <option value="not_sure_fit" className="bg-[#010308] text-white">לא בטוח/ה אם זה מתאים ספציפית לי</option>
-                <option value="not_ready" className="bg-[#010308] text-white">לא בטוח/ה שאני מוכן/ה עדיין</option>
-                <option value="no_product" className="bg-[#010308] text-white">אין לי מוצר או שירות ברור עדיין</option>
-                <option value="fear_of_sales" className="bg-[#010308] text-white">יש לי חסם משמעותי ממכירות</option>
-                <option value="time" className="bg-[#010308] text-white">לא בטוח/ה שיש לי מספיק זמן</option>
-                <option value="talk_first" className="bg-[#010308] text-white">אני פשוט חייב/ת לדבר עם מישהו קודם</option>
-                <option value="other" className="bg-[#010308] text-white">אחר</option>
+                <option value="price" className="bg-[#0d0b08] text-white">המחיר. זה כרגע גדול עליי</option>
+                <option value="not_sure_fit" className="bg-[#0d0b08] text-white">לא בטוח/ה אם זה מתאים ספציפית לי</option>
+                <option value="not_ready" className="bg-[#0d0b08] text-white">לא בטוח/ה שאני מוכן/ה עדיין</option>
+                <option value="no_product" className="bg-[#0d0b08] text-white">אין לי מוצר או שירות ברור עדיין</option>
+                <option value="fear_of_sales" className="bg-[#0d0b08] text-white">יש לי חסם משמעותי ממכירות</option>
+                <option value="time" className="bg-[#0d0b08] text-white">לא בטוח/ה שיש לי מספיק זמן</option>
+                <option value="talk_first" className="bg-[#0d0b08] text-white">אני פשוט חייב/ת לדבר עם מישהו קודם</option>
+                <option value="other" className="bg-[#0d0b08] text-white">אחר</option>
               </select>
             </div>
 
@@ -141,11 +141,11 @@ export function Hesitation() {
                 <div className="flex gap-4">
                   <label className="flex-1 cursor-pointer">
                     <input type="radio" name="hasProduct" value="yes" className="peer sr-only" required />
-                    <div className="text-center py-3 rounded-xl border border-white/[0.05] bg-white/[0.02] peer-checked:border-[#C8A24C] peer-checked:bg-[#C8A24C]/10 transition-colors text-white/80 peer-checked:text-white min-h-11">כן</div>
+                    <div className="text-center py-3 rounded-xl border border-white/[0.05] bg-white/[0.02] peer-checked:border-[#b79043] peer-checked:bg-[#b79043]/10 transition-colors text-white/80 peer-checked:text-white min-h-11">כן</div>
                   </label>
                   <label className="flex-1 cursor-pointer">
                     <input type="radio" name="hasProduct" value="no" className="peer sr-only" />
-                    <div className="text-center py-3 rounded-xl border border-white/[0.05] bg-white/[0.02] peer-checked:border-[#C8A24C] peer-checked:bg-[#C8A24C]/10 transition-colors text-white/80 peer-checked:text-white min-h-11">עדיין לא</div>
+                    <div className="text-center py-3 rounded-xl border border-white/[0.05] bg-white/[0.02] peer-checked:border-[#b79043] peer-checked:bg-[#b79043]/10 transition-colors text-white/80 peer-checked:text-white min-h-11">עדיין לא</div>
                   </label>
                 </div>
               </div>
@@ -154,11 +154,11 @@ export function Hesitation() {
                 <div className="flex gap-4">
                   <label className="flex-1 cursor-pointer">
                     <input type="radio" name="hasSold" value="yes" className="peer sr-only" required />
-                    <div className="text-center py-3 rounded-xl border border-white/[0.05] bg-white/[0.02] peer-checked:border-[#C8A24C] peer-checked:bg-[#C8A24C]/10 transition-colors text-white/80 peer-checked:text-white min-h-11">כן</div>
+                    <div className="text-center py-3 rounded-xl border border-white/[0.05] bg-white/[0.02] peer-checked:border-[#b79043] peer-checked:bg-[#b79043]/10 transition-colors text-white/80 peer-checked:text-white min-h-11">כן</div>
                   </label>
                   <label className="flex-1 cursor-pointer">
                     <input type="radio" name="hasSold" value="no" className="peer sr-only" />
-                    <div className="text-center py-3 rounded-xl border border-white/[0.05] bg-white/[0.02] peer-checked:border-[#C8A24C] peer-checked:bg-[#C8A24C]/10 transition-colors text-white/80 peer-checked:text-white min-h-11">לא</div>
+                    <div className="text-center py-3 rounded-xl border border-white/[0.05] bg-white/[0.02] peer-checked:border-[#b79043] peer-checked:bg-[#b79043]/10 transition-colors text-white/80 peer-checked:text-white min-h-11">לא</div>
                   </label>
                 </div>
               </div>
@@ -166,16 +166,16 @@ export function Hesitation() {
 
             <div className="space-y-2">
               <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">מה השינוי המרכזי שהיית רוצה לראות תוך 90 יום?</label>
-              <textarea required name="goal90" rows={3} className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#C8A24C]/50 transition-colors resize-none" />
+              <textarea required name="goal90" rows={3} className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors resize-none" />
             </div>
 
             <div className="space-y-2">
               <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">לינק לאינסטגרם / אתר (רשות)</label>
-              <input name="links" type="url" dir="ltr" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#C8A24C]/50 transition-colors text-center min-h-11" />
+              <input name="links" type="url" dir="ltr" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors text-center min-h-11" />
             </div>
 
             <div className="flex items-start gap-4 pt-4">
-              <input required type="checkbox" id="consent" className="mt-1.5 w-4 h-4 bg-transparent border-white/20 rounded text-[#C8A24C] focus:ring-[#C8A24C] focus:ring-offset-0" />
+              <input required type="checkbox" id="consent" className="mt-1.5 w-4 h-4 bg-transparent border-white/20 rounded text-[#b79043] focus:ring-[#b79043] focus:ring-offset-0" />
               <label htmlFor="consent" className="text-sm text-white/40 leading-relaxed font-light cursor-pointer">
                 ידוע לי שמסלול ההססנים הוא תשלום מלא של 8,888 ₪ לפני מע״מ בארבע פעימות, ואינו הנחה.
                 {checkoutEnabled

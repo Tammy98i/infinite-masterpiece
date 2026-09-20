@@ -115,8 +115,8 @@ export function VideoBackground() {
         </video>
       </div>
       <div className="site-video-shade">
-        <div className="absolute inset-0 bg-[#010308]/58" />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/55 via-transparent to-[#010308]/72" />
+        <div className="absolute inset-0 bg-[#0d0b08]/58" />
+        <div className="absolute inset-0 bg-gradient-to-b from-[#0d0b08]/55 via-transparent to-[#0d0b08]/72" />
         <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,transparent_35%,rgba(1,3,8,0.45)_100%)]" />
       </div>
     </div>

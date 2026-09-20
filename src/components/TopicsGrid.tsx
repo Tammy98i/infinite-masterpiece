@@ -42,7 +42,7 @@ export const TopicsGrid: React.FC = () => {
               setView('category', { categoryId: category.id });
             }}
             aria-label={`פתיחת נושא ${category.name}, ${count} הרצאות`}
-            className="group relative aspect-[16/10] overflow-hidden rounded-2xl border border-white/10 text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505] min-h-11"
+            className="group relative aspect-[16/10] overflow-hidden rounded-2xl border border-white/10 text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505] min-h-11"
           >
             {cover ? (
               <img
@@ -62,8 +62,8 @@ export const TopicsGrid: React.FC = () => {
               <p className="text-[13px] text-white/65 mt-1">
                 {count === 0 ? 'בקרוב' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`}
               </p>
-              <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-medium text-[#C8A24C]">
-                <Play className="w-3.5 h-3.5 fill-[#C8A24C]" />
+              <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-medium text-[#b79043]">
+                <Play className="w-3.5 h-3.5 fill-[#b79043]" />
                 לצפייה
               </span>
             </div>

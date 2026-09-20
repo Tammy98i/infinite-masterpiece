@@ -98,7 +98,7 @@ export const Navbar: React.FC = () => {
                 className="flex items-center gap-4 group focus-ring rounded-xl"
                 aria-label="Infinite Masterpiece"
               >
-                <InfinityIcon className="w-8 h-8 text-[#F7E7B5] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
+                <InfinityIcon className="w-8 h-8 text-[#dfc47d] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
                 <span className="hidden sm:block font-light text-[15px] tracking-[0.25em] text-white/90 leading-tight uppercase">
                   Infinite
                   <br />
@@ -113,7 +113,7 @@ export const Navbar: React.FC = () => {
                 onClick={() => setView('home')}
                 className={`transition-colors py-2 min-h-11 border-b-2 ${
                   currentView === 'home'
-                    ? 'text-white border-[#C8A24C]'
+                    ? 'text-white border-[#b79043]'
                     : 'text-white/85 hover:text-white border-transparent'
                 }`}
               >
@@ -124,7 +124,7 @@ export const Navbar: React.FC = () => {
                 onClick={() => setView('mylist')}
                 className={`transition-colors py-2 min-h-11 border-b-2 ${
                   currentView === 'mylist'
-                    ? 'text-white border-[#C8A24C]'
+                    ? 'text-white border-[#b79043]'
                     : 'text-white/85 hover:text-white border-transparent'
                 }`}
               >
@@ -135,7 +135,7 @@ export const Navbar: React.FC = () => {
                 onClick={() => setView('history')}
                 className={`transition-colors py-2 min-h-11 border-b-2 ${
                   currentView === 'history'
-                    ? 'text-white border-[#C8A24C]'
+                    ? 'text-white border-[#b79043]'
                     : 'text-white/85 hover:text-white border-transparent'
                 }`}
               >
@@ -146,7 +146,7 @@ export const Navbar: React.FC = () => {
                 onClick={() => setView('shorts')}
                 className={`transition-colors py-2 min-h-11 border-b-2 ${
                   currentView === 'shorts'
-                    ? 'text-white border-[#C8A24C]'
+                    ? 'text-white border-[#b79043]'
                     : 'text-white/85 hover:text-white border-transparent'
                 }`}
               >
@@ -175,12 +175,12 @@ export const Navbar: React.FC = () => {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="חיפוש בספרייה..."
-                      className="w-56 sm:w-72 bg-zinc-900/90 border border-[#C8A24C]/50 rounded-full py-2 pr-9 pl-8 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#C8A24C]/40 shadow-inner min-h-11"
+                      className="w-56 sm:w-72 bg-zinc-900/90 border border-[#b79043]/50 rounded-full py-2 pr-9 pl-8 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 shadow-inner min-h-11"
                       aria-label="חיפוש בספרייה"
                       aria-autocomplete="list"
                       aria-controls="library-search-suggestions"
                     />
-                    <Search className="w-4 h-4 text-[#C8A24C] absolute right-3 pointer-events-none" />
+                    <Search className="w-4 h-4 text-[#b79043] absolute right-3 pointer-events-none" />
                     <button
                       type="button"
                       onClick={() => {
@@ -257,7 +257,7 @@ export const Navbar: React.FC = () => {
                     setIsSearchOpen(true);
                   }}
                   data-onboarding="search"
-                  className="px-3 rounded-full border border-white/10 text-zinc-300 hover:text-white hover:border-[#C8A24C]/40 hover:bg-white/5 transition-colors min-h-11 min-w-11 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C]"
+                  className="px-3 rounded-full border border-white/10 text-zinc-300 hover:text-white hover:border-[#b79043]/40 hover:bg-white/5 transition-colors min-h-11 min-w-11 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
                   title="חיפוש בספרייה"
                   aria-label="חיפוש בספרייה"
                 >
@@ -275,7 +275,7 @@ export const Navbar: React.FC = () => {
               onClick={() => setView(currentView === 'lecturer' ? 'home' : 'lecturer')}
               className={`hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs min-h-11 border transition-colors duration-200 ${
                 currentView === 'lecturer'
-                  ? 'border-[#C8A24C] text-[#C8A24C] bg-[#C8A24C]/10'
+                  ? 'border-[#b79043] text-[#b79043] bg-[#b79043]/10'
                   : 'border-white/10 text-white/55 hover:text-white'
               }`}
             >
@@ -290,7 +290,7 @@ export const Navbar: React.FC = () => {
               onClick={() => setView(currentView === 'admin' ? 'home' : 'admin')}
               className={`hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs min-h-11 border transition-colors duration-200 ${
                 currentView === 'admin'
-                  ? 'border-[#C8A24C] text-[#C8A24C] bg-[#C8A24C]/10'
+                  ? 'border-[#b79043] text-[#b79043] bg-[#b79043]/10'
                   : 'border-white/10 text-white/55 hover:text-white'
               }`}
             >
@@ -304,7 +304,7 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setAuthModalOpen(true)}
-                className="hidden sm:inline-flex items-center px-4 py-2.5 rounded-full border border-white/25 text-white/85 text-sm font-medium hover:border-white/50 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C]"
+                className="hidden sm:inline-flex items-center px-4 py-2.5 rounded-full border border-white/25 text-white/85 text-sm font-medium hover:border-white/50 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
               >
                 כניסה
               </button>
@@ -375,7 +375,7 @@ export const Navbar: React.FC = () => {
                   setView(currentView === 'lecturer' ? 'home' : 'lecturer');
                   setIsMobileMenuOpen(false);
                 }}
-                className="text-right px-4 py-3 rounded-xl text-sm text-[#C8A24C] min-h-11"
+                className="text-right px-4 py-3 rounded-xl text-sm text-[#b79043] min-h-11"
               >
                 {currentView === 'lecturer' ? 'חזרה לספרייה' : 'אזור מרצה'}
               </button>
@@ -387,7 +387,7 @@ export const Navbar: React.FC = () => {
                   setView(currentView === 'admin' ? 'home' : 'admin');
                   setIsMobileMenuOpen(false);
                 }}
-                className="text-right px-4 py-3 rounded-xl text-sm text-[#C8A24C] min-h-11"
+                className="text-right px-4 py-3 rounded-xl text-sm text-[#b79043] min-h-11"
               >
                 {currentView === 'admin' ? 'חזרה לספרייה' : 'ניהול'}
               </button>

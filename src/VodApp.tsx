@@ -111,19 +111,19 @@ export const VodApp: React.FC = () => {
       </main>
 
       {currentView !== 'watch' && (
-        <footer className="editorial-library-footer relative z-10 border-t border-white/10 bg-[#010308]/75 backdrop-blur-md py-10 px-4 sm:px-8 lg:px-10 text-right select-none" role="contentinfo" aria-label="תחתית הספרייה">
+        <footer className="editorial-library-footer relative z-10 border-t border-white/10 bg-[#0d0b08]/75 backdrop-blur-md py-10 px-4 sm:px-8 lg:px-10 text-right select-none" role="contentinfo" aria-label="תחתית הספרייה">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8 text-sm text-zinc-400">
             <div>
               <p className="text-white/80 mb-1 text-sm">Infinite Masterpiece</p>
               <p className="text-sm">{SITE_TAGLINE}</p>
             </div>
             <div className="flex flex-wrap gap-5 text-sm">
-              <Link to="/" className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] rounded min-h-11 inline-flex items-center">האתר הראשי</Link>
-              <button type="button" onClick={() => setView('profile')} className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] rounded min-h-11">חשבון</button>
-              <button type="button" onClick={() => setView('history')} className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] rounded min-h-11">היסטוריה</button>
-              <Link to="/terms" className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] rounded min-h-11 inline-flex items-center">תנאי שימוש</Link>
-              <Link to="/privacy" className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] rounded min-h-11 inline-flex items-center">מדיניות פרטיות</Link>
-              <Link to="/accessibility" className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] rounded min-h-11 inline-flex items-center">הצהרת נגישות</Link>
+              <Link to="/" className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11 inline-flex items-center">האתר הראשי</Link>
+              <button type="button" onClick={() => setView('profile')} className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11">חשבון</button>
+              <button type="button" onClick={() => setView('history')} className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11">היסטוריה</button>
+              <Link to="/terms" className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11 inline-flex items-center">תנאי שימוש</Link>
+              <Link to="/privacy" className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11 inline-flex items-center">מדיניות פרטיות</Link>
+              <Link to="/accessibility" className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11 inline-flex items-center">הצהרת נגישות</Link>
             </div>
           </div>
           <p className="max-w-7xl mx-auto mt-4 text-sm text-zinc-600">Infinite Masterpiece © כל הזכויות שמורות.</p>

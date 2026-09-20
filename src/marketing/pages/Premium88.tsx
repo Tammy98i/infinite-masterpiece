@@ -10,10 +10,10 @@ export function Premium88() {
   }, []);
 
   return (
-    <div className="min-h-screen text-white selection:bg-[#C8A24C]/30">
+    <div className="min-h-screen text-white selection:bg-[#b79043]/30">
       <section className="relative pt-32 pb-16 lg:pt-40 lg:pb-20">
         <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-10 text-center">
-          <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-6 font-semibold">
+          <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-6 font-semibold">
             האנשים שמאחורי שכבת העומק
           </p>
           <h1 className="text-4xl md:text-6xl font-heading text-white tracking-tight mb-6">
@@ -48,7 +48,7 @@ export function Premium88() {
         <div className="mt-6">
           <a
             href="/#depth-layer"
-            className="text-white/40 hover:text-[#C8A24C] transition-colors text-sm font-light"
+            className="text-white/40 hover:text-[#b79043] transition-colors text-sm font-light"
           >
             רוצה להבין את שכבת העומק?
           </a>

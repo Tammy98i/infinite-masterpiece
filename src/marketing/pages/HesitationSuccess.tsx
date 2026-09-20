@@ -14,7 +14,7 @@ export function HesitationSuccess() {
 
   return (
     <div className="min-h-screen relative pt-32 pb-32 flex items-center justify-center">
-      <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/25 via-transparent to-[#010308]/35" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0d0b08]/25 via-transparent to-[#0d0b08]/35" />
 
       <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 text-center">
         <motion.div
@@ -23,8 +23,8 @@ export function HesitationSuccess() {
           transition={{ duration: 0.8, ease: 'easeOut' }}
           className="mb-12"
         >
-          <div className="w-24 h-24 rounded-full bg-[#C8A24C]/10 border border-[#C8A24C]/30 flex items-center justify-center mx-auto mb-8 relative">
-            <CheckCircle2 className="w-10 h-10 text-[#C8A24C]" strokeWidth={1.5} />
+          <div className="w-24 h-24 rounded-full bg-[#b79043]/10 border border-[#b79043]/30 flex items-center justify-center mx-auto mb-8 relative">
+            <CheckCircle2 className="w-10 h-10 text-[#b79043]" strokeWidth={1.5} />
           </div>
 
           <h1 className="text-4xl md:text-5xl font-light text-white mb-6 tracking-tight">

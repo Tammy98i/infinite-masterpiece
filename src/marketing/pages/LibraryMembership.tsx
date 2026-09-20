@@ -21,20 +21,20 @@ export function LibraryMembership() {
 
   return (
     <div className="max-w-[960px] mx-auto px-4 sm:px-6 lg:px-8 py-16 md:py-24 text-center">
-      <p className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C] mb-4">מנוי ספרייה</p>
+      <p className="text-[11px] uppercase tracking-[0.2em] text-[#b79043] mb-4">מנוי ספרייה</p>
       <h1 className="text-3xl md:text-4xl font-heading text-white mb-4">גישה לספריית Infinite Masterpiece</h1>
       <p className="text-sm md:text-base text-white/50 font-light leading-relaxed max-w-2xl mb-4">
         הספרייה נמכרת במנוי לצפייה — לא ברכישת קורס בודד. מנוי פותח הרצאות, הדרכות, מסלולים ועדכונים חדשים.
       </p>
       <p className="text-xs text-white/35 font-light mb-10 max-w-2xl">
         מסלול האמיצים / ההססנים (8,888 ₪) הוא כניסה למיזם — נפרד ממנוי הספרייה.{' '}
-        <Link to="/pricing" className="text-[#C8A24C] hover:text-[#F7E7B5] underline-offset-2 hover:underline">
+        <Link to="/pricing" className="text-[#b79043] hover:text-[#dfc47d] underline-offset-2 hover:underline">
           בדיקת התאמה למסלול המלא
         </Link>
       </p>
 
       {hasAccess ? (
-        <div className="rounded-2xl border border-[#C8A24C]/30 bg-[#C8A24C]/10 p-6 mb-8">
+        <div className="rounded-2xl border border-[#b79043]/30 bg-[#b79043]/10 p-6 mb-8">
           <p className="text-white/85">יש לכם כבר גישה פעילה לספרייה.</p>
           <Link
             to="/library"
@@ -56,7 +56,7 @@ export function LibraryMembership() {
             >
               <h2 className="text-lg font-medium text-white mb-1">{plan.title}</h2>
               <p className="text-xs text-white/45 mb-4 flex-1">{plan.subtitle}</p>
-              <p className="text-2xl text-[#F7E7B5] mb-4">{plan.priceLabel}</p>
+              <p className="text-2xl text-[#dfc47d] mb-4">{plan.priceLabel}</p>
               <button
                 type="button"
                 disabled={hasAccess || trialUsed}
@@ -80,7 +80,7 @@ export function LibraryMembership() {
 
       <div className="rounded-xl border border-white/10 p-5 text-sm text-white/45 font-light leading-relaxed">
         <strong className="text-white/70 font-normal">נבחרת 88</strong> — מועמדות נפרדת עם גישת premium_88.{' '}
-        <Link to="/application?type=88" className="text-[#C8A24C] hover:underline">
+        <Link to="/application?type=88" className="text-[#b79043] hover:underline">
           הגשת מועמדות
         </Link>
       </div>

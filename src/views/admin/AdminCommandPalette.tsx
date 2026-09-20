@@ -25,10 +25,10 @@ export function AdminCommandPalette({ open, recent, onClose, onNavigate }: {
   const navigate = (tab: Tab) => { onNavigate(tab); onClose(); };
   return <div className="fixed inset-0 z-[100] flex items-start justify-center p-4 pt-[12vh]" role="presentation">
     <button type="button" className="absolute inset-0 bg-black/75 backdrop-blur-sm" aria-label="סגירת מעבר מהיר" onClick={onClose} />
-    <section role="dialog" aria-modal="true" aria-labelledby="admin-search-title" className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-[#C8A24C]/30 bg-[#080808] shadow-2xl">
+    <section role="dialog" aria-modal="true" aria-labelledby="admin-search-title" className="relative w-full max-w-2xl overflow-hidden rounded-3xl border border-[#b79043]/30 bg-[#080808] shadow-2xl">
       <h2 id="admin-search-title" className="sr-only">מעבר מהיר באדמין</h2>
       <div className="flex items-center gap-3 border-b border-white/10 px-5">
-        <Search className="h-5 w-5 text-[#C8A24C]" aria-hidden />
+        <Search className="h-5 w-5 text-[#b79043]" aria-hidden />
         <input ref={inputRef} value={query} onChange={event => setQuery(event.target.value)} onKeyDown={event => { if (event.key === 'Escape') onClose(); if (event.key === 'Enter' && results[0]) navigate(results[0].id); }} placeholder="חיפוש מסך, פעולה או תחום…" className="min-h-16 flex-1 bg-transparent text-base text-white outline-none placeholder:text-white/35" />
         <button type="button" onClick={onClose} className="flex h-11 w-11 items-center justify-center rounded-full text-white/50 hover:bg-white/5 hover:text-white" aria-label="סגירה"><X size={18} /></button>
       </div>
@@ -46,8 +46,8 @@ function ResultButton({ tab, onClick }: { tab: Tab; onClick: () => void }) {
   const item = NAV_ITEMS.find(candidate => candidate.id === tab);
   if (!item) return null;
   const Icon = item.icon;
-  return <button type="button" onClick={onClick} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-4 py-3 text-right hover:bg-[#C8A24C]/10 focus:bg-[#C8A24C]/10">
-    <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#C8A24C]/20 bg-[#C8A24C]/5 text-[#C8A24C]"><Icon size={17} /></span>
+  return <button type="button" onClick={onClick} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-4 py-3 text-right hover:bg-[#b79043]/10 focus:bg-[#b79043]/10">
+    <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#b79043]/20 bg-[#b79043]/5 text-[#b79043]"><Icon size={17} /></span>
     <span className="min-w-0 flex-1"><strong className="block font-normal text-white">{item.label}</strong><span className="block truncate text-xs text-white/40">{TAB_META[tab].group} · {TAB_META[tab].description}</span></span>
   </button>;
 }

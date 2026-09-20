@@ -15,9 +15,9 @@ export function Login() {
   };
 
   return (
-    <div className="min-h-screen relative flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#010308]">
+    <div className="min-h-screen relative flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8 bg-[#0d0b08]">
       <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1518066000714-58c45f1a2c0a?q=80&w=2070&auto=format&fit=crop')] bg-cover bg-center opacity-[0.03] mix-blend-screen" />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#010308] via-transparent to-[#010308]" />
+      <div className="absolute inset-0 bg-gradient-to-t from-[#0d0b08] via-transparent to-[#0d0b08]" />
 
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
@@ -26,7 +26,7 @@ export function Login() {
         className="max-w-md w-full space-y-8 relative z-10 bg-white/[0.02] border border-white/[0.05] p-10 rounded-[32px] backdrop-blur-2xl shadow-2xl"
       >
         <div className="text-center">
-          <Infinity className="mx-auto h-12 w-12 text-[#C8A24C]" strokeWidth={1} />
+          <Infinity className="mx-auto h-12 w-12 text-[#b79043]" strokeWidth={1} />
           <h2 className="mt-6 text-3xl font-light text-white tracking-tight">כניסה למערכת</h2>
           <p className="mt-2 text-sm text-white/50 font-light">
             האזור האישי לתלמידי <span className="font-heading text-gold-gradient">Infinite Masterpiece</span>
@@ -43,7 +43,7 @@ export function Login() {
                 dir="ltr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="appearance-none relative block w-full px-5 py-4 border border-white/[0.08] bg-black/40 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-[#C8A24C] focus:border-[#C8A24C] focus:z-10 text-center transition-colors"
+                className="appearance-none relative block w-full px-5 py-4 border border-white/[0.08] bg-black/40 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-[#b79043] focus:border-[#b79043] focus:z-10 text-center transition-colors"
                 placeholder="כתובת אימייל"
               />
             </div>
@@ -55,14 +55,14 @@ export function Login() {
                 dir="ltr"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="appearance-none relative block w-full px-5 py-4 border border-white/[0.08] bg-black/40 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-[#C8A24C] focus:border-[#C8A24C] focus:z-10 text-center transition-colors"
+                className="appearance-none relative block w-full px-5 py-4 border border-white/[0.08] bg-black/40 rounded-xl text-white focus:outline-none focus:ring-1 focus:ring-[#b79043] focus:border-[#b79043] focus:z-10 text-center transition-colors"
                 placeholder="סיסמה"
               />
             </div>
           </div>
 
           <div className="flex items-center justify-between text-sm">
-            <Link to="/reset-password" className="text-[#C8A24C] hover:text-[#F7E7B5] transition-colors">
+            <Link to="/reset-password" className="text-[#b79043] hover:text-[#dfc47d] transition-colors">
               שכחת סיסמה?
             </Link>
           </div>

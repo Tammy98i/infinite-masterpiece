@@ -3,12 +3,12 @@
 @import "./styles/editorial-system.css";
 
 @theme {
-  --color-primary: #c9a227;
-  --color-primary-light: #e8c547;
-  --color-primary-dark: #a68520;
-  --color-primary-muted: #c9a22733;
-  --color-surface: #050505;
-  --color-surface-elevated: #0a0a0a;
+  --color-primary: #b79043;
+  --color-primary-light: #dfc47d;
+  --color-primary-dark: #8f6d32;
+  --color-primary-muted: #b7904333;
+  --color-surface: #0d0b08;
+  --color-surface-elevated: #15110d;
   --font-heading: "Noto Sans Hebrew", "Noto Sans", "Arial Hebrew", ui-sans-serif, system-ui, sans-serif;
   --font-body: "IBM Plex Sans Hebrew", "IBM Plex Sans", "Arial Hebrew", ui-sans-serif, system-ui, sans-serif;
   --font-accent: "Rubik", ui-sans-serif, system-ui, sans-serif;
@@ -21,14 +21,14 @@
 html {
   scroll-behavior: smooth;
   direction: rtl;
-  background-color: #010308;
+  background-color: #0d0b08;
 }
 
 @layer base {
   body {
     font-family: var(--font-body);
-    background-color: #010308;
-    color: #ffffff;
+    background-color: #0d0b08;
+    color: #f2ede3;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
@@ -42,12 +42,12 @@ html {
 
 @layer base {
   :focus-visible {
-    outline: 2px solid #c8a24c;
+    outline: 2px solid #b79043;
     outline-offset: 2px;
   }
 }
 
-.site-backdrop-layout { position: relative; isolation: isolate; min-height: 100vh; background: #010308; }
+.site-backdrop-layout { position: relative; isolation: isolate; min-height: 100vh; background: #0d0b08; }
 .site-backdrop-content { position: relative; z-index: 10; }
 
 .page-fade {
@@ -61,7 +61,7 @@ html {
 
 @layer utilities {
   .focus-ring {
-    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505];
+    @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505];
   }
 
   .skip-link {
@@ -71,7 +71,7 @@ html {
     z-index: 100;
     padding: 0.75rem 1rem;
     border-radius: 9999px;
-    background: #c8a24c;
+    background: #b79043;
     color: #000;
     font-size: 0.875rem;
     font-weight: 600;
@@ -99,7 +99,7 @@ html {
 }
 .card-hover:hover {
   transform: translateY(-4px);
-  border-color: rgba(201, 162, 39, 0.4);
+  border-color: rgba(183, 144, 67, 0.4);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -124,17 +124,17 @@ html.a11y-reduce-motion .page-fade {
 }
 
 .glass {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(242, 237, 227, 0.035);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(223, 196, 125, 0.2);
 }
 
 .glass-active {
-  background: rgba(201, 162, 39, 0.15);
+  background: rgba(183, 144, 67, 0.15);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
-  border: 1px solid rgba(201, 162, 39, 0.4);
+  border: 1px solid rgba(183, 144, 67, 0.4);
 }
 
 .carousel-scroll {
@@ -155,12 +155,12 @@ html.a11y-reduce-motion .page-fade {
   height: 4px;
 }
 .vod-app .carousel-scroll::-webkit-scrollbar-thumb {
-  background: rgba(201, 162, 39, 0.4);
+  background: rgba(183, 144, 67, 0.4);
   border-radius: 4px;
 }
 .vod-app .carousel-scroll {
   scrollbar-width: thin;
-  scrollbar-color: rgba(201, 162, 39, 0.4) transparent;
+  scrollbar-color: rgba(183, 144, 67, 0.4) transparent;
 }
 
 .vod-app ::-webkit-scrollbar {
@@ -178,10 +178,10 @@ html.a11y-reduce-motion .page-fade {
 .onboarding-highlight {
   position: relative;
   z-index: 65;
-  outline: 2px solid rgba(201, 162, 39, 0.9);
+  outline: 2px solid rgba(183, 144, 67, 0.9);
   outline-offset: 3px;
   border-radius: 12px;
-  box-shadow: 0 0 0 4px rgba(201, 162, 39, 0.25);
+  box-shadow: 0 0 0 4px rgba(183, 144, 67, 0.25);
 }
 
 .bg-noise {
@@ -192,17 +192,14 @@ html.a11y-reduce-motion .page-fade {
 }
 
 .text-gold-gradient {
-  background: linear-gradient(to right, #C8A24C, #F7E7B5, #D4AF37);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
+  color: #b79043;
 }
 
 ::-webkit-scrollbar {
   width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #010308;
+  background: #0d0b08;
 }
 ::-webkit-scrollbar-thumb {
   background: #1a1f2e;
@@ -221,7 +218,7 @@ html.a11y-reduce-motion .page-fade {
 .sky-readable h2,
 .sky-readable h3,
 .sky-readable h4 {
-  color: #ffffff;
+  color: #f2ede3;
   text-shadow:
     0 1px 2px rgba(1, 3, 8, 0.9),
     0 4px 22px rgba(1, 3, 8, 0.75);
@@ -295,16 +292,16 @@ html.a11y-reduce-motion .page-fade {
 
 .sky-readable .hover\:text-white:hover,
 .sky-readable .hover\:text-zinc-200:hover {
-  color: #ffffff;
+  color: #f2ede3;
 }
 
-.sky-readable .hover\:text-\[\#C8A24C\]:hover,
-.sky-readable .group:hover .group-hover\:text-\[\#C8A24C\] {
-  color: #c8a24c;
+.sky-readable .hover\:text-\[\#b79043\]:hover,
+.sky-readable .group:hover .group-hover\:text-\[\#b79043\] {
+  color: #b79043;
 }
 
-.sky-readable .hover\:text-\[\#F7E7B5\]:hover {
-  color: #f7e7b5;
+.sky-readable .hover\:text-\[\#dfc47d\]:hover {
+  color: #dfc47d;
 }
 
 .sky-readable .bg-white\/\[0\.01\],
@@ -317,9 +314,9 @@ html.a11y-reduce-motion .page-fade {
   -webkit-backdrop-filter: blur(14px);
 }
 
-.sky-readable .bg-\[\#C8A24C\]\/5,
-.sky-readable .bg-\[\#C8A24C\]\/10,
-.sky-readable .bg-\[\#C8A24C\]\/\[0\.07\] {
+.sky-readable .bg-\[\#b79043\]\/5,
+.sky-readable .bg-\[\#b79043\]\/10,
+.sky-readable .bg-\[\#b79043\]\/\[0\.07\] {
   background-color: rgb(12 10 6 / 0.72);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
@@ -339,7 +336,7 @@ html.a11y-contrast-high .sky-readable .text-white\/40,
 html.a11y-contrast-high .sky-readable .text-white\/45,
 html.a11y-contrast-high .sky-readable .text-white\/50,
 html.a11y-contrast-high .sky-readable .text-white\/55 {
-  color: #ffffff;
+  color: #f2ede3;
 }
 
 .btn-gold {
@@ -350,10 +347,10 @@ html.a11y-contrast-high .sky-readable .text-white\/55 {
   padding: 0.8rem 1.75rem;
   border: 1px solid rgba(247, 231, 181, 0.55);
   border-radius: 9999px;
-  background: linear-gradient(135deg, #f2dda4 0%, #c8a24c 72%);
+  background: linear-gradient(135deg, #f2dda4 0%, #b79043 72%);
   color: #111;
   font-weight: 700;
-  box-shadow: 0 10px 30px rgba(200, 162, 76, 0.2);
+  box-shadow: 0 10px 30px rgba(183, 144, 67, 0.2);
   text-decoration: none;
   cursor: pointer;
   transition: transform 180ms var(--ease-premium), box-shadow 180ms ease, filter 180ms ease;
@@ -362,7 +359,7 @@ html.a11y-contrast-high .sky-readable .text-white\/55 {
 .btn-gold:hover {
   filter: brightness(1.06);
   transform: translateY(-1px);
-  box-shadow: 0 14px 34px rgba(200, 162, 76, 0.28);
+  box-shadow: 0 14px 34px rgba(183, 144, 67, 0.28);
 }
 
 .btn-gold:focus-visible {
@@ -385,7 +382,7 @@ html.a11y-contrast-high .sky-readable .text-white\/55 {
   background: linear-gradient(145deg, rgb(7 10 17 / 0.88), rgb(1 3 8 / 0.72));
   backdrop-filter: blur(18px);
   -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(200, 162, 76, 0.22);
+  border: 1px solid rgba(183, 144, 67, 0.22);
   border-radius: 1.25rem;
   box-shadow: 0 18px 55px rgba(0, 0, 0, 0.18);
 }
@@ -407,9 +404,9 @@ html.a11y-contrast-high .sky-readable .text-white\/55 {
 }
 
 .btn-secondary:hover {
-  border-color: rgba(200, 162, 76, 0.55);
-  background: rgba(200, 162, 76, 0.08);
-  color: #f7e7b5;
+  border-color: rgba(183, 144, 67, 0.55);
+  background: rgba(183, 144, 67, 0.08);
+  color: #dfc47d;
 }
 
 .marketing-shell :is(h1, h2, h3) {

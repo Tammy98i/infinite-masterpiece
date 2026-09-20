@@ -45,7 +45,7 @@ export function WebinarCountdown({ date, time, className = '' }: Props) {
   if (!label) return null;
 
   return (
-    <p className={`text-xs text-[#C8A24C] font-light ${className}`} aria-live="polite">
+    <p className={`text-xs text-[#b79043] font-light ${className}`} aria-live="polite">
       {label}
     </p>
   );

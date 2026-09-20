@@ -75,12 +75,12 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           decoding="async"
           className="w-full h-full object-cover object-center scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#010308] via-[#010308]/70 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-l from-[#010308]/90 via-[#010308]/55 to-transparent w-full md:w-[65%] ms-auto" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0b08] via-[#0d0b08]/70 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-l from-[#0d0b08]/90 via-[#0d0b08]/55 to-transparent w-full md:w-[65%] ms-auto" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-8 w-full z-10 text-right md:max-w-2xl md:ms-0 md:me-auto">
-        <p className="text-[#C8A24C] text-xs sm:text-sm font-medium tracking-[0.18em] mb-4">
+        <p className="text-[#b79043] text-xs sm:text-sm font-medium tracking-[0.18em] mb-4">
           {continueWatching ? 'המשך צפייה' : 'מומלץ הערב'}
         </p>
 
@@ -108,7 +108,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
               aria-valuemax={100}
               aria-valuenow={continuePct}
             >
-              <div className="h-full bg-[#C8A24C]" style={{ width: `${continuePct}%` }} />
+              <div className="h-full bg-[#b79043]" style={{ width: `${continuePct}%` }} />
             </div>
           </div>
         )}
@@ -126,7 +126,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           <button
             type="button"
             onClick={handleDetails}
-            className="inline-flex items-center px-7 py-3 rounded-full border border-white/35 text-white font-medium text-sm hover:bg-white/10 transition-colors min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="inline-flex items-center px-7 py-3 rounded-full border border-white/35 text-white font-medium text-sm hover:bg-white/10 transition-colors min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
           >
             פרטים
           </button>

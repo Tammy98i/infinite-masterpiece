@@ -19,7 +19,7 @@ export const HistoryView: React.FC = () => {
     <div className="min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8">
         <div>
-          <div className="flex items-center gap-2 text-[#C8A24C] text-xs mb-1">
+          <div className="flex items-center gap-2 text-[#b79043] text-xs mb-1">
             <Clock className="w-4 h-4" />
             <span>לאחרונה בספרייה</span>
           </div>
@@ -62,7 +62,7 @@ export const HistoryView: React.FC = () => {
                   <div className="text-sm font-medium truncate">{course.title}</div>
                   <div className="text-xs text-white/40 mt-1 truncate">{episode.title}</div>
                   <div className="mt-2 h-1 rounded-full bg-white/10 overflow-hidden">
-                    <div className="h-full bg-[#C8A24C]" style={{ width: `${pct}%` }} />
+                    <div className="h-full bg-[#b79043]" style={{ width: `${pct}%` }} />
                   </div>
                   <div className="text-[11px] text-white/35 mt-1">
                     {progress.completed

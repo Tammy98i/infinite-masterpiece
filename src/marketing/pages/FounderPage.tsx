@@ -56,7 +56,7 @@ export function FounderPage() {
   const paragraphs = founder.description.split(/\n\n+/).filter(Boolean);
 
   return (
-    <div className="min-h-screen text-white selection:bg-[#C8A24C]/30">
+    <div className="min-h-screen text-white selection:bg-[#b79043]/30">
       <section className="pt-28 pb-20 lg:pt-36 lg:pb-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-10">
           <Link
@@ -72,7 +72,7 @@ export function FounderPage() {
               <h1 className="text-4xl md:text-5xl font-heading text-white tracking-tight mb-4">
                 {founder.name}
               </h1>
-              <p className="text-[#C8A24C] text-sm tracking-widest mb-8 font-medium">
+              <p className="text-[#b79043] text-sm tracking-widest mb-8 font-medium">
                 {founder.title}
               </p>
               <div className="max-w-xl mx-auto space-y-5">
@@ -87,7 +87,7 @@ export function FounderPage() {
                   {founder.expertise.map((item) => (
                     <span
                       key={item}
-                      className="px-3 py-1.5 rounded-full border border-[#C8A24C]/30 text-[11px] tracking-widest text-[#C8A24C]"
+                      className="px-3 py-1.5 rounded-full border border-[#b79043]/30 text-[11px] tracking-widest text-[#b79043]"
                     >
                       {item}
                     </span>
@@ -102,7 +102,7 @@ export function FounderPage() {
                       href={item.url}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center min-h-11 px-4 rounded-full border border-white/15 text-sm text-white/70 hover:text-[#C8A24C] hover:border-[#C8A24C]/40 transition-colors duration-200 cursor-pointer"
+                      className="inline-flex items-center min-h-11 px-4 rounded-full border border-white/15 text-sm text-white/70 hover:text-[#b79043] hover:border-[#b79043]/40 transition-colors duration-200 cursor-pointer"
                     >
                       {item.label}
                     </a>
@@ -130,7 +130,7 @@ export function FounderPage() {
               {loaded && courses.length > 0 && (
                 <a
                   href="#lectures"
-                  className="inline-flex mt-8 text-sm text-white/55 hover:text-[#C8A24C] min-h-11 items-center cursor-pointer transition-colors duration-200"
+                  className="inline-flex mt-8 text-sm text-white/55 hover:text-[#b79043] min-h-11 items-center cursor-pointer transition-colors duration-200"
                 >
                   צפייה בהרצאות
                 </a>
@@ -151,7 +151,7 @@ export function FounderPage() {
       {founder.portfolio.length > 0 && (
         <section className="pb-20">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <h2 className="text-sm tracking-[0.25em] text-[#C8A24C] mb-8">תיק עסקי</h2>
+            <h2 className="text-sm tracking-[0.25em] text-[#b79043] mb-8">תיק עסקי</h2>
             <div className="divide-y divide-white/10 border-t border-white/10">
               {founder.portfolio.map((item) => (
                 <div key={item.title} className="py-6">
@@ -166,7 +166,7 @@ export function FounderPage() {
 
       <section id="lectures" className="pb-20 scroll-mt-28">
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <h2 className="text-sm tracking-[0.25em] text-[#C8A24C] mb-8">הרצאות בספרייה</h2>
+          <h2 className="text-sm tracking-[0.25em] text-[#b79043] mb-8">הרצאות בספרייה</h2>
           {!loaded && <p className="text-sm text-white/40 font-light">טוען הרצאות...</p>}
           {loaded && courses.length === 0 && (
             <p className="text-sm text-white/40 font-light leading-relaxed">
@@ -181,7 +181,7 @@ export function FounderPage() {
                   to={`/library/course/${encodeURIComponent(course.id)}`}
                   className="block py-6 group cursor-pointer"
                 >
-                  <h3 className="text-white text-lg font-medium mb-1 group-hover:text-[#C8A24C] transition-colors duration-200">
+                  <h3 className="text-white text-lg font-medium mb-1 group-hover:text-[#b79043] transition-colors duration-200">
                     {course.title}
                   </h3>
                   <p className="text-sm text-white/45 font-light leading-relaxed">{course.subtitle}</p>
@@ -195,14 +195,14 @@ export function FounderPage() {
       <section className="pb-32 text-center px-4">
         <Link
           to="/premium-88"
-          className="text-white/40 hover:text-[#C8A24C] transition-colors text-sm font-light cursor-pointer"
+          className="text-white/40 hover:text-[#b79043] transition-colors text-sm font-light cursor-pointer"
         >
           חזרה לצוות המיזם
         </Link>
         <div className="mt-8">
           <Link
             to="/application?type=88"
-            className="inline-flex justify-center py-3 px-8 rounded-full text-sm text-[#C8A24C] border border-[#C8A24C]/40 hover:border-[#F7E7B5] hover:text-[#F7E7B5] transition-colors duration-200 min-h-11 cursor-pointer"
+            className="inline-flex justify-center py-3 px-8 rounded-full text-sm text-[#b79043] border border-[#b79043]/40 hover:border-[#dfc47d] hover:text-[#dfc47d] transition-colors duration-200 min-h-11 cursor-pointer"
           >
             הגשת מועמדות לנבחרת 88
           </Link>

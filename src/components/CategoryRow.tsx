@@ -97,7 +97,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
           <button
             type="button"
             onClick={() => scroll('prev')}
-            className="rail-control absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/85 text-white border border-white/15 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover/row:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C]"
+            className="rail-control absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/85 text-white border border-white/15 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover/row:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
             aria-label="הצגת פריטים קודמים"
           >
             <ChevronRight className="w-5 h-5" aria-hidden />
@@ -118,7 +118,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
               scroll('prev');
             }
           }}
-          className={`mx-auto flex max-w-[1400px] gap-4 sm:gap-6 overflow-x-auto px-4 sm:px-8 lg:px-10 pb-3 pt-2 scroll-smooth snap-x snap-mandatory carousel-scroll focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-inset ${
+          className={`mx-auto flex max-w-[1400px] gap-4 sm:gap-6 overflow-x-auto px-4 sm:px-8 lg:px-10 pb-3 pt-2 scroll-smooth snap-x snap-mandatory carousel-scroll focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-inset ${
             ranked ? 'pt-4' : ''
           }`}
         >
@@ -141,7 +141,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
           <button
             type="button"
             onClick={() => scroll('next')}
-            className="rail-control absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/85 text-white border border-white/15 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover/row:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C]"
+            className="rail-control absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/85 text-white border border-white/15 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover/row:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
             aria-label="הצגת פריטים נוספים"
           >
             <ChevronLeft className="w-5 h-5" aria-hidden />

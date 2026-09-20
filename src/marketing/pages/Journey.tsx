@@ -43,7 +43,7 @@ export function Journey() {
     <div className="w-full">
       <section className="pt-32 pb-16 md:pt-40 md:pb-20">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
-          <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-6 font-semibold">התהליך</p>
+          <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-6 font-semibold">התהליך</p>
           <h1 className="text-4xl md:text-6xl font-light text-white leading-tight mb-6">מסע 33 הימים.</h1>
           <p className="text-lg text-white/50 font-light max-w-2xl leading-relaxed">
             ארבעה שלבים שבונים מערכת עסקית סביב היצירה: ממכירה ראשונה ועד סקייל וקהילה.
@@ -63,15 +63,15 @@ export function Journey() {
                 transition={{ duration: 0.6, delay: idx * 0.08 }}
                 className="relative bg-white/[0.02] border border-white/[0.04] backdrop-blur-3xl rounded-[32px] p-10 xl:p-12 hover:bg-white/[0.04] transition-all duration-700 shadow-[0_24px_48px_rgba(0,0,0,0.2)] group flex flex-col h-full overflow-hidden"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-[#C8A24C]/0 via-transparent to-[#C8A24C]/0 group-hover:from-[#C8A24C]/5 transition-all duration-700" />
+                <div className="absolute inset-0 bg-gradient-to-br from-[#b79043]/0 via-transparent to-[#b79043]/0 group-hover:from-[#b79043]/5 transition-all duration-700" />
                 <div className="relative z-10">
                   <div className="text-[48px] font-accent font-semibold tabular-nums text-white/10 mb-8 leading-none">
                     {step.num}
                   </div>
                   <div className="flex justify-between items-start mb-6">
-                    <span className="text-[11px] uppercase tracking-[0.2em] text-[#C8A24C]">{step.days}</span>
+                    <span className="text-[11px] uppercase tracking-[0.2em] text-[#b79043]">{step.days}</span>
                     <step.icon
-                      className="w-6 h-6 text-white/30 group-hover:text-[#C8A24C] transition-colors duration-500"
+                      className="w-6 h-6 text-white/30 group-hover:text-[#b79043] transition-colors duration-500"
                       strokeWidth={1}
                     />
                   </div>
@@ -90,7 +90,7 @@ export function Journey() {
               <span>להצטרפות</span>
               <ArrowLeft className="w-4 h-4" />
             </Link>
-            <Link to="/" className="text-sm text-white/40 hover:text-[#C8A24C] transition-colors">
+            <Link to="/" className="text-sm text-white/40 hover:text-[#b79043] transition-colors">
               חזרה לדף הבית
             </Link>
           </div>

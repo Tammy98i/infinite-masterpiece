@@ -16,7 +16,7 @@ import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
 
 const fieldClass =
-  'w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#C8A24C] focus:outline-none min-h-11';
+  'w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#b79043] focus:outline-none min-h-11';
 
 const STATUS_LABEL: Record<string, string> = {
   draft: 'טיוטה',
@@ -45,7 +45,7 @@ export function LecturerView() {
           <button
             type="button"
             onClick={() => setAuthModalOpen(true)}
-            className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 cursor-pointer"
+            className="w-full py-3 rounded-full bg-[#b79043] text-black text-sm min-h-11 cursor-pointer"
           >
             כניסה
           </button>
@@ -85,8 +85,8 @@ function ReferralCard({
   };
 
   return (
-    <div className="border border-[#C8A24C]/25 rounded-3xl p-6 bg-[#C8A24C]/5">
-      <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">הפניות</p>
+    <div className="border border-[#b79043]/25 rounded-3xl p-6 bg-[#b79043]/5">
+      <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">הפניות</p>
       <h2 className="text-xl font-light mb-2">קישור ההפניה שלכם</h2>
       <p className="text-sm text-white/50 font-light leading-relaxed mb-5">
         מי שנכנס דרך הקישור ונרשם או ממלא מסלול כניסה נספר כאן. בלי לערבב עם מועמדות לנבחרת 88.
@@ -96,7 +96,7 @@ function ReferralCard({
         <button
           type="button"
           onClick={() => void copy()}
-          className="px-5 py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer shrink-0"
+          className="px-5 py-3 rounded-full bg-[#b79043] text-black text-sm font-medium min-h-11 cursor-pointer shrink-0"
         >
           {copied ? 'הועתק' : 'העתקת קישור'}
         </button>
@@ -191,14 +191,14 @@ function ApplicationPanel({
       <button type="button" onClick={onBack} className="text-sm text-white/45 hover:text-white mb-8 min-h-11 cursor-pointer">
         חזרה לפרופיל
       </button>
-      <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">מרצים</p>
+      <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">מרצים</p>
       <h1 className="text-3xl font-light mb-4">בקשה להיות מרצה</h1>
       <p className="text-sm text-white/45 font-light mb-8">
         הבקשה עוברת לאישור אדמין. אחרי אישור נפתח דשבורד להעלאת תוכן לבדיקה.
       </p>
 
       {application?.status === 'pending' && (
-        <p className="text-sm text-[#C8A24C] mb-6">הבקשה ממתינה לאישור.</p>
+        <p className="text-sm text-[#b79043] mb-6">הבקשה ממתינה לאישור.</p>
       )}
       {application?.status === 'approved' && (
         <div className="mb-6">
@@ -206,7 +206,7 @@ function ApplicationPanel({
           <button
             type="button"
             onClick={() => void refreshUser()}
-            className="px-4 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 cursor-pointer"
+            className="px-4 py-2.5 rounded-full bg-[#b79043] text-black text-sm min-h-11 cursor-pointer"
           >
             כניסה לדשבורד
           </button>
@@ -218,7 +218,7 @@ function ApplicationPanel({
         </p>
       )}
       {application?.status === 'more_info' && (
-        <p className="text-sm text-[#C8A24C] mb-6">
+        <p className="text-sm text-[#b79043] mb-6">
           נדרשים פרטים נוספים{application.adminNote ? `. ${application.adminNote}` : '.'}
         </p>
       )}
@@ -275,7 +275,7 @@ function ApplicationPanel({
         </label>
         {error && <p className="text-sm text-rose-300">{error}</p>}
         {!locked && (
-          <button type="submit" disabled={pending} className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60">
+          <button type="submit" disabled={pending} className="w-full py-3 rounded-full bg-[#b79043] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60">
             {pending ? 'שולח...' : 'שליחת בקשה'}
           </button>
         )}
@@ -364,13 +364,13 @@ function LecturerDashboard({
         onClick={() => goTab(item.id)}
         className={`w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm min-h-11 text-right transition-colors ${
           active
-            ? 'bg-[#C8A24C]/15 text-[#F7E7B5] border border-[#C8A24C]/40'
+            ? 'bg-[#b79043]/15 text-[#dfc47d] border border-[#b79043]/40'
             : 'text-white/60 hover:text-white hover:bg-white/[0.04] border border-transparent'
         }`}
       >
         <span className="font-light">{item.label}</span>
         {item.badge && item.badge > 0 ? (
-          <span className="text-[10px] text-[#C8A24C] border border-[#C8A24C]/40 rounded-full px-2 py-0.5">
+          <span className="text-[10px] text-[#b79043] border border-[#b79043]/40 rounded-full px-2 py-0.5">
             {item.badge}
           </span>
         ) : item.ready === false ? (
@@ -388,7 +388,7 @@ function LecturerDashboard({
       <div className="flex min-h-screen">
         <aside className="hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
           <div className="p-5 border-b border-white/10">
-            <p className="text-[11px] uppercase tracking-[0.28em] text-[#C8A24C] mb-2">מרצה</p>
+            <p className="text-[11px] uppercase tracking-[0.28em] text-[#b79043] mb-2">מרצה</p>
             <h1 className="text-xl font-light">דשבורד מרצה</h1>
             <p className="text-xs text-white/40 mt-2 font-light truncate">{user.name}</p>
             {user.email ? (
@@ -397,18 +397,18 @@ function LecturerDashboard({
               </p>
             ) : null}
             {stats?.isFounder ? (
-              <p className="text-[11px] text-[#C8A24C] mt-1">מרצה ומייסד</p>
+              <p className="text-[11px] text-[#b79043] mt-1">מרצה ומייסד</p>
             ) : (
               <p className="text-[11px] text-white/35 mt-1">מרצה</p>
             )}
           </div>
           <nav className="flex-1 p-3 grid gap-1 content-start">{navItems.map(navButton)}</nav>
           <div className="p-4 border-t border-white/10 grid gap-2">
-            <div className="border border-[#C8A24C]/30 rounded-2xl p-4 text-center">
+            <div className="border border-[#b79043]/30 rounded-2xl p-4 text-center">
               <p className="text-xs text-white/45 mb-3">צריכים עזרה?</p>
               <a
                 href="mailto:support@infinitemasterpiece.local"
-                className="inline-flex px-4 py-2 rounded-full bg-[#C8A24C] text-black text-xs min-h-10 items-center justify-center"
+                className="inline-flex px-4 py-2 rounded-full bg-[#b79043] text-black text-xs min-h-10 items-center justify-center"
               >
                 צור פניה
               </a>
@@ -434,7 +434,7 @@ function LecturerDashboard({
                 תפריט
               </button>
               <div className="min-w-0">
-                <p className="text-[11px] tracking-[0.2em] text-[#C8A24C] uppercase truncate">Infinite Masterpiece</p>
+                <p className="text-[11px] tracking-[0.2em] text-[#b79043] uppercase truncate">Infinite Masterpiece</p>
                 <p className="text-sm text-white/70 font-light truncate">שלום, {user.name}</p>
                 {user.email ? (
                   <p className="text-[11px] text-white/40 truncate" dir="ltr">
@@ -565,7 +565,7 @@ function QuestionsPanel() {
   return (
     <div className="grid gap-6">
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">שאלות</p>
+        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">שאלות</p>
         <h2 className="text-2xl font-light">שאלות ותגובות על התכנים שלי</h2>
         <p className="text-sm text-white/45 mt-2">רק שאלות על ההרצאות שלכם. בלי נתוני משתמשים רגישים מעבר לשם.</p>
       </div>
@@ -588,7 +588,7 @@ function QuestionsPanel() {
               <p className="text-xs text-white/35">
                 {row.userName} · {row.createdAt.replace('T', ' ').slice(0, 16)}
               </p>
-              {row.answer ? <p className="text-sm text-[#C8A24C]/90">תשובה: {row.answer}</p> : null}
+              {row.answer ? <p className="text-sm text-[#b79043]/90">תשובה: {row.answer}</p> : null}
               {row.status === 'open' ? (
                 <div className="grid gap-2">
                   <textarea
@@ -603,7 +603,7 @@ function QuestionsPanel() {
                       type="button"
                       disabled={pendingId === row.id}
                       onClick={() => void reply(row.id, 'answered')}
-                      className="px-4 py-2 rounded-full bg-[#C8A24C] text-black text-xs min-h-10 disabled:opacity-60"
+                      className="px-4 py-2 rounded-full bg-[#b79043] text-black text-xs min-h-10 disabled:opacity-60"
                     >
                       שליחת תשובה
                     </button>
@@ -659,7 +659,7 @@ function MessagesPanel() {
   return (
     <div className="grid gap-6">
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">הודעות</p>
+        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">הודעות</p>
         <h2 className="text-2xl font-light">הודעות מהצוות</h2>
       </div>
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
@@ -674,12 +674,12 @@ function MessagesPanel() {
                 type="button"
                 onClick={() => void open(row.id)}
                 className={`w-full text-right p-4 hover:bg-white/[0.03] ${
-                  selectedId === row.id ? 'bg-[#C8A24C]/10' : ''
+                  selectedId === row.id ? 'bg-[#b79043]/10' : ''
                 }`}
               >
                 <div className="flex items-center justify-between gap-2">
                   <span className="text-sm">{row.subject}</span>
-                  {!row.readAt ? <span className="text-[10px] text-[#C8A24C]">חדש</span> : null}
+                  {!row.readAt ? <span className="text-[10px] text-[#b79043]">חדש</span> : null}
                 </div>
                 <p className="text-xs text-white/40 mt-1">
                   {row.fromAdminName} · {row.createdAt.replace('T', ' ').slice(0, 16)}
@@ -726,7 +726,7 @@ function CoursesSeriesPanel({
   return (
     <div className="grid gap-8">
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">סדרות</p>
+        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">סדרות</p>
         <h2 className="text-2xl font-light">קורסים / סדרות שלי</h2>
         <p className="text-sm text-white/45 mt-2">
           קיבוץ ההרצאות לפי קטגוריה. יצירת סדרה נפרדת תגיע בהמשך; כרגע מנהלים דרך ההרצאות והקטגוריה.
@@ -774,7 +774,7 @@ function Founder88Panel({ courses }: { courses: Course[] }) {
   return (
     <div className="grid gap-6">
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">נבחרת 88</p>
+        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">נבחרת 88</p>
         <h2 className="text-2xl font-light">הרצאות בעמוד נבחרת 88</h2>
         <p className="text-sm text-white/45 mt-2">
           הרצאות שפורסמו תחת הפרופיל שלכם. הצגה בעמוד הציבורי נקבעת גם על ידי האדמין.
@@ -848,7 +848,7 @@ function OverviewHome({
           <button
             type="button"
             onClick={onUpload}
-            className="px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11"
+            className="px-5 py-2.5 rounded-full bg-[#b79043] text-black text-sm min-h-11"
           >
             העלאת תוכן
           </button>
@@ -889,7 +889,7 @@ function OverviewHome({
               {stats.viewsByDay.map((day) => (
                 <div key={day.date} className="flex-1 flex flex-col items-center gap-1 min-w-0">
                   <div
-                    className="w-full rounded-t bg-[#C8A24C]/80"
+                    className="w-full rounded-t bg-[#b79043]/80"
                     style={{ height: `${Math.max(6, (day.views / maxDay) * 100)}%` }}
                     title={`${day.date}: ${day.views}`}
                   />
@@ -932,7 +932,7 @@ function OverviewHome({
                     row.status === 'published'
                       ? 'text-emerald-300'
                       : row.status === 'pending_review'
-                        ? 'text-[#C8A24C]'
+                        ? 'text-[#b79043]'
                         : 'text-white/40'
                   }`}
                 >
@@ -944,8 +944,8 @@ function OverviewHome({
         </div>
       </div>
 
-      <div className="border border-[#C8A24C]/25 rounded-2xl p-5 bg-[#C8A24C]/5">
-        <p className="text-[13px] uppercase tracking-[0.25em] text-[#C8A24C] mb-2">טיפ להצלחה</p>
+      <div className="border border-[#b79043]/25 rounded-2xl p-5 bg-[#b79043]/5">
+        <p className="text-[13px] uppercase tracking-[0.25em] text-[#b79043] mb-2">טיפ להצלחה</p>
         <p className="text-sm text-white/70 font-light leading-relaxed">
           שמרו על הרצאות ממוקדות. Completion Rate גבוה מגדיל שמירות ושדרוגים מהתוכן שלכם.
         </p>
@@ -975,13 +975,13 @@ function VideosPanel({
     <div className="grid gap-6">
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">תוכן</p>
+          <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">תוכן</p>
           <h2 className="text-2xl font-light">{title}</h2>
         </div>
         <button
           type="button"
           onClick={onUpload}
-          className="px-5 py-2.5 rounded-full bg-[#C8A24C] text-black text-sm min-h-11"
+          className="px-5 py-2.5 rounded-full bg-[#b79043] text-black text-sm min-h-11"
         >
           העלאת תוכן
         </button>
@@ -1035,7 +1035,7 @@ function VideosPanel({
                         <button
                           type="button"
                           onClick={() => onSubmit(course.id)}
-                          className="px-3 py-1.5 text-xs border border-[#C8A24C]/40 text-[#C8A24C] rounded-xl min-h-10"
+                          className="px-3 py-1.5 text-xs border border-[#b79043]/40 text-[#b79043] rounded-xl min-h-10"
                         >
                           שליחה לאישור
                         </button>
@@ -1057,7 +1057,7 @@ function AnalyticsPanel({ stats }: { stats: LecturerOverview }) {
   return (
     <div className="grid gap-8">
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">אנליטיקות</p>
+        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">אנליטיקות</p>
         <h2 className="text-2xl font-light">ביצועי התכנים שלי</h2>
         <p className="text-sm text-white/45 mt-2">נתונים מצרפיים בלבד על התוכן שלכם. בלי פרטי משתמשים.</p>
       </div>
@@ -1094,7 +1094,7 @@ function AnalyticsPanel({ stats }: { stats: LecturerOverview }) {
                   </div>
                   <div className="h-2 rounded-full bg-white/5 overflow-hidden">
                     <div
-                      className="h-full bg-[#C8A24C]"
+                      className="h-full bg-[#b79043]"
                       style={{ width: `${Math.max(4, (item.views / maxTop) * 100)}%` }}
                     />
                   </div>
@@ -1113,7 +1113,7 @@ function ResourcesPanel({ courses }: { courses: Course[] }) {
   return (
     <div className="grid gap-6">
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">קבצים</p>
+        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">קבצים</p>
         <h2 className="text-2xl font-light">קבצים נלווים</h2>
         <p className="text-sm text-white/45 mt-2">קבצים שצורפו להרצאות שלכם. העלאה חדשה דרך עריכת הרצאה.</p>
       </div>
@@ -1208,7 +1208,7 @@ function ProfileEditorPanel({ isFounderTab }: { isFounderTab: boolean }) {
   return (
     <div className="grid gap-6 max-w-2xl">
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">
+        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">
           {isFounderTab ? 'מייסד' : 'פרופיל'}
         </p>
         <h2 className="text-2xl font-light">{isFounderTab ? 'פרופיל מייסד' : 'פרופיל מרצה'}</h2>
@@ -1241,7 +1241,7 @@ function ProfileEditorPanel({ isFounderTab }: { isFounderTab: boolean }) {
         type="button"
         disabled={pending}
         onClick={() => void save()}
-        className="w-fit px-6 py-3 rounded-full bg-[#C8A24C] text-black text-sm min-h-11 disabled:opacity-60"
+        className="w-fit px-6 py-3 rounded-full bg-[#b79043] text-black text-sm min-h-11 disabled:opacity-60"
       >
         {pending ? 'שומר...' : 'שמירת פרופיל'}
       </button>
@@ -1254,7 +1254,7 @@ function SettingsPanel({ onLibrary }: { onLibrary: () => void }) {
   return (
     <div className="grid gap-6 max-w-xl">
       <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#C8A24C] mb-2">הגדרות</p>
+        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">הגדרות</p>
         <h2 className="text-2xl font-light">הגדרות חשבון</h2>
       </div>
       <div className="border border-white/10 rounded-2xl p-5 grid gap-3">
@@ -1338,7 +1338,7 @@ function TeamPanel() {
           </div>
         ))}
       </div>
-      <div className="border border-[#C8A24C]/25 rounded-3xl p-6 grid gap-4">
+      <div className="border border-[#b79043]/25 rounded-3xl p-6 grid gap-4">
         <label className="block">
           <span className="block text-xs text-white/45 mb-1">שם</span>
           <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
@@ -1357,7 +1357,7 @@ function TeamPanel() {
           type="button"
           disabled={pending}
           onClick={() => void save()}
-          className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
+          className="w-full py-3 rounded-full bg-[#b79043] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60"
         >
           {pending ? 'שומר...' : 'הוספה לצוות'}
         </button>
@@ -1495,7 +1495,7 @@ function LecturerCourseForm({
         שליחה לאישור אדמין אחרי שמירה
       </label>
       {error && <p className="text-sm text-rose-300">{error}</p>}
-      <button type="submit" disabled={pending} className="w-full py-3 rounded-full bg-[#C8A24C] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60">
+      <button type="submit" disabled={pending} className="w-full py-3 rounded-full bg-[#b79043] text-black text-sm font-medium min-h-11 cursor-pointer disabled:opacity-60">
         {pending ? 'שומר...' : 'שמירה'}
       </button>
     </form>

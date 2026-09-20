@@ -16,7 +16,7 @@ export const MyListView: React.FC = () => {
     <div className="min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto">
       <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8">
         <div>
-          <div className="flex items-center gap-2 text-[#C8A24C] text-xs font-semibold mb-1">
+          <div className="flex items-center gap-2 text-[#b79043] text-xs font-semibold mb-1">
             <Bookmark className="w-4 h-4" />
             <span>רשימת צפייה אישית</span>
           </div>

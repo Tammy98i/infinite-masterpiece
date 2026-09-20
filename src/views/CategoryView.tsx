@@ -43,7 +43,7 @@ export const CategoryView: React.FC = () => {
             : undefined
         }
       >
-        <div className="flex items-center gap-2 text-[#C8A24C] text-xs mb-2">
+        <div className="flex items-center gap-2 text-[#b79043] text-xs mb-2">
           <Layers className="w-4 h-4" />
           <span>נושא</span>
         </div>
@@ -69,7 +69,7 @@ export const CategoryView: React.FC = () => {
               onClick={() => setActiveFilter(filter.id)}
               className={`px-4 py-2 rounded-xl text-sm font-medium transition-all min-h-11 whitespace-nowrap ${
                 activeFilter === filter.id
-                  ? 'bg-[#C8A24C] text-black'
+                  ? 'bg-[#b79043] text-black'
                   : 'bg-white/5 text-zinc-300 hover:bg-white/10'
               }`}
             >
@@ -84,7 +84,7 @@ export const CategoryView: React.FC = () => {
           <select
             value={selectedInstructor}
             onChange={(e) => setSelectedInstructor(e.target.value)}
-            className="bg-zinc-800 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#C8A24C] min-h-11"
+            className="bg-zinc-800 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#b79043] min-h-11"
             aria-label="סינון לפי מרצה"
           >
             <option value="all">לפי מרצה: הכול</option>

@@ -57,7 +57,7 @@ export function TeamMessageComposer({
         type="button"
         disabled={disabled || pending || !subject.trim() || !body.trim()}
         onClick={() => void send()}
-        className="w-fit px-4 py-2 rounded-full bg-[#C8A24C] text-black text-xs min-h-10 disabled:opacity-60 cursor-pointer"
+        className="w-fit px-4 py-2 rounded-full bg-[#b79043] text-black text-xs min-h-10 disabled:opacity-60 cursor-pointer"
       >
         {pending ? 'שולח...' : 'שליחת הודעה'}
       </button>

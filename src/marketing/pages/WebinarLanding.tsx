@@ -46,7 +46,7 @@ function FaqItem({ q, a, ...props }: { q: string; a: string } & HTMLAttributes<H
     <details {...props} className="group glass-card p-5">
       <summary className="flex items-center justify-between gap-4 cursor-pointer list-none text-white font-light min-h-11">
         <span>{q}</span>
-        <ChevronDown className="w-4 h-4 text-[#C8A24C] group-open:rotate-180 transition-transform duration-200 shrink-0" />
+        <ChevronDown className="w-4 h-4 text-[#b79043] group-open:rotate-180 transition-transform duration-200 shrink-0" />
       </summary>
       <p className="mt-4 text-sm text-white/50 font-light leading-relaxed">{a}</p>
     </details>
@@ -54,7 +54,7 @@ function FaqItem({ q, a, ...props }: { q: string; a: string } & HTMLAttributes<H
 }
 
 function SectionLabel({ children }: { children: ReactNode }) {
-  return <p className="text-[11px] uppercase tracking-[0.25em] text-[#C8A24C] mb-4">{children}</p>;
+  return <p className="text-[11px] uppercase tracking-[0.25em] text-[#b79043] mb-4">{children}</p>;
 }
 
 function SectionTitle({ children }: { children: ReactNode }) {
@@ -79,7 +79,7 @@ function HostFaces() {
               src={host.src}
               name={host.name}
               alt={host.name}
-              className="w-[72px] h-[72px] rounded-full border-2 border-[#C8A24C] text-base"
+              className="w-[72px] h-[72px] rounded-full border-2 border-[#b79043] text-base"
             />
           </span>
         ))}
@@ -202,8 +202,8 @@ export function WebinarLanding() {
     <div className="w-full pb-28">
       <section id="webinar-hero" className="relative min-h-0 md:min-h-screen flex items-center pt-20 pb-8 md:pt-24 md:pb-16 overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/40 via-transparent to-[#010308]/55" />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[min(900px,90vw)] h-[320px] bg-[radial-gradient(ellipse_at_center,rgba(200,162,76,0.18),transparent_70%)]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-[#0d0b08]/40 via-transparent to-[#0d0b08]/55" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-[min(900px,90vw)] h-[320px] bg-[radial-gradient(ellipse_at_center,rgba(183, 144, 67,0.18),transparent_70%)]" />
         </div>
 
         <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
@@ -213,9 +213,9 @@ export function WebinarLanding() {
               animate={{ opacity: 1, y: 0 }}
               className="text-center flex flex-col items-center"
             >
-              <div className="inline-flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-1.5 rounded-full border border-[#C8A24C]/50 bg-[#C8A24C]/15 mb-8">
-                <span className={`w-2 h-2 rounded-full ${eventNight ? 'bg-emerald-400' : 'bg-[#C8A24C]'}`} aria-hidden />
-                <span className="text-[11px] text-[#F7E7B5] font-medium">
+              <div className="inline-flex flex-wrap items-center gap-x-3 gap-y-1 px-4 py-1.5 rounded-full border border-[#b79043]/50 bg-[#b79043]/15 mb-8">
+                <span className={`w-2 h-2 rounded-full ${eventNight ? 'bg-emerald-400' : 'bg-[#b79043]'}`} aria-hidden />
+                <span className="text-[11px] text-[#dfc47d] font-medium">
                   {eventNight ? 'הערב החי עכשיו' : eventEnded ? WEBINAR_CTA_ENDED : 'ערב חי'}, {config.date}, {config.time}
                 </span>
                 {eventNight || eventEnded ? null : <WebinarCountdown date={config.date} time={config.time} />}
@@ -231,7 +231,7 @@ export function WebinarLanding() {
               <p className="text-base md:text-xl text-white/50 font-light leading-relaxed max-w-2xl mb-3 md:mb-5">
                 {config.heroSubheadline}
               </p>
-              <p className="text-sm md:text-lg text-[#F7E7B5] font-medium mb-3 md:mb-6">{WEBINAR_PUNCHLINE}</p>
+              <p className="text-sm md:text-lg text-[#dfc47d] font-medium mb-3 md:mb-6">{WEBINAR_PUNCHLINE}</p>
               <p className="text-sm text-white/45 font-light mb-5 md:mb-8">
                 {config.location}, {config.durationMinutes} דקות, {WEBINAR_AUDIENCE_LABEL}
               </p>
@@ -258,7 +258,7 @@ export function WebinarLanding() {
                       {liveEnter.label}
                     </a>
                   ) : (
-                    <p className="text-sm text-[#F7E7B5] font-medium min-h-11 inline-flex items-center">
+                    <p className="text-sm text-[#dfc47d] font-medium min-h-11 inline-flex items-center">
                       {liveEnter.label}
                     </p>
                   )
@@ -275,7 +275,7 @@ export function WebinarLanding() {
                   <button
                     type="button"
                     onClick={() => scrollToForm('hero_unregistered')}
-                    className="text-sm text-white/45 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
+                    className="text-sm text-white/45 hover:text-[#dfc47d] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
                   >
                     {WEBINAR_CTA_NOT_REGISTERED}
                   </button>
@@ -286,7 +286,7 @@ export function WebinarLanding() {
                       event.preventDefault();
                       scrollToWebinarFit();
                     }}
-                    className="text-sm text-white/45 hover:text-[#F7E7B5] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
+                    className="text-sm text-white/45 hover:text-[#dfc47d] min-h-11 inline-flex items-center cursor-pointer transition-colors duration-200"
                   >
                     {WEBINAR_CTA_FIT_LINK}
                   </a>
@@ -314,7 +314,7 @@ export function WebinarLanding() {
                   key={item.title}
                   className="glass-card p-5"
                 >
-                  <Icon className="w-6 h-6 text-[#C8A24C] mb-4" strokeWidth={1.5} aria-hidden />
+                  <Icon className="w-6 h-6 text-[#b79043] mb-4" strokeWidth={1.5} aria-hidden />
                   <h3 className="text-white mb-2">{item.title}</h3>
                   <p className="text-sm text-white/50 font-light">{item.text}</p>
                 </div>
@@ -344,7 +344,7 @@ export function WebinarLanding() {
                 </div>
                 <div className="p-6">
                   <h3 className="text-xl text-white mb-1">{leader.name}</h3>
-                  <p className="text-sm text-[#C8A24C] mb-3">{leader.title}</p>
+                  <p className="text-sm text-[#b79043] mb-3">{leader.title}</p>
                   <p className="text-sm text-white/50 font-light leading-relaxed">{leader.bio}</p>
                 </div>
               </article>
@@ -353,13 +353,13 @@ export function WebinarLanding() {
           <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
             {WEBINAR_TASK_STEPS.map((item, index) => (
               <li key={item.title} className="glass-card p-5">
-                <p className="text-[11px] text-[#C8A24C] mb-3">{String(index + 1).padStart(2, '0')}</p>
+                <p className="text-[11px] text-[#b79043] mb-3">{String(index + 1).padStart(2, '0')}</p>
                 <h3 className="text-white mb-2">{item.title}</h3>
                 <p className="text-sm text-white/50 font-light leading-relaxed">{item.text}</p>
               </li>
             ))}
           </ol>
-          <p id="tracks" className="text-sm text-[#F7E7B5]/80 font-light leading-relaxed max-w-2xl mx-auto">
+          <p id="tracks" className="text-sm text-[#dfc47d]/80 font-light leading-relaxed max-w-2xl mx-auto">
             שני מסלולי כניסה לפיילוט, אמיצים והססנים, יוצגו בסוף הערב. לא נדרש להחליט עכשיו.
           </p>
           <p className="mt-3 text-[11px] text-white/35 font-light leading-relaxed">{WEBINAR_TRACKS_FINE_PRINT}</p>
@@ -380,14 +380,14 @@ export function WebinarLanding() {
               <ul className="space-y-3">
                 {WEBINAR_FIT_YES.map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm text-white/65 font-light">
-                    <Check className="w-4 h-4 text-[#C8A24C] shrink-0 mt-0.5" aria-hidden />
+                    <Check className="w-4 h-4 text-[#b79043] shrink-0 mt-0.5" aria-hidden />
                     <span>{item}</span>
                   </li>
                 ))}
               </ul>
             </div>
             <div className="hidden lg:flex items-stretch justify-center" aria-hidden>
-              <div className="w-px bg-gradient-to-b from-transparent via-[#F7E7B5]/70 to-transparent" />
+              <div className="w-px bg-gradient-to-b from-transparent via-[#dfc47d]/70 to-transparent" />
             </div>
             <div className="rounded-3xl border border-rose-500/20 bg-rose-500/5 p-6 text-right">
               <h3 className="text-lg text-white mb-4 font-light text-center">לא מתאים אם…</h3>
@@ -423,14 +423,14 @@ export function WebinarLanding() {
 
       <section id="webinar-register-bottom" className="relative py-20 md:py-28 border-t border-white/[0.04] overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#010308]/20 to-[#010308]/50" />
-          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(200,162,76,0.16),transparent_70%)]" />
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0d0b08]/20 to-[#0d0b08]/50" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(183, 144, 67,0.16),transparent_70%)]" />
         </div>
         <div className="relative z-10 max-w-[920px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4 max-w-2xl mx-auto">
             זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.
           </p>
-          <p className="text-sm sm:text-base text-[#C8A24C] font-light mb-8">מחכים לך בוובינר. גל, תמי וגלב.</p>
+          <p className="text-sm sm:text-base text-[#b79043] font-light mb-8">מחכים לך בוובינר. גל, תמי וגלב.</p>
           <aside
             id={WEBINAR_REGISTER_ID}
             aria-label="הרשמה לוובינר"
@@ -442,14 +442,14 @@ export function WebinarLanding() {
               headlineParts={headlineParts}
             />
           </aside>
-          <p className="flex flex-wrap items-center justify-center gap-4 text-xs text-[#C8A24C]/80 font-light mt-8">
-            <Link to="/terms" className="hover:text-[#F7E7B5] min-h-11 inline-flex items-center">
+          <p className="flex flex-wrap items-center justify-center gap-4 text-xs text-[#b79043]/80 font-light mt-8">
+            <Link to="/terms" className="hover:text-[#dfc47d] min-h-11 inline-flex items-center">
               תנאי שימוש
             </Link>
-            <Link to="/privacy" className="hover:text-[#F7E7B5] min-h-11 inline-flex items-center">
+            <Link to="/privacy" className="hover:text-[#dfc47d] min-h-11 inline-flex items-center">
               פרטיות
             </Link>
-            <Link to="/accessibility" className="hover:text-[#F7E7B5] min-h-11 inline-flex items-center">
+            <Link to="/accessibility" className="hover:text-[#dfc47d] min-h-11 inline-flex items-center">
               נגישות
             </Link>
           </p>

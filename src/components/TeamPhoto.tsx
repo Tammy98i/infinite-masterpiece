@@ -14,7 +14,7 @@ export function TeamPhoto({ src, name, alt, className }: Props): ReactElement {
   if (!src || failed) {
     return (
       <div
-        className={`flex items-center justify-center bg-[radial-gradient(circle_at_center,rgba(200,162,76,0.28),#0b1020_70%)] text-[#F7E7B5] font-heading ${className ?? ''}`}
+        className={`flex items-center justify-center bg-[radial-gradient(circle_at_center,rgba(183, 144, 67,0.28),#0b1020_70%)] text-[#dfc47d] font-heading ${className ?? ''}`}
         aria-hidden={!alt}
         role={alt ? 'img' : undefined}
         aria-label={alt}

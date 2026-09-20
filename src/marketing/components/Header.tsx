@@ -224,13 +224,13 @@ export function Header() {
         'editorial-site-header fixed top-0 inset-x-0 z-50 h-20 transition-colors duration-300',
         onHome && 'home-header',
         isScrolled
-          ? 'bg-[#010308]/82 backdrop-blur-2xl border-b border-white/[0.08]'
-          : 'bg-gradient-to-b from-[#010308]/80 via-[#010308]/35 to-transparent border-b border-transparent'
+          ? 'bg-[#0d0b08]/82 backdrop-blur-2xl border-b border-white/[0.08]'
+          : 'bg-gradient-to-b from-[#0d0b08]/80 via-[#0d0b08]/35 to-transparent border-b border-transparent'
       )}
     >
       <div className="header-row mx-auto grid h-full w-full max-w-[1400px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 px-4 sm:px-8 lg:px-10">
           <Link to="/" className="header-logo flex items-center gap-3 sm:gap-4 group shrink-0 min-h-11">
-            <InfinityIcon className="w-8 h-8 text-[#F7E7B5] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
+            <InfinityIcon className="w-8 h-8 text-[#dfc47d] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
             <div className="flex flex-col">
               <span className="font-light text-[13px] sm:text-[15px] tracking-[0.25em] text-white/90 leading-tight uppercase">
                 Infinite
@@ -251,10 +251,10 @@ export function Header() {
                     ? 'text-white/85 hover:text-white'
                     : 'accent' in link && link.accent
                     ? onWebinar && link.to === '/webinar'
-                      ? 'text-[#F7E7B5] font-medium'
+                      ? 'text-[#dfc47d] font-medium'
                       : onPremium88 && link.to === '/premium-88'
-                      ? 'text-[#F7E7B5] font-medium'
-                      : 'text-[#C8A24C] hover:text-[#F7E7B5]'
+                      ? 'text-[#dfc47d] font-medium'
+                      : 'text-[#b79043] hover:text-[#dfc47d]'
                     : link.to === '/pricing' && onPricing
                     ? 'text-white font-medium'
                     : link.to === '/journey' && onJourney
@@ -274,7 +274,7 @@ export function Header() {
               {!onWebinar ? (
                 <Link
                   to="/library"
-                  className="px-5 py-3 rounded-full text-sm font-medium text-white/85 hover:text-[#C8A24C] transition-colors duration-500 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C8A24C] focus-visible:ring-offset-2 focus-visible:ring-offset-[#010308]"
+                  className="px-5 py-3 rounded-full text-sm font-medium text-white/85 hover:text-[#b79043] transition-colors duration-500 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d0b08]"
                   aria-label="כניסה לספרייה אינסופית. קורסים והרצאות אונליין"
                 >
                   ספרייה
@@ -313,7 +313,7 @@ export function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="header-panel lg:hidden absolute top-full left-0 right-0 bg-[#010308]/95 backdrop-blur-3xl border-b border-white/[0.05]"
+            className="header-panel lg:hidden absolute top-full left-0 right-0 bg-[#0d0b08]/95 backdrop-blur-3xl border-b border-white/[0.05]"
           >
             <nav className="px-6 py-8 flex flex-col gap-6" aria-label="ניווט נייד">
               {navLinks.map((link) => (
@@ -322,7 +322,7 @@ export function Header() {
                   to={link.to}
                   className={cn(
                     'text-lg font-light',
-                    'accent' in link && link.accent ? 'text-[#F7E7B5]' : 'text-white/90 hover:text-white'
+                    'accent' in link && link.accent ? 'text-[#dfc47d]' : 'text-white/90 hover:text-white'
                   )}
                   onClick={() => setMobileMenuOpen(false)}
                 >
@@ -335,7 +335,7 @@ export function Header() {
                   <Link
                     to="/library"
                     onClick={() => setMobileMenuOpen(false)}
-                    className="block w-full text-center px-8 py-3 text-sm text-white/85 hover:text-[#C8A24C] min-h-11"
+                    className="block w-full text-center px-8 py-3 text-sm text-white/85 hover:text-[#b79043] min-h-11"
                   >
                     כבר בפנים? כניסה לספרייה
                   </Link>

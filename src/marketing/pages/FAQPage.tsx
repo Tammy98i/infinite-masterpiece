@@ -53,7 +53,7 @@ export function FAQPage() {
   return (
     <div className="min-h-screen relative pt-32 pb-48">
       {/* Background */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/25 via-transparent to-[#010308]/35" />
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0d0b08]/25 via-transparent to-[#0d0b08]/35" />
 
       <div className="relative z-10 max-w-3xl mx-auto px-4 sm:px-6 lg:px-8">
         
@@ -67,8 +67,8 @@ export function FAQPage() {
 
         <label className="relative mb-8 block">
           <span className="sr-only">חיפוש בשאלות נפוצות</span>
-          <Search className="pointer-events-none absolute start-5 top-1/2 h-5 w-5 -translate-y-1/2 text-[#C8A24C]" />
-          <input value={query} onChange={event => { setQuery(event.target.value); setOpenIndex(null); }} placeholder="חיפוש לפי נושא או שאלה…" className="min-h-14 w-full rounded-2xl border border-white/10 bg-white/[0.03] py-3 pe-12 ps-14 text-white outline-none placeholder:text-white/35 focus:border-[#C8A24C]/60" />
+          <Search className="pointer-events-none absolute start-5 top-1/2 h-5 w-5 -translate-y-1/2 text-[#b79043]" />
+          <input value={query} onChange={event => { setQuery(event.target.value); setOpenIndex(null); }} placeholder="חיפוש לפי נושא או שאלה…" className="min-h-14 w-full rounded-2xl border border-white/10 bg-white/[0.03] py-3 pe-12 ps-14 text-white outline-none placeholder:text-white/35 focus:border-[#b79043]/60" />
           {query ? <button type="button" onClick={() => setQuery('')} className="absolute end-2 top-1/2 flex h-10 w-10 -translate-y-1/2 items-center justify-center text-white/40 hover:text-white" aria-label="ניקוי חיפוש"><X size={17} /></button> : null}
         </label>
         <p className="mb-4 text-sm text-white/40" role="status">{filteredFaqs.length} שאלות</p>
@@ -76,7 +76,7 @@ export function FAQPage() {
           {filteredFaqs.map((faq, idx) => (
             <div 
               key={idx}
-              className="glass-card overflow-hidden transition-colors hover:border-[#C8A24C]/50"
+              className="glass-card overflow-hidden transition-colors hover:border-[#b79043]/50"
             >
               <button
                 onClick={() => setOpenIndex(openIndex === idx ? null : idx)}
@@ -84,7 +84,7 @@ export function FAQPage() {
               >
                 <span className="text-lg font-heading text-white/90">{faq.q}</span>
                 <ChevronDown 
-                  className={`w-5 h-5 text-[#C8A24C]/60 transition-transform duration-500 ${openIndex === idx ? 'rotate-180' : ''}`} 
+                  className={`w-5 h-5 text-[#b79043]/60 transition-transform duration-500 ${openIndex === idx ? 'rotate-180' : ''}`} 
                   strokeWidth={1.5}
                 />
               </button>
@@ -105,7 +105,7 @@ export function FAQPage() {
               </AnimatePresence>
             </div>
           ))}
-          {filteredFaqs.length === 0 ? <div className="glass-card p-10 text-center"><p className="text-white/55">לא נמצאה תשובה מתאימה.</p><Link to="/webinar" className="mt-4 inline-flex min-h-11 items-center text-[#C8A24C] hover:text-[#F7E7B5]">אפשר לשאול אותנו בערב החי</Link></div> : null}
+          {filteredFaqs.length === 0 ? <div className="glass-card p-10 text-center"><p className="text-white/55">לא נמצאה תשובה מתאימה.</p><Link to="/webinar" className="mt-4 inline-flex min-h-11 items-center text-[#b79043] hover:text-[#dfc47d]">אפשר לשאול אותנו בערב החי</Link></div> : null}
         </div>
 
         {/* Hesitation CTA in FAQ */}
@@ -122,10 +122,10 @@ export function FAQPage() {
 
           <Link
             to="/hesitation"
-            className="inline-flex flex-col items-center justify-center px-12 py-6 rounded-[24px] bg-white/[0.02] text-white border border-[#C8A24C]/30 hover:bg-white/[0.05] hover:border-[#C8A24C]/60 transition-all duration-500 text-lg shadow-[0_0_20px_rgba(200,162,76,0.05)] hover:shadow-[0_0_40px_rgba(200,162,76,0.15)] group"
+            className="inline-flex flex-col items-center justify-center px-12 py-6 rounded-[24px] bg-white/[0.02] text-white border border-[#b79043]/30 hover:bg-white/[0.05] hover:border-[#b79043]/60 transition-all duration-500 text-lg shadow-[0_0_20px_rgba(183, 144, 67,0.05)] hover:shadow-[0_0_40px_rgba(183, 144, 67,0.15)] group"
           >
             <span className="font-medium mb-1">אני מתחיל/ה ב־8 ₪</span>
-            <span className="text-sm text-white/40 group-hover:text-[#C8A24C] transition-colors">מסלול ההססנים. 4 פעימות</span>
+            <span className="text-sm text-white/40 group-hover:text-[#b79043] transition-colors">מסלול ההססנים. 4 פעימות</span>
           </Link>
         </div>
 
