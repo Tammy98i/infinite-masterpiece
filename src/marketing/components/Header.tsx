@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { Menu, Search, X, Infinity as InfinityIcon } from 'lucide-react';
 import { cn } from '../lib/utils';
@@ -26,6 +26,9 @@ export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
+  const onHome = location.pathname === '/';
+  const menuRef = useRef<HTMLDivElement>(null);
+  const burgerRef = useRef<HTMLButtonElement>(null);
   const onPremium88 = location.pathname === '/premium-88';
   const onPricing = location.pathname === '/pricing';
   const onJourney = location.pathname === '/journey';
@@ -171,6 +174,29 @@ export function Header() {
     };
   }, []);
 
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  useEffect(() => {
+    if (!onHome || !mobileMenuOpen) return;
+    const outside = (event: MouseEvent) => {
+      if (!menuRef.current?.contains(event.target as Node) && !burgerRef.current?.contains(event.target as Node)) setMobileMenuOpen(false);
+    };
+    const escape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setMobileMenuOpen(false);
+        burgerRef.current?.focus();
+      }
+    };
+    document.addEventListener('click', outside);
+    document.addEventListener('keydown', escape);
+    return () => {
+      document.removeEventListener('click', outside);
+      document.removeEventListener('keydown', escape);
+    };
+  }, [onHome, mobileMenuOpen]);
+
   const defaultNavLinks: Array<{ name: string; to: string; accent?: boolean }> = [
     { name: 'וובינר', to: '/webinar', accent: true },
     { name: 'תהליך', to: '/journey' },
@@ -196,13 +222,14 @@ export function Header() {
       aria-label="כותרת האתר"
       className={cn(
         'fixed top-0 inset-x-0 z-50 h-20 transition-colors duration-500',
+        onHome && 'home-header',
         isScrolled
           ? 'bg-[#010308]/82 backdrop-blur-2xl border-b border-white/[0.08]'
           : 'bg-gradient-to-b from-[#010308]/80 via-[#010308]/35 to-transparent border-b border-transparent'
       )}
     >
-      <div className="mx-auto grid h-full w-full max-w-[1400px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-6 lg:px-8">
-          <Link to="/" className="flex items-center gap-3 sm:gap-4 group shrink-0 min-h-11">
+      <div className="header-row mx-auto grid h-full w-full max-w-[1400px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-3 px-4 sm:px-6 lg:px-8">
+          <Link to="/" className="header-logo flex items-center gap-3 sm:gap-4 group shrink-0 min-h-11">
             <InfinityIcon className="w-8 h-8 text-[#F7E7B5] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
             <div className="flex flex-col">
               <span className="font-light text-[13px] sm:text-[15px] tracking-[0.25em] text-white/90 leading-tight uppercase">
@@ -213,7 +240,7 @@ export function Header() {
             </div>
           </Link>
 
-          <nav className="hidden lg:flex items-center justify-center gap-6 xl:gap-10 min-w-0" aria-label="ניווט ראשי">
+          <nav className="header-links hidden lg:flex items-center justify-center gap-6 xl:gap-10 min-w-0" aria-label="ניווט ראשי">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -240,9 +267,9 @@ export function Header() {
             ))}
           </nav>
 
-          <div className="flex items-center justify-end gap-2 sm:gap-3 shrink-0">
+          <div className="header-actions flex items-center justify-end gap-2 sm:gap-3 shrink-0">
             <button type="button" onClick={() => setSearchOpen(true)} className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-white/60 transition-colors hover:bg-white/5 hover:text-white" aria-label="חיפוש באתר"><Search className="h-5 w-5" strokeWidth={1.5} /></button>
-            <div className="hidden lg:flex items-center gap-3">
+            <div className="header-desktop hidden lg:flex items-center gap-3">
               {headerCta()}
               {!onWebinar ? (
                 <Link
@@ -255,14 +282,19 @@ export function Header() {
               ) : null}
               <AccountMenu />
             </div>
-            <div className="flex items-center gap-2 lg:hidden">
-              {compactBarCta()}
+            <div className="header-mobile flex items-center gap-2 lg:hidden">
+              <div className="header-compact-cta">{compactBarCta()}</div>
               <AccountMenu />
               <button
                 type="button"
-                className="p-2 text-white/85 hover:text-white transition-colors min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
-                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-                aria-label="תפריט ניווט"
+                ref={burgerRef}
+                className="header-burger p-2 text-white/85 hover:text-white transition-colors min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
+                onClick={(event) => {
+                  event.stopPropagation();
+                  setMobileMenuOpen((open) => !open);
+                }}
+                aria-label={mobileMenuOpen ? 'סגירת תפריט ניווט' : 'תפריט ניווט'}
+                aria-controls="site-mobile-menu"
                 aria-expanded={mobileMenuOpen}
               >
                 {mobileMenuOpen ? <X className="w-6 h-6" strokeWidth={1.5} /> : <Menu className="w-6 h-6" strokeWidth={1.5} />}
@@ -275,11 +307,13 @@ export function Header() {
       <AnimatePresence>
         {mobileMenuOpen && (
           <motion.div
+            ref={menuRef}
+            id="site-mobile-menu"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="lg:hidden absolute top-full left-0 right-0 bg-[#010308]/95 backdrop-blur-3xl border-b border-white/[0.05]"
+            className="header-panel lg:hidden absolute top-full left-0 right-0 bg-[#010308]/95 backdrop-blur-3xl border-b border-white/[0.05]"
           >
             <nav className="px-6 py-8 flex flex-col gap-6" aria-label="ניווט נייד">
               {navLinks.map((link) => (

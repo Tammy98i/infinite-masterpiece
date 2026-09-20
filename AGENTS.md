@@ -39,3 +39,9 @@ docker compose -f docker-compose.base44.yml up -d
 - The Base44 Compose command now uses `tsx watch` alongside Vite so API source edits reload too.
 - Explicitly empty VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY must remain empty, not fall back to the project's published Supabase defaults. Otherwise local demo login returns a client-only preview token that cannot authorize API writes. With local defaults, sign out of any old preview-only session and log in again to get a real SQLite session.
 - These endpoints are implemented for the Express runtime used by Compose; the separate Vercel serverless API tree does not provide the new Team Members endpoints.
+
+## Homepage video hero
+- `VideoHero` owns the font-aware entrance and removes the static QuietBoot cover on home only. Its animation classes live on `.video-home` so the existing Header participates without duplicating search/account/navigation logic.
+- Hero CSS is scoped to home; keep page scrolling available for the sections below it. The Header folds at 1160px on home only. Keep burger clicks stopped from reaching the outside-click listener (the icon swaps during that same click).
+- Reduced motion includes both the OS preference and the accessibility widget's `a11y-reduce-motion` class. Both video copies pause at time zero; fonts use the existing Hebrew stack.
+- Verify at 1280×800, 1160px, 372px, 320px and short landscape, including menu Escape/outside-click closure. A hidden preview can suspend video playback; checking loaded metadata alone does not verify the cross-fade.

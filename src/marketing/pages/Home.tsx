@@ -15,85 +15,17 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { EntryTrackCards } from '../components/EntryTrackCards';
-import { WEBINAR_CTA_ENDED, WEBINAR_CTA_HEADER, WEBINAR_CTA_NEXT_CYCLE } from '../../constants/webinarPage';
-import { useWebinarPhase } from '../hooks/useWebinarPhase';
+import { VideoHero } from '../components/VideoHero';
 import { SectionNav } from '../components/SectionNav';
 import { FAQS } from './FAQPage';
 
-const MotionDiv = motion.div;
 const MotionSection = motion.section;
 const MOTION = { duration: 0.5, ease: [0.16, 1, 0.3, 1] as const };
 
 export function Home() {
-  const { phase } = useWebinarPhase();
-  const homeCta = phase === 'ended' ? WEBINAR_CTA_NEXT_CYCLE : WEBINAR_CTA_HEADER;
   return (
     <div className="w-full">
-      {/* 1. HERO */}
-      <section className="relative min-h-0 md:min-h-screen flex items-center pt-20 pb-8 md:pt-20 md:pb-16 overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none" aria-hidden>
-          <div className="absolute inset-0 bg-gradient-to-b from-[#010308]/30 via-transparent to-[#010308]/40" />
-        </div>
-
-        <div className="relative z-20 max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 w-full flex justify-center">
-          <div className="w-full max-w-3xl flex flex-col justify-center items-center text-center">
-            <MotionDiv
-              initial={{ opacity: 0, y: 16 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={MOTION}
-            >
-              <div className="inline-flex items-center gap-3 px-4 py-1.5 rounded-full bg-white/[0.03] border border-white/[0.05] backdrop-blur-md mb-8">
-                <span className="w-2 h-2 rounded-full bg-[#C8A24C]" />
-                <span className="text-[11px] font-medium tracking-[0.2em] text-white/60 uppercase">
-                  The Masterpiece Framework
-                </span>
-              </div>
-
-              <h1 className="font-heading tracking-tight leading-[1.15] mb-4 md:mb-8 mx-auto w-[min(calc(100vw-2rem),72rem)]">
-                <span className="text-white block text-[32px] sm:text-[40px] md:text-[64px] lg:text-[76px]">
-                  יש לך יצירה.
-                </span>
-                <span className="text-gold-gradient font-medium block whitespace-nowrap text-[clamp(1.25rem,calc((100vw-2rem)/13.2),4.5rem)]">
-                  עכשיו בונים לה מערכת הכנסה.
-                </span>
-              </h1>
-
-              <p className="text-[16px] md:text-[22px] text-white/50 mb-6 md:mb-12 max-w-xl leading-relaxed font-light">
-                הבעיה היא לא שאין לך כישרון. הבעיה היא שאין סביב הכישרון שלך מערכת עסקית. אנו הופכים יצירה
-                לעסק, השפעה וחופש.
-              </p>
-
-              <div className="flex flex-col items-center gap-4 w-full sm:w-auto">
-                <Link
-                  to={phase === 'ended' ? '/pricing' : '/webinar'}
-                  className="btn-gold text-black text-lg w-full sm:w-auto px-12 py-5 rounded-[22px] flex items-center justify-center gap-3 group"
-                >
-                  <span>{homeCta}</span>
-                  <ArrowLeft className="w-5 h-5 group-hover:-translate-x-1 transition-transform duration-500" />
-                </Link>
-                {phase === 'ended' ? (
-                  <p className="text-white/70 text-sm font-medium min-h-11 inline-flex items-center">
-                    {WEBINAR_CTA_ENDED}
-                  </p>
-                ) : (
-                  <a
-                    href="/#pricing"
-                    className="text-white/45 hover:text-[#C8A24C] transition-colors duration-500 text-sm font-light min-h-11 inline-flex items-center"
-                  >
-                    למסלול האמיצים והססנים
-                  </a>
-                )}
-                <Link
-                  to="/library"
-                  className="text-white/30 hover:text-[#C8A24C] transition-colors duration-500 text-sm font-light min-h-11 inline-flex items-center"
-                >
-                  כבר בפנים? כניסה לספרייה
-                </Link>
-              </div>
-            </MotionDiv>
-          </div>
-        </div>
-      </section>
+      <VideoHero />
 
       <SectionNav items={[
         { id: 'what-is-it', label: 'במה זה שונה' },
