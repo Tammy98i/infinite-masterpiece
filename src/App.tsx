@@ -1,6 +1,6 @@
 ﻿import { lazy, Suspense, useEffect } from 'react';
 import { BrowserRouter, Routes, Route, Outlet, Navigate, useLocation } from 'react-router-dom';
-import { Layout } from './marketing/components/Layout';
+import { Layout, SiteBackdropLayout } from './marketing/components/Layout';
 import { Home } from './marketing/pages/Home';
 import { Premium88 } from './marketing/pages/Premium88';
 import { FounderPage } from './marketing/pages/FounderPage';
@@ -124,6 +124,7 @@ export default function App() {
       <AuthModal />
       <A11yWidget />
       <Routes>
+        <Route element={<SiteBackdropLayout />}>
         <Route element={<PublicLayoutWrapper />}>
           <Route path="/" element={<Home />} />
           <Route path="/journey" element={<Journey />} />
@@ -150,6 +151,7 @@ export default function App() {
         <Route path="/library/*" element={<LibraryRoute />} />
         <Route path="/login" element={<Navigate to="/library" replace />} />
         <Route path="/dashboard" element={<Navigate to="/library" replace />} />
+        </Route>
       </Routes>
       </MotionA11yProvider>
     </BrowserRouter>

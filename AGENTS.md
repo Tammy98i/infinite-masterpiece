@@ -43,5 +43,7 @@ docker compose -f docker-compose.base44.yml up -d
 ## Homepage video hero
 - `VideoHero` owns the font-aware entrance and removes the static QuietBoot cover on home only. Its animation classes live on `.video-home` so the existing Header participates without duplicating search/account/navigation logic.
 - Hero CSS is scoped to home; keep page scrolling available for the sections below it. The Header folds at 1160px on home only. Keep burger clicks stopped from reaching the outside-click listener (the icon swaps during that same click).
-- Reduced motion includes both the OS preference and the accessibility widget's `a11y-reduce-motion` class. Both video copies pause at time zero; fonts use the existing Hebrew stack.
+- `SiteBackdropLayout` in `Layout.tsx` wraps both public and library routes in `App.tsx`. It owns one persistent `VideoBackground` pair across navigation; `VideoHero` is transparent foreground only. Do not mount additional backdrop players in individual layouts or views.
+- The hero retains its light shade; scrolling down home progressively restores the shared dark readability overlays. Page shells must remain transparent; cards, dialogs and actual lesson playback retain their own surfaces.
+- Reduced motion includes both the OS preference and the accessibility widget's `a11y-reduce-motion` class. Both video copies pause at time zero and are hidden so the poster is shown. Hidden tabs pause background playback; fonts use the existing Hebrew stack.
 - Verify at 1280×800, 1160px, 372px, 320px and short landscape, including menu Escape/outside-click closure. A hidden preview can suspend video playback; checking loaded metadata alone does not verify the cross-fade.

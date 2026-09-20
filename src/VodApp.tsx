@@ -7,7 +7,7 @@ import { OnboardingTriggers } from './components/onboarding/OnboardingTriggers';
 import { PaywallProvider } from './context/PaywallContext';
 import { PaywallTriggers } from './components/PaywallTriggers';
 import { SITE_TAGLINE } from './constants/brand';
-import { SkyBackdrop } from './components/SkyBackdrop';
+
 
 import { HomeView } from './views/HomeView';
 import { CategoryView } from './views/CategoryView';
@@ -98,8 +98,7 @@ export const VodApp: React.FC = () => {
   return (
     <PaywallProvider>
     <PaywallTriggers />
-    <div className={`vod-app flex flex-col min-h-screen relative text-white ${currentView === 'watch' || currentView === 'admin' || currentView === 'lecturer' ? 'bg-[#050505]' : 'sky-readable bg-[#010308]'}`}>
-      {currentView !== 'watch' && currentView !== 'admin' && currentView !== 'lecturer' ? <SkyBackdrop /> : null}
+    <div className="vod-app sky-readable flex flex-col min-h-screen relative text-white bg-transparent">
       {currentView !== 'watch' && (
         <a href="#library-main" className="skip-link">
           דילוג לתוכן הראשי

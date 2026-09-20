@@ -36,7 +36,7 @@ export function LecturerView() {
 
   if (isGuest) {
     return (
-      <div className="min-h-screen bg-[#050505] text-white pt-28 pb-24 px-4 text-right">
+      <div className="min-h-screen bg-transparent text-white pt-28 pb-24 px-4 text-right">
         <div className="max-w-md mx-auto border border-white/10 rounded-3xl p-8">
           <h1 className="text-2xl font-medium mb-3">אזור מרצים</h1>
           <p className="text-sm text-white/50 font-light mb-6">
@@ -187,7 +187,7 @@ function ApplicationPanel({
   };
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white pt-28 pb-24 px-4 sm:px-8 max-w-3xl mx-auto text-right">
+    <div className="min-h-screen bg-transparent text-white pt-28 pb-24 px-4 sm:px-8 max-w-3xl mx-auto text-right">
       <button type="button" onClick={onBack} className="text-sm text-white/45 hover:text-white mb-8 min-h-11 cursor-pointer">
         חזרה לפרופיל
       </button>
@@ -384,7 +384,7 @@ function LecturerDashboard({
     status ? courses.filter((course) => course.status === status) : courses;
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white text-right" dir="rtl">
+    <div className="min-h-screen bg-transparent text-white text-right" dir="rtl">
       <div className="flex min-h-screen">
         <aside className="hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
           <div className="p-5 border-b border-white/10">

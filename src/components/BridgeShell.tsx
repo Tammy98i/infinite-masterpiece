@@ -1,10 +1,9 @@
 import { Infinity as InfinityIcon } from 'lucide-react';
-import { SkyBackdrop } from './SkyBackdrop';
+
 
 export function BridgeShell() {
   return (
-    <div className="sky-readable min-h-screen relative bg-[#010308] text-white">
-      <SkyBackdrop />
+    <div className="sky-readable min-h-screen relative bg-transparent text-white">
       <header className="relative z-10 h-20 px-4 sm:px-8 flex items-center justify-between border-b border-white/[0.04]">
         <div className="flex items-center gap-3">
           <InfinityIcon className="w-7 h-7 text-[#F7E7B5]" strokeWidth={1} />

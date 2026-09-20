@@ -1,7 +1,7 @@
 .team-galaxy {
   --galaxy-gold: #c8a24c; --galaxy-champagne: #f7e7b5; --star-scale: 1;
   position: relative; isolation: isolate; overflow: hidden; color: #f7f4eb;
-  background: #05070b; border-block: 1px solid #c8a24c29; padding: 70px 28px 28px;
+  background: #05070b66; border-block: 1px solid #c8a24c29; padding: 70px 28px 28px;
   scroll-margin-top: 80px;
 }
 .team-galaxy::before { content: ''; position: absolute; inset: 0; z-index: -1; pointer-events: none; background: radial-gradient(ellipse at 37% 53%, #c8a24c0c, transparent 55%); }

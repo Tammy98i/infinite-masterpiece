@@ -107,7 +107,7 @@ export function AdminView() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-[#050505] text-white pt-28 pb-24 px-4 text-right">
+      <div className="min-h-screen bg-transparent text-white pt-28 pb-24 px-4 text-right">
         <div className="max-w-md mx-auto border border-white/10 rounded-3xl p-8">
           <h1 className="text-2xl font-medium mb-3">אין הרשאת ניהול</h1>
           <p className="text-sm text-white/50 font-light mb-6">
@@ -134,7 +134,7 @@ export function AdminView() {
   const tabMeta = TAB_META[tab];
 
   return (
-    <div className="min-h-screen bg-[#050505] text-white text-right">
+    <div className="min-h-screen bg-transparent text-white text-right">
       <div className="flex min-h-screen">
         <aside className="hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
           <AdminSidebar
