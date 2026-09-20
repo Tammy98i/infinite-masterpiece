@@ -9,7 +9,7 @@ export function Footer() {
   if (onWebinar) {
     return (
       <footer
-        className="relative bg-[#010308]/78 backdrop-blur-xl overflow-hidden pt-12 pb-12 border-t border-white/[0.08]"
+        className="editorial-site-footer relative bg-[#010308]/78 backdrop-blur-xl overflow-hidden pt-12 pb-12 border-t border-white/[0.08]"
         role="contentinfo"
         aria-label="תחתית האתר"
       >
@@ -47,7 +47,7 @@ export function Footer() {
   }
 
   return (
-    <footer className="relative bg-[#010308]/78 backdrop-blur-xl overflow-hidden pt-24 pb-14 border-t border-white/[0.08]" role="contentinfo" aria-label="תחתית האתר">
+    <footer className="editorial-site-footer relative bg-[#010308]/78 backdrop-blur-xl overflow-hidden pt-24 pb-14 border-t border-white/[0.08]" role="contentinfo" aria-label="תחתית האתר">
       <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-10">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-16 text-right mb-20">
           <div>

@@ -81,7 +81,7 @@ export const Navbar: React.FC = () => {
       <header
         role="banner"
         aria-label="כותרת הספרייה"
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`editorial-library-header fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled || currentView !== 'home'
             ? 'bg-[#0a0a0acc] backdrop-blur-md border-b border-white/10 shadow-xl'
             : 'bg-gradient-to-b from-black/80 via-black/40 to-transparent'
@@ -396,7 +396,7 @@ export const Navbar: React.FC = () => {
         )}
       </header>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0af2] backdrop-blur-xl border-t border-white/10 py-2 px-6 flex items-center justify-between" aria-label="ניווט תחתון — ספרייה">
+      <nav className="editorial-library-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0af2] backdrop-blur-xl border-t border-white/10 py-2 px-6 flex items-center justify-between" aria-label="ניווט תחתון — ספרייה">
         <button
           type="button"
           onClick={() => setView('home')}

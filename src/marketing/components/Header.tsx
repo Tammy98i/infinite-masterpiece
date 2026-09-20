@@ -221,7 +221,7 @@ export function Header() {
       role="banner"
       aria-label="כותרת האתר"
       className={cn(
-        'fixed top-0 inset-x-0 z-50 h-20 transition-colors duration-300',
+        'editorial-site-header fixed top-0 inset-x-0 z-50 h-20 transition-colors duration-300',
         onHome && 'home-header',
         isScrolled
           ? 'bg-[#010308]/82 backdrop-blur-2xl border-b border-white/[0.08]'
