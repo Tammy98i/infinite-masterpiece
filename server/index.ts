@@ -30,9 +30,21 @@ import { isS3Enabled } from './services/s3Upload.js';
 import { handleStripeWebhook, processDueInstallments, isStripeEnabled } from './services/stripeService.js';
 import { startWebinarReminderScheduler } from './jobs/webinarReminders.js';
 import { isWebinarEmailEnabled } from './services/webinarEmailService.js';
+import { validateProductionEnvironment } from './config/production.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
+validateProductionEnvironment();
+
 const app = express();
+app.disable('x-powered-by');
+app.use((_req, res, next) => {
+  res.setHeader('X-Content-Type-Options', 'nosniff');
+  res.setHeader('Referrer-Policy', 'strict-origin-when-cross-origin');
+  res.setHeader('Permissions-Policy', 'camera=(), microphone=(), geolocation=()');
+  res.setHeader('Content-Security-Policy', "frame-ancestors 'self'");
+  if (isProduction()) res.setHeader('Strict-Transport-Security', 'max-age=31536000; includeSubDomains');
+  next();
+});
 const PORT = Number(process.env.PORT || (isProduction() ? 3000 : 3001));
 
 if (isProduction()) {
@@ -64,7 +76,7 @@ app.post('/api/checkout/webhook', express.raw({ type: 'application/json' }), asy
     res.status(status).json({ error: (err as Error).message });
   }
 });
-app.use(express.json());
+app.use(express.json({ limit: '1mb' }));
 ensureUploadsDir();
 app.use('/uploads', express.static(UPLOADS_DIR, { fallthrough: false, index: false }));
 

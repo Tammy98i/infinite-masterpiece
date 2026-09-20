@@ -5,7 +5,7 @@
 1. **התחברות לאתר** — אימייל+סיסמה, טלפון (OTP), ו-Google דרך **Authentication → Providers**.
 2. **OAuth Server** — האתר שלנו כספק זהות לאפליקציות אחרות. דף האישור: `/oauth/consent`.
 
-בלי מפתחות שרת נשארת גם כניסת הדמו בפריוו (`admin@infinitemasterpiece.local` / `Masterpiece88`).
+כניסת הדמו זמינה רק בשרת הפיתוח; build של פרודקשן מחייב Supabase ואינו מאפשר חשבונות דמו.
 
 ## מה חובר בקוד
 
@@ -20,9 +20,9 @@
 
 ### 1. מפתחות
 
-פרויקט: `bjhxluqeyjdioebtuvob`. ה-URL וה-anon הציבוריים מחוברים בקוד (`src/lib/supabasePublic.ts`), כך שהתחברות אימייל/סיסמה מופיעה גם בלי משתני Vercel.
+כתובת הפרויקט והמפתח הציבורי אינם נשמרים בקוד. יש להגדיר אותם כמשתני סביבה בכל סביבת פריסה.
 
-טבלת `public.profiles` כבר נוצרה בפרויקט.
+לפני פרסום יש להריץ את `supabase/profiles.sql` ב-SQL Editor של הפרויקט.
 
 **Project Settings → API**: Project URL + `anon` `public`.
 
@@ -109,6 +109,6 @@ curl http://localhost:3001/api/auth/providers
 
 ## Vercel
 
-`vercel.json` מגיש את ה-SPA. `api/auth/login` + `providers` / `supabase` / `me` / `logout` רצים כפונקציות. בלי מפתחות Supabase, חשבונות הדמו (`admin@infinitemasterpiece.local` / `Masterpiece88`) נכנסים בפריוו לבד — גם אם Deployment Protection חוסם את `/api`.
+`vercel.json` מגיש את ה-SPA. `api/auth/login` + `providers` / `supabase` / `me` / `logout` רצים כפונקציות. בלי משתני Supabase ההתחברות אינה זמינה בפריסת Vercel; חשבונות דמו קיימים בפיתוח מקומי בלבד.
 
 קטלוג הספרייה נופל לתוכן הסטטי אם אין Express. אימייל/סיסמה ו-Google עובדים בפריוו בלי משתני Vercel (ה-anon הציבורי בקוד). הרשמת טלפון דורשת שספק Phone+SMS יהיה דלוק ב-Supabase.

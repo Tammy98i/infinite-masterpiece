@@ -7,6 +7,7 @@ import { seedAdminIfMissing, seedCatalogIfEmpty, seedDemoLecturersIfMissing, see
 import { migrateSchema } from './migrate.js';
 import { initializeTeamMembers } from './teamMembers.js';
 import { seedWebinarConfigIfMissing } from '../services/webinarService.js';
+import { isProduction } from '../config/env.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DB_PATH = path.join(__dirname, '..', 'data', 'onboarding.db');
@@ -35,8 +36,12 @@ export function getDb(): DatabaseSync {
   }
   seedCatalogIfEmpty(db);
   seedFounderLecturers(db);
-  seedAdminIfMissing(db);
-  seedDemoLecturersIfMissing(db);
+  if (!isProduction()) {
+    seedAdminIfMissing(db);
+    seedDemoLecturersIfMissing(db);
+
+  }
+
   seedWebinarConfigIfMissing();
   initializeTeamMembers(db);
 

@@ -173,15 +173,9 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, []);
 
   const applyPlan = (plan: PlanId, userId: string) => {
+    if (userId === 'guest') return;
     const trialEndsAt = plan === 'free_trial' ? formatTrialEndDate(TRIAL_DAYS) : undefined;
-    setUser((prev) => ({
-      ...prev,
-      subscriptionPlan: plan,
-      trialEndsAt,
-    }));
-    if (userId !== 'guest') {
-      void authApi.setPlan(plan, trialEndsAt).then(({ user: next }) => setUser(fromPayload(next)));
-    }
+    void authApi.setPlan(plan, trialEndsAt).then(({ user: next }) => setUser(fromPayload(next)));
   };
 
   const applySession = (token: string, next: AuthUserPayload) => {

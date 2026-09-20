@@ -12,6 +12,9 @@ import { BUILT_IN_ADMIN_EMAILS, mergeAdminEmails } from '../../src/data/adminEma
 import { syncSupabaseSession, isSupabaseAuthConfigured, userFromBearer } from '../services/supabaseAuthService.js';
 import { trackEvent } from '../services/analyticsService.js';
 import { recordPayment } from '../services/paymentService.js';
+import { isProduction } from '../config/env.js';
+import { authRateLimit } from '../middleware/authRateLimit.js';
+import { canUserChangePlan, trialEndDate } from '../services/subscriptionPolicy.js';
 
 const router = Router();
 
@@ -25,14 +28,14 @@ router.get('/providers', (_req, res) => {
     process.env.VITE_ADMIN_EMAILS
   );
   res.json({
-    local: true,
+    local: !isProduction(),
     supabase: isSupabaseAuthConfigured(),
     adminEmails,
     ...(url && anonKey ? { supabaseUrl: url, anonKey } : {}),
   });
 });
 
-router.post('/supabase', async (req, res) => {
+router.post('/supabase', authRateLimit, async (req, res) => {
   try {
     const accessToken = String(req.body?.accessToken || '');
     const fullName = String(req.body?.fullName || '');
@@ -53,7 +56,11 @@ function bearer(req: { headers: { authorization?: string } }) {
   return header.startsWith('Bearer ') ? header.slice(7) : undefined;
 }
 
-router.post('/register', (req, res) => {
+router.post('/register', authRateLimit, (req, res) => {
+  if (isProduction()) {
+    res.status(404).json({ error: 'הרשמה מקומית אינה זמינה בפרודקשן' });
+    return;
+  }
   try {
     const { fullName, email, password, referredByLecturerId } = req.body ?? {};
     const result = registerUser(
@@ -69,7 +76,11 @@ router.post('/register', (req, res) => {
   }
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', authRateLimit, (req, res) => {
+  if (isProduction()) {
+    res.status(404).json({ error: 'התחברות מקומית אינה זמינה בפרודקשן' });
+    return;
+  }
   try {
     const { email, password } = req.body ?? {};
     const result = loginUser(String(email || ''), String(password || ''));
@@ -105,9 +116,13 @@ router.patch('/subscription', async (req, res) => {
     res.status(400).json({ error: 'תוכנית לא תקינה' });
     return;
   }
-  const trialEndsAt = typeof req.body?.trialEndsAt === 'string' ? req.body.trialEndsAt : undefined;
+  if (!canUserChangePlan(user.subscriptionPlan, plan)) {
+    res.status(403).json({ error: 'שדרוג לתוכנית בתשלום מתבצע רק לאחר אישור תשלום' });
+    return;
+  }
+  const trialEndsAt = plan === 'free_trial' ? trialEndDate() : undefined;
   const next = updateSubscription(user.id, plan, trialEndsAt);
-  if (plan !== 'none') {
+  if (plan === 'free_trial') {
     recordPayment(user.id, plan, 'user');
   }
   if (plan === 'free_trial') {

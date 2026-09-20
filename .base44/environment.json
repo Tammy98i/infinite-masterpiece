@@ -40,8 +40,23 @@
       "requiredAtBoot": false
     },
     {
+      "name": "SUPABASE_URL",
+      "description": "Supabase project URL for server-side authentication. Get from Supabase Dashboard → Project Settings → API.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "SUPABASE_ANON_KEY",
+      "description": "Supabase anon key for server-side token verification. Get from Supabase Dashboard → Project Settings → API.",
+      "requiredAtBoot": false
+    },
+    {
       "name": "SUPABASE_SERVICE_ROLE_KEY",
       "description": "Supabase service role key for server-side operations. Get from Supabase Dashboard → Project Settings → API.",
+      "requiredAtBoot": false
+    },
+    {
+      "name": "EMAIL_FROM",
+      "description": "Verified Resend sender identity, for example Infinite Masterpiece <hello@your-domain.co.il>.",
       "requiredAtBoot": false
     }
   ]

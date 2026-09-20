@@ -3,6 +3,11 @@ import type { AuthUserPayload } from '../api/auth';
 export const PREVIEW_TOKEN_PREFIX = 'preview:';
 export const PREVIEW_PASSWORD = 'Masterpiece88';
 const PREVIEW_EXTRA_KEY = 'mc_preview_users';
+const PREVIEW_AUTH_ENABLED = import.meta.env.DEV;
+
+export function isPreviewAuthEnabled() {
+  return PREVIEW_AUTH_ENABLED;
+}
 
 const STAFF: AuthUserPayload[] = [
   {
@@ -70,7 +75,7 @@ function allUsers() {
 }
 
 export function isPreviewToken(token: string | null | undefined) {
-  return Boolean(token?.startsWith(PREVIEW_TOKEN_PREFIX));
+  return PREVIEW_AUTH_ENABLED && Boolean(token?.startsWith(PREVIEW_TOKEN_PREFIX));
 }
 
 export function previewSessionFromToken(token: string | null | undefined) {
@@ -82,6 +87,7 @@ export function previewSessionFromToken(token: string | null | undefined) {
 }
 
 export function previewLogin(email: string, password: string) {
+  if (!PREVIEW_AUTH_ENABLED) throw new Error('כניסת דמו אינה זמינה בפרודקשן');
   const normalized = email.trim().toLowerCase();
   const user = allUsers().find((item) => item.email === normalized);
   if (!user || password !== PREVIEW_PASSWORD) {
@@ -91,6 +97,7 @@ export function previewLogin(email: string, password: string) {
 }
 
 export function previewRegister(fullName: string, email: string, password: string) {
+  if (!PREVIEW_AUTH_ENABLED) throw new Error('הרשמת דמו אינה זמינה בפרודקשן');
   const normalized = email.trim().toLowerCase();
   if (!normalized.includes('@')) throw new Error('נא להזין אימייל תקין');
   if (password.length < 8) throw new Error('הסיסמה חייבת להיות לפחות 8 תווים');
@@ -117,5 +124,5 @@ export function previewRegister(fullName: string, email: string, password: strin
 }
 
 export function isDemoEmail(email: string) {
-  return email.trim().toLowerCase().endsWith('@infinitemasterpiece.local');
+  return PREVIEW_AUTH_ENABLED && email.trim().toLowerCase().endsWith('@infinitemasterpiece.local');
 }

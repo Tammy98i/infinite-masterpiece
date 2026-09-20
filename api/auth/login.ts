@@ -16,6 +16,10 @@ export default function handler(req: VercelReq, res: VercelRes) {
     res.status(405).json({ error: 'Method not allowed' });
     return;
   }
+  if (process.env.NODE_ENV === 'production') {
+    res.status(404).json({ error: 'Local preview login is disabled in production' });
+    return;
+  }
   try {
     const body = jsonBody(req);
     const result = matchPreview(String(body.email || ''), String(body.password || ''));

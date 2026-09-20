@@ -39,6 +39,8 @@ docker compose -f docker-compose.base44.yml up -d
 - The Base44 Compose command now uses `tsx watch` alongside Vite so API source edits reload too.
 - Explicitly empty VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY must remain empty, not fall back to the project's published Supabase defaults. Otherwise local demo login returns a client-only preview token that cannot authorize API writes. With local defaults, sign out of any old preview-only session and log in again to get a real SQLite session.
 - These endpoints are implemented for the Express runtime used by Compose; the separate Vercel serverless API tree does not provide the new Team Members endpoints.
+- Production startup fails fast unless `APP_URL` is HTTPS and Supabase + Resend server credentials are present. Local/demo auth and demo-user seeding are development-only; paid plans cannot be self-assigned through `/api/auth/subscription`.
+- Production Docker builds require `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` as build args. Supabase currently owns authentication/profiles; the broader content store still uses SQLite pending a separate asynchronous data-layer migration.
 
 ## Homepage SpaceEdu hero
 - `SpaceHero` replaces the former homepage `VideoHero` and owns its branded Infinite Masterpiece navigation, original Hebrew hero copy and webinar-phase CTAs alongside the planet-switching state, lazy video loading, entrance sequence, and responsive composition. The regular site Header is hidden on home only; all other routes retain it unchanged.
