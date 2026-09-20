@@ -41,7 +41,7 @@ docker compose -f docker-compose.base44.yml up -d
 - These endpoints are implemented for the Express runtime used by Compose; the separate Vercel serverless API tree does not provide the new Team Members endpoints.
 
 ## Homepage SpaceEdu hero
-- `SpaceHero` replaces the former homepage `VideoHero` and owns its isolated SpaceEdu navigation, planet-switching state, lazy video loading, entrance sequence, and responsive composition. The regular site Header is hidden on home only; all other routes retain it unchanged.
+- `SpaceHero` replaces the former homepage `VideoHero` and owns its branded Infinite Masterpiece navigation, original Hebrew hero copy and webinar-phase CTAs alongside the planet-switching state, lazy video loading, entrance sequence, and responsive composition. The regular site Header is hidden on home only; all other routes retain it unchanged.
 - Earth is the initial feature; Venus and Mars occupy the left/right slots. Each slot contains all three preloaded cut-out images and switches visibility by class, while non-featured video clips receive a `src` only after selection.
 - `SiteBackdropLayout` still provides the persistent static `SkyBackdrop` (user-provided minimalist starfield hosted on `media.base44.com`, `68f8c5a13_image.png`) behind every route. The three planet clips are scoped to the homepage hero and unmount on navigation.
 - Reduced motion includes both the OS preference and the accessibility widget's `a11y-reduce-motion` class: clips are hidden in favor of the selected poster and planet transforms/entrance animations are disabled.

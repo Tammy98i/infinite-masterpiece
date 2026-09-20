@@ -1,4 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { ArrowLeft, Infinity as InfinityIcon } from 'lucide-react';
+import { WEBINAR_CTA_ENDED, WEBINAR_CTA_HEADER, WEBINAR_CTA_NEXT_CYCLE } from '../../constants/webinarPage';
+import { useWebinarPhase } from '../hooks/useWebinarPhase';
 import './SpaceHero.css';
 
 type PlanetId = 'earth' | 'venus' | 'mars';
@@ -63,6 +67,7 @@ export function SpaceHero() {
   const [featured, setFeatured] = useState<PlanetId>('earth');
   const [loaded, setLoaded] = useState<Set<PlanetId>>(() => new Set(['earth']));
   const [menuOpen, setMenuOpen] = useState(false);
+  const { phase } = useWebinarPhase();
 
   const featuredIndex = PLANETS.findIndex((planet) => planet.id === featured);
   const current = PLANETS[featuredIndex];
@@ -141,14 +146,21 @@ export function SpaceHero() {
 
       <div className="space-ui">
         <header className="space-navbar">
-          <div className="space-navrow" data-open={menuOpen}>
-            <a className="space-logo" href="/">space<i>edu</i></a>
+          <div className="space-navrow" data-open={menuOpen} dir="rtl">
+            <Link className="space-logo" to="/" aria-label="Infinite Masterpiece — דף הבית">
+              <InfinityIcon aria-hidden="true" strokeWidth={1} />
+              <span>Infinite<br /><b>Masterpiece</b></span>
+            </Link>
             <div ref={menuRef} className="space-links" id="space-site-nav">
-              <a href="#what-is-it" aria-current="page" onClick={() => setMenuOpen(false)}>Planets</a>
-              <a href="#pricing" onClick={() => setMenuOpen(false)}>Tution</a>
-              <a href="/library" onClick={() => setMenuOpen(false)}>Tutorials</a>
-              <a href="/faq" onClick={() => setMenuOpen(false)}>Blog</a>
-              <a className="space-enroll" href="/webinar" onClick={() => setMenuOpen(false)}>Enroll</a>
+              <Link to="/webinar" onClick={() => setMenuOpen(false)}>וובינר</Link>
+              <Link to="/journey" onClick={() => setMenuOpen(false)}>תהליך</Link>
+              <Link to="/premium-88" onClick={() => setMenuOpen(false)}>צוות המיזם</Link>
+              <Link to="/pricing" onClick={() => setMenuOpen(false)}>מחירון</Link>
+              <Link to="/faq" onClick={() => setMenuOpen(false)}>שאלות</Link>
+              <Link className="space-library" to="/library" onClick={() => setMenuOpen(false)}>ספרייה</Link>
+              <Link className="space-enroll" to={phase === 'ended' ? '/pricing' : '/webinar'} onClick={() => setMenuOpen(false)}>
+                {phase === 'ended' ? WEBINAR_CTA_NEXT_CYCLE : WEBINAR_CTA_HEADER}
+              </Link>
             </div>
             <button
               ref={burgerRef}
@@ -167,20 +179,26 @@ export function SpaceHero() {
           </div>
         </header>
 
-        <div className="space-copy">
-          <div className="space-col space-eyebrow"><span className="space-ent-mask"><span className="space-ent-line">PLANET</span></span></div>
-          <h1 className="space-col space-title" id="space-hero-title"><span className="space-ent-mask"><span className="space-ent-line">{current.name}</span></span></h1>
+        <div className="space-copy" dir="rtl">
+          <div className="space-col space-eyebrow"><span className="space-ent-mask"><span className="space-ent-line"><i />The Masterpiece Framework</span></span></div>
+          <h1 className="space-col space-title" id="space-hero-title">
+            <span className="space-ent-mask"><span className="space-ent-line">יש לך יצירה.</span></span>
+            <span className="space-ent-mask space-title-wide"><span className="space-ent-line">עכשיו בונים לה מערכת הכנסה.</span></span>
+          </h1>
           <div className="space-col space-rule"><span /></div>
-          <p className="space-col space-lede">
-            Learn more about the fascinating details of Planet {current.name[0]}{current.name.slice(1).toLowerCase()}.
-            Course enrollment <br />starts today. Early Bird tickets typically last a week, don&apos;t miss out!
-          </p>
+          <p className="space-col space-lede">הבעיה היא לא שאין לך כישרון. הבעיה היא שאין סביב הכישרון שלך מערכת עסקית.<br /> אנו הופכים יצירה לעסק, השפעה וחופש.</p>
           <div className="space-col space-cta">
             <PlanetSlot side="l" planet={left} onSelect={selectPlanet} />
             <PlanetSlot side="r" planet={right} onSelect={selectPlanet} />
-            <a href="/webinar">GET STARTED</a>
+            <Link to={phase === 'ended' ? '/pricing' : '/webinar'}>
+              {phase === 'ended' ? WEBINAR_CTA_NEXT_CYCLE : WEBINAR_CTA_HEADER}<ArrowLeft aria-hidden="true" />
+            </Link>
             <span className="space-label space-label-l">{left.name}</span>
             <span className="space-label space-label-r">{right.name}</span>
+            <div className="space-secondary-actions">
+              {phase === 'ended' ? <p className="space-ended">{WEBINAR_CTA_ENDED}</p> : <a href="/#pricing">למסלול האמיצים והססנים</a>}
+              <Link to="/library">כבר בפנים? כניסה לספרייה</Link>
+            </div>
           </div>
         </div>
       </div>
