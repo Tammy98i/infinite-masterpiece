@@ -39,6 +39,7 @@ import { getWebinarPhase } from '../../utils/webinarTime';
 import { TeamPhoto } from '../../components/TeamPhoto';
 import { TeamGalaxy } from '../components/galaxy/TeamGalaxy';
 import './WebinarLanding.css';
+import './WebinarEditorialCinema.css';
 
 const bottleneckIcons = [Tag, Handshake, Megaphone, Network, Target];
 
@@ -254,6 +255,7 @@ export function WebinarLanding() {
         </motion.div>
       </section>
 
+      <div className="webinar-editorial-grid">
       <section id="problem" className="py-20 md:py-24 border-t border-white/[0.04]">
         <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>הבעיה</SectionLabel>
@@ -412,6 +414,7 @@ export function WebinarLanding() {
           </p>
         </div>
       </section>
+      </div>
 
       {eventEnded ? null : (
         <WebinarStickyCta
