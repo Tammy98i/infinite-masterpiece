@@ -52,8 +52,8 @@ function contributorAngle(slot: number, count: number) {
 export function starPosition(member: TeamMember, slot: number, total = 6) {
   if (member.hierarchy_level === 'founder') return { x: 50, y: 48 };
   if (member.hierarchy_level === 'leadership') {
-    const angle = [-152, -28][slot % 2] * Math.PI / 180;
-    return { x: 50 + Math.cos(angle) * 19, y: 48 + Math.sin(angle) * 16 };
+    const angle = [-155, -25][slot % 2] * Math.PI / 180;
+    return { x: 50 + Math.cos(angle) * 26, y: 48 + Math.sin(angle) * 15 };
   }
   const count = Math.max(1, total);
   const angle = contributorAngle(slot, count);

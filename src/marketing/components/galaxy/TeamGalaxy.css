@@ -47,12 +47,14 @@
 .galaxy-star-anchor.is-selected.galaxy-featured .galaxy-stellar-body { width: 176px; height: 176px; }
 .galaxy-star-anchor.is-selected.galaxy-sun .galaxy-stellar-body { width: 194px; height: 194px; }
 .galaxy-star-anchor.is-selected .galaxy-stellar-body::before { inset: -16px; border-color: #dfc47d8c; animation-duration: 5s; }
-.galaxy-star-anchor.is-selected .galaxy-star-name { top: calc(100% + 18px); width: min(320px, 86vw); font-family: Georgia, 'Times New Roman', serif; font-size: 27px; color: #f7f4eb; }
-.galaxy-inline-details { position: absolute; top: calc(100% + 62px); left: 50%; transform: translateX(-50%); display: grid; justify-items: center; gap: 10px; width: min(560px, 88vw); text-align: center; pointer-events: none; }
+.galaxy-map.has-selection .galaxy-star-anchor.is-selected .galaxy-star-name { top: calc(100% + 18px); width: min(320px, 86vw); font-family: Georgia, 'Times New Roman', serif; font-size: 27px; color: #f7f4eb; }
+.galaxy-inline-details { position: absolute; top: calc(100% + 62px); left: 50%; transform: translateX(-50%); display: grid; justify-items: center; gap: 10px; width: min(560px, 88vw); padding: 12px 18px 16px; border-radius: 8px; background: #05070bf0; text-align: center; pointer-events: none; }
 .galaxy-inline-role { color: #dfc47d; font-size: 12px; line-height: 1.55; letter-spacing: .06em; max-width: 100%; overflow-wrap: anywhere; }
-.galaxy-inline-bio { color: #f7f4ebbd; font-size: 14px; line-height: 1.75; max-width: 36rem; white-space: pre-line; overflow-wrap: anywhere; }
+.galaxy-inline-bio { color: #f7f4ebde; font-size: 14px; line-height: 1.75; max-width: 36rem; white-space: pre-line; overflow-wrap: anywhere; }
 .galaxy-map.has-selection .galaxy-star-anchor:not(.is-selected) { opacity: .32 !important; }
 .galaxy-map.has-selection .galaxy-star-anchor:not(.is-selected) .galaxy-stellar-body { transform: scale(.84); filter: saturate(.6); }
+.galaxy-map.has-selection .galaxy-star-anchor:not(.is-selected) .galaxy-star-name,
+.galaxy-map.has-selection .galaxy-star-anchor:not(.is-selected) .galaxy-star-role { opacity: 0; }
 .galaxy-map.has-selection .galaxy-manifesto { opacity: .18; }
 .galaxy-sun { z-index: 3; }
 .galaxy-sun .galaxy-stellar-body { box-shadow: 0 0 45px #b7904350, 0 0 100px #b790431f, 0 0 4px #dfc47d; }
@@ -114,7 +116,9 @@
 @media (min-width: 1440px) { .galaxy-layout { grid-template-columns: minmax(0, 1fr) 330px; } .galaxy-map { height: 740px; } .galaxy-map.has-selection { min-height: 880px; } }
 @media (min-width: 768px) and (max-width: 1199px) { .team-galaxy { --star-scale: .85; } .galaxy-layout { grid-template-columns: minmax(0, 1fr) 260px; gap: 15px; } .galaxy-map { height: 660px; } .galaxy-map.has-selection { min-height: 800px; } .galaxy-spotlight { padding: 24px 18px; } .galaxy-legend > div { gap: 12px; } .galaxy-star-role { width: 145px; } }
 @media (max-width: 767px) {
-  .team-galaxy { --star-scale: .68; padding: 48px 16px 28px; }
+  .team-galaxy { --star-scale: .58; padding: 48px 16px 28px; }
+  .galaxy-sun:not(.is-selected) .galaxy-stellar-body { width: 96px; height: 96px; }
+  .galaxy-featured:not(.galaxy-sun):not(.is-selected) .galaxy-stellar-body { width: 64px; height: 64px; }
   .galaxy-heading { margin-bottom: 8px; }
   .galaxy-heading h2 { font-size: 27px; line-height: 1.35; }
   .galaxy-heading h2 em { display: block; }
@@ -128,7 +132,7 @@
   .galaxy-star-role { font-size: 9px; width: 115px; top: calc(100% + 35px); }
   .galaxy-sun .galaxy-star-name { font-size: 18px; width: 140px; }
   .galaxy-star-anchor.is-selected .galaxy-star-name { font-size: 22px; }
-  .galaxy-inline-details { width: min(520px, 92vw); }
+  .galaxy-inline-details { width: min(520px, 84vw); padding: 12px 16px 14px; }
   .galaxy-inline-bio { font-size: 13px; }
   .galaxy-sun .galaxy-star-role { font-size: 8px; }
   .galaxy-flare { font-size: 22px; top: -18px; }
