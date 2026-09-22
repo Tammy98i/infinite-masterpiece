@@ -38,8 +38,7 @@
 .webinar-stage-page :is(#hosts, #webinar-fit, #webinar-faq, #webinar-register, #webinar-register-bottom) {
   scroll-margin-top: calc(var(--site-header-h) + var(--webinar-subnav-h));
 }
-.editorial-marketing-shell:has(.webinar-stage-page) .conversion-band,
-.editorial-marketing-shell:has(.webinar-stage-page) > .relative > footer { display: none; }
+.editorial-marketing-shell:has(.webinar-stage-page) .conversion-band { display: none; }
 
 .webinar-stage-hero {
   min-height: 680px;

@@ -352,12 +352,12 @@ export function WebinarLanding() {
             <div className="hidden lg:flex items-stretch justify-center" aria-hidden>
               <div className="w-px bg-gradient-to-b from-transparent via-[#dfc47d]/70 to-transparent" />
             </div>
-            <div className="rounded-3xl border border-rose-500/20 bg-rose-500/5 p-6 text-right">
+            <div className="glass-card p-6 text-right">
               <h3 className="text-lg text-white mb-4 font-light text-center">לא מתאים אם…</h3>
               <ul className="space-y-3">
                 {WEBINAR_FIT_NO.map((item) => (
                   <li key={item} className="flex items-start gap-3 text-sm text-white/55 font-light">
-                    <X className="w-4 h-4 text-rose-300 shrink-0 mt-0.5" aria-hidden />
+                    <X className="w-4 h-4 text-[#dfc47d] shrink-0 mt-0.5" aria-hidden />
                     <span>{item}</span>
                   </li>
                 ))}
