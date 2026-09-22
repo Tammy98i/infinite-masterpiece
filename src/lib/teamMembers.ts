@@ -42,9 +42,10 @@ export function starPosition(member: TeamMember, slot: number, total = 6) {
   const count = Math.max(1, total);
   const start = -155 * Math.PI / 180;
   const sweep = 310 * Math.PI / 180;
-  const angle = count === 1 ? start + sweep / 2 : start + (sweep * slot) / (count - 1);
+  const step = count === 1 ? 0 : sweep / count;
+  const angle = start + step * slot + step / 2;
   const distance = 36 + member.orbit * 0.4 + (100 - member.impact_score) * 0.02;
-  return { x: 50 + Math.cos(angle) * distance, y: 52 + Math.sin(angle) * (distance * 0.82) };
+  return { x: 50 + Math.cos(angle) * distance, y: 56 + Math.sin(angle) * (distance * 0.72) };
 }
 
 export function validateTeamMember(raw: unknown): TeamMemberInput {
