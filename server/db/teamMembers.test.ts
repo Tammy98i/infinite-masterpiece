@@ -11,11 +11,13 @@ test('team import, create, edit, hide and seed persistence', () => {
       INSERT INTO lecturers VALUES('gal','gal',1,0,'Gal','Vision','','Bio','[]');`);
     initializeTeamMembers(db);
     const imported = listTeamMembers(db);
-    assert.equal(imported.length, 2);
+    assert.equal(imported.filter(m => m.hierarchy_level !== 'contributor').length, 2);
+    assert.ok(imported.some(m => m.name === 'אליאור לוי' && m.photo === '/team/elior.jpg'));
+    assert.equal(imported.find(m => m.name === 'גלב סמירנוב')?.photo, '/team/gleb.jpg');
     const sun = imported.find(m => m.hierarchy_level === 'founder')!;
     const created = saveTeamMember(db, { ...sun, name: 'Test contributor', hierarchy_level: 'contributor', impact_score: 30, orbit: 3, active: false });
-    assert.equal(listTeamMembers(db).length, 2);
-    assert.equal(listTeamMembers(db, true).length, 3);
+    assert.equal(listTeamMembers(db).length, imported.length);
+    assert.equal(listTeamMembers(db, true).length, imported.length + 1);
     saveTeamMember(db, { ...created, role: 'Updated', impact_score: 70, orbit: 2, display_order: 8, active: true, photo: '/uploads/test.png' }, created.id);
     assert.equal(listTeamMembers(db).find(m => m.id === created.id)?.impact_score, 70);
     assert.equal(listTeamMembers(db).find(m => m.id === created.id)?.photo, '/uploads/test.png');
