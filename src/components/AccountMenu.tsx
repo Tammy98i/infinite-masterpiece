@@ -68,7 +68,12 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
 
   const goLecturer = () => goLibrary('lecturer');
 
-  const goPricing = () => {
+  const goLibraryAccess = () => {
+    setOpen(false);
+    navigate('/library-membership');
+  };
+
+  const goFitCheck = () => {
     setOpen(false);
     navigate('/pricing');
   };
@@ -78,7 +83,7 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
       {isTrial && trialDaysLeft !== null && trialDaysLeft >= 0 && (
         <button
           type="button"
-          onClick={goPricing}
+          onClick={goLibraryAccess}
           className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary-light text-xs font-bold min-h-11"
         >
           <Clock className="w-3.5 h-3.5" />
@@ -174,17 +179,26 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
           )}
 
           {(isGuest || ((isUnpaid || isTrial) && user.role !== 'admin')) && (
-            <button
-              type="button"
-              onClick={goPricing}
-              className="w-full mb-4 text-right rounded-2xl border border-[#b79043]/40 bg-[#b79043]/10 p-4 hover:border-[#dfc47d] transition-colors"
-            >
-              <div className="text-sm font-semibold text-white mb-1">פתיחת גישה</div>
-              <p className="text-[11px] text-white/50 font-light leading-relaxed">
-                מסלול האמיצים או מסלול ההססנים. 8,888 ₪ לפני מע״מ.
-              </p>
-              <div className="mt-2.5 text-[11px] font-semibold text-[#b79043]">בחירת מסלול</div>
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={goLibraryAccess}
+                className="w-full mb-2 text-right rounded-2xl border border-[#b79043]/40 bg-[#b79043]/10 p-4 hover:border-[#dfc47d] transition-colors"
+              >
+                <div className="text-sm font-semibold text-white mb-1">פתיחת גישה</div>
+                <p className="text-[11px] text-white/50 font-light leading-relaxed">
+                  מנוי לספרייה פותח צפייה בהרצאות ובהדרכות.
+                </p>
+                <div className="mt-2.5 text-[11px] font-semibold text-[#b79043]">למנוי הספרייה</div>
+              </button>
+              <button
+                type="button"
+                onClick={goFitCheck}
+                className="w-full mb-4 text-right px-3 py-2 text-[11px] text-white/55 hover:text-white min-h-11"
+              >
+                בדיקת התאמה למסע
+              </button>
+            </>
           )}
 
           {!isGuest && (

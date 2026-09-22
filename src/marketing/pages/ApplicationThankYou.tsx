@@ -14,8 +14,8 @@ export function ApplicationThankYou() {
           animate={{ scale: 1, opacity: 1 }}
           className="mb-8 flex justify-center"
         >
-          <div className="w-20 h-20 rounded-full bg-cyan-950 border border-cyan-800 flex items-center justify-center">
-            <CheckCircle2 className="w-10 h-10 text-cyan-400" />
+          <div className="w-20 h-20 rounded-full bg-[#b79043]/10 border border-[#b79043]/40 flex items-center justify-center">
+            <CheckCircle2 className="w-10 h-10 text-[#dfc47d]" />
           </div>
         </motion.div>
 
@@ -33,13 +33,26 @@ export function ApplicationThankYou() {
               : 'תודה שמילאת את הפרטים. הצוות שלנו יעבור על התשובות שלך כדי לבדוק התאמה למסלול. ניצור איתך קשר בימים הקרובים (לרוב עד 48 שעות) להמשך התהליך.'}
           </p>
 
-          <Link
-            to="/"
-            className="inline-flex items-center gap-2 text-cyan-400 hover:text-cyan-300 font-medium"
-          >
-            חזרה לעמוד הראשי
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+          <div className="mb-8 text-right rounded-2xl border border-[#b79043]/25 bg-[#05070d]/60 p-5">
+            <p className="text-sm font-semibold text-white mb-3">מה עכשיו</p>
+            <ul className="space-y-2 text-sm text-white/75 leading-relaxed">
+              <li>{paid ? 'הגישה לספרייה נפתחת באותו אימייל.' : 'חלון חזרה: הצוות יוצר קשר, לרוב עד 48 שעות.'}</li>
+              <li>אפשר כבר להיכנס לספרייה ולראות את הטעימות.</li>
+            </ul>
+          </div>
+
+          <div className="flex flex-col items-center gap-3">
+            <Link to="/library" className="btn-gold text-black min-w-44">
+              כניסה לספרייה
+            </Link>
+            <Link
+              to="/"
+              className="inline-flex items-center gap-2 text-white/70 hover:text-white font-medium min-h-11"
+            >
+              חזרה לעמוד הראשי
+              <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
         </motion.div>
       </div>
     </div>

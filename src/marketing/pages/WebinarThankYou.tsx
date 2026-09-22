@@ -129,6 +129,22 @@ export function WebinarThankYou() {
     markLocal('whatsapp');
   };
 
+  const whatsappHref = useMemo(() => {
+    const url = config.whatsappGroupUrl.trim();
+    if (!url) return '';
+    const draft = 'שלום, נרשמתי לערב החי של Infinite Masterpiece.';
+    try {
+      const parsed = new URL(url);
+      const host = parsed.hostname.replace(/^www\./, '');
+      const isChat = host === 'wa.me' || host === 'api.whatsapp.com';
+      if (!isChat || parsed.searchParams.has('text')) return url;
+      parsed.searchParams.set('text', draft);
+      return parsed.toString();
+    } catch {
+      return url;
+    }
+  }, [config.whatsappGroupUrl]);
+
   const persistPersonPicked = (picked: boolean) => {
     setPersonPicked(picked);
     if (picked) {
@@ -283,15 +299,15 @@ export function WebinarThankYou() {
                     ) : null}
                   </p>
                   <p className="text-xs text-white/45 font-light mb-3">נעדכן רק כשיש משהו שחשוב לדעת.</p>
-                  {config.whatsappGroupUrl ? (
+                  {whatsappHref ? (
                     <a
-                      href={config.whatsappGroupUrl}
+                      href={whatsappHref}
                       target="_blank"
                       rel="noreferrer"
                       onClick={markWhatsapp}
                       className="btn-gold text-black gap-2 px-5 py-2 text-sm"
                     >
-                      {localSteps.whatsapp ? 'הצטרפת' : 'הצטרפות עכשיו'}
+                      {localSteps.whatsapp ? 'ההודעה נפתחה' : 'פתיחת וואטסאפ עם הודעה מוכנה'}
                     </a>
                   ) : (
                     <p className="text-xs text-white/40 font-light">הקישור יישלח באישור המייל.</p>

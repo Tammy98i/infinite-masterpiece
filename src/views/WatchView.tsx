@@ -50,7 +50,7 @@ export const WatchView: React.FC = () => {
   const [isPlaying, setIsPlaying] = useState(true);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(episode?.duration || 0);
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(false);
   const [playbackRate, setPlaybackRate] = useState(readSpeed);
   const [showChrome, setShowChrome] = useState(true);
   const [showEpisodes, setShowEpisodes] = useState(false);

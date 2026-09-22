@@ -56,7 +56,7 @@ export const CourseDetailView: React.FC = () => {
   const [activeEpisodeId, setActiveEpisodeId] = useState<string | null>(null);
   const [playerOn, setPlayerOn] = useState(false);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [muted, setMuted] = useState(true);
+  const [muted, setMuted] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
   const [playerError, setPlayerError] = useState(false);
@@ -687,7 +687,7 @@ export const CourseDetailView: React.FC = () => {
                       type="button"
                       aria-current={isActive ? 'true' : undefined}
                       aria-label={`פרק ${ep.episodeNumber}: ${episodeDisplayName(ep.title)}${
-                        access === 'locked' ? ', דורש מסלול' : access === 'preview' ? ', טעימה' : ''
+                        access === 'locked' ? ', דורש מנוי' : access === 'preview' ? ', טעימה' : ''
                       }${done ? ', הושלם' : ''}`}
                       onClick={() => {
                         trackEvent('course_chapter_selected', {
@@ -728,7 +728,7 @@ export const CourseDetailView: React.FC = () => {
                             {access === 'locked' && (
                               <span className="inline-flex items-center gap-1 text-white/45">
                                 <Lock className="w-3 h-3" aria-hidden />
-                                דורש מסלול
+                                דורש מנוי
                               </span>
                             )}
                             {done && (

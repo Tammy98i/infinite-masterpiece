@@ -39,9 +39,7 @@ export function Application() {
           fullName,
           phone: String(data.get('phone') || ''),
           email,
-          field: String(data.get('field') || ''),
-          goal90: String(data.get('open') || ''),
-          links: String(data.get('links') || ''),
+          field: '',
         });
         const { redirected } = await continueAfterTrackLead({
           leadId: lead.id,
@@ -58,11 +56,9 @@ export function Application() {
           fullName: String(data.get('fullName') || ''),
           phone: String(data.get('phone') || ''),
           email: String(data.get('email') || ''),
-          field: String(data.get('field') || ''),
-          businessStage: String(data.get('stage') || ''),
-          goal: String(data.get('goal') || ''),
-          links: String(data.get('links') || ''),
-          notes: String(data.get('open') || ''),
+          field: '',
+          businessStage: '',
+          goal: '',
         });
         navigate('/thank-you-application');
         return;
@@ -92,7 +88,7 @@ export function Application() {
                   : 'בדיקת התאמה לתוכנית'}
             </h1>
             <p className="text-slate-400">
-              מלאו את הפרטים בצורה המדויקת ביותר. התשובות שלכם יעזרו לנו להבין אם אנחנו יכולים לעזור לכם לייצר מערכת מכירות יציבה.
+              שם, טלפון ואימייל מספיקים כדי להתקדם. שאר הפרטים ייאספו אחר כך, לא לפני התשלום.
             </p>
           </div>
 
@@ -113,50 +109,10 @@ export function Application() {
               <input required type="email" id="email" name="email" className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all" />
             </div>
 
-            <div className="space-y-2">
-              <label htmlFor="field" className="text-sm font-medium text-slate-300">תחום יצירה / עיסוק *</label>
-              <input required type="text" id="field" name="field" placeholder="לדוגמה: מעצב גרפי, צלם, כותב תוכן" className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all" />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="stage" className="text-sm font-medium text-slate-300">באיזה שלב עסקי את/ה כרגע? *</label>
-              <select required id="stage" name="stage" className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all appearance-none">
-                <option value="">בחר/י שלב...</option>
-                <option value="not_selling">עדיין לא מוכר/ת</option>
-                <option value="first_sales">מכירות ראשונות</option>
-                <option value="active">עסק פעיל</option>
-                <option value="established">עסק מבוסס</option>
-                <option value="scale">רוצה סקייל (התרחבות)</option>
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="goal" className="text-sm font-medium text-slate-300">מה המטרה המרכזית שלך כרגע? *</label>
-              <select required id="goal" name="goal" className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all appearance-none">
-                <option value="">בחר/י מטרה...</option>
-                <option value="sales">להגדיל מכירות</option>
-                <option value="brand">לשפר מיתוג</option>
-                <option value="product">לבנות מוצר דיגיטלי/פיזי</option>
-                <option value="exposure">להגדיל חשיפה</option>
-                <option value="pricing">להעלות מחירים/תמחור</option>
-                <option value="system">לייצר מערכת עסקית מסודרת</option>
-              </select>
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="links" className="text-sm font-medium text-slate-300">לינק לאינסטגרם / אתר / תיק עבודות (אופציונלי)</label>
-              <input type="url" id="links" name="links" className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all" />
-            </div>
-
-            <div className="space-y-2">
-              <label htmlFor="open" className="text-sm font-medium text-slate-300">מה הכי חשוב לך לשנות בעסק שלך עכשיו? *</label>
-              <textarea required id="open" name="open" rows={4} className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all resize-none"></textarea>
-            </div>
-
             <div className="flex items-start gap-3 pt-2">
               <input required type="checkbox" id="consent" className="mt-1 w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500" />
               <label htmlFor="consent" className="text-sm text-slate-400">
-                אני מאשר/ת את <a href="/terms" className="text-cyan-400 hover:underline">תקנון האתר</a> ו<a href="/privacy" className="text-cyan-400 hover:underline">מדיניות הפרטיות</a>, ומסכים/ה לקבלת עדכונים ותכנים שיווקיים (ניתן להסיר את עצמך בכל עת).
+                אני מאשר/ת את <a href="/terms" className="text-[#dfc47d] hover:underline">תקנון האתר</a> ו<a href="/privacy" className="text-[#dfc47d] hover:underline">מדיניות הפרטיות</a>, ומסכים/ה לקבלת עדכונים ותכנים שיווקיים (ניתן להסיר את עצמך בכל עת).
               </label>
             </div>
 
@@ -165,7 +121,7 @@ export function Application() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="w-full py-4 text-base font-medium rounded-xl bg-cyan-600 text-white hover:bg-cyan-500 transition-colors disabled:opacity-70 disabled:cursor-not-allowed flex items-center justify-center"
+                className="btn-gold text-black w-full py-4 text-base disabled:opacity-70 disabled:cursor-not-allowed"
               >
                 {isSubmitting ? (
                   <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin" />

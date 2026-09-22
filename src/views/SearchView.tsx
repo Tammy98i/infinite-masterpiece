@@ -5,19 +5,17 @@ import { searchCourses, searchSuggestions } from '../utils/searchCatalog';
 import { LIBRARY_TOPIC_IDS, getCardAccessState } from '../utils/libraryHome';
 import { formatClock } from '../utils/time';
 import { trackEvent } from '../utils/analytics';
-import { useWatchAccess } from '../utils/useWatchAccess';
 import { EmptyState } from '../components/LibraryStates';
 import { EMPTY_FILTERS, SearchFilters, type SearchFilterState } from '../components/SearchFilters';
 
 const ACCESS_LABEL = {
   open: 'פתוח',
   preview: 'טעימה',
-  locked: 'דורש מסלול',
+  locked: 'דורש מנוי',
 } as const;
 
 export const SearchView: React.FC = () => {
   const { searchQuery, setSearchQuery, courses, instructors, categories, user, setView } = useApp();
-  const { goWatch } = useWatchAccess();
   const [filters, setFilters] = useState<SearchFilterState>(EMPTY_FILTERS);
   const query = searchQuery.trim();
   const queryLower = query.toLowerCase();
@@ -53,11 +51,6 @@ export const SearchView: React.FC = () => {
     const course = courses.find((c) => c.id === courseId);
     if (!course) return;
     trackEvent('search_result_click', { content_id: course.id });
-    const access = getCardAccessState(course, user);
-    if (access === 'locked' || access === 'preview') {
-      goWatch(course.id, course.episodes[0]?.id, 'search');
-      return;
-    }
     setView('course', { courseId: course.id });
   };
 

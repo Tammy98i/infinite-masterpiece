@@ -27,11 +27,29 @@ export function Header() {
   const onJourney = location.pathname === '/journey';
   const onWebinarLanding = location.pathname === '/webinar';
   const onWebinar = location.pathname.startsWith('/webinar');
+  const onHesitation = location.pathname.startsWith('/hesitation');
+  const onDecision = onPricing || onHesitation;
   const { phase, liveEnter } = useWebinarPhase();
 
   const headerCtaClass = 'header-cta btn-gold text-black';
 
+  const decisionCta = (className: string, onClick?: () => void) => {
+    if (onHesitation && !location.pathname.startsWith('/hesitation-success')) {
+      return (
+        <a href="#hesitation-form" onClick={onClick} className={className}>
+          המשך במסלול
+        </a>
+      );
+    }
+    return (
+      <Link to="/pricing#choose-track" onClick={onClick} className={className}>
+        בחירת מסלול
+      </Link>
+    );
+  };
+
   const headerCta = () => {
+    if (onDecision) return decisionCta(headerCtaClass);
     if (phase === 'ended') {
       return (
         <Link to="/pricing" className={headerCtaClass}>
@@ -69,6 +87,7 @@ export function Header() {
   const compactBarCtaClass = 'header-cta btn-gold text-black shrink-0';
 
   const compactBarCta = () => {
+    if (onDecision) return decisionCta(compactBarCtaClass);
     if (phase === 'ended') {
       return (
         <Link to="/pricing" className={compactBarCtaClass}>
@@ -106,6 +125,7 @@ export function Header() {
   const mobileHeaderCta = () => {
     const close = () => setMobileMenuOpen(false);
     const mobileClass = 'btn-gold text-black text-base block w-full text-center px-8 py-4';
+    if (onDecision) return decisionCta(mobileClass, close);
     if (phase === 'ended') {
       return (
         <Link to="/pricing" onClick={close} className={mobileClass}>

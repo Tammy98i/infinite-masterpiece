@@ -46,13 +46,26 @@ export function HesitationSuccess() {
           ))}
         </div>
 
-        <Link
-          to="/"
-          className="inline-flex items-center justify-center gap-3 text-white/50 hover:text-white transition-colors group min-h-11"
-        >
-          <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
-          <span className="text-[13px] uppercase tracking-widest">חזרה לעמוד הבית</span>
-        </Link>
+        <div className="mb-8 text-right rounded-2xl border border-[#b79043]/25 bg-[#05070d]/60 p-5">
+          <p className="text-sm font-semibold text-white mb-3">מה עכשיו</p>
+          <ul className="space-y-2 text-sm text-white/75 leading-relaxed">
+            <li>הפעימה הבאה היא 80 ₪, ואחריה 800 ו־8,000, במוצאי שבת לפי שלבי המיזם.</li>
+            <li>{paid ? 'הגישה לספרייה נפתחת באותו אימייל.' : 'הצוות יחזור לפתיחת הפעימה הראשונה של 8 ₪.'}</li>
+          </ul>
+        </div>
+
+        <div className="flex flex-col items-center gap-3">
+          <Link to="/library" className="btn-gold text-black min-w-44">
+            כניסה לספרייה
+          </Link>
+          <Link
+            to="/"
+            className="inline-flex items-center justify-center gap-3 text-white/50 hover:text-white transition-colors group min-h-11"
+          >
+            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <span className="text-[13px] uppercase tracking-widest">חזרה לעמוד הבית</span>
+          </Link>
+        </div>
       </div>
     </div>
   );

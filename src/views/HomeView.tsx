@@ -148,7 +148,6 @@ export const HomeView: React.FC = () => {
 
       <div className="relative z-10 -mt-16 md:-mt-24">
         <LibraryPlanBanner />
-        <LibraryQuickActions />
         {isLoading ? <CatalogLoadingNotice /> : null}
 
         {catalogStatus === 'error' && (
@@ -165,6 +164,8 @@ export const HomeView: React.FC = () => {
             <StartHereRail {...pickStartHereCourses(courses, user)} />
           )}
         </div>
+
+        <LibraryQuickActions />
 
         {savedCourses.length > 0 ? (
           <CategoryRow

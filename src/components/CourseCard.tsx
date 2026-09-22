@@ -26,7 +26,7 @@ interface CourseCardProps {
 const ACCESS_LABEL: Record<CardAccessState, string> = {
   open: 'פתוח',
   preview: 'טעימה',
-  locked: 'נעול',
+  locked: 'דורש מנוי',
 };
 
 export const CourseCard: React.FC<CourseCardProps> = ({
@@ -80,16 +80,16 @@ export const CourseCard: React.FC<CourseCardProps> = ({
       goWatch(course.id, progress.episodeId, 'continue');
       return;
     }
-    if (access === 'locked') {
-      goWatch(course.id, course.episodes[0]?.id, 'locked_card');
-      return;
-    }
     setView('course', { courseId: course.id });
   };
 
   const handlePlayClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    goWatch(course.id, progress ? progress.episodeId : course.episodes[0]?.id, 'card_play');
+    if (layout === 'continue' && progress) {
+      goWatch(course.id, progress.episodeId, 'card_play');
+      return;
+    }
+    setView('course', { courseId: course.id });
   };
 
   const handleListClick = (e: React.MouseEvent) => {
@@ -184,7 +184,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                         : 'bg-black/75 text-white/90'
                   }`}
                 >
-                  {badge === 'נעול' ? <Lock className="w-3 h-3" aria-hidden /> : null}
+                  {badge === 'דורש מנוי' ? <Lock className="w-3 h-3" aria-hidden /> : null}
                   {badge}
                 </span>
               ) : null}

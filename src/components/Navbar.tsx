@@ -2,13 +2,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useUser } from '../context/UserContext';
-import { Search, Mic, Shield, Menu, X, Infinity as InfinityIcon, Compass, Bookmark, User } from 'lucide-react';
+import { Search, Mic, Shield, Menu, X, Infinity as InfinityIcon, Compass, Bookmark, User, History } from 'lucide-react';
 import { AccountMenu } from './AccountMenu';
 import { trackEvent } from '../utils/analytics';
 import { searchSuggestions } from '../utils/searchCatalog';
 import { formatClock } from '../utils/time';
 import { getCardAccessState } from '../utils/libraryHome';
-import { useWatchAccess } from '../utils/useWatchAccess';
 
 export const Navbar: React.FC = () => {
   const {
@@ -23,7 +22,6 @@ export const Navbar: React.FC = () => {
     categories,
   } = useApp();
   const { user, isGuest, setAuthModalOpen } = useUser();
-  const { goWatch } = useWatchAccess();
   const navigate = useNavigate();
 
   const [isScrolled, setIsScrolled] = useState(false);
@@ -191,7 +189,6 @@ export const Navbar: React.FC = () => {
                       type="button"
                       onClick={() => {
                         setIsSearchOpen(false);
-                        setSearchQuery('');
                       }}
                       className="absolute left-2.5 text-zinc-400 hover:text-white p-1 min-h-11 min-w-11 flex items-center justify-center"
                       aria-label="סגירת חיפוש"
@@ -218,13 +215,7 @@ export const Navbar: React.FC = () => {
                               });
                               setIsSearchOpen(false);
                               if (item.type === 'course') {
-                                const course = courses.find((c) => c.id === item.id);
-                                const access = course ? getCardAccessState(course, user) : 'open';
-                                if (access === 'locked' || access === 'preview') {
-                                  goWatch(item.id, course?.episodes[0]?.id, 'search');
-                                } else {
-                                  setView('course', { courseId: item.id });
-                                }
+                                setView('course', { courseId: item.id });
                               }
                               else if (item.type === 'instructor') setView('instructor', { instructorId: item.id });
                               else setView('category', { categoryId: item.id });
@@ -244,7 +235,7 @@ export const Navbar: React.FC = () => {
                                     const access = getCardAccessState(course, user);
                                     const dur = course.episodes.reduce((s, ep) => s + ep.duration, 0);
                                     return ` · ${formatClock(dur)} · ${
-                                      access === 'open' ? 'פתוח' : access === 'preview' ? 'טעימה' : 'דורש מסלול'
+                                      access === 'open' ? 'פתוח' : access === 'preview' ? 'טעימה' : 'דורש מנוי'
                                     }`;
                                   })()
                                 : ''}
@@ -402,7 +393,7 @@ export const Navbar: React.FC = () => {
         )}
       </header>
 
-      <nav className="editorial-library-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0af2] backdrop-blur-xl border-t border-white/10 py-2 px-6 flex items-center justify-between" aria-label="ניווט תחתון — ספרייה">
+      <nav className="editorial-library-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0af2] backdrop-blur-xl border-t border-white/10 py-2 px-2 flex items-center justify-between" aria-label="ניווט תחתון — ספרייה">
         <button
           type="button"
           onClick={() => setView('home')}
@@ -422,6 +413,16 @@ export const Navbar: React.FC = () => {
         >
           <Search className="w-5 h-5" />
           <span className="text-[10px]">חיפוש</span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setView('history')}
+          className={`flex flex-col items-center gap-1 min-h-11 min-w-11 ${
+            currentView === 'history' ? 'text-primary-light font-bold' : 'text-zinc-400'
+          }`}
+        >
+          <History className="w-5 h-5" />
+          <span className="text-[10px]">היסטוריה</span>
         </button>
         <button
           type="button"

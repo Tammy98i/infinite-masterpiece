@@ -11,6 +11,8 @@ const HIDDEN_ROUTES = [
   '/auth',
   '/oauth',
   '/webinar',
+  '/pricing',
+  '/hesitation',
 ];
 
 export function ConversionBand() {

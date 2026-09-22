@@ -3,21 +3,17 @@ import {
   ArrowLeft,
   BarChart3,
   ChevronDown,
-  LineChart,
-  PlaySquare,
   Rocket,
   Settings,
-  Smartphone,
   Tag,
   Target,
-  UserCircle,
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { EntryTrackCards } from './EntryTrackCards';
 import { FAQS } from '../pages/FAQPage';
 import './TabbedSlider.css';
 
-type TabId = 'difference' | 'team' | 'platform' | 'pricing' | 'gradual' | 'faq';
+type TabId = 'difference' | 'team' | 'platform' | 'pricing' | 'faq';
 
 type Tab = {
   id: TabId;
@@ -30,7 +26,6 @@ const TABS: Tab[] = [
   { id: 'team', label: 'נבחרת 88', tone: 'dark' },
   { id: 'platform', label: 'הפלטפורמה', tone: 'cream' },
   { id: 'pricing', label: 'מסלולים ומחיר', tone: 'dark' },
-  { id: 'gradual', label: 'דרך מדורגת', tone: 'cream' },
   { id: 'faq', label: 'שאלות', tone: 'cream' },
 ];
 
@@ -42,21 +37,6 @@ const DIFFERENCE_ITEMS = [
   { icon: Rocket, title: 'סקייל, חופש והשפעה', body: 'בקצב שלך' },
 ];
 
-const TEAM_ITEMS = [
-  ['Mastermind', 'חשיבה אסטרטגית עם אנשים שבונים ברצינות'],
-  ['Micro-Pods', 'קבוצות עבודה קטנות, ממוקדות ואפקטיביות'],
-  ['Hot Seats', 'עבודה ישירה על ההצעה, המכירה והמודל'],
-  ['ניתוח אישי', 'מבט מדויק על החסמים וההזדמנויות'],
-  ['גישה למומחים', 'מענה ממוקד בנקודות שדורשות מומחיות'],
-  ['ליווי הטמעה', 'להפוך החלטות לפעולות בתוך העסק'],
-];
-
-const PLATFORM_ITEMS = [
-  { icon: PlaySquare, title: 'ספריית VOD', body: 'כל השיעורים, המשימות והתבניות' },
-  { icon: UserCircle, title: 'אזור אישי', body: 'המסע שלך, המשימות והיעד הבא' },
-  { icon: LineChart, title: 'מעקב ביצועים', body: 'מדידת עשייה בפועל, לא רק צפייה' },
-  { icon: Smartphone, title: 'אפליקציה בהמשך', body: 'חוויית Mobile-First בכל מקום' },
-];
 
 function DifferencePanel() {
   return (
@@ -83,12 +63,8 @@ function TeamPanel() {
     <div className="tabbed-content">
       <p className="tabbed-kicker">שכבת העומק</p>
       <h2>נבחרת 88</h2>
-      <p className="tabbed-lede">עד 88 יוצרים שעובדים קרוב יותר. על ההצעה, המכירה והמודל. לפי התאמה, לא בלחיצת תשלום.</p>
-      <div className="tabbed-team-grid">
-        {TEAM_ITEMS.map(([title, body]) => <article key={title}><h3>{title}</h3><p>{body}</p></article>)}
-      </div>
-      <p className="tabbed-fine">בנוסף למסלול הראשי · 8,888 ₪ לפני מע״מ</p>
-      <Link to="/application?type=88" className="tabbed-button">הגשת מועמדות</Link>
+      <p className="tabbed-lede">עד 88 יוצרים שעובדים קרוב יותר, לפי התאמה. זה לא חלק מבחירת המסלול.</p>
+      <Link to="/premium-88" className="tabbed-link">לעמוד נבחרת 88 <ArrowLeft aria-hidden="true" /></Link>
     </div>
   );
 }
@@ -96,15 +72,10 @@ function TeamPanel() {
 function PlatformPanel() {
   return (
     <div className="tabbed-content">
-      <p className="tabbed-kicker">THE PLATFORM</p>
-      <h2>כל מה שצריך כדי להתקדם במקום אחד.</h2>
-      <p className="tabbed-lede">המסלול, התכנים, המשימות, הקהילה וההתקדמות שלך — בלי קבצים מפוזרים ולינקים שנעלמים.</p>
-      <div className="tabbed-platform-grid">
-        {PLATFORM_ITEMS.map(item => (
-          <article key={item.title}><item.icon aria-hidden="true" /><h3>{item.title}</h3><p>{item.body}</p></article>
-        ))}
-      </div>
-      <Link to="/library" className="tabbed-link">כבר בפנים? כניסה לספרייה <ArrowLeft aria-hidden="true" /></Link>
+      <p className="tabbed-kicker">הפלטפורמה</p>
+      <h2>התכנים וההתקדמות במקום אחד.</h2>
+      <p className="tabbed-lede">אחרי הכניסה, הספרייה מחזיקה את השיעורים ואת ההמשך. אין כאן מסלול נפרד.</p>
+      <Link to="/library" className="tabbed-link">כניסה לספרייה <ArrowLeft aria-hidden="true" /></Link>
     </div>
   );
 }
@@ -116,19 +87,8 @@ function PricingPanel() {
       <h2>מסלולים ומחיר</h2>
       <p className="tabbed-lede">שתי דרכי כניסה. אותו מסע. ההבדל הוא בקצב הכניסה ובכרטיסי ההגרלה.</p>
       <EntryTrackCards />
-      <Link to="/hesitation" className="tabbed-outline-button">החלטה מדויקת — רוצים להיכנס שלב שלב?</Link>
-    </div>
-  );
-}
-
-function GradualPanel() {
-  return (
-    <div className="tabbed-content tabbed-gradual">
-      <p className="tabbed-kicker">דרך מדורגת</p>
-      <h2>רוצים להיכנס שלב שלב?</h2>
       <p className="tabbed-lede">מסלול ההססנים הוא אותו מחיר מלא, 8,888 ₪ לפני מע״מ, בפריסה שמתחילה ב־8 ₪. לא הנחה ולא מסלול חלקי.</p>
       <div className="tabbed-steps" aria-label="שלבי התשלום"><span>8 ₪</span><i /><span>80 ₪</span><i /><span>800 ₪</span><i /><span>8,000 ₪</span></div>
-      <Link to="/hesitation" className="tabbed-button">אני מתחיל/ה ב־8 ₪</Link>
     </div>
   );
 }
@@ -156,12 +116,12 @@ const PANELS: Record<TabId, () => ReactElement> = {
   team: TeamPanel,
   platform: PlatformPanel,
   pricing: PricingPanel,
-  gradual: GradualPanel,
   faq: FaqPanel,
 };
 
 function tabFromHash(hash: string): TabId | null {
   const id = hash.replace(/^#/, '');
+  if (id === 'gradual') return 'pricing';
   return TABS.some(tab => tab.id === id) ? id as TabId : null;
 }
 
@@ -183,12 +143,18 @@ export function TabbedSlider() {
     return () => window.removeEventListener('hashchange', apply);
   }, []);
 
+  const selectTab = (id: TabId) => {
+    setActive(id);
+    const next = `${window.location.pathname}${window.location.search}#${id}`;
+    window.history.replaceState(null, '', next);
+  };
+
   const handleKeys = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
     event.preventDefault();
     const nextIndex = event.key === 'Home' ? 0 : event.key === 'End' ? TABS.length - 1 : (index + (event.key === 'ArrowLeft' ? 1 : -1) + TABS.length) % TABS.length;
     const next = TABS[nextIndex];
-    setActive(next.id);
+    selectTab(next.id);
     tabRefs.current[nextIndex]?.focus();
   };
 
@@ -206,7 +172,7 @@ export function TabbedSlider() {
               aria-controls={`panel-${tab.id}`}
               aria-selected={active === tab.id}
               tabIndex={active === tab.id ? 0 : -1}
-              onClick={() => setActive(tab.id)}
+              onClick={() => selectTab(tab.id)}
               onKeyDown={event => handleKeys(event, index)}
             >
               {tab.label}
