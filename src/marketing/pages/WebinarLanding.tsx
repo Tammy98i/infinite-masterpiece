@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { motion } from 'motion/react';
 import { Check, ChevronDown, Handshake, Megaphone, Network, Tag, Target, X } from 'lucide-react';
 import { webinarApi } from '../../api/webinar';
 import {
@@ -10,35 +9,31 @@ import {
   type WebinarPublicPayload,
 } from '../../constants/webinar';
 import {
-  WEBINAR_AUDIENCE_LABEL,
   WEBINAR_BOTTLENECKS,
   WEBINAR_CTA_ENDED,
   WEBINAR_CTA_REGISTER,
-  WEBINAR_CTA_FIT_LINK,
   WEBINAR_CTA_NEXT_CYCLE,
-  WEBINAR_CTA_NOT_REGISTERED,
   WEBINAR_ENDED_NOTE,
   WEBINAR_FIT_NO,
   WEBINAR_FIT_YES,
   WEBINAR_GLEB,
   WEBINAR_HOLDING_LINE,
-  WEBINAR_PUNCHLINE,
   WEBINAR_REGISTER_ID,
   WEBINAR_TASK_STEPS,
   WEBINAR_TRACKS_FINE_PRINT,
-  webinarLiveEnter,
 } from '../../constants/webinarPage';
 import { WebinarRegistrationForm } from '../components/WebinarRegistrationForm';
 import { WebinarStickyCta } from '../components/WebinarStickyCta';
 import { WebinarSectionCta } from '../components/WebinarSocialProof';
-import { WebinarCountdown } from '../components/WebinarCountdown';
-import { trackEvent, trackWebinarCta, scrollToWebinarForm, scrollToWebinarFit } from '../../utils/analytics';
+import { trackEvent, trackWebinarCta, scrollToWebinarForm } from '../../utils/analytics';
 import { captureUtmFromSearch } from '../../utils/utm';
 import { getWebinarPhase } from '../../utils/webinarTime';
 import { TeamPhoto } from '../../components/TeamPhoto';
 import { TeamGalaxy } from '../components/galaxy/TeamGalaxy';
+import { WebinarNeuralHero } from '../components/WebinarNeuralHero';
 import './WebinarLanding.css';
 import './WebinarEditorialCinema.css';
+import '../components/WebinarNeuralHero.css';
 
 const bottleneckIcons = [Tag, Handshake, Megaphone, Network, Target];
 
@@ -171,7 +166,6 @@ export function WebinarLanding() {
     : 'upcoming';
   const eventNight = eventPhase === 'live';
   const eventEnded = eventPhase === 'ended';
-  const liveEnter = webinarLiveEnter(config.zoomLink, config.whatsappGroupUrl);
 
   const scrollToForm = (section = 'hero') => {
     trackWebinarCta(section);
@@ -206,58 +200,14 @@ export function WebinarLanding() {
         <a href="#webinar-register">{eventEnded ? 'המחזור הבא' : 'הרשמה'}</a>
         <a href="#webinar-faq">שאלות</a>
       </nav>
-      <section id="webinar-hero" className="webinar-stage-hero relative overflow-hidden">
-        <div className="webinar-stage-atmosphere" aria-hidden />
-        <motion.div
-          initial={{ opacity: 0, y: 24 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="webinar-stage-shell"
-        >
-          <div className="webinar-stage-event">
-            <span className={`webinar-stage-dot ${eventNight ? 'is-live' : ''}`} aria-hidden />
-            <span>{eventNight ? 'הערב החי עכשיו' : eventEnded ? WEBINAR_CTA_ENDED : 'ערב חי'}, {config.date}, {config.time}</span>
-            {eventNight || eventEnded ? null : <WebinarCountdown date={config.date} time={config.time} />}
-          </div>
-
-          <div className="webinar-stage-cast" aria-label="מנחי הערב">
-            {hosts.map((host) => (
-              <figure key={host.name} className="webinar-stage-person">
-                <TeamPhoto src={host.image} name={host.name} alt={host.name} className="webinar-stage-portrait" />
-                <figcaption>{host.name}</figcaption>
-              </figure>
-            ))}
-          </div>
-
-          <div className="webinar-stage-copy">
-            <h1>
-              <span>{headlineParts.line1}</span>
-              {headlineParts.line2 ? <span className="text-gold-gradient">{headlineParts.line2}</span> : null}
-            </h1>
-            <p className="webinar-stage-subheadline">{config.heroSubheadline}</p>
-            <p className="webinar-stage-punchline">{WEBINAR_PUNCHLINE}</p>
-            <p className="webinar-stage-meta">{config.location} · {config.durationMinutes} דקות · {WEBINAR_AUDIENCE_LABEL}</p>
-            <div className="webinar-stage-actions">
-              {eventEnded ? (
-                <>
-                  <Link to="/pricing" className="btn-gold text-black">{WEBINAR_CTA_NEXT_CYCLE}</Link>
-                  <p>{WEBINAR_CTA_ENDED}. {WEBINAR_ENDED_NOTE}</p>
-                </>
-              ) : eventNight ? (
-                liveEnter.href ? (
-                  <a href={liveEnter.href} target="_blank" rel="noreferrer" onClick={() => trackWebinarCta('hero_enter')} className="btn-gold text-black">{liveEnter.label}</a>
-                ) : <p>{liveEnter.label}</p>
-              ) : (
-                <button type="button" onClick={() => scrollToForm('hero')} className="btn-gold text-black">{WEBINAR_CTA_REGISTER}</button>
-              )}
-              {eventEnded ? null : eventNight ? (
-                <button type="button" onClick={() => scrollToForm('hero_unregistered')} className="webinar-stage-secondary">{WEBINAR_CTA_NOT_REGISTERED}</button>
-              ) : (
-                <a href="#webinar-fit" onClick={(event) => { event.preventDefault(); scrollToWebinarFit(); }} className="webinar-stage-secondary">{WEBINAR_CTA_FIT_LINK}</a>
-              )}
-            </div>
-          </div>
-        </motion.div>
-      </section>
+      <WebinarNeuralHero
+        config={config}
+        hosts={hosts}
+        headlineParts={headlineParts}
+        eventNight={eventNight}
+        eventEnded={eventEnded}
+        onRegister={scrollToForm}
+      />
 
       <div className="webinar-editorial-grid">
       <section id="problem" className="py-20 md:py-24 border-t border-white/[0.04]">
