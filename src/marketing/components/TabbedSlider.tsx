@@ -1,4 +1,4 @@
-import { useRef, useState, type KeyboardEvent, type ReactElement } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent, type ReactElement } from 'react';
 import {
   ArrowLeft,
   BarChart3,
@@ -160,11 +160,28 @@ const PANELS: Record<TabId, () => ReactElement> = {
   faq: FaqPanel,
 };
 
+function tabFromHash(hash: string): TabId | null {
+  const id = hash.replace(/^#/, '');
+  return TABS.some(tab => tab.id === id) ? id as TabId : null;
+}
+
 export function TabbedSlider() {
-  const [active, setActive] = useState<TabId>('difference');
+  const [active, setActive] = useState<TabId>(() => tabFromHash(window.location.hash) ?? 'difference');
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const activeTab = TABS.find(tab => tab.id === active) ?? TABS[0];
   const ActivePanel = PANELS[active];
+
+  useEffect(() => {
+    const apply = () => {
+      const next = tabFromHash(window.location.hash);
+      if (!next) return;
+      setActive(next);
+      document.getElementById('home-topics')?.scrollIntoView({ block: 'start' });
+    };
+    apply();
+    window.addEventListener('hashchange', apply);
+    return () => window.removeEventListener('hashchange', apply);
+  }, []);
 
   const handleKeys = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
     if (!['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(event.key)) return;
@@ -176,7 +193,7 @@ export function TabbedSlider() {
   };
 
   return (
-    <section className="tabbed-slider" dir="rtl" aria-label="תוכן עמוד הבית">
+    <section id="home-topics" className="tabbed-slider" dir="rtl" aria-label="תוכן עמוד הבית">
       <div className="tabbed-tabs-wrap">
         <div className="tabbed-tabs" role="tablist" aria-label="בחירת נושא">
           {TABS.map((tab, index) => (

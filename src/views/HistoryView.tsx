@@ -36,7 +36,10 @@ export const HistoryView: React.FC = () => {
       </div>
 
       {items.length === 0 ? (
-        <StartHereRail {...pickStartHereCourses(courses, user)} />
+        <>
+          <p className="mb-6 text-sm text-white/70">עוד אין צפייה בחשבון הזה.</p>
+          <StartHereRail {...pickStartHereCourses(courses, user)} />
+        </>
       ) : (
         <div className="divide-y divide-white/10">
           {items.map(({ course, episode, progress }) => {

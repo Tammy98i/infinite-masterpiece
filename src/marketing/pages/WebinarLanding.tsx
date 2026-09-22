@@ -13,11 +13,10 @@ import {
   WEBINAR_AUDIENCE_LABEL,
   WEBINAR_BOTTLENECKS,
   WEBINAR_CTA_ENDED,
-  WEBINAR_CTA_FIT,
+  WEBINAR_CTA_REGISTER,
   WEBINAR_CTA_FIT_LINK,
   WEBINAR_CTA_NEXT_CYCLE,
   WEBINAR_CTA_NOT_REGISTERED,
-  WEBINAR_CTA_PRIMARY,
   WEBINAR_ENDED_NOTE,
   WEBINAR_FIT_NO,
   WEBINAR_FIT_YES,
@@ -203,9 +202,9 @@ export function WebinarLanding() {
   return (
     <div className="webinar-stage-page w-full pb-28">
       <nav className="webinar-section-nav" aria-label="ניווט בתוך עמוד הוובינר">
-        <a href="#hosts">הצוות</a>
-        <a href="#webinar-fit">התאמה</a>
-        <a href="#webinar-faq">שאלות נפוצות</a>
+        <a href="#webinar-fit">למי זה</a>
+        <a href="#webinar-register">הרשמה</a>
+        <a href="#webinar-faq">שאלות</a>
       </nav>
       <section id="webinar-hero" className="webinar-stage-hero relative overflow-hidden">
         <div className="webinar-stage-atmosphere" aria-hidden />
@@ -248,7 +247,7 @@ export function WebinarLanding() {
                   <a href={liveEnter.href} target="_blank" rel="noreferrer" onClick={() => trackWebinarCta('hero_enter')} className="btn-gold text-black">{liveEnter.label}</a>
                 ) : <p>{liveEnter.label}</p>
               ) : (
-                <button type="button" onClick={() => scrollToForm('hero')} className="btn-gold text-black">{WEBINAR_CTA_PRIMARY}</button>
+                <button type="button" onClick={() => scrollToForm('hero')} className="btn-gold text-black">{WEBINAR_CTA_REGISTER}</button>
               )}
               {eventEnded ? null : eventNight ? (
                 <button type="button" onClick={() => scrollToForm('hero_unregistered')} className="webinar-stage-secondary">{WEBINAR_CTA_NOT_REGISTERED}</button>
@@ -366,7 +365,7 @@ export function WebinarLanding() {
             </div>
           </div>
           {eventEnded ? null : (
-            <WebinarSectionCta label={WEBINAR_CTA_FIT} section="fit" onClick={() => scrollToForm('fit')} />
+            <WebinarSectionCta label={WEBINAR_CTA_REGISTER} section="fit" onClick={() => scrollToForm('fit')} />
           )}
         </div>
       </section>

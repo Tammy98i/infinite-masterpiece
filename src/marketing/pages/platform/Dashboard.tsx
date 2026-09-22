@@ -171,7 +171,7 @@ export function Dashboard() {
       <p className="text-white/50 max-w-lg mb-10 leading-relaxed font-light">
         החשבון שלך הוא במעמד ״חינמי/הססן״. כדי לקבל גישה מלאה למסע 33 הימים, לספריית ה-VOD, לקהילה ולקפטנים, יש לשדרג למסלול המלא.
       </p>
-      <Link to="/#pricing" className="btn-gold text-black px-10 py-4 text-lg">
+      <Link to="/pricing" className="btn-gold text-black px-10 py-4 text-lg">
         שדרוג למסלול המלא
       </Link>
       

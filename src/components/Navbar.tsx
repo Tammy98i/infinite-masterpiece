@@ -1,5 +1,5 @@
 ﻿import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useUser } from '../context/UserContext';
 import { Search, Mic, Shield, Menu, X, Infinity as InfinityIcon, Compass, Bookmark, User } from 'lucide-react';
@@ -108,6 +108,12 @@ export const Navbar: React.FC = () => {
             </div>
 
             <nav className="hidden md:flex items-center gap-6 text-[14px] sm:text-[15px] font-light" aria-label="ניווט הספרייה">
+              <Link
+                to="/"
+                className="transition-colors py-2 min-h-11 inline-flex items-center border-b-2 border-transparent text-[#dfc47d] hover:text-white"
+              >
+                לאתר
+              </Link>
               <button
                 type="button"
                 onClick={() => setView('home')}

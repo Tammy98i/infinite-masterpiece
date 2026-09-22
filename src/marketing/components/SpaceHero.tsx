@@ -140,7 +140,7 @@ export function SpaceHero() {
             <span className="space-label space-label-l">{left.name}</span>
             <span className="space-label space-label-r">{right.name}</span>
             <div className="space-secondary-actions">
-              {phase === 'ended' ? <p className="space-ended">{WEBINAR_CTA_ENDED}</p> : <a href="/#pricing">למסלול האמיצים והססנים</a>}
+              {phase === 'ended' ? <p className="space-ended">{WEBINAR_CTA_ENDED}</p> : <Link to="/pricing">למסלול האמיצים והססנים</Link>}
               <Link to="/library">כבר בפנים? כניסה לספרייה</Link>
             </div>
           </div>

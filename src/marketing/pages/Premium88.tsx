@@ -47,7 +47,7 @@ export function Premium88() {
         </Link>
         <div className="mt-6">
           <a
-            href="/#depth-layer"
+            href="/#team"
             className="text-white/40 hover:text-[#b79043] transition-colors text-sm font-light"
           >
             רוצה להבין את שכבת העומק?

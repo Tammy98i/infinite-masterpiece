@@ -7,6 +7,7 @@ export const WEBINAR_AUDIENCE_LABEL = 'יוצרים, אמנים, מומחים ו
 
 export const WEBINAR_REGISTER_ID = 'webinar-register';
 export const WEBINAR_CTA_PRIMARY = 'כן. אני מגיע/ה לערב החי';
+export const WEBINAR_CTA_REGISTER = 'הרשמה לערב החי';
 export const WEBINAR_CTA_SHORT = 'אני מגיע/ה';
 export const WEBINAR_CTA_HEADER = 'אני מגיע/ה לערב החי';
 export const WEBINAR_CTA_FIT = 'כן. זה מתאים לי. אני מגיע/ה';

@@ -87,7 +87,7 @@ export function Journey() {
               to="/pricing"
               className="btn-gold text-black w-full sm:w-auto px-10 py-4 text-sm"
             >
-              <span>להצטרפות</span>
+              <span>להצטרפות למסע</span>
               <ArrowLeft className="w-4 h-4" />
             </Link>
             <Link to="/" className="text-sm text-white/40 hover:text-[#b79043] transition-colors">

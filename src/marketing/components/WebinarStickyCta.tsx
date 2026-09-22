@@ -3,7 +3,7 @@ import { trackWebinarCta, scrollToWebinarForm } from '../../utils/analytics';
 import { WebinarCountdown } from './WebinarCountdown';
 import {
   WEBINAR_CTA_NOT_REGISTERED,
-  WEBINAR_CTA_PRIMARY,
+  WEBINAR_CTA_REGISTER,
   WEBINAR_CTA_SHORT,
   webinarLiveEnter,
 } from '../../constants/webinarPage';
@@ -102,7 +102,7 @@ export function WebinarStickyCta({
             ) : (
               <>
                 <span className="sm:hidden">{WEBINAR_CTA_SHORT}</span>
-                <span className="hidden sm:inline">{WEBINAR_CTA_PRIMARY}</span>
+                <span className="hidden sm:inline">{WEBINAR_CTA_REGISTER}</span>
               </>
             )}
           </button>

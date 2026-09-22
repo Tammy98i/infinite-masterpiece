@@ -127,6 +127,7 @@ body { background: var(--editorial-ink); }
   border-radius: 9999px;
   font-size: 13px;
   line-height: 1;
+  white-space: nowrap;
 }
 .editorial-site-header .header-compact-cta .header-cta {
   height: 36px;

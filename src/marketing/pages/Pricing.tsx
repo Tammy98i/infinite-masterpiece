@@ -25,7 +25,7 @@ export function Pricing() {
           <span className="text-[11px] font-medium uppercase tracking-[0.15em] text-[#dfc47d]">המחזור הקרוב נפתח בקרוב</span>
         </div>
         <h1 className="mb-5 text-4xl font-heading text-white md:text-6xl">שתי דרכי כניסה. <span className="text-gold-gradient">אותו מסע.</span></h1>
-        <p className="mx-auto max-w-2xl text-base font-light leading-relaxed text-white/55 md:text-lg">מסלול מלא שבונה מערכת עסקית סביב היצירה. ההבדל בין המסלולים הוא בקצב התשלום ובכרטיסי ההגרלה — לא בגישה לתוכן.</p>
+        <p className="mx-auto max-w-2xl text-base font-light leading-relaxed text-white/55 md:text-lg">אותו מסע מלא. אמיצים: 8,008 ₪ לפני מע״מ בתשלום אחד. הססנים: 8,888 ₪ לפני מע״מ בארבע פעימות. זה קצב תשלום, לא הנחה ולא מוצר חלקי.</p>
       </section>
 
       <SectionNav items={[{ id: 'choose-track', label: 'בחירת מסלול' }, { id: 'whats-included', label: 'מה מקבלים' }, { id: 'journey-preview', label: '33 הימים' }, { id: 'pricing-faq', label: 'שאלות' }]} />

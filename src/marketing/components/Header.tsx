@@ -7,6 +7,7 @@ import { AccountMenu } from '../../components/AccountMenu';
 import { scrollToWebinarForm, trackWebinarCta } from '../../utils/analytics';
 import {
   WEBINAR_CTA_HEADER,
+  WEBINAR_CTA_REGISTER,
   WEBINAR_CTA_NEXT_CYCLE,
   WEBINAR_CTA_NEXT_CYCLE_SHORT,
   WEBINAR_CTA_SHORT,
@@ -54,13 +55,13 @@ export function Header() {
     if (onWebinarLanding) {
       return (
         <button type="button" onClick={goToWebinarForm} className={headerCtaClass}>
-          {WEBINAR_CTA_HEADER}
+          {WEBINAR_CTA_REGISTER}
         </button>
       );
     }
     return (
       <Link to={onWebinar ? `/webinar#${WEBINAR_REGISTER_ID}` : '/webinar'} className={headerCtaClass}>
-        {WEBINAR_CTA_HEADER}
+        {WEBINAR_CTA_REGISTER}
       </Link>
     );
   };

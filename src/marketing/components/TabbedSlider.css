@@ -4,11 +4,12 @@
   width: 100%;
   color: #e0edff;
   background: rgba(5, 10, 20, .86);
+  scroll-margin-top: var(--site-header-h, 72px);
 }
 
 .tabbed-tabs-wrap {
   position: sticky;
-  top: 0;
+  top: var(--site-header-h, 72px);
   z-index: 35;
   padding: 0 4vw;
   border-bottom: 1px solid rgba(183, 144, 67, .28);

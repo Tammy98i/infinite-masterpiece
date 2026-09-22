@@ -63,7 +63,7 @@ export function VideoHero() {
             {phase === 'ended' ? WEBINAR_CTA_NEXT_CYCLE : WEBINAR_CTA_HEADER}<ArrowLeft aria-hidden="true" />
           </Link>
           {phase === 'ended' ? <p className="vh-ended">{WEBINAR_CTA_ENDED}</p> : (
-            <a href="/#pricing" className="vh-btn vh-ghost">למסלול האמיצים והססנים<ArrowLeft aria-hidden="true" /></a>
+            <Link to="/pricing" className="vh-btn vh-ghost">למסלול האמיצים והססנים<ArrowLeft aria-hidden="true" /></Link>
           )}
         </div>
         <Link to="/library" className="vh-library">כבר בפנים? כניסה לספרייה</Link>

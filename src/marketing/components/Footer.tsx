@@ -18,6 +18,12 @@ export function Footer() {
             aria-label="קישורי וובינר"
             className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm text-white/50 font-light mb-8"
           >
+            <Link to="/" className="hover:text-white min-h-11 inline-flex items-center">
+              האתר
+            </Link>
+            <Link to="/library" className="hover:text-white min-h-11 inline-flex items-center">
+              ספרייה
+            </Link>
             <Link
               to={`/webinar#${WEBINAR_REGISTER_ID}`}
               className="hover:text-[#dfc47d] min-h-11 inline-flex items-center"
@@ -53,9 +59,9 @@ export function Footer() {
           <div>
             <h3 className="text-[11px] uppercase tracking-[0.2em] text-[#b79043] mb-4">המסלול</h3>
             <ul className="space-y-3 text-sm text-white/50 font-light">
-              <li><a href="/#what-is-it" className="hover:text-white transition-colors">במה זה שונה</a></li>
+              <li><Link to="/#difference" className="hover:text-white transition-colors">במה זה שונה</Link></li>
               <li><Link to="/journey" className="hover:text-white transition-colors">התהליך. 33 ימים</Link></li>
-              <li><a href="/#pricing" className="hover:text-white transition-colors">מחיר</a></li>
+              <li><Link to="/pricing" className="hover:text-white transition-colors">מחיר</Link></li>
               <li><Link to="/hesitation" className="hover:text-white transition-colors">מסלול ההססנים</Link></li>
             </ul>
           </div>
@@ -67,7 +73,7 @@ export function Footer() {
             </h3>
             <ul className="space-y-3 text-sm text-white/50 font-light">
               <li><Link to="/webinar" className="hover:text-white transition-colors text-[#b79043]/90">הרשמה לוובינר</Link></li>
-              <li><a href="/#depth-layer" className="hover:text-white transition-colors">מהי שכבת העומק</a></li>
+              <li><Link to="/#team" className="hover:text-white transition-colors">מהי שכבת העומק</Link></li>
               <li><Link to="/premium-88" className="hover:text-white transition-colors">צוות המיזם</Link></li>
               <li><Link to="/application?type=88" className="hover:text-white transition-colors">הגשת מועמדות</Link></li>
             </ul>
@@ -77,7 +83,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-white/50 font-light">
               <li><Link to="/library-membership" className="hover:text-white transition-colors">מנוי ספרייה</Link></li>
               <li><Link to="/library" className="hover:text-white transition-colors">כניסה לספרייה</Link></li>
-              <li><a href="/#infinite-library" className="hover:text-white transition-colors">הפלטפורמה</a></li>
+              <li><Link to="/#platform" className="hover:text-white transition-colors">הפלטפורמה</Link></li>
             </ul>
           </div>
           <div>
@@ -97,7 +103,7 @@ export function Footer() {
             <span className="text-[11px] uppercase tracking-widest">© {new Date().getFullYear()} Infinite Masterpiece</span>
           </div>
           <Link
-            to="/#pricing"
+            to="/pricing"
             className="text-sm text-[#b79043] hover:text-[#dfc47d] transition-colors"
           >
             להצטרפות למסע
