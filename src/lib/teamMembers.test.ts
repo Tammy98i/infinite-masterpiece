@@ -6,9 +6,12 @@ test('impact increases diameter and changes position, sun remains largest', () =
   for (let score = 0; score < 100; score++) assert.ok(starDiameter({ ...input, impact_score: score }) < starDiameter({ ...input, impact_score: score + 1 }));
   assert.ok(starDiameter({ ...input, hierarchy_level: 'founder', impact_score: 0 }) > starDiameter({ ...input, hierarchy_level: 'leadership', impact_score: 100 }));
   assert.ok(starDiameter({ ...input, hierarchy_level: 'leadership', impact_score: 0 }) > starDiameter({ ...input, impact_score: 100 }));
-  assert.notDeepEqual(starPosition({ ...input, id: '1', hierarchy_level: 'leadership' }, 0), starPosition({ ...input, id: '1' }, 0));
-  assert.notDeepEqual(starPosition({ ...input, id: '1' }, 0), starPosition({ ...input, id: '1', impact_score: 90 }, 0));
-  assert.notDeepEqual(starPosition({ ...input, id: '1' }, 0), starPosition({ ...input, id: '1', orbit: 4 }, 0));
+  assert.notDeepEqual(starPosition({ ...input, id: '1', hierarchy_level: 'leadership' }, 0), starPosition({ ...input, id: '1' }, 0, 6));
+  assert.notDeepEqual(starPosition({ ...input, id: '1' }, 0, 6), starPosition({ ...input, id: '1', impact_score: 90 }, 0, 6));
+  assert.notDeepEqual(starPosition({ ...input, id: '1' }, 0, 6), starPosition({ ...input, id: '1', orbit: 4 }, 0, 6));
+  const first = starPosition({ ...input, id: '1' }, 0, 6);
+  const last = starPosition({ ...input, id: '6' }, 5, 6);
+  assert.ok(Math.hypot(first.x - last.x, first.y - last.y) > 8);
 });
 test('invalid fields and image protocols are rejected', () => {
   for (const impact_score of [-1, 101, 2.5, '90', null]) assert.throws(() => validateTeamMember({ ...input, impact_score }));

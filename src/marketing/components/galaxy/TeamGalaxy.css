@@ -123,7 +123,7 @@
   .galaxy-heading > p:not(.galaxy-eyebrow) { font-size: 12px; }
   .galaxy-heading > span { font-size: 11px; }
   .galaxy-layout { display: block; }
-  .galaxy-map { height: 500px; }
+  .galaxy-map { height: 560px; }
   .galaxy-star-name { font-size: 13px; width: 115px; }
   .galaxy-star-role { font-size: 9px; width: 115px; top: calc(100% + 35px); }
   .galaxy-sun .galaxy-star-name { font-size: 22px; }

@@ -32,13 +32,19 @@ export function sortTeam(members: TeamMember[]) {
   return [...members].sort((a, b) => TEAM_LEVELS.indexOf(a.hierarchy_level) - TEAM_LEVELS.indexOf(b.hierarchy_level)
     || a.orbit - b.orbit || a.display_order - b.display_order || b.impact_score - a.impact_score || a.id.localeCompare(b.id));
 }
-/** Six spacious slots per page; orbit and impact adjust distance without changing text orientation. */
-export function starPosition(member: TeamMember, slot: number) {
+/** Leadership stays close to the sun. The rest of the team fill the outer ring. */
+export function starPosition(member: TeamMember, slot: number, total = 6) {
   if (member.hierarchy_level === 'founder') return { x: 50, y: 52 };
-  const angle = [-145, -35, 145, 35, 180, 0][slot % 6] * Math.PI / 180;
-  const ring = member.hierarchy_level === 'leadership' ? 24 : 34;
-  const distance = member.orbit * 1.5 + (100 - member.impact_score) * 0.025;
-  return { x: 50 + Math.cos(angle) * (ring + distance), y: 52 + Math.sin(angle) * (ring + distance) };
+  if (member.hierarchy_level === 'leadership') {
+    const angle = [-145, -35][slot % 2] * Math.PI / 180;
+    return { x: 50 + Math.cos(angle) * 27, y: 52 + Math.sin(angle) * 24 };
+  }
+  const count = Math.max(1, total);
+  const start = -155 * Math.PI / 180;
+  const sweep = 310 * Math.PI / 180;
+  const angle = count === 1 ? start + sweep / 2 : start + (sweep * slot) / (count - 1);
+  const distance = 36 + member.orbit * 0.4 + (100 - member.impact_score) * 0.02;
+  return { x: 50 + Math.cos(angle) * distance, y: 52 + Math.sin(angle) * (distance * 0.82) };
 }
 
 export function validateTeamMember(raw: unknown): TeamMemberInput {

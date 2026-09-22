@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { motion } from 'motion/react';
-import { ChevronLeft, ChevronRight, Infinity as InfinityIcon, Pause, Play, Sparkles, Sun } from 'lucide-react';
+import { Infinity as InfinityIcon, Pause, Play, Sparkles, Sun } from 'lucide-react';
 import { teamMembersApi } from '../../../api/teamMembers';
 import { sortTeam, starDiameter, starPosition, type TeamMember } from '../../../lib/teamMembers';
 import { InlineStarDetails } from './InlineStarDetails';
@@ -13,10 +13,7 @@ export function TeamGalaxy() {
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
   const [paused, setPaused] = useState(false);
-  const [page, setPage] = useState(0);
-  const [compact, setCompact] = useState(() => window.matchMedia('(max-width: 1023px)').matches);
   const lastTrigger = useRef<HTMLButtonElement | null>(null);
-  const touchStart = useRef<number | null>(null);
   useEffect(() => {
     let cancelled = false;
     const load = () => teamMembersApi.list().then(res => {
@@ -29,18 +26,10 @@ export function TeamGalaxy() {
     window.addEventListener('team-members-updated', refresh);
     return () => { cancelled = true; clearInterval(timer); window.removeEventListener('focus', refresh); window.removeEventListener('team-members-updated', refresh); };
   }, []);
-  useEffect(() => {
-    const query = window.matchMedia('(max-width: 1023px)');
-    const change = () => { setCompact(query.matches); setPage(0); };
-    query.addEventListener('change', change);
-    return () => query.removeEventListener('change', change);
-  }, []);
   const founder = members.find(member => member.hierarchy_level === 'founder');
-  const satellites = members.filter(member => member.hierarchy_level !== 'founder');
-  const capacity = compact ? 4 : 8;
-  const pageCount = Math.max(1, Math.ceil(satellites.length / capacity));
-  const safePage = Math.min(page, pageCount - 1);
-  const visible = satellites.slice(safePage * capacity, (safePage + 1) * capacity);
+  const leaders = members.filter(member => member.hierarchy_level === 'leadership');
+  const contributors = members.filter(member => member.hierarchy_level !== 'founder' && member.hierarchy_level !== 'leadership');
+  const satellites = [...leaders, ...contributors];
   const profile = members.find(member => member.id === selected);
   const close = (restoreFocus = true) => {
     setSelected(null);
@@ -50,7 +39,11 @@ export function TeamGalaxy() {
     const sun = member.hierarchy_level === 'founder';
     const featured = sun || member.hierarchy_level === 'leadership';
     const isSelected = selected === member.id;
-    const naturalPosition = starPosition(member, slot);
+    const naturalPosition = starPosition(
+      member,
+      member.hierarchy_level === 'leadership' ? leaders.findIndex(item => item.id === member.id) : contributors.findIndex(item => item.id === member.id),
+      member.hierarchy_level === 'leadership' ? leaders.length : contributors.length
+    );
     const position = isSelected
       ? { x: 50, y: 38 }
       : profile && sun
@@ -94,20 +87,12 @@ export function TeamGalaxy() {
           <div className={`galaxy-map ${profile ? 'has-selection' : ''}`}
             onClick={event => {
               if (event.target instanceof Element && !event.target.closest('.galaxy-star') && profile) close(false);
-            }}
-            onTouchStart={event => { touchStart.current = event.touches[0].clientX; }}
-            onTouchEnd={event => {
-              const start = touchStart.current; touchStart.current = null;
-              if (start !== null && Math.abs(event.changedTouches[0].clientX - start) > 55) {
-                setSelected(null);
-                setPage(current => (current + (event.changedTouches[0].clientX < start ? 1 : -1) + pageCount) % pageCount);
-              }
             }}>
             <div className="galaxy-orbits" aria-hidden="true">
               {[0, 1, 2, 3].map((ring) => <motion.div key={ring} className={`galaxy-orbit galaxy-orbit-${ring}`} initial={{ opacity: 0, scale: 0.85 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.25 + ring * 0.12, duration: 1.5 }}><span /></motion.div>)}
             </div>
             {founder && renderStar(founder, 0)}
-            {visible.map(renderStar)}
+            {satellites.map(renderStar)}
             <div className="galaxy-manifesto" aria-hidden="true"><InfinityIcon size={30} strokeWidth={1} /><span>A MORE CREATIVE WORLD<br />IS POSSIBLE.</span></div>
           </div>
           <div className="galaxy-map-footer">
@@ -117,11 +102,6 @@ export function TeamGalaxy() {
             </div>
             <button type="button" className="galaxy-motion-toggle" onClick={() => setPaused(value => !value)} aria-pressed={paused} aria-label={paused ? 'הפעלת תנועת הכוכבים' : 'השהיית תנועת הכוכבים'}>{paused ? <Play size={16} /> : <Pause size={16} />}</button>
           </div>
-          {pageCount > 1 && <nav className="galaxy-paging" aria-label="מסלולי צוות">
-            <button type="button" aria-label="מסלול קודם" onClick={() => { setSelected(null); setPage((safePage - 1 + pageCount) % pageCount); }}><ChevronLeft size={18} /></button>
-            <span role="status">{safePage + 1} / {pageCount} · {compact ? 'החליקו או הקישו להמשך הצוות' : 'לגלות עוד אנשים במערכת'}</span>
-            <button type="button" aria-label="מסלול הבא" onClick={() => { setSelected(null); setPage((safePage + 1) % pageCount); }}><ChevronRight size={18} /></button>
-          </nav>}
         </div>
 
       </div>
