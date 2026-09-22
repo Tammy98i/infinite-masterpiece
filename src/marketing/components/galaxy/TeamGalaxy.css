@@ -67,14 +67,7 @@
 .team-galaxy button:focus-visible { outline: 2px solid #dfc47d; outline-offset: 8px; border-radius: 6px; }
 .galaxy-manifesto { position: absolute; bottom: 25px; left: 50%; transform: translateX(-50%); display: grid; justify-items: center; gap: 8px; text-align: center; color: #b79043; pointer-events: none; }
 .galaxy-manifesto span { font-size: 8px; line-height: 1.8; letter-spacing: .23em; }
-.galaxy-map-footer { display: flex; align-items: end; justify-content: space-between; gap: 15px; padding: 8px 12px; }
-.galaxy-legend { display: grid; gap: 12px; border: 1px solid #b7904333; padding: 15px 18px; border-radius: 4px; }
-.galaxy-legend > div { display: flex; flex-wrap: wrap; gap: 16px; }
-.galaxy-legend > div > span { display: flex; align-items: center; gap: 7px; font-size: 10px; color: #f7f4ebc2; }
-.galaxy-legend svg, .galaxy-legend-core, .galaxy-legend-dot { color: #ddbf78; }
-.galaxy-legend-core { font-size: 14px; }
-.galaxy-legend-dot { font-size: 16px; }
-.galaxy-legend p { font-size: 10px; color: #ddbf78; padding-top: 8px; border-top: 1px solid #b7904320; }
+.galaxy-map-footer { display: flex; align-items: center; justify-content: flex-end; gap: 15px; padding: 8px 12px; }
 .galaxy-motion-toggle, .galaxy-paging button, .galaxy-profile-nav button { display: inline-flex; align-items: center; justify-content: center; width: 44px; height: 44px; border: 1px solid #b7904340; border-radius: 50%; color: #ddbf78; cursor: pointer; flex-shrink: 0; background: #07090d; }
 .galaxy-panel-slot { padding-top: 35px; }
 .galaxy-idle, .galaxy-spotlight { border: 1px solid #b790434d; border-radius: 6px; padding: 28px 24px; background: #090b0eed; position: relative; }
@@ -114,7 +107,7 @@
 @keyframes galaxy-glow { 50% { opacity: .45; } }
 @keyframes galaxy-orbit-travel { to { offset-distance: 100%; } }
 @media (min-width: 1440px) { .galaxy-layout { grid-template-columns: minmax(0, 1fr) 330px; } .galaxy-map { height: 740px; } .galaxy-map.has-selection { min-height: 880px; } }
-@media (min-width: 768px) and (max-width: 1199px) { .team-galaxy { --star-scale: .85; } .galaxy-layout { grid-template-columns: minmax(0, 1fr) 260px; gap: 15px; } .galaxy-map { height: 660px; } .galaxy-map.has-selection { min-height: 800px; } .galaxy-spotlight { padding: 24px 18px; } .galaxy-legend > div { gap: 12px; } .galaxy-star-role { width: 145px; } }
+@media (min-width: 768px) and (max-width: 1199px) { .team-galaxy { --star-scale: .85; } .galaxy-layout { grid-template-columns: minmax(0, 1fr) 260px; gap: 15px; } .galaxy-map { height: 660px; } .galaxy-map.has-selection { min-height: 800px; } .galaxy-spotlight { padding: 24px 18px; } .galaxy-star-role { width: 145px; } }
 @media (max-width: 767px) {
   .team-galaxy { --star-scale: .58; padding: 48px 16px 28px; }
   .galaxy-sun:not(.is-selected) .galaxy-stellar-body { width: 96px; height: 96px; }
@@ -139,8 +132,6 @@
   .galaxy-sun .galaxy-flare { font-size: 34px; top: -29px; }
   .galaxy-manifesto { bottom: 27px; }
   .galaxy-map-footer { padding: 0; gap: 8px; }
-  .galaxy-legend { padding: 12px; flex: 1; }
-  .galaxy-legend > div { display: grid; grid-template-columns: 1fr 1fr; gap: 8px 16px; }
   .galaxy-panel-slot { padding-top: 24px; }
   .galaxy-idle { min-height: 200px; padding-block: 24px; }
   .galaxy-idle > span { display: none; }

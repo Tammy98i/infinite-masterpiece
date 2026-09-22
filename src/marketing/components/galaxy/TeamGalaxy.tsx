@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type CSSProperties } from 'react';
 import { motion } from 'motion/react';
-import { Infinity as InfinityIcon, Pause, Play, Sparkles, Sun } from 'lucide-react';
+import { Infinity as InfinityIcon, Pause, Play } from 'lucide-react';
 import { teamMembersApi } from '../../../api/teamMembers';
 import { sortTeam, starDiameter, starPosition, type TeamMember } from '../../../lib/teamMembers';
 import { InlineStarDetails } from './InlineStarDetails';
@@ -96,10 +96,6 @@ export function TeamGalaxy() {
             <div className="galaxy-manifesto" aria-hidden="true"><InfinityIcon size={30} strokeWidth={1} /><span>A MORE CREATIVE WORLD<br />IS POSSIBLE.</span></div>
           </div>
           <div className="galaxy-map-footer">
-            <div className="galaxy-legend" aria-label="מקרא גודל הכוכבים">
-              <div><span><Sun size={18} />Founder</span><span><Sparkles size={15} />Leadership</span><span><span className="galaxy-legend-core">✦</span>Core Team</span><span><span className="galaxy-legend-dot">•</span>Contributors</span></div>
-              <p>Star Size = Impact Level</p>
-            </div>
             <button type="button" className="galaxy-motion-toggle" onClick={() => setPaused(value => !value)} aria-pressed={paused} aria-label={paused ? 'הפעלת תנועת הכוכבים' : 'השהיית תנועת הכוכבים'}>{paused ? <Play size={16} /> : <Pause size={16} />}</button>
           </div>
         </div>
