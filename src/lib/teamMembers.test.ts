@@ -12,10 +12,20 @@ test('impact increases diameter and changes position, sun remains largest', () =
   const first = starPosition({ ...input, id: '1' }, 0, 6);
   const last = starPosition({ ...input, id: '6' }, 5, 6);
   assert.ok(Math.hypot(first.x - last.x, first.y - last.y) > 8);
-  for (let slot = 0; slot < 6; slot++) {
-    const point = starPosition({ ...input, id: String(slot) }, slot, 6);
-    assert.ok(!(Math.abs(point.x - 50) < 8 && point.y < 28), `slot ${slot} sits on the top of the ring`);
+  const leaders = [0, 1].map(slot => starPosition({ ...input, id: `lead-${slot}`, hierarchy_level: 'leadership' }, slot, 2));
+  const contributors = Array.from({ length: 6 }, (_, slot) => starPosition({ ...input, id: String(slot) }, slot, 6));
+  for (const [index, point] of contributors.entries()) {
+    assert.ok(!(Math.abs(point.x - 50) < 8 && point.y < 28), `slot ${index} sits on the top of the ring`);
+    assert.ok(point.y < 78, `slot ${index} sits on the manifesto`);
+    assert.ok(point.x < 22 || point.x > 78, `slot ${index} crowds the sun`);
+    for (const other of contributors.slice(index + 1)) {
+      assert.ok(Math.hypot(point.x - other.x, point.y - other.y) > 16, 'contributors merge');
+    }
+    for (const lead of leaders) {
+      assert.ok(Math.hypot(point.x - lead.x, point.y - lead.y) > 16, 'contributor overlaps leadership');
+    }
   }
+  assert.ok(Math.hypot(leaders[0].x - leaders[1].x, leaders[0].y - leaders[1].y) > 24, 'leadership stars merge');
 });
 test('invalid fields and image protocols are rejected', () => {
   for (const impact_score of [-1, 101, 2.5, '90', null]) assert.throws(() => validateTeamMember({ ...input, impact_score }));

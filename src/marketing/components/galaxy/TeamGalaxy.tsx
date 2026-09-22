@@ -45,9 +45,9 @@ export function TeamGalaxy() {
       member.hierarchy_level === 'leadership' ? leaders.length : contributors.length
     );
     const position = isSelected
-      ? { x: 50, y: 38 }
+      ? { x: 50, y: 30 }
       : profile && sun
-        ? { x: 16, y: 50 }
+        ? { x: 14, y: 52 }
         : naturalPosition;
     const diameter = starDiameter(member);
     return <motion.div key={member.id}
@@ -66,7 +66,7 @@ export function TeamGalaxy() {
         <span className="galaxy-star-name" dir="auto">{member.name}</span>
         {isSelected
           ? <InlineStarDetails member={member} />
-          : <span className="galaxy-star-role" dir="auto">{sun ? 'FOUNDER / VISIONARY' : member.role}</span>}
+          : sun ? <span className="galaxy-star-role" dir="auto">FOUNDER / VISIONARY</span> : null}
       </button>
     </motion.div>;
   };

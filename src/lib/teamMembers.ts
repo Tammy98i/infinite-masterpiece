@@ -32,20 +32,33 @@ export function sortTeam(members: TeamMember[]) {
   return [...members].sort((a, b) => TEAM_LEVELS.indexOf(a.hierarchy_level) - TEAM_LEVELS.indexOf(b.hierarchy_level)
     || a.orbit - b.orbit || a.display_order - b.display_order || b.impact_score - a.impact_score || a.id.localeCompare(b.id));
 }
-/** Leadership stays close to the sun. The rest of the team fill the outer ring. */
+/** Evenly sample an arc, inclusive of both ends when more than one seat. */
+function sampleArc(startDeg: number, endDeg: number, count: number, index: number) {
+  if (count <= 1) return (startDeg + endDeg) / 2;
+  return startDeg + (endDeg - startDeg) * (index / (count - 1));
+}
+
+/** Side seats only: left 202°→148°, right 32°→−22°. Crown and manifesto stay empty. */
+function contributorAngle(slot: number, count: number) {
+  const leftCount = Math.ceil(count / 2);
+  const onLeft = slot < leftCount;
+  const degrees = onLeft
+    ? sampleArc(202, 148, leftCount, slot)
+    : sampleArc(32, -22, count - leftCount, slot - leftCount);
+  return degrees * Math.PI / 180;
+}
+
+/** Leadership stays close to the sun. The rest of the team sit on two side arcs. */
 export function starPosition(member: TeamMember, slot: number, total = 6) {
-  if (member.hierarchy_level === 'founder') return { x: 50, y: 52 };
+  if (member.hierarchy_level === 'founder') return { x: 50, y: 48 };
   if (member.hierarchy_level === 'leadership') {
-    const angle = [-145, -35][slot % 2] * Math.PI / 180;
-    return { x: 50 + Math.cos(angle) * 27, y: 52 + Math.sin(angle) * 24 };
+    const angle = [-152, -28][slot % 2] * Math.PI / 180;
+    return { x: 50 + Math.cos(angle) * 19, y: 48 + Math.sin(angle) * 16 };
   }
   const count = Math.max(1, total);
-  const start = -155 * Math.PI / 180;
-  const sweep = 310 * Math.PI / 180;
-  const step = count === 1 ? 0 : sweep / count;
-  const angle = start + step * slot + step / 2;
-  const distance = 36 + member.orbit * 0.4 + (100 - member.impact_score) * 0.02;
-  return { x: 50 + Math.cos(angle) * distance, y: 56 + Math.sin(angle) * (distance * 0.72) };
+  const angle = contributorAngle(slot, count);
+  const distance = 40 + member.orbit * 0.45 + (100 - member.impact_score) * 0.02;
+  return { x: 50 + Math.cos(angle) * distance, y: 48 + Math.sin(angle) * (distance * 0.86) };
 }
 
 export function validateTeamMember(raw: unknown): TeamMemberInput {
