@@ -203,7 +203,7 @@ export function WebinarLanding() {
     <div className="webinar-stage-page w-full pb-28">
       <nav className="webinar-section-nav" aria-label="ניווט בתוך עמוד הוובינר">
         <a href="#webinar-fit">למי זה</a>
-        <a href="#webinar-register">הרשמה</a>
+        <a href="#webinar-register">{eventEnded ? 'המחזור הבא' : 'הרשמה'}</a>
         <a href="#webinar-faq">שאלות</a>
       </nav>
       <section id="webinar-hero" className="webinar-stage-hero relative overflow-hidden">
@@ -390,6 +390,16 @@ export function WebinarLanding() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(183, 144, 67,0.16),transparent_70%)]" />
         </div>
         <div className="relative z-10 max-w-[920px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          {eventEnded ? (
+            <div id={WEBINAR_REGISTER_ID} className="scroll-mt-24">
+              <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4 max-w-2xl mx-auto">
+                {WEBINAR_CTA_ENDED}
+              </p>
+              <p className="text-sm sm:text-base text-white/70 font-light mb-8">{WEBINAR_ENDED_NOTE}</p>
+              <Link to="/pricing" className="btn-gold text-black">{WEBINAR_CTA_NEXT_CYCLE}</Link>
+            </div>
+          ) : (
+            <>
           <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4 max-w-2xl mx-auto">
             זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.
           </p>
@@ -405,6 +415,8 @@ export function WebinarLanding() {
               headlineParts={headlineParts}
             />
           </aside>
+            </>
+          )}
           <p className="flex flex-wrap items-center justify-center gap-4 text-xs text-[#b79043]/80 font-light mt-8">
             <Link to="/terms" className="hover:text-[#dfc47d] min-h-11 inline-flex items-center">
               תנאי שימוש

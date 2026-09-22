@@ -6,6 +6,7 @@ import { webinarApi } from '../../api/webinar';
 import { DEFAULT_WEBINAR_CONFIG } from '../../constants/webinar';
 import {
   WEBINAR_CTA_ENDED,
+  WEBINAR_CTA_NEXT_CYCLE,
   WEBINAR_ENDED_NOTE,
   webinarLiveEnter,
 } from '../../constants/webinarPage';
@@ -170,8 +171,16 @@ export function WebinarThankYou() {
           <p className="text-white/55 font-light leading-relaxed mb-6">
             {isWaitlist
               ? 'הפרטים שלך נקלטו לרשימת ההמתנה. נעדכן כשיתפנה מקום.'
-              : `נרשמת בהצלחה. שלושה צעדים לפני הערב: יומן, וואטסאפ, ואדם אחד. ${date}, ${time}.`}
+              : phase === 'ended'
+                ? `${WEBINAR_CTA_ENDED}. ${WEBINAR_ENDED_NOTE}`
+                : `נרשמת בהצלחה. שלושה צעדים לפני הערב: יומן, וואטסאפ, ואדם אחד. ${date}, ${time}.`}
           </p>
+
+          {phase === 'ended' ? (
+            <Link to="/pricing" className="btn-gold text-black mb-8 w-full px-5 py-3 text-sm">
+              {WEBINAR_CTA_NEXT_CYCLE}
+            </Link>
+          ) : null}
 
           {phase === 'live' && liveEnter.href ? (
             <a
@@ -185,12 +194,7 @@ export function WebinarThankYou() {
             </a>
           ) : null}
 
-          {phase === 'ended' ? (
-            <p className="mb-8 text-sm text-white/50 font-light">
-              {WEBINAR_CTA_ENDED}. {WEBINAR_ENDED_NOTE}
-            </p>
-          ) : null}
-
+          {phase === 'ended' ? null : (
           <ol className="space-y-4 text-right mb-8">
             <li
               className={`rounded-2xl border px-5 py-4 ${
@@ -328,6 +332,7 @@ export function WebinarThankYou() {
               </div>
             </li>
           </ol>
+          )}
 
           <Link
             to="/"
@@ -336,6 +341,7 @@ export function WebinarThankYou() {
             חזרה לאתר
           </Link>
 
+          {phase === 'ended' ? null : (
           <button
             type="button"
             onClick={() => void share()}
@@ -344,6 +350,7 @@ export function WebinarThankYou() {
             <Share2 className="w-3.5 h-3.5" aria-hidden />
             {copied ? 'הקישור הועתק' : 'להזמין מישהו לערב'}
           </button>
+          )}
         </motion.div>
       </div>
     </div>

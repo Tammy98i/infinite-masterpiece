@@ -37,6 +37,7 @@ export function WebinarRegistrationForm({
   const formViewTracked = useRef(false);
   const resumedRef = useRef(false);
   const rootRef = useRef<HTMLFormElement>(null);
+  const errorRef = useRef<HTMLParagraphElement>(null);
   const [prefillEmail, setPrefillEmail] = useState('');
 
   const goToThankYou = (id: string, fullName: string, waitlisted?: boolean) => {
@@ -102,6 +103,14 @@ export function WebinarRegistrationForm({
     observer.observe(node);
     return () => observer.disconnect();
   }, [formId]);
+
+  useEffect(() => {
+    if (!error) return;
+    errorRef.current?.focus();
+  }, [error]);
+
+  const phoneInvalid = error === 'נא להזין מספר נייד ישראלי';
+  const emailInvalid = error === 'נא להזין את האימייל שבו נרשמת' || error === 'לא מצאנו הרשמה למייל הזה';
 
   const markStarted = () => {
     if (startedRef.current) return;
@@ -230,7 +239,8 @@ export function WebinarRegistrationForm({
             placeholder="05XXXXXXXX"
             dir="ltr"
             className={`${fieldClass} text-left`}
-            aria-describedby={`${formId}-phone-hint`}
+            aria-invalid={phoneInvalid || undefined}
+            aria-describedby={phoneInvalid ? `${formId}-phone-hint ${formId}-error` : `${formId}-phone-hint`}
           />
           <p id={`${formId}-phone-hint`} className="mt-1 text-[11px] text-white/35 font-light">
             נייד ישראלי, 05 או 9725
@@ -250,6 +260,8 @@ export function WebinarRegistrationForm({
           autoComplete="email"
           className={`${fieldClass} text-left`}
           dir="ltr"
+          aria-invalid={emailInvalid || undefined}
+          aria-describedby={emailInvalid ? `${formId}-error` : undefined}
           value={prefillEmail}
           onChange={(event) => setPrefillEmail(event.target.value)}
         />
@@ -289,7 +301,7 @@ export function WebinarRegistrationForm({
       <WebinarTrustStrip config={config} />
 
       {error ? (
-        <p className="text-sm text-rose-300" role="alert">
+        <p id={`${formId}-error`} ref={errorRef} tabIndex={-1} className="text-sm text-rose-300 outline-none" role="alert">
           {error}
         </p>
       ) : null}
