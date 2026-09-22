@@ -1,0 +1,31 @@
+services:
+  app:
+    image: node:22-bookworm-slim
+    working_dir: /app
+    ports:
+      - "3000:3000"
+    volumes:
+      - .:/app
+      - base44-node-modules:/app/node_modules
+      - base44-data:/app/server/data
+    env_file:
+      - /run/base44/app.env
+    environment:
+      NODE_ENV: development
+      PORT: "3001"
+      API_PORT: "3001"
+      APP_URL: https://3000-${BASE44_PUBLIC_HOST_SUFFIX}
+      CHOKIDAR_USEPOLLING: "true"
+      __VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS: ${__VITE_ADDITIONAL_SERVER_ALLOWED_HOSTS}
+    command: sh -c 'npm ci && npx concurrently --kill-others -n api,web "npx tsx watch server/index.ts" "npx vite --host 0.0.0.0 --port 3000 --strictPort"'
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/api/health').then(r => { if (!r.ok) process.exit(1); }).catch(() => process.exit(1))"]
+      interval: 10s
+      timeout: 5s
+      retries: 6
+      start_period: 90s
+
+volumes:
+  base44-node-modules:
+  base44-data:
