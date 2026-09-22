@@ -36,9 +36,8 @@ export function TeamGalaxy() {
     return () => query.removeEventListener('change', change);
   }, []);
   const founder = members.find(member => member.hierarchy_level === 'founder');
-  const satellites = members.filter(member => member.hierarchy_level !== 'founder' && member.hierarchy_level !== 'contributor');
-  const contributors = members.filter(member => member.hierarchy_level === 'contributor');
-  const capacity = compact ? 2 : 6;
+  const satellites = members.filter(member => member.hierarchy_level !== 'founder');
+  const capacity = compact ? 4 : 8;
   const pageCount = Math.max(1, Math.ceil(satellites.length / capacity));
   const safePage = Math.min(page, pageCount - 1);
   const visible = satellites.slice(safePage * capacity, (safePage + 1) * capacity);
@@ -49,7 +48,7 @@ export function TeamGalaxy() {
   };
   const renderStar = (member: TeamMember, slot: number) => {
     const sun = member.hierarchy_level === 'founder';
-    const featured = sun || /תמי|tami|גלב|gleb/i.test(member.name);
+    const featured = sun || member.hierarchy_level === 'leadership';
     const isSelected = selected === member.id;
     const naturalPosition = starPosition(member, slot);
     const position = isSelected
@@ -57,7 +56,7 @@ export function TeamGalaxy() {
       : profile && sun
         ? { x: 16, y: 50 }
         : naturalPosition;
-    const diameter = starDiameter(member) + (featured && !sun ? 16 : 0);
+    const diameter = starDiameter(member);
     return <motion.div key={member.id}
       className={`galaxy-star-anchor ${sun ? 'galaxy-sun' : ''} ${featured ? 'galaxy-featured' : ''} ${isSelected ? 'is-selected' : ''}`}
       style={{ left: `${position.x}%`, top: `${position.y}%`, '--star-size': `${diameter}px`, '--star-glow': `${10 + member.impact_score * 0.28}px` } as CSSProperties}
@@ -126,23 +125,6 @@ export function TeamGalaxy() {
         </div>
 
       </div>
-      {contributors.length > 0 && <div className="galaxy-supporting" aria-label="שאר הצוות">
-        {contributors.map(member => {
-          const isSelected = selected === member.id;
-          return <button key={member.id} type="button" className={`galaxy-support-card ${isSelected ? 'is-selected' : ''}`}
-            data-member-id={member.id}
-            aria-label={isSelected ? `סגירת פרטי ${member.name}` : `הצגת פרטי ${member.name}`}
-            aria-expanded={isSelected}
-            onClick={event => { lastTrigger.current = event.currentTarget; setSelected(current => current === member.id ? null : member.id); }}>
-            <span className="galaxy-support-portrait"><StarPortrait member={member} /></span>
-            <span className="galaxy-support-copy">
-              <span className="galaxy-support-name" dir="auto">{member.name}</span>
-              <span className="galaxy-support-role" dir="auto">{member.role}</span>
-              {isSelected && <span className="galaxy-support-bio" dir="auto">{member.bio || member.contribution}</span>}
-            </span>
-          </button>;
-        })}
-      </div>}
       <p className="galaxy-bottom-note">מערכת אחת. כוחות שונים. השפעה אינסופית.</p>
     </>}
   </motion.section>;

@@ -21,10 +21,12 @@ export const TEAM_LEVEL_LABELS: Record<TeamLevel, string> = {
   founder: 'Founder', leadership: 'Leadership', core: 'Core Team', contributor: 'Contributors',
 };
 
-/** Every score changes diameter; the sun has a separate, non-overlapping size range. */
+/** Three clear sizes: founder, leadership, then the rest of the team. */
 export function starDiameter(member: Pick<TeamMember, 'impact_score' | 'hierarchy_level'>) {
   const score = Math.max(0, Math.min(100, member.impact_score));
-  return member.hierarchy_level === 'founder' ? 150 + score * 0.6 : 40 + score * 0.8;
+  if (member.hierarchy_level === 'founder') return 150 + score * 0.6;
+  if (member.hierarchy_level === 'leadership') return 88 + score * 0.22;
+  return 36 + score * 0.18;
 }
 export function sortTeam(members: TeamMember[]) {
   return [...members].sort((a, b) => TEAM_LEVELS.indexOf(a.hierarchy_level) - TEAM_LEVELS.indexOf(b.hierarchy_level)
@@ -34,8 +36,9 @@ export function sortTeam(members: TeamMember[]) {
 export function starPosition(member: TeamMember, slot: number) {
   if (member.hierarchy_level === 'founder') return { x: 50, y: 52 };
   const angle = [-145, -35, 145, 35, 180, 0][slot % 6] * Math.PI / 180;
+  const ring = member.hierarchy_level === 'leadership' ? 24 : 34;
   const distance = member.orbit * 1.5 + (100 - member.impact_score) * 0.025;
-  return { x: 50 + Math.cos(angle) * (30 + distance), y: 52 + Math.sin(angle) * (30 + distance) };
+  return { x: 50 + Math.cos(angle) * (ring + distance), y: 52 + Math.sin(angle) * (ring + distance) };
 }
 
 export function validateTeamMember(raw: unknown): TeamMemberInput {
