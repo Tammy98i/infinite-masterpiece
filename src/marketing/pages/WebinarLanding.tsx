@@ -202,7 +202,6 @@ export function WebinarLanding() {
       </nav>
       <WebinarNeuralHero
         config={config}
-        hosts={hosts}
         headlineParts={headlineParts}
         eventNight={eventNight}
         eventEnded={eventEnded}

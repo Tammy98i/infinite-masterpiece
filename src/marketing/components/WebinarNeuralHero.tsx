@@ -13,7 +13,6 @@ import {
   WEBINAR_PUNCHLINE,
   webinarLiveEnter,
 } from '../../constants/webinarPage';
-import { TeamPhoto } from '../../components/TeamPhoto';
 import { WebinarCountdown } from './WebinarCountdown';
 import { trackWebinarCta, scrollToWebinarFit } from '../../utils/analytics';
 import './WebinarNeuralHero.css';
@@ -52,14 +51,12 @@ function CtaArrow() {
 
 export function WebinarNeuralHero({
   config,
-  hosts,
   headlineParts,
   eventNight,
   eventEnded,
   onRegister,
 }: {
   config: WebinarConfig;
-  hosts: Array<{ name: string; image: string }>;
   headlineParts: { line1: string; line2: string };
   eventNight: boolean;
   eventEnded: boolean;
@@ -143,15 +140,6 @@ export function WebinarNeuralHero({
           </span>
           {eventNight || eventEnded ? null : <WebinarCountdown date={config.date} time={config.time} />}
         </p>
-
-        <div className="webinar-neural-cast" aria-label="מנחי הערב">
-          {hosts.map((host) => (
-            <figure key={host.name}>
-              <TeamPhoto src={host.image} name={host.name} alt={host.name} className="webinar-neural-face" />
-              <figcaption>{host.name}</figcaption>
-            </figure>
-          ))}
-        </div>
 
         <div className="webinar-stage-copy">
           <h1>
