@@ -13,6 +13,9 @@ test('team import, create, edit, hide and seed persistence', () => {
     const imported = listTeamMembers(db);
     assert.equal(imported.filter(m => m.hierarchy_level !== 'contributor').length, 2);
     assert.ok(imported.some(m => m.name === 'אליאור לוי' && m.photo === '/team/elior.jpg'));
+    assert.ok(imported.some(m => m.name === 'תמי פינקלשטיין' && m.photo === '/team/tami-finkelstein.jpg'));
+    assert.ok(imported.some(m => m.name === 'דולב נירן' && m.photo === '/team/dolev.jpg'));
+    assert.ok(imported.some(m => m.name === 'עדי קלינר' && m.photo === '/team/adi-kaliner.jpg'));
     assert.equal(imported.find(m => m.name === 'גלב סמירנוב')?.photo, '/team/gleb.jpg');
     const sun = imported.find(m => m.hierarchy_level === 'founder')!;
     const created = saveTeamMember(db, { ...sun, name: 'Test contributor', hierarchy_level: 'contributor', impact_score: 30, orbit: 3, active: false });

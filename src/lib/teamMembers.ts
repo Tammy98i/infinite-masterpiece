@@ -38,13 +38,14 @@ function sampleArc(startDeg: number, endDeg: number, count: number, index: numbe
   return startDeg + (endDeg - startDeg) * (index / (count - 1));
 }
 
-/** Side seats only: left 202°→148°, right 32°→−22°. Crown and manifesto stay empty. */
+/** Side seats only. Wider horseshoe when the roster grows so names do not merge. */
 function contributorAngle(slot: number, count: number) {
   const leftCount = Math.ceil(count / 2);
   const onLeft = slot < leftCount;
+  const wide = count > 6;
   const degrees = onLeft
-    ? sampleArc(202, 148, leftCount, slot)
-    : sampleArc(32, -22, count - leftCount, slot - leftCount);
+    ? sampleArc(wide ? 222 : 202, wide ? 138 : 148, leftCount, slot)
+    : sampleArc(wide ? 42 : 32, wide ? -42 : -22, count - leftCount, slot - leftCount);
   return degrees * Math.PI / 180;
 }
 
@@ -57,7 +58,7 @@ export function starPosition(member: TeamMember, slot: number, total = 6) {
   }
   const count = Math.max(1, total);
   const angle = contributorAngle(slot, count);
-  const distance = 40 + member.orbit * 0.45 + (100 - member.impact_score) * 0.02;
+  const distance = 40 + Math.max(0, count - 6) * 2 + member.orbit * 0.45 + (100 - member.impact_score) * 0.02;
   return { x: 50 + Math.cos(angle) * distance, y: 48 + Math.sin(angle) * (distance * 0.86) };
 }
 
