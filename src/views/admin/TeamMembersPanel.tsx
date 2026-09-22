@@ -4,7 +4,7 @@ import { FileUploadField } from '../../components/FileUploadField';
 import { TEAM_LEVELS, TEAM_LEVEL_LABELS, starDiameter, type TeamMember, type TeamMemberInput, type TeamLevel } from '../../lib/teamMembers';
 import { fieldClass } from './adminConstants';
 
-const emptyMember = (): TeamMemberInput => ({ name: '', role: '', photo: '', bio: '', vision: '', contribution: '', responsibilities: [], expertise: [], impact_score: 50, hierarchy_level: 'core', orbit: 2, active: false, display_order: 0 });
+const emptyMember = (order: number): TeamMemberInput => ({ name: '', role: '', photo: '', bio: '', vision: '', contribution: '', responsibilities: [], expertise: [], impact_score: 55, hierarchy_level: 'core', orbit: 2, active: true, display_order: order });
 
 export function TeamMembersPanel() {
   const [members, setMembers] = useState<TeamMember[]>([]);
@@ -16,13 +16,13 @@ export function TeamMembersPanel() {
   return <section className="grid gap-6" aria-labelledby="team-members-admin-title" dir="rtl">
     <header className="flex flex-wrap items-start justify-between gap-4">
       <div><p className="text-xs tracking-widest text-[#b79043] mb-2" dir="ltr">TEAM MEMBERS</p><h2 id="team-members-admin-title" className="text-2xl font-light">גלקסיית הצוות</h2>
-        <p className="text-sm text-white/55 mt-2">ניהול האנשים, הפרופילים ורמות ההשפעה בסקשן הוובינר.</p></div>
+        <p className="text-sm text-white/55 mt-2">כל פרופיל פעיל מופיע ב־THE PEOPLE BEHIND THE VISION. פרופיל חדש מוצג מיד אחרי השמירה.</p></div>
       {!editing && <button type="button" className="px-5 py-3 border border-[#b79043]/50 rounded-full text-[#dfc47d] min-h-11" onClick={() => { setNotice(''); setEditing('new'); }}>הוספת איש צוות לגלקסיה</button>}
     </header>
     <p className="text-xs text-white/55 border border-[#b79043]/25 rounded-xl p-4 leading-relaxed">ציוני ההשפעה הראשוניים הם ערכי פתיחה לצורכי תצוגה, לא מדידה מאומתת. ניתן לערוך אותם כאן. גודל הכוכב מתעדכן לפי הציון; המייסד נשאר השמש הגדולה במרכז. הפרטים הועתקו מהצוות הקיים פעם אחת, ומנוהלים מעתה כאן באופן עצמאי.</p>
     {error && <p role="alert" className="text-[#dfc47d]">{error}</p>}
     {notice && <p role="status" className="text-[#dfc47d]">{notice}</p>}
-    {loading ? <p role="status">טוענים את הצוות…</p> : editing ? <TeamMemberForm member={editing === 'new' ? null : editing} onCancel={() => setEditing(null)} onSaved={member => {
+    {loading ? <p role="status">טוענים את הצוות…</p> : editing ? <TeamMemberForm member={editing === 'new' ? null : editing} nextOrder={members.reduce((max, item) => Math.max(max, item.display_order), -1) + 1} onCancel={() => setEditing(null)} onSaved={member => {
       setMembers(current => [...current.filter(item => item.id !== member.id), member].sort((a, b) => a.display_order - b.display_order));
       setEditing(null); setNotice('הפרופיל נשמר. הגלקסיה עודכנה.'); window.dispatchEvent(new Event('team-members-updated'));
     }} /> : <div className="grid gap-3">{members.map(member => <article key={member.id} data-team-row={member.id} className="border border-white/15 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
@@ -32,8 +32,8 @@ export function TeamMembersPanel() {
   </section>;
 }
 
-function TeamMemberForm({ member, onSaved, onCancel }: { member: TeamMember | null; onSaved: (member: TeamMember) => void; onCancel: () => void }) {
-  const [draft, setDraft] = useState<TeamMemberInput>(member || emptyMember());
+function TeamMemberForm({ member, nextOrder = 0, onSaved, onCancel }: { member: TeamMember | null; nextOrder?: number; onSaved: (member: TeamMember) => void; onCancel: () => void }) {
+  const [draft, setDraft] = useState<TeamMemberInput>(member || emptyMember(nextOrder));
   const [responsibilities, setResponsibilities] = useState(member?.responsibilities.join('\n') || '');
   const [expertise, setExpertise] = useState(member?.expertise.join('\n') || '');
   const [pending, setPending] = useState(false);
