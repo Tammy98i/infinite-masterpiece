@@ -216,9 +216,9 @@ export function Header() {
       className="editorial-site-header fixed top-0 inset-x-0 z-50"
     >
       <div className="header-row mx-auto grid h-full w-full max-w-[1400px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 px-4 sm:px-8 lg:px-10">
-          <Link to="/" className="header-logo flex items-center gap-3 sm:gap-4 group shrink-0 min-h-11">
+          <Link to="/" aria-label="Infinite Masterpiece, דף הבית" className="header-logo flex items-center gap-3 sm:gap-4 group shrink-0 min-h-11">
             <InfinityIcon className="w-8 h-8 text-[#dfc47d] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
-            <div className="flex flex-col">
+            <div className="header-wordmark flex flex-col">
               <span className="font-light text-[13px] sm:text-[15px] tracking-[0.25em] text-white/90 leading-tight uppercase">
                 Infinite
                 <br/>
@@ -300,7 +300,7 @@ export function Header() {
                   key={link.name}
                   to={link.to}
                   className={cn(
-                    'text-lg font-light',
+                    'inline-flex min-h-11 items-center text-lg font-light',
                     link.to === '/webinar' || currentNav(link.to) ? 'text-[#dfc47d]' : 'text-white/90 hover:text-white'
                   )}
                   onClick={() => setMobileMenuOpen(false)}

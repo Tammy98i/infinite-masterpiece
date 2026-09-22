@@ -35,9 +35,10 @@ export function EntryTrackCards() {
           <p className="text-[13px] text-white/50 font-light mb-4 min-h-10">
             למי שכבר יודע/ת שזה הזמן להיכנס עד הסוף.
           </p>
-          <div className="mb-4 min-h-14">
-            <p className="text-2xl font-accent font-semibold tabular-nums text-white">8,008 ₪</p>
-            <p className="text-[11px] text-white/35 mt-1">+ מע״מ · תשלום מלא</p>
+          <div className="mb-5">
+            <p className="text-[11px] uppercase tracking-[.18em] text-[#dfc47d]">לפני מע״מ</p>
+            <p className="mt-2 text-4xl font-accent font-semibold tabular-nums leading-none text-white sm:text-5xl">8,008 ₪</p>
+            <p className="mt-2 text-sm text-white/70">תשלום אחד</p>
           </div>
           <FeatureList
             items={[
@@ -65,14 +66,15 @@ export function EntryTrackCards() {
           <p className="text-[13px] text-white/50 font-light mb-4 min-h-10">
             למי שרוצה להיכנס שלב שלב. גישה מלאה מההתחלה.
           </p>
-          <div className="mb-4 min-h-14">
-            <p className="text-2xl font-accent font-semibold tabular-nums text-white">8 ₪ היום</p>
-            <p className="text-[11px] text-white/35 mt-1">ואחר כך 80 · 800 · 8,000</p>
+          <div className="mb-5">
+            <p className="text-[11px] uppercase tracking-[.18em] text-[#dfc47d]">לפני מע״מ · ארבע פעימות</p>
+            <p className="mt-2 text-4xl font-accent font-semibold tabular-nums leading-none text-white sm:text-5xl">8,888 ₪</p>
+            <p className="mt-2 text-sm text-white/70">8 היום · אחר כך 80 · 800 · 8,000</p>
           </div>
           <FeatureList
             items={[
               'גישה מלאה למיזם ולספרייה',
-              'סך הכל: 8,888 ₪ לפני מע״מ',
+              'לא הנחה ולא מסלול חלקי',
               'כרטיס כניסה אחד לכל הגרלה',
             ]}
           />
