@@ -202,6 +202,11 @@ export function WebinarLanding() {
 
   return (
     <div className="webinar-stage-page w-full pb-28">
+      <nav className="webinar-section-nav" aria-label="ניווט בתוך עמוד הוובינר">
+        <a href="#hosts">הצוות</a>
+        <a href="#webinar-fit">התאמה</a>
+        <a href="#webinar-faq">שאלות נפוצות</a>
+      </nav>
       <section id="webinar-hero" className="webinar-stage-hero relative overflow-hidden">
         <div className="webinar-stage-atmosphere" aria-hidden />
         <motion.div

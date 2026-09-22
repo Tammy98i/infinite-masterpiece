@@ -11,18 +11,33 @@
   direction: rtl;
 }
 
-.editorial-marketing-shell:has(.webinar-stage-page) main { padding-top: 0; }
-.editorial-marketing-shell:has(.webinar-stage-page) .editorial-site-header {
-  height: 64px;
-  background: linear-gradient(180deg, rgba(2, 11, 24, .92), rgba(2, 11, 24, .48), transparent);
-  border: 0;
+.webinar-section-nav {
+  position: sticky;
+  top: var(--site-header-h);
+  z-index: 40;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 28px;
+  height: var(--webinar-subnav-h);
+  padding-inline: 16px;
+  background: rgba(5, 10, 20, .94);
+  border-bottom: 1px solid var(--editorial-rule);
+  overflow-x: auto;
 }
-.editorial-marketing-shell:has(.webinar-stage-page) .header-row { max-width: 1180px; padding-inline: 24px; }
-.editorial-marketing-shell:has(.webinar-stage-page) .header-logo svg { width: 24px; height: 24px; }
-.editorial-marketing-shell:has(.webinar-stage-page) .header-logo span { font-size: 11px; }
-.editorial-marketing-shell:has(.webinar-stage-page) .header-links { gap: 28px; }
-.editorial-marketing-shell:has(.webinar-stage-page) .header-links a { font-size: 12px; }
-.editorial-marketing-shell:has(.webinar-stage-page) .header-actions .btn-gold { min-height: 34px; padding: 7px 16px; font-size: 11px; }
+.webinar-section-nav a {
+  flex: none;
+  color: rgba(224, 237, 255, .84);
+  font-size: 13px;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: color .2s ease;
+}
+.webinar-section-nav a:hover { color: var(--editorial-gold-light); }
+.webinar-stage-page :is(#hosts, #webinar-fit, #webinar-faq, #webinar-register, #webinar-register-bottom) {
+  scroll-margin-top: calc(var(--site-header-h) + var(--webinar-subnav-h));
+}
 .editorial-marketing-shell:has(.webinar-stage-page) .conversion-band,
 .editorial-marketing-shell:has(.webinar-stage-page) > .relative > footer { display: none; }
 
@@ -298,7 +313,6 @@
 }
 
 @media (max-width: 767px) {
-  .editorial-marketing-shell:has(.webinar-stage-page) .editorial-site-header { height: 68px; }
   .webinar-stage-hero { min-height: 680px; padding: 78px 10px 24px; }
   .webinar-stage-shell { min-height: 568px; }
   .webinar-stage-event { top: 2px; max-width: calc(100vw - 24px); }

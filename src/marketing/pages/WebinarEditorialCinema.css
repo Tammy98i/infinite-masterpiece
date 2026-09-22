@@ -9,8 +9,8 @@
 }
 
 .webinar-stage-page .webinar-stage-hero {
-  min-height: 720px;
-  padding: 76px 32px 36px;
+  min-height: 680px;
+  padding: 28px 32px 36px;
   background:
     radial-gradient(ellipse 42% 70% at 76% 48%, rgba(29, 68, 108, .34), transparent 70%),
     linear-gradient(115deg, #050a14 15%, #071426 58%, #050a14 100%);
@@ -373,7 +373,7 @@
 }
 
 @media (max-width: 767px) {
-  .webinar-stage-page .webinar-stage-hero { min-height: 760px; padding: 74px 18px 24px; }
+  .webinar-stage-page .webinar-stage-hero { min-height: 720px; padding: 20px 18px 24px; }
   .webinar-stage-page .webinar-stage-shell { min-height: 650px; display: block; }
   .webinar-stage-page .webinar-stage-event { top: 0; left: 50%; transform: translateX(-50%); }
   .webinar-stage-page .webinar-stage-cast { position: absolute; inset: 34px 0 auto; min-height: 350px; opacity: .7; }
