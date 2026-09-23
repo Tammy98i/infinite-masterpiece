@@ -25,7 +25,7 @@ export function EntryTrackCards() {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center items-stretch">
-        <article className="glass-card flex flex-col p-5 sm:p-6">
+        <article data-track="brave" className="glass-card flex flex-col p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3 min-h-8 mb-3">
             <h3 className="text-lg sm:text-xl font-heading text-white">מסלול האמיצים</h3>
             <span className="shrink-0 px-2.5 py-1 rounded-full bg-[#b79043] text-black text-[10px] font-semibold tracking-wide">
@@ -56,7 +56,7 @@ export function EntryTrackCards() {
           </Link>
         </article>
 
-        <article className="glass-card flex flex-col p-5 sm:p-6">
+        <article data-track="hesitant" className="glass-card flex flex-col p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3 min-h-8 mb-3">
             <h3 className="text-lg sm:text-xl font-heading text-white">מסלול ההססנים</h3>
             <span className="shrink-0 px-2.5 py-1 text-[10px] opacity-0 pointer-events-none" aria-hidden>

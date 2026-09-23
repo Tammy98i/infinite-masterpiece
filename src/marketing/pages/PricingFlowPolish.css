@@ -1,0 +1,220 @@
+/* ui-ux-pro-max: Liquid Glass + gold night, 200–400ms ease-out, no scroll-jack. */
+
+.pricing-flow-page {
+  --flow-night: #02060f;
+  --flow-navy: #071322;
+  --flow-ink: #10182a;
+  --flow-gold: #dfc47d;
+  --flow-ease: cubic-bezier(.16, 1, .3, 1);
+  overflow-x: clip;
+  background:
+    radial-gradient(70% 36% at 50% 0%, rgba(183, 144, 67, .1), transparent 58%),
+    linear-gradient(180deg, #02060f 0%, #071322 28%, #0a1220 52%, #0c1014 78%, #0d0b08 100%);
+}
+
+.pricing-hero {
+  position: relative;
+}
+
+.pricing-hero::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 28%;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(2, 6, 15, 0) 0%, rgba(7, 19, 34, .28) 55%, rgba(2, 6, 15, .55) 100%);
+}
+
+.pricing-flow-stem {
+  display: block;
+  width: 1px;
+  height: 48px;
+  margin: 22px auto 0;
+  background: linear-gradient(180deg, rgba(223, 196, 125, 0), var(--flow-gold));
+}
+
+.editorial-marketing-shell:not(.video-home) main .pricing-flow-page > section.pricing-hero:first-child {
+  border-bottom: 0;
+}
+
+.editorial-marketing-shell .pricing-flow-page > nav[aria-label] {
+  border-block-width: 0;
+  background: rgba(7, 19, 34, .62);
+  backdrop-filter: blur(16px) saturate(.55);
+  -webkit-backdrop-filter: blur(16px) saturate(.55);
+}
+
+.pricing-flow-page > nav[aria-label]::before,
+.pricing-flow-page > nav[aria-label]::after {
+  content: '';
+  display: block;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(223, 196, 125, .28), transparent);
+}
+
+.pricing-flow-page > nav[aria-label] a[aria-current='location'] {
+  box-shadow: inset 0 0 0 1px rgba(223, 196, 125, .28);
+}
+
+.pricing-flow-page #choose-track {
+  background:
+    radial-gradient(70% 45% at 50% 8%, rgba(183, 144, 67, .12), transparent 58%),
+    linear-gradient(180deg, rgba(2, 6, 15, 0), rgba(18, 14, 8, .16));
+}
+
+.pricing-flow-page #whats-included {
+  background:
+    radial-gradient(80% 40% at 50% 0%, rgba(77, 122, 168, .1), transparent 55%),
+    linear-gradient(180deg, rgba(10, 18, 32, 0), rgba(6, 12, 24, .28));
+}
+
+.pricing-flow-page #journey-preview {
+  background:
+    radial-gradient(70% 42% at 50% 18%, rgba(80, 120, 200, .08), transparent 60%),
+    linear-gradient(180deg, rgba(2, 6, 15, 0), rgba(8, 16, 28, .22));
+}
+
+.pricing-flow-page .pricing-trust {
+  background: linear-gradient(180deg, rgba(8, 16, 28, 0), rgba(12, 14, 18, .18));
+}
+
+.pricing-flow-page #pricing-faq {
+  background:
+    radial-gradient(60% 40% at 50% 88%, rgba(183, 144, 67, .1), transparent 68%),
+    linear-gradient(180deg, rgba(12, 14, 18, 0), #0d0b08 100%);
+}
+
+.pricing-flow-page :is(#choose-track, #whats-included, #journey-preview, .pricing-trust, #pricing-faq) {
+  position: relative;
+}
+
+.pricing-flow-page :is(#choose-track, #whats-included, #journey-preview, .pricing-trust, #pricing-faq)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 12%;
+  left: 12%;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(223, 196, 125, .28), transparent);
+}
+
+.pricing-island:not(.pricing-hero) {
+  opacity: 0;
+  translate: 0 8px;
+  transition: opacity .22s var(--flow-ease), translate .38s var(--flow-ease);
+}
+
+.pricing-island.is-in,
+.pricing-hero.pricing-island {
+  opacity: 1;
+  translate: 0 0;
+}
+
+.pricing-flow-page #choose-track.is-in [data-track],
+.pricing-flow-page #whats-included.is-in .pricing-included li,
+.pricing-flow-page #journey-preview.is-in .pricing-journey-grid article {
+  animation: pricing-flow-rise .38s var(--flow-ease) both;
+}
+
+.pricing-flow-page #choose-track.is-in [data-track='hesitant'],
+.pricing-flow-page #whats-included.is-in .pricing-included li:nth-child(2),
+.pricing-flow-page #journey-preview.is-in .pricing-journey-grid article:nth-child(2) {
+  animation-delay: .06s;
+}
+
+.pricing-flow-page #whats-included.is-in .pricing-included li:nth-child(3),
+.pricing-flow-page #journey-preview.is-in .pricing-journey-grid article:nth-child(3) {
+  animation-delay: .12s;
+}
+
+.pricing-flow-page #whats-included.is-in .pricing-included li:nth-child(4),
+.pricing-flow-page #journey-preview.is-in .pricing-journey-grid article:nth-child(4) {
+  animation-delay: .18s;
+}
+
+@keyframes pricing-flow-rise {
+  from { opacity: 0; translate: 0 8px; }
+}
+
+.pricing-flow-page .glass-card {
+  border-color: rgba(223, 196, 125, .22);
+  background: linear-gradient(180deg, rgba(16, 24, 42, .5), rgba(5, 10, 20, .4));
+  backdrop-filter: blur(16px) saturate(.55);
+  -webkit-backdrop-filter: blur(16px) saturate(.55);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.pricing-flow-page [data-track='brave'] {
+  border-color: rgba(223, 196, 125, .55);
+  box-shadow: 0 18px 40px rgba(2, 6, 15, .28), inset 0 0 0 1px rgba(223, 196, 125, .12);
+}
+
+.pricing-flow-page [data-track='hesitant'] {
+  border-color: rgba(223, 196, 125, .2);
+}
+
+.pricing-flow-page [data-track]:hover,
+.pricing-flow-page details.glass-card:hover {
+  border-color: rgba(223, 196, 125, .42);
+}
+
+.pricing-flow-page details.glass-card {
+  cursor: pointer;
+}
+
+.pricing-flow-page details.glass-card[open] {
+  border-color: rgba(223, 196, 125, .4);
+}
+
+.pricing-journey-grid {
+  counter-reset: stage;
+}
+
+.pricing-journey-grid article {
+  position: relative;
+}
+
+.pricing-journey-grid article::before {
+  counter-increment: stage;
+  content: counter(stage, decimal-leading-zero);
+  display: block;
+  margin-bottom: 10px;
+  color: var(--flow-gold);
+  font-size: 12px;
+  letter-spacing: .16em;
+}
+
+@media (max-width: 767px) {
+  .pricing-flow-stem { height: 36px; margin-top: 16px; }
+  .pricing-hero::after { height: 18%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pricing-island:not(.pricing-hero) {
+    opacity: 1;
+    translate: none;
+    transition: none;
+  }
+
+  .pricing-flow-page #choose-track.is-in [data-track],
+  .pricing-flow-page #whats-included.is-in .pricing-included li,
+  .pricing-flow-page #journey-preview.is-in .pricing-journey-grid article {
+    animation: none;
+  }
+}
+
+.a11y-reduce-motion .pricing-island:not(.pricing-hero) {
+  opacity: 1;
+  translate: none;
+  transition: none;
+}
+
+.a11y-reduce-motion .pricing-flow-page #choose-track.is-in [data-track],
+.a11y-reduce-motion .pricing-flow-page #whats-included.is-in .pricing-included li,
+.a11y-reduce-motion .pricing-flow-page #journey-preview.is-in .pricing-journey-grid article {
+  animation: none;
+}

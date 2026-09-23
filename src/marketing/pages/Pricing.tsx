@@ -1,9 +1,11 @@
+import { useEffect } from 'react';
 import { Check, ChevronDown, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { EntryTrackCards } from '../components/EntryTrackCards';
 import { ProgramHighlights } from '../components/ProgramHighlights';
 import { SectionNav } from '../components/SectionNav';
 import { FAQS } from './FAQPage';
+import './PricingFlowPolish.css';
 
 const INCLUDED = [
   'תוכנית ליווי ביצועית בת 33 ימים',
@@ -14,9 +16,28 @@ const INCLUDED = [
 const PRICE_FAQS = FAQS.filter((_, index) => [3, 5, 6, 7, 8].includes(index));
 
 export function Pricing() {
+  useEffect(() => {
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+      || document.documentElement.classList.contains('a11y-reduce-motion');
+    const islands = Array.from(document.querySelectorAll<HTMLElement>('.pricing-island'));
+    const appear = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) entry.target.classList.add('is-in');
+        }
+      },
+      { threshold: 0.14, rootMargin: '0px 0px -16% 0px' },
+    );
+    for (const node of islands) {
+      if (reduce) node.classList.add('is-in');
+      appear.observe(node);
+    }
+    return () => appear.disconnect();
+  }, []);
+
   return (
-    <div className="w-full pb-24 text-center">
-      <section className="mx-auto max-w-[1100px] px-4 pb-16 pt-16 sm:px-6 md:pb-20 md:pt-24 lg:px-8">
+    <div className="pricing-flow-page w-full pb-24 text-center">
+      <section className="pricing-hero pricing-island is-in mx-auto max-w-[1100px] px-4 pb-16 pt-16 sm:px-6 md:pb-20 md:pt-24 lg:px-8">
         <nav aria-label="פירורי לחם" className="mb-10 flex items-center justify-center gap-2 text-xs text-white/35">
           <Link to="/" className="min-h-11 inline-flex items-center hover:text-white">בית</Link><span aria-hidden>›</span><span className="text-[#b79043]">מסלולים ומחיר</span>
         </nav>
@@ -26,25 +47,26 @@ export function Pricing() {
         </div>
         <h1 className="mb-5 text-4xl font-heading text-white md:text-6xl">שתי דרכי כניסה. <span className="text-gold-gradient">אותו מסע.</span></h1>
         <p className="mx-auto max-w-2xl text-base font-light leading-relaxed text-white/55 md:text-lg">אותו מסע מלא. אמיצים: 8,008 ₪ לפני מע״מ בתשלום אחד. הססנים: 8,888 ₪ לפני מע״מ בארבע פעימות. זה קצב תשלום, לא הנחה ולא מוצר חלקי.</p>
+        <span className="pricing-flow-stem" aria-hidden />
       </section>
 
       <SectionNav items={[{ id: 'choose-track', label: 'בחירת מסלול' }, { id: 'whats-included', label: 'מה מקבלים' }, { id: 'journey-preview', label: '33 הימים' }, { id: 'pricing-faq', label: 'שאלות' }]} />
 
-      <section id="choose-track" className="section-block mx-auto max-w-[1050px] px-4 sm:px-6 lg:px-8">
+      <section id="choose-track" className="pricing-island section-block mx-auto max-w-[1050px] px-4 sm:px-6 lg:px-8">
         <p className="mb-4 text-[11px] uppercase tracking-[.25em] text-[#b79043]">בחירת מסלול</p>
         <h2 className="mb-4 text-3xl font-heading text-white md:text-4xl">אמיצים או הססנים</h2>
         <p className="mx-auto mb-10 max-w-xl text-sm font-light leading-relaxed text-white/45">אמיצים: 8,008 ₪ לפני מע״מ בתשלום מלא. הססנים: 8,888 ₪ לפני מע״מ בארבע פעימות.</p>
         <EntryTrackCards />
       </section>
 
-      <section id="whats-included" className="section-block border-y border-white/[0.05] bg-[#0d0b08]/30">
+      <section id="whats-included" className="pricing-island section-block">
         <div className="mx-auto grid max-w-[1100px] gap-10 px-4 text-right sm:px-6 lg:grid-cols-[.8fr_1.2fr] lg:items-center lg:px-8">
           <div><p className="mb-4 text-[11px] uppercase tracking-[.25em] text-[#b79043]">אותו ערך בשני המסלולים</p><h2 className="mb-5 text-3xl font-heading text-white md:text-4xl">מה מקבלים בפועל?</h2><p className="font-light leading-relaxed text-white/50">לא עוד אוסף שיעורים. התהליך מחבר בין למידה, ביצוע, מדידה וקהילה כדי לבנות מערכת עבודה שחוזרת על עצמה.</p></div>
-          <ul className="grid gap-3 sm:grid-cols-2">{INCLUDED.map(item => <li key={item} className="glass-card flex items-start gap-3 p-5 text-sm text-white/70"><Check className="mt-0.5 h-4 w-4 shrink-0 text-[#b79043]" /><span>{item}</span></li>)}</ul>
+          <ul className="pricing-included grid gap-3 sm:grid-cols-2">{INCLUDED.map(item => <li key={item} className="glass-card flex items-start gap-3 p-5 text-sm text-white/70"><Check className="mt-0.5 h-4 w-4 shrink-0 text-[#b79043]" /><span>{item}</span></li>)}</ul>
         </div>
       </section>
 
-      <section id="journey-preview" className="section-block mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+      <section id="journey-preview" className="pricing-island section-block mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
         <p className="mb-4 text-[11px] uppercase tracking-[.25em] text-[#b79043]">מפת הדרך</p>
         <h2 className="mb-4 text-3xl font-heading text-white md:text-4xl">33 ימים. ארבעה שלבים ברורים.</h2>
         <p className="mx-auto mb-10 max-w-2xl font-light text-white/50">ממכירה ראשונה ועד תשתיות, סקייל וקהילה — כל שלב נשען על השלב שלפניו.</p>
@@ -52,7 +74,7 @@ export function Pricing() {
         <Link to="/journey" className="mt-8 inline-flex min-h-11 items-center text-sm text-[#b79043] hover:text-[#dfc47d]">לכל פירוט המסע</Link>
       </section>
 
-      <section className="mx-auto max-w-[900px] px-4 py-12 sm:px-6 lg:px-8">
+      <section className="pricing-trust pricing-island mx-auto max-w-[900px] px-4 py-12 sm:px-6 lg:px-8">
         <div className="glass-card flex flex-col items-center gap-5 p-7 sm:flex-row sm:text-right">
           <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#b79043]/10 text-[#b79043]"><ShieldCheck /></span>
           <div className="flex-1"><h2 className="mb-1 text-lg text-white">שקיפות לפני החלטה</h2><p className="text-sm font-light leading-relaxed text-white/50">לא מבטיחים הכנסה ודאית. הצלחה תלויה במאמץ, בביצוע ובהתמדה; תנאי ההחזרים והמימוש מפורטים במסמכים המשפטיים.</p></div>
@@ -60,10 +82,10 @@ export function Pricing() {
         </div>
       </section>
 
-      <section id="pricing-faq" className="section-block mx-auto max-w-[800px] px-4 sm:px-6 lg:px-8">
+      <section id="pricing-faq" className="pricing-island section-block mx-auto max-w-[800px] px-4 sm:px-6 lg:px-8">
         <p className="mb-4 text-[11px] uppercase tracking-[.25em] text-[#b79043]">לפני שמחליטים</p>
         <h2 className="mb-10 text-3xl font-heading text-white md:text-4xl">שאלות על המסלול והמחיר</h2>
-        <div className="space-y-3 text-right">{PRICE_FAQS.map(item => <details key={item.q} className="group glass-card p-5"><summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 text-white"><span>{item.q}</span><ChevronDown className="h-4 w-4 shrink-0 text-[#b79043] transition-transform group-open:rotate-180" /></summary><p className="mt-4 text-sm font-light leading-relaxed text-white/50">{item.a}</p></details>)}</div>
+        <div className="space-y-3 text-right">{PRICE_FAQS.map(item => <details key={item.q} className="group glass-card p-5"><summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 text-white"><span>{item.q}</span><ChevronDown className="h-4 w-4 shrink-0 text-[#b79043] transition-transform duration-200 group-open:rotate-180" /></summary><p className="mt-4 text-sm font-light leading-relaxed text-white/50">{item.a}</p></details>)}</div>
         <Link to="/faq" className="mt-8 inline-flex min-h-11 items-center text-sm text-[#b79043] hover:text-[#dfc47d]">לכל השאלות הנפוצות</Link>
       </section>
     </div>
