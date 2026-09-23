@@ -20,12 +20,12 @@ export const ContinueWatchingRow: React.FC = () => {
 
   return (
     <section
-      className="library-spacious-section library-island library-island-flush py-8 select-none scroll-mt-24"
+      className="library-spacious-section library-island library-island-flush py-3 select-none scroll-mt-24"
       data-onboarding="continue-watching"
       aria-label="המשך צפייה — רשימת הרצאות"
     >
-      <div className="flex items-center gap-3 px-4 sm:px-8 mb-5">
-        <h2 className="text-xl sm:text-2xl font-heading font-semibold text-white">המשך צפייה</h2>
+      <div className="flex items-center gap-3 px-4 sm:px-8 mb-1">
+        <h2 className="library-rail-title font-heading text-white">המשך צפייה</h2>
         <button
           type="button"
           onClick={() => setView('history')}
@@ -59,7 +59,7 @@ export const ContinueWatchingRow: React.FC = () => {
               scroll('prev');
             }
           }}
-          className="library-rail-scroller flex gap-3 sm:gap-4 overflow-x-auto px-4 sm:px-8 pb-2 scroll-smooth snap-x snap-mandatory carousel-scroll focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-inset"
+          className="library-rail-scroller flex overflow-x-auto px-4 sm:px-8 scroll-smooth snap-x snap-mandatory carousel-scroll focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-inset"
         >
           {continueList.map(({ course, progress }, index) => {
             const progressPercentage = Math.min(

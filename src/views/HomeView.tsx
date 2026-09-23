@@ -165,7 +165,7 @@ export const HomeView: React.FC = () => {
         <div className="min-h-[480px] md:h-[78vh] bg-zinc-900 animate-pulse" aria-busy="true" />
       )}
 
-      <div className="relative z-10 -mt-16 md:-mt-24">
+      <div className="relative z-10 -mt-10 md:-mt-16">
         <LibraryPlanBanner />
         {isLoading ? <CatalogLoadingNotice /> : null}
 

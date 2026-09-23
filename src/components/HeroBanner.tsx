@@ -61,7 +61,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
 
   return (
     <section
-      className="library-hero relative w-full min-h-[560px] md:h-[84vh] flex items-end overflow-hidden pt-24 pb-28 md:pb-40"
+      className="library-hero relative w-full min-h-[78vh] md:h-[88vh] flex items-end overflow-hidden pt-24 pb-16 md:pb-24"
       aria-label={continueWatching ? `המשך צפייה: ${course.title}` : `מומלץ: ${course.title}`}
     >
       <div className="absolute inset-0 select-none overflow-hidden">
@@ -83,22 +83,20 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-8 w-full z-10 text-right md:max-w-2xl md:ms-0 md:me-auto">
-        <p className="text-[#b79043] text-xs sm:text-sm font-medium tracking-[0.18em] mb-4">
-          {continueWatching ? 'המשך צפייה' : 'מומלץ הערב'}
-        </p>
-
-        <h1 className="text-4xl sm:text-6xl lg:text-[4.25rem] font-bold text-white leading-[1.1] mb-5">
+        <h1 className="text-4xl sm:text-6xl lg:text-[5rem] font-bold text-white leading-[1.05] tracking-tight mb-4">
           {course.title}
         </h1>
 
-        <p className="text-sm sm:text-base text-white/75 font-light leading-relaxed max-w-xl mb-4 line-clamp-2">
-          {course.subtitle || course.description}
+        <p className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/80">
+          {instructor ? <span>{instructor.name}</span> : null}
+          {instructor ? <span aria-hidden>·</span> : null}
+          <span>{formatClock(totalSecs)}</span>
+          <span aria-hidden>·</span>
+          <span>{canFull ? 'פתוח לצפייה' : canPreview ? 'טעימה' : 'דורש מנוי'}</span>
         </p>
 
-        <p className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-white/70">
-          {instructor ? <span>{instructor.name}</span> : null}
-          <span>{formatClock(totalSecs)}</span>
-          <span>{canFull ? 'פתוח לצפייה' : canPreview ? 'טעימה' : 'דורש מנוי'}</span>
+        <p className="text-sm sm:text-base text-white/80 font-light leading-relaxed max-w-xl mb-6 line-clamp-2">
+          {course.subtitle || course.description}
         </p>
 
         {continueWatching && (
@@ -126,16 +124,16 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           <button
             type="button"
             onClick={handlePlayClick}
-            className="btn-gold text-black inline-flex items-center gap-2.5 px-8 py-3 text-sm"
+            className="library-hero-play inline-flex items-center gap-2.5 px-7 py-2.5 text-sm font-semibold min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
           >
-            <Play className="w-4 h-4 fill-black" />
+            <Play className="w-5 h-5 fill-current" />
             <span>{primaryLabel}</span>
           </button>
 
           <button
             type="button"
             onClick={handleDetails}
-            className="inline-flex items-center px-7 py-3 rounded-full border border-white/35 text-white font-medium text-sm hover:bg-white/10 transition-colors min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="library-hero-more inline-flex items-center px-6 py-2.5 text-sm font-medium min-h-11 hover:bg-white/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
           >
             פרטים
           </button>

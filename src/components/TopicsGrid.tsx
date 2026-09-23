@@ -1,5 +1,4 @@
 import React from 'react';
-import { Play } from 'lucide-react';
 import { useApp } from '../context/AppContext';
 import { LIBRARY_TOPIC_IDS } from '../utils/libraryHome';
 import { coursesInCategory } from '../utils/recommendations';
@@ -23,16 +22,16 @@ export const TopicsGrid: React.FC = () => {
 
   return (
     <section
-      className="library-spacious-section library-island mx-auto max-w-[1400px] py-10 select-none scroll-mt-24"
+      className="library-spacious-section library-island py-3 select-none scroll-mt-24"
       aria-labelledby="topics-heading"
     >
-      <div className="px-4 sm:px-8 mb-4">
-        <h2 id="topics-heading" className="text-base sm:text-lg font-semibold text-white tracking-tight">
+      <div className="px-4 sm:px-8 mb-1">
+        <h2 id="topics-heading" className="library-rail-title text-white tracking-tight">
           עיון לפי נושא
         </h2>
       </div>
 
-      <div className="px-4 sm:px-8 lg:px-10 grid grid-cols-2 md:grid-cols-3 xl:grid-cols-4 gap-6 lg:gap-8">
+      <div className="library-rail-scroller flex overflow-x-auto px-4 sm:px-8 lg:px-10">
         {topics.map(({ category, count, cover }) => (
           <button
             key={category.id}
@@ -42,30 +41,26 @@ export const TopicsGrid: React.FC = () => {
               setView('category', { categoryId: category.id });
             }}
             aria-label={`פתיחת נושא ${category.name}, ${count} הרצאות`}
-            className="group relative aspect-[16/10] overflow-hidden rounded-2xl border border-white/10 text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-offset-2 focus-visible:ring-offset-[#050505] min-h-11"
+            className="library-poster group relative aspect-[16/9] w-[168px] sm:w-[210px] shrink-0 overflow-hidden rounded-[4px] text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] min-h-11"
           >
             {cover ? (
               <img
                 src={cover}
                 alt=""
                 aria-hidden
-                className="absolute inset-0 w-full h-full object-cover brightness-[0.55] group-hover:brightness-[0.65] group-hover:scale-105 transition-[filter,transform] duration-500 motion-reduce:transition-none motion-reduce:group-hover:scale-100"
+                className="absolute inset-0 w-full h-full object-cover brightness-[0.7] group-hover:brightness-90 transition-[filter] duration-200 motion-reduce:transition-none"
               />
             ) : (
               <div className="absolute inset-0 bg-zinc-900" />
             )}
-            <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
-            <div className="relative z-10 h-full flex flex-col justify-end p-4 sm:p-5">
-              <h3 className="text-[15px] sm:text-base font-semibold text-white leading-snug line-clamp-2">
+            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+            <div className="relative z-10 h-full flex flex-col justify-end p-2 text-right">
+              <h3 className="text-[13px] font-semibold text-white leading-snug line-clamp-2">
                 {category.name}
               </h3>
-              <p className="text-[13px] text-white/65 mt-1">
+              <p className="sr-only">
                 {count === 0 ? 'בקרוב' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`}
               </p>
-              <span className="mt-3 inline-flex items-center gap-1.5 text-[13px] font-medium text-[#b79043]">
-                <Play className="w-3.5 h-3.5 fill-[#b79043]" />
-                לצפייה
-              </span>
             </div>
           </button>
         ))}
