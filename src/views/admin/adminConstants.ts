@@ -6,10 +6,10 @@ export const fieldClass =
 export const STAFF_DESK_TABS: Record<string, Tab[]> = {
   content: ['overview', 'content', 'categories', 'lecturers', 'founders', 'team', 'access', 'notifications', 'audit', 'onboarding'],
   support: ['overview', 'users', 'access', 'leads', 'notifications', 'audit', 'team'],
-  sales: ['overview', 'leads', 'webinar', 'tracks', 'payments', 'funnel', 'premium88', 'analytics', 'notifications', 'team', 'access'],
+  sales: ['overview', 'leads', 'webinar', 'tracks', 'payments', 'funnel', 'premium88', 'pods', 'analytics', 'notifications', 'team', 'access'],
   legal: ['overview', 'legal', 'settings', 'audit', 'notifications', 'team', 'access'],
   finance: ['overview', 'payments', 'tracks', 'analytics', 'notifications', 'audit', 'team', 'access'],
-  community: ['overview', 'users', 'access', 'leads', 'premium88', 'funnel', 'notifications', 'team'],
+  community: ['overview', 'users', 'access', 'leads', 'premium88', 'pods', 'funnel', 'notifications', 'team'],
 };
 
 export const STAFF_DESK_LABEL: Record<string, string> = {

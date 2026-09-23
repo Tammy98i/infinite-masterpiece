@@ -35,6 +35,7 @@ export type Tab =
   | 'team'
   | 'lecturers'
   | 'premium88'
+  | 'pods'
   | 'funnel'
   | 'analytics'
   | 'raffles'
@@ -97,6 +98,7 @@ export const NAV_GROUPS: NavGroup[] = [
       { id: 'payments', label: 'מנויים ותשלומים', ready: true, icon: Wallet, keywords: 'payments stripe' },
       { id: 'tracks', label: 'מסלולי כניסה', ready: true, icon: Megaphone, badge: 'חדש', keywords: 'tracks אמיצים הססנים' },
       { id: 'premium88', label: 'נבחרת 88', ready: true, icon: UsersRound, keywords: 'premium 88' },
+      { id: 'pods', label: 'פודים', ready: true, icon: Users, badge: 'חדש', keywords: 'pods קפטן שיוך מסע' },
       { id: 'funnel', label: 'משפך חינמיים', ready: true, icon: BarChart3, keywords: 'funnel המרה' },
       { id: 'leads', label: 'לידים ופניות', ready: true, icon: ClipboardList, keywords: 'leads crm' },
       { id: 'webinar', label: 'וובינר', ready: true, icon: Video, badge: 'חדש', keywords: 'webinar הרשמה' },
@@ -143,6 +145,7 @@ export const TAB_META: Record<
   payments: { title: 'מנויים ותשלומים', description: 'חיובים, מנויים ותשלומי מסלול', group: 'מסחר והכנסות' },
   tracks: { title: 'מסלולי כניסה', description: 'אמיצים, הססנים ומעקב תשלומים', group: 'מסחר והכנסות' },
   premium88: { title: 'נבחרת 88', description: 'מועמדויות ואישורי הצטרפות', group: 'מסחר והכנסות' },
+  pods: { title: 'פודים', description: 'קבוצות מסע, תור שיוך ומינוי קפטן', group: 'מסחר והכנסות' },
   funnel: { title: 'משפך חינמיים', description: 'המרות ממשתמשים חינמיים', group: 'מסחר והכנסות' },
   leads: { title: 'לידים ופניות', description: 'CRM ופניות מהאתר', group: 'מסחר והכנסות' },
   webinar: { title: 'וובינר', description: 'הגדרות, הרשמות ומדדים', group: 'מסחר והכנסות' },

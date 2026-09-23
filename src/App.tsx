@@ -25,6 +25,7 @@ import { WebinarThankYou } from './marketing/pages/WebinarThankYou';
 import { AuthCallback } from './marketing/pages/AuthCallback';
 import { OAuthConsent } from './marketing/pages/OAuthConsent';
 import { UpdatePassword } from './marketing/pages/UpdatePassword';
+import { PodPage } from './pages/PodPage';
 
 const PublicLayoutWrapper = () => {
   const location = useLocation();
@@ -142,6 +143,7 @@ export default function App() {
           <Route path="/oauth/consent" element={<OAuthConsent />} />
           <Route path="/hesitation" element={<Hesitation />} />
           <Route path="/hesitation-success" element={<HesitationSuccess />} />
+          <Route path="/pod" element={<PodPage />} />
         </Route>
 
         <Route path="/library/*" element={<LibraryRoute />} />
