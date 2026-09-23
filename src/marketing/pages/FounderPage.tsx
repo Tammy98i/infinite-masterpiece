@@ -50,7 +50,7 @@ export function FounderPage() {
   }
 
   if (!founder) {
-    return <Navigate to="/premium-88" replace />;
+    return <Navigate to="/#team" replace />;
   }
 
   const paragraphs = founder.description.split(/\n\n+/).filter(Boolean);
@@ -60,7 +60,7 @@ export function FounderPage() {
       <section className="pt-28 pb-20 lg:pt-36 lg:pb-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-8 lg:px-10">
           <Link
-            to="/premium-88"
+            to="/#team"
             className="inline-flex items-center gap-1.5 text-sm text-white/45 hover:text-white mb-12 min-h-11 cursor-pointer transition-colors duration-200"
           >
             <ArrowRight className="w-4 h-4" />
@@ -194,7 +194,7 @@ export function FounderPage() {
 
       <section className="pb-32 text-center px-4">
         <Link
-          to="/premium-88"
+          to="/#team"
           className="text-white/40 hover:text-[#b79043] transition-colors text-sm font-light cursor-pointer"
         >
           חזרה לצוות המיזם

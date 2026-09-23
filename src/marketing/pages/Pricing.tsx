@@ -15,7 +15,7 @@ const INCLUDED = [
 ];
 const PRICE_FAQS = FAQS.filter((_, index) => [3, 5, 6, 7, 8].includes(index));
 
-export function Pricing() {
+export function Pricing({ embedded = false }: { embedded?: boolean }) {
   useEffect(() => {
     const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
       || document.documentElement.classList.contains('a11y-reduce-motion');
@@ -37,10 +37,12 @@ export function Pricing() {
 
   return (
     <div className="pricing-flow-page w-full pb-24 text-center">
-      <section className="pricing-hero pricing-island is-in mx-auto max-w-[1100px] px-4 pb-16 pt-16 sm:px-6 md:pb-20 md:pt-24 lg:px-8">
+      <section className={`pricing-hero pricing-island is-in mx-auto max-w-[1100px] px-4 ${embedded ? 'pb-10 pt-6 md:pb-12' : 'pb-16 pt-16 md:pb-20 md:pt-24'} sm:px-6 lg:px-8`}>
+        {embedded ? null : (
         <nav aria-label="פירורי לחם" className="mb-10 flex items-center justify-center gap-2 text-xs text-white/35">
           <Link to="/" className="min-h-11 inline-flex items-center hover:text-white">בית</Link><span aria-hidden>›</span><span className="text-[#b79043]">מסלולים ומחיר</span>
         </nav>
+        )}
         <div className="mb-8 inline-flex items-center gap-2 rounded-full border border-[#b79043]/20 bg-[#b79043]/10 px-4 py-2">
           <span className="h-1.5 w-1.5 rounded-full bg-[#b79043]" />
           <span className="text-[11px] font-medium uppercase tracking-[0.15em] text-[#dfc47d]">המחזור הקרוב נפתח בקרוב</span>
@@ -71,7 +73,7 @@ export function Pricing() {
         <h2 className="mb-4 text-3xl font-heading text-white md:text-4xl">33 ימים. ארבעה שלבים ברורים.</h2>
         <p className="mx-auto mb-10 max-w-2xl font-light text-white/50">ממכירה ראשונה ועד תשתיות, סקייל וקהילה — כל שלב נשען על השלב שלפניו.</p>
         <ProgramHighlights />
-        <Link to="/journey" className="mt-8 inline-flex min-h-11 items-center text-sm text-[#b79043] hover:text-[#dfc47d]">לכל פירוט המסע</Link>
+        <Link to="/#journey" className="mt-8 inline-flex min-h-11 items-center text-sm text-[#b79043] hover:text-[#dfc47d]">לכל פירוט המסע</Link>
       </section>
 
       <section className="pricing-trust pricing-island mx-auto max-w-[900px] px-4 py-12 sm:px-6 lg:px-8">

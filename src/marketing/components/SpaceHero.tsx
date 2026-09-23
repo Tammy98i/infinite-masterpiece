@@ -134,7 +134,7 @@ export function SpaceHero() {
           <div className="space-col space-cta">
             <PlanetSlot side="l" planet={left} onSelect={selectPlanet} />
             <PlanetSlot side="r" planet={right} onSelect={selectPlanet} />
-            <Link to={phase === 'ended' ? '/pricing' : '/webinar'}>
+            <Link to={phase === 'ended' ? '/#pricing' : '/webinar'}>
               {phase === 'ended' ? WEBINAR_CTA_NEXT_CYCLE : WEBINAR_CTA_HEADER}<ArrowLeft aria-hidden="true" />
             </Link>
             <span className="space-label space-label-l">{left.name}</span>

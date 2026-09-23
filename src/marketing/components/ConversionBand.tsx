@@ -29,7 +29,7 @@ export function ConversionBand() {
           <p className="text-sm leading-relaxed text-white/60 sm:text-base">בחרו את דרך הכניסה שמתאימה לקצב שלכם — וקבלו מסלול ברור מהרעיון ועד למערכת עובדת.</p>
         </div>
         <div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:flex-row">
-          <Link to="/pricing" className="btn-gold min-w-44 gap-2">
+          <Link to="/#pricing" className="btn-gold min-w-44 gap-2">
             לצפייה במסלולים
             <ArrowLeft className="h-4 w-4" aria-hidden="true" />
           </Link>

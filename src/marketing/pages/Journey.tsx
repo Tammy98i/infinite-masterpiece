@@ -34,14 +34,14 @@ const STEPS = [
   },
 ];
 
-export function Journey() {
+export function Journey({ embedded = false }: { embedded?: boolean }) {
   useEffect(() => {
-    window.scrollTo(0, 0);
-  }, []);
+    if (!embedded) window.scrollTo(0, 0);
+  }, [embedded]);
 
   return (
     <div className="w-full">
-      <section className="pt-32 pb-16 md:pt-40 md:pb-20">
+      <section className={embedded ? 'pt-6 pb-10 md:pb-12' : 'pt-32 pb-16 md:pt-40 md:pb-20'}>
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-6 font-semibold">התהליך</p>
           <h1 className="text-4xl md:text-6xl font-light text-white leading-tight mb-6">מסע 33 הימים.</h1>
@@ -84,15 +84,17 @@ export function Journey() {
 
           <div className="mt-16 flex flex-col sm:flex-row items-center justify-center gap-6">
             <Link
-              to="/pricing"
+              to="/#pricing"
               className="btn-gold text-black w-full sm:w-auto px-10 py-4 text-sm"
             >
               <span>להצטרפות למסע</span>
               <ArrowLeft className="w-4 h-4" />
             </Link>
+            {embedded ? null : (
             <Link to="/" className="text-sm text-white/40 hover:text-[#b79043] transition-colors">
               חזרה לדף הבית
             </Link>
+            )}
           </div>
         </div>
       </section>

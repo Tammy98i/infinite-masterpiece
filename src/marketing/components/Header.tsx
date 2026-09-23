@@ -22,9 +22,7 @@ export function Header() {
   const location = useLocation();
   const menuRef = useRef<HTMLDivElement>(null);
   const burgerRef = useRef<HTMLButtonElement>(null);
-  const onPremium88 = location.pathname === '/premium-88';
   const onPricing = location.pathname === '/pricing';
-  const onJourney = location.pathname === '/journey';
   const onWebinarLanding = location.pathname === '/webinar';
   const onWebinar = location.pathname.startsWith('/webinar');
   const onHesitation = location.pathname.startsWith('/hesitation');
@@ -42,7 +40,7 @@ export function Header() {
       );
     }
     return (
-      <Link to="/pricing#choose-track" onClick={onClick} className={className}>
+      <Link to="/#pricing" onClick={onClick} className={className}>
         בחירת מסלול
       </Link>
     );
@@ -52,7 +50,7 @@ export function Header() {
     if (onDecision) return decisionCta(headerCtaClass);
     if (phase === 'ended') {
       return (
-        <Link to="/pricing" className={headerCtaClass}>
+        <Link to="/#pricing" className={headerCtaClass}>
           {WEBINAR_CTA_NEXT_CYCLE}
         </Link>
       );
@@ -90,7 +88,7 @@ export function Header() {
     if (onDecision) return decisionCta(compactBarCtaClass);
     if (phase === 'ended') {
       return (
-        <Link to="/pricing" className={compactBarCtaClass}>
+        <Link to="/#pricing" className={compactBarCtaClass}>
           {WEBINAR_CTA_NEXT_CYCLE_SHORT}
         </Link>
       );
@@ -128,7 +126,7 @@ export function Header() {
     if (onDecision) return decisionCta(mobileClass, close);
     if (phase === 'ended') {
       return (
-        <Link to="/pricing" onClick={close} className={mobileClass}>
+        <Link to="/#pricing" onClick={close} className={mobileClass}>
           {WEBINAR_CTA_NEXT_CYCLE}
         </Link>
       );
@@ -205,15 +203,8 @@ export function Header() {
     };
   }, [mobileMenuOpen]);
 
-  const hash = location.hash.replace(/^#/, '');
-  const onHome = location.pathname === '/';
-  const onFaq = location.pathname === '/faq';
   const navLinks = [
     { name: 'וובינר', to: '/webinar', active: onWebinar },
-    { name: 'תהליך', to: '/#journey', active: (onHome && (hash === 'journey' || hash === 'process')) || onJourney },
-    { name: 'צוות המיזם', to: '/#team', active: (onHome && hash === 'team') || onPremium88 },
-    { name: 'מחירון', to: '/#pricing', active: (onHome && (hash === 'pricing' || hash === 'gradual')) || onPricing },
-    { name: 'שאלות', to: '/#faq', active: (onHome && hash === 'faq') || onFaq },
   ];
 
   const goToWebinarForm = () => {
@@ -251,13 +242,7 @@ export function Header() {
                 to={link.to}
                 className={cn(
                   'font-light tracking-wide transition-colors duration-200',
-                  link.to === '/webinar'
-                    ? link.active
-                      ? 'font-medium text-[#dfc47d]'
-                      : 'text-[#b79043] hover:text-[#dfc47d]'
-                    : link.active
-                      ? 'font-medium text-[#dfc47d]'
-                      : 'text-white/85 hover:text-white'
+                  link.active ? 'font-medium text-[#dfc47d]' : 'text-[#b79043] hover:text-[#dfc47d]'
                 )}
               >
                 {link.name}

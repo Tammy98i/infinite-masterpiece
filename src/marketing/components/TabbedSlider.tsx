@@ -8,10 +8,10 @@ import {
   Tag,
   Target,
 } from 'lucide-react';
-import { Link, useNavigate } from 'react-router-dom';
-import { EntryTrackCards } from './EntryTrackCards';
-import { FounderRoster } from './FounderRoster';
-import { ProgramHighlights } from './ProgramHighlights';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Journey } from '../pages/Journey';
+import { Premium88 } from '../pages/Premium88';
+import { Pricing } from '../pages/Pricing';
 import { FAQS } from '../pages/FAQPage';
 import './TabbedSlider.css';
 
@@ -56,35 +56,17 @@ function DifferencePanel() {
           </article>
         ))}
       </div>
-      <Link to="/journey" className="tabbed-link">לפירוט מסע 33 הימים <ArrowLeft aria-hidden="true" /></Link>
+      <Link to="/#journey" className="tabbed-link">לפירוט מסע 33 הימים <ArrowLeft aria-hidden="true" /></Link>
     </div>
   );
 }
 
 function JourneyPanel() {
-  return (
-    <div className="tabbed-content tabbed-journey">
-      <p className="tabbed-kicker">התהליך</p>
-      <h2>33 ימים. ארבעה שלבים ברורים.</h2>
-      <p className="tabbed-lede">ממכירה ראשונה ועד תשתיות, סקייל וקהילה — כל שלב נשען על השלב שלפניו.</p>
-      <ProgramHighlights />
-      <Link to="/journey" className="tabbed-link">לכל פירוט המסע <ArrowLeft aria-hidden="true" /></Link>
-    </div>
-  );
+  return <Journey embedded />;
 }
 
 function TeamPanel() {
-  return (
-    <div className="tabbed-content tabbed-team">
-      <p className="tabbed-kicker">האנשים מאחורי החזון</p>
-      <h2>צוות המיזם</h2>
-      <p className="tabbed-lede">מי עומד מאחורי Infinite Masterpiece, ומה כל יזם מביא. נבחרת 88 עובדת קרוב יותר לצוות הזה, לפי התאמה.</p>
-      <div className="tabbed-team-roster">
-        <FounderRoster />
-      </div>
-      <Link to="/premium-88" className="tabbed-link">לעמוד הצוות ונבחרת 88 <ArrowLeft aria-hidden="true" /></Link>
-    </div>
-  );
+  return <Premium88 embedded />;
 }
 
 function PlatformPanel() {
@@ -99,16 +81,7 @@ function PlatformPanel() {
 }
 
 function PricingPanel() {
-  return (
-    <div className="tabbed-content tabbed-pricing">
-      <p className="tabbed-kicker">אמיצים או הססנים</p>
-      <h2>מסלולים ומחיר</h2>
-      <p className="tabbed-lede">שתי דרכי כניסה. אותו מסע. ההבדל הוא בקצב הכניסה ובכרטיסי ההגרלה.</p>
-      <EntryTrackCards />
-      <p className="tabbed-lede">מסלול ההססנים הוא אותו מחיר מלא, 8,888 ₪ לפני מע״מ, בפריסה שמתחילה ב־8 ₪. לא הנחה ולא מסלול חלקי.</p>
-      <div className="tabbed-steps" aria-label="שלבי התשלום"><span>8 ₪</span><i /><span>80 ₪</span><i /><span>800 ₪</span><i /><span>8,000 ₪</span></div>
-    </div>
-  );
+  return <Pricing embedded />;
 }
 
 function FaqPanel() {
@@ -146,22 +119,18 @@ function tabFromHash(hash: string): TabId | null {
 
 export function TabbedSlider() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [active, setActive] = useState<TabId>(() => tabFromHash(window.location.hash) ?? 'difference');
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const activeTab = TABS.find(tab => tab.id === active) ?? TABS[0];
   const ActivePanel = PANELS[active];
 
   useEffect(() => {
-    const apply = () => {
-      const next = tabFromHash(window.location.hash);
-      if (!next) return;
-      setActive(next);
-      document.getElementById('home-topics')?.scrollIntoView({ block: 'start' });
-    };
-    apply();
-    window.addEventListener('hashchange', apply);
-    return () => window.removeEventListener('hashchange', apply);
-  }, []);
+    const next = tabFromHash(location.hash);
+    if (!next) return;
+    setActive(next);
+    document.getElementById('home-topics')?.scrollIntoView({ block: 'start' });
+  }, [location.hash]);
 
   const selectTab = (id: TabId) => {
     setActive(id);
@@ -205,7 +174,7 @@ export function TabbedSlider() {
         id={`panel-${active}`}
         role="tabpanel"
         aria-labelledby={`tab-${active}`}
-        className={`tabbed-panel tabbed-panel--${activeTab.tone}`}
+        className={`tabbed-panel tabbed-panel--${activeTab.tone}${active === 'pricing' || active === 'journey' || active === 'team' ? ' tabbed-panel--embed' : ''}`}
       >
         <ActivePanel />
       </div>

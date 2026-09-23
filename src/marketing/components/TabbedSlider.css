@@ -66,6 +66,16 @@
 .tabbed-panel--cream,
 .tabbed-panel--dark { color: #e0edff; background: rgba(5, 10, 20, .82); }
 
+.tabbed-panel--embed {
+  min-height: 0;
+  padding: 0 0 3rem;
+  background: transparent;
+}
+
+.tabbed-slider nav[aria-label='ניווט בתוך העמוד'] {
+  top: calc(var(--site-header-h, 72px) + 4.6rem);
+}
+
 .tabbed-content { width: min(1160px, 100%); margin: 0 auto; text-align: center; }
 .tabbed-kicker { margin: 0 0 1rem; color: #b79043; font-size: .74rem; font-weight: 800; letter-spacing: .23em; text-transform: uppercase; }
 .tabbed-content > h2 { max-width: 850px; margin: 0 auto 1.25rem; color: #e0edff; font-family: var(--font-heading); font-size: clamp(2.25rem, 5vw, 4.7rem); font-weight: 700; line-height: 1.02; letter-spacing: -.035em; }

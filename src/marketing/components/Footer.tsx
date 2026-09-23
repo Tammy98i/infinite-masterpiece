@@ -103,7 +103,7 @@ export function Footer() {
             <span className="text-[11px] uppercase tracking-widest">© {new Date().getFullYear()} Infinite Masterpiece</span>
           </div>
           <Link
-            to="/pricing"
+            to="/#pricing"
             className="text-sm text-[#b79043] hover:text-[#dfc47d] transition-colors"
           >
             להצטרפות למסע
