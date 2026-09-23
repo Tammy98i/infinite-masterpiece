@@ -218,3 +218,58 @@
 .a11y-reduce-motion .pricing-flow-page #journey-preview.is-in .pricing-journey-grid article {
   animation: none;
 }
+
+.pricing-flow-page.is-compact {
+  padding-bottom: 1.25rem;
+  background: transparent;
+}
+
+.pricing-flow-page.is-compact .pricing-hero::after,
+.pricing-flow-page.is-compact :is(#choose-track, #whats-included, #journey-preview, .pricing-trust, #pricing-faq)::before {
+  display: none;
+}
+
+.pricing-flow-page.is-compact :is(#choose-track, #whats-included, #journey-preview, .pricing-trust, #pricing-faq) {
+  background: none;
+}
+
+.tabbed-slider .pricing-flow-page.is-compact .glass-card {
+  padding: 1.1rem 1.15rem;
+}
+
+.pricing-flow-page.is-compact [data-track] .text-4xl,
+.pricing-flow-page.is-compact [data-track] .sm\:text-5xl {
+  font-size: 2rem;
+  line-height: 1;
+}
+
+.pricing-flow-page.is-compact [data-track] ul {
+  display: none;
+}
+
+.pricing-flow-page.is-compact [data-track] .mb-5 {
+  margin-bottom: 0.85rem;
+}
+
+.pricing-flow-page.is-compact .pricing-journey-grid {
+  gap: 0.65rem;
+}
+
+.pricing-flow-page.is-compact .pricing-journey-grid article {
+  padding: 0.9rem 0.85rem;
+}
+
+.pricing-flow-page.is-compact .pricing-journey-grid article svg,
+.pricing-flow-page.is-compact .pricing-journey-grid article p:last-child {
+  display: none;
+}
+
+.pricing-flow-page.is-compact .pricing-journey-grid article::before {
+  margin-bottom: 4px;
+  font-size: 11px;
+}
+
+.pricing-flow-page.is-compact .pricing-journey-grid h3 {
+  margin: 0;
+  font-size: 0.95rem;
+}
