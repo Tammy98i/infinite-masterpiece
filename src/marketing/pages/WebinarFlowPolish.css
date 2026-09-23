@@ -166,6 +166,17 @@
   counter-reset: bottle;
 }
 
+@media (min-width: 900px) {
+  .webinar-flow-page #problem .webinar-neural-bottlenecks {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px 12px;
+  }
+  .webinar-flow-page #problem .webinar-neural-bottlenecks li {
+    width: auto;
+  }
+}
+
 .webinar-flow-page #problem .webinar-neural-bottlenecks li {
   display: grid;
   justify-items: center;
@@ -198,8 +209,8 @@
 }
 
 .webinar-flow-page .webinar-fit-yes {
-  border-color: rgba(223, 196, 125, .42);
-  box-shadow: 0 18px 40px rgba(2, 6, 15, .28);
+  border-color: rgba(223, 196, 125, .55);
+  box-shadow: 0 18px 40px rgba(2, 6, 15, .28), inset 0 0 0 1px rgba(223, 196, 125, .12);
 }
 
 .webinar-flow-page .webinar-fit-no {

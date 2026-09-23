@@ -304,6 +304,10 @@
   .webinar-flow-page #problem .webinar-neural-bottlenecks li {
     width: calc(50% - 12px);
   }
+  .webinar-night-page,
+  .webinar-flow-page #problem.webinar-neural-afterglow {
+    padding-bottom: 88px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
