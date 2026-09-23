@@ -20,7 +20,7 @@ export const ContinueWatchingRow: React.FC = () => {
 
   return (
     <section
-      className="py-8 select-none scroll-mt-24"
+      className="library-spacious-section library-island library-island-flush py-8 select-none scroll-mt-24"
       data-onboarding="continue-watching"
       aria-label="המשך צפייה — רשימת הרצאות"
     >

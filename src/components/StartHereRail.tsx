@@ -17,7 +17,7 @@ export function StartHereRail({ tenMinute, taste, newest }: Props) {
   if (items.length === 0) return null;
 
   return (
-    <section className="py-8 select-none scroll-mt-24" aria-label="המשיכו מכאן — רשימת הרצאות">
+    <section className="library-spacious-section library-island library-island-flush py-8 select-none scroll-mt-24" aria-label="המשיכו מכאן — רשימת הרצאות">
       <div className="px-4 sm:px-8 mb-5">
         <h2 className="text-lg sm:text-xl font-semibold text-white tracking-tight">המשיכו מכאן</h2>
         <p className="text-sm text-white/80 mt-1 font-medium">שלוש התחלות. בלי רשימה ריקה.</p>

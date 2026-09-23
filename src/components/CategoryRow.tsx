@@ -76,7 +76,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
   return (
     <section
       id={id}
-      className="library-spacious-section py-10 select-none relative group/row scroll-mt-24"
+      className="library-spacious-section library-island py-10 select-none relative group/row scroll-mt-24"
       aria-label={`${title} — רשימת הרצאות`}
     >
       <div className="mx-auto flex max-w-[1400px] items-center gap-4 px-4 sm:px-8 lg:px-10 mb-7">

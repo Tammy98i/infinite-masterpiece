@@ -23,7 +23,7 @@ export const TopicsGrid: React.FC = () => {
 
   return (
     <section
-      className="library-spacious-section mx-auto max-w-[1400px] py-10 select-none scroll-mt-24"
+      className="library-spacious-section library-island mx-auto max-w-[1400px] py-10 select-none scroll-mt-24"
       aria-labelledby="topics-heading"
     >
       <div className="px-4 sm:px-8 mb-4">
