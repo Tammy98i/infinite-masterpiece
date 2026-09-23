@@ -7,7 +7,7 @@ import { InlineStarDetails } from './InlineStarDetails';
 import { StarPortrait } from './StarPortrait';
 import './TeamGalaxy.css';
 
-export function TeamGalaxy() {
+export function TeamGalaxy({ className = '' }: { className?: string }) {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
@@ -70,7 +70,7 @@ export function TeamGalaxy() {
       </button>
     </motion.div>;
   };
-  return <motion.section id="team-universe" className={`team-galaxy ${paused ? 'galaxy-paused' : ''}`}
+  return <motion.section id="team-universe" className={`team-galaxy ${paused ? 'galaxy-paused' : ''} ${className}`.trim()}
     aria-labelledby="galaxy-title" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 1 }}
     onKeyDown={event => { if (event.key === 'Escape' && profile) { event.preventDefault(); close(); } }}>
     <div className="galaxy-dust" aria-hidden="true">{Array.from({ length: 30 }, (_, i) => <i key={i} style={{ left: `${(i * 37 + 13) % 100}%`, top: `${(i * 23 + 7) % 100}%`, animationDelay: `${i * -0.7}s` }} />)}</div>
