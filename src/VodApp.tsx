@@ -118,7 +118,6 @@ export const VodApp: React.FC = () => {
               <p className="text-sm">{SITE_TAGLINE}</p>
             </div>
             <div className="flex flex-wrap gap-5 text-sm">
-              <Link to="/" className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11 inline-flex items-center">האתר הראשי</Link>
               <button type="button" onClick={() => setView('profile')} className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11">חשבון</button>
               <button type="button" onClick={() => setView('history')} className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11">היסטוריה</button>
               <Link to="/terms" className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11 inline-flex items-center">תנאי שימוש</Link>

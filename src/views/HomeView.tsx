@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { ContinueWatchingRow } from '../components/ContinueWatchingRow';
 import { CategoryRow } from '../components/CategoryRow';
@@ -109,7 +108,7 @@ export const HomeView: React.FC = () => {
     return (
       <div className="min-h-screen text-white pt-32 px-4 text-center">
         <h1 className="text-2xl font-semibold mb-3">לא הצלחנו לטעון את הספרייה</h1>
-        <p className="text-white/50 mb-8">נסו שוב, או חזרו לאתר הראשי.</p>
+        <p className="text-white/50 mb-8">נסו שוב בעוד רגע.</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <button
             type="button"
@@ -118,9 +117,6 @@ export const HomeView: React.FC = () => {
           >
             טעינה מחדש
           </button>
-          <Link to="/" className="px-6 py-3 rounded-full border border-white/20 text-white/80 min-h-11 inline-flex items-center">
-            חזרה לאתר הראשי
-          </Link>
         </div>
       </div>
     );

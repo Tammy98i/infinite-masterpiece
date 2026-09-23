@@ -1,5 +1,4 @@
 ﻿import React, { useState, useRef, useEffect, useMemo } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { useUser } from '../context/UserContext';
 import { Search, Mic, Shield, Menu, X, Infinity as InfinityIcon, Compass, Bookmark, User, History } from 'lucide-react';
@@ -22,7 +21,6 @@ export const Navbar: React.FC = () => {
     categories,
   } = useApp();
   const { user, isGuest, setAuthModalOpen } = useUser();
-  const navigate = useNavigate();
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -106,12 +104,6 @@ export const Navbar: React.FC = () => {
             </div>
 
             <nav className="hidden md:flex items-center gap-6 text-[14px] sm:text-[15px] font-light" aria-label="ניווט הספרייה">
-              <Link
-                to="/"
-                className="transition-colors py-2 min-h-11 inline-flex items-center border-b-2 border-transparent text-[#dfc47d] hover:text-white"
-              >
-                לאתר
-              </Link>
               <button
                 type="button"
                 onClick={() => setView('home')}
@@ -330,16 +322,6 @@ export const Navbar: React.FC = () => {
         {/* Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
           <nav className="md:hidden bg-zinc-950 border-b border-white/10 px-6 py-5 grid gap-2" aria-label="ניווט נייד — ספרייה">
-            <button
-              type="button"
-              onClick={() => {
-                navigate('/');
-                setIsMobileMenuOpen(false);
-              }}
-              className="text-right px-4 py-3 rounded-xl text-base text-zinc-200 hover:bg-white/5 min-h-11"
-            >
-              חזרה לאתר
-            </button>
             <button
               type="button"
               onClick={() => {
