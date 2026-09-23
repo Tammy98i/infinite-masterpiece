@@ -1,41 +1,34 @@
-/* Neural afterglow: hero continues into #problem, then later slides keep the same glass language. */
+/* Neural slides: glass plates on a night stage. Hero is exclusive; problem is its own canvas. */
 
 .webinar-neural-overture {
-  position: relative;
-  isolation: isolate;
+  display: contents;
 }
 
-.webinar-stage-page .webinar-neural-overture .webinar-neural-hero {
-  min-height: 0;
-  padding-bottom: 0;
-}
-
-.webinar-stage-page .webinar-neural-overture .webinar-neural-veil {
-  background:
-    radial-gradient(140% 60% at 50% 40%, rgba(var(--veil), .28) 0%, rgba(var(--veil), .1) 50%, rgba(var(--veil), 0) 100%),
-    linear-gradient(180deg, rgba(var(--veil), .22) 0%, rgba(var(--veil), 0) 28%, rgba(var(--veil), 0) 48%, rgba(var(--veil), .55) 78%, rgba(var(--veil), .82) 100%);
+.webinar-neural-sub {
+  max-width: 36rem;
+  margin: 0 auto 14px;
+  color: rgba(224, 237, 255, .72);
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.65;
+  text-wrap: balance;
 }
 
 .webinar-stage-page #problem.webinar-neural-afterglow {
   position: relative;
   z-index: 2;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  min-height: 0;
-  margin-top: -8px;
-  padding: 0 24px 72px;
+  display: grid;
+  place-items: center;
+  min-height: 100%;
+  margin: 0;
+  padding: clamp(20px, 4vh, 36px) 24px;
   border: 0;
-  background: linear-gradient(180deg, transparent 0%, rgba(5, 10, 20, .18) 42%, rgba(5, 10, 20, .42) 100%);
+  background: radial-gradient(80% 70% at 50% 40%, rgba(12, 20, 36, .35), rgba(2, 6, 15, .2));
   scroll-margin-top: calc(var(--site-header-h) + var(--webinar-subnav-h));
 }
 
 .webinar-stage-page .webinar-neural-afterglow .webinar-neural-stem {
-  display: block;
-  width: 1px;
-  height: 36px;
-  margin-bottom: -1px;
-  background: linear-gradient(180deg, rgba(186, 200, 214, .7), rgba(206, 220, 232, .92) 52%, rgba(182, 198, 212, .68));
+  display: none;
 }
 
 .webinar-stage-page #problem.webinar-neural-afterglow .webinar-neural-plate {
@@ -323,10 +316,8 @@
   border-radius: 8px;
 }
 
-@media (min-width: 900px) {
-  .webinar-stage-page .webinar-neural-overture .webinar-neural-hero {
-    min-height: calc(100dvh - var(--site-header-h) - var(--webinar-subnav-h) - 280px);
-  }
+.webinar-stage-page.webinar-deck .webinar-editorial-grid .team-galaxy .galaxy-map {
+  height: min(520px, 58vh);
 }
 
 @media (max-width: 767px) {

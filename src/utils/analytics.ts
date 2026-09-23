@@ -55,11 +55,25 @@ export function trackWebinarCta(section: string) {
   trackEvent('webinar_cta_clicked', { section });
 }
 
+export function goToWebinarSlide(id: string) {
+  if (typeof window === 'undefined') return;
+  window.dispatchEvent(new CustomEvent('webinar:go', { detail: { id } }));
+}
+
 export function scrollToWebinarForm(formId = WEBINAR_REGISTER_ID) {
+  if (typeof document !== 'undefined' && document.querySelector('[data-webinar-deck]')) {
+    goToWebinarSlide(formId);
+    return;
+  }
   document.getElementById(formId)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 export function scrollToWebinarFit() {
+  if (typeof document !== 'undefined' && document.querySelector('[data-webinar-deck]')) {
+    goToWebinarSlide('webinar-fit');
+    trackEvent('webinar_fit_cta_clicked');
+    return;
+  }
   document.getElementById('webinar-fit')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
   trackEvent('webinar_fit_cta_clicked');
 }
