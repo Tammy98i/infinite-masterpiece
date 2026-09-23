@@ -37,6 +37,7 @@ import './WebinarEditorialCinema.css';
 import '../components/WebinarNeuralHero.css';
 import './WebinarNeuralSlides.css';
 import './WebinarNightLanguage.css';
+import './WebinarFlowPolish.css';
 
 const WEBINAR_ISLANDS = [
   { id: 'webinar-hero', title: 'פתיחה' },
@@ -171,7 +172,7 @@ export function WebinarLanding() {
           }
         }
       },
-      { threshold: 0.35, rootMargin: '-12% 0px -28% 0px' }
+      { threshold: 0.14, rootMargin: '0px 0px -16% 0px' }
     );
     for (const node of islands) {
       if (reduce) node.classList.add('is-in');
@@ -217,7 +218,7 @@ export function WebinarLanding() {
   const eveningFeats = [...WEBINAR_DIFFERENCE_POINTS.map((item) => item.title), config.costLabel];
 
   return (
-    <div className="webinar-stage-page webinar-night-page w-full">
+    <div className="webinar-stage-page webinar-night-page webinar-flow-page w-full">
       <nav className="webinar-spine" aria-label="מיקום בעמוד הוובינר">
         {WEBINAR_ISLANDS.map((island) => (
           <a
@@ -241,6 +242,7 @@ export function WebinarLanding() {
       />
 
       <section id="problem" className="webinar-neural-afterglow webinar-island">
+        <div className="webinar-flow-stem" aria-hidden="true" />
         <div className="webinar-neural-plate">
           <SectionLabel>הבעיה</SectionLabel>
           <SectionTitle>

@@ -1,0 +1,179 @@
+/* ui-ux-pro-max: Liquid Glass + gold night, 200–400ms ease-out, no scroll-jack. */
+
+.webinar-flow-page {
+  --flow-night: #02060f;
+  --flow-navy: #071322;
+  --flow-ink: #10182a;
+  --flow-gold: #dfc47d;
+  --flow-ease: cubic-bezier(.16, 1, .3, 1);
+  overflow-x: clip;
+}
+
+.webinar-flow-page .webinar-neural-hero {
+  position: relative;
+}
+
+.webinar-flow-page .webinar-neural-hero::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 22%;
+  z-index: 1;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(2, 6, 15, 0) 0%, rgba(7, 19, 34, .35) 55%, #02060f 100%);
+}
+
+.webinar-flow-stem {
+  display: block;
+  width: 1px;
+  height: 48px;
+  margin: 0 auto 18px;
+  background: linear-gradient(180deg, rgba(223, 196, 125, 0), var(--flow-gold));
+}
+
+.webinar-flow-page #problem.webinar-neural-afterglow {
+  background:
+    radial-gradient(70% 50% at 50% 0%, rgba(77, 122, 168, .12), transparent 62%),
+    linear-gradient(180deg, #02060f 0%, #071322 58%, #0a1220 100%);
+}
+
+.webinar-flow-page #problem.webinar-neural-afterglow .webinar-neural-plate {
+  border-color: rgba(223, 196, 125, .22);
+  background: linear-gradient(180deg, rgba(16, 24, 42, .55), rgba(5, 10, 20, .42));
+  box-shadow: 0 18px 50px rgba(2, 6, 15, .28);
+}
+
+.webinar-flow-page .webinar-editorial-grid {
+  background:
+    linear-gradient(180deg, #0a1220 0%, #081018 18%, #02060f 42%, #0c1014 72%, #0d0b08 100%);
+}
+
+.webinar-flow-page .webinar-editorial-grid > #hosts {
+  background:
+    radial-gradient(80% 40% at 50% 0%, rgba(183, 144, 67, .1), transparent 58%),
+    linear-gradient(180deg, rgba(10, 18, 32, .0), rgba(18, 14, 8, .18) 100%);
+}
+
+.webinar-flow-page .webinar-editorial-grid > .team-galaxy {
+  background:
+    radial-gradient(70% 45% at 50% 30%, rgba(80, 120, 200, .08), transparent 60%),
+    linear-gradient(180deg, rgba(2, 6, 15, 0), rgba(6, 12, 24, .35));
+}
+
+.webinar-flow-page .webinar-editorial-grid > #webinar-fit {
+  background:
+    radial-gradient(70% 40% at 50% 0%, rgba(77, 122, 168, .1), transparent 55%),
+    linear-gradient(180deg, rgba(2, 6, 15, 0), rgba(8, 16, 28, .28));
+}
+
+.webinar-flow-page .webinar-editorial-grid > #webinar-faq {
+  background: linear-gradient(180deg, rgba(8, 16, 28, 0), rgba(12, 14, 18, .22));
+}
+
+.webinar-flow-page .webinar-editorial-grid > #webinar-register-bottom {
+  background:
+    radial-gradient(60% 40% at 50% 45%, rgba(183, 144, 67, .14), transparent 68%),
+    linear-gradient(180deg, rgba(12, 14, 18, 0), #0d0b08 100%);
+}
+
+.webinar-flow-page .webinar-editorial-grid > :is(#hosts, .team-galaxy, #webinar-fit, #webinar-faq, #webinar-register-bottom) {
+  position: relative;
+}
+
+.webinar-flow-page .webinar-editorial-grid > :is(#hosts, .team-galaxy, #webinar-fit, #webinar-faq, #webinar-register-bottom)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 12%;
+  left: 12%;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(223, 196, 125, .28), transparent);
+}
+
+.webinar-flow-page #problem::after {
+  content: '';
+  display: block;
+  width: min(42%, 280px);
+  height: 1px;
+  margin: 36px auto 0;
+  background: linear-gradient(90deg, transparent, rgba(223, 196, 125, .32), transparent);
+}
+
+.webinar-island:not(.webinar-neural-hero) {
+  transition: opacity .22s var(--flow-ease, cubic-bezier(.16, 1, .3, 1)), translate .38s var(--flow-ease, cubic-bezier(.16, 1, .3, 1));
+}
+
+.webinar-flow-page #problem.is-in .webinar-neural-bottlenecks li,
+.webinar-flow-page #hosts.is-in .webinar-host-orbs li,
+.webinar-flow-page #hosts.is-in .webinar-task-spine li,
+.webinar-flow-page #webinar-fit.is-in .glass-card {
+  animation: webinar-flow-rise .38s var(--flow-ease) both;
+}
+
+.webinar-flow-page #problem.is-in .webinar-neural-bottlenecks li:nth-child(2),
+.webinar-flow-page #hosts.is-in .webinar-host-orbs li:nth-child(2),
+.webinar-flow-page #hosts.is-in .webinar-task-spine li:nth-child(2),
+.webinar-flow-page #webinar-fit.is-in .glass-card:nth-child(3) { animation-delay: .06s; }
+
+.webinar-flow-page #problem.is-in .webinar-neural-bottlenecks li:nth-child(3),
+.webinar-flow-page #hosts.is-in .webinar-host-orbs li:nth-child(3),
+.webinar-flow-page #hosts.is-in .webinar-task-spine li:nth-child(3) { animation-delay: .12s; }
+
+.webinar-flow-page #problem.is-in .webinar-neural-bottlenecks li:nth-child(4),
+.webinar-flow-page #hosts.is-in .webinar-task-spine li:nth-child(4) { animation-delay: .18s; }
+
+.webinar-flow-page #problem.is-in .webinar-neural-bottlenecks li:nth-child(5) { animation-delay: .24s; }
+
+@keyframes webinar-flow-rise {
+  from { opacity: 0; translate: 0 8px; }
+}
+
+.webinar-flow-page .glass-card,
+.webinar-flow-page .webinar-stage-register-card {
+  border-color: rgba(223, 196, 125, .22);
+  background: linear-gradient(180deg, rgba(16, 24, 42, .5), rgba(5, 10, 20, .4));
+  backdrop-filter: blur(16px) saturate(.55);
+  -webkit-backdrop-filter: blur(16px) saturate(.55);
+  transition: border-color .2s ease, box-shadow .2s ease;
+}
+
+.webinar-flow-page details.glass-card {
+  cursor: pointer;
+}
+
+.webinar-flow-page details.glass-card[open] {
+  border-color: rgba(223, 196, 125, .4);
+}
+
+.webinar-flow-page .webinar-host-orbs .webinar-host-orb {
+  transition: box-shadow .2s ease;
+}
+
+.webinar-flow-page .webinar-spine a.is-on::before {
+  box-shadow: 0 0 14px rgba(223, 196, 125, .45);
+}
+
+@media (max-width: 767px) {
+  .webinar-flow-stem { height: 36px; margin-bottom: 12px; }
+  .webinar-flow-page .webinar-neural-hero::after { height: 16%; }
+  .webinar-flow-page #problem::after { margin-top: 24px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .webinar-flow-page #problem.is-in .webinar-neural-bottlenecks li,
+  .webinar-flow-page #hosts.is-in .webinar-host-orbs li,
+  .webinar-flow-page #hosts.is-in .webinar-task-spine li,
+  .webinar-flow-page #webinar-fit.is-in .glass-card {
+    animation: none;
+  }
+}
+
+.a11y-reduce-motion .webinar-flow-page #problem.is-in .webinar-neural-bottlenecks li,
+.a11y-reduce-motion .webinar-flow-page #hosts.is-in .webinar-host-orbs li,
+.a11y-reduce-motion .webinar-flow-page #hosts.is-in .webinar-task-spine li,
+.a11y-reduce-motion .webinar-flow-page #webinar-fit.is-in .glass-card {
+  animation: none;
+}
