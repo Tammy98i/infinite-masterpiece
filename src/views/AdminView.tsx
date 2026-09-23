@@ -610,7 +610,7 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
 
       <div>
         <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">תמונת מצב</p>
-        <h2 className="text-2xl font-light">מה קורה במערכת עכשיו</h2>
+        <h2 className="text-lg font-medium">מה קורה במערכת עכשיו</h2>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3">
@@ -2299,7 +2299,7 @@ function CategoriesPanel() {
     <div className="grid gap-8">
       <div>
         <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">קטגוריות</p>
-        <h2 className="text-2xl font-light">ניהול קטגוריות VOD</h2>
+        <h2 className="text-lg font-medium">ניהול קטגוריות VOD</h2>
       </div>
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
@@ -2441,7 +2441,7 @@ function Premium88Panel() {
     <div className="grid gap-8">
       <div>
         <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">נבחרת 88</p>
-        <h2 className="text-2xl font-light">מועמדויות</h2>
+        <h2 className="text-lg font-medium">מועמדויות</h2>
         <p className="text-sm text-white/45 mt-2 font-light">
           מועמדויות מטופס `/application?type=88`. נפרד ממסלולי כניסה וממנוי הספרייה.
         </p>
@@ -2538,7 +2538,7 @@ function AuditLogsPanel() {
     <div className="grid gap-6">
       <div>
         <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">יומן פעולות</p>
-        <h2 className="text-2xl font-light">פעולות רגישות באדמין</h2>
+        <h2 className="text-lg font-medium">פעולות רגישות באדמין</h2>
       </div>
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
         <table className="w-full text-sm text-start">
@@ -2653,7 +2653,7 @@ function RafflesPanel() {
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
       <div>
         <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">הגרלות</p>
-        <h2 className="text-2xl font-light">ניהול הגרלות וכרטיסים</h2>
+        <h2 className="text-lg font-medium">ניהול הגרלות וכרטיסים</h2>
         <p className="text-sm text-white/45 mt-2">
           תקנון מאושר: {data.termsApproved ? 'כן' : 'לא'} · כרטיסים ללא שיוך: {data.unassignedTickets}
         </p>
@@ -2829,12 +2829,11 @@ function LeadsPanel() {
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
 
   return (
-    <div className="grid gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="grid gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">לידים ופניות</p>
-          <h2 className="text-2xl font-light">CRM מאוחד</h2>
-          <p className="text-sm text-white/45 mt-2">{filtered.length} רשומות</p>
+          <h2 className="text-lg font-medium">CRM מאוחד</h2>
+          <p className="text-xs text-white/45">{filtered.length} רשומות</p>
         </div>
         <button
           type="button"
@@ -2983,7 +2982,7 @@ function LegalPanel() {
     <div className="grid gap-8 max-w-4xl">
       <div>
         <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">משפטי</p>
-        <h2 className="text-2xl font-light">תקנון, פרטיות והגרלות</h2>
+        <h2 className="text-lg font-medium">תקנון, פרטיות והגרלות</h2>
         <p className="text-sm text-white/45 mt-2">הטקסטים מוצגים בעמודי האתר הציבוריים.</p>
       </div>
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
@@ -3210,7 +3209,7 @@ function WebinarPanel() {
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">וובינר</p>
-          <h2 className="text-2xl font-light">הגדרות ולידים</h2>
+          <h2 className="text-lg font-medium">הגדרות ולידים</h2>
           <p className="text-sm text-white/45 mt-2">
             {data?.totalRegistrations ?? 0} נרשמים ·{' '}
             <a href="/webinar" target="_blank" rel="noreferrer" className="text-[#b79043] hover:underline">
