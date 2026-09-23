@@ -141,7 +141,7 @@ export function FounderPage() {
               <img
                 src={instructor?.avatarUrl || founder.image}
                 alt={founder.name}
-                className="w-full aspect-[4/5] max-h-[640px] object-cover grayscale"
+                className="w-full aspect-[4/5] max-h-[640px] object-cover"
               />
             </div>
           </div>
