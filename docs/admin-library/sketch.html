@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>סקיצת אדמין + ספרייה — Infinite Masterpiece</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600&family=Noto+Sans+Hebrew:wght@500;600;700&family=Rubik:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #010308;
+      --gold: #c8a24c;
+      --gold-soft: #f7e7b5;
+      --ink: #fff;
+      --muted: rgba(255,255,255,0.86);
+      --line: rgba(200,162,76,0.28);
+      --card: rgba(1,3,8,0.64);
+      --note: #ff7a33;
+      --heading: "Noto Sans Hebrew", "Arial Hebrew", sans-serif;
+      --body: "IBM Plex Sans Hebrew", "Arial Hebrew", sans-serif;
+      --play: #fff;
+      --more: rgba(109,109,110,.72);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--body);
+    }
+    .wrap { max-width: 1220px; margin: 0 auto; padding: 24px 16px 80px; }
+    .banner {
+      border: 1px dashed var(--note);
+      color: var(--note);
+      padding: 10px 14px;
+      border-radius: 999px;
+      display: inline-flex;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    h1.page-title {
+      font-family: var(--heading);
+      font-weight: 600;
+      font-size: clamp(1.6rem, 3vw, 2.3rem);
+      margin: 0 0 8px;
+    }
+    .lede { color: var(--muted); max-width: 48rem; line-height: 1.75; margin-bottom: 22px; }
+    nav.states { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 22px; }
+    nav.states button {
+      background: transparent;
+      color: var(--gold-soft);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      min-height: 44px;
+      padding: 0 16px;
+      cursor: pointer;
+      font-family: inherit;
+    }
+    nav.states button[aria-pressed="true"] {
+      background: linear-gradient(90deg, #c8a24c, #f7e7b5, #d4af37);
+      color: #111;
+      border-color: transparent;
+      font-weight: 600;
+    }
+    .screen { display: none; }
+    .screen.is-on { display: block; }
+    .canvas {
+      position: relative;
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      overflow: hidden;
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(200,162,76,0.12), transparent 50%),
+        #010308;
+      min-height: 560px;
+      padding: 28px 20px 40px;
+    }
+    .canvas.is-space {
+      background:
+        linear-gradient(180deg, rgba(2,6,14,.72), rgba(2,6,14,.42) 40%, rgba(2,6,14,.88)),
+        radial-gradient(ellipse at 70% 18%, rgba(80,120,200,.18), transparent 42%),
+        radial-gradient(circle at 18% 72%, rgba(200,162,76,.08), transparent 36%),
+        #040814;
+    }
+    .note {
+      color: var(--note);
+      font-family: Rubik, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 0 0 16px;
+    }
+    .note::before { content: "→ "; }
+    .headline {
+      font-family: var(--heading);
+      font-size: clamp(1.45rem, 3vw, 2.1rem);
+      font-weight: 700;
+      line-height: 1.25;
+      margin: 0 0 12px;
+    }
+    .sub { color: var(--muted); max-width: 44rem; line-height: 1.7; margin: 0 0 22px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+    .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+    .grid5 { display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px; }
+    .glass {
+      background: var(--card);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px 16px;
+    }
+    .caption { font-size: 15px; font-weight: 500; line-height: 1.55; margin: 0; }
+    .muted { color: rgba(255,255,255,0.62); font-size: 13px; line-height: 1.6; margin: 8px 0 0; }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 0 18px;
+      border: 0;
+      border-radius: 4px;
+      background: #fff;
+      color: #111;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .cta.ghost {
+      background: var(--more);
+      color: #fff;
+    }
+    .cta.warn {
+      background: transparent;
+      color: #f7b4b4;
+      border: 1px solid rgba(247,180,180,.4);
+    }
+    .cta.gold {
+      background: linear-gradient(90deg, #c8a24c, #f7e7b5, #d4af37);
+      color: #111;
+      border-radius: 999px;
+    }
+    .row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      min-height: 36px;
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 4px 0;
+    }
+    .row:last-child { border-bottom: 0; }
+    .pill {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: rgba(1,3,8,0.64);
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-size: 12px;
+      margin-bottom: 14px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+    .stamp {
+      display: inline-block;
+      color: var(--note);
+      border: 2px solid var(--note);
+      padding: 3px 10px;
+      border-radius: 8px;
+      font-weight: 600;
+      font-size: 12px;
+    }
+    .keep {
+      display: inline-block;
+      color: #9be7b5;
+      border: 1px solid rgba(155,231,181,.45);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+    }
+    footer.sketch-foot { margin-top: 24px; color: rgba(255,255,255,0.55); font-size: 13px; line-height: 1.6; }
+
+    /* Map cards */
+    .page-card h3 { margin: 0 0 6px; font-size: 14px; font-weight: 600; }
+    .page-card .issue { color: var(--note); font-size: 12px; margin: 8px 0 0; line-height: 1.5; }
+    .page-card .fix { color: #d8c48a; font-size: 12px; margin: 6px 0 0; line-height: 1.5; }
+
+    /* Compact users desk */
+    .desk {
+      display: grid;
+      grid-template-columns: 196px 1fr;
+      min-height: 620px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(0,0,0,.28);
+    }
+    .desk-nav {
+      position: relative;
+      padding: 16px 12px;
+      border-inline-end: 1px solid rgba(255,255,255,.08);
+    }
+    .desk-nav span.group {
+      display: block;
+      font-size: 10px;
+      letter-spacing: .16em;
+      color: rgba(255,255,255,.38);
+      margin: 12px 8px 6px;
+    }
+    .desk-nav a {
+      display: block;
+      color: rgba(255,255,255,.72);
+      text-decoration: none;
+      font-size: 13px;
+      min-height: 32px;
+      padding: 6px 10px;
+      border-inline-start: 2px solid transparent;
+    }
+    .desk-nav a.is-on {
+      color: #fff;
+      font-weight: 600;
+      border-inline-start-color: #fff;
+    }
+    .desk-main { padding: 16px 16px 20px; }
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .toolbar input[type="search"] {
+      flex: 1;
+      min-width: 180px;
+      min-height: 44px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.45);
+      color: #fff;
+      padding: 0 12px;
+      font-family: inherit;
+    }
+    .compact {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    .compact th {
+      text-align: start;
+      color: rgba(255,255,255,.42);
+      font-weight: 400;
+      font-size: 11px;
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .compact td {
+      padding: 5px 8px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      white-space: nowrap;
+    }
+    .compact tr { height: 32px; }
+    .compact tr.is-gone { display: none; }
+    .compact .name { font-weight: 500; }
+    .compact .mail { color: rgba(255,255,255,.4); font-size: 11px; }
+    .acts { display: flex; gap: 6px; }
+    .acts button {
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: transparent;
+      color: #fff;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .acts button.kill { color: #f7b4b4; border-color: rgba(247,180,180,.35); }
+    .drawer {
+      display: none;
+      margin-top: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      background: rgba(1,3,8,.72);
+    }
+    .drawer.is-on { display: block; }
+    .drawer label { display: grid; gap: 4px; font-size: 12px; color: rgba(255,255,255,.6); }
+    .drawer select, .drawer input {
+      min-height: 40px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: #0a0a0a;
+      color: #fff;
+      font-family: inherit;
+    }
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+    .fat-row {
+      padding: 14px 10px;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+    .fat-row .mail { display: block; color: rgba(255,255,255,.35); font-size: 11px; }
+    .fat-row .team { color: var(--gold); font-size: 10px; }
+
+    /* Library billboard */
+    .billboard {
+      position: relative;
+      min-height: 340px;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 18px;
+      background:
+        linear-gradient(90deg, rgba(2,6,14,.92) 8%, rgba(2,6,14,.35) 58%, rgba(2,6,14,.7)),
+        linear-gradient(180deg, transparent 40%, rgba(2,6,14,.95)),
+        radial-gradient(circle at 72% 40%, #3a5a8c 0%, #12182a 55%, #05070e 100%);
+      padding: 36px 28px 28px;
+    }
+    .billboard h2 {
+      font-family: var(--heading);
+      font-size: clamp(1.8rem, 4vw, 2.8rem);
+      margin: 8px 0 10px;
+      max-width: 16ch;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 18px; }
+    .rail-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin: 0 0 8px;
+    }
+    .rail {
+      display: flex;
+      gap: 8px;
+      overflow: hidden;
+      margin-bottom: 16px;
+    }
+    .poster {
+      flex: 0 0 148px;
+      aspect-ratio: 16 / 9;
+      border-radius: 4px;
+      background:
+        linear-gradient(180deg, transparent 45%, rgba(0,0,0,.78)),
+        linear-gradient(135deg, #1a2744, #0b1220);
+      position: relative;
+      overflow: hidden;
+    }
+    .poster:nth-child(2) { background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.78)), linear-gradient(135deg, #3a2a18, #120c08); }
+    .poster:nth-child(3) { background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.78)), linear-gradient(135deg, #163028, #07110e); }
+    .poster:nth-child(4) { background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.78)), linear-gradient(135deg, #2a1838, #0c0812); }
+    .poster:nth-child(5) { background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.78)), linear-gradient(135deg, #183040, #081016); }
+    .poster:nth-child(6) { background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.78)), linear-gradient(135deg, #402018, #140808); }
+    .poster b {
+      position: absolute;
+      inset-inline-start: 8px;
+      bottom: 8px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .poster i {
+      position: absolute;
+      inset-inline-end: 8px;
+      top: 8px;
+      font-style: normal;
+      font-size: 10px;
+      background: rgba(0,0,0,.55);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+
+    /* Dark layers illustration */
+    .sky-stack {
+      position: relative;
+      height: 280px;
+      border-radius: 16px;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at 30% 20%, #6b8ec8 0%, transparent 28%),
+        radial-gradient(circle at 80% 40%, #c8a24c33 0%, transparent 30%),
+        linear-gradient(180deg, #1a3a78, #050814);
+    }
+    .veil {
+      position: absolute;
+      inset: 0;
+    }
+    .veil-a { background: linear-gradient(180deg, rgba(5,10,20,.55) 0%, rgba(5,10,20,.08) 28%, transparent 50%, rgba(5,10,20,.62) 100%); }
+    .veil-b { background: rgba(3,8,18,.22); }
+    .veil-c { background: linear-gradient(90deg, rgba(5,10,20,.42), transparent 42%, rgba(5,10,20,.42)); }
+    .veil-d { background: radial-gradient(ellipse at 50% 0%, rgba(5,10,20,.06), rgba(5,10,20,.38) 78%); }
+    .veil-e { background: linear-gradient(180deg, transparent 12%, rgba(3,8,18,.36) 100%); }
+    .veil-f { background: rgba(2,6,14,.18); }
+    .veil-g { background: linear-gradient(180deg, rgba(0,0,0,.28), transparent 24%, transparent 70%, rgba(0,0,0,.5)); }
+    .layer-list { margin-top: 14px; }
+    .layer-list .row span:first-child { color: rgba(255,255,255,.7); font-size: 13px; }
+
+    .toast {
+      display: none;
+      margin-top: 10px;
+      color: var(--gold-soft);
+      font-size: 13px;
+    }
+    .toast.is-on { display: block; }
+
+    @media (max-width: 900px) {
+      .grid3, .grid2, .grid5, .compare, .desk { grid-template-columns: 1fr; }
+      .desk-nav { border-inline-end: 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="banner">סקיצה לאישור · לא קוד במוצר · לא מוחקים אף מסך קיים · ספרייה = מנוי צפייה</p>
+    <h1 class="page-title">אדמין פרקטי + ספרייה כמו נטפליקס אקדמית</h1>
+    <p class="lede">
+      כל עמודי <span dir="ltr">/library/admin</span> נשארים. הטבלאות יורדות לגובה שורה אחת,
+      חיפוש לפי שם, עריכה והסרה בשורה. מעל תמונת החלל נוספות שכבות כהות.
+      הספרייה נראית כמו נטפליקס — לקורסים ולטכנאים אקדמיים, לא לסדרות.
+    </p>
+    <nav class="states" aria-label="מסכי הסקיצה">
+      <button type="button" data-screen="map" aria-pressed="true">מפה</button>
+      <button type="button" data-screen="users" aria-pressed="false">יוזרים</button>
+      <button type="button" data-screen="admin" aria-pressed="false">אדמין</button>
+      <button type="button" data-screen="library" aria-pressed="false">ספרייה</button>
+      <button type="button" data-screen="veils" aria-pressed="false">שכבות</button>
+      <button type="button" data-screen="keep" aria-pressed="false">נשאר</button>
+    </nav>
+
+    <section class="screen is-on" id="screen-map" aria-label="מפת האדמין">
+      <div class="canvas">
+        <p class="note">23 מסכים קיימים. אף אחד לא יורד. רק הפעולות נהיות ברורות והטבלאות יורדות בגובה.</p>
+        <h2 class="headline">מה לא פרקטי היום</h2>
+        <p class="sub">לחיצה על שורה פותחת כרטיס צד. טופס יצירה תמיד פתוח. אין הסרת יוזר. שני מסכי משתמשים כפולים. כפתור «מעבר לטיפול» בלי שם היעד.</p>
+        <div class="grid3">
+          <div class="glass page-card">
+            <p class="pill"><span class="dot"></span> מבט על</p>
+            <h3>סקירה · התראות · אנליטיקות</h3>
+            <p class="issue">«מעבר לטיפול» זהב עגול — לא כתוב לאן. הסקירה כבר עם פסי קטלוג.</p>
+            <p class="fix">הכפתור אומר את היעד: «ללידים», «לבקשות מרצים». פסי הסקירה נשארים.</p>
+          </div>
+          <div class="glass page-card">
+            <p class="pill"><span class="dot"></span> אנשים</p>
+            <h3>גישה · משתמשים · צוות · מייסדים · גלקסיה · מרצים</h3>
+            <p class="issue">אותה טבלת יוזרים בשני טאבים. שורות גבוהות. עריכה מוסתרת. אין הסרה.</p>
+            <p class="fix">טבלה צפופה + חיפוש שם + עריכה/הסרה בשורה. שני הטאבים נשארים, עם תפקיד ברור לכל אחד.</p>
+          </div>
+          <div class="glass page-card">
+            <p class="pill"><span class="dot"></span> מסחר</p>
+            <h3>מנויים · מסלולים · 88 · פודים · משפך · לידים · וובינר · הגרלות</h3>
+            <p class="issue">טבלאות גבוהות. פעולות בכרטיס צד. מסע וספרייה עלולים להתערבב ב־CTA.</p>
+            <p class="fix">אותה צפיפות. כפתור פעולה עם פועל: «שייך לפוד», «אשר מועמדות». בלי CTA ספרייה כאן.</p>
+          </div>
+          <div class="glass page-card">
+            <p class="pill"><span class="dot"></span> תוכן</p>
+            <h3>תכני VOD · קטגוריות · הדרכות</h3>
+            <p class="issue">טופס קורס ארוך ליד הרשימה. קטגוריות כבר עם פעולות בשורה — זה המודל.</p>
+            <p class="fix">רשימת כרזות צפופה. טופס מאחורי «הרצאה חדשה». פעולות כמו בקטגוריות.</p>
+          </div>
+          <div class="glass page-card">
+            <p class="pill"><span class="dot"></span> מערכת</p>
+            <h3>הגדרות · משפטי · יומן</h3>
+            <p class="issue">הגדרות = מוכנות. לא ברור מה חובה לפני השקה.</p>
+            <p class="fix">רשימת מוכנות עם «חסר / מוכן» בשורה אחת. יומן נשאר לקריאה בלבד.</p>
+          </div>
+          <div class="glass page-card">
+            <p class="pill"><span class="dot"></span> גבול</p>
+            <h3>מה לא נוגעים</h3>
+            <p class="muted" style="margin-top:0">מייסד הוא דגל, לא role. מסלול הססנים 8→80→800→8,000. גישה לתכן רק דרך מסלול / מנוי ספרייה.</p>
+            <p class="fix">שלב 2 בחוץ: תגובות, שאלות למרצה, AI, אפליקציה, גיימיפיקציה.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-users" aria-label="טבלת יוזרים צפופה">
+      <div class="canvas">
+        <p class="note">הדגמה חיה בסקיצה: חיפוש לפי שם, עריכה בשורה, הסרה עם אישור. לא קוד במוצר.</p>
+        <div class="compare" style="margin-bottom:16px">
+          <div class="glass">
+            <p class="caption">היום</p>
+            <div class="fat-row">נועה לוי<span class="mail" dir="ltr">noa@example.com</span><span class="team">צוות</span></div>
+            <div class="fat-row">דניאל כהן<span class="mail" dir="ltr">dan@example.com</span></div>
+            <div class="fat-row">מיכל אברמוב<span class="mail" dir="ltr">michal@example.com</span></div>
+            <p class="muted">שלוש שורות = חצי מסך. עריכה רק אחרי לחיצה, בכרטיס צד. אין הסרה.</p>
+          </div>
+          <div class="glass">
+            <p class="caption">אחרי</p>
+            <p class="muted" style="margin-top:0">32px לשורה. שם בלבד בשורה. אימייל משני. יצירה מאחורי כפתור. עריכה והסרה נראות בלי לבחור שורה.</p>
+          </div>
+        </div>
+
+        <div class="desk" aria-label="איור דסק משתמשים">
+          <aside class="desk-nav">
+            <p class="caption" style="margin-bottom:8px">אדמין</p>
+            <span class="group">מבט על</span>
+            <a href="#screen-map">סקירה</a>
+            <a href="#screen-map">התראות</a>
+            <span class="group">אנשים</span>
+            <a class="is-on" href="#screen-users">משתמשים</a>
+            <a href="#screen-admin">צוות ומרצים</a>
+            <a href="#screen-admin">גלקסיית הצוות</a>
+            <span class="group">מסחר</span>
+            <a href="#screen-admin">לידים ופניות</a>
+            <a href="#screen-admin">פודים</a>
+          </aside>
+          <div class="desk-main">
+            <div class="toolbar">
+              <input id="user-search" type="search" placeholder="חיפוש משתמש לפי שם…" aria-label="חיפוש משתמש לפי שם" />
+              <button class="cta ghost" type="button" id="toggle-create">הוספת משתמש</button>
+              <span class="keep">ייצוא נשאר</span>
+              <span class="keep">חסימה נשארת</span>
+            </div>
+            <div class="drawer" id="create-box">
+              <p class="caption">חשבון חדש</p>
+              <p class="muted">שם · אימייל · סיסמה · תפקיד. אותו טופס היום, רק סגור עד שלוחצים.</p>
+            </div>
+            <table class="compact" id="user-table">
+              <thead>
+                <tr>
+                  <th>שם</th>
+                  <th>תפקיד</th>
+                  <th>מנוי</th>
+                  <th>מסלול</th>
+                  <th>סטטוס</th>
+                  <th>פעולות</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr data-name="נועה לוי">
+                  <td><span class="name">נועה לוי</span> <span class="mail" dir="ltr">noa@…</span></td>
+                  <td>אדמין</td><td>פרימיום</td><td>אמיצים</td><td>פעיל</td>
+                  <td><span class="acts"><button type="button" class="edit">עריכה</button><button type="button" class="kill">הסרה</button></span></td>
+                </tr>
+                <tr data-name="דניאל כהן">
+                  <td><span class="name">דניאל כהן</span> <span class="mail" dir="ltr">dan@…</span></td>
+                  <td>משתמש</td><td>ניסיון</td><td>הססנים</td><td>פעיל</td>
+                  <td><span class="acts"><button type="button" class="edit">עריכה</button><button type="button" class="kill">הסרה</button></span></td>
+                </tr>
+                <tr data-name="מיכל אברמוב">
+                  <td><span class="name">מיכל אברמוב</span> <span class="mail" dir="ltr">michal@…</span></td>
+                  <td>מרצה</td><td>פרימיום</td><td>ללא</td><td>פעיל</td>
+                  <td><span class="acts"><button type="button" class="edit">עריכה</button><button type="button" class="kill">הסרה</button></span></td>
+                </tr>
+                <tr data-name="אורי שמש">
+                  <td><span class="name">אורי שמש</span> <span class="mail" dir="ltr">ori@…</span></td>
+                  <td>משתמש</td><td>חינמי</td><td>ללא</td><td>חסום</td>
+                  <td><span class="acts"><button type="button" class="edit">עריכה</button><button type="button" class="kill">הסרה</button></span></td>
+                </tr>
+                <tr data-name="רותם גל">
+                  <td><span class="name">רותם גל</span> <span class="mail" dir="ltr">rot@…</span></td>
+                  <td>משתמש</td><td>נבחרת 88</td><td>אמיצים</td><td>פעיל</td>
+                  <td><span class="acts"><button type="button" class="edit">עריכה</button><button type="button" class="kill">הסרה</button></span></td>
+                </tr>
+                <tr data-name="תמר לוין">
+                  <td><span class="name">תמר לוין</span> <span class="mail" dir="ltr">tami@…</span></td>
+                  <td>אדמין</td><td>פרימיום</td><td>ללא</td><td>פעיל</td>
+                  <td><span class="acts"><button type="button" class="edit">עריכה</button><button type="button" class="kill">הסרה</button></span></td>
+                </tr>
+                <tr data-name="גל ברק">
+                  <td><span class="name">גל ברק</span> <span class="mail" dir="ltr">gal@…</span></td>
+                  <td>מרצה</td><td>פרימיום</td><td>ללא</td><td>פעיל</td>
+                  <td><span class="acts"><button type="button" class="edit">עריכה</button><button type="button" class="kill">הסרה</button></span></td>
+                </tr>
+                <tr data-name="יובל נחום">
+                  <td><span class="name">יובל נחום</span> <span class="mail" dir="ltr">yuv@…</span></td>
+                  <td>משתמש</td><td>חינמי</td><td>הססנים</td><td>פעיל</td>
+                  <td><span class="acts"><button type="button" class="edit">עריכה</button><button type="button" class="kill">הסרה</button></span></td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="drawer" id="edit-box">
+              <p class="caption" id="edit-title">עריכת משתמש</p>
+              <div class="grid3" style="margin-top:10px">
+                <label>תפקיד
+                  <select><option>משתמש</option><option>מרצה</option><option>אדמין</option></select>
+                </label>
+                <label>מנוי
+                  <select><option>חינמי</option><option>ניסיון</option><option>פרימיום</option><option>נבחרת 88</option></select>
+                </label>
+                <label>מסלול
+                  <select><option>ללא</option><option>אמיצים</option><option>הססנים</option></select>
+                </label>
+              </div>
+              <div class="actions">
+                <button class="cta" type="button" id="save-edit">שמירה</button>
+                <button class="cta ghost" type="button" id="block-edit">חסימה</button>
+                <button class="cta warn" type="button" id="close-edit">סגירה</button>
+              </div>
+            </div>
+            <p class="toast" id="user-toast" role="status"></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-admin" aria-label="פעולות אדמין פרקטיות">
+      <div class="canvas">
+        <p class="note">כל טאב נשאר. רק הפעולה מקבלת פועל ברור ויושבת ליד השורה, לא בכרטיס נסתר.</p>
+        <h2 class="headline">פעולה אחת, תווית אחת</h2>
+        <div class="grid2">
+          <div class="glass">
+            <p class="caption">אנשים</p>
+            <div class="row"><span>משתמשים</span><span>עריכה · הסרה · חסימה · חיפוש שם</span></div>
+            <div class="row"><span>גישה והרשאות</span><span>מטריצת תפקידים + מיילי אדמין</span></div>
+            <div class="row"><span>צוות ומרצים</span><span>שיוך דסק · הודעה לצוות</span></div>
+            <div class="row"><span>צוות מייסדים</span><span>עריכת ביו ציבורי</span></div>
+            <div class="row"><span>גלקסיית הצוות</span><span>השפעה · תמונה · הסתרה</span></div>
+            <div class="row"><span>בקשות מרצים</span><span>אישור · דחייה</span></div>
+          </div>
+          <div class="glass">
+            <p class="caption">מסחר ותוכן</p>
+            <div class="row"><span>לידים</span><span>פתח כרטיס · סמן טופל</span></div>
+            <div class="row"><span>מסלולי כניסה</span><span>פעימה הבאה · לא הנחה</span></div>
+            <div class="row"><span>נבחרת 88</span><span>אשר מועמדות · דחה</span></div>
+            <div class="row"><span>פודים</span><span>שייך · העבר קפטן · השהה</span></div>
+            <div class="row"><span>תכני VOD</span><span>פרסם · טיוטה · כרזה</span></div>
+            <div class="row"><span>קטגוריות</span><span>סדר · גישה · מחק — כבר בשורה</span></div>
+          </div>
+        </div>
+        <div class="glass" style="margin-top:14px">
+          <p class="caption">איך נראית שורת ליד אחרי</p>
+          <div class="row">
+            <span>ליד ששילם 8 ₪ · הססנים · שבוע 1</span>
+            <span class="acts">
+              <button type="button">פתח כרטיס</button>
+              <button type="button">סמן טופל</button>
+            </span>
+          </div>
+          <div class="row">
+            <span>בקשת מרצה · תחום מכירות</span>
+            <span class="acts">
+              <button type="button">אישור</button>
+              <button type="button" class="kill">דחייה</button>
+            </span>
+          </div>
+          <div class="row">
+            <span>מנוי ספרייה בלבד</span>
+            <span class="stamp">לא נכנס לתור פוד</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-library" aria-label="ספרייה אקדמית כמו נטפליקס">
+      <div class="canvas is-space">
+        <p class="note">אותה שפת נטפליקס: כרזה, Play לבן, עוד אפור, פסים 16:9 רדיוס 4. התוכן הוא הרצאות וקורסים.</p>
+        <div class="billboard">
+          <p class="pill"><span class="dot"></span> הרצאה נבחרת · טכניקת מכירה</p>
+          <h2>שיחת המכירה הראשונה בלי סקריפט מת</h2>
+          <p class="sub" style="max-width:36rem">הרצאה אקדמית לטכנאי מכירות. 42 דקות. טעימה פתוחה לחינמי. מנוי ספרייה פותח את ההמשך — לא מסע, לא נבחרת 88.</p>
+          <div class="actions">
+            <button class="cta" type="button">▶ הפעלה</button>
+            <button class="cta ghost" type="button">ℹ מידע נוסף</button>
+          </div>
+        </div>
+        <p class="rail-title">המשיכו לצפות</p>
+        <div class="rail" aria-hidden="true">
+          <div class="poster"><i>המשך</i><b>משא ומתן</b></div>
+          <div class="poster"><i>המשך</i><b>סגירת עסקה</b></div>
+          <div class="poster"><i>המשך</i><b>סיפור מותג</b></div>
+          <div class="poster"><b>מיינדסט</b></div>
+        </div>
+        <p class="rail-title">מומלץ לטכנאים</p>
+        <div class="rail" aria-hidden="true">
+          <div class="poster"><i>טעימה</i><b>אבחון לקוח</b></div>
+          <div class="poster"><i>דורש מנוי</i><b>תמחור פרויקט</b></div>
+          <div class="poster"><b>שאלות פתוחות</b></div>
+          <div class="poster"><i>טעימה</i><b>הצעת ערך</b></div>
+          <div class="poster"><b>קרוזל התנגדויות</b></div>
+          <div class="poster"><i>דורש מנוי</i><b>אחרי הסגירה</b></div>
+        </div>
+        <p class="rail-title">עד 10 דקות · חדש · מרצים</p>
+        <div class="rail" aria-hidden="true">
+          <div class="poster"><b>פיץ׳ ב־8 דק׳</b></div>
+          <div class="poster"><b>חדש · כסף</b></div>
+          <div class="poster"><b>גל ברק</b></div>
+          <div class="poster"><b>מיכל א.</b></div>
+        </div>
+        <p class="muted">נשארים: Paywall אחרי טעימה, באנר מנוי ספרייה, נושאים, מרצים, חיפוש, המשך צפייה. לא מתווסף דירוג או תגובות על הרצאה.</p>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-veils" aria-label="שכבות כהות מעל החלל">
+      <div class="canvas">
+        <p class="note">אותה תמונת שמיים. שבע שכבות כהות מעל — הספרייה והאדמין קריאים בלי להסתיר את החלל לגמרי.</p>
+        <h2 class="headline">שכבות מעל התמונה</h2>
+        <div class="sky-stack" aria-hidden="true">
+          <span class="veil veil-a"></span>
+          <span class="veil veil-b"></span>
+          <span class="veil veil-c"></span>
+          <span class="veil veil-d"></span>
+          <span class="veil veil-e"></span>
+          <span class="veil veil-f"></span>
+          <span class="veil veil-g"></span>
+        </div>
+        <div class="glass layer-list">
+          <div class="row"><span>A–E קיימות בספרייה</span><span class="keep">נשאר</span></div>
+          <div class="row"><span>F שכבת דיו אחידה קלה</span><span>חדש · קריאות טקסט</span></div>
+          <div class="row"><span>G עמעום עליון+תחתון כמו נטפליקס</span><span>חדש · כרזה והפסים</span></div>
+          <div class="row"><span>אדמין: 4 ווילות מקומיות בסיידבר</span><span class="keep">כבר בדסק</span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="screen" id="screen-keep" aria-label="מה נשאר">
+      <div class="canvas">
+        <p class="note">אם זה מופיע כאן כ«נשאר» — אסור להוריד בבנייה. אם זה «לא כאן» — לא נכנס בלי עדכון אפיון.</p>
+        <div class="grid3">
+          <div class="glass">
+            <p class="caption">כל טאבי האדמין</p>
+            <p class="muted">23 מסכים כולל גישה, משתמשים, צוות, מייסדים, גלקסיה, פודים, 88, הגרלות, יומן.</p>
+          </div>
+          <div class="glass">
+            <p class="caption">חסימה · ייצוא · יצירה</p>
+            <p class="muted">הסרה מתווספת. חסימה לא מוחלפת. יצירה רק מתקפלת.</p>
+          </div>
+          <div class="glass">
+            <p class="caption">ספרייה קיימת</p>
+            <p class="muted">הירו, פסים, טעימה, Paywall, מנוי, מרצים, נושאים, המשך צפייה.</p>
+          </div>
+          <div class="glass">
+            <p class="caption">לא תגובות / דירוג</p>
+            <p class="muted">הספרייה נשארת בלי שרשור על הרצאה. שלב 2 בחוץ.</p>
+          </div>
+          <div class="glass">
+            <p class="caption">לא מערבבים CTA</p>
+            <p class="muted">מסע / 88 באתר השיווק. ספרייה מוכרת מנוי צפייה בלבד.</p>
+          </div>
+          <div class="glass">
+            <p class="caption">לא קוד עכשיו</p>
+            <p class="muted">הלוח הזה הוא איור. בנייה רק אחרי «קדימה» על הסקיצה.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="sketch-foot">
+      מקור: סיור <span dir="ltr">/library/admin</span> + ספריית הקטלוג.
+      חיפוש שם כבר קיים; עריכה בכרטיס צד; אין מחיקה ב־API.
+      לא מערבבים CTA של מסע עם מנוי ספרייה. מייסד = <span dir="ltr">is_founder</span>.
+    </footer>
+  </div>
+  <script>
+    function show(id) {
+      document.querySelectorAll('.screen').forEach((el) => el.classList.toggle('is-on', el.id === 'screen-' + id));
+      document.querySelectorAll('nav.states button').forEach((btn) => {
+        btn.setAttribute('aria-pressed', btn.getAttribute('data-screen') === id ? 'true' : 'false');
+      });
+    }
+    document.querySelectorAll('nav.states button').forEach((btn) => {
+      btn.addEventListener('click', () => show(btn.getAttribute('data-screen')));
+    });
+
+    const search = document.getElementById('user-search');
+    const table = document.getElementById('user-table');
+    const toast = document.getElementById('user-toast');
+    const editBox = document.getElementById('edit-box');
+    const createBox = document.getElementById('create-box');
+    const editTitle = document.getElementById('edit-title');
+
+    function say(text) {
+      toast.textContent = text;
+      toast.classList.add('is-on');
+    }
+
+    search.addEventListener('input', () => {
+      const q = search.value.trim();
+      table.querySelectorAll('tbody tr').forEach((row) => {
+        const name = row.getAttribute('data-name') || '';
+        row.style.display = !q || name.includes(q) ? '' : 'none';
+      });
+    });
+
+    document.getElementById('toggle-create').addEventListener('click', () => {
+      createBox.classList.toggle('is-on');
+    });
+
+    table.addEventListener('click', (event) => {
+      const btn = event.target.closest('button');
+      if (!btn) return;
+      const row = btn.closest('tr');
+      const name = row.getAttribute('data-name');
+      if (btn.classList.contains('kill')) {
+        if (window.confirm('להסיר את ' + name + '? החשבון יימחק. חסימה נשארת פעולה נפרדת.')) {
+          row.classList.add('is-gone');
+          say('הוסר מהטבלה בסקיצה: ' + name);
+        }
+        return;
+      }
+      if (btn.classList.contains('edit')) {
+        editTitle.textContent = 'עריכה · ' + name;
+        editBox.classList.add('is-on');
+        editBox.scrollIntoView({ block: 'nearest' });
+      }
+    });
+
+    document.getElementById('save-edit').addEventListener('click', () => {
+      say('נשמר בסקיצה. במוצר זה יישאר אותו updateUser.');
+      editBox.classList.remove('is-on');
+    });
+    document.getElementById('block-edit').addEventListener('click', () => {
+      say('חסימה נשארת. לא מחליפה הסרה.');
+    });
+    document.getElementById('close-edit').addEventListener('click', () => {
+      editBox.classList.remove('is-on');
+    });
+  </script>
+</body>
+</html>
