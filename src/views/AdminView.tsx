@@ -276,57 +276,56 @@ function NotificationsPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) 
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
 
   return (
-    <div className="grid gap-6 max-w-3xl">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <div className="grid gap-3 max-w-3xl">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">התראות</p>
-          <h2 className="text-2xl font-light">תור פעולות לטיפול</h2>
-          <p className="text-sm text-white/45 mt-2">
-            סיכום אוטומטי מהמערכת. שליחה במייל או וואטסאפ תגיע בשלב הבא.
+          <h2 className="text-lg font-medium">תור פעולות לטיפול</h2>
+          <p className="text-xs text-white/45">
+            סיכום אוטומטי מהמערכת.
             {high > 0 ? ` · ${high} דחופות` : ''}
           </p>
         </div>
         <button
           type="button"
           onClick={() => void load()}
-          className="px-4 py-2 rounded-full border border-white/15 text-xs min-h-11 hover:border-white/40"
+          className="px-3 py-1.5 rounded border border-white/15 text-xs min-h-9 hover:border-white/40"
         >
           רענון
         </button>
       </div>
 
       {items.length === 0 ? (
-        <div className="border border-white/10 rounded-2xl p-8 text-sm text-white/45">
+        <div className="border border-white/10 rounded p-4 text-sm text-white/45">
           אין פריטים לטיפול כרגע. המערכת תציג כאן פעימות לחיוב, בקשות ממתינות, לידים חדשים ועוד.
         </div>
       ) : (
-        <ul className="grid gap-3">
+        <ul className="grid gap-1.5">
           {items.map((item) => (
-            <li key={item.id} className="border border-white/10 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
+            <li key={item.id} className="crm-desk-notif">
               <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2 mb-1">
+                <p className="text-sm">
                   <span
-                    className={`text-[11px] ${
+                    className={`text-[11px] ms-0 me-2 ${
                       item.severity === 'high'
                         ? 'text-rose-300'
                         : item.severity === 'medium'
-                          ? 'text-[#b79043]'
+                          ? 'text-[#dfc47d]'
                           : 'text-white/40'
                     }`}
                   >
                     {NOTIF_SEVERITY_LABEL[item.severity]}
                   </span>
-                  <span className="text-[11px] text-white/30">{item.count}</span>
-                </div>
-                <h3 className="text-base font-light">{item.title}</h3>
-                <p className="text-sm text-white/50 mt-1">{item.detail}</p>
+                  {item.title}
+                  <span className="text-[11px] text-white/30 ms-2">{item.count}</span>
+                </p>
+                <p className="text-xs text-white/45 truncate">{item.detail}</p>
               </div>
               <button
                 type="button"
                 onClick={() => onNavigate(item.tab as Tab)}
-                className="px-4 py-2 rounded-full bg-[#b79043] text-black text-xs min-h-11 shrink-0"
+                className="crm-desk-row-act shrink-0"
               >
-                מעבר לטיפול
+                ל{TAB_META[item.tab as Tab]?.title || item.tab}
               </button>
             </li>
           ))}
@@ -2211,6 +2210,7 @@ const P88_STATUS_LABEL: Record<string, string> = {
 
 const AUDIT_ACTION_LABEL: Record<string, string> = {
   user_updated: 'עדכון משתמש',
+  user_deleted: 'הסרת משתמש',
   category_created: 'יצירת קטגוריה',
   category_updated: 'עדכון קטגוריה',
   categories_reordered: 'סידור קטגוריות',

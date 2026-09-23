@@ -89,9 +89,9 @@ export function TeamStaffView() {
             key={id}
             type="button"
             onClick={() => setFilter(id)}
-            className={`px-4 py-2 rounded-xl text-xs min-h-10 border cursor-pointer transition-colors ${
+            className={`px-3 py-1.5 rounded text-xs min-h-9 border cursor-pointer ${
               filter === id
-                ? 'bg-[#b79043]/15 text-[#dfc47d] border-[#b79043]/40'
+                ? 'bg-white/10 text-white border-white/30'
                 : 'border-white/10 text-white/55 hover:border-white/25'
             }`}
           >
@@ -101,8 +101,8 @@ export function TeamStaffView() {
         </div>
       </AdminListControls>
 
-      <div className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
-        <div className="overflow-x-auto border border-white/10 rounded-2xl bg-white/[0.02]">
+      <div className="grid gap-3 xl:grid-cols-[1.4fr_0.8fr]">
+        <div className="overflow-x-auto border border-white/10 rounded bg-white/[0.02]">
           <table className="w-full text-sm text-start">
             <thead className="text-xs text-white/45 border-b border-white/10 bg-[#0a0a0a]">
               <tr>
@@ -128,10 +128,10 @@ export function TeamStaffView() {
                       selectedId === row.id ? 'bg-[#b79043]/10' : index % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.015]'
                     } hover:bg-[#b79043]/5 transition-colors`}
                   >
-                    <td className="py-3 px-3">
+                    <td>
                       {row.name}
                       {row.isFounder ? <span className="text-white/35"> · מייסד</span> : null}
-                      <span className="block text-xs text-white/35" dir="ltr">
+                      <span className="text-xs text-white/35 ms-2" dir="ltr">
                         {row.email}
                       </span>
                     </td>
@@ -149,14 +149,13 @@ export function TeamStaffView() {
           </table>
         </div>
 
-        <aside className="border border-white/10 rounded-2xl p-5 min-h-[360px] bg-white/[0.02]">
+        <aside className="border border-white/10 rounded p-3 bg-white/[0.02]">
           {!selected ? (
             <p className="text-sm text-white/45">בחרו איש צוות או מרצה.</p>
           ) : (
-            <div className="grid gap-4 text-sm">
+            <div className="grid gap-3 text-sm">
               <div>
-                <p className="text-[11px] uppercase tracking-[0.2em] text-[#b79043] mb-2">כרטיס צוות</p>
-                <h3 className="text-xl font-light">{selected.name}</h3>
+                <p className="text-sm font-medium">{selected.name}</p>
                 <p className="text-white/45 mt-1 break-all text-xs" dir="ltr">
                   {selected.email}
                 </p>

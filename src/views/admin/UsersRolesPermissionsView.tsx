@@ -193,6 +193,21 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
     URL.revokeObjectURL(url);
   };
 
+  const removeUser = async (id: string, name: string) => {
+    if (!window.confirm(`להסיר את ${name}? החשבון יימחק. חסימה נשארת פעולה נפרדת.`)) return;
+    setPendingId(id);
+    setError('');
+    try {
+      await adminApi.deleteUser(id);
+      if (selectedId === id) setSelectedId(null);
+      await load();
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'ההסרה נכשלה');
+    } finally {
+      setPendingId(null);
+    }
+  };
+
   const headerActions = (
     <>
       <button
@@ -229,204 +244,197 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
     <AdminPageShell group={meta.group} title={meta.title} description={meta.description} actions={headerActions}>
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
-      <div className="flex flex-wrap gap-2 border-b border-white/10 pb-4">
+      <div className="flex flex-wrap gap-1 border-b border-white/10 pb-2">
         {SECTIONS.map((item) => (
           <button
             key={item.id}
             type="button"
             onClick={() => setSection(item.id)}
-            className={`px-4 py-2.5 rounded-xl text-sm min-h-10 border transition-colors cursor-pointer ${
+            className={`px-3 py-1.5 rounded text-xs min-h-9 border cursor-pointer ${
               section === item.id
-                ? 'bg-[#b79043]/15 text-[#dfc47d] border-[#b79043]/40'
+                ? 'bg-white/10 text-white border-white/30'
                 : 'border-white/10 text-white/55 hover:border-white/25 hover:text-white'
             }`}
           >
-            <span className="block font-light">{item.label}</span>
-            <span className="block text-[10px] text-white/35 mt-0.5">{item.hint}</span>
+            {item.label}
           </button>
         ))}
       </div>
 
       {section === 'accounts' ? (
-        <div className="grid gap-6 xl:grid-cols-[1.35fr_0.85fr]">
-          <div className="border border-white/10 rounded-2xl overflow-hidden bg-white/[0.02]">
-            <div className="p-3 border-b border-white/10">
-              <input
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                placeholder="חיפוש לפי שם או אימייל..."
-                className={fieldClass}
-              />
-            </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm text-start">
-                <thead className="text-xs text-white/45 border-b border-white/10 bg-[#0a0a0a]">
-                  <tr>
-                    <th className="py-3 px-3 font-normal">שם</th>
-                    <th className="py-3 px-3 font-normal">תפקיד</th>
-                    <th className="py-3 px-3 font-normal">מנוי</th>
-                    <th className="py-3 px-3 font-normal">סטטוס</th>
+        <div className="grid gap-3">
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="חיפוש משתמש לפי שם…"
+            className={fieldClass}
+            aria-label="חיפוש משתמש לפי שם"
+          />
+          <div className="overflow-x-auto border border-white/10 rounded bg-white/[0.02]">
+            <table className="w-full text-sm text-start">
+              <thead className="text-xs text-white/45 border-b border-white/10">
+                <tr>
+                  <th className="font-normal">שם</th>
+                  <th className="font-normal">תפקיד</th>
+                  <th className="font-normal">מנוי</th>
+                  <th className="font-normal">סטטוס</th>
+                  <th className="font-normal">פעולות</th>
+                </tr>
+              </thead>
+              <tbody>
+                {filteredUsers.map((row) => (
+                  <tr key={row.id} className={`border-b border-white/5 ${selectedId === row.id ? 'bg-white/10' : ''}`}>
+                    <td>
+                      <span>{row.name}</span>
+                      <span className="text-xs text-white/35 ms-2" dir="ltr">
+                        {row.email}
+                      </span>
+                    </td>
+                    <td className="text-white/65">{ROLE_LABEL[row.role] || row.role}</td>
+                    <td className="text-white/55">{PLAN_LABEL[row.subscriptionPlan] || row.subscriptionPlan}</td>
+                    <td>{row.blocked ? 'חסום' : 'פעיל'}</td>
+                    <td>
+                      <span className="inline-flex gap-1">
+                        <button type="button" className="crm-desk-row-act" onClick={() => setSelectedId(row.id === selectedId ? null : row.id)}>
+                          עריכה
+                        </button>
+                        <button
+                          type="button"
+                          className="crm-desk-row-act kill"
+                          disabled={pendingId === row.id}
+                          onClick={() => void removeUser(row.id, row.name)}
+                        >
+                          הסרה
+                        </button>
+                      </span>
+                    </td>
                   </tr>
-                </thead>
-                <tbody>
-                  {filteredUsers.map((row, index) => (
-                    <tr
-                      key={row.id}
-                      onClick={() => setSelectedId(row.id)}
-                      className={`cursor-pointer border-b border-white/5 ${
-                        selectedId === row.id ? 'bg-[#b79043]/10' : index % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.015]'
-                      } hover:bg-[#b79043]/5 transition-colors`}
-                    >
-                      <td className="py-3 px-3">
-                        <span className="block">{row.name}</span>
-                        <span className="block text-xs text-white/35 truncate max-w-[200px]" dir="ltr">
-                          {row.email}
-                        </span>
-                        {row.isFounder ? <span className="text-[10px] text-[#b79043]/80">צוות</span> : null}
-                      </td>
-                      <td className="py-3 px-3 text-white/65">{ROLE_LABEL[row.role] || row.role}</td>
-                      <td className="py-3 px-3 text-white/55">{PLAN_LABEL[row.subscriptionPlan] || row.subscriptionPlan}</td>
-                      <td className="py-3 px-3">{row.blocked ? 'חסום' : 'פעיל'}</td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                ))}
+              </tbody>
+            </table>
           </div>
 
-          <aside className="border border-white/10 rounded-2xl p-5 min-h-[360px] bg-white/[0.02]">
-            {!selected ? (
-              <p className="text-sm text-white/45">בחרו משתמש מהרשימה לעריכת הרשאות.</p>
-            ) : (
-              <div className="grid gap-4 text-sm">
-                <div>
-                  <p className="text-[11px] uppercase tracking-[0.2em] text-[#b79043] mb-2">פרטי חשבון</p>
-                  <h3 className="text-xl font-light">{selected.name}</h3>
-                  <p className="text-white/45 mt-1 break-all text-xs" dir="ltr">
-                    {selected.email}
-                  </p>
-                </div>
-
-                <fieldset className="grid gap-3 border border-white/10 rounded-xl p-4">
-                  <legend className="text-xs text-white/45 px-1">הרשאות</legend>
-                  <label className="grid gap-1 text-white/50">
-                    תפקיד
-                    <select
-                      value={selected.role}
-                      disabled={pendingId === selected.id}
-                      onChange={(e) => void patch(selected.id, { role: e.target.value })}
-                      className={fieldClass}
-                    >
-                      <option value="student">משתמש</option>
-                      <option value="instructor">מרצה</option>
-                      <option value="admin">אדמין</option>
-                    </select>
-                  </label>
-                  <label className="grid gap-1 text-white/50">
-                    דסק צוות
-                    <select
-                      value={selected.staffDesk || ''}
-                      disabled={pendingId === selected.id}
-                      onChange={(e) =>
-                        void patch(
-                          selected.id,
-                          { staffDesk: e.target.value, role: e.target.value ? 'admin' : selected.role },
-                          e.target.value ? 'לשייך לדסק צוות?' : undefined
-                        )
-                      }
-                      className={fieldClass}
-                    >
-                      <option value="">ללא</option>
-                      {Object.entries(STAFF_DESK_LABEL).map(([key, label]) => (
-                        <option key={key} value={key}>
-                          {label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                  <label className="flex items-center gap-2 text-white/70">
-                    <input
-                      type="checkbox"
-                      checked={selected.isFounder}
-                      disabled={pendingId === selected.id}
-                      onChange={() =>
-                        void patch(selected.id, { isFounder: !selected.isFounder })
-                      }
-                      className="w-4 h-4 accent-[#b79043]"
-                    />
-                    שיוך לצוות המיזם
-                  </label>
-                  <label className="grid gap-1 text-white/50">
-                    סטטוס גישה
-                    <select
-                      value={selected.staffStatus || 'active'}
-                      disabled={pendingId === selected.id}
-                      onChange={(e) =>
-                        void patch(
-                          selected.id,
-                          { staffStatus: e.target.value },
-                          e.target.value === 'suspended' ? 'להשהות גישה ולנתק סשנים פעילים?' : undefined
-                        )
-                      }
-                      className={fieldClass}
-                    >
-                      <option value="active">פעיל</option>
-                      <option value="limited">גישה מוגבלת</option>
-                      <option value="suspended">מושהה</option>
-                    </select>
-                  </label>
-                </fieldset>
-
-                <fieldset className="grid gap-3 border border-white/10 rounded-xl p-4">
-                  <legend className="text-xs text-white/45 px-1">מנוי ומסחר</legend>
-                  <label className="grid gap-1 text-white/50">
-                    מנוי
-                    <select
-                      value={selected.subscriptionPlan}
-                      disabled={pendingId === selected.id}
-                      onChange={(e) => void patch(selected.id, { subscriptionPlan: e.target.value })}
-                      className={fieldClass}
-                    >
-                      {Object.entries(PLAN_LABEL).map(([key, label]) => (
-                        <option key={key} value={key}>
-                          {label}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
-                </fieldset>
-
-                <div className="flex flex-wrap gap-2 pt-1">
+          {selected ? (
+            <div className="crm-desk-edit-drawer grid gap-3 text-sm">
+              <p className="font-medium">
+                עריכה · {selected.name}
+                <span className="text-xs text-white/40 ms-2" dir="ltr">
+                  {selected.email}
+                </span>
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                <label className="grid gap-1 text-white/50 text-xs">
+                  תפקיד
+                  <select
+                    value={selected.role}
+                    disabled={pendingId === selected.id}
+                    onChange={(e) => void patch(selected.id, { role: e.target.value })}
+                    className={fieldClass}
+                  >
+                    <option value="student">משתמש</option>
+                    <option value="instructor">מרצה</option>
+                    <option value="admin">אדמין</option>
+                  </select>
+                </label>
+                <label className="grid gap-1 text-white/50 text-xs">
+                  דסק צוות
+                  <select
+                    value={selected.staffDesk || ''}
+                    disabled={pendingId === selected.id}
+                    onChange={(e) =>
+                      void patch(
+                        selected.id,
+                        { staffDesk: e.target.value, role: e.target.value ? 'admin' : selected.role },
+                        e.target.value ? 'לשייך לדסק צוות?' : undefined
+                      )
+                    }
+                    className={fieldClass}
+                  >
+                    <option value="">ללא</option>
+                    {Object.entries(STAFF_DESK_LABEL).map(([key, label]) => (
+                      <option key={key} value={key}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+                <label className="grid gap-1 text-white/50 text-xs">
+                  מנוי
+                  <select
+                    value={selected.subscriptionPlan}
+                    disabled={pendingId === selected.id}
+                    onChange={(e) => void patch(selected.id, { subscriptionPlan: e.target.value })}
+                    className={fieldClass}
+                  >
+                    {Object.entries(PLAN_LABEL).map(([key, label]) => (
+                      <option key={key} value={key}>
+                        {label}
+                      </option>
+                    ))}
+                  </select>
+                </label>
+              </div>
+              <div className="flex flex-wrap gap-2 items-center">
+                <label className="flex items-center gap-2 text-white/70 text-sm min-h-11">
+                  <input
+                    type="checkbox"
+                    checked={selected.isFounder}
+                    disabled={pendingId === selected.id}
+                    onChange={() => void patch(selected.id, { isFounder: !selected.isFounder })}
+                    className="w-4 h-4 accent-[#b79043]"
+                  />
+                  שיוך לצוות המיזם
+                </label>
+                <label className="grid gap-1 text-white/50 text-xs min-w-[10rem]">
+                  סטטוס גישה
+                  <select
+                    value={selected.staffStatus || 'active'}
+                    disabled={pendingId === selected.id}
+                    onChange={(e) =>
+                      void patch(
+                        selected.id,
+                        { staffStatus: e.target.value },
+                        e.target.value === 'suspended' ? 'להשהות גישה ולנתק סשנים פעילים?' : undefined
+                      )
+                    }
+                    className={fieldClass}
+                  >
+                    <option value="active">פעיל</option>
+                    <option value="limited">גישה מוגבלת</option>
+                    <option value="suspended">מושהה</option>
+                  </select>
+                </label>
+                <button
+                  type="button"
+                  disabled={pendingId === selected.id}
+                  onClick={() => void patch(selected.id, { blocked: !selected.blocked })}
+                  className="crm-desk-row-act"
+                >
+                  {selected.blocked ? 'שחרור חסימה' : 'חסימה'}
+                </button>
+                {selected.role !== 'instructor' && selected.role !== 'admin' ? (
                   <button
                     type="button"
                     disabled={pendingId === selected.id}
-                    onClick={() => void patch(selected.id, { blocked: !selected.blocked })}
-                    className="px-3 py-2 text-xs border border-white/20 rounded-xl min-h-10 cursor-pointer hover:border-white/40"
+                    onClick={() => void patch(selected.id, { role: 'instructor' })}
+                    className="crm-desk-row-act"
                   >
-                    {selected.blocked ? 'שחרור חסימה' : 'חסימה'}
+                    אישור כמרצה
                   </button>
-                  {selected.role !== 'instructor' && selected.role !== 'admin' ? (
-                    <button
-                      type="button"
-                      disabled={pendingId === selected.id}
-                      onClick={() => void patch(selected.id, { role: 'instructor' })}
-                      className="px-3 py-2 text-xs bg-[#b79043] text-black rounded-xl min-h-10 cursor-pointer"
-                    >
-                      אישור כמרצה
-                    </button>
-                  ) : null}
-                </div>
-
-                {selected.role === 'instructor' || selected.role === 'admin' ? (
-                  <TeamMessageComposer
-                    lecturerUserId={selected.id}
-                    lecturerName={selected.name}
-                    disabled={pendingId === selected.id}
-                  />
                 ) : null}
+                <button type="button" className="crm-desk-row-act" onClick={() => setSelectedId(null)}>
+                  סגירה
+                </button>
               </div>
-            )}
-          </aside>
+              {selected.role === 'instructor' || selected.role === 'admin' ? (
+                <TeamMessageComposer
+                  lecturerUserId={selected.id}
+                  lecturerName={selected.name}
+                  disabled={pendingId === selected.id}
+                />
+              ) : null}
+            </div>
+          ) : null}
         </div>
       ) : null}
 

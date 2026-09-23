@@ -158,7 +158,7 @@
 .crm-desk-nav-search {
   width: 100%;
   min-height: 44px;
-  border-radius: 4px;
+  border-radius: 4px !important;
   border: 1px solid rgba(255, 255, 255, .14);
   background: rgba(5, 10, 20, .55);
   padding-inline: 2.25rem 0.75rem;
@@ -217,6 +217,103 @@
 
 .crm-desk table {
   background: transparent;
+  font-size: 13px;
+}
+
+.crm-desk table th,
+.crm-desk table td {
+  padding-block: 4px;
+  padding-inline: 8px;
+  font-size: 13px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.crm-desk table td .block {
+  display: inline;
+}
+
+.crm-desk table td .block + .block {
+  margin-inline-start: 0.45em;
+  font-size: 11px;
+}
+
+.crm-desk-page-header {
+  padding-block: 0.35rem !important;
+}
+
+.crm-desk-page-header h1 {
+  font-size: 1.125rem !important;
+  font-weight: 500 !important;
+  line-height: 1.3;
+}
+
+.crm-desk-page-header p.text-sm {
+  font-size: 12px;
+  margin-top: 0.15rem !important;
+  max-width: 42rem;
+}
+
+.crm-desk .border.border-white\/10.rounded-2xl,
+.crm-desk .border.border-white\/10.rounded-3xl,
+.crm-desk .border.border-white\/10.rounded-xl {
+  border-radius: 4px;
+}
+
+.crm-desk .rounded-full:not(.crm-hero-play):not(.crm-hero-more) {
+  border-radius: 4px;
+}
+
+.crm-desk .min-h-\[360px\],
+.crm-desk .min-h-\[320px\] {
+  min-height: 0 !important;
+}
+
+.crm-desk-row-act {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  margin-block: -8px;
+  padding: 0 8px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 4px;
+  background: transparent;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.crm-desk-row-act.kill {
+  color: #f7b4b4;
+  border-color: rgba(247, 180, 180, .35);
+}
+
+.crm-desk-row-act:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.crm-desk-edit-drawer {
+  margin-top: 10px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 4px;
+  padding: 12px;
+  background: rgba(5, 10, 20, .45);
+}
+
+.crm-desk-notif {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 4px;
 }
 
 .crm-desk .crm-hero {
