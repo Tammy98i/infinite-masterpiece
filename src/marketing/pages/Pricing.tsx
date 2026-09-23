@@ -66,7 +66,7 @@ export function Pricing({ embedded = false }: { embedded?: boolean }) {
 
       {embedded ? null : (
       <section id="whats-included" className="pricing-island section-block">
-        <div className="mx-auto grid max-w-[1100px] gap-10 px-4 text-right sm:px-6 lg:grid-cols-[.8fr_1.2fr] lg:items-center lg:px-8">
+        <div className="mx-auto grid max-w-[1100px] gap-10 px-4 text-start sm:px-6 lg:grid-cols-[.8fr_1.2fr] lg:items-center lg:px-8">
           <div><p className="mb-4 text-[11px] uppercase tracking-[.25em] text-[#b79043]">אותו ערך בשני המסלולים</p><h2 className="mb-5 text-3xl font-heading text-white md:text-4xl">מה מקבלים בפועל?</h2><p className="font-light leading-relaxed text-white/50">לא עוד אוסף שיעורים. התהליך מחבר בין למידה, ביצוע, מדידה וקהילה כדי לבנות מערכת עבודה שחוזרת על עצמה.</p></div>
           <ul className="pricing-included grid gap-3 sm:grid-cols-2">
             {PROGRAM_INCLUDED.map(item => (
@@ -98,7 +98,7 @@ export function Pricing({ embedded = false }: { embedded?: boolean }) {
             <Link to="/terms" className="min-h-11 inline-flex items-center text-[#b79043] hover:text-[#dfc47d]">לתנאי השימוש</Link>
           </p>
         ) : (
-        <div className="glass-card flex flex-col items-center gap-5 p-7 sm:flex-row sm:text-right">
+        <div className="glass-card flex flex-col items-center gap-5 p-7 sm:flex-row sm:text-start">
           <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[#b79043]/10 text-[#b79043]"><ShieldCheck /></span>
           <div className="flex-1"><h2 className="mb-1 text-lg text-white">שקיפות לפני החלטה</h2><p className="text-sm font-light leading-relaxed text-white/50">לא מבטיחים הכנסה ודאית. הצלחה תלויה במאמץ, בביצוע ובהתמדה; תנאי ההחזרים והמימוש מפורטים במסמכים המשפטיים.</p></div>
           <Link to="/terms" className="min-h-11 shrink-0 rounded-full border border-white/15 px-5 py-3 text-sm text-white/65 hover:border-[#b79043]/50 hover:text-white">לתנאי השימוש</Link>
@@ -109,7 +109,7 @@ export function Pricing({ embedded = false }: { embedded?: boolean }) {
       <section id="pricing-faq" className={`pricing-island mx-auto max-w-[800px] px-4 sm:px-6 lg:px-8 ${embedded ? 'py-5' : 'section-block'}`}>
         <p className={`uppercase tracking-[.22em] text-[#b79043] ${embedded ? 'mb-3 text-[11px]' : 'mb-4 text-[11px]'}`}>שאלות</p>
         {embedded ? null : <h2 className="mb-10 text-3xl font-heading text-white md:text-4xl">שאלות על המסלול והמחיר</h2>}
-        <div className={`text-right ${embedded ? 'divide-y divide-[#b79043]/15' : 'space-y-3'}`}>
+        <div className={`text-start ${embedded ? 'divide-y divide-[#b79043]/15' : 'space-y-3'}`}>
           {PRICE_FAQS.map(item => (
             <details key={item.q} className={embedded ? 'group py-2' : 'group glass-card p-5'}>
               <summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 text-white">

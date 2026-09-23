@@ -107,7 +107,7 @@ export function AdminView() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-transparent text-white pt-28 pb-24 px-4 text-right">
+      <div className="min-h-screen bg-transparent text-white pt-28 pb-24 px-4 text-start">
         <div className="max-w-md mx-auto border border-white/10 rounded-3xl p-8">
           <h1 className="text-2xl font-medium mb-3">אין הרשאת ניהול</h1>
           <p className="text-sm text-white/50 font-light mb-6">
@@ -134,7 +134,7 @@ export function AdminView() {
   const tabMeta = TAB_META[tab];
 
   return (
-    <div className="min-h-screen bg-transparent text-white text-right">
+    <div className="min-h-screen bg-transparent text-white text-start">
       <div className="flex min-h-screen">
         <aside className="hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
           <AdminSidebar
@@ -697,7 +697,7 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
                 key={action.label}
                 type="button"
                 onClick={() => onNavigate(action.tab)}
-                className="text-right border border-white/10 rounded-2xl p-4 hover:border-[#b79043]/40 transition-colors min-h-11"
+                className="text-start border border-white/10 rounded-2xl p-4 hover:border-[#b79043]/40 transition-colors min-h-11"
               >
                 <div className="text-sm text-white mb-1">{action.label}</div>
                 <div className="text-xs text-white/40 font-light">{action.hint}</div>
@@ -841,7 +841,7 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
           <p className="text-sm text-white/40">עדיין אין מדידות.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-right">
+            <table className="w-full text-sm text-start">
               <thead className="text-xs text-white/40 border-b border-white/10">
                 <tr>
                   <th className="py-3 font-normal">אירוע</th>
@@ -871,7 +871,7 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
                 <span className="text-white">{EVENT_LABEL[row.event] || row.event}</span>
                 {row.properties.source ? <span>מקור: {row.properties.source}</span> : null}
                 {row.properties.courseId ? <span className="text-white/35">{row.properties.courseId}</span> : null}
-                <span className="text-white/30 mr-auto">{row.createdAt.replace('T', ' ').slice(0, 16)}</span>
+                <span className="text-white/30 ms-auto">{row.createdAt.replace('T', ' ').slice(0, 16)}</span>
               </li>
             ))}
           </ul>
@@ -1040,7 +1040,7 @@ function ContentPanel({
             <button
               type="button"
               onClick={() => setEditing(course)}
-              className="flex-1 text-right cursor-pointer"
+              className="flex-1 text-start cursor-pointer"
             >
               <div className="text-white">{course.title}</div>
               <div className="text-xs text-white/40 mt-1">
@@ -1163,7 +1163,7 @@ function CourseForm({
       className="grid gap-5 max-w-3xl"
     >
       <div className="flex items-center justify-between gap-3">
-        <button type="button" onClick={() => { if (canLeave()) onCancel(); }} className="text-sm text-white/45 hover:text-white text-right cursor-pointer min-h-11">
+        <button type="button" onClick={() => { if (canLeave()) onCancel(); }} className="text-sm text-white/45 hover:text-white text-start cursor-pointer min-h-11">
           חזרה לרשימה
         </button>
         {dirty ? <span className="rounded-full border border-[#b79043]/25 bg-[#b79043]/10 px-3 py-1 text-xs text-[#dfc47d]" role="status">שינויים שלא נשמרו</span> : null}
@@ -1709,7 +1709,7 @@ function FoundersPanel() {
                 <input
                   type="url"
                   dir="ltr"
-                  className={`${fieldClass} mt-1 text-left`}
+                  className={`${fieldClass} mt-1 text-start`}
                   placeholder="https://"
                   value={linkUrl(founder, 'אתר')}
                   onChange={(e) => setLinkDraft(founder.id, 'אתר', e.target.value)}
@@ -1721,7 +1721,7 @@ function FoundersPanel() {
                 <input
                   type="url"
                   dir="ltr"
-                  className={`${fieldClass} mt-1 text-left`}
+                  className={`${fieldClass} mt-1 text-start`}
                   placeholder="https://instagram.com/"
                   value={linkUrl(founder, 'אינסטגרם')}
                   onChange={(e) => setLinkDraft(founder.id, 'אינסטגרם', e.target.value)}
@@ -1784,7 +1784,7 @@ function PaymentsPanel() {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm text-right">
+      <table className="w-full text-sm text-start">
         <thead className="text-xs text-white/40 border-b border-white/10">
           <tr>
             <th className="py-3 font-normal">מתי</th>
@@ -2005,7 +2005,7 @@ function TracksPanel() {
 
       <div className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.9fr)]">
         <div className="overflow-x-auto border border-white/10 rounded-2xl">
-          <table className="w-full text-sm text-right">
+          <table className="w-full text-sm text-start">
             <thead className="text-xs text-white/40 border-b border-white/10">
               <tr>
                 <th className="py-3 px-3 font-normal">מתי</th>
@@ -2064,10 +2064,10 @@ function TracksPanel() {
 
               <dl className="grid gap-2 text-sm">
                 <div className="flex justify-between gap-3"><dt className="text-white/40">טלפון</dt><dd>{selected.phone}</dd></div>
-                <div className="flex justify-between gap-3"><dt className="text-white/40">אימייל</dt><dd className="text-left break-all">{selected.email}</dd></div>
+                <div className="flex justify-between gap-3"><dt className="text-white/40">אימייל</dt><dd className="text-start break-all">{selected.email}</dd></div>
                 <div className="flex justify-between gap-3"><dt className="text-white/40">תחום</dt><dd>{selected.field || 'לא צוין'}</dd></div>
                 {selected.hesitationReason ? (
-                  <div className="flex justify-between gap-3"><dt className="text-white/40">הססנות</dt><dd className="text-left">{selected.hesitationReason}</dd></div>
+                  <div className="flex justify-between gap-3"><dt className="text-white/40">הססנות</dt><dd className="text-start">{selected.hesitationReason}</dd></div>
                 ) : null}
                 {selected.hasProduct ? (
                   <div className="flex justify-between gap-3"><dt className="text-white/40">מוצר</dt><dd>{selected.hasProduct}</dd></div>
@@ -2076,10 +2076,10 @@ function TracksPanel() {
                   <div className="flex justify-between gap-3"><dt className="text-white/40">מכירות</dt><dd>{selected.hasSold}</dd></div>
                 ) : null}
                 {selected.goal90 ? (
-                  <div className="flex justify-between gap-3"><dt className="text-white/40">יעד 90</dt><dd className="text-left">{selected.goal90}</dd></div>
+                  <div className="flex justify-between gap-3"><dt className="text-white/40">יעד 90</dt><dd className="text-start">{selected.goal90}</dd></div>
                 ) : null}
                 {selected.links ? (
-                  <div className="flex justify-between gap-3"><dt className="text-white/40">קישורים</dt><dd className="text-left break-all">{selected.links}</dd></div>
+                  <div className="flex justify-between gap-3"><dt className="text-white/40">קישורים</dt><dd className="text-start break-all">{selected.links}</dd></div>
                 ) : null}
                 {(selected.referredByLecturerName || selected.referredByLecturerId) && (
                   <div className="flex justify-between gap-3">
@@ -2306,7 +2306,7 @@ function CategoriesPanel() {
       </div>
 
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
+        <table className="w-full text-sm text-start">
           <thead className="text-xs text-white/40 border-b border-white/10">
             <tr>
               <th className="py-3 px-3 font-normal">סדר</th>
@@ -2420,7 +2420,7 @@ function Premium88Panel() {
 
       <div className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
         <div className="overflow-x-auto border border-white/10 rounded-2xl">
-          <table className="w-full text-sm text-right">
+          <table className="w-full text-sm text-start">
             <thead className="text-xs text-white/40 border-b border-white/10">
               <tr>
                 <th className="py-3 px-3 font-normal">מתי</th>
@@ -2511,7 +2511,7 @@ function AuditLogsPanel() {
         <h2 className="text-2xl font-light">פעולות רגישות באדמין</h2>
       </div>
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
+        <table className="w-full text-sm text-start">
           <thead className="text-xs text-white/40 border-b border-white/10">
             <tr>
               <th className="py-3 px-3 font-normal">מתי</th>
@@ -2665,7 +2665,7 @@ function RafflesPanel() {
       </div>
 
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
+        <table className="w-full text-sm text-start">
           <thead className="text-xs text-white/40 border-b border-white/10">
             <tr>
               <th className="py-3 px-3 font-normal">שם</th>
@@ -2725,7 +2725,7 @@ function RafflesPanel() {
 
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
         <div className="p-4 text-sm text-white/50">כרטיסים אחרונים</div>
-        <table className="w-full text-sm text-right">
+        <table className="w-full text-sm text-start">
           <thead className="text-xs text-white/40 border-b border-white/10">
             <tr>
               <th className="py-3 px-3 font-normal">משתמש</th>
@@ -2832,7 +2832,7 @@ function LeadsPanel() {
       </div>
 
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
+        <table className="w-full text-sm text-start">
           <thead className="text-xs text-white/40 border-b border-white/10">
             <tr>
               <th className="py-3 px-3 font-normal">מקור</th>
@@ -3022,7 +3022,7 @@ function LegalPanel() {
           <p className="text-sm text-white/40">אין פניות רשומות.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-right">
+            <table className="w-full text-sm text-start">
               <thead>
                 <tr className="text-white/50 border-b border-white/10">
                   <th className="py-2 pe-3">תאריך</th>
@@ -3465,7 +3465,7 @@ function WebinarPanel() {
           ))}
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-right">
+          <table className="w-full text-sm text-start">
             <thead>
               <tr className="text-white/50 border-b border-white/10">
                 <th className="py-2 pe-3">תאריך</th>

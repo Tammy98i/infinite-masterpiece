@@ -82,7 +82,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
         <div className="absolute inset-0 bg-black/20" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-8 w-full z-10 text-right md:max-w-2xl md:ms-0 md:me-auto">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-8 w-full z-10 text-start md:max-w-2xl md:ms-0 md:me-auto">
         <h1 className="text-4xl sm:text-6xl lg:text-[5rem] font-bold text-white leading-[1.05] tracking-tight mb-4">
           {course.title}
         </h1>

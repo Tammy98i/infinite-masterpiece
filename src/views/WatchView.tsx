@@ -416,12 +416,12 @@ export const WatchView: React.FC = () => {
           chromeOn ? 'opacity-100' : 'opacity-0'
         }`}
       >
-        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/70 to-transparent" />
-        <div className="absolute inset-x-0 bottom-0 h-32 bg-gradient-to-t from-black/80 to-transparent" />
+        <div className="absolute inset-inline-0 top-0 h-28 bg-gradient-to-b from-black/70 to-transparent" />
+        <div className="absolute inset-inline-0 bottom-0 h-32 bg-gradient-to-t from-black/80 to-transparent" />
       </div>
 
       <div
-        className={`absolute inset-x-0 top-0 z-20 flex items-center justify-between gap-4 px-5 pt-4 transition-opacity duration-300 ${
+        className={`absolute inset-inline-0 top-0 z-20 flex items-center justify-between gap-4 px-5 pt-4 transition-opacity duration-300 ${
           chromeOn ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -429,7 +429,7 @@ export const WatchView: React.FC = () => {
         <button
           type="button"
           onClick={() => setView('course', { courseId: course.id })}
-          className="flex items-center gap-2 text-right min-h-11 focus-ring rounded-lg"
+          className="flex items-center gap-2 text-start min-h-11 focus-ring rounded-lg"
         >
           <ArrowRight className="w-5 h-5 text-white/80" />
           <span className="text-sm text-white">
@@ -516,7 +516,7 @@ export const WatchView: React.FC = () => {
                 key={ep.id}
                 type="button"
                 onClick={() => playEpisode(ep.id)}
-                className={`w-full flex items-baseline gap-3 px-4 py-3 text-right cursor-pointer ${
+                className={`w-full flex items-baseline gap-3 px-4 py-3 text-start cursor-pointer ${
                   isActive ? 'bg-white/5' : 'hover:bg-white/[0.03]'
                 }`}
               >
@@ -525,7 +525,7 @@ export const WatchView: React.FC = () => {
                 </span>
                 <span className={`flex-1 min-w-0 text-sm leading-snug ${isActive ? 'text-white' : 'text-white/70'}`}>
                   {episodeName(ep.title)}
-                  {lockedEp && <Lock className="inline w-3 h-3 mr-1.5 text-white/35" />}
+                  {lockedEp && <Lock className="inline w-3 h-3 ms-1.5 text-white/35" />}
                 </span>
                 <span className="text-[11px] text-white/35 tabular-nums">{formatClock(ep.duration)}</span>
               </button>
@@ -558,7 +558,7 @@ export const WatchView: React.FC = () => {
       )}
 
       <div
-        className={`absolute inset-x-0 bottom-0 z-20 px-5 pb-6 transition-opacity duration-300 ${
+        className={`absolute inset-inline-0 bottom-0 z-20 px-5 pb-6 transition-opacity duration-300 ${
           chromeOn && !showEndOverlay ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -596,7 +596,7 @@ export const WatchView: React.FC = () => {
             className="justify-self-center w-12 h-12 rounded-full bg-white text-black flex items-center justify-center cursor-pointer"
             aria-label={isPlaying ? 'השהיה' : 'הפעלה'}
           >
-            {isPlaying ? <Pause className="w-4 h-4 fill-black" /> : <Play className="w-4 h-4 fill-black ml-0.5" />}
+            {isPlaying ? <Pause className="w-4 h-4 fill-black" data-icon="play" /> : <Play className="w-4 h-4 fill-black ml-0.5" data-icon="play" />}
           </button>
 
           <div className="justify-self-end flex items-center gap-3">
@@ -622,7 +622,7 @@ export const WatchView: React.FC = () => {
           onClick={() => {
             if (!muteMedia) setMuted(false);
           }}
-          className="absolute bottom-28 inset-x-0 mx-auto w-fit z-20 px-4 py-2 rounded-full border border-white/20 bg-black/70 text-xs text-white/80 min-h-11 cursor-pointer"
+          className="absolute bottom-28 inset-inline-0 mx-auto w-fit z-20 px-4 py-2 rounded-full border border-white/20 bg-black/70 text-xs text-white/80 min-h-11 cursor-pointer"
         >
           {muteMedia ? 'השמע מושתק בהגדרות הנגישות' : 'מושתק. לחצו להפעלת שמע'}
         </button>

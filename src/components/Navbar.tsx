@@ -77,7 +77,7 @@ export const Navbar: React.FC = () => {
       <header
         role="banner"
         aria-label="כותרת הספרייה"
-        className={`editorial-library-header fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
+        className={`editorial-library-header fixed top-0 inset-inline-0 z-50 transition-all duration-300 ${
           isScrolled ||
           (currentView !== 'home' &&
             currentView !== 'course' &&
@@ -89,7 +89,7 @@ export const Navbar: React.FC = () => {
       >
         <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-10 h-20 flex items-center justify-between gap-4 sm:gap-6">
           
-          {/* Right Section: Logo & Main Nav */}
+          {/* Start side: Logo & Main Nav */}
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3">
               <button
@@ -155,7 +155,7 @@ export const Navbar: React.FC = () => {
             </nav>
           </div>
 
-          {/* Left Section: Search, My List, Profile, Admin */}
+          {/* End side: Search, My List, Profile, Admin */}
           <div className="flex items-center gap-3">
             
             {/* Search Bar / Icon */}
@@ -175,18 +175,18 @@ export const Navbar: React.FC = () => {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="חיפוש בספרייה..."
-                      className="w-56 sm:w-72 bg-zinc-900/90 border border-[#b79043]/50 rounded-full py-2 pr-9 pl-8 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 shadow-inner min-h-11"
+                      className="w-56 sm:w-72 bg-zinc-900/90 border border-[#b79043]/50 rounded-full py-2 ps-9 pe-8 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 shadow-inner min-h-11"
                       aria-label="חיפוש בספרייה"
                       aria-autocomplete="list"
                       aria-controls="library-search-suggestions"
                     />
-                    <Search className="w-4 h-4 text-[#b79043] absolute right-3 pointer-events-none" />
+                    <Search className="w-4 h-4 text-[#b79043] absolute start-3 pointer-events-none" data-icon="search" />
                     <button
                       type="button"
                       onClick={() => {
                         setIsSearchOpen(false);
                       }}
-                      className="absolute left-2.5 text-zinc-400 hover:text-white p-1 min-h-11 min-w-11 flex items-center justify-center"
+                      className="absolute end-2.5 text-zinc-400 hover:text-white p-1 min-h-11 min-w-11 flex items-center justify-center"
                       aria-label="סגירת חיפוש"
                     >
                       <X className="w-4 h-4" />
@@ -203,7 +203,7 @@ export const Navbar: React.FC = () => {
                         <li key={`${item.type}-${item.id}`} role="option">
                           <button
                             type="button"
-                            className="w-full text-right px-4 py-3 hover:bg-white/5 min-h-11 border-b border-white/5 last:border-0"
+                            className="w-full text-start px-4 py-3 hover:bg-white/5 min-h-11 border-b border-white/5 last:border-0"
                             onClick={() => {
                               trackEvent('search_result_click', {
                                 content_id: item.id,
@@ -254,7 +254,7 @@ export const Navbar: React.FC = () => {
                   title="חיפוש בספרייה"
                   aria-label="חיפוש בספרייה"
                 >
-                  <Search className="w-5 h-5" />
+                  <Search className="w-5 h-5" data-icon="search" />
                   <span className="hidden lg:inline text-sm">חיפוש</span>
                   <kbd className="hidden xl:inline text-[10px] text-white/30">/</kbd>
                 </button>
@@ -332,7 +332,7 @@ export const Navbar: React.FC = () => {
                 setView('mylist');
                 setIsMobileMenuOpen(false);
               }}
-              className="text-right px-4 py-3 rounded-xl text-base text-zinc-200 hover:bg-white/5 min-h-11"
+              className="text-start px-4 py-3 rounded-xl text-base text-zinc-200 hover:bg-white/5 min-h-11"
             >
               הרשימה
             </button>
@@ -344,7 +344,7 @@ export const Navbar: React.FC = () => {
                   setView(item.view);
                   setIsMobileMenuOpen(false);
                 }}
-                className={`text-right px-4 py-3 rounded-xl text-base min-h-11 ${
+                className={`text-start px-4 py-3 rounded-xl text-base min-h-11 ${
                   currentView === item.view ? 'bg-primary/15 text-primary-light font-bold' : 'text-zinc-200 hover:bg-white/5'
                 }`}
               >
@@ -358,7 +358,7 @@ export const Navbar: React.FC = () => {
                   setView(currentView === 'lecturer' ? 'home' : 'lecturer');
                   setIsMobileMenuOpen(false);
                 }}
-                className="text-right px-4 py-3 rounded-xl text-sm text-[#b79043] min-h-11"
+                className="text-start px-4 py-3 rounded-xl text-sm text-[#b79043] min-h-11"
               >
                 {currentView === 'lecturer' ? 'חזרה לספרייה' : 'אזור מרצה'}
               </button>
@@ -370,7 +370,7 @@ export const Navbar: React.FC = () => {
                   setView(currentView === 'admin' ? 'home' : 'admin');
                   setIsMobileMenuOpen(false);
                 }}
-                className="text-right px-4 py-3 rounded-xl text-sm text-[#b79043] min-h-11"
+                className="text-start px-4 py-3 rounded-xl text-sm text-[#b79043] min-h-11"
               >
                 {currentView === 'admin' ? 'חזרה לספרייה' : 'ניהול'}
               </button>
@@ -379,7 +379,7 @@ export const Navbar: React.FC = () => {
         )}
       </header>
 
-      <nav className="editorial-library-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0af2] backdrop-blur-xl border-t border-white/10 py-2 px-2 flex items-center justify-between" aria-label="ניווט תחתון — ספרייה">
+      <nav className="editorial-library-bottom-nav md:hidden fixed bottom-0 inset-inline-0 z-50 bg-[#0a0a0af2] backdrop-blur-xl border-t border-white/10 py-2 px-2 flex items-center justify-between" aria-label="ניווט תחתון — ספרייה">
         <button
           type="button"
           onClick={() => setView('home')}

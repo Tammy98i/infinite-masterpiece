@@ -53,7 +53,7 @@ export const HistoryView: React.FC = () => {
                 type="button"
                 onClick={() => goWatch(course.id, episode.id, 'history')}
                 aria-label={`המשך צפייה: ${course.title}, ${episode.title}`}
-                className="w-full text-right py-5 flex items-center gap-4 hover:bg-white/[0.03] transition-colors min-h-11"
+                className="w-full text-start py-5 flex items-center gap-4 hover:bg-white/[0.03] transition-colors min-h-11"
               >
                 <img
                   src={course.coverImage}

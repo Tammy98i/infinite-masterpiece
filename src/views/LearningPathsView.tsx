@@ -7,7 +7,7 @@ export const LearningPathsView: React.FC = () => {
   const { learningPaths, courses, setView } = useApp();
 
   return (
-    <div className="library-catalog-page min-h-screen text-white pt-28 pb-24 px-4 sm:px-8 max-w-7xl mx-auto text-right">
+    <div className="library-catalog-page min-h-screen text-white pt-28 pb-24 px-4 sm:px-8 max-w-7xl mx-auto text-start">
       
       <div className="text-center max-w-3xl mx-auto mb-16">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-white/10 text-white/80 text-xs font-semibold uppercase mb-3">
@@ -68,7 +68,7 @@ export const LearningPathsView: React.FC = () => {
                 <div className="flex gap-6 overflow-x-auto pb-4 scroll-smooth">
                   {pathCourses.map((course, i) => (
                     <div key={course.id} className="relative shrink-0">
-                      <div className="absolute -top-3 -right-3 z-30 w-8 h-8 rounded-full bg-white text-[#141414] font-bold text-sm flex items-center justify-center border-2 border-[#141414]">
+                      <div className="absolute -top-3 -start-3 z-30 w-8 h-8 rounded-full bg-white text-[#141414] font-bold text-sm flex items-center justify-center border-2 border-[#141414]">
                         {i + 1}
                       </div>
                       <CourseCard course={course} />

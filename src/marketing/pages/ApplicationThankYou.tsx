@@ -33,7 +33,7 @@ export function ApplicationThankYou() {
               : 'תודה שמילאת את הפרטים. הצוות שלנו יעבור על התשובות שלך כדי לבדוק התאמה למסלול. ניצור איתך קשר בימים הקרובים (לרוב עד 48 שעות) להמשך התהליך.'}
           </p>
 
-          <div className="mb-8 text-right rounded-2xl border border-[#b79043]/25 bg-[#05070d]/60 p-5">
+          <div className="mb-8 text-start rounded-2xl border border-[#b79043]/25 bg-[#05070d]/60 p-5">
             <p className="text-sm font-semibold text-white mb-3">מה עכשיו</p>
             <ul className="space-y-2 text-sm text-white/75 leading-relaxed">
               <li>{paid ? 'הגישה לספרייה נפתחת באותו אימייל.' : 'חלון חזרה: הצוות יוצר קשר, לרוב עד 48 שעות.'}</li>

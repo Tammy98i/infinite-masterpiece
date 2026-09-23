@@ -103,7 +103,7 @@ export function TeamStaffView() {
 
       <div className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
         <div className="overflow-x-auto border border-white/10 rounded-2xl bg-white/[0.02]">
-          <table className="w-full text-sm text-right">
+          <table className="w-full text-sm text-start">
             <thead className="text-xs text-white/45 border-b border-white/10 bg-[#0a0a0a]">
               <tr>
                 <th className="py-3 px-3 font-normal">שם</th>

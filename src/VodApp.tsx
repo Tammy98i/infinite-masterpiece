@@ -112,7 +112,7 @@ export const VodApp: React.FC = () => {
       </main>
 
       {currentView !== 'watch' && (
-        <footer className="editorial-library-footer relative z-10 border-t border-white/10 bg-[#141414] py-10 px-4 sm:px-8 lg:px-10 text-right select-none" role="contentinfo" aria-label="תחתית הספרייה">
+        <footer className="editorial-library-footer relative z-10 border-t border-white/10 bg-[#141414] py-10 px-4 sm:px-8 lg:px-10 text-start select-none" role="contentinfo" aria-label="תחתית הספרייה">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8 text-sm text-zinc-400">
             <div>
               <p className="text-white/80 mb-1 text-sm">Infinite Masterpiece</p>

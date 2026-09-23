@@ -1,0 +1,80 @@
+/* Hebrew RTL foundation — site-wide.
+   Direction is declared once on <html lang="he" dir="rtl"> (index.html).
+   Do not sprinkle direction: rtl on inner components.
+   Decorative LTR islands (SpaceHero planets, Team Galaxy) keep an explicit dir="ltr". */
+
+html {
+  direction: rtl;
+}
+
+body {
+  direction: rtl;
+  text-align: start;
+}
+
+/* BiDi islands: emails, phones, URLs, clocks, passwords stay LTR isolates. */
+.bidi-ltr,
+.bidi-phone,
+.bidi-email,
+.bidi-clock,
+.bidi-url,
+input[type='email'],
+input[type='tel'],
+input[type='url'],
+input[type='password'],
+input[inputmode='tel'],
+input[inputmode='email'],
+input[inputmode='numeric'],
+input[inputmode='decimal'],
+a[href^='mailto:'],
+a[href^='tel:'],
+time,
+[data-bidi='ltr'] {
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: start;
+}
+
+.bidi-phone,
+.bidi-email,
+.bidi-clock,
+.bidi-url,
+time {
+  display: inline-block;
+}
+
+/* Tabular numbers / clocks / prices stay visually stable in mixed Hebrew copy. */
+.tabular-nums,
+.price,
+[data-price] {
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Mirror only directional glyphs. Never flip Play, Search, Check, Clock, media. */
+.icon-dir {
+  transform: scaleX(-1);
+}
+
+.icon-play,
+.icon-search,
+.icon-check,
+.icon-clock,
+.icon-media,
+[data-icon='play'],
+[data-icon='search'],
+[data-icon='check'],
+[data-icon='clock'] {
+  transform: none;
+}
+
+/* Progress / range controls stay physical LTR (media and quantity, not navigation). */
+input[type='range'] {
+  direction: ltr;
+}
+
+/* Off-screen skip / honeypot helpers use logical insets. */
+.visually-off-start {
+  position: absolute;
+  inset-inline-start: -9999px;
+}

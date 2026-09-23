@@ -259,7 +259,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
               />
             </div>
             <div className="overflow-x-auto">
-              <table className="w-full text-sm text-right">
+              <table className="w-full text-sm text-start">
                 <thead className="text-xs text-white/45 border-b border-white/10 bg-[#0a0a0a]">
                   <tr>
                     <th className="py-3 px-3 font-normal">שם</th>
@@ -436,7 +436,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
             תפקיד = מה המשתמש יכול לעשות במערכת. דגל מייסד/ת הוא שכבה נוספת — מציג את האדם בעמוד הצוות.
           </p>
           <div className="overflow-x-auto border border-white/10 rounded-2xl">
-            <table className="w-full text-sm text-right">
+            <table className="w-full text-sm text-start">
               <thead className="text-xs text-white/45 border-b border-white/10 bg-[#0a0a0a]">
                 <tr>
                   <th className="py-3 px-4 font-normal">תפקיד</th>

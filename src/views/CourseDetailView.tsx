@@ -420,7 +420,7 @@ export const CourseDetailView: React.FC = () => {
           <div className="library-course-veil-d absolute inset-0" />
         </div>
 
-        <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 w-full text-right">
+        <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 w-full text-start">
           <nav className="mb-6 text-sm text-white/70" aria-label="ניווט משני">
             <button
               type="button"
@@ -471,7 +471,7 @@ export const CourseDetailView: React.FC = () => {
                 className="w-11 h-11 rounded-full object-cover"
                 loading="lazy"
               />
-              <span className="text-right">
+              <span className="text-start">
                 <span className="block text-sm font-medium text-white">{instructor.name}</span>
                 <span className="block text-[13px] text-white/60">{instructor.title}</span>
               </span>
@@ -521,7 +521,7 @@ export const CourseDetailView: React.FC = () => {
         </div>
       </header>
 
-      <div className="relative z-10 -mt-8 max-w-[1360px] mx-auto px-4 sm:px-8 text-right">
+      <div className="relative z-10 -mt-8 max-w-[1360px] mx-auto px-4 sm:px-8 text-start">
         <div className="grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-6 mb-10">
           <section aria-label="נגן הקורס" className="min-w-0">
             <div className="library-course-stage relative aspect-video overflow-hidden bg-black">
@@ -603,7 +603,7 @@ export const CourseDetailView: React.FC = () => {
                       </button>
                     </div>
                   ) : (
-                    <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/85 to-transparent flex items-center gap-3">
+                    <div className="absolute inset-inline-0 bottom-0 p-3 bg-gradient-to-t from-black/85 to-transparent flex items-center gap-3">
                       <button
                         type="button"
                         onClick={() => {
@@ -688,7 +688,7 @@ export const CourseDetailView: React.FC = () => {
                     className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-white text-[#141414] flex items-center justify-center hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
                     aria-label={cta?.label || 'התחילו לצפות'}
                   >
-                    <Play className="w-7 h-7 fill-current ml-1" />
+                    <Play className="w-7 h-7 fill-current ml-1" data-icon="play" />
                   </button>
                 </>
               )}
@@ -751,7 +751,7 @@ export const CourseDetailView: React.FC = () => {
                         setChapterInUrl(ep.id);
                         if (playerOn) void startPlayback(ep.id);
                       }}
-                      className={`library-episode-row w-full text-right p-3 transition-colors min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] ${
+                      className={`library-episode-row w-full text-start p-3 transition-colors min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] ${
                         isActive ? 'is-active' : ''
                       }`}
                     >
@@ -776,7 +776,7 @@ export const CourseDetailView: React.FC = () => {
                             )}
                           </span>
                           {partial > 0 && !done ? (
-                            <span className="absolute inset-x-0 bottom-0 h-0.5 bg-white/20">
+                            <span className="absolute inset-inline-0 bottom-0 h-0.5 bg-white/20">
                               <span className="block h-full bg-[#b79043]" style={{ width: `${partial}%` }} />
                             </span>
                           ) : null}

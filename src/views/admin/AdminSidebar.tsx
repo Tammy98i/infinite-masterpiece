@@ -17,7 +17,7 @@ function NavButton({ item, active, onClick }: { item: NavItem; active: boolean; 
     <button
       type="button"
       onClick={onClick}
-      className={`w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm min-h-11 text-right transition-colors duration-200 cursor-pointer ${
+      className={`w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm min-h-11 text-start transition-colors duration-200 cursor-pointer ${
         active
           ? 'bg-[#b79043]/15 text-[#dfc47d] border border-[#b79043]/40'
           : 'text-white/60 hover:text-white hover:bg-white/[0.04] border border-transparent'

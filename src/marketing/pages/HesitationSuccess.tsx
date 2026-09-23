@@ -46,7 +46,7 @@ export function HesitationSuccess() {
           ))}
         </div>
 
-        <div className="mb-8 text-right rounded-2xl border border-[#b79043]/25 bg-[#05070d]/60 p-5">
+        <div className="mb-8 text-start rounded-2xl border border-[#b79043]/25 bg-[#05070d]/60 p-5">
           <p className="text-sm font-semibold text-white mb-3">מה עכשיו</p>
           <ul className="space-y-2 text-sm text-white/75 leading-relaxed">
             <li>הפעימה הבאה היא 80 ₪, ואחריה 800 ו־8,000, במוצאי שבת לפי שלבי המיזם.</li>

@@ -36,7 +36,7 @@ export function LecturerView() {
 
   if (isGuest) {
     return (
-      <div className="min-h-screen bg-transparent text-white pt-28 pb-24 px-4 text-right">
+      <div className="min-h-screen bg-transparent text-white pt-28 pb-24 px-4 text-start">
         <div className="max-w-md mx-auto border border-white/10 rounded-3xl p-8">
           <h1 className="text-2xl font-medium mb-3">אזור מרצים</h1>
           <p className="text-sm text-white/50 font-light mb-6">
@@ -187,7 +187,7 @@ function ApplicationPanel({
   };
 
   return (
-    <div className="min-h-screen bg-transparent text-white pt-28 pb-24 px-4 sm:px-8 max-w-3xl mx-auto text-right">
+    <div className="min-h-screen bg-transparent text-white pt-28 pb-24 px-4 sm:px-8 max-w-3xl mx-auto text-start">
       <button type="button" onClick={onBack} className="text-sm text-white/45 hover:text-white mb-8 min-h-11 cursor-pointer">
         חזרה לפרופיל
       </button>
@@ -362,7 +362,7 @@ function LecturerDashboard({
         key={item.id}
         type="button"
         onClick={() => goTab(item.id)}
-        className={`w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm min-h-11 text-right transition-colors ${
+        className={`w-full flex items-center justify-between gap-2 rounded-xl px-3 py-2.5 text-sm min-h-11 text-start transition-colors ${
           active
             ? 'bg-[#b79043]/15 text-[#dfc47d] border border-[#b79043]/40'
             : 'text-white/60 hover:text-white hover:bg-white/[0.04] border border-transparent'
@@ -384,7 +384,7 @@ function LecturerDashboard({
     status ? courses.filter((course) => course.status === status) : courses;
 
   return (
-    <div className="min-h-screen bg-transparent text-white text-right" dir="rtl">
+    <div className="min-h-screen bg-transparent text-white text-start" dir="rtl">
       <div className="flex min-h-screen">
         <aside className="hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
           <div className="p-5 border-b border-white/10">
@@ -673,7 +673,7 @@ function MessagesPanel() {
                 key={row.id}
                 type="button"
                 onClick={() => void open(row.id)}
-                className={`w-full text-right p-4 hover:bg-white/[0.03] ${
+                className={`w-full text-start p-4 hover:bg-white/[0.03] ${
                   selectedId === row.id ? 'bg-[#b79043]/10' : ''
                 }`}
               >
@@ -781,7 +781,7 @@ function Founder88Panel({ courses }: { courses: Course[] }) {
         </p>
       </div>
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
+        <table className="w-full text-sm text-start">
           <thead className="text-xs text-white/40 border-b border-white/10">
             <tr>
               <th className="py-3 px-3 font-normal">הרצאה</th>
@@ -987,7 +987,7 @@ function VideosPanel({
         </button>
       </div>
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
+        <table className="w-full text-sm text-start">
           <thead className="text-xs text-white/40 border-b border-white/10">
             <tr>
               <th className="py-3 px-3 font-normal">הרצאה</th>
@@ -1118,7 +1118,7 @@ function ResourcesPanel({ courses }: { courses: Course[] }) {
         <p className="text-sm text-white/45 mt-2">קבצים שצורפו להרצאות שלכם. העלאה חדשה דרך עריכת הרצאה.</p>
       </div>
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
+        <table className="w-full text-sm text-start">
           <thead className="text-xs text-white/40 border-b border-white/10">
             <tr>
               <th className="py-3 px-3 font-normal">הרצאה</th>
@@ -1261,14 +1261,14 @@ function SettingsPanel({ onLibrary }: { onLibrary: () => void }) {
         <button
           type="button"
           onClick={() => setView('profile')}
-          className="text-right px-4 py-3 rounded-xl border border-white/15 text-sm min-h-11 hover:border-white/40"
+          className="text-start px-4 py-3 rounded-xl border border-white/15 text-sm min-h-11 hover:border-white/40"
         >
           פרופיל משתמש כללי
         </button>
         <button
           type="button"
           onClick={onLibrary}
-          className="text-right px-4 py-3 rounded-xl border border-white/15 text-sm min-h-11 hover:border-white/40"
+          className="text-start px-4 py-3 rounded-xl border border-white/15 text-sm min-h-11 hover:border-white/40"
         >
           חזרה לספרייה
         </button>
@@ -1433,7 +1433,7 @@ function LecturerCourseForm({
 
   return (
     <form onSubmit={(e) => void save(e)} className="grid gap-4 max-w-2xl">
-      <button type="button" onClick={onCancel} className="text-sm text-white/45 text-right cursor-pointer">
+      <button type="button" onClick={onCancel} className="text-sm text-white/45 text-start cursor-pointer">
         חזרה
       </button>
       <label className="block">

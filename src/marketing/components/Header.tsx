@@ -201,7 +201,7 @@ export function Header() {
     <header
       role="banner"
       aria-label="כותרת האתר"
-      className="editorial-site-header fixed top-0 inset-x-0 z-50"
+      className="editorial-site-header fixed top-0 inset-inline-0 z-50"
     >
       <div className="header-row mx-auto grid h-full w-full max-w-[1400px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 px-4 sm:px-8 lg:px-10">
           <Link to="/" aria-label="Infinite Masterpiece, דף הבית" className="header-logo flex items-center gap-3 sm:gap-4 group shrink-0 min-h-11">
@@ -260,7 +260,7 @@ export function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="header-panel lg:hidden absolute top-full left-0 right-0 bg-[#0d0b08]/95 backdrop-blur-3xl border-b border-white/[0.05]"
+            className="header-panel lg:hidden absolute top-full inset-inline-0 bg-[#0d0b08]/95 backdrop-blur-3xl border-b border-white/[0.05]"
           >
             <nav className="px-6 py-8 flex flex-col gap-6" aria-label="ניווט נייד">
               <div className="flex flex-col gap-4">

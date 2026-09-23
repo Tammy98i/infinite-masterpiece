@@ -101,7 +101,7 @@ export const OnboardingCenterView: React.FC = () => {
               <button
                 key={path.id}
                 onClick={() => setSelectedPathId(path.id)}
-                className={`w-full text-right p-3 rounded-xl border transition-all ${
+                className={`w-full text-start p-3 rounded-xl border transition-all ${
                   selectedPathId === path.id
                     ? 'border-primary/50 bg-primary/10'
                     : 'border-white/5 bg-white/5 hover:border-white/20'

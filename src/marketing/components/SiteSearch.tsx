@@ -38,7 +38,7 @@ export function SiteSearch({ open, onClose }: { open: boolean; onClose: () => vo
         <button type="button" onClick={onClose} className="flex h-11 w-11 items-center justify-center rounded-full text-white/45 hover:bg-white/5 hover:text-white" aria-label="סגירה"><X size={18} /></button>
       </div>
       <div className="max-h-[55vh] overflow-y-auto p-3">
-        {results.length ? results.map(item => <Link key={item.to} to={item.to} onClick={onClose} className="group flex min-h-16 items-center gap-4 rounded-2xl px-4 py-3 text-right hover:bg-[#b79043]/10">
+        {results.length ? results.map(item => <Link key={item.to} to={item.to} onClick={onClose} className="group flex min-h-16 items-center gap-4 rounded-2xl px-4 py-3 text-start hover:bg-[#b79043]/10">
           <span className="min-w-0 flex-1"><strong className="block font-normal text-white">{item.title}</strong><span className="mt-1 block text-sm text-white/45">{item.description}</span></span><ArrowLeft size={17} className="text-white/25 transition-transform group-hover:-translate-x-1 group-hover:text-[#b79043]" />
         </Link>) : <p className="px-5 py-12 text-center text-sm text-white/45">לא מצאנו עמוד מתאים. נסו ניסוח קצר יותר.</p>}
       </div>

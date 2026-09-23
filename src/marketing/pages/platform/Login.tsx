@@ -72,7 +72,7 @@ export function Login() {
               type="submit"
               className="btn-gold text-black w-full py-4 px-4"
             >
-              <span className="absolute left-0 inset-y-0 flex items-center pl-4">
+              <span className="absolute end-0 inset-y-0 flex items-center pe-4">
                 <Lock className="h-5 w-5 text-black/50 group-hover:text-black/80 transition-colors" />
               </span>
               התחברות

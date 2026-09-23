@@ -29,7 +29,7 @@ export const InstructorProfileView: React.FC = () => {
 
   if (!instructor) {
     return (
-      <div className="library-catalog-page min-h-screen text-white pt-28 px-4 text-right">
+      <div className="library-catalog-page min-h-screen text-white pt-28 px-4 text-start">
         <button
           type="button"
           onClick={() => setView('instructors')}
@@ -57,7 +57,7 @@ export const InstructorProfileView: React.FC = () => {
           <div className="library-course-veil-d absolute inset-0" />
         </div>
 
-        <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 w-full text-right grid gap-8 md:grid-cols-[minmax(220px,32%)_1fr] md:items-end">
+        <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 w-full text-start grid gap-8 md:grid-cols-[minmax(220px,32%)_1fr] md:items-end">
           <div className="library-instructor-frame relative w-full max-w-[360px] ms-auto md:ms-0">
             {instructor.avatarUrl ? (
               <img
@@ -126,7 +126,7 @@ export const InstructorProfileView: React.FC = () => {
         </div>
       </header>
 
-      <div className="relative z-10 -mt-8 max-w-[1360px] mx-auto px-4 sm:px-8 text-right">
+      <div className="relative z-10 -mt-8 max-w-[1360px] mx-auto px-4 sm:px-8 text-start">
         {instructor.bio ? (
           <section className="mb-8 max-w-3xl">
             <h2 className="library-rail-title text-white mb-3">על המרצה</h2>

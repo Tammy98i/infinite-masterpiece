@@ -71,18 +71,18 @@ export const SearchView: React.FC = () => {
               }
             }}
             placeholder="שם הרצאה, מרצה או נושא"
-            className="library-search-field w-full border py-4 pr-12 pl-6 text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 min-h-11"
+            className="library-search-field w-full border py-4 ps-12 pe-6 text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 min-h-11"
             autoFocus
             aria-label="חיפוש בספרייה"
             enterKeyHint="search"
           />
-          <Search className="w-5 h-5 text-[#b79043] absolute right-4 pointer-events-none" />
+          <Search className="w-5 h-5 text-[#b79043] absolute start-4 pointer-events-none" data-icon="search" />
         </div>
       </div>
 
       {query ? (
         <div>
-          <h2 className="text-lg font-semibold mb-4 text-right border-b border-white/10 pb-3 flex items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold mb-4 text-start border-b border-white/10 pb-3 flex items-center justify-between gap-3">
             <span>תוצאות עבור {query}</span>
             <span className="text-sm font-medium text-[#b79043]">{results.length === baseResults.length ? results.length : `${results.length} מתוך ${baseResults.length}`}</span>
           </h2>
