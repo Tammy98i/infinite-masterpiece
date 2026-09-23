@@ -33,12 +33,16 @@ function splitExistingSentences(text: string) {
   return { first: text.slice(0, index + 1), second: text.slice(index + 2) };
 }
 
-function Chevron() {
+export function NeuralChevron({ className = 'webinar-neural-chev' }: { className?: string }) {
   return (
-    <svg className="webinar-neural-chev" viewBox="0 0 11 20" aria-hidden="true">
+    <svg className={className} viewBox="0 0 11 20" aria-hidden="true">
       <path d="M1.15 1.15 L9.6 10 L1.15 18.85" />
     </svg>
   );
+}
+
+function Chevron() {
+  return <NeuralChevron />;
 }
 
 function CtaArrow() {

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, ChevronDown, Handshake, Megaphone, Network, Tag, Target, X } from 'lucide-react';
+import { Check, ChevronDown, X } from 'lucide-react';
 import { webinarApi } from '../../api/webinar';
 import {
   DEFAULT_WEBINAR_CONFIG,
@@ -30,12 +30,11 @@ import { captureUtmFromSearch } from '../../utils/utm';
 import { getWebinarPhase } from '../../utils/webinarTime';
 import { TeamPhoto } from '../../components/TeamPhoto';
 import { TeamGalaxy } from '../components/galaxy/TeamGalaxy';
-import { WebinarNeuralHero } from '../components/WebinarNeuralHero';
+import { NeuralChevron, WebinarNeuralHero } from '../components/WebinarNeuralHero';
 import './WebinarLanding.css';
 import './WebinarEditorialCinema.css';
 import '../components/WebinarNeuralHero.css';
-
-const bottleneckIcons = [Tag, Handshake, Megaphone, Network, Target];
+import './WebinarNeuralSlides.css';
 
 function FaqItem({ q, a, ...props }: { q: string; a: string } & HTMLAttributes<HTMLDetailsElement>) {
   return (
@@ -200,6 +199,7 @@ export function WebinarLanding() {
         <a href="#webinar-register">{eventEnded ? 'המחזור הבא' : 'הרשמה'}</a>
         <a href="#webinar-faq">שאלות</a>
       </nav>
+      <div className="webinar-neural-overture">
       <WebinarNeuralHero
         config={config}
         headlineParts={headlineParts}
@@ -208,35 +208,33 @@ export function WebinarLanding() {
         onRegister={scrollToForm}
       />
 
-      <div className="webinar-editorial-grid">
-      <section id="problem" className="py-20 md:py-24 border-t border-white/[0.04]">
-        <div className="max-w-[1100px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <section id="problem" className="webinar-neural-afterglow">
+        <span className="webinar-neural-stem" aria-hidden="true" />
+        <div className="webinar-neural-plate">
           <SectionLabel>הבעיה</SectionLabel>
           <SectionTitle>
             הבעיה היא לא שאין לך כישרון.
             <br />
-            <span className="text-white/40">הבעיה היא שאין סביבו מערכת.</span>
+            <span>הבעיה היא שאין סביבו מערכת.</span>
           </SectionTitle>
-          <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">{WEBINAR_HOLDING_LINE}</p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
-            {WEBINAR_BOTTLENECKS.map((item, index) => {
-              const Icon = bottleneckIcons[index];
-              return (
-                <div
-                  key={item.title}
-                  className="glass-card p-5"
-                >
-                  <Icon className="w-6 h-6 text-[#b79043] mb-4" strokeWidth={1.5} aria-hidden />
-                  <h3 className="text-white mb-2">{item.title}</h3>
-                  <p className="text-sm text-white/50 font-light">{item.text}</p>
+          <p className="webinar-neural-hold">{WEBINAR_HOLDING_LINE}</p>
+          <ul className="webinar-neural-bottlenecks">
+            {WEBINAR_BOTTLENECKS.map((item) => (
+              <li key={item.title}>
+                <NeuralChevron />
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.text}</p>
                 </div>
-              );
-            })}
-          </div>
+              </li>
+            ))}
+          </ul>
         </div>
       </section>
+      </div>
 
-      <section id="hosts" className="py-20 md:py-24 border-t border-white/[0.04]">
+      <div className="webinar-editorial-grid">
+      <section id="hosts" className="webinar-neural-slide">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>הערב החי</SectionLabel>
           <SectionTitle>לא באים רק ללמוד. באים לבצע.</SectionTitle>
@@ -280,7 +278,7 @@ export function WebinarLanding() {
 
       <TeamGalaxy />
 
-      <section id="webinar-fit" ref={fitRef} className="py-20 md:py-24 border-t border-white/[0.04]">
+      <section id="webinar-fit" ref={fitRef} className="webinar-neural-slide">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <SectionLabel>התאמה</SectionLabel>
@@ -319,7 +317,7 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <section id="webinar-faq" className="py-20 md:py-24 border-t border-white/[0.04]">
+      <section id="webinar-faq" className="webinar-neural-slide">
         <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <SectionLabel>שאלות</SectionLabel>
@@ -333,7 +331,7 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <section id="webinar-register-bottom" className="relative py-20 md:py-28 border-t border-white/[0.04] overflow-hidden">
+      <section id="webinar-register-bottom" className="webinar-neural-slide relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0d0b08]/20 to-[#0d0b08]/50" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(183, 144, 67,0.16),transparent_70%)]" />
