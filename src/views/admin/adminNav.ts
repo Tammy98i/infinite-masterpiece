@@ -150,7 +150,7 @@ export const TAB_META: Record<
   leads: { title: 'לידים ופניות', description: 'CRM ופניות מהאתר', group: 'מסחר והכנסות' },
   webinar: { title: 'וובינר', description: 'הגדרות, הרשמות ומדדים', group: 'מסחר והכנסות' },
   raffles: { title: 'הגרלות', description: 'כרטיסים, תקנון וזוכים', group: 'מסחר והכנסות' },
-  content: { title: 'תכני VOD', description: 'קורסים, פרקים והעלאות', group: 'תוכן VOD' },
+  content: { title: 'תכני VOD', description: 'כרזות ופסים אקדמיים, קורסים, פרקים והעלאות', group: 'תוכן VOD' },
   categories: { title: 'קטגוריות', description: 'סדר ותצוגה בספרייה', group: 'תוכן VOD' },
   onboarding: { title: 'הדרכות', description: 'מרכז הדרכה לצוות', group: 'תוכן VOD' },
   notifications: { title: 'התראות', description: 'תור פעולות לטיפול', group: 'מבט על' },
