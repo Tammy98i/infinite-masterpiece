@@ -7,6 +7,17 @@
   --flow-gold: #dfc47d;
   --flow-ease: cubic-bezier(.16, 1, .3, 1);
   overflow-x: clip;
+  background:
+    linear-gradient(
+      180deg,
+      #02060f 0%,
+      #06101c 14%,
+      #071322 28%,
+      #0a1220 42%,
+      #081018 58%,
+      #0c1014 76%,
+      #0d0b08 100%
+    );
 }
 
 .webinar-flow-page .webinar-neural-hero {
@@ -19,10 +30,10 @@
   left: 0;
   right: 0;
   bottom: 0;
-  height: 22%;
+  height: 34%;
   z-index: 1;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(2, 6, 15, 0) 0%, rgba(7, 19, 34, .35) 55%, #02060f 100%);
+  background: linear-gradient(180deg, rgba(2, 6, 15, 0) 0%, rgba(6, 16, 28, .42) 48%, #02060f 100%);
 }
 
 .webinar-flow-stem {
@@ -36,7 +47,8 @@
 .webinar-flow-page #problem.webinar-neural-afterglow {
   background:
     radial-gradient(70% 50% at 50% 0%, rgba(77, 122, 168, .12), transparent 62%),
-    linear-gradient(180deg, #02060f 0%, #071322 58%, #0a1220 100%);
+    linear-gradient(180deg, #02060f 0%, #071322 58%, rgba(10, 18, 32, 0) 100%);
+  box-shadow: 0 48px 80px -40px rgba(2, 6, 15, .55);
 }
 
 .webinar-flow-page #problem.webinar-neural-afterglow .webinar-neural-plate {
@@ -46,8 +58,7 @@
 }
 
 .webinar-flow-page .webinar-editorial-grid {
-  background:
-    linear-gradient(180deg, #0a1220 0%, #081018 18%, #02060f 42%, #0c1014 72%, #0d0b08 100%);
+  background: transparent;
 }
 
 .webinar-flow-page .webinar-editorial-grid > #hosts {
@@ -91,6 +102,17 @@
   height: 1px;
   pointer-events: none;
   background: linear-gradient(90deg, transparent, rgba(223, 196, 125, .28), transparent);
+}
+
+.webinar-flow-page .webinar-editorial-grid > :is(#hosts, .team-galaxy, #webinar-fit, #webinar-faq)::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 96px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(2, 6, 15, 0), rgba(2, 6, 15, .35));
 }
 
 .webinar-flow-page #problem::after {
