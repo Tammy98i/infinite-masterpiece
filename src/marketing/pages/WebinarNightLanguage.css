@@ -218,15 +218,14 @@
   .webinar-night-page #problem.is-in .webinar-neural-bottlenecks li:nth-child(5) { transition-delay: .24s; }
 }
 
-.webinar-island:not(.webinar-neural-hero):not(#problem) {
+.webinar-island:not(.webinar-neural-hero) {
   opacity: 0;
   translate: 0 8px;
   transition: opacity .2s ease, translate .4s ease;
 }
 
 .webinar-island.is-in,
-.webinar-neural-hero.webinar-island,
-.webinar-night-page #problem.webinar-island {
+.webinar-neural-hero.webinar-island {
   opacity: 1;
   translate: 0 0;
 }
