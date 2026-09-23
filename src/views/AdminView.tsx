@@ -138,7 +138,7 @@ export function AdminView() {
   return (
     <div className="crm-desk min-h-screen bg-transparent text-white text-start">
       <div className="flex min-h-screen">
-        <aside className="crm-desk-aside hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
+        <aside className="crm-desk-aside hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 sticky top-0 h-screen overflow-y-auto">
           <AdminSidebar
             groups={visibleGroups}
             tab={tab}
