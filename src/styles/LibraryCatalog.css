@@ -2,18 +2,18 @@
    Keep the starfield visible, then stack dark navy layers on top. */
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-image {
-  opacity: .88;
-  filter: saturate(1.06) contrast(1.05) brightness(.78);
+  opacity: .92;
+  filter: saturate(1.08) contrast(1.06) brightness(.88);
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-blackout {
-  background: rgba(5, 10, 20, .38);
+  background: rgba(5, 10, 20, .28);
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-shade {
   background:
-    radial-gradient(circle at 50% 16%, transparent 10%, rgba(5, 10, 20, .28) 56%, rgba(5, 10, 20, .62) 100%),
-    linear-gradient(180deg, rgba(5, 10, 20, .2), rgba(5, 10, 20, .52));
+    radial-gradient(circle at 50% 16%, transparent 14%, rgba(5, 10, 20, .2) 58%, rgba(5, 10, 20, .48) 100%),
+    linear-gradient(180deg, rgba(5, 10, 20, .14), rgba(5, 10, 20, .4));
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-library-veil {
@@ -21,23 +21,23 @@
 }
 
 .editorial-sky-library-veil-a {
-  background: linear-gradient(180deg, rgba(5, 10, 20, .58) 0%, rgba(5, 10, 20, .12) 28%, transparent 48%, rgba(5, 10, 20, .7) 100%);
+  background: linear-gradient(180deg, rgba(5, 10, 20, .48) 0%, rgba(5, 10, 20, .08) 28%, transparent 50%, rgba(5, 10, 20, .55) 100%);
 }
 
 .editorial-sky-library-veil-b {
-  background: rgba(3, 8, 18, .28);
+  background: rgba(3, 8, 18, .16);
 }
 
 .editorial-sky-library-veil-c {
-  background: linear-gradient(90deg, rgba(5, 10, 20, .48), transparent 40%, rgba(5, 10, 20, .48));
+  background: linear-gradient(90deg, rgba(5, 10, 20, .36), transparent 42%, rgba(5, 10, 20, .36));
 }
 
 .editorial-sky-library-veil-d {
-  background: radial-gradient(ellipse at 50% 0%, rgba(5, 10, 20, .08), rgba(5, 10, 20, .42) 78%);
+  background: radial-gradient(ellipse at 50% 0%, rgba(5, 10, 20, .04), rgba(5, 10, 20, .32) 78%);
 }
 
 .editorial-sky-library-veil-e {
-  background: linear-gradient(180deg, transparent 8%, rgba(3, 8, 18, .36) 100%);
+  background: linear-gradient(180deg, transparent 12%, rgba(3, 8, 18, .28) 100%);
 }
 
 .vod-app.library-catalog,
