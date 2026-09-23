@@ -43,7 +43,7 @@ export const MyListView: React.FC = () => {
       </div>
 
       {savedCourses.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">
+        <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-stretch">
           {savedCourses.map((course) => (
             <CourseCard key={course.id} course={course} />
           ))}

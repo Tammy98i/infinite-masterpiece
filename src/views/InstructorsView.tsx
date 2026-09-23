@@ -9,7 +9,7 @@ export const InstructorsView: React.FC = () => {
       <h1 className="text-3xl sm:text-4xl font-semibold mb-3">מרצים</h1>
       <p className="text-sm text-white/45 font-light mb-12">בחרו מרצה כדי לראות את ההרצאות שלו בספרייה.</p>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4">
         {instructors.map((inst) => {
           const count = courses.filter((c) => c.instructorId === inst.id).length;
           return (
@@ -18,23 +18,26 @@ export const InstructorsView: React.FC = () => {
               type="button"
               onClick={() => setView('instructor', { instructorId: inst.id })}
               aria-label={`${inst.name}, ${inst.title}, ${count === 0 ? 'אין הרצאות' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`}`}
-              className="flex items-center gap-4 p-4 rounded-2xl border border-white/10 bg-white/[0.03] text-right hover:border-[#b79043]/50 transition-colors duration-200 min-h-11 cursor-pointer"
+              className="library-poster text-right min-h-11 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
             >
-              <img
-                src={inst.avatarUrl}
-                alt=""
-                aria-hidden
-                className="w-16 h-16 rounded-full object-cover border border-white/10 shrink-0"
-              />
-              <div className="min-w-0 flex-1">
-                <div className="text-lg font-medium text-white truncate">{inst.name}</div>
-                <div className="text-xs text-white/45 mt-1 truncate">
-                  {inst.isFounder ? 'צוות המיזם · ' : ''}
-                  {inst.title}
+              <div className="relative aspect-video overflow-hidden rounded-[4px] bg-zinc-900">
+                <img
+                  src={inst.avatarUrl}
+                  alt=""
+                  aria-hidden
+                  className="w-full h-full object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                <div className="absolute bottom-2 right-2 left-2">
+                  <div className="text-[13px] font-semibold text-white truncate">{inst.name}</div>
+                  <div className="text-[12px] text-white/70 truncate">
+                    {inst.isFounder ? 'צוות המיזם · ' : ''}
+                    {inst.title}
+                  </div>
                 </div>
-                <div className="text-xs text-white/35 mt-1">
-                  {count === 0 ? 'אין הרצאות עדיין' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`}
-                </div>
+              </div>
+              <div className="sr-only">
+                {count === 0 ? 'אין הרצאות עדיין' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`}
               </div>
             </button>
           );

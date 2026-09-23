@@ -56,10 +56,10 @@ export const HistoryView: React.FC = () => {
                 className="w-full text-right py-5 flex items-center gap-4 hover:bg-white/[0.03] transition-colors min-h-11"
               >
                 <img
-                  src={course.thumbnail}
+                  src={course.coverImage}
                   alt=""
                   aria-hidden
-                  className="w-28 h-16 object-cover rounded-lg shrink-0 border border-white/10"
+                  className="w-28 sm:w-36 aspect-video object-cover rounded-[4px] shrink-0"
                 />
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium truncate">{course.title}</div>

@@ -2,26 +2,40 @@
    Black field, dense 16:9 rails. Gold instead of Netflix red. */
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-image {
-  opacity: .18;
-  filter: saturate(.6) brightness(.35);
+  opacity: .22;
+  filter: saturate(.55) brightness(.28);
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-blackout {
-  background: #141414;
+  background: rgba(0, 0, 0, .62);
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-shade {
-  background: #141414;
+  background: rgba(20, 20, 20, .55);
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-library-veil {
   display: block;
 }
 
-.editorial-sky-library-veil-a,
-.editorial-sky-library-veil-b,
+.editorial-sky-library-veil-a {
+  background: linear-gradient(180deg, rgba(0, 0, 0, .72), rgba(20, 20, 20, .28) 42%, rgba(0, 0, 0, .78));
+}
+
+.editorial-sky-library-veil-b {
+  background: rgba(0, 0, 0, .38);
+}
+
 .editorial-sky-library-veil-c {
-  background: #141414;
+  background: linear-gradient(90deg, rgba(20, 20, 20, .55), transparent 46%, rgba(20, 20, 20, .55));
+}
+
+.editorial-sky-library-veil-d {
+  background: radial-gradient(ellipse at 50% 0%, rgba(0, 0, 0, .2), rgba(20, 20, 20, .62) 78%);
+}
+
+.editorial-sky-library-veil-e {
+  background: rgba(20, 20, 20, .42);
 }
 
 .vod-app.library-catalog,
@@ -152,8 +166,85 @@
   backdrop-filter: none;
 }
 
+.library-catalog-page,
+.library-catalog-page.library-course-page,
+.vod-app.library-catalog .editorial-library-footer {
+  background: #141414 !important;
+}
+
 .library-catalog-page .library-poster {
   width: 100%;
+}
+
+.library-course-billboard {
+  min-height: 58vh;
+}
+
+@media (min-width: 768px) {
+  .library-course-billboard {
+    min-height: 70vh;
+  }
+}
+
+.library-course-veil-a {
+  background: linear-gradient(180deg, rgba(0, 0, 0, .55) 0%, transparent 34%, rgba(20, 20, 20, .55) 72%, #141414 100%);
+}
+
+.library-course-veil-b {
+  background: linear-gradient(270deg, transparent 12%, rgba(20, 20, 20, .38) 52%, rgba(0, 0, 0, .78) 100%);
+}
+
+.library-course-veil-c {
+  background: rgba(0, 0, 0, .28);
+}
+
+.library-course-veil-d {
+  background: radial-gradient(ellipse at 70% 20%, transparent 0%, rgba(20, 20, 20, .45) 70%, #141414 100%);
+}
+
+.library-course-stage {
+  border-radius: 4px;
+}
+
+.library-episode-row {
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  background: transparent;
+}
+
+.library-episode-row:hover,
+.library-episode-row:focus-visible {
+  background: rgba(255, 255, 255, .06);
+}
+
+.library-episode-row.is-active {
+  background: rgba(255, 255, 255, .08);
+}
+
+.library-instructor-card {
+  border: 0;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, .04);
+}
+
+.library-catalog-page .library-page-hero,
+.library-catalog-page .library-page-toolbar {
+  border-radius: 4px;
+  border-color: rgba(255, 255, 255, .1);
+  background: rgba(20, 20, 20, .55);
+}
+
+.library-catalog-page .library-page-chip {
+  border-radius: 4px;
+}
+
+.library-catalog-page .library-page-grid {
+  gap: 8px;
+}
+
+.library-catalog-page .library-search-field {
+  border-radius: 4px;
+  background: #141414;
+  border-color: rgba(255, 255, 255, .18);
 }
 
 @media (prefers-reduced-motion: reduce) {

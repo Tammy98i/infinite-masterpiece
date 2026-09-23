@@ -23,11 +23,11 @@ export const QuizView: React.FC = () => {
     <div className="library-catalog-page min-h-screen text-white pt-28 pb-24 px-4 sm:px-8 max-w-6xl mx-auto text-right">
       
       <div className="text-center max-w-2xl mx-auto mb-12">
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-gradient-to-r from-primary/20 to-purple-500/20 border border-primary/40 text-primary-light text-xs font-black uppercase mb-3">
-          <Sparkles className="w-4 h-4 animate-spin" style={{ animationDuration: '6s' }} />
+        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-white/10 text-white/80 text-xs font-semibold uppercase mb-3">
+          <Sparkles className="w-4 h-4" />
           <span>מנוע המלצות חכם VOD</span>
         </div>
-        <h1 className="text-3xl sm:text-5xl font-black text-white mb-4">
+        <h1 className="text-3xl sm:text-5xl font-semibold text-white mb-4">
           מה מתאים לי לראות עכשיו?
         </h1>
         <p className="text-base sm:text-lg text-zinc-400 leading-relaxed">
@@ -36,7 +36,7 @@ export const QuizView: React.FC = () => {
       </div>
 
       {/* Question 1: Mood */}
-      <div className="glass rounded-3xl p-8 mb-8 border border-white/10">
+      <div className="library-page-hero p-8 mb-8 border">
         <h2 className="text-xl font-bold text-white mb-6">
           1. איך אתם מרגישים היום? (בחרו את המצב הכי קרוב)
         </h2>
@@ -48,10 +48,10 @@ export const QuizView: React.FC = () => {
               <button
                 key={item.mood}
                 onClick={() => setSelectedMood(item.mood)}
-                className={`p-6 rounded-2xl text-right transition-all flex items-center justify-between border card-hover ${
+                className={`p-6 rounded-[4px] text-right transition-all flex items-center justify-between border ${
                   isSelected
-                    ? 'bg-gradient-to-l from-primary/25 to-primary/5 border-primary text-white shadow-xl shadow-primary/10'
-                    : 'bg-white/5 border-white/5 text-zinc-300 hover:border-white/20'
+                    ? 'bg-white/10 border-white text-white'
+                    : 'bg-white/5 border-white/10 text-zinc-300 hover:border-white/25'
                 }`}
               >
                 <div>
@@ -65,8 +65,8 @@ export const QuizView: React.FC = () => {
                   </div>
                 </div>
 
-                <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${
-                  isSelected ? 'bg-primary text-black' : 'bg-black/40 text-primary-light'
+                <div className={`w-10 h-10 rounded-[4px] flex items-center justify-center ${
+                  isSelected ? 'bg-white text-[#141414]' : 'bg-black/40 text-white/70'
                 }`}>
                   <Sparkles className="w-5 h-5" />
                 </div>
@@ -78,7 +78,7 @@ export const QuizView: React.FC = () => {
 
       {/* Question 2: Time */}
       {selectedMood && (
-        <div className="glass rounded-3xl p-8 mb-12 border border-white/10 animate-in fade-in slide-in-from-top-4">
+        <div className="library-page-hero p-8 mb-12 border">
           <h2 className="text-xl font-bold text-white mb-6">
             2. כמה זמן פנוי יש לכם לצפייה כרגע?
           </h2>
@@ -86,8 +86,8 @@ export const QuizView: React.FC = () => {
           <div className="flex flex-wrap gap-4">
             <button
               onClick={() => setSelectedTime('short')}
-              className={`px-6 py-4 rounded-2xl font-bold text-sm transition-all flex items-center gap-2 border ${
-                selectedTime === 'short' ? 'bg-primary text-black border-primary-light shadow-lg' : 'bg-white/5 text-zinc-300 border-white/10 hover:bg-white/10'
+              className={`px-6 py-4 rounded-[4px] font-semibold text-sm transition-all flex items-center gap-2 border ${
+                selectedTime === 'short' ? 'bg-white text-[#141414] border-white' : 'bg-white/5 text-zinc-300 border-white/10 hover:bg-white/10'
               }`}
             >
               <Zap className="w-4 h-4" />
@@ -96,8 +96,8 @@ export const QuizView: React.FC = () => {
 
             <button
               onClick={() => setSelectedTime('any')}
-              className={`px-6 py-4 rounded-2xl font-bold text-sm transition-all flex items-center gap-2 border ${
-                selectedTime === 'any' ? 'bg-primary text-black border-primary-light shadow-lg' : 'bg-white/5 text-zinc-300 border-white/10 hover:bg-white/10'
+              className={`px-6 py-4 rounded-[4px] font-semibold text-sm transition-all flex items-center gap-2 border ${
+                selectedTime === 'any' ? 'bg-white text-[#141414] border-white' : 'bg-white/5 text-zinc-300 border-white/10 hover:bg-white/10'
               }`}
             >
               <Compass className="w-4 h-4" />
@@ -111,7 +111,7 @@ export const QuizView: React.FC = () => {
       {selectedMood && (
         <div className="animate-in fade-in duration-500">
           <div className="flex items-center justify-between border-b border-white/10 pb-4 mb-8">
-            <h2 className="text-2xl font-heading text-primary-light">
+            <h2 className="text-2xl font-semibold text-white">
               התכנים המדויקים ביותר עבורכם ({recommendedCourses.length || courses.slice(0, 3).length})
             </h2>
             <button
@@ -129,16 +129,16 @@ export const QuizView: React.FC = () => {
             if (!featured) return null;
             return (
               <>
-                <div className="mb-8 glass rounded-3xl p-6 border border-primary/30 bg-gradient-to-br from-primary/10 to-transparent">
-                  <div className="text-xs font-bold text-primary-light mb-2">ההמלצה המובילה שלנו</div>
+                <div className="mb-8 library-page-hero p-6 border">
+                  <div className="text-xs font-semibold text-white/70 mb-2">ההמלצה המובילה שלנו</div>
                   <div className="flex flex-col sm:flex-row gap-6 items-center">
-                    <img src={featured.coverImage} alt={featured.title} className="w-full sm:w-48 aspect-video object-cover rounded-2xl" />
+                    <img src={featured.coverImage} alt={featured.title} className="w-full sm:w-48 aspect-video object-cover rounded-[4px]" />
                     <div className="flex-1 text-right">
-                      <h3 className="text-xl font-heading text-white mb-2">{featured.title}</h3>
+                      <h3 className="text-xl font-semibold text-white mb-2">{featured.title}</h3>
                       <p className="text-sm text-zinc-400 mb-4 line-clamp-2">{featured.subtitle}</p>
                       <button
                         onClick={() => setView('watch', { courseId: featured.id, episodeId: featured.episodes[0]?.id })}
-                        className="px-6 py-3 rounded-full bg-primary text-black font-black flex items-center gap-2 focus-ring"
+                        className="library-hero-play px-6 py-3 font-semibold flex items-center gap-2 focus-ring"
                       >
                         <Play className="w-4 h-4 fill-black" />
                         התחילו לצפות עכשיו

@@ -7,6 +7,7 @@ import { formatClock } from '../utils/time';
 import { trackEvent } from '../utils/analytics';
 import { EmptyState } from '../components/LibraryStates';
 import { EMPTY_FILTERS, SearchFilters, type SearchFilterState } from '../components/SearchFilters';
+import { CourseCard } from '../components/CourseCard';
 
 const ACCESS_LABEL = {
   open: 'פתוח',
@@ -70,7 +71,7 @@ export const SearchView: React.FC = () => {
               }
             }}
             placeholder="שם הרצאה, מרצה או נושא"
-            className="w-full bg-zinc-900 border border-[#b79043]/50 rounded-full py-4 pr-12 pl-6 text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 min-h-11"
+            className="library-search-field w-full border py-4 pr-12 pl-6 text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 min-h-11"
             autoFocus
             aria-label="חיפוש בספרייה"
             enterKeyHint="search"
@@ -88,32 +89,22 @@ export const SearchView: React.FC = () => {
           <SearchFilters value={filters} onChange={setFilters} activeCount={activeFilterCount} />
 
           {results.length > 0 ? (
-            <ul className="grid min-w-0 gap-4" role="list">
-              {results.map((course) => {
+            <ul className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5" role="list">
+              {results.map((course, index) => {
                 const instructor = instructors.find((i) => i.id === course.instructorId);
                 const duration = course.episodes.reduce((s, ep) => s + ep.duration, 0);
                 const access = getCardAccessState(course, user);
                 return (
                   <li key={course.id} className="min-w-0">
-                    <button
-                      type="button"
-                      onClick={() => openResult(course.id)}
-                      aria-label={course.title}
-                      className="w-full min-w-0 flex items-center gap-3 sm:gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-3 text-right hover:border-[#b79043]/50 transition-colors duration-500 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] cursor-pointer"
-                    >
-                      <img
-                        src={course.coverImage}
-                        alt=""
-                        aria-hidden
-                        className="w-24 sm:w-36 aspect-video object-cover rounded-lg shrink-0"
-                      />
-                      <div className="min-w-0 flex-1">
-                        <div className="text-[15px] font-semibold text-white truncate">{course.title}</div>
-                        <div className="text-[13px] text-white/55 mt-1 truncate">
-                          {instructor?.name || 'מרצה'} · {formatClock(duration)} · {ACCESS_LABEL[access]}
-                        </div>
-                      </div>
-                    </button>
+                    <CourseCard
+                      course={course}
+                      fullWidth
+                      sectionName="search"
+                      position={index}
+                    />
+                    <p className="sr-only">
+                      {instructor?.name || 'מרצה'} · {formatClock(duration)} · {ACCESS_LABEL[access]}
+                    </p>
                   </li>
                 );
               })}

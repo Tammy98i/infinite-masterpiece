@@ -90,7 +90,7 @@ export const InstructorProfileView: React.FC = () => {
 
         <h2 className="text-sm text-white/40 mb-6">הרצאות בספרייה</h2>
         {lectures.length > 0 ? (
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 justify-items-center sm:justify-items-stretch">
+          <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 justify-items-stretch">
             {lectures.map((course) => (
               <CourseCard key={course.id} course={course} fullWidth />
             ))}
