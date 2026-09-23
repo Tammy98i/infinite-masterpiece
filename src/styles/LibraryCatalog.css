@@ -176,12 +176,14 @@
   width: 100%;
 }
 
-.library-course-billboard {
+.library-course-billboard,
+.library-instructor-billboard {
   min-height: 58vh;
 }
 
 @media (min-width: 768px) {
-  .library-course-billboard {
+  .library-course-billboard,
+  .library-instructor-billboard {
     min-height: 70vh;
   }
 }

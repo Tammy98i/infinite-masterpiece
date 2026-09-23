@@ -78,7 +78,11 @@ export const Navbar: React.FC = () => {
         role="banner"
         aria-label="כותרת הספרייה"
         className={`editorial-library-header fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled || (currentView !== 'home' && currentView !== 'course')
+          isScrolled ||
+          (currentView !== 'home' &&
+            currentView !== 'course' &&
+            currentView !== 'instructors' &&
+            currentView !== 'instructor')
             ? 'is-solid bg-[#0a0a0acc] backdrop-blur-md border-b border-white/10 shadow-xl'
             : 'is-over-hero bg-gradient-to-b from-black/80 via-black/40 to-transparent'
         }`}

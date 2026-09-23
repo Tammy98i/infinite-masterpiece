@@ -49,13 +49,21 @@ export const LecturersRow: React.FC = () => {
             aria-label={`${inst.name}, ${inst.title}`}
             className="w-[120px] sm:w-[140px] shrink-0 text-right group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11"
           >
-            <div className="aspect-[16/9] overflow-hidden rounded-[4px] mb-2">
-              <img
-                src={inst.avatarUrl}
-                alt=""
-                aria-hidden
-                className="w-full h-full object-cover object-top group-hover:brightness-110 transition-[filter] duration-200 motion-reduce:transition-none"
-              />
+            <div className="relative aspect-[16/9] overflow-hidden rounded-[4px] mb-2 bg-zinc-900">
+              {inst.avatarUrl ? (
+                <img
+                  src={inst.avatarUrl}
+                  alt=""
+                  aria-hidden
+                  className="w-full h-full object-cover object-top group-hover:brightness-110 transition-[filter] duration-200 motion-reduce:transition-none"
+                />
+              ) : (
+                <div className="w-full h-full flex items-center justify-center bg-[#1a1a1a] text-[#b79043] text-2xl font-semibold" aria-hidden>
+                  {inst.name.trim().charAt(0) || 'מ'}
+                </div>
+              )}
+              <div className="absolute inset-0 bg-black/25 pointer-events-none" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
             </div>
             <div className="text-[13px] font-medium text-white truncate">{inst.name}</div>
             <div className="text-[12px] text-white/55 mt-0.5 truncate">{inst.title}</div>
