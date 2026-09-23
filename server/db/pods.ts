@@ -150,8 +150,10 @@ export function isApproved88(db: DatabaseSync, email: string) {
   return Boolean(row);
 }
 
-export function is88Eligible(db: DatabaseSync, user: Pick<UserRow, 'email' | 'subscription_plan'>) {
-  return user.subscription_plan === 'premium_88' || isApproved88(db, user.email);
+export function is88Eligible(db: DatabaseSync, user: Pick<UserRow, 'email' | 'subscription_plan' | 'role'>) {
+  if (isApproved88(db, user.email)) return true;
+  const staff = user.role === 'admin' || user.role === 'lecturer' || user.role === 'instructor';
+  return user.subscription_plan === 'premium_88' && !staff;
 }
 
 function eligibleKinds(db: DatabaseSync, user: UserRow): PodKind[] {
@@ -453,7 +455,7 @@ function publicMembers(db: DatabaseSync, podId: string) {
      FROM pod_members m JOIN users u ON u.id = m.user_id
      WHERE m.pod_id = ? AND m.status IN ('invited', 'active', 'paused')
      ORDER BY m.pod_role DESC, u.full_name`
-  ).all() as Array<{ full_name: string; status: PodMemberStatus; pod_role: PodRole }>;
+  ).all(podId) as Array<{ full_name: string; status: PodMemberStatus; pod_role: PodRole }>;
   return rows
     .filter((row) => row.pod_role !== 'captain')
     .map((row) => ({

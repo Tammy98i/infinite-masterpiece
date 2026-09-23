@@ -127,6 +127,7 @@ test('admin assign, queue rules, member home, task, captain, questions', () => {
     assert.equal(home.pods[0].task?.submittedCount, 1);
     assert.equal(home.pods[0].questions.length, 1);
     assert.equal(home.pods[0].isCaptain, false);
+    assert.ok(home.pods[0].members.some((member) => member.firstName === 'נועה'));
 
     const captainHome = getMyPodsState(db, 'gal');
     assert.equal(captainHome.pods[0].isCaptain, true);
