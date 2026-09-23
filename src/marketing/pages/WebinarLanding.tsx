@@ -31,7 +31,7 @@ import { captureUtmFromSearch } from '../../utils/utm';
 import { getWebinarPhase } from '../../utils/webinarTime';
 import { TeamPhoto } from '../../components/TeamPhoto';
 import { TeamGalaxy } from '../components/galaxy/TeamGalaxy';
-import { NeuralChevron, WebinarNeuralHero } from '../components/WebinarNeuralHero';
+import { WebinarNeuralHero } from '../components/WebinarNeuralHero';
 import './WebinarLanding.css';
 import './WebinarEditorialCinema.css';
 import '../components/WebinarNeuralHero.css';
@@ -255,11 +255,8 @@ export function WebinarLanding() {
           <ul className="webinar-neural-bottlenecks">
             {WEBINAR_BOTTLENECKS.map((item) => (
               <li key={item.title}>
-                <NeuralChevron />
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </div>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
               </li>
             ))}
           </ul>
@@ -307,7 +304,12 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <TeamGalaxy className="webinar-island" />
+      <TeamGalaxy
+        className="webinar-island"
+        eyebrow="האנשים מאחורי החזון"
+        title="הצוות שמחזיק את המערכת"
+        subtitle="כל אחד מביא כוח אחר. יחד הם יוצרים מערכת אחת."
+      />
 
       <section id="webinar-fit" className="webinar-neural-slide webinar-island">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -315,8 +317,8 @@ export function WebinarLanding() {
             <SectionLabel>התאמה</SectionLabel>
             <SectionTitle>הוובינר הזה מתאים לך אם…</SectionTitle>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_80px_1fr] gap-6 items-stretch">
-            <div className="glass-card p-6 text-right">
+          <div className="webinar-fit-grid grid grid-cols-1 lg:grid-cols-[1.15fr_48px_.85fr] gap-6 items-stretch">
+            <div className="glass-card webinar-fit-yes p-6 text-right">
               <h3 className="text-lg text-white mb-4 font-light text-center">מתאים אם…</h3>
               <ul className="space-y-3">
                 {WEBINAR_FIT_YES.map((item) => (
@@ -330,7 +332,7 @@ export function WebinarLanding() {
             <div className="hidden lg:flex items-stretch justify-center" aria-hidden>
               <div className="w-px bg-gradient-to-b from-transparent via-[#dfc47d]/70 to-transparent" />
             </div>
-            <div className="glass-card p-6 text-right">
+            <div className="glass-card webinar-fit-no p-6 text-right">
               <h3 className="text-lg text-white mb-4 font-light text-center">לא מתאים אם…</h3>
               <ul className="space-y-3">
                 {WEBINAR_FIT_NO.map((item) => (
