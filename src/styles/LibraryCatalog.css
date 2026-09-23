@@ -45,10 +45,6 @@
   background: #141414 !important;
 }
 
-.vod-app.library-catalog .editorial-library-header {
-  height: 68px !important;
-}
-
 .vod-app.library-catalog .editorial-library-header.is-over-hero {
   background: linear-gradient(180deg, rgba(0, 0, 0, .72), transparent) !important;
   border-bottom-color: transparent !important;
