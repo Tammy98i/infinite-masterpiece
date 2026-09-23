@@ -1,7 +1,10 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Trophy, Megaphone, ScrollText, Infinity, ArrowLeft } from 'lucide-react';
+import { Trophy, Megaphone, ScrollText, Infinity, ArrowLeft, Check } from 'lucide-react';
+import { ProgramHighlights } from '../components/ProgramHighlights';
+import { PROGRAM_INCLUDED } from '../data/programIncluded';
+import './PricingFlowPolish.css';
 
 const STEPS = [
   {
@@ -39,9 +42,41 @@ export function Journey({ embedded = false }: { embedded?: boolean }) {
     if (!embedded) window.scrollTo(0, 0);
   }, [embedded]);
 
+  if (embedded) {
+    return (
+      <div className="pricing-flow-page is-compact w-full text-center">
+        <section id="whats-included" className="pricing-island py-5 is-in">
+          <div className="mx-auto max-w-[1100px] px-4 sm:px-6 lg:px-8">
+            <p className="mb-4 text-[11px] uppercase tracking-[.25em] text-[#b79043]">אותו ערך בשני המסלולים</p>
+            <ul className="pricing-included grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+              {PROGRAM_INCLUDED.map(item => (
+                <li key={item} className="glass-card flex items-start gap-3 p-5 text-right text-sm text-white/70">
+                  <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#b79043]" />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+
+        <section id="journey-preview" className="pricing-island mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 py-5 is-in">
+          <p className="mb-4 text-[11px] uppercase tracking-[.25em] text-[#b79043]">33 הימים</p>
+          <ProgramHighlights />
+        </section>
+
+        <div className="flex justify-center px-4 pb-2">
+          <Link to="/#pricing" className="btn-gold text-black w-full sm:w-auto px-10 py-4 text-sm">
+            <span>להצטרפות למסע</span>
+            <ArrowLeft className="w-4 h-4" />
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="w-full">
-      <section className={embedded ? 'pt-6 pb-10 md:pb-12' : 'pt-32 pb-16 md:pt-40 md:pb-20'}>
+      <section className="pt-32 pb-16 md:pt-40 md:pb-20">
         <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8">
           <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-6 font-semibold">התהליך</p>
           <h1 className="text-4xl md:text-6xl font-light text-white leading-tight mb-6">מסע 33 הימים.</h1>
@@ -90,11 +125,9 @@ export function Journey({ embedded = false }: { embedded?: boolean }) {
               <span>להצטרפות למסע</span>
               <ArrowLeft className="w-4 h-4" />
             </Link>
-            {embedded ? null : (
             <Link to="/" className="text-sm text-white/40 hover:text-[#b79043] transition-colors">
               חזרה לדף הבית
             </Link>
-            )}
           </div>
         </div>
       </section>

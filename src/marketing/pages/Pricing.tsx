@@ -4,15 +4,10 @@ import { Link } from 'react-router-dom';
 import { EntryTrackCards } from '../components/EntryTrackCards';
 import { ProgramHighlights } from '../components/ProgramHighlights';
 import { SectionNav } from '../components/SectionNav';
+import { PROGRAM_INCLUDED } from '../data/programIncluded';
 import { FAQS } from './FAQPage';
 import './PricingFlowPolish.css';
 
-const INCLUDED = [
-  'תוכנית ליווי ביצועית בת 33 ימים',
-  'ארבעה שלבים: מכירה, שיווק, תשתיות וסקייל',
-  'גישה מלאה למיזם ולספריית אינסוף',
-  'שידורים, משימות, קפטנים וקהילה',
-];
 const PRICE_FAQS = FAQS.filter((_, index) => [3, 5, 6, 7, 8].includes(index));
 
 export function Pricing({ embedded = false }: { embedded?: boolean }) {
@@ -69,16 +64,13 @@ export function Pricing({ embedded = false }: { embedded?: boolean }) {
         <EntryTrackCards />
       </section>
 
-      <section id="whats-included" className={`pricing-island ${embedded ? 'py-5' : 'section-block'}`}>
-        <div className={`mx-auto max-w-[1100px] px-4 sm:px-6 lg:px-8 ${embedded ? '' : 'grid gap-10 text-right lg:grid-cols-[.8fr_1.2fr] lg:items-center'}`}>
-          {embedded ? (
-            <p className="mb-4 text-[11px] uppercase tracking-[.22em] text-[#b79043]">אותו ערך בשני המסלולים</p>
-          ) : (
-            <div><p className="mb-4 text-[11px] uppercase tracking-[.25em] text-[#b79043]">אותו ערך בשני המסלולים</p><h2 className="mb-5 text-3xl font-heading text-white md:text-4xl">מה מקבלים בפועל?</h2><p className="font-light leading-relaxed text-white/50">לא עוד אוסף שיעורים. התהליך מחבר בין למידה, ביצוע, מדידה וקהילה כדי לבנות מערכת עבודה שחוזרת על עצמה.</p></div>
-          )}
-          <ul className={`pricing-included ${embedded ? 'mx-auto grid max-w-3xl gap-2 text-right sm:grid-cols-2' : 'grid gap-3 sm:grid-cols-2'}`}>
-            {INCLUDED.map(item => (
-              <li key={item} className={embedded ? 'flex items-start gap-2 text-sm text-white/70' : 'glass-card flex items-start gap-3 p-5 text-sm text-white/70'}>
+      {embedded ? null : (
+      <section id="whats-included" className="pricing-island section-block">
+        <div className="mx-auto grid max-w-[1100px] gap-10 px-4 text-right sm:px-6 lg:grid-cols-[.8fr_1.2fr] lg:items-center lg:px-8">
+          <div><p className="mb-4 text-[11px] uppercase tracking-[.25em] text-[#b79043]">אותו ערך בשני המסלולים</p><h2 className="mb-5 text-3xl font-heading text-white md:text-4xl">מה מקבלים בפועל?</h2><p className="font-light leading-relaxed text-white/50">לא עוד אוסף שיעורים. התהליך מחבר בין למידה, ביצוע, מדידה וקהילה כדי לבנות מערכת עבודה שחוזרת על עצמה.</p></div>
+          <ul className="pricing-included grid gap-3 sm:grid-cols-2">
+            {PROGRAM_INCLUDED.map(item => (
+              <li key={item} className="glass-card flex items-start gap-3 p-5 text-sm text-white/70">
                 <Check className="mt-0.5 h-4 w-4 shrink-0 text-[#b79043]" />
                 <span>{item}</span>
               </li>
@@ -86,20 +78,17 @@ export function Pricing({ embedded = false }: { embedded?: boolean }) {
           </ul>
         </div>
       </section>
+      )}
 
-      <section id="journey-preview" className={`pricing-island mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8 ${embedded ? 'py-5' : 'section-block'}`}>
-        <p className={`uppercase tracking-[.22em] text-[#b79043] ${embedded ? 'mb-3 text-[11px]' : 'mb-4 text-[11px]'}`}>33 הימים</p>
-        {embedded ? null : (
-          <>
-            <h2 className="mb-4 text-3xl font-heading text-white md:text-4xl">33 ימים. ארבעה שלבים ברורים.</h2>
-            <p className="mx-auto mb-10 max-w-2xl font-light text-white/50">ממכירה ראשונה ועד תשתיות, סקייל וקהילה — כל שלב נשען על השלב שלפניו.</p>
-          </>
-        )}
+      {embedded ? null : (
+      <section id="journey-preview" className="pricing-island section-block mx-auto max-w-[1200px] px-4 sm:px-6 lg:px-8">
+        <p className="mb-4 text-[11px] uppercase tracking-[.25em] text-[#b79043]">33 הימים</p>
+        <h2 className="mb-4 text-3xl font-heading text-white md:text-4xl">33 ימים. ארבעה שלבים ברורים.</h2>
+        <p className="mx-auto mb-10 max-w-2xl font-light text-white/50">ממכירה ראשונה ועד תשתיות, סקייל וקהילה — כל שלב נשען על השלב שלפניו.</p>
         <ProgramHighlights />
-        {embedded ? null : (
-          <Link to="/#journey" className="mt-8 inline-flex min-h-11 items-center text-sm text-[#b79043] hover:text-[#dfc47d]">לכל פירוט המסע</Link>
-        )}
+        <Link to="/#journey" className="mt-8 inline-flex min-h-11 items-center text-sm text-[#b79043] hover:text-[#dfc47d]">לכל פירוט המסע</Link>
       </section>
+      )}
 
       <section className={`pricing-trust pricing-island mx-auto max-w-[900px] px-4 sm:px-6 lg:px-8 ${embedded ? 'py-4' : 'py-12'}`}>
         {embedded ? (
