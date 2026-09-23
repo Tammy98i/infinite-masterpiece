@@ -28,3 +28,4 @@ alwaysApply: true
 גישה לתכנים נעולה: רק דרך הרשמה למסלול / מנוי ספרייה. לא תשלום לקורס בודד.
 
 מקור האפיון: `docs/SPEC-VOD-PLATFORM.md`
+אפיון Pods (שלב 2, לא לבנייה): `docs/SPEC-PODS.md`

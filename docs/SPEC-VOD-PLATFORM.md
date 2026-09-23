@@ -143,6 +143,8 @@ Overview · Content Analytics · Users · Lecturers (תור אישור) · Found
 
 `users` · `subscriptions` · `founders` · `lecturers` · `lecturer_applications` · `categories` · `videos` · `video_progress` · `watch_events` · `user_list` · `payments` · `analytics_events`
 
+תוספת לשלב 2 — Pods: ראו [`SPEC-PODS.md`](./SPEC-PODS.md) §7 (`pods` · `pod_members` · `pod_tasks` · `pod_task_submissions` · `pod_questions` · `pod_sessions`).
+
 רמות גישה לסרטון: `free` | `premium` | `premium_88` | `admin_only` | `draft`
 
 סטטוס מנוי: `free` | `trial` | `premium` | `premium_88` | `cancelled`
@@ -193,6 +195,8 @@ Overview · Content Analytics · Users · Lecturers (תור אישור) · Found
 ## שלב 2 (לא עכשיו)
 
 תגובות · שאלות למרצה · תשלומים למרצים · Revenue Share · AI recommendation · אפליקציה · Push · Community · Pods · Gamification · Certificates · מייל/וואטסאפ · מנוע הגרלות מלא
+
+אפיון Pods (לא לבנייה עד הוצאה מסעיף זה): [`SPEC-PODS.md`](./SPEC-PODS.md). סקיצה: [`SPEC-PODS-SKETCH.md`](./SPEC-PODS-SKETCH.md).
 
 ---
 
