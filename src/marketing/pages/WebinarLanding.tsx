@@ -13,7 +13,6 @@ import {
   WEBINAR_BOTTLENECKS,
   WEBINAR_CTA_ENDED,
   WEBINAR_CTA_REGISTER,
-  WEBINAR_CTA_NEXT_CYCLE,
   WEBINAR_DIFFERENCE_POINTS,
   WEBINAR_ENDED_NOTE,
   WEBINAR_FIT_NO,
@@ -370,23 +369,15 @@ export function WebinarLanding() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(183, 144, 67,0.16),transparent_70%)]" />
         </div>
         <div className="relative z-10 max-w-[920px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          {eventEnded ? (
-            <div id={WEBINAR_REGISTER_ID} className="scroll-mt-24">
-              <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4 max-w-2xl mx-auto">
-                {WEBINAR_CTA_ENDED}
-              </p>
-              <p className="text-sm sm:text-base text-white/70 font-light mb-8">{WEBINAR_ENDED_NOTE}</p>
-              <Link to="/pricing" className="btn-gold text-black">{WEBINAR_CTA_NEXT_CYCLE}</Link>
-            </div>
-          ) : (
-            <>
           <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4 max-w-2xl mx-auto">
-            זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.
+            {eventEnded ? WEBINAR_CTA_ENDED : 'זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.'}
           </p>
-          <p className="text-sm sm:text-base text-[#b79043] font-light mb-8">מחכים לך בוובינר. גל, תמי וגלב.</p>
+          <p className="text-sm sm:text-base text-[#b79043] font-light mb-8">
+            {eventEnded ? WEBINAR_ENDED_NOTE : 'מחכים לך בוובינר. גל, תמי וגלב.'}
+          </p>
           <aside
             id={WEBINAR_REGISTER_ID}
-            aria-label="הרשמה לוובינר"
+            aria-label={eventEnded ? 'הרשמה למחזור הבא' : 'הרשמה לוובינר'}
             className={`${REGISTER_CARD_CLASS} webinar-stage-register-card mx-auto w-full max-w-xl md:max-w-2xl lg:max-w-3xl text-start scroll-mt-24`}
           >
             <WebinarRegisterCard
@@ -395,8 +386,6 @@ export function WebinarLanding() {
               headlineParts={headlineParts}
             />
           </aside>
-            </>
-          )}
           <p className="flex flex-wrap items-center justify-center gap-4 text-xs text-[#b79043]/80 font-light mt-8">
             <Link to="/terms" className="hover:text-[#dfc47d] min-h-11 inline-flex items-center">
               תנאי שימוש

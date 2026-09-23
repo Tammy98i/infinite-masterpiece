@@ -101,6 +101,8 @@ body { background: var(--editorial-ink); }
 
 .editorial-marketing-shell main.site-main { padding-top: var(--site-header-h); }
 .editorial-marketing-shell.video-home main.site-main { padding-top: 0; }
+.editorial-marketing-shell.webinar-isolated { --site-header-h: 0px; }
+.editorial-marketing-shell.webinar-isolated main.site-main { padding-top: 0; }
 
 .editorial-site-header .header-row {
   max-width: 1400px;

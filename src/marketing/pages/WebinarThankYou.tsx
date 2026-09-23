@@ -169,7 +169,7 @@ export function WebinarThankYou() {
   };
 
   return (
-    <div className="min-h-screen relative pt-32 pb-32 flex items-center justify-center">
+    <div className="min-h-screen relative pt-16 pb-32 flex items-center justify-center">
       <div className="absolute inset-0 bg-gradient-to-b from-[#0d0b08]/35 via-transparent to-[#0d0b08]/50" />
 
       <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 text-center">
@@ -193,7 +193,7 @@ export function WebinarThankYou() {
           </p>
 
           {phase === 'ended' ? (
-            <Link to="/pricing" className="btn-gold text-black mb-8 w-full px-5 py-3 text-sm">
+            <Link to="/webinar#webinar-register" className="btn-gold text-black mb-8 w-full px-5 py-3 text-sm">
               {WEBINAR_CTA_NEXT_CYCLE}
             </Link>
           ) : null}
@@ -351,10 +351,10 @@ export function WebinarThankYou() {
           )}
 
           <Link
-            to="/"
+            to="/webinar"
             className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 text-sm text-white/75 hover:text-white min-h-11 cursor-pointer transition-colors duration-200 mb-3"
           >
-            חזרה לאתר
+            חזרה לוובינר
           </Link>
 
           {phase === 'ended' ? null : (
