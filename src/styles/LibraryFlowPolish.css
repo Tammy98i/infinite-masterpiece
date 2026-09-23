@@ -12,7 +12,7 @@
 }
 
 .vod-app:has(.library-flow-page) {
-  background: rgba(5, 10, 20, .28);
+  background: rgba(5, 10, 20, .16);
 }
 
 .vod-app:has(.library-flow-page) main {
