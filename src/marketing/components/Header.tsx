@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, Search, X, Infinity as InfinityIcon } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { Menu, X, Infinity as InfinityIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AccountMenu } from '../../components/AccountMenu';
 import { scrollToWebinarForm, trackWebinarCta } from '../../utils/analytics';
@@ -14,11 +13,9 @@ import {
   WEBINAR_REGISTER_ID,
 } from '../../constants/webinarPage';
 import { useWebinarPhase } from '../hooks/useWebinarPhase';
-import { SiteSearch } from './SiteSearch';
 
 export function Header() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
   const menuRef = useRef<HTMLDivElement>(null);
   const burgerRef = useRef<HTMLButtonElement>(null);
@@ -169,18 +166,6 @@ export function Header() {
   };
 
   useEffect(() => {
-    const handleSearch = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement;
-      if ((event.key === '/' || ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k')) && !['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
-        event.preventDefault();
-        setSearchOpen(true);
-      }
-    };
-    window.addEventListener('keydown', handleSearch);
-    return () => window.removeEventListener('keydown', handleSearch);
-  }, []);
-
-  useEffect(() => {
     setMobileMenuOpen(false);
   }, [location.pathname, location.hash]);
 
@@ -203,10 +188,6 @@ export function Header() {
     };
   }, [mobileMenuOpen]);
 
-  const navLinks = [
-    { name: 'וובינר', to: '/webinar', active: onWebinar },
-  ];
-
   const goToWebinarForm = () => {
     trackWebinarCta('header');
     if (onWebinarLanding) {
@@ -217,7 +198,6 @@ export function Header() {
   };
 
   return (
-    <>
     <header
       role="banner"
       aria-label="כותרת האתר"
@@ -235,23 +215,9 @@ export function Header() {
             </div>
           </Link>
 
-          <nav className="header-links hidden lg:flex items-center justify-center gap-6 xl:gap-10 min-w-0" aria-label="ניווט ראשי">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.to}
-                className={cn(
-                  'font-light tracking-wide transition-colors duration-200',
-                  link.active ? 'font-medium text-[#dfc47d]' : 'text-[#b79043] hover:text-[#dfc47d]'
-                )}
-              >
-                {link.name}
-              </Link>
-            ))}
-          </nav>
+          <div className="header-links min-w-0" aria-hidden="true" />
 
           <div className="header-actions flex items-center justify-end gap-2 sm:gap-3 shrink-0">
-            <button type="button" onClick={() => setSearchOpen(true)} className="flex min-h-11 min-w-11 cursor-pointer items-center justify-center rounded-full text-white/60 transition-colors duration-200 hover:bg-white/5 hover:text-white" aria-label="חיפוש באתר"><Search className="h-5 w-5" strokeWidth={1.5} /></button>
             <div className="header-desktop hidden lg:flex items-center gap-3">
               {headerCta()}
               <Link
@@ -297,20 +263,7 @@ export function Header() {
             className="header-panel lg:hidden absolute top-full left-0 right-0 bg-[#0d0b08]/95 backdrop-blur-3xl border-b border-white/[0.05]"
           >
             <nav className="px-6 py-8 flex flex-col gap-6" aria-label="ניווט נייד">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.to}
-                  className={cn(
-                    'inline-flex min-h-11 items-center text-lg font-light',
-                    link.active ? 'text-[#dfc47d]' : 'text-white/90 hover:text-white'
-                  )}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <div className="pt-6 border-t border-white/[0.05] flex flex-col gap-4">
+              <div className="flex flex-col gap-4">
                 {mobileHeaderCta()}
                 <Link
                   to="/library"
@@ -325,7 +278,5 @@ export function Header() {
         )}
       </AnimatePresence>
     </header>
-    <SiteSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
-    </>
   );
 }
