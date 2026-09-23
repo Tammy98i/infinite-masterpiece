@@ -23,26 +23,24 @@ export const InstructorsView: React.FC = () => {
   return (
     <div className="library-catalog-page library-instructor-index min-h-screen text-white pb-24">
       <header className="library-instructor-billboard relative min-h-[58vh] md:min-h-[70vh] flex items-end overflow-hidden pt-24 pb-16 md:pb-20">
-        <div className="absolute inset-0 select-none overflow-hidden">
-          {featured?.avatarUrl ? (
-            <img
-              src={featured.avatarUrl}
-              alt=""
-              aria-hidden
-              className="w-full h-full object-contain object-center bg-[#141414]"
-            />
-          ) : (
-            <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center text-[#b79043] text-7xl font-semibold" aria-hidden>
-              {featured ? portraitLetter(featured.name) : 'מ'}
-            </div>
-          )}
+        <div className="absolute inset-0 select-none overflow-hidden bg-[#141414]">
           <div className="library-course-veil-a absolute inset-0" />
           <div className="library-course-veil-b absolute inset-0" />
           <div className="library-course-veil-c absolute inset-0" />
           <div className="library-course-veil-d absolute inset-0" />
         </div>
 
-        <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 w-full text-right">
+        <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 w-full text-right grid gap-8 md:grid-cols-[minmax(220px,32%)_1fr] md:items-end">
+          <div className="library-instructor-frame relative w-full max-w-[360px] ms-auto md:ms-0">
+            {featured?.avatarUrl ? (
+              <img src={featured.avatarUrl} alt="" aria-hidden />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-[#1a1a1a] text-[#b79043] text-7xl font-semibold" aria-hidden>
+                {featured ? portraitLetter(featured.name) : 'מ'}
+              </div>
+            )}
+          </div>
+          <div>
           <p className="text-[13px] text-white/70 mb-3">המרצים של הספרייה</p>
           <h1 className="text-4xl sm:text-6xl lg:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight mb-4">
             מרצים
@@ -85,6 +83,7 @@ export const InstructorsView: React.FC = () => {
               לכל המרצים
             </button>
           </div>
+          </div>
         </div>
       </header>
 
@@ -102,9 +101,9 @@ export const InstructorsView: React.FC = () => {
                 aria-label={`${inst.name}, ${inst.title}, ${countLabel}`}
                 className="library-poster text-right min-h-11 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
               >
-                <div className="relative aspect-[3/4] overflow-hidden rounded-[4px] bg-[#141414]">
+                <div className="library-instructor-frame relative overflow-hidden rounded-[4px]">
                   {inst.avatarUrl ? (
-                    <img src={inst.avatarUrl} alt="" aria-hidden className="w-full h-full object-contain object-center" />
+                    <img src={inst.avatarUrl} alt="" aria-hidden />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-[#1a1a1a] text-[#b79043] text-3xl font-semibold" aria-hidden>
                       {portraitLetter(inst.name)}

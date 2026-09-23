@@ -181,10 +181,18 @@
   min-height: 58vh;
 }
 
-.library-instructor-billboard img {
+.library-instructor-frame {
+  display: block;
+  width: 100%;
+  aspect-ratio: 11 / 11;
+  background: #141414;
+}
+
+.library-instructor-frame img {
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   object-position: center;
-  background: #141414;
 }
 
 @media (min-width: 768px) {

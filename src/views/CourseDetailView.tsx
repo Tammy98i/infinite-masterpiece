@@ -895,12 +895,13 @@ export const CourseDetailView: React.FC = () => {
             </h2>
             {instructor ? (
               <div className="library-instructor-card p-4">
-                <img
-                  src={instructor.avatarUrl}
-                  alt={instructor.name ? `תמונת פרופיל: ${instructor.name}` : 'תמונת מרצה'}
-                  className="w-full max-w-[280px] aspect-[3/4] object-contain object-center rounded-[4px] mb-4 bg-[#141414]"
-                  loading="lazy"
-                />
+                <div className="library-instructor-frame w-full max-w-[280px] rounded-[4px] mb-4 overflow-hidden">
+                  <img
+                    src={instructor.avatarUrl}
+                    alt={instructor.name ? `תמונת פרופיל: ${instructor.name}` : 'תמונת מרצה'}
+                    loading="lazy"
+                  />
+                </div>
                 <button
                   type="button"
                   onClick={() => setView('instructor', { instructorId: instructor.id })}

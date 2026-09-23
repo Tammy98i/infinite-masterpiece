@@ -50,25 +50,27 @@ export const InstructorProfileView: React.FC = () => {
   return (
     <div className="library-catalog-page library-instructor-page min-h-screen text-white pb-28">
       <header className="library-instructor-billboard relative min-h-[58vh] md:min-h-[70vh] flex items-end overflow-hidden pt-24 pb-16 md:pb-20">
-        <div className="absolute inset-0 select-none overflow-hidden">
-          {instructor.avatarUrl ? (
-            <img
-              src={instructor.avatarUrl}
-              alt={instructor.name ? `תמונת פרופיל: ${instructor.name}` : 'תמונת מרצה'}
-              className="w-full h-full object-contain object-center bg-[#141414]"
-            />
-          ) : (
-            <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center text-[#b79043] text-7xl font-semibold" aria-hidden>
-              {portraitLetter(instructor.name)}
-            </div>
-          )}
+        <div className="absolute inset-0 select-none overflow-hidden bg-[#141414]">
           <div className="library-course-veil-a absolute inset-0" />
           <div className="library-course-veil-b absolute inset-0" />
           <div className="library-course-veil-c absolute inset-0" />
           <div className="library-course-veil-d absolute inset-0" />
         </div>
 
-        <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 w-full text-right">
+        <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 w-full text-right grid gap-8 md:grid-cols-[minmax(220px,32%)_1fr] md:items-end">
+          <div className="library-instructor-frame relative w-full max-w-[360px] ms-auto md:ms-0">
+            {instructor.avatarUrl ? (
+              <img
+                src={instructor.avatarUrl}
+                alt={instructor.name ? `תמונת פרופיל: ${instructor.name}` : 'תמונת מרצה'}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-[#1a1a1a] text-[#b79043] text-7xl font-semibold" aria-hidden>
+                {portraitLetter(instructor.name)}
+              </div>
+            )}
+          </div>
+          <div>
           <button
             type="button"
             onClick={() => setView('instructors')}
@@ -119,6 +121,7 @@ export const InstructorProfileView: React.FC = () => {
                 עמוד בצוות המיזם
               </Link>
             ) : null}
+          </div>
           </div>
         </div>
       </header>
