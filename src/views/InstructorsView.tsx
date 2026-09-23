@@ -29,7 +29,7 @@ export const InstructorsView: React.FC = () => {
               src={featured.avatarUrl}
               alt=""
               aria-hidden
-              className="w-full h-full object-cover object-top scale-105"
+              className="w-full h-full object-contain object-center bg-[#141414]"
             />
           ) : (
             <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center text-[#b79043] text-7xl font-semibold" aria-hidden>
@@ -102,9 +102,9 @@ export const InstructorsView: React.FC = () => {
                 aria-label={`${inst.name}, ${inst.title}, ${countLabel}`}
                 className="library-poster text-right min-h-11 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
               >
-                <div className="relative aspect-video overflow-hidden rounded-[4px] bg-zinc-900">
+                <div className="relative aspect-[3/4] overflow-hidden rounded-[4px] bg-[#141414]">
                   {inst.avatarUrl ? (
-                    <img src={inst.avatarUrl} alt="" aria-hidden className="w-full h-full object-cover object-top" />
+                    <img src={inst.avatarUrl} alt="" aria-hidden className="w-full h-full object-contain object-center" />
                   ) : (
                     <div className="w-full h-full flex items-center justify-center bg-[#1a1a1a] text-[#b79043] text-3xl font-semibold" aria-hidden>
                       {portraitLetter(inst.name)}

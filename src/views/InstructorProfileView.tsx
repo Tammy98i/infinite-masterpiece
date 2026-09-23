@@ -55,7 +55,7 @@ export const InstructorProfileView: React.FC = () => {
             <img
               src={instructor.avatarUrl}
               alt={instructor.name ? `תמונת פרופיל: ${instructor.name}` : 'תמונת מרצה'}
-              className="w-full h-full object-cover object-top scale-105"
+              className="w-full h-full object-contain object-center bg-[#141414]"
             />
           ) : (
             <div className="w-full h-full bg-[#1a1a1a] flex items-center justify-center text-[#b79043] text-7xl font-semibold" aria-hidden>

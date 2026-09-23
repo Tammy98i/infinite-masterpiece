@@ -898,7 +898,7 @@ export const CourseDetailView: React.FC = () => {
                 <img
                   src={instructor.avatarUrl}
                   alt={instructor.name ? `תמונת פרופיל: ${instructor.name}` : 'תמונת מרצה'}
-                  className="w-full aspect-video object-cover rounded-[4px] mb-4 max-w-[420px]"
+                  className="w-full max-w-[280px] aspect-[3/4] object-contain object-center rounded-[4px] mb-4 bg-[#141414]"
                   loading="lazy"
                 />
                 <button

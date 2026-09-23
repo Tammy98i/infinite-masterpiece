@@ -47,15 +47,15 @@ export const LecturersRow: React.FC = () => {
               setView('instructor', { instructorId: inst.id });
             }}
             aria-label={`${inst.name}, ${inst.title}`}
-            className="w-[120px] sm:w-[140px] shrink-0 text-right group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11"
+            className="w-[132px] sm:w-[156px] shrink-0 text-right group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11"
           >
-            <div className="relative aspect-[16/9] overflow-hidden rounded-[4px] mb-2 bg-zinc-900">
+            <div className="relative aspect-[3/4] overflow-hidden rounded-[4px] mb-2 bg-[#141414]">
               {inst.avatarUrl ? (
                 <img
                   src={inst.avatarUrl}
                   alt=""
                   aria-hidden
-                  className="w-full h-full object-cover object-top group-hover:brightness-110 transition-[filter] duration-200 motion-reduce:transition-none"
+                  className="w-full h-full object-contain object-center group-hover:brightness-110 transition-[filter] duration-200 motion-reduce:transition-none"
                 />
               ) : (
                 <div className="w-full h-full flex items-center justify-center bg-[#1a1a1a] text-[#b79043] text-2xl font-semibold" aria-hidden>

@@ -181,6 +181,12 @@
   min-height: 58vh;
 }
 
+.library-instructor-billboard img {
+  object-fit: contain;
+  object-position: center;
+  background: #141414;
+}
+
 @media (min-width: 768px) {
   .library-course-billboard,
   .library-instructor-billboard {
