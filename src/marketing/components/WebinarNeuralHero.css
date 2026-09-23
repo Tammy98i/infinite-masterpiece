@@ -43,8 +43,8 @@
   z-index: 0;
   pointer-events: none;
   background:
-    radial-gradient(140% 58% at 50% 38%, rgba(var(--veil), .16) 0%, rgba(var(--veil), .06) 48%, rgba(var(--veil), 0) 100%),
-    linear-gradient(180deg, rgba(var(--veil), .12) 0%, rgba(var(--veil), 0) 24%, rgba(var(--veil), 0) 64%, rgba(var(--veil), .26) 100%);
+    radial-gradient(140% 60% at 50% 40%, rgba(var(--veil), .28) 0%, rgba(var(--veil), .1) 50%, rgba(var(--veil), 0) 100%),
+    linear-gradient(180deg, rgba(var(--veil), .22) 0%, rgba(var(--veil), 0) 28%, rgba(var(--veil), 0) 58%, rgba(var(--veil), .42) 100%);
 }
 
 .webinar-stage-page .webinar-neural-hero .webinar-stage-shell {
@@ -89,10 +89,7 @@
   direction: rtl;
   display: grid;
   justify-items: center;
-  gap: calc(var(--c) * 16);
-}
-.webinar-neural-hero.is-slim .webinar-stage-copy {
-  gap: calc(var(--c) * 18);
+  gap: calc(var(--c) * 14);
 }
 .webinar-stage-page .webinar-neural-hero .webinar-stage-copy::before { display: none; }
 .webinar-stage-page .webinar-neural-hero .webinar-stage-copy h1 {
@@ -255,8 +252,8 @@
   }
   .webinar-neural-veil {
     background:
-      radial-gradient(130% 48% at 50% 42%, rgba(var(--veil), .3) 0%, rgba(var(--veil), .12) 55%, rgba(var(--veil), 0) 100%),
-      linear-gradient(180deg, rgba(var(--veil), .16) 0%, rgba(var(--veil), 0) 22%, rgba(var(--veil), 0) 64%, rgba(var(--veil), .22) 100%);
+      radial-gradient(130% 44% at 50% 45%, rgba(var(--veil), .5) 0%, rgba(var(--veil), .26) 55%, rgba(var(--veil), 0) 100%),
+      linear-gradient(180deg, rgba(var(--veil), .34) 0%, rgba(var(--veil), 0) 20%, rgba(var(--veil), 0) 60%, rgba(var(--veil), .36) 100%);
   }
   .webinar-stage-page .webinar-neural-hero .webinar-stage-copy h1 { max-width: none; }
   .webinar-neural-feats { grid-template-columns: 1fr 1fr; }
@@ -269,14 +266,27 @@
     animation: webinar-neural-wipe .95s cubic-bezier(.16, 1, .3, 1) both;
   }
   .webinar-neural-hero:not(.is-entered) #webinar-h1b { animation-delay: .1s; }
+  .webinar-neural-hero:not(.is-entered) .webinar-stage-event,
+  .webinar-neural-hero:not(.is-entered) .webinar-stage-subheadline,
   .webinar-neural-hero:not(.is-entered) .webinar-stage-punchline,
-  .webinar-neural-hero:not(.is-entered) .webinar-neural-note,
-  .webinar-neural-hero:not(.is-entered) .webinar-neural-cta {
+  .webinar-neural-hero:not(.is-entered) .webinar-neural-cta,
+  .webinar-neural-hero:not(.is-entered) .webinar-stage-secondary,
+  .webinar-neural-hero:not(.is-entered) .webinar-neural-feats li,
+  .webinar-neural-hero:not(.is-entered) .webinar-neural-rule,
+  .webinar-neural-hero:not(.is-entered) .webinar-stage-meta {
     animation: webinar-neural-lift .7s cubic-bezier(.25, .8, .35, 1) both;
   }
-  .webinar-neural-hero:not(.is-entered) .webinar-stage-punchline { animation-delay: .28s; }
-  .webinar-neural-hero:not(.is-entered) .webinar-neural-note { animation-delay: .4s; }
-  .webinar-neural-hero:not(.is-entered) .webinar-neural-cta { animation-delay: .5s; }
+  .webinar-neural-hero:not(.is-entered) .webinar-stage-event { animation-delay: .12s; }
+  .webinar-neural-hero:not(.is-entered) .webinar-stage-subheadline { animation-delay: .54s; }
+  .webinar-neural-hero:not(.is-entered) .webinar-stage-punchline { animation-delay: .62s; }
+  .webinar-neural-hero:not(.is-entered) .webinar-neural-cta { animation-delay: .74s; }
+  .webinar-neural-hero:not(.is-entered) .webinar-stage-secondary { animation-delay: .82s; }
+  .webinar-neural-hero:not(.is-entered) .webinar-neural-feats li:nth-child(1) { animation-delay: 1s; }
+  .webinar-neural-hero:not(.is-entered) .webinar-neural-feats li:nth-child(2) { animation-delay: 1.07s; }
+  .webinar-neural-hero:not(.is-entered) .webinar-neural-feats li:nth-child(3) { animation-delay: 1.14s; }
+  .webinar-neural-hero:not(.is-entered) .webinar-neural-feats li:nth-child(4) { animation-delay: 1.21s; }
+  .webinar-neural-hero:not(.is-entered) .webinar-neural-rule { animation-delay: 1.3s; }
+  .webinar-neural-hero:not(.is-entered) .webinar-stage-meta { animation-delay: 1.4s; }
 }
 
 @keyframes webinar-neural-wipe {
