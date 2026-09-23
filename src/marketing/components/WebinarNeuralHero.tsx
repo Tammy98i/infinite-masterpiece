@@ -37,6 +37,45 @@ function CtaArrow() {
   );
 }
 
+export function WebinarNeuralSky() {
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    const query = matchMedia('(prefers-reduced-motion: reduce)');
+    const sync = () => {
+      if (prefersReducedMotion()) {
+        video.pause();
+        return;
+      }
+      const play = video.play();
+      if (play) play.catch(() => undefined);
+    };
+    sync();
+    query.addEventListener?.('change', sync);
+    return () => query.removeEventListener?.('change', sync);
+  }, []);
+
+  return (
+    <>
+      <video
+        ref={videoRef}
+        className="webinar-neural-art"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+        poster={WEBINAR_NEURAL_POSTER}
+        src={WEBINAR_NEURAL_VIDEO}
+      />
+      <div className="webinar-neural-veil" aria-hidden="true" />
+    </>
+  );
+}
+
 export function WebinarNeuralHero({
   config,
   headlineParts,
@@ -51,26 +90,16 @@ export function WebinarNeuralHero({
   onRegister: (section: string) => void;
 }) {
   const rootRef = useRef<HTMLElement>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
   const liveEnter = webinarLiveEnter(config.zoomLink, config.whatsappGroupUrl);
   const when = eventNight ? 'הערב החי עכשיו' : eventEnded ? WEBINAR_CTA_ENDED : 'ערב חי';
 
   useEffect(() => {
-    const video = videoRef.current;
     const root = rootRef.current;
-    if (!video || !root) return;
-    const query = matchMedia('(prefers-reduced-motion: reduce)');
-    const sync = () => {
-      if (prefersReducedMotion()) {
-        video.pause();
-        root.classList.add('is-entered');
-        return;
-      }
-      const play = video.play();
-      if (play) play.catch(() => undefined);
-    };
-    sync();
-    query.addEventListener?.('change', sync);
+    if (!root) return;
+    if (prefersReducedMotion()) {
+      root.classList.add('is-entered');
+      return;
+    }
     const done = () => {
       window.clearTimeout(safety);
       root.classList.add('is-entered');
@@ -79,7 +108,6 @@ export function WebinarNeuralHero({
     const last = root.querySelector('[data-neural-end]');
     last?.addEventListener('animationend', done, { once: true });
     return () => {
-      query.removeEventListener?.('change', sync);
       window.clearTimeout(safety);
       last?.removeEventListener('animationend', done);
     };
@@ -106,19 +134,6 @@ export function WebinarNeuralHero({
 
   return (
     <section ref={rootRef} id="webinar-hero" className="webinar-stage-hero webinar-neural-hero is-slim webinar-island" dir="rtl">
-      <video
-        ref={videoRef}
-        className="webinar-neural-art"
-        autoPlay
-        muted
-        loop
-        playsInline
-        preload="auto"
-        aria-hidden="true"
-        poster={WEBINAR_NEURAL_POSTER}
-        src={WEBINAR_NEURAL_VIDEO}
-      />
-      <div className="webinar-neural-veil" aria-hidden="true" />
       <div className="webinar-stage-shell">
         <div className="webinar-stage-copy">
           <p className="webinar-neural-when">

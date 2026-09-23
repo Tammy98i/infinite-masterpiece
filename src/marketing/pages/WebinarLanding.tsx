@@ -31,7 +31,7 @@ import { captureUtmFromSearch } from '../../utils/utm';
 import { getWebinarPhase } from '../../utils/webinarTime';
 import { TeamPhoto } from '../../components/TeamPhoto';
 import { TeamGalaxy } from '../components/galaxy/TeamGalaxy';
-import { NeuralChevron, WebinarNeuralHero } from '../components/WebinarNeuralHero';
+import { NeuralChevron, WebinarNeuralHero, WebinarNeuralSky } from '../components/WebinarNeuralHero';
 import './WebinarLanding.css';
 import './WebinarEditorialCinema.css';
 import '../components/WebinarNeuralHero.css';
@@ -232,37 +232,44 @@ export function WebinarLanding() {
         ))}
       </nav>
 
-      <WebinarNeuralHero
-        config={config}
-        headlineParts={headlineParts}
-        eventNight={eventNight}
-        eventEnded={eventEnded}
-        onRegister={scrollToForm}
-      />
+      <div className="webinar-neural-overture">
+        <WebinarNeuralSky />
+        <WebinarNeuralHero
+          config={config}
+          headlineParts={headlineParts}
+          eventNight={eventNight}
+          eventEnded={eventEnded}
+          onRegister={scrollToForm}
+        />
 
-      <section id="problem" className="webinar-neural-afterglow webinar-island">
-        <div className="webinar-neural-plate">
-          <SectionLabel>הבעיה</SectionLabel>
-          <SectionTitle>
-            הבעיה היא לא שאין לך כישרון.
-            <br />
-            <span>הבעיה היא שאין סביבו מערכת.</span>
-          </SectionTitle>
-          <p className="webinar-neural-sub">{config.heroSubheadline}</p>
-          <p className="webinar-neural-hold">{WEBINAR_HOLDING_LINE}</p>
-          <ul className="webinar-neural-bottlenecks">
-            {WEBINAR_BOTTLENECKS.map((item) => (
-              <li key={item.title}>
-                <NeuralChevron />
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
+        <section id="problem" className="webinar-neural-afterglow webinar-island">
+          <div className="webinar-hero-bridge" aria-hidden="true">
+            <span className="webinar-hero-bridge-line" />
+            <span className="webinar-hero-bridge-chev" />
+          </div>
+          <div className="webinar-neural-plate">
+            <SectionLabel>הבעיה</SectionLabel>
+            <SectionTitle>
+              הבעיה היא לא שאין לך כישרון.
+              <br />
+              <span>הבעיה היא שאין סביבו מערכת.</span>
+            </SectionTitle>
+            <p className="webinar-neural-sub">{config.heroSubheadline}</p>
+            <p className="webinar-neural-hold">{WEBINAR_HOLDING_LINE}</p>
+            <ul className="webinar-neural-bottlenecks">
+              {WEBINAR_BOTTLENECKS.map((item) => (
+                <li key={item.title}>
+                  <NeuralChevron />
+                  <div>
+                    <h3>{item.title}</h3>
+                    <p>{item.text}</p>
+                  </div>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </section>
+      </div>
 
       <div className="webinar-editorial-grid">
       <section id="hosts" className="webinar-neural-slide webinar-island">
