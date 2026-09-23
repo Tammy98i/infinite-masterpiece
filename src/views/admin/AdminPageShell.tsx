@@ -11,7 +11,7 @@ type AdminPageShellProps = {
 export function AdminPageShell({ group, title, description, actions, children }: AdminPageShellProps) {
   return (
     <div className="grid gap-6">
-      <header className="sticky top-[4.5rem] z-10 -mx-1 px-1 py-3 bg-[#050505]/95 backdrop-blur-md border-b border-white/5 mb-2">
+      <header className="crm-desk-page-header sticky top-[4.5rem] z-10 -mx-1 px-1 py-3 bg-[#050505]/95 backdrop-blur-md border-b border-white/5 mb-2">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div className="min-w-0">
             <p className="text-[11px] uppercase tracking-[0.22em] text-[#b79043]/90 mb-1">

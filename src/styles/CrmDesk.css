@@ -1,0 +1,196 @@
+/* CRM / lecturer desks: Netflix-library language over the shared sky plate.
+   Extra dark veils sit on the starfield. Chrome stays translucent so the image remains. */
+
+.editorial-sky-crm-veil {
+  display: none;
+}
+
+.site-backdrop-layout:has(.crm-desk) .editorial-sky-image {
+  opacity: .7;
+  filter: saturate(.92) contrast(1.1) brightness(.58);
+}
+
+.site-backdrop-layout:has(.crm-desk) .editorial-sky-blackout {
+  background: rgba(3, 8, 18, .42);
+}
+
+.site-backdrop-layout:has(.crm-desk) .editorial-sky-shade {
+  background:
+    radial-gradient(circle at 50% 12%, transparent 10%, rgba(5, 10, 20, .34) 52%, rgba(5, 10, 20, .62) 100%),
+    linear-gradient(180deg, rgba(5, 10, 20, .28), rgba(5, 10, 20, .58));
+}
+
+.site-backdrop-layout:has(.crm-desk) .editorial-sky-crm-veil {
+  display: block;
+}
+
+.editorial-sky-crm-veil-a {
+  background: linear-gradient(180deg, rgba(2, 6, 14, .62) 0%, rgba(5, 10, 20, .18) 26%, transparent 48%, rgba(2, 6, 14, .7) 100%);
+}
+
+.editorial-sky-crm-veil-b {
+  background: rgba(2, 6, 16, .28);
+}
+
+.editorial-sky-crm-veil-c {
+  background: linear-gradient(90deg, rgba(5, 10, 20, .5), transparent 38%, rgba(5, 10, 20, .5));
+}
+
+.editorial-sky-crm-veil-d {
+  background: radial-gradient(ellipse at 18% 8%, rgba(5, 10, 20, .08), rgba(3, 8, 18, .46) 74%);
+}
+
+.editorial-sky-crm-veil-e {
+  background: linear-gradient(180deg, transparent 8%, rgba(2, 6, 14, .4) 100%);
+}
+
+.crm-desk,
+.crm-desk main {
+  background: transparent !important;
+  color: #e8eef8;
+}
+
+.crm-desk-aside,
+.crm-desk .crm-desk-aside {
+  background: rgba(5, 10, 20, .62) !important;
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border-color: rgba(255, 255, 255, .08) !important;
+}
+
+.crm-desk-topbar,
+.crm-desk .crm-desk-topbar {
+  background: rgba(5, 10, 20, .58) !important;
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-color: rgba(255, 255, 255, .08) !important;
+}
+
+.crm-desk-page-header {
+  background: rgba(5, 10, 20, .5) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-color: rgba(255, 255, 255, .06) !important;
+}
+
+.crm-desk .bg-zinc-900,
+.crm-desk .bg-zinc-900\/80,
+.crm-desk .bg-zinc-800,
+.crm-desk .bg-\[\#0a0a0a\],
+.crm-desk .bg-\[\#0A0A0A\],
+.crm-desk .bg-\[\#090909\]\/95,
+.crm-desk .bg-\[\#080808\],
+.crm-desk .bg-\[\#050505\]\/90,
+.crm-desk .bg-\[\#050505\]\/95 {
+  background: rgba(5, 10, 20, .55) !important;
+}
+
+.crm-desk .border.border-white\/10.rounded-2xl,
+.crm-desk .border.border-white\/10.rounded-3xl,
+.crm-desk .border.border-white\/10.rounded-xl {
+  background: rgba(5, 10, 20, .38);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.crm-desk table {
+  background: transparent;
+}
+
+.crm-desk .crm-hero {
+  position: relative;
+  min-height: 22rem;
+  overflow: hidden;
+  border-radius: 4px;
+}
+
+@media (min-width: 768px) {
+  .crm-desk .crm-hero {
+    min-height: 28rem;
+  }
+}
+
+.crm-desk .crm-hero-veil-bottom {
+  background: linear-gradient(180deg, transparent 32%, rgba(5, 10, 20, .5) 68%, rgba(5, 10, 20, .88) 100%);
+}
+
+.crm-desk .crm-hero-veil-side {
+  background: linear-gradient(270deg, transparent 6%, rgba(5, 10, 20, .38) 46%, rgba(5, 10, 20, .82) 100%);
+}
+
+.crm-desk .crm-hero-play {
+  background: #fff;
+  color: #141414;
+  border-radius: 4px;
+}
+
+.crm-desk .crm-hero-more {
+  background: rgba(109, 109, 110, .7);
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+}
+
+.crm-desk .crm-rail-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #fff;
+  margin-bottom: 6px;
+}
+
+.crm-desk .crm-rail-scroller {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-block: 6px 12px;
+  scroll-snap-type: inline mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+
+.crm-desk .crm-rail-scroller > * {
+  scroll-snap-align: start;
+  flex: 0 0 auto;
+}
+
+.crm-desk .crm-poster {
+  width: min(42vw, 240px);
+  border: 0;
+  border-radius: 4px;
+  overflow: hidden;
+  cursor: pointer;
+  background: rgba(5, 10, 20, .55);
+  transition: transform .2s ease, filter .2s ease;
+}
+
+.crm-desk .crm-poster:hover,
+.crm-desk .crm-poster:focus-within {
+  transform: scale(1.06);
+  z-index: 2;
+}
+
+.crm-desk .crm-poster-play {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+
+.crm-desk .crm-poster:hover .crm-poster-play,
+.crm-desk .crm-poster:focus-within .crm-poster-play {
+  opacity: 1;
+}
+
+.crm-desk .crm-kpi {
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  background: rgba(5, 10, 20, .62);
+}
+
+@media (prefers-reduced-motion: reduce),
+html.a11y-reduce-motion {
+  .crm-desk .crm-poster,
+  .crm-desk .crm-poster:hover,
+  .crm-desk .crm-poster:focus-within {
+    transform: none;
+    transition: none;
+  }
+}

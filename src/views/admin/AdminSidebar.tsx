@@ -154,7 +154,7 @@ export function AdminMobileNav({
 }) {
   const items = groups.flatMap((g) => g.items);
   return (
-    <div className="lg:hidden border-b border-white/10 bg-[#080808] p-3 grid gap-1 max-h-[50vh] overflow-y-auto">
+    <div className="crm-desk-aside lg:hidden border-b border-white/10 bg-[#080808] p-3 grid gap-1 max-h-[50vh] overflow-y-auto">
       {items.map((item) => (
         <Fragment key={item.id}>
           <NavButton item={item} active={tab === item.id} onClick={() => onNavigate(item.id)} />

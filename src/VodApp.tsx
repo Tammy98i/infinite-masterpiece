@@ -26,6 +26,7 @@ import { AdminView } from './views/AdminView';
 import { LecturerView } from './views/LecturerView';
 import { libraryPath } from './utils/libraryPath';
 import './styles/LibraryCatalog.css';
+import './styles/CrmDesk.css';
 
 export const VodApp: React.FC = () => {
   const { currentView, setView } = useApp();
@@ -99,7 +100,7 @@ export const VodApp: React.FC = () => {
   return (
     <PaywallProvider>
     <PaywallTriggers />
-    <div className="vod-app library-catalog sky-readable flex flex-col min-h-screen relative text-white bg-transparent">
+    <div className={`vod-app library-catalog sky-readable flex flex-col min-h-screen relative text-white bg-transparent${currentView === 'admin' || currentView === 'lecturer' || currentView === 'profile' ? ' crm-desk' : ''}`}>
       {currentView !== 'watch' && (
         <a href="#library-main" className="skip-link">
           דילוג לתוכן הראשי

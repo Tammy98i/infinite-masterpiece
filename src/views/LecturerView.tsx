@@ -9,14 +9,15 @@ import {
   type LecturerQuestion,
   type LecturerTeamMessage,
 } from '../api/lecturer';
-import type { AccessLevel, Course, Instructor } from '../types';
+import type { AccessLevel, Category, Course, Instructor } from '../types';
 import type { CoursePayload } from '../api/admin';
 import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/captions';
 import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
+import { CrmCatalogStage } from '../components/CrmCatalogStage';
 
 const fieldClass =
-  'w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#b79043] focus:outline-none min-h-11';
+  'w-full bg-[rgba(5,10,20,.55)] border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#b79043] focus:outline-none min-h-11';
 
 const STATUS_LABEL: Record<string, string> = {
   draft: 'טיוטה',
@@ -36,7 +37,7 @@ export function LecturerView() {
 
   if (isGuest) {
     return (
-      <div className="min-h-screen bg-transparent text-white pt-28 pb-24 px-4 text-start">
+      <div className="crm-desk min-h-screen bg-transparent text-white pt-28 pb-24 px-4 text-start">
         <div className="max-w-md mx-auto border border-white/10 rounded-3xl p-8">
           <h1 className="text-2xl font-medium mb-3">אזור מרצים</h1>
           <p className="text-sm text-white/50 font-light mb-6">
@@ -187,7 +188,7 @@ function ApplicationPanel({
   };
 
   return (
-    <div className="min-h-screen bg-transparent text-white pt-28 pb-24 px-4 sm:px-8 max-w-3xl mx-auto text-start">
+    <div className="crm-desk min-h-screen bg-transparent text-white pt-28 pb-24 px-4 sm:px-8 max-w-3xl mx-auto text-start">
       <button type="button" onClick={onBack} className="text-sm text-white/45 hover:text-white mb-8 min-h-11 cursor-pointer">
         חזרה לפרופיל
       </button>
@@ -384,9 +385,9 @@ function LecturerDashboard({
     status ? courses.filter((course) => course.status === status) : courses;
 
   return (
-    <div className="min-h-screen bg-transparent text-white text-start" dir="rtl">
+    <div className="crm-desk min-h-screen bg-transparent text-white text-start" dir="rtl">
       <div className="flex min-h-screen">
-        <aside className="hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
+        <aside className="crm-desk-aside hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
           <div className="p-5 border-b border-white/10">
             <p className="text-[11px] uppercase tracking-[0.28em] text-[#b79043] mb-2">מרצה</p>
             <h1 className="text-xl font-light">דשבורד מרצה</h1>
@@ -424,7 +425,7 @@ function LecturerDashboard({
         </aside>
 
         <div className="flex-1 min-w-0">
-          <header className="sticky top-0 z-20 border-b border-white/10 bg-[#050505]/90 backdrop-blur-xl px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
+          <header className="crm-desk-topbar sticky top-0 z-20 border-b border-white/10 bg-[#050505]/90 backdrop-blur-xl px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
               <button
                 type="button"
@@ -453,7 +454,7 @@ function LecturerDashboard({
           </header>
 
           {mobileNavOpen ? (
-            <div className="lg:hidden border-b border-white/10 bg-[#080808] p-3 grid gap-1">{navItems.map(navButton)}</div>
+            <div className="crm-desk-aside lg:hidden border-b border-white/10 bg-[#080808] p-3 grid gap-1">{navItems.map(navButton)}</div>
           ) : null}
 
           <main className="px-4 sm:px-6 lg:px-8 py-8 pb-24 max-w-7xl">
@@ -462,8 +463,14 @@ function LecturerDashboard({
             {tab === 'overview' && stats ? (
               <OverviewHome
                 stats={stats}
+                courses={courses}
+                categories={categories}
                 onUpload={() => goTab('upload')}
                 onVideos={() => goTab('videos')}
+                onEdit={(course) => {
+                  setEditing(course);
+                  setTab('upload');
+                }}
               />
             ) : null}
 
@@ -814,12 +821,18 @@ function Founder88Panel({ courses }: { courses: Course[] }) {
 
 function OverviewHome({
   stats,
+  courses,
+  categories,
   onUpload,
   onVideos,
+  onEdit,
 }: {
   stats: LecturerOverview;
+  courses: Course[];
+  categories: { id: string; name: string }[];
   onUpload: () => void;
   onVideos: () => void;
+  onEdit: (course: Course) => void;
 }) {
   const maxDay = Math.max(1, ...stats.viewsByDay.map((d) => d.views));
   const kpis = [
@@ -837,6 +850,17 @@ function OverviewHome({
 
   return (
     <div className="grid gap-8">
+      <CrmCatalogStage
+        courses={courses}
+        categories={categories as Category[]}
+        eyebrow="הסטודיו האקדמי"
+        kicker="אותן כרזות כמו בספרייה — רק ההרצאות שלכם, בלי CTA של מנוי."
+        featuredActionLabel="עריכת ההרצאה"
+        secondaryActionLabel="ההרצאות שלי"
+        onFeaturedAction={onEdit}
+        onSecondaryAction={() => onVideos()}
+        onSelectCourse={onEdit}
+      />
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <h2 className="text-2xl sm:text-3xl font-light mb-2">ברוך הבא לדשבורד המרצה שלך</h2>
@@ -872,7 +896,7 @@ function OverviewHome({
 
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3">
         {kpis.map((card) => (
-          <div key={card.label} className="border border-white/10 rounded-2xl p-4 bg-[#0A0A0A]">
+          <div key={card.label} className="crm-kpi border border-white/10 rounded-2xl p-4 bg-[#0A0A0A]">
             <div className="text-[11px] text-white/40 mb-2">{card.label}</div>
             <div className="text-2xl font-light tabular-nums">{card.value}</div>
           </div>
@@ -986,6 +1010,16 @@ function VideosPanel({
           העלאת תוכן
         </button>
       </div>
+      <CrmCatalogStage
+        courses={courses}
+        categories={categories as Category[]}
+        eyebrow="ההרצאות שלי"
+        featuredActionLabel="עריכה"
+        secondaryActionLabel="העלאת תוכן"
+        onFeaturedAction={onEdit}
+        onSecondaryAction={() => onUpload()}
+        onSelectCourse={onEdit}
+      />
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
         <table className="w-full text-sm text-start">
           <thead className="text-xs text-white/40 border-b border-white/10">

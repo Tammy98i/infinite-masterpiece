@@ -21,6 +21,7 @@ import type { LecturerApplication } from '../api/lecturer';
 import type { AccessLevel, Category, Course, Instructor, PublishStatus, UserProfile } from '../types';
 import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
+import { CrmCatalogStage } from '../components/CrmCatalogStage';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { isApiUnavailableMessage } from '../lib/supabaseUser';
 import { emptyAnalytics, overviewFrom, readinessPayload, type ProfileListRow } from '../lib/adminFallback';
@@ -108,7 +109,7 @@ export function AdminView() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-transparent text-white pt-28 pb-24 px-4 text-start">
+      <div className="crm-desk min-h-screen bg-transparent text-white pt-28 pb-24 px-4 text-start">
         <div className="max-w-md mx-auto border border-white/10 rounded-3xl p-8">
           <h1 className="text-2xl font-medium mb-3">אין הרשאת ניהול</h1>
           <p className="text-sm text-white/50 font-light mb-6">
@@ -135,9 +136,9 @@ export function AdminView() {
   const tabMeta = TAB_META[tab];
 
   return (
-    <div className="min-h-screen bg-transparent text-white text-start">
+    <div className="crm-desk min-h-screen bg-transparent text-white text-start">
       <div className="flex min-h-screen">
-        <aside className="hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
+        <aside className="crm-desk-aside hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
           <AdminSidebar
             groups={visibleGroups}
             tab={tab}
@@ -149,7 +150,7 @@ export function AdminView() {
         </aside>
 
         <div className="flex-1 min-w-0">
-          <header className="sticky top-0 z-20 border-b border-white/10 bg-[#050505]/90 backdrop-blur-xl px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
+          <header className="crm-desk-topbar sticky top-0 z-20 border-b border-white/10 bg-[#050505]/90 backdrop-blur-xl px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
               <button
                 type="button"
@@ -205,11 +206,13 @@ export function AdminView() {
               </AdminPageShell>
             )}
             {tab === 'content' && (
-              <ContentPanel
-                categories={categories}
-                instructors={instructors}
-                onSaved={() => void reloadCatalog()}
-              />
+              <AdminPageShell group={tabMeta.group} title={tabMeta.title} description={tabMeta.description}>
+                <ContentPanel
+                  categories={categories}
+                  instructors={instructors}
+                  onSaved={() => void reloadCatalog()}
+                />
+              </AdminPageShell>
             )}
             {tab === 'analytics' && (
               <AdminPageShell group={tabMeta.group} title={tabMeta.title} description={tabMeta.description}>
@@ -519,7 +522,7 @@ function ReadinessPanel() {
 }
 
 function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
-  const { user } = useApp();
+  const { user, courses, instructors, categories } = useApp();
   const [data, setData] = useState<AdminOverview | null>(null);
   const [analytics, setAnalytics] = useState<AdminAnalytics | null>(null);
   const [error, setError] = useState('');
@@ -593,6 +596,19 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
 
   return (
     <div className="grid gap-8">
+      <CrmCatalogStage
+        courses={courses}
+        instructors={instructors}
+        categories={categories}
+        eyebrow="קטלוג אקדמי"
+        kicker="אותה שפת ספרייה — לניהול הרצאות, קורסים וטכנאים. בלי CTA של מנוי."
+        featuredActionLabel="ניהול ההרצאה"
+        secondaryActionLabel="לקטלוג התוכן"
+        onFeaturedAction={() => onNavigate('content')}
+        onSecondaryAction={() => onNavigate('content')}
+        onSelectCourse={() => onNavigate('content')}
+      />
+
       <div>
         <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">תמונת מצב</p>
         <h2 className="text-2xl font-light">מה קורה במערכת עכשיו</h2>
@@ -600,7 +616,7 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
 
       <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3">
         {cards.map((card) => (
-          <div key={card.label} className="border border-white/10 rounded-2xl p-4 bg-white/[0.02]">
+          <div key={card.label} className="crm-kpi border border-white/10 rounded-2xl p-4 bg-white/[0.02]">
             <div className="text-[11px] text-white/40 mb-2 leading-snug">{card.label}</div>
             <div className="text-xl font-light text-white">{card.value}</div>
           </div>
@@ -998,7 +1014,19 @@ function ContentPanel({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <CrmCatalogStage
+        courses={courses}
+        instructors={instructors as Instructor[]}
+        categories={categories as Category[]}
+        eyebrow="תוכן VOD"
+        kicker="כרזות ופסים כמו בספרייה. הטבלה והפעולות הקיימות נשארות מתחת."
+        featuredActionLabel="עריכת ההרצאה"
+        secondaryActionLabel="הרצאה חדשה"
+        onFeaturedAction={(course) => setEditing(course)}
+        onSecondaryAction={() => setEditing('new')}
+        onSelectCourse={(course) => setEditing(course)}
+      />
+      <div className="flex items-center justify-between mb-6 mt-8">
         <p className="text-sm text-white/45">{courses.length} הרצאות</p>
         <button
           type="button"

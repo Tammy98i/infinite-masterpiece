@@ -131,7 +131,7 @@ export const TAB_META: Record<
   Tab,
   { title: string; description: string; group: string }
 > = {
-  overview: { title: 'סקירה', description: 'מצב המערכת, מוכנות להשקה ומדדים', group: 'מבט על' },
+  overview: { title: 'סקירה', description: 'קטלוג אקדמי כמו בספרייה, מצב המערכת, מוכנות להשקה ומדדים', group: 'מבט על' },
   access: {
     title: 'משתמשים · תפקידים · הרשאות',
     description: 'ניהול חשבונות, תפקידים, דסקים ומיילי אדמין — במקום אחד',
