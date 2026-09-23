@@ -200,6 +200,10 @@ body { background: var(--editorial-ink); }
 .editorial-library-header .header-chip {
   min-height: var(--header-cta-h);
   font-size: var(--header-action-fs);
+  white-space: nowrap;
+}
+@media (max-width: 1023px) {
+  .editorial-library-header .header-nav-wide { display: none; }
 }
 .editorial-library-header .header-search input {
   min-height: var(--header-cta-h);

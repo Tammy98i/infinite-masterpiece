@@ -144,7 +144,7 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setView('shorts')}
-                className={`transition-colors py-2 min-h-11 border-b-2 ${
+                className={`header-nav-wide transition-colors py-2 min-h-11 border-b-2 ${
                   currentView === 'shorts'
                     ? 'text-white border-[#b79043]'
                     : 'text-white/85 hover:text-white border-transparent'
