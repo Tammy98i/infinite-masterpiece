@@ -75,6 +75,7 @@ body { background: var(--editorial-ink); }
     linear-gradient(180deg, rgba(5, 10, 20, .12), rgba(5, 10, 20, .34));
   backdrop-filter: none;
 }
+.editorial-sky-library-veil { display: none; }
 
 .editorial-marketing-shell,
 .vod-app {
@@ -310,8 +311,8 @@ body { background: var(--editorial-ink); }
 .editorial-library-footer a:hover { color: var(--editorial-gold-light); }
 
 /* Library: retain media-led browsing, but use the same restrained frame. */
-.vod-app { background: rgba(5, 10, 20, .42); }
-.vod-app main { background: linear-gradient(180deg, rgba(10, 18, 32, .18), rgba(5, 10, 20, .72) 36rem); }
+.vod-app { background: transparent; }
+.vod-app main { background: transparent; }
 .vod-app main [class*='rounded-2xl'] { border-radius: var(--editorial-radius); }
 .vod-app main [class*='rounded-3xl'] { border-radius: 12px; }
 .vod-app main [class*='shadow-'] { box-shadow: none; }
