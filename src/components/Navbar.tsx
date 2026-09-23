@@ -79,8 +79,8 @@ export const Navbar: React.FC = () => {
         aria-label="כותרת הספרייה"
         className={`editorial-library-header fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
           isScrolled || currentView !== 'home'
-            ? 'bg-[#0a0a0acc] backdrop-blur-md border-b border-white/10 shadow-xl'
-            : 'bg-gradient-to-b from-black/80 via-black/40 to-transparent'
+            ? 'is-solid bg-[#0a0a0acc] backdrop-blur-md border-b border-white/10 shadow-xl'
+            : 'is-over-hero bg-gradient-to-b from-black/80 via-black/40 to-transparent'
         }`}
       >
         <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-10 h-20 flex items-center justify-between gap-4 sm:gap-6">

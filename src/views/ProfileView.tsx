@@ -22,7 +22,7 @@ export const ProfileView: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen text-white pt-24 pb-28">
+    <div className="library-catalog-page min-h-screen text-white pt-24 pb-28">
       <div className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-10 text-right">
         <button
           type="button"

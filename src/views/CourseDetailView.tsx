@@ -393,7 +393,7 @@ export const CourseDetailView: React.FC = () => {
   const totalDuration = course.episodes.reduce((s, ep) => s + ep.duration, 0);
 
   return (
-    <div className="min-h-screen text-white pt-24 pb-16">
+    <div className="library-catalog-page min-h-screen text-white pt-24 pb-16">
       <div className="max-w-[1360px] mx-auto px-4 sm:px-8 text-right">
         {/* Breadcrumb */}
         <nav className="mb-8 text-sm text-white/45" aria-label="ניווט משני">

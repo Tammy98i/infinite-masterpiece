@@ -13,7 +13,7 @@ export const MyListView: React.FC = () => {
   const isFreeList = user.role !== 'admin' && !hasFullLibraryAccess(user);
 
   return (
-    <div className="min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto">
+    <div className="library-catalog-page min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto">
       <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8">
         <div>
           <div className="flex items-center gap-2 text-[#b79043] text-xs font-semibold mb-1">

@@ -59,7 +59,7 @@ export const ContinueWatchingRow: React.FC = () => {
               scroll('prev');
             }
           }}
-          className="flex gap-3 sm:gap-4 overflow-x-auto px-4 sm:px-8 pb-2 scroll-smooth snap-x snap-mandatory carousel-scroll focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-inset"
+          className="library-rail-scroller flex gap-3 sm:gap-4 overflow-x-auto px-4 sm:px-8 pb-2 scroll-smooth snap-x snap-mandatory carousel-scroll focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-inset"
         >
           {continueList.map(({ course, progress }, index) => {
             const progressPercentage = Math.min(

@@ -118,7 +118,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
               scroll('prev');
             }
           }}
-          className={`mx-auto flex max-w-[1400px] gap-4 sm:gap-6 overflow-x-auto px-4 sm:px-8 lg:px-10 pb-3 pt-2 scroll-smooth snap-x snap-mandatory carousel-scroll focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-inset ${
+          className={`library-rail-scroller mx-auto flex max-w-[1400px] gap-4 sm:gap-6 overflow-x-auto px-4 sm:px-8 lg:px-10 pb-3 pt-2 scroll-smooth snap-x snap-mandatory carousel-scroll focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-inset ${
             ranked ? 'pt-4' : ''
           }`}
         >

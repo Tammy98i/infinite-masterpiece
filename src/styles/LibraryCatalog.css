@@ -1,0 +1,139 @@
+/* ui-ux-pro-max: OLED catalog + Liquid Glass on night/gold.
+   Netflix rail structure for academic courses. No red, no iOS blue. */
+
+.editorial-sky-library-veil {
+  display: none;
+  pointer-events: none;
+}
+
+.site-backdrop-layout:has(.vod-app) .editorial-sky-image {
+  opacity: .7;
+  filter: saturate(1.02) contrast(1.08) brightness(.74);
+}
+
+.site-backdrop-layout:has(.vod-app) .editorial-sky-blackout {
+  background: rgba(2, 6, 14, .48);
+}
+
+.site-backdrop-layout:has(.vod-app) .editorial-sky-shade {
+  background:
+    radial-gradient(circle at 50% 38%, transparent 14%, rgba(3, 8, 16, .28) 68%, rgba(2, 5, 12, .62) 100%),
+    linear-gradient(180deg, rgba(4, 8, 16, .2), rgba(3, 6, 12, .42));
+}
+
+.site-backdrop-layout:has(.vod-app) .editorial-sky-library-veil {
+  display: block;
+}
+
+.editorial-sky-library-veil-a {
+  background: rgba(2, 4, 10, .28);
+}
+
+.editorial-sky-library-veil-b {
+  background: radial-gradient(70% 55% at 50% 35%, transparent 18%, rgba(2, 6, 14, .5) 100%);
+}
+
+.editorial-sky-library-veil-c {
+  background: linear-gradient(180deg, rgba(5, 10, 20, .18) 0%, rgba(5, 10, 20, .46) 42%, rgba(3, 6, 12, .58) 100%);
+}
+
+.vod-app.library-catalog {
+  background: rgba(5, 10, 20, .5);
+}
+
+.vod-app.library-catalog main {
+  background: transparent;
+}
+
+.vod-app.library-catalog .editorial-library-header.is-over-hero {
+  background: linear-gradient(180deg, rgba(0, 0, 0, .7), rgba(0, 0, 0, .22), transparent) !important;
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.vod-app.library-catalog .editorial-library-header.is-solid {
+  background: rgba(5, 10, 20, .94) !important;
+  border-bottom-color: rgba(223, 196, 125, .2) !important;
+  backdrop-filter: blur(18px) !important;
+}
+
+.library-catalog .library-hero {
+  min-height: 560px;
+}
+
+@media (min-width: 768px) {
+  .library-catalog .library-hero {
+    height: 84vh;
+  }
+}
+
+.library-catalog .library-hero-veil-bottom {
+  background: linear-gradient(180deg, transparent 0%, rgba(5, 10, 20, .55) 48%, rgba(3, 6, 12, .82) 100%);
+}
+
+.library-catalog .library-hero-veil-side {
+  background: linear-gradient(270deg, transparent 0%, rgba(5, 10, 20, .42) 42%, rgba(3, 6, 12, .78) 100%);
+}
+
+.library-catalog .library-hero::after {
+  height: 38%;
+  background: linear-gradient(180deg, rgba(2, 6, 15, 0) 0%, rgba(5, 10, 20, .35) 62%, rgba(5, 10, 20, .18) 100%);
+}
+
+.library-catalog .library-poster {
+  cursor: pointer;
+  transition: transform .28s cubic-bezier(.16, 1, .3, 1), border-color .2s ease, box-shadow .2s ease;
+  border-color: rgba(223, 196, 125, .16);
+}
+
+.library-catalog .library-poster:hover,
+.library-catalog .library-poster:focus-within {
+  border-color: rgba(223, 196, 125, .42);
+  box-shadow: 0 16px 36px rgba(2, 6, 14, .35);
+  transform: translateY(-6px);
+}
+
+.library-catalog .library-poster-play {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+
+.library-catalog .library-poster:hover .library-poster-play,
+.library-catalog .library-poster:focus-within .library-poster-play {
+  opacity: 1;
+}
+
+.library-catalog .library-rail-scroller {
+  padding-block: 14px 18px;
+  mask-image: linear-gradient(to left, transparent, #000 28px, #000 calc(100% - 36px), transparent);
+  -webkit-mask-image: linear-gradient(to left, transparent, #000 28px, #000 calc(100% - 36px), transparent);
+}
+
+.library-catalog-page .library-poster {
+  width: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .library-catalog .library-poster,
+  .library-catalog .library-poster:hover,
+  .library-catalog .library-poster:focus-within {
+    transform: none;
+    transition: border-color .2s ease;
+  }
+
+  .library-catalog .library-poster-play {
+    opacity: 1;
+  }
+}
+
+.a11y-reduce-motion .library-catalog .library-poster,
+.a11y-reduce-motion .library-catalog .library-poster:hover,
+.a11y-reduce-motion .library-catalog .library-poster:focus-within {
+  transform: none;
+}
+
+.a11y-reduce-motion .library-catalog .library-poster-play {
+  opacity: 1;
+}

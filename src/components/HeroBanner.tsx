@@ -20,8 +20,10 @@ interface HeroBannerProps {
 }
 
 export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching }) => {
-  const { setView, user } = useApp();
+  const { setView, user, instructors } = useApp();
   const { goWatch } = useWatchAccess();
+  const instructor = instructors.find((item) => item.id === course.instructorId);
+  const totalSecs = course.episodes.reduce((sum, item) => sum + item.duration, 0);
 
   const episode =
     course.episodes.find((e) => e.id === continueWatching?.episodeId) || course.episodes[0];
@@ -59,7 +61,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
 
   return (
     <section
-      className="library-hero relative w-full min-h-[480px] md:h-[78vh] flex items-end overflow-hidden pt-24 pb-24 md:pb-36"
+      className="library-hero relative w-full min-h-[560px] md:h-[84vh] flex items-end overflow-hidden pt-24 pb-28 md:pb-40"
       aria-label={continueWatching ? `המשך צפייה: ${course.title}` : `מומלץ: ${course.title}`}
     >
       <div className="absolute inset-0 select-none overflow-hidden">
@@ -75,8 +77,9 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           decoding="async"
           className="w-full h-full object-cover object-center scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0b08] via-[#0d0b08]/70 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-l from-[#0d0b08]/90 via-[#0d0b08]/55 to-transparent w-full md:w-[65%] ms-auto" />
+        <div className="library-hero-veil-bottom absolute inset-0 bg-gradient-to-t from-[#0d0b08] via-[#0d0b08]/70 to-transparent" />
+        <div className="library-hero-veil-side absolute inset-0 bg-gradient-to-l from-[#0d0b08]/90 via-[#0d0b08]/55 to-transparent w-full md:w-[70%] ms-auto" />
+        <div className="absolute inset-0 bg-black/20" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-8 w-full z-10 text-right md:max-w-2xl md:ms-0 md:me-auto">
@@ -88,8 +91,14 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           {course.title}
         </h1>
 
-        <p className="text-sm sm:text-base text-white/75 font-light leading-relaxed max-w-xl mb-6 line-clamp-2">
+        <p className="text-sm sm:text-base text-white/75 font-light leading-relaxed max-w-xl mb-4 line-clamp-2">
           {course.subtitle || course.description}
+        </p>
+
+        <p className="mb-6 flex flex-wrap items-center gap-x-3 gap-y-1 text-[12px] text-white/70">
+          {instructor ? <span>{instructor.name}</span> : null}
+          <span>{formatClock(totalSecs)}</span>
+          <span>{canFull ? 'פתוח לצפייה' : canPreview ? 'טעימה' : 'דורש מנוי'}</span>
         </p>
 
         {continueWatching && (

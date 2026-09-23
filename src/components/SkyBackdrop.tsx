@@ -15,6 +15,9 @@ export function SkyBackdrop({ className = '' }: Props) {
       />
       <div className="editorial-sky-blackout absolute inset-0" />
       <div className="editorial-sky-shade absolute inset-0" />
+      <div className="editorial-sky-library-veil editorial-sky-library-veil-a absolute inset-0" />
+      <div className="editorial-sky-library-veil editorial-sky-library-veil-b absolute inset-0" />
+      <div className="editorial-sky-library-veil editorial-sky-library-veil-c absolute inset-0" />
     </div>
   );
 }

@@ -112,10 +112,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   const widthClass = fullWidth
     ? 'w-full'
     : layout === 'continue'
-      ? 'w-[260px] sm:w-[340px]'
+      ? 'w-[280px] sm:w-[360px]'
       : rank
-        ? 'w-[240px] sm:w-[300px]'
-        : 'w-[220px] sm:w-[260px]';
+        ? 'w-[250px] sm:w-[310px]'
+        : 'w-[240px] sm:w-[300px]';
 
   return (
     <div
@@ -134,15 +134,15 @@ export const CourseCard: React.FC<CourseCardProps> = ({
 
       <div className={`relative ${rank ? 'ml-10 sm:ml-14' : ''}`}>
         <div
-          className={`relative overflow-hidden rounded-2xl border transition-[border-color] duration-200 ${
-            isHovered ? 'border-white/25' : 'border-white/10'
+          className={`library-poster relative overflow-hidden rounded-2xl border transition-[border-color] duration-200 ${
+            isHovered ? 'border-[#dfc47d]/45' : 'border-white/10'
           }`}
         >
           <button
             type="button"
             onClick={handleCardClick}
             aria-label={ariaTitle}
-            className="block w-full text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-inset"
+            className="block w-full cursor-pointer text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-inset"
           >
             <div className="relative aspect-[16/9] bg-zinc-900">
               <img
@@ -160,7 +160,12 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                   isHovered ? 'brightness-90' : ''
                 }`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent" />
+              <span className="library-poster-play absolute inset-0 z-[1] flex items-center justify-center">
+                <span className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-black">
+                  <Play className="ms-0.5 h-5 w-5 fill-black" aria-hidden />
+                </span>
+              </span>
 
               {showDurationBadge && !badge && (
                 <span className="absolute top-2 start-2 z-10 rounded bg-black/75 px-2 py-0.5 text-[12px] font-medium text-white">
