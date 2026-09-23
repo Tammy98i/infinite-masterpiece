@@ -11,7 +11,7 @@ import {
   Volume2,
   VolumeX,
 } from 'lucide-react';
-import { formatClock } from '../utils/time';
+import { ClockLabel } from '../components/ClockLabel';
 import { canPreviewEpisode, canWatchEpisode, PREVIEW_SECONDS } from '../utils/access';
 import { playbackApi } from '../api/playback';
 import { trackEvent } from '../utils/analytics';
@@ -430,7 +430,7 @@ export const CourseDetailView: React.FC = () => {
               ספרייה
             </button>
             <span className="mx-2 text-white/35" aria-hidden>
-              ›
+              ‹
             </span>
             <span className="text-white">{course.title}</span>
           </nav>
@@ -448,7 +448,7 @@ export const CourseDetailView: React.FC = () => {
           <p className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/80">
             {instructor ? <span>{instructor.name}</span> : null}
             {instructor ? <span aria-hidden>·</span> : null}
-            <span>{formatClock(totalDuration)}</span>
+            <ClockLabel seconds={totalDuration} />
             <span aria-hidden>·</span>
             <span>
               {completedCount} מתוך {episodeCount} פרקים
@@ -482,7 +482,7 @@ export const CourseDetailView: React.FC = () => {
             <p className="text-[13px] text-white/70 mb-2" id="course-progress-label">
               {completedCount} מתוך {episodeCount} פרקים
               <span className="text-white/35"> · </span>
-              {formatClock(totalDuration)}
+              <ClockLabel seconds={totalDuration} />
             </p>
             <div
               className="h-1 rounded-full bg-white/15 overflow-hidden"
@@ -637,7 +637,7 @@ export const CourseDetailView: React.FC = () => {
                           />
                         </div>
                         <div className="text-[12px] text-white/70 tabular-nums">
-                          {formatClock(currentTime)} / {formatClock(duration || activeEpisode.duration)}
+                          <ClockLabel seconds={currentTime} /> / <ClockLabel seconds={duration || activeEpisode.duration} />
                         </div>
                       </div>
                       {captionTracks.length > 0 ? (
@@ -789,7 +789,7 @@ export const CourseDetailView: React.FC = () => {
                             {episodeDisplayName(ep.title)}
                           </div>
                           <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[13px] text-white/50">
-                            <span className="tabular-nums">{formatClock(ep.duration)}</span>
+                            <ClockLabel seconds={ep.duration} className="tabular-nums" />
                             {access === 'open' && <span className="text-[#b79043]">פתוח</span>}
                             {access === 'preview' && <span className="text-[#dfc47d]">טעימה</span>}
                             {access === 'locked' && (
@@ -804,7 +804,11 @@ export const CourseDetailView: React.FC = () => {
                                 הושלם
                               </span>
                             )}
-                            {partial > 0 && !done && <span>המשך מ־{formatClock(prog!.currentTime)}</span>}
+                            {partial > 0 && !done && (
+                              <span>
+                                המשך מ־<ClockLabel seconds={prog!.currentTime} />
+                              </span>
+                            )}
                           </div>
                         </div>
                       </div>

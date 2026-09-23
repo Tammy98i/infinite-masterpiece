@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Check, ChevronDown, ShieldCheck } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Price } from '../../components/Price';
 import { EntryTrackCards } from '../components/EntryTrackCards';
 import { ProgramHighlights } from '../components/ProgramHighlights';
 import { SectionNav } from '../components/SectionNav';
@@ -35,7 +36,7 @@ export function Pricing({ embedded = false }: { embedded?: boolean }) {
       <section className={`pricing-hero pricing-island is-in mx-auto max-w-[1100px] px-4 ${embedded ? 'pb-5 pt-5' : 'pb-16 pt-16 md:pb-20 md:pt-24'} sm:px-6 lg:px-8`}>
         {embedded ? null : (
         <nav aria-label="פירורי לחם" className="mb-10 flex items-center justify-center gap-2 text-xs text-white/35">
-          <Link to="/" className="min-h-11 inline-flex items-center hover:text-white">בית</Link><span aria-hidden>›</span><span className="text-[#b79043]">מסלולים ומחיר</span>
+          <Link to="/" className="min-h-11 inline-flex items-center hover:text-white">בית</Link><span aria-hidden>‹</span><span className="text-[#b79043]">מסלולים ומחיר</span>
         </nav>
         )}
         {embedded ? null : (
@@ -45,7 +46,7 @@ export function Pricing({ embedded = false }: { embedded?: boolean }) {
         </div>
         )}
         <h1 className={`font-heading text-white ${embedded ? 'mb-2 text-2xl md:text-3xl' : 'mb-5 text-4xl md:text-6xl'}`}>שתי דרכי כניסה. <span className="text-gold-gradient">אותו מסע.</span></h1>
-        <p className={`mx-auto max-w-2xl font-light leading-relaxed text-white/55 ${embedded ? 'text-sm' : 'text-base md:text-lg'}`}>אותו מסע מלא. אמיצים: 8,008 ₪ לפני מע״מ בתשלום אחד. הססנים: 8,888 ₪ לפני מע״מ בארבע פעימות. זה קצב תשלום, לא הנחה ולא מוצר חלקי.</p>
+        <p className={`mx-auto max-w-2xl font-light leading-relaxed text-white/55 ${embedded ? 'text-sm' : 'text-base md:text-lg'}`}>אותו מסע מלא. אמיצים: <Price amount={8008} /> לפני מע״מ בתשלום אחד. הססנים: <Price amount={8888} /> לפני מע״מ בארבע פעימות. זה קצב תשלום, לא הנחה ולא מוצר חלקי.</p>
         {embedded ? null : <span className="pricing-flow-stem" aria-hidden />}
       </section>
 
@@ -58,7 +59,7 @@ export function Pricing({ embedded = false }: { embedded?: boolean }) {
           <>
             <p className="mb-4 text-[11px] uppercase tracking-[.25em] text-[#b79043]">בחירת מסלול</p>
             <h2 className="mb-4 text-3xl font-heading text-white md:text-4xl">אמיצים או הססנים</h2>
-            <p className="mx-auto mb-10 max-w-xl text-sm font-light leading-relaxed text-white/45">אמיצים: 8,008 ₪ לפני מע״מ בתשלום מלא. הססנים: 8,888 ₪ לפני מע״מ בארבע פעימות.</p>
+            <p className="mx-auto mb-10 max-w-xl text-sm font-light leading-relaxed text-white/45">אמיצים: <Price amount={8008} /> לפני מע״מ בתשלום מלא. הססנים: <Price amount={8888} /> לפני מע״מ בארבע פעימות.</p>
           </>
         )}
         <EntryTrackCards />

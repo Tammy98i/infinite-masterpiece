@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { DirBack } from '../components/DirArrow';
 import { useApp } from '../context/AppContext';
 import { CourseCard } from '../components/CourseCard';
 import { usePaywall } from '../context/PaywallContext';
@@ -35,7 +35,7 @@ export const InstructorProfileView: React.FC = () => {
           onClick={() => setView('instructors')}
           className="inline-flex items-center gap-1.5 text-sm text-white/45 hover:text-white mb-10 min-h-11"
         >
-          <ArrowRight className="w-4 h-4" />
+          <DirBack />
           מרצים
         </button>
         <p className="text-sm text-white/45">המרצה לא נמצא.</p>
@@ -76,7 +76,7 @@ export const InstructorProfileView: React.FC = () => {
             onClick={() => setView('instructors')}
             className="inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white mb-6 min-h-11"
           >
-            <ArrowRight className="w-4 h-4" />
+            <DirBack />
             מרצים
           </button>
 

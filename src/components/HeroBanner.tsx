@@ -2,7 +2,7 @@
 import { Course } from '../types';
 import { useApp } from '../context/AppContext';
 import { Play } from 'lucide-react';
-import { formatClock } from '../utils/time';
+import { ClockLabel } from './ClockLabel';
 import { useWatchAccess } from '../utils/useWatchAccess';
 import { canPreviewEpisode, canWatchEpisode } from '../utils/access';
 import { getCardAccessState } from '../utils/libraryHome';
@@ -90,7 +90,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
         <p className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/80">
           {instructor ? <span>{instructor.name}</span> : null}
           {instructor ? <span aria-hidden>·</span> : null}
-          <span>{formatClock(totalSecs)}</span>
+          <ClockLabel seconds={totalSecs} />
           <span aria-hidden>·</span>
           <span>{canFull ? 'פתוח לצפייה' : canPreview ? 'טעימה' : 'דורש מנוי'}</span>
         </p>
@@ -103,7 +103,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           <div className="max-w-sm mb-7">
             <div className="flex items-center justify-between text-[11px] text-white/70 mb-2" id="hero-progress-label">
               <span>
-                {formatClock(continueWatching.currentTime)} / {formatClock(continueWatching.duration)}
+                <ClockLabel seconds={continueWatching.currentTime} /> / <ClockLabel seconds={continueWatching.duration} />
               </span>
               <span>המשך צפייה</span>
             </div>

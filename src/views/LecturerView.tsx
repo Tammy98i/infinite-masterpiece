@@ -231,11 +231,11 @@ function ApplicationPanel({
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label className="block">
             <span className="block text-xs text-white/45 mb-1">טלפון</span>
-            <input required disabled={locked} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={fieldClass} />
+            <input required type="tel" dir="ltr" inputMode="tel" disabled={locked} value={form.phone} onChange={(e) => setForm({ ...form, phone: e.target.value })} className={fieldClass} />
           </label>
           <label className="block">
             <span className="block text-xs text-white/45 mb-1">אימייל</span>
-            <input required type="email" disabled={locked} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={fieldClass} />
+            <input required type="email" dir="ltr" disabled={locked} value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} className={fieldClass} />
           </label>
         </div>
         <label className="block">

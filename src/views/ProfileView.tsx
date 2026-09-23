@@ -1,6 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, LogOut, Mic } from 'lucide-react';
+import { LogOut, Mic } from 'lucide-react';
+import { DirBack } from '../components/DirArrow';
 import { useApp } from '../context/AppContext';
 import { PlansGrid } from '../components/PlansGrid';
 import { planLabel } from '../data/plans';
@@ -29,7 +30,7 @@ export const ProfileView: React.FC = () => {
           onClick={() => setView('home')}
           className="inline-flex items-center gap-1.5 text-sm text-white/45 hover:text-white mb-10 min-h-11"
         >
-          <ArrowRight className="w-4 h-4" />
+          <DirBack />
           ספרייה
         </button>
 

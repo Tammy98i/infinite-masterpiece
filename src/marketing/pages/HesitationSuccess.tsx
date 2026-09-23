@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { CheckCircle2, ArrowLeft } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
+import { DirBack } from '../../components/DirArrow';
+import { Price } from '../../components/Price';
 import { HESITANT_INSTALLMENTS } from '../../data/entryTracks';
 
 export function HesitationSuccess() {
@@ -40,7 +42,7 @@ export function HesitationSuccess() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-12 text-center">
           {HESITANT_INSTALLMENTS.map((item) => (
             <div key={item.number} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
-              <p className="text-white font-accent font-semibold tabular-nums mb-1">{item.amountBeforeVat.toLocaleString('he-IL')} ₪</p>
+              <p className="text-white font-accent font-semibold mb-1"><Price amount={item.amountBeforeVat} /></p>
               <p className="text-xs text-white/40 font-light">{item.when}</p>
             </div>
           ))}
@@ -62,7 +64,7 @@ export function HesitationSuccess() {
             to="/"
             className="inline-flex items-center justify-center gap-3 text-white/50 hover:text-white transition-colors group min-h-11"
           >
-            <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />
+            <DirBack />
             <span className="text-[13px] uppercase tracking-widest">חזרה לעמוד הבית</span>
           </Link>
         </div>

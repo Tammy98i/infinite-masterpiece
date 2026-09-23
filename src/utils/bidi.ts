@@ -61,3 +61,15 @@ export function rtlPhysicalToLogical(token: string): string {
 
 /** Icons that must stay un-mirrored in RTL (universal, not directional). */
 export const UNMIRRORED_ICONS = ['play', 'search', 'check', 'clock', 'pause', 'volume'] as const;
+
+/** Unicode LTR isolate — keeps prices and clocks stable inside Hebrew strings. */
+export const LRI = '\u2066';
+export const PDI = '\u2069';
+
+export function isolateLtr(text: string): string {
+  return `${LRI}${text}${PDI}`;
+}
+
+export function formatIls(amount: number): string {
+  return isolateLtr(`${amount.toLocaleString('he-IL')}\u00a0₪`);
+}

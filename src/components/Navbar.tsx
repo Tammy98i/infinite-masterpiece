@@ -5,7 +5,7 @@ import { Search, Mic, Shield, Menu, X, Infinity as InfinityIcon, Compass, Bookma
 import { AccountMenu } from './AccountMenu';
 import { trackEvent } from '../utils/analytics';
 import { searchSuggestions } from '../utils/searchCatalog';
-import { formatClock } from '../utils/time';
+import { isolateClock } from '../utils/time';
 import { getCardAccessState } from '../utils/libraryHome';
 
 export const Navbar: React.FC = () => {
@@ -167,7 +167,7 @@ export const Navbar: React.FC = () => {
                       handleSearchSubmit(e);
                       trackEvent('search_submit', { query: searchQuery.trim() });
                     }}
-                    className="flex items-center animate-in fade-in slide-in-from-left-2 duration-200"
+                    className="flex items-center search-slide-in"
                   >
                     <input
                       ref={searchInputRef}
@@ -230,7 +230,7 @@ export const Navbar: React.FC = () => {
                                     if (!course) return '';
                                     const access = getCardAccessState(course, user);
                                     const dur = course.episodes.reduce((s, ep) => s + ep.duration, 0);
-                                    return ` · ${formatClock(dur)} · ${
+                                    return ` · ${isolateClock(dur)} · ${
                                       access === 'open' ? 'פתוח' : access === 'preview' ? 'טעימה' : 'דורש מנוי'
                                     }`;
                                   })()

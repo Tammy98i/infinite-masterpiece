@@ -1,7 +1,8 @@
 ﻿import React from 'react';
 import { useApp } from '../context/AppContext';
 import { CourseCard } from '../components/CourseCard';
-import { Bookmark, ArrowRight } from 'lucide-react';
+import { Bookmark } from 'lucide-react';
+import { DirBack } from '../components/DirArrow';
 import { FREE_LIST_LIMIT, hasFullLibraryAccess } from '../utils/access';
 import { StartHereRail } from '../components/StartHereRail';
 import { pickStartHereCourses } from '../utils/libraryHome';
@@ -38,7 +39,7 @@ export const MyListView: React.FC = () => {
           className="flex items-center gap-1.5 text-xs font-bold text-zinc-400 hover:text-white transition-colors min-h-11 cursor-pointer"
         >
           <span>לספרייה המלאה</span>
-          <ArrowRight className="w-4 h-4" />
+          <DirBack />
         </button>
       </div>
 
