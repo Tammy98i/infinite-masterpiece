@@ -184,7 +184,7 @@ export function Header() {
 
   useEffect(() => {
     setMobileMenuOpen(false);
-  }, [location.pathname]);
+  }, [location.pathname, location.hash]);
 
   useEffect(() => {
     if (!mobileMenuOpen) return;
@@ -205,19 +205,16 @@ export function Header() {
     };
   }, [mobileMenuOpen]);
 
+  const hash = location.hash.replace(/^#/, '');
+  const onHome = location.pathname === '/';
+  const onFaq = location.pathname === '/faq';
   const navLinks = [
-    { name: 'וובינר', to: '/webinar' },
-    { name: 'תהליך', to: '/journey' },
-    { name: 'צוות המיזם', to: '/premium-88' },
-    { name: 'מחירון', to: '/pricing' },
-    { name: 'שאלות', to: '/faq' },
+    { name: 'וובינר', to: '/webinar', active: onWebinar },
+    { name: 'תהליך', to: '/#journey', active: (onHome && (hash === 'journey' || hash === 'process')) || onJourney },
+    { name: 'צוות המיזם', to: '/#team', active: (onHome && hash === 'team') || onPremium88 },
+    { name: 'מחירון', to: '/#pricing', active: (onHome && (hash === 'pricing' || hash === 'gradual')) || onPricing },
+    { name: 'שאלות', to: '/#faq', active: (onHome && hash === 'faq') || onFaq },
   ];
-  const currentNav = (to: string) => (
-    (to === '/webinar' && onWebinar)
-    || (to === '/premium-88' && onPremium88)
-    || (to === '/pricing' && onPricing)
-    || (to === '/journey' && onJourney)
-  );
 
   const goToWebinarForm = () => {
     trackWebinarCta('header');
@@ -255,10 +252,10 @@ export function Header() {
                 className={cn(
                   'font-light tracking-wide transition-colors duration-200',
                   link.to === '/webinar'
-                    ? onWebinar
+                    ? link.active
                       ? 'font-medium text-[#dfc47d]'
                       : 'text-[#b79043] hover:text-[#dfc47d]'
-                    : currentNav(link.to)
+                    : link.active
                       ? 'font-medium text-[#dfc47d]'
                       : 'text-white/85 hover:text-white'
                 )}
@@ -321,7 +318,7 @@ export function Header() {
                   to={link.to}
                   className={cn(
                     'inline-flex min-h-11 items-center text-lg font-light',
-                    link.to === '/webinar' || currentNav(link.to) ? 'text-[#dfc47d]' : 'text-white/90 hover:text-white'
+                    link.active ? 'text-[#dfc47d]' : 'text-white/90 hover:text-white'
                   )}
                   onClick={() => setMobileMenuOpen(false)}
                 >

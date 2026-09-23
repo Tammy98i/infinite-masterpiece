@@ -8,12 +8,14 @@ import {
   Tag,
   Target,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { EntryTrackCards } from './EntryTrackCards';
+import { FounderRoster } from './FounderRoster';
+import { ProgramHighlights } from './ProgramHighlights';
 import { FAQS } from '../pages/FAQPage';
 import './TabbedSlider.css';
 
-type TabId = 'difference' | 'team' | 'platform' | 'pricing' | 'faq';
+type TabId = 'difference' | 'journey' | 'team' | 'platform' | 'pricing' | 'faq';
 
 type Tab = {
   id: TabId;
@@ -23,10 +25,11 @@ type Tab = {
 
 const TABS: Tab[] = [
   { id: 'difference', label: 'במה זה שונה', tone: 'cream' },
-  { id: 'team', label: 'נבחרת 88', tone: 'dark' },
-  { id: 'platform', label: 'הפלטפורמה', tone: 'cream' },
-  { id: 'pricing', label: 'מסלולים ומחיר', tone: 'dark' },
-  { id: 'faq', label: 'שאלות', tone: 'cream' },
+  { id: 'journey', label: 'תהליך', tone: 'dark' },
+  { id: 'team', label: 'צוות המיזם', tone: 'cream' },
+  { id: 'platform', label: 'הפלטפורמה', tone: 'dark' },
+  { id: 'pricing', label: 'מחירון', tone: 'cream' },
+  { id: 'faq', label: 'שאלות', tone: 'dark' },
 ];
 
 const DIFFERENCE_ITEMS = [
@@ -58,13 +61,28 @@ function DifferencePanel() {
   );
 }
 
+function JourneyPanel() {
+  return (
+    <div className="tabbed-content tabbed-journey">
+      <p className="tabbed-kicker">התהליך</p>
+      <h2>33 ימים. ארבעה שלבים ברורים.</h2>
+      <p className="tabbed-lede">ממכירה ראשונה ועד תשתיות, סקייל וקהילה — כל שלב נשען על השלב שלפניו.</p>
+      <ProgramHighlights />
+      <Link to="/journey" className="tabbed-link">לכל פירוט המסע <ArrowLeft aria-hidden="true" /></Link>
+    </div>
+  );
+}
+
 function TeamPanel() {
   return (
-    <div className="tabbed-content">
-      <p className="tabbed-kicker">שכבת העומק</p>
-      <h2>נבחרת 88</h2>
-      <p className="tabbed-lede">עד 88 יוצרים שעובדים קרוב יותר, לפי התאמה. זה לא חלק מבחירת המסלול.</p>
-      <Link to="/premium-88" className="tabbed-link">לעמוד נבחרת 88 <ArrowLeft aria-hidden="true" /></Link>
+    <div className="tabbed-content tabbed-team">
+      <p className="tabbed-kicker">האנשים מאחורי החזון</p>
+      <h2>צוות המיזם</h2>
+      <p className="tabbed-lede">מי עומד מאחורי Infinite Masterpiece, ומה כל יזם מביא. נבחרת 88 עובדת קרוב יותר לצוות הזה, לפי התאמה.</p>
+      <div className="tabbed-team-roster">
+        <FounderRoster />
+      </div>
+      <Link to="/premium-88" className="tabbed-link">לעמוד הצוות ונבחרת 88 <ArrowLeft aria-hidden="true" /></Link>
     </div>
   );
 }
@@ -97,22 +115,22 @@ function FaqPanel() {
   return (
     <div className="tabbed-content tabbed-faq">
       <p className="tabbed-kicker">בהירות לפני החלטה</p>
-      <h2>שאלות שכדאי לשאול</h2>
+      <h2>שאלות נפוצות</h2>
       <div className="tabbed-faq-list">
-        {FAQS.slice(0, 4).map(item => (
+        {FAQS.map(item => (
           <details key={item.q}>
             <summary><span>{item.q}</span><ChevronDown aria-hidden="true" /></summary>
             <p>{item.a}</p>
           </details>
         ))}
       </div>
-      <Link to="/faq" className="tabbed-button">לכל השאלות הנפוצות</Link>
     </div>
   );
 }
 
 const PANELS: Record<TabId, () => ReactElement> = {
   difference: DifferencePanel,
+  journey: JourneyPanel,
   team: TeamPanel,
   platform: PlatformPanel,
   pricing: PricingPanel,
@@ -122,10 +140,12 @@ const PANELS: Record<TabId, () => ReactElement> = {
 function tabFromHash(hash: string): TabId | null {
   const id = hash.replace(/^#/, '');
   if (id === 'gradual') return 'pricing';
+  if (id === 'process') return 'journey';
   return TABS.some(tab => tab.id === id) ? id as TabId : null;
 }
 
 export function TabbedSlider() {
+  const navigate = useNavigate();
   const [active, setActive] = useState<TabId>(() => tabFromHash(window.location.hash) ?? 'difference');
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const activeTab = TABS.find(tab => tab.id === active) ?? TABS[0];
@@ -145,8 +165,7 @@ export function TabbedSlider() {
 
   const selectTab = (id: TabId) => {
     setActive(id);
-    const next = `${window.location.pathname}${window.location.search}#${id}`;
-    window.history.replaceState(null, '', next);
+    navigate({ pathname: '/', hash: id }, { replace: true });
   };
 
   const handleKeys = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {

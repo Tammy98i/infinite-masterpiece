@@ -21,8 +21,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: clamp(.35rem, 1.4vw, 1.8rem);
-  max-width: 1120px;
+  gap: clamp(.3rem, 1.1vw, 1.4rem);
+  max-width: 1280px;
   margin: 0 auto;
   padding: .9rem 0;
   overflow-x: auto;
@@ -68,8 +68,8 @@
 
 .tabbed-content { width: min(1160px, 100%); margin: 0 auto; text-align: center; }
 .tabbed-kicker { margin: 0 0 1rem; color: #b79043; font-size: .74rem; font-weight: 800; letter-spacing: .23em; text-transform: uppercase; }
-.tabbed-content h2 { max-width: 850px; margin: 0 auto 1.25rem; color: #e0edff; font-family: var(--font-heading); font-size: clamp(2.25rem, 5vw, 4.7rem); font-weight: 700; line-height: 1.02; letter-spacing: -.035em; }
-.tabbed-content h2 span { color: #b79043; }
+.tabbed-content > h2 { max-width: 850px; margin: 0 auto 1.25rem; color: #e0edff; font-family: var(--font-heading); font-size: clamp(2.25rem, 5vw, 4.7rem); font-weight: 700; line-height: 1.02; letter-spacing: -.035em; }
+.tabbed-content > h2 span { color: #b79043; }
 .tabbed-lede { max-width: 720px; margin: 0 auto 2.6rem; color: rgba(224, 237, 255, .66); font-size: clamp(1rem, 1.6vw, 1.2rem); line-height: 1.8; }
 .tabbed-fine { margin: 1.8rem 0 1rem; color: rgba(224, 237, 255, .5); font-size: .82rem; }
 
@@ -100,6 +100,11 @@
 .tabbed-platform-grid article { padding: 2rem 1.25rem; border: 1px solid rgba(183, 144, 67, .22); border-radius: 10px; background: #0a1220; box-shadow: none; }
 .tabbed-platform-grid svg { width: 32px; height: 32px; margin: 0 auto 1rem; color: #b79043; stroke-width: 1.3; }
 
+.tabbed-journey .pricing-journey-grid,
+.tabbed-journey .grid { margin-top: 2.2rem; text-align: right; }
+.tabbed-journey .glass-card { border: 1px solid rgba(183, 144, 67, .3); background: #0a1220; box-shadow: none; }
+.tabbed-team-roster { margin: 2.4rem auto 1rem; text-align: center; }
+.tabbed-team-roster h2 { max-width: none; margin: 0 0 .25rem; font-size: 1.05rem; font-weight: 600; letter-spacing: 0; }
 .tabbed-pricing .w-full.max-w-4xl { margin-top: 2.5rem; }
 .tabbed-pricing .glass-card { border: 1px solid rgba(183, 144, 67, .3); background: #0a1220; box-shadow: none; }
 .tabbed-pricing .glass-card :is(h3, p, li) { color: #e0edff; }

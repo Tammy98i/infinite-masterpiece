@@ -86,7 +86,7 @@ export function Pricing() {
         <p className="mb-4 text-[11px] uppercase tracking-[.25em] text-[#b79043]">לפני שמחליטים</p>
         <h2 className="mb-10 text-3xl font-heading text-white md:text-4xl">שאלות על המסלול והמחיר</h2>
         <div className="space-y-3 text-right">{PRICE_FAQS.map(item => <details key={item.q} className="group glass-card p-5"><summary className="flex min-h-11 cursor-pointer list-none items-center justify-between gap-4 text-white"><span>{item.q}</span><ChevronDown className="h-4 w-4 shrink-0 text-[#b79043] transition-transform duration-200 group-open:rotate-180" /></summary><p className="mt-4 text-sm font-light leading-relaxed text-white/50">{item.a}</p></details>)}</div>
-        <Link to="/faq" className="mt-8 inline-flex min-h-11 items-center text-sm text-[#b79043] hover:text-[#dfc47d]">לכל השאלות הנפוצות</Link>
+        <Link to="/#faq" className="mt-8 inline-flex min-h-11 items-center text-sm text-[#b79043] hover:text-[#dfc47d]">לכל השאלות הנפוצות</Link>
       </section>
     </div>
   );

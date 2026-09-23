@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom';
 const DESTINATIONS = [
   { to: '/', title: 'דף הבית', description: 'המערכת העסקית סביב היצירה', keywords: 'יצירה מערכת הכנסה' },
   { to: '/webinar', title: 'וובינר חי', description: 'היכרות, התאמה והרשמה לערב החי', keywords: 'הרשמה ערב שאלות התאמה' },
-  { to: '/journey', title: 'מסע 33 הימים', description: 'ארבעת שלבי התהליך', keywords: 'מכירות שיווק תשתיות סקייל' },
-  { to: '/pricing', title: 'מסלולים ומחיר', description: 'אמיצים או הססנים', keywords: '8008 8888 תשלום פעימות' },
-  { to: '/premium-88', title: 'צוות המיזם', description: 'האנשים שמאחורי שכבת העומק', keywords: 'מייסדים מומחים נבחרת' },
-  { to: '/faq', title: 'שאלות נפוצות', description: 'תשובות לפני קבלת החלטה', keywords: 'החזר מתאים ספרייה pods' },
+  { to: '/#journey', title: 'מסע 33 הימים', description: 'ארבעת שלבי התהליך', keywords: 'מכירות שיווק תשתיות סקייל תהליך' },
+  { to: '/#pricing', title: 'מסלולים ומחיר', description: 'אמיצים או הססנים', keywords: '8008 8888 תשלום פעימות מחירון' },
+  { to: '/#team', title: 'צוות המיזם', description: 'האנשים שמאחורי שכבת העומק', keywords: 'מייסדים מומחים נבחרת' },
+  { to: '/#faq', title: 'שאלות נפוצות', description: 'תשובות לפני קבלת החלטה', keywords: 'החזר מתאים ספרייה pods' },
   { to: '/library-membership', title: 'מנוי ספרייה', description: 'פרטי הגישה לספריית אינסוף', keywords: 'קורסים הרצאות תוכן' },
   { to: '/library', title: 'כניסה לספרייה', description: 'המשך צפייה באזור האישי', keywords: 'התחברות חשבון קורסים' },
 ];
