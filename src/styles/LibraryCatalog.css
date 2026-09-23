@@ -183,15 +183,19 @@
 
 .library-instructor-frame {
   display: block;
+  position: relative;
   width: 100%;
   aspect-ratio: 11 / 11;
+  overflow: hidden;
   background: #141414;
 }
 
 .library-instructor-frame img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
-  object-fit: contain;
+  object-fit: cover;
   object-position: center;
 }
 
