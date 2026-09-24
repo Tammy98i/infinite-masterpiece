@@ -25,6 +25,7 @@ export const Navbar: React.FC = () => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [topicsNavActive, setTopicsNavActive] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const suggestions = useMemo(
     () => (isSearchOpen ? searchSuggestions(courses, instructors, categories, searchQuery, 6) : []),
@@ -50,6 +51,21 @@ export const Navbar: React.FC = () => {
     window.addEventListener('keydown', openSearch);
     return () => window.removeEventListener('keydown', openSearch);
   }, []);
+
+  useEffect(() => {
+    if (currentView !== 'home') {
+      setTopicsNavActive(currentView === 'category');
+      return;
+    }
+    const el = document.getElementById('topics-heading');
+    if (!el || typeof IntersectionObserver === 'undefined') return;
+    const io = new IntersectionObserver(
+      ([entry]) => setTopicsNavActive(Boolean(entry?.isIntersecting)),
+      { rootMargin: '-20% 0px -55% 0px', threshold: 0 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [currentView]);
 
   useEffect(() => {
     if (isSearchOpen && searchInputRef.current) {
@@ -112,7 +128,7 @@ export const Navbar: React.FC = () => {
                 type="button"
                 onClick={() => setView('home')}
                 className={`transition-colors py-2 min-h-11 border-b-2 ${
-                  currentView === 'home'
+                  currentView === 'home' && !topicsNavActive
                     ? 'text-white border-[#b79043]'
                     : 'text-white/85 hover:text-white border-transparent'
                 }`}
@@ -156,6 +172,7 @@ export const Navbar: React.FC = () => {
                 type="button"
                 onClick={() => {
                   if (currentView !== 'home') setView('home');
+                  setTopicsNavActive(true);
                   requestAnimationFrame(() => {
                     document.getElementById('topics-heading')?.scrollIntoView({
                       behavior: 'smooth',
@@ -163,7 +180,11 @@ export const Navbar: React.FC = () => {
                     });
                   });
                 }}
-                className="header-nav-wide transition-colors py-2 min-h-11 border-b-2 text-white/85 hover:text-white border-transparent"
+                className={`header-nav-wide transition-colors py-2 min-h-11 border-b-2 ${
+                  topicsNavActive
+                    ? 'text-white border-[#b79043]'
+                    : 'text-white/85 hover:text-white border-transparent'
+                }`}
               >
                 נושאים
               </button>

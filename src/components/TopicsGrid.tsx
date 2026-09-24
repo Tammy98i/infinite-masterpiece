@@ -58,6 +58,9 @@ export const TopicsGrid: React.FC = () => {
               <h3 className="text-[13px] font-semibold text-white leading-snug line-clamp-2">
                 {category.name}
               </h3>
+              <p className="library-topic-count mt-0.5" aria-hidden>
+                {count === 0 ? 'בקרוב' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`}
+              </p>
               <p className="sr-only">
                 {count === 0 ? 'בקרוב' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`}
               </p>

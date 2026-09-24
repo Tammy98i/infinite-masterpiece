@@ -544,9 +544,19 @@
   border-radius: 4px;
 }
 
+.crm-desk .crm-hero.min-h-0,
+.crm-desk .crm-catalog-stage .crm-hero.pt-10 {
+  min-height: 11rem;
+}
+
 @media (min-width: 768px) {
   .crm-desk .crm-hero {
     min-height: 28rem;
+  }
+
+  .crm-desk .crm-hero.min-h-0,
+  .crm-desk .crm-catalog-stage .crm-hero.pt-10 {
+    min-height: 12.5rem;
   }
 }
 

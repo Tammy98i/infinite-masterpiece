@@ -604,6 +604,7 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
         onFeaturedAction={() => onNavigate('content')}
         onSecondaryAction={() => onNavigate('content')}
         onSelectCourse={() => onNavigate('content')}
+        compact
       />
 
       <section aria-label="לטיפול עכשיו" className="grid gap-3">
@@ -718,6 +719,12 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
     { label: 'מנוי', value: data.funnel.subscriptionStarted },
     { label: 'ביטולים', value: data.funnel.subscriptionCancelled },
   ];
+  const funnelHints = funnel.map((card, index) => {
+    if (index === 0) return card.value > 0 ? '100%' : '—';
+    const prev = funnel[index - 1]?.value ?? 0;
+    if (prev <= 0) return '—';
+    return `${Math.round((card.value / prev) * 100)}% מהקודם`;
+  });
   const video = [
     { label: 'התחלה', value: data.video.started },
     { label: 'רבע', value: data.video.p25 },
@@ -739,10 +746,11 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
           {focus === 'funnel' ? 'משפך משתמשים חינמיים' : 'המרה'}
         </h2>
         <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
-          {funnel.map((card) => (
+          {funnel.map((card, index) => (
             <article key={card.label} className="crm-desk-metric pointer-events-none">
               <strong>{card.value}</strong>
               <b>{card.label}</b>
+              <em>{funnelHints[index]}</em>
             </article>
           ))}
         </div>
@@ -812,20 +820,26 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
             <ul className="divide-y divide-white/8">
               {data.recent.slice(0, 40).map((row) => {
                 const label = EVENT_LABEL[row.event] || row.event;
-                const who =
-                  (typeof row.properties.source === 'string' && row.properties.source) ||
-                  (typeof row.properties.courseId === 'string' && row.properties.courseId) ||
-                  label;
+                const source =
+                  typeof row.properties.source === 'string' ? row.properties.source : null;
+                const courseId =
+                  typeof row.properties.courseId === 'string' ? row.properties.courseId : null;
+                const who = source || label;
+                const detailParts = [
+                  source ? `מקור: ${source}` : null,
+                  courseId ? `הרצאה · ${courseId.replace(/^course[-_]?/i, '').slice(0, 24)}` : null,
+                ].filter(Boolean);
                 return (
                   <li key={row.id} className="px-3 py-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
                     <span className="crm-desk-who min-w-0">
                       <DeskMonogram name={who} />
                       <span className="min-w-0">
                         <span className="block text-white truncate">{label}</span>
-                        <span className="block text-[11px] text-white/40 truncate">
-                          {row.properties.source ? `מקור: ${row.properties.source}` : null}
-                          {row.properties.courseId ? ` · ${row.properties.courseId}` : null}
-                        </span>
+                        {detailParts.length > 0 ? (
+                          <span className="block text-[11px] text-white/40 truncate">
+                            {detailParts.join(' · ')}
+                          </span>
+                        ) : null}
                       </span>
                     </span>
                     <span className="text-white/35 ms-auto" dir="ltr">
@@ -1067,7 +1081,15 @@ function ContentPanel({
                       </button>
                     </td>
                     <td className="py-3 px-3">
-                      <span className="inline-flex rounded-[4px] border border-white/15 px-2 py-0.5 text-[11px] text-white/75">
+                      <span
+                        className={`inline-flex rounded-[4px] border px-2 py-0.5 text-[11px] ${
+                          status === 'published'
+                            ? 'border-[rgba(155,231,181,0.45)] text-[#9be7b5]'
+                            : status === 'blocked'
+                              ? 'border-[rgba(247,180,180,0.45)] text-[#f7b4b4]'
+                              : 'border-white/25 text-white/70'
+                        }`}
+                      >
                         {STATUS_LABEL[status]}
                       </span>
                     </td>

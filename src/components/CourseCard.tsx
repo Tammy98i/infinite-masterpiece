@@ -86,15 +86,6 @@ export const CourseCard: React.FC<CourseCardProps> = ({
     setView('course', { courseId: course.id });
   };
 
-  const handlePlayClick = (e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (layout === 'continue' && progress) {
-      goWatch(course.id, progress.episodeId, 'card_play');
-      return;
-    }
-    setView('course', { courseId: course.id });
-  };
-
   const handleListClick = (e: React.MouseEvent) => {
     e.stopPropagation();
     const next = !isSaved;
@@ -120,7 +111,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({
         ? 'w-[180px] sm:w-[210px]'
         : 'w-[168px] sm:w-[210px]';
 
-  const metaLine = [instructorName, resumeLabel || durationLabel, ACCESS_LABEL[access]]
+  /* Hover meta: only טעימה / נעול — not «פתוח» (polish 04) */
+  const accessMeta = access === 'open' ? null : ACCESS_LABEL[access];
+  const metaLine = [instructorName, resumeLabel || durationLabel, accessMeta]
     .filter(Boolean)
     .join(' · ');
 
@@ -225,17 +218,6 @@ export const CourseCard: React.FC<CourseCardProps> = ({
               )}
             </div>
           </button>
-
-          {layout === 'continue' ? (
-            <button
-              type="button"
-              onClick={handlePlayClick}
-              className="absolute start-2 bottom-14 z-10 w-11 h-11 rounded-[4px] bg-white text-black flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
-              aria-label={`המשיכו לצפות ב־${course.title}`}
-            >
-              <Play className="w-4 h-4 fill-black ml-0.5" data-icon="play" aria-hidden />
-            </button>
-          ) : null}
 
           <button
             type="button"

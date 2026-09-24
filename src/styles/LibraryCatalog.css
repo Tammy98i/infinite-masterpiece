@@ -226,9 +226,63 @@
 
 .library-catalog .library-rail-scroller {
   gap: 8px;
-  padding-block: 6px 10px;
+  /* Vertical padding so poster hover scale is not clipped by overflow-x */
+  padding-block: 14px 18px;
   mask-image: none;
   -webkit-mask-image: none;
+}
+
+.library-catalog .group\/row {
+  overflow: visible;
+}
+
+.library-catalog .library-rail-scroller:focus-within,
+.library-catalog .group\/row:hover .library-rail-scroller {
+  overflow-y: visible;
+}
+
+.library-catalog .rail-control {
+  border-radius: 4px !important;
+}
+
+.library-catalog .library-plan-strip .library-plan-cta {
+  border-radius: 4px !important;
+  background: #fff !important;
+  color: #141414 !important;
+}
+
+.library-catalog .library-plan-strip .library-plan-cta:hover {
+  background: #f3f3f3 !important;
+}
+
+.library-catalog .library-topic-count {
+  color: #dfc47d;
+  font-size: 0.7rem;
+  font-style: normal;
+}
+
+.library-catalog .library-page-back {
+  color: rgba(255, 255, 255, 0.7) !important;
+  border-radius: 4px;
+}
+
+.library-catalog .library-page-back:hover {
+  color: #fff !important;
+}
+
+.library-catalog .library-start-here-quiet {
+  opacity: 0.85;
+  border: 1px dashed rgba(255, 255, 255, 0.18);
+  border-radius: 4px;
+  padding-block: 10px;
+  background: rgba(5, 10, 20, 0.35);
+}
+
+.library-catalog .library-page-eyebrow {
+  color: #b79043;
+  font-size: 0.7rem;
+  letter-spacing: 0.14em;
+  font-weight: 500;
 }
 
 .library-catalog .library-spacious-section,

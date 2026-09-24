@@ -5,9 +5,10 @@ type Props = {
   tenMinute?: Course;
   taste?: Course;
   newest?: Course;
+  quiet?: boolean;
 };
 
-export function StartHereRail({ tenMinute, taste, newest }: Props) {
+export function StartHereRail({ tenMinute, taste, newest, quiet = false }: Props) {
   const items = [
     tenMinute ? { course: tenMinute, label: '10 דקות', section: 'start_ten' } : null,
     taste ? { course: taste, label: 'טעימה פתוחה', section: 'start_taste' } : null,
@@ -17,7 +18,12 @@ export function StartHereRail({ tenMinute, taste, newest }: Props) {
   if (items.length === 0) return null;
 
   return (
-    <section className="library-spacious-section library-island library-island-flush py-3 select-none scroll-mt-24" aria-label="המשיכו מכאן — רשימת הרצאות">
+    <section
+      className={`library-spacious-section library-island library-island-flush py-3 select-none scroll-mt-24 ${
+        quiet ? 'library-start-here-quiet' : ''
+      }`}
+      aria-label="המשיכו מכאן — רשימת הרצאות"
+    >
       <div className="px-4 sm:px-8 mb-1">
         <h2 className="library-rail-title text-white tracking-tight">המשיכו מכאן</h2>
       </div>

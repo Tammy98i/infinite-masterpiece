@@ -20,6 +20,8 @@ type Props = {
   onFeaturedAction: (course: Course) => void;
   onSecondaryAction?: (course: Course) => void;
   onSelectCourse: (course: Course) => void;
+  /** Short banner only — no rails (admin overview polish) */
+  compact?: boolean;
 };
 
 function pickFeatured(courses: Course[]) {
@@ -47,6 +49,7 @@ export function CrmCatalogStage({
   onFeaturedAction,
   onSecondaryAction,
   onSelectCourse,
+  compact = false,
 }: Props) {
   const featured = pickFeatured(courses);
   const published = railOf(courses, (course) => course.status === 'published');
@@ -57,7 +60,12 @@ export function CrmCatalogStage({
   return (
     <div className="crm-catalog-stage grid gap-8">
       {featured ? (
-        <section className="crm-hero relative flex items-end overflow-hidden pt-16 pb-10 sm:pt-20 sm:pb-12" aria-label={`הרצאה מומלצת: ${featured.title}`}>
+        <section
+          className={`crm-hero relative flex items-end overflow-hidden ${
+            compact ? 'pt-10 pb-8 sm:pt-12 sm:pb-9 min-h-0' : 'pt-16 pb-10 sm:pt-20 sm:pb-12'
+          }`}
+          aria-label={`הרצאה מומלצת: ${featured.title}`}
+        >
           <div className="absolute inset-0 select-none overflow-hidden">
             <img
               {...responsiveImageAttrs(featured.backdropImage || featured.coverImage, {
@@ -76,13 +84,28 @@ export function CrmCatalogStage({
           <div className="relative z-10 w-full max-w-2xl px-5 sm:px-8 text-start">
             <p className="text-[11px] uppercase tracking-[0.22em] text-[#dfc47d] mb-2">{eyebrow}</p>
             {kicker ? <p className="text-sm text-white/70 mb-2">{kicker}</p> : null}
-            <h2 className="text-3xl sm:text-5xl font-bold text-white leading-[1.08] tracking-tight">{featured.title}</h2>
-            {featured.subtitle ? <p className="mt-3 max-w-xl text-sm sm:text-base text-white/75 leading-relaxed">{featured.subtitle}</p> : null}
-            <p className="mt-3 text-xs text-white/50">
-              {instructorName(featured.instructorId) || 'מרצה'}
-              {featured.level ? ` · ${featured.level}` : ''}
-              {featured.status ? ` · ${STATUS_LABEL[featured.status]}` : ''}
-            </p>
+            <h2
+              className={`font-bold text-white leading-[1.08] tracking-tight ${
+                compact ? 'text-2xl sm:text-3xl' : 'text-3xl sm:text-5xl'
+              }`}
+            >
+              {compact ? 'לטיפול עכשיו' : featured.title}
+            </h2>
+            {compact ? (
+              <p className="mt-2 max-w-xl text-sm text-white/70 leading-relaxed">
+                {featured.title}
+                {featured.subtitle ? ` — ${featured.subtitle}` : ''}
+              </p>
+            ) : featured.subtitle ? (
+              <p className="mt-3 max-w-xl text-sm sm:text-base text-white/75 leading-relaxed">{featured.subtitle}</p>
+            ) : null}
+            {compact ? null : (
+              <p className="mt-3 text-xs text-white/50">
+                {instructorName(featured.instructorId) || 'מרצה'}
+                {featured.level ? ` · ${featured.level}` : ''}
+                {featured.status ? ` · ${STATUS_LABEL[featured.status]}` : ''}
+              </p>
+            )}
             <div className="mt-5 flex flex-wrap gap-2">
               <button type="button" className="crm-hero-play min-h-11 px-5 text-sm font-semibold cursor-pointer" onClick={() => onFeaturedAction(featured)}>
                 {featuredActionLabel}
@@ -108,6 +131,8 @@ export function CrmCatalogStage({
         </section>
       )}
 
+      {compact ? null : (
+        <>
       <CourseRail title="הרצאות באוויר" courses={published} instructors={instructors} onSelect={onSelectCourse} />
       <CourseRail title="ממתינות לאישור" courses={pending} instructors={instructors} onSelect={onSelectCourse} />
       <CourseRail title="טיוטות אקדמיות" courses={drafts} instructors={instructors} onSelect={onSelectCourse} />
@@ -156,6 +181,8 @@ export function CrmCatalogStage({
           </div>
         </section>
       ) : null}
+        </>
+      )}
     </div>
   );
 }
@@ -199,7 +226,7 @@ function CourseRail({
               )}
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
               <span className="crm-poster-play absolute inset-0 z-[1] flex items-center justify-center">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black text-xs font-semibold">
+                <span className="flex h-10 w-10 items-center justify-center rounded-[4px] bg-white text-black text-xs font-semibold">
                   פתח
                 </span>
               </span>
