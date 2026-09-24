@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>סקיצה · פוליש ספרייה + אדמין — Infinite Masterpiece</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600&family=Noto+Sans+Hebrew:wght@500;600;700&family=Rubik:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gold: #b79043;
+      --gold-soft: #dfc47d;
+      --muted: rgba(224, 237, 255, 0.72);
+      --line: rgba(255, 255, 255, 0.12);
+      --note: #ff7a33;
+      --ok: #9be7b5;
+      --r: 4px;
+      --heading: "Noto Sans Hebrew", "Arial Hebrew", sans-serif;
+      --body: "IBM Plex Sans Hebrew", "Arial Hebrew", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      color: #fff;
+      font-family: var(--body);
+      background: #02060f;
+    }
+    :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+    .sky {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .sky-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.74;
+      filter: saturate(0.92) contrast(1.1) brightness(0.64);
+    }
+    .veil {
+      position: absolute;
+      inset: 0;
+    }
+    .veil-blackout { background: rgba(3, 8, 18, 0.28); }
+    .veil-shade {
+      background:
+        radial-gradient(circle at 50% 12%, transparent 10%, rgba(5, 10, 20, 0.28) 52%, rgba(5, 10, 20, 0.52) 100%),
+        linear-gradient(180deg, rgba(5, 10, 20, 0.22), rgba(5, 10, 20, 0.48));
+    }
+    .veil-f { background: linear-gradient(180deg, transparent 40%, rgba(2, 6, 14, 0.62) 100%); }
+    .veil-g { background: linear-gradient(to inline-end, rgba(5, 10, 20, 0.38), transparent 45%); }
+    .veil-h { background: radial-gradient(ellipse at 50% 35%, transparent 18%, rgba(3, 8, 18, 0.4) 88%); }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 22px 16px 80px;
+    }
+    .banner {
+      border: 1px dashed var(--note);
+      color: var(--note);
+      padding: 8px 12px;
+      border-radius: 999px;
+      display: inline-flex;
+      font-size: 12.5px;
+      margin-bottom: 14px;
+      background: rgba(0, 0, 0, 0.35);
+    }
+    h1 {
+      font-family: var(--heading);
+      font-weight: 600;
+      font-size: clamp(1.35rem, 2.6vw, 1.9rem);
+      margin: 0 0 8px;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
+    }
+    .lede {
+      color: var(--muted);
+      max-width: 52rem;
+      line-height: 1.7;
+      margin: 0 0 14px;
+      font-size: 14.5px;
+    }
+    .note {
+      color: var(--note);
+      font-family: Rubik, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 0 0 14px;
+    }
+    .note::before { content: "→ "; }
+
+    .zone-row, .mode-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .zone-btn, .mode-btn {
+      border: 1px solid var(--line);
+      background: rgba(5, 10, 20, 0.55);
+      color: #fff;
+      border-radius: var(--r);
+      padding: 10px 14px;
+      min-height: 44px;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .zone-btn.is-on, .mode-btn.is-on {
+      border-color: rgba(183, 144, 67, 0.65);
+      background: rgba(183, 144, 67, 0.14);
+      color: var(--gold-soft);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 900px) {
+      .steps { grid-template-columns: 1fr 1fr; }
+    }
+    .step {
+      text-align: start;
+      border: 1px solid var(--line);
+      background: rgba(5, 10, 20, 0.62);
+      border-radius: var(--r);
+      padding: 10px 12px;
+      color: #fff;
+      font-family: inherit;
+      cursor: pointer;
+      min-height: 88px;
+      backdrop-filter: blur(10px);
+    }
+    .step:hover, .step.is-on {
+      border-color: rgba(183, 144, 67, 0.55);
+      background: rgba(183, 144, 67, 0.12);
+    }
+    .step .n {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--gold-soft);
+      margin: 0 0 6px;
+    }
+    .step b { display: block; font-size: 13px; margin-bottom: 4px; }
+    .step span { font-size: 12px; color: rgba(255, 255, 255, 0.55); line-height: 1.4; }
+
+    .screen { display: none; }
+    .screen.is-on { display: block; }
+    .zone-admin .lib-only { display: none; }
+    .zone-lib .admin-only { display: none; }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    @media (max-width: 800px) {
+      .compare { grid-template-columns: 1fr; }
+    }
+    .pane {
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 12px;
+      background: rgba(5, 10, 20, 0.55);
+      min-height: 160px;
+      backdrop-filter: blur(12px);
+    }
+    .pane .tag {
+      font-size: 11px;
+      margin: 0 0 8px;
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .tag.bad { color: var(--note); border: 1px solid rgba(255, 122, 51, 0.45); }
+    .tag.good { color: var(--ok); border: 1px solid rgba(155, 231, 181, 0.45); }
+
+    .rail-frame {
+      position: relative;
+      border: 1px dashed rgba(255, 122, 51, 0.35);
+      border-radius: var(--r);
+      padding: 10px 36px;
+      overflow: hidden;
+    }
+    body.is-sketch .rail-frame {
+      overflow: visible;
+      padding-block: 18px;
+      border-color: rgba(155, 231, 181, 0.35);
+    }
+    .rail {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-block: 4px;
+    }
+    body.is-sketch .rail { overflow: visible; }
+    .poster {
+      flex: 0 0 150px;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--r);
+      border: 1px solid var(--line);
+      background: linear-gradient(145deg, #243552, #0d1524);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .2s ease;
+    }
+    .poster:hover { transform: scale(1.06); z-index: 2; }
+    .poster .meta {
+      display: none;
+      position: absolute;
+      inset: 0;
+      padding: 10px;
+      background: linear-gradient(transparent 20%, rgba(2, 6, 14, 0.92));
+      align-content: end;
+      gap: 3px;
+      font-size: 11px;
+    }
+    body.is-sketch .poster:hover .meta { display: grid; }
+    .poster .play {
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 28px;
+      height: 28px;
+      border-radius: var(--r);
+      background: #fff;
+      color: #000;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      opacity: 0;
+    }
+    body.is-sketch .poster:hover .play { opacity: 1; }
+    .poster .play-fixed {
+      position: absolute;
+      inset-inline-start: 8px;
+      bottom: 10px;
+      width: 32px;
+      height: 32px;
+      border-radius: 999px;
+      background: #fff;
+      color: #000;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      z-index: 3;
+    }
+    body.is-sketch .poster .play-fixed { display: none; }
+    .arrow {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      border: 1px solid var(--line);
+      background: rgba(5, 10, 20, 0.75);
+      color: #fff;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      font-size: 16px;
+    }
+    .arrow.prev { inset-inline-end: 0; border-radius: 999px; }
+    .arrow.next { inset-inline-start: 0; border-radius: 999px; }
+    body.is-sketch .arrow { border-radius: var(--r); }
+
+    .strip {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      background: rgba(5, 10, 20, 0.55);
+      margin-top: 10px;
+    }
+    .strip p { margin: 0; font-size: 13px; color: rgba(255,255,255,.7); flex: 1; }
+    .btn-gold-pill {
+      border: 0;
+      border-radius: 999px;
+      background: var(--gold);
+      color: #000;
+      padding: 8px 14px;
+      min-height: 40px;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn-white-sq {
+      border: 0;
+      border-radius: var(--r);
+      background: #fff;
+      color: #141414;
+      padding: 8px 14px;
+      min-height: 40px;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .btn-more {
+      border: 0;
+      border-radius: var(--r);
+      background: rgba(109, 109, 110, 0.7);
+      color: #fff;
+      padding: 8px 14px;
+      min-height: 40px;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .nav-demo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      background: rgba(5, 10, 20, 0.55);
+      margin-bottom: 10px;
+    }
+    .nav-demo a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-size: 13px;
+      border-bottom: 2px solid transparent;
+      padding-block: 4px;
+    }
+    .nav-demo a.is-on { color: #fff; border-bottom-color: var(--gold); }
+    .nav-demo .brand { font-weight: 600; margin-inline-end: auto; }
+    .topics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 700px) { .topics { grid-template-columns: 1fr 1fr; } }
+    .topic {
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 12px;
+      background: rgba(5, 10, 20, 0.5);
+      min-height: 72px;
+    }
+    .topic b { display: block; font-size: 14px; margin-bottom: 4px; }
+    .topic em {
+      font-style: normal;
+      font-size: 11px;
+      color: rgba(255,255,255,.4);
+    }
+    body.is-sketch .topic em { color: var(--gold-soft); }
+
+    .empty-wrap { display: grid; gap: 10px; }
+    .empty-new {
+      border-radius: var(--r);
+      border: 1px solid var(--line);
+      background: rgba(5, 10, 20, 0.55);
+      padding: 18px;
+      text-align: start;
+    }
+    .empty-new .eye { color: var(--gold); font-size: 11px; letter-spacing: 0.14em; margin-bottom: 6px; }
+    .empty-new h4 { margin: 0 0 6px; font-weight: 500; }
+    .empty-new p { margin: 0 0 12px; color: rgba(255, 255, 255, 0.55); font-size: 13px; }
+    .page-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding-bottom: 10px;
+      border-bottom: 1px solid var(--line);
+    }
+    .page-head .gold-ico { color: var(--gold); font-size: 12px; margin-bottom: 4px; }
+    .page-head h3 { margin: 0; font-size: 1.35rem; }
+    .page-head a { color: #a1a1aa; font-size: 12px; text-decoration: none; }
+    body.is-sketch .page-head a { color: rgba(255,255,255,.7); }
+    .start-here {
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 12px;
+      background: rgba(5, 10, 20, 0.4);
+    }
+    .start-here h5 { margin: 0 0 8px; font-size: 14px; }
+    .start-here.quiet {
+      opacity: 0.72;
+      border-style: dashed;
+    }
+    body.is-sketch .start-here.quiet { opacity: 0.85; }
+    .start-here .mini {
+      display: flex;
+      gap: 8px;
+    }
+    .start-here .mini i {
+      flex: 0 0 72px;
+      aspect-ratio: 16/9;
+      border-radius: var(--r);
+      background: linear-gradient(135deg, #2a3b58, #10182a);
+      font-style: normal;
+    }
+
+    .desk {
+      display: grid;
+      grid-template-columns: 170px 1fr;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      overflow: hidden;
+      min-height: 320px;
+      background: rgba(5, 10, 20, 0.35);
+    }
+    @media (max-width: 800px) { .desk { grid-template-columns: 1fr; } }
+    .aside {
+      border-inline-end: 1px solid var(--line);
+      padding: 12px 10px;
+      background: rgba(5, 10, 20, 0.45);
+    }
+    .aside h2 { font-size: 14px; margin: 0 0 8px; }
+    .aside button {
+      width: 100%;
+      text-align: start;
+      border: 0;
+      border-inline-start: 2px solid transparent;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.55);
+      padding: 8px;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: 12.5px;
+    }
+    .aside button.is-on {
+      color: #fff;
+      font-weight: 600;
+      border-inline-start-color: #fff;
+    }
+    .main { padding: 14px; }
+
+    .hero-big {
+      border-radius: var(--r);
+      border: 1px solid var(--line);
+      min-height: 150px;
+      padding: 16px;
+      margin-bottom: 10px;
+      background:
+        linear-gradient(to inline-start, rgba(5, 10, 20, 0.2), rgba(5, 10, 20, 0.88)),
+        linear-gradient(135deg, #1a2744, #0a1428);
+    }
+    .hero-big.tall { min-height: 220px; }
+    .hero-big .eye { font-size: 11px; letter-spacing: 0.16em; color: var(--gold); }
+    .hero-big h3 { margin: 6px 0; font-size: 1.25rem; font-weight: 500; font-family: var(--heading); }
+    .hero-big p { margin: 0; font-size: 13px; color: rgba(255,255,255,.65); }
+    .hero-big .acts { display: flex; gap: 8px; margin-top: 10px; flex-wrap: wrap; }
+    .fake-rails {
+      display: grid;
+      gap: 6px;
+      margin-bottom: 10px;
+      opacity: 0.55;
+    }
+    body.is-sketch .fake-rails { display: none; }
+    .fake-rails .row {
+      height: 42px;
+      border-radius: var(--r);
+      border: 1px dashed rgba(255,255,255,.15);
+      background: rgba(255,255,255,.03);
+    }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 700px) { .metric-row { grid-template-columns: 1fr 1fr; } }
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 12px;
+      text-align: start;
+      background: rgba(5, 10, 20, 0.55);
+    }
+    .metric strong { display: block; font-size: 1.45rem; font-weight: 300; }
+    .metric b { display: block; font-size: 0.85rem; margin-top: 4px; }
+    .metric em { display: block; font-size: 0.7rem; font-style: normal; color: rgba(255,255,255,.4); margin-top: 2px; }
+
+    .table-wrap {
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      overflow: hidden;
+      background: rgba(5, 10, 20, 0.38);
+      margin-top: 10px;
+    }
+    table { width: 100%; border-collapse: collapse; font-size: 13px; }
+    th, td {
+      text-align: start;
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    th { color: rgba(255, 255, 255, 0.4); font-weight: 400; font-size: 11px; }
+    .who { display: flex; align-items: center; gap: 10px; }
+    .thumb {
+      width: 56px;
+      height: 32px;
+      border-radius: var(--r);
+      background: linear-gradient(135deg, #2a3b58, #10182a);
+      flex-shrink: 0;
+    }
+    .mono {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r);
+      display: grid;
+      place-items: center;
+      background: rgba(183, 144, 67, 0.2);
+      color: var(--gold-soft);
+      font-size: 13px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .chip {
+      display: inline-flex;
+      border-radius: var(--r);
+      border: 1px solid rgba(255,255,255,.15);
+      padding: 2px 8px;
+      font-size: 11px;
+      color: rgba(255,255,255,.75);
+    }
+    body.is-sketch .chip.pub { border-color: rgba(155, 231, 181, 0.45); color: var(--ok); }
+    body.is-sketch .chip.draft { border-color: rgba(255,255,255,.25); color: rgba(255,255,255,.7); }
+    body.is-sketch .chip.block { border-color: rgba(247, 180, 180, .45); color: #f7b4b4; }
+    .sq-btn {
+      border-radius: var(--r);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: transparent;
+      color: #fff;
+      padding: 6px 10px;
+      min-height: 36px;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .funnel-hint {
+      font-size: 11px;
+      color: rgba(255,255,255,.4);
+      margin: 4px 0 0;
+    }
+    body.is-today .funnel-hint { display: none; }
+
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      inset-inline-start: 50%;
+      transform: translateX(50%);
+      background: rgba(5, 10, 20, 0.92);
+      border: 1px solid rgba(183, 144, 67, 0.45);
+      color: var(--gold-soft);
+      padding: 10px 16px;
+      border-radius: var(--r);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+      z-index: 20;
+      max-width: min(90vw, 420px);
+      text-align: center;
+    }
+    .toast.is-on { opacity: 1; }
+    footer {
+      margin-top: 18px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+      line-height: 1.6;
+    }
+    .stamps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .stamps span {
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 6px 10px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.55);
+    }
+  </style>
+</head>
+<body class="is-today zone-lib">
+  <div class="sky" aria-hidden="true">
+    <img class="sky-img" src="https://media.base44.com/images/public/6aa94dfb715e7d446231f544/025d40d79_image.png" alt="" width="1023" height="438" />
+    <div class="veil veil-blackout"></div>
+    <div class="veil veil-shade"></div>
+    <div class="veil veil-f"></div>
+    <div class="veil veil-g"></div>
+    <div class="veil veil-h"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="banner">סקיצה לאישור — פוליש אחרי נטפליקס אקדמי — לא קוד במוצר — בלי למחוק פיצ׳רים</div>
+    <h1>פוליש עיצובי · ספרייה + סקירה / תוכן / אנליטיקות</h1>
+    <p class="lede">
+      אחרי הכרום הבסיסי (ווילים, hover, טבלאות) — עוד 12 תיקונים קטנים שמשלימים את השפה:
+      hover שלא נחתך, Play אחד, CTA אחיד, סקירה קצרה, chip סטטוס, ומשפך קריא.
+    </p>
+    <p class="note" id="hint">בחרו אזור ושכבה. מתג היום / סקיצה משווה לפני־אחרי.</p>
+
+    <div class="zone-row" role="group" aria-label="אזור">
+      <button type="button" class="zone-btn is-on" data-zone="lib">ספרייה</button>
+      <button type="button" class="zone-btn" data-zone="admin">אדמין</button>
+    </div>
+    <div class="mode-row" role="group" aria-label="מצב">
+      <button type="button" class="mode-btn is-on" data-mode="today">היום</button>
+      <button type="button" class="mode-btn" data-mode="sketch">סקיצה</button>
+    </div>
+
+    <div class="steps lib-only" id="steps-lib" role="list">
+      <button type="button" class="step is-on" data-go="rails">
+        <div class="n">01–04</div>
+        <b>פסים / hover</b>
+        <span>לא נחתך · חץ 4px · Play אחד · מטא</span>
+      </button>
+      <button type="button" class="step" data-go="strip">
+        <div class="n">05</div>
+        <b>Plan strip</b>
+        <span>CTA לבן 4px</span>
+      </button>
+      <button type="button" class="step" data-go="topics">
+        <div class="n">06</div>
+        <b>נושאים</b>
+        <span>מונה + underline פעיל</span>
+      </button>
+      <button type="button" class="step" data-go="empty">
+        <div class="n">07–08</div>
+        <b>ריקים</b>
+        <span>כותרת אחידה · StartHere שקט</span>
+      </button>
+    </div>
+
+    <div class="steps admin-only" id="steps-admin" role="list" hidden>
+      <button type="button" class="step is-on" data-go="overview">
+        <div class="n">09–10</div>
+        <b>סקירה</b>
+        <span>באנר קצר + מדדים · Play 4px</span>
+      </button>
+      <button type="button" class="step" data-go="content">
+        <div class="n">11</div>
+        <b>תכני VOD</b>
+        <span>chip סטטוס לפי מצב</span>
+      </button>
+      <button type="button" class="step" data-go="analytics">
+        <div class="n">12</div>
+        <b>אנליטיקות</b>
+        <span>רמזים · יחס משפך · פיד קריא</span>
+      </button>
+      <button type="button" class="step" data-go="rails">
+        <div class="n">01</div>
+        <b>פסים משותפים</b>
+        <span>אותה שפת hover</span>
+      </button>
+    </div>
+
+    <!-- rails -->
+    <section class="screen is-on" id="screen-rails">
+      <div class="compare">
+        <div class="pane">
+          <span class="tag bad" id="rails-tag">היום</span>
+          <p style="margin:0 0 8px;font-size:12px;color:rgba(255,255,255,.5)" id="rails-copy">
+            overflow חותך hover · חץ עגול · שני Play בהמשך · מטא עם «פתוח».
+          </p>
+          <div class="rail-frame" id="rail-frame">
+            <button type="button" class="arrow prev" aria-label="הקודם">‹</button>
+            <button type="button" class="arrow next" aria-label="הבא">›</button>
+            <div class="rail" id="rail">
+              <article class="poster is-continue">
+                <span class="play-fixed" aria-hidden>▶</span>
+                <div class="meta"><b>המשך צפייה</b><span class="meta-line">גל · 12:00 · פתוח</span></div>
+                <span class="play" aria-hidden>▶</span>
+              </article>
+              <article class="poster">
+                <div class="meta"><b>טעימה</b><span class="meta-line">מרצה · 10:00 · טעימה</span></div>
+                <span class="play" aria-hidden>▶</span>
+              </article>
+              <article class="poster">
+                <div class="meta"><b>נעול</b><span class="meta-line">מערכות · נעול</span></div>
+                <span class="play" aria-hidden>▶</span>
+              </article>
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <span class="tag good">מה משתנה</span>
+          <ul style="margin:0;padding-inline-start:18px;line-height:1.7;font-size:13px;color:rgba(255,255,255,.75)">
+            <li>מסגרת פס עם padding — hover לא נחתך</li>
+            <li>חיצים מרובעים 4px</li>
+            <li>בהמשך: Play רק ב־hover (בלי כפתור קבוע)</li>
+            <li>מטא: רק טעימה / נעול — בלי «פתוח»</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- strip -->
+    <section class="screen" id="screen-strip">
+      <div class="compare">
+        <div class="pane">
+          <span class="tag bad">היום</span>
+          <div class="strip">
+            <p>מנוי פותח את כל הספרייה — בדיקת התאמה או פתיחת גישה.</p>
+            <button type="button" class="btn-gold-pill" data-toast="pill זהב · היום">פתיחת גישה</button>
+          </div>
+        </div>
+        <div class="pane">
+          <span class="tag good">סקיצה</span>
+          <div class="strip">
+            <p>אותו CTA נשאר — רק כרום כמו הכרזה.</p>
+            <button type="button" class="btn-white-sq" data-toast="לבן 4px · סקיצה">פתיחת גישה</button>
+            <button type="button" class="btn-more" data-toast="משני">לא עכשיו</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- topics -->
+    <section class="screen" id="screen-topics">
+      <div class="nav-demo" aria-label="ניווט">
+        <span class="brand">INFINITE MASTERPIECE</span>
+        <a href="#">ספרייה</a>
+        <a href="#">הרשימה</a>
+        <a href="#" class="is-on" id="nav-topics">נושאים</a>
+        <a href="#">10 דק׳</a>
+      </div>
+      <div class="topics" id="topics">
+        <div class="topic"><b>מנהיגות</b><em class="count">12 הרצאות</em></div>
+        <div class="topic"><b>מערכות</b><em class="count">8 הרצאות</em></div>
+        <div class="topic"><b>זוגיות</b><em class="count">5 הרצאות</em></div>
+        <div class="topic"><b>מיינדפולנס</b><em class="count">7 הרצאות</em></div>
+      </div>
+      <p style="font-size:12px;color:rgba(255,255,255,.45);margin:10px 0 0" id="topics-hint">
+        היום: מונה ב־sr-only. סקיצה: מונה זהב גלוי + underline על נושאים.
+      </p>
+    </section>
+
+    <!-- empty -->
+    <section class="screen" id="screen-empty">
+      <div class="page-head">
+        <div>
+          <div class="gold-ico">★ רשימת צפייה אישית</div>
+          <h3>הרשימה שלי (0)</h3>
+        </div>
+        <a href="#" id="back-link">לספרייה המלאה ←</a>
+      </div>
+      <div class="empty-wrap">
+        <div class="empty-new">
+          <div class="eye">הרשימה שלי</div>
+          <h4>עדיין אין הרצאות שמורות</h4>
+          <p>בחרו מהכרזה או מהפסים — הכל נשאר במקומו.</p>
+          <button type="button" class="btn-white-sq" data-toast="CTA פאנל">להמשיך לגלול</button>
+        </div>
+        <div class="start-here" id="start-here">
+          <h5>המשיכו מכאן</h5>
+          <div class="mini"><i></i><i></i><i></i></div>
+        </div>
+      </div>
+      <p style="font-size:12px;color:rgba(255,255,255,.45);margin:10px 0 0" id="empty-hint">
+        היום: שני «המשיכו מכאן» מתחרים. סקיצה: StartHere שקט/מקווקו; קישור חזרה בלבן־אפור.
+      </p>
+    </section>
+
+    <!-- overview -->
+    <section class="screen" id="screen-overview">
+      <div class="desk">
+        <aside class="aside">
+          <h2>אדמין</h2>
+          <button type="button" class="is-on">סקירה</button>
+          <button type="button" data-jump="content">תכני VOD</button>
+          <button type="button" data-jump="analytics">אנליטיקות</button>
+        </aside>
+        <div class="main">
+          <div class="hero-big tall" id="ov-hero">
+            <span class="eye">קטלוג אקדמי</span>
+            <h3>לטיפול עכשיו</h3>
+            <p>אותה כרזה — בלי פסים כפולים מתחת.</p>
+            <div class="acts">
+              <button type="button" class="btn-white-sq" data-jump="content">ניהול ההרצאה</button>
+              <button type="button" class="btn-more" data-jump="content">לקטלוג</button>
+            </div>
+          </div>
+          <div class="fake-rails" id="ov-rails" aria-hidden="true">
+            <div class="row"></div>
+            <div class="row"></div>
+            <div class="row"></div>
+          </div>
+          <div class="metric-row">
+            <button type="button" class="metric"><strong>3</strong><b>לחיוב</b><em>הססנים</em></button>
+            <button type="button" class="metric"><strong>2</strong><b>בקשות מרצים</b><em>אשר בשורה</em></button>
+            <button type="button" class="metric"><strong>5</strong><b>לידים</b><em>פתוחים</em></button>
+            <button type="button" class="metric"><strong>4</strong><b>ממתינות</b><em>תוכן</em></button>
+          </div>
+          <p style="font-size:12px;color:rgba(255,255,255,.4);margin:10px 0 0" id="ov-hint">
+            היום: CrmCatalogStage מלא דוחף מדדים למטה. סקיצה: באנר קצר בלבד.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- content -->
+    <section class="screen" id="screen-content">
+      <div class="desk">
+        <aside class="aside">
+          <h2>אדמין</h2>
+          <button type="button" data-jump="overview">סקירה</button>
+          <button type="button" class="is-on">תכני VOD</button>
+          <button type="button" data-jump="analytics">אנליטיקות</button>
+        </aside>
+        <div class="main">
+          <p style="margin:0 0 8px;font-size:13px;color:rgba(255,255,255,.5)">טבלה + bulk נשארים. רק chip הסטטוס מקבל משקל.</p>
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr><th></th><th>הרצאה</th><th>סטטוס</th><th>פעולה</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox" checked aria-label="בחירה" /></td>
+                  <td><span class="who"><span class="thumb"></span><span>מחזון למערכת</span></span></td>
+                  <td><span class="chip pub">פורסם</span></td>
+                  <td><button type="button" class="sq-btn">עריכה</button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" aria-label="בחירה" /></td>
+                  <td><span class="who"><span class="mono">נט</span><span>ניהול זמן</span></span></td>
+                  <td><span class="chip draft">טיוטה</span></td>
+                  <td><button type="button" class="sq-btn">עריכה</button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" aria-label="בחירה" /></td>
+                  <td><span class="who"><span class="mono">חס</span><span>טיוטה ישנה</span></span></td>
+                  <td><span class="chip block">חסום</span></td>
+                  <td><button type="button" class="sq-btn">עריכה</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- analytics -->
+    <section class="screen" id="screen-analytics">
+      <div class="desk">
+        <aside class="aside">
+          <h2>אדמין</h2>
+          <button type="button" data-jump="overview">סקירה</button>
+          <button type="button" data-jump="content">תכני VOD</button>
+          <button type="button" class="is-on">אנליטיקות</button>
+        </aside>
+        <div class="main">
+          <p style="margin:0 0 6px;font-size:12px;color:rgba(255,255,255,.5)">המרה</p>
+          <div class="metric-row">
+            <article class="metric"><strong>42</strong><b>Paywall</b><em class="funnel-hint">100%</em></article>
+            <article class="metric"><strong>18</strong><b>שדרוג</b><em class="funnel-hint">43% מהקודם</em></article>
+            <article class="metric"><strong>9</strong><b>ניסיון</b><em class="funnel-hint">50% מהקודם</em></article>
+            <article class="metric"><strong>6</strong><b>מנוי</b><em class="funnel-hint">67% מהקודם</em></article>
+          </div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>אירוע</th><th>פרט</th><th>זמן</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><span class="who"><span class="mono">דכ</span><span>סיום פרק</span></span></td>
+                  <td id="feed-detail">course_abc123</td>
+                  <td dir="ltr">12:04</td>
+                </tr>
+                <tr>
+                  <td><span class="who"><span class="mono">נל</span><span>התחלת צפייה</span></span></td>
+                  <td>מקור: library</td>
+                  <td dir="ltr">11:51</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:12px;color:rgba(255,255,255,.4);margin:10px 0 0" id="an-hint">
+            היום: מדדים שטוחים + courseId גולמי. סקיצה: יחס שלב→שלב + כותרת קריאה.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <div class="stamps">
+      <span>בלי מחיקת פיצ׳רים</span>
+      <span>ספרייה ≠ מסע / 88</span>
+      <span>רדיוס 4px</span>
+      <span>זהב = accent בלבד</span>
+    </div>
+    <footer>
+      סקיצת פוליש בלבד. בנייה במוצר רק אחרי «קדימה».
+      המשך ל־[`sketch.html`](sketch.html) (שכבות הבסיס) ו־SPEC-LIBRARY-NETFLIX-POLISH.md.
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    const toast = document.getElementById("toast");
+    let mode = "today";
+    let zone = "lib";
+
+    function say(t) {
+      toast.textContent = t;
+      toast.classList.add("is-on");
+      clearTimeout(say._t);
+      say._t = setTimeout(() => toast.classList.remove("is-on"), 2200);
+    }
+
+    function setMode(next) {
+      mode = next;
+      document.body.classList.toggle("is-sketch", next === "sketch");
+      document.body.classList.toggle("is-today", next === "today");
+      document.querySelectorAll(".mode-btn").forEach((btn) => {
+        btn.classList.toggle("is-on", btn.getAttribute("data-mode") === next);
+      });
+      document.getElementById("rails-tag").textContent = next === "sketch" ? "סקיצה" : "היום";
+      document.getElementById("rails-tag").className = next === "sketch" ? "tag good" : "tag bad";
+      document.getElementById("rails-copy").textContent =
+        next === "sketch"
+          ? "padding אנכי · חץ 4px · Play אחד ב־hover · מטא בלי «פתוח»."
+          : "overflow חותך hover · חץ עגול · שני Play בהמשך · מטא עם «פתוח».";
+      document.querySelectorAll(".meta-line").forEach((el, i) => {
+        if (next === "sketch") {
+          el.textContent = i === 0 ? "גל · 12:00" : i === 1 ? "מרצה · 10:00 · טעימה" : "מערכות · נעול";
+        } else {
+          el.textContent = i === 0 ? "גל · 12:00 · פתוח" : i === 1 ? "מרצה · 10:00 · טעימה" : "מערכות · נעול";
+        }
+      });
+      document.getElementById("topics-hint").textContent =
+        next === "sketch"
+          ? "סקיצה: מונה זהב גלוי + underline על נושאים בנאב."
+          : "היום: מונה ב־sr-only / בלי מצב פעיל ברור.";
+      document.getElementById("empty-hint").textContent =
+        next === "sketch"
+          ? "סקיצה: StartHere שקט; קישור חזרה בלבן־אפור."
+          : "היום: שני «המשיכו מכאן» מתחרים.";
+      document.getElementById("start-here").classList.toggle("quiet", next === "sketch");
+      document.getElementById("ov-hero").classList.toggle("tall", next === "today");
+      document.getElementById("ov-hint").textContent =
+        next === "sketch"
+          ? "סקיצה: באנר קצר בלבד — המדדים מיד מתחת."
+          : "היום: CrmCatalogStage מלא דוחף מדדים למטה.";
+      document.getElementById("feed-detail").textContent =
+        next === "sketch" ? "מחזון למערכת · פרק 2" : "course_abc123";
+      document.getElementById("an-hint").textContent =
+        next === "sketch"
+          ? "סקיצה: יחס שלב→שלב + כותרת קריאה בפיד."
+          : "היום: מדדים שטוחים + courseId גולמי.";
+      say(next === "sketch" ? "מצב סקיצה — פוליש" : "מצב היום");
+    }
+
+    function setZone(next) {
+      zone = next;
+      document.body.classList.toggle("zone-lib", next === "lib");
+      document.body.classList.toggle("zone-admin", next === "admin");
+      document.querySelectorAll(".zone-btn").forEach((btn) => {
+        btn.classList.toggle("is-on", btn.getAttribute("data-zone") === next);
+      });
+      document.getElementById("steps-lib").hidden = next !== "lib";
+      document.getElementById("steps-admin").hidden = next !== "admin";
+      showScreen(next === "lib" ? "rails" : "overview");
+      say(next === "lib" ? "אזור ספרייה" : "אזור אדמין");
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach((el) => el.classList.toggle("is-on", el.id === "screen-" + id));
+      const steps = zone === "lib"
+        ? document.querySelectorAll("#steps-lib .step")
+        : document.querySelectorAll("#steps-admin .step");
+      steps.forEach((btn) => btn.classList.toggle("is-on", btn.getAttribute("data-go") === id));
+    }
+
+    document.querySelectorAll(".mode-btn").forEach((btn) => {
+      btn.addEventListener("click", () => setMode(btn.getAttribute("data-mode")));
+    });
+    document.querySelectorAll(".zone-btn").forEach((btn) => {
+      btn.addEventListener("click", () => setZone(btn.getAttribute("data-zone")));
+    });
+    document.querySelectorAll(".step").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        showScreen(btn.getAttribute("data-go"));
+        say(btn.querySelector("b").textContent);
+        if (["rails", "strip", "topics", "empty", "overview", "content", "analytics"].includes(btn.getAttribute("data-go"))) {
+          setMode("sketch");
+        }
+      });
+    });
+    document.body.addEventListener("click", (e) => {
+      const t = e.target.closest("[data-toast]");
+      if (t) say(t.getAttribute("data-toast"));
+      const jump = e.target.closest("[data-jump]");
+      if (jump) {
+        setZone("admin");
+        showScreen(jump.getAttribute("data-jump"));
+        setMode("sketch");
+      }
+    });
+
+    setMode("today");
+    setZone("lib");
+  </script>
+</body>
+</html>
