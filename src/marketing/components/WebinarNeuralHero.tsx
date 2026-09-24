@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { Link } from 'react-router-dom';
 import type { WebinarConfig } from '../../constants/webinar';
 import {
   WEBINAR_CTA_ENDED,
@@ -86,10 +85,10 @@ export function WebinarNeuralHero({
   }, []);
 
   const primary = eventEnded ? (
-    <Link to="/pricing" className="webinar-neural-cta" data-neural-end>
+    <button type="button" onClick={() => onRegister('hero')} className="webinar-neural-cta" data-neural-end>
       <span>{WEBINAR_CTA_NEXT_CYCLE}</span>
       <CtaArrow />
-    </Link>
+    </button>
   ) : eventNight && liveEnter.href ? (
     <a href={liveEnter.href} target="_blank" rel="noreferrer" onClick={() => trackWebinarCta('hero_enter')} className="webinar-neural-cta" data-neural-end>
       <span>{liveEnter.label}</span>

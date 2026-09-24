@@ -23,8 +23,8 @@ export function ConfirmDialog({ open, title, description, confirmLabel, pending 
   if (!open) return null;
   return <dialog ref={dialogRef} role="alertdialog" onCancel={event => { event.preventDefault(); if (!pending) onClose(); }} aria-labelledby="confirm-title" aria-describedby="confirm-description" className="fixed inset-0 m-auto w-full max-w-lg border-0 bg-transparent p-4 text-white backdrop:bg-black/80 backdrop:backdrop-blur-sm">
 
-    <section className="relative w-full max-w-md rounded-3xl border border-white/15 bg-[#0a0a0a] p-6 text-right shadow-2xl">
-      <button type="button" onClick={onClose} disabled={pending} className="absolute left-4 top-4 flex h-11 w-11 items-center justify-center rounded-full text-white/45 hover:bg-white/5 hover:text-white disabled:opacity-40" aria-label="ביטול וסגירה"><X size={18} /></button>
+    <section className="relative w-full max-w-md rounded-3xl border border-white/15 bg-[#0a0a0a] p-6 text-start shadow-2xl">
+      <button type="button" onClick={onClose} disabled={pending} className="absolute end-4 top-4 flex h-11 w-11 items-center justify-center rounded-full text-white/45 hover:bg-white/5 hover:text-white disabled:opacity-40" aria-label="ביטול וסגירה"><X size={18} /></button>
       <span className={`mb-5 flex h-11 w-11 items-center justify-center rounded-full ${tone === 'danger' ? 'bg-rose-500/10 text-rose-300' : 'bg-[#b79043]/10 text-[#b79043]'}`}><AlertTriangle size={21} /></span>
       <h2 id="confirm-title" className="mb-2 text-xl font-medium text-white">{title}</h2>
       <p id="confirm-description" className="text-sm font-light leading-relaxed text-white/50">{description}</p>

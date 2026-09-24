@@ -1,0 +1,291 @@
+/* Library browse over the shared space plate.
+   Keep the starfield visible, then stack dark navy layers on top. */
+
+.site-backdrop-layout:has(.vod-app) .editorial-sky-image {
+  opacity: .92;
+  filter: saturate(1.08) contrast(1.06) brightness(.88);
+}
+
+.site-backdrop-layout:has(.vod-app) .editorial-sky-blackout {
+  background: rgba(5, 10, 20, .28);
+}
+
+.site-backdrop-layout:has(.vod-app) .editorial-sky-shade {
+  background:
+    radial-gradient(circle at 50% 16%, transparent 14%, rgba(5, 10, 20, .2) 58%, rgba(5, 10, 20, .48) 100%),
+    linear-gradient(180deg, rgba(5, 10, 20, .14), rgba(5, 10, 20, .4));
+}
+
+.site-backdrop-layout:has(.vod-app) .editorial-sky-library-veil {
+  display: block;
+}
+
+.editorial-sky-library-veil-a {
+  background: linear-gradient(180deg, rgba(5, 10, 20, .48) 0%, rgba(5, 10, 20, .08) 28%, transparent 50%, rgba(5, 10, 20, .55) 100%);
+}
+
+.editorial-sky-library-veil-b {
+  background: rgba(3, 8, 18, .16);
+}
+
+.editorial-sky-library-veil-c {
+  background: linear-gradient(90deg, rgba(5, 10, 20, .36), transparent 42%, rgba(5, 10, 20, .36));
+}
+
+.editorial-sky-library-veil-d {
+  background: radial-gradient(ellipse at 50% 0%, rgba(5, 10, 20, .04), rgba(5, 10, 20, .32) 78%);
+}
+
+.editorial-sky-library-veil-e {
+  background: linear-gradient(180deg, transparent 12%, rgba(3, 8, 18, .28) 100%);
+}
+
+.vod-app.library-catalog,
+.vod-app.library-catalog main,
+.vod-app:has(.library-flow-page),
+.library-flow-page {
+  background: transparent !important;
+}
+
+.vod-app.library-catalog .editorial-library-header.is-over-hero {
+  background: linear-gradient(180deg, rgba(5, 10, 20, .72), transparent) !important;
+  border-bottom-color: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.vod-app.library-catalog .editorial-library-header.is-solid {
+  background: rgba(5, 10, 20, .78) !important;
+  border-bottom-color: var(--editorial-rule) !important;
+  backdrop-filter: blur(18px) !important;
+}
+
+.library-flow-page .library-island::before,
+.library-flow-page #rail-continue,
+.library-flow-page #rail-recommended,
+.library-flow-page #rail-shorts,
+.library-flow-page #rail-new,
+.library-flow-page #rail-popular {
+  background: none;
+}
+
+.library-catalog .library-hero {
+  min-height: 78vh;
+}
+
+@media (min-width: 768px) {
+  .library-catalog .library-hero {
+    height: 88vh;
+  }
+}
+
+.library-catalog .library-hero-veil-bottom {
+  background: linear-gradient(180deg, transparent 40%, rgba(5, 10, 20, .45) 72%, rgba(5, 10, 20, .82) 100%);
+}
+
+.library-catalog .library-hero-veil-side {
+  background: linear-gradient(270deg, transparent 8%, rgba(5, 10, 20, .32) 48%, rgba(5, 10, 20, .78) 100%);
+}
+
+.library-catalog .library-hero::after {
+  height: 28%;
+  background: linear-gradient(180deg, transparent, rgba(5, 10, 20, .86));
+}
+
+.library-catalog .library-hero-play {
+  background: #fff;
+  color: #141414;
+  border-radius: 4px;
+}
+
+.library-catalog .library-hero-more {
+  background: rgba(109, 109, 110, .7);
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
+}
+
+.library-catalog .library-poster {
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform .2s ease, filter .2s ease;
+}
+
+.library-catalog .library-poster:hover,
+.library-catalog .library-poster:focus-within {
+  transform: scale(1.06);
+  box-shadow: none;
+  border-color: transparent;
+  z-index: 2;
+}
+
+.library-catalog .library-poster-play {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .2s ease;
+}
+
+.library-catalog .library-poster:hover .library-poster-play,
+.library-catalog .library-poster:focus-within .library-poster-play {
+  opacity: 1;
+}
+
+.library-catalog .library-rail-scroller {
+  gap: 8px;
+  padding-block: 6px 10px;
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+.library-catalog .library-spacious-section,
+.library-catalog .library-island {
+  padding-block: 10px;
+}
+
+@media (min-width: 768px) {
+  .vod-app.library-catalog .library-spacious-section,
+  .vod-app.library-catalog main > section:not([class*="h-[78vh]"]):not([class*="h-[88vh]"]) {
+    padding-block: 10px;
+  }
+}
+
+.library-catalog .library-rail-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.library-catalog .library-plan-strip,
+.library-catalog .library-quick-action {
+  border-radius: 4px;
+  border-color: rgba(255, 255, 255, .12);
+  background: rgba(5, 10, 20, .62);
+  backdrop-filter: none;
+}
+
+.library-catalog-page,
+.library-catalog-page.library-course-page {
+  background: transparent !important;
+}
+
+.vod-app.library-catalog .editorial-library-footer {
+  background: rgba(5, 10, 20, .72) !important;
+}
+
+.library-catalog-page .library-poster {
+  width: 100%;
+}
+
+.library-course-billboard,
+.library-instructor-billboard {
+  min-height: 58vh;
+}
+
+.library-instructor-frame {
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 11 / 11;
+  overflow: hidden;
+  background: #141414;
+}
+
+.library-instructor-frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (min-width: 768px) {
+  .library-course-billboard,
+  .library-instructor-billboard {
+    min-height: 70vh;
+  }
+}
+
+.library-course-veil-a {
+  background: linear-gradient(180deg, rgba(5, 10, 20, .55) 0%, transparent 34%, rgba(5, 10, 20, .45) 72%, rgba(5, 10, 20, .86) 100%);
+}
+
+.library-course-veil-b {
+  background: linear-gradient(270deg, transparent 12%, rgba(5, 10, 20, .32) 52%, rgba(5, 10, 20, .72) 100%);
+}
+
+.library-course-veil-c {
+  background: rgba(5, 10, 20, .22);
+}
+
+.library-course-veil-d {
+  background: radial-gradient(ellipse at 70% 20%, transparent 0%, rgba(5, 10, 20, .4) 70%, rgba(5, 10, 20, .82) 100%);
+}
+
+.library-course-stage {
+  border-radius: 4px;
+}
+
+.library-episode-row {
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  background: transparent;
+}
+
+.library-episode-row:hover,
+.library-episode-row:focus-visible {
+  background: rgba(255, 255, 255, .06);
+}
+
+.library-episode-row.is-active {
+  background: rgba(255, 255, 255, .08);
+}
+
+.library-instructor-card {
+  border: 0;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, .04);
+}
+
+.library-catalog-page .library-page-hero,
+.library-catalog-page .library-page-toolbar {
+  border-radius: 4px;
+  border-color: rgba(255, 255, 255, .1);
+  background: rgba(5, 10, 20, .55);
+}
+
+.library-catalog-page .library-page-chip {
+  border-radius: 4px;
+}
+
+.library-catalog-page .library-page-grid {
+  gap: 8px;
+}
+
+.library-catalog-page .library-search-field {
+  border-radius: 4px;
+  background: rgba(5, 10, 20, .72);
+  border-color: rgba(255, 255, 255, .18);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .library-catalog .library-poster,
+  .library-catalog .library-poster:hover,
+  .library-catalog .library-poster:focus-within {
+    transform: none;
+  }
+
+  .library-catalog .library-poster-play {
+    opacity: 1;
+  }
+}
+
+.a11y-reduce-motion .library-catalog .library-poster,
+.a11y-reduce-motion .library-catalog .library-poster:hover,
+.a11y-reduce-motion .library-catalog .library-poster:focus-within {
+  transform: none;
+}
+
+.a11y-reduce-motion .library-catalog .library-poster-play {
+  opacity: 1;
+}
