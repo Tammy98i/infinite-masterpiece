@@ -63,9 +63,9 @@ export function WebinarStickyCta({
   const ctaClass = 'btn-gold text-black shrink-0 sm:min-w-[240px] text-center py-3 px-5 sm:px-6 text-sm';
 
   return (
-    <div className="fixed bottom-0 inset-x-0 z-40 border-t border-[#b79043]/20 bg-[#0d0b08]/95 backdrop-blur-xl px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
+    <div className="fixed bottom-0 inset-inline-0 z-40 border-t border-[#b79043]/20 bg-[#0d0b08]/95 backdrop-blur-xl px-4 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       <div className="max-w-[1100px] mx-auto flex items-center gap-3">
-        <div className="min-w-0 flex-1 text-center sm:text-right">
+        <div className="min-w-0 flex-1 text-center sm:text-start">
           <p className="text-xs text-white/70 truncate">
             {eventNight ? 'הערב החי עכשיו' : `${date}, ${time}`}
           </p>

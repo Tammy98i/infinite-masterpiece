@@ -100,13 +100,13 @@ export function Application() {
               </div>
               <div className="space-y-2">
                 <label htmlFor="phone" className="text-sm font-medium text-slate-300">טלפון נייד *</label>
-                <input required type="tel" id="phone" name="phone" className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all" />
+                <input required type="tel" id="phone" name="phone" dir="ltr" inputMode="tel" autoComplete="tel" className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all" />
               </div>
             </div>
 
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium text-slate-300">כתובת אימייל *</label>
-              <input required type="email" id="email" name="email" className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all" />
+              <input required type="email" id="email" name="email" dir="ltr" autoComplete="email" className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all" />
             </div>
 
             <div className="flex items-start gap-3 pt-2">

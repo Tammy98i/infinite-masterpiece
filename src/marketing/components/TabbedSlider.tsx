@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactElement } from 'react';
 import {
-  ArrowLeft,
   BarChart3,
   ChevronDown,
   Rocket,
@@ -8,6 +7,7 @@ import {
   Tag,
   Target,
 } from 'lucide-react';
+import { DirNext } from '../../components/DirArrow';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Journey } from '../pages/Journey';
 import { Premium88 } from '../pages/Premium88';
@@ -56,7 +56,7 @@ function DifferencePanel() {
           </article>
         ))}
       </div>
-      <Link to="/#journey" className="tabbed-link">לפירוט מסע 33 הימים <ArrowLeft aria-hidden="true" /></Link>
+      <Link to="/#journey" className="tabbed-link">לפירוט מסע 33 הימים <DirNext /></Link>
     </div>
   );
 }
@@ -75,7 +75,7 @@ function PlatformPanel() {
       <p className="tabbed-kicker">הפלטפורמה</p>
       <h2>התכנים וההתקדמות במקום אחד.</h2>
       <p className="tabbed-lede">אחרי הכניסה, הספרייה מחזיקה את השיעורים ואת ההמשך. אין כאן מסלול נפרד.</p>
-      <Link to="/library" className="tabbed-link">כניסה לספרייה <ArrowLeft aria-hidden="true" /></Link>
+      <Link to="/library" className="tabbed-link">כניסה לספרייה <DirNext /></Link>
     </div>
   );
 }

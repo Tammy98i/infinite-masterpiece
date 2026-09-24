@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { DirNext } from '../../components/DirArrow';
 import { WEBINAR_CTA_ENDED, WEBINAR_CTA_HEADER, WEBINAR_CTA_NEXT_CYCLE } from '../../constants/webinarPage';
 import { useWebinarPhase } from '../hooks/useWebinarPhase';
 import './SpaceHero.css';
@@ -135,7 +135,7 @@ export function SpaceHero() {
             <PlanetSlot side="l" planet={left} onSelect={selectPlanet} />
             <PlanetSlot side="r" planet={right} onSelect={selectPlanet} />
             <Link to={phase === 'ended' ? '/#pricing' : '/webinar'}>
-              {phase === 'ended' ? WEBINAR_CTA_NEXT_CYCLE : WEBINAR_CTA_HEADER}<ArrowLeft aria-hidden="true" />
+              {phase === 'ended' ? WEBINAR_CTA_NEXT_CYCLE : WEBINAR_CTA_HEADER}<DirNext />
             </Link>
             <span className="space-label space-label-l">{left.name}</span>
             <span className="space-label space-label-r">{right.name}</span>
