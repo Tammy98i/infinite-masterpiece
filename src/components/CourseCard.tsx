@@ -2,7 +2,8 @@
 import { Course, WatchProgress } from '../types';
 import { useApp } from '../context/AppContext';
 import { Play, Plus, Check, Lock } from 'lucide-react';
-import { formatClock } from '../utils/time';
+import { formatClock, isolateClock } from '../utils/time';
+import { ClockLabel } from './ClockLabel';
 import { useWatchAccess } from '../utils/useWatchAccess';
 import { useMyListToggle } from '../utils/useMyListToggle';
 import { cardBadgeLabel, getCardAccessState, isCourseNew, type CardAccessState } from '../utils/libraryHome';
@@ -56,7 +57,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
     : formatClock(totalSecs);
   const resumeLabel =
     progress && layout === 'continue'
-      ? `המשך מדקה ${formatClock(progress.currentTime)}`
+      ? `המשך מדקה ${isolateClock(progress.currentTime)}`
       : undefined;
   const episodeTitle = progress
     ? course.episodes.find((e) => e.id === progress.episodeId)?.title
@@ -112,37 +113,35 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   const widthClass = fullWidth
     ? 'w-full'
     : layout === 'continue'
-      ? 'w-[260px] sm:w-[340px]'
+      ? 'w-[240px] sm:w-[280px]'
       : rank
-        ? 'w-[240px] sm:w-[300px]'
-        : 'w-[220px] sm:w-[260px]';
+        ? 'w-[180px] sm:w-[210px]'
+        : 'w-[168px] sm:w-[210px]';
 
   return (
     <div
-      className={`relative shrink-0 text-right ${widthClass}`}
+      className={`relative shrink-0 text-start ${widthClass}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {rank != null && (
         <span
-          className="absolute left-0 bottom-10 z-0 text-7xl sm:text-8xl font-accent font-bold leading-none text-[#b79043]/30 pointer-events-none select-none"
+          className="absolute end-0 bottom-6 z-0 text-6xl sm:text-7xl font-accent font-bold leading-none text-[#b79043]/45 pointer-events-none select-none"
           aria-hidden
         >
           {rank}
         </span>
       )}
 
-      <div className={`relative ${rank ? 'ml-10 sm:ml-14' : ''}`}>
+      <div className={`relative ${rank ? 'me-10 sm:me-14' : ''}`}>
         <div
-          className={`relative overflow-hidden rounded-2xl border transition-[border-color] duration-200 ${
-            isHovered ? 'border-white/25' : 'border-white/10'
-          }`}
+          className="library-poster relative overflow-hidden rounded-[4px]"
         >
           <button
             type="button"
             onClick={handleCardClick}
             aria-label={ariaTitle}
-            className="block w-full text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-inset"
+            className="block w-full cursor-pointer text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-inset"
           >
             <div className="relative aspect-[16/9] bg-zinc-900">
               <img
@@ -156,15 +155,20 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                 aria-hidden
                 loading="lazy"
                 decoding="async"
-                className={`w-full h-full object-cover brightness-[0.78] transition-[filter] duration-300 motion-reduce:transition-none ${
-                  isHovered ? 'brightness-90' : ''
+                className={`w-full h-full object-cover brightness-[0.92] transition-[filter] duration-200 motion-reduce:transition-none ${
+                  isHovered ? 'brightness-110' : ''
                 }`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black via-black/35 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              <span className="library-poster-play absolute inset-0 z-[1] flex items-center justify-center">
+                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black">
+                  <Play className="ml-0.5 h-4 w-4 fill-black" data-icon="play" aria-hidden />
+                </span>
+              </span>
 
               {showDurationBadge && !badge && (
                 <span className="absolute top-2 start-2 z-10 rounded bg-black/75 px-2 py-0.5 text-[12px] font-medium text-white">
-                  {formatClock(totalSecs)}
+                  <ClockLabel seconds={totalSecs} />
                 </span>
               )}
 
@@ -189,22 +193,18 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                 </span>
               ) : null}
 
-              <div className="absolute bottom-3 right-3 left-3 z-[1] text-right pointer-events-none">
-                <div className="text-[15px] sm:text-base font-heading font-semibold text-white leading-snug line-clamp-1">
+              <div className="absolute bottom-2 start-2 end-2 z-[1] text-start pointer-events-none">
+                <div className="text-[13px] font-semibold text-white leading-snug line-clamp-1">
                   {title}
                 </div>
-                {instructorName && (
-                  <div className="text-[13px] text-white/70 mt-0.5 truncate">{instructorName}</div>
-                )}
-                <div className="text-[13px] text-white/70 mt-0.5">
-                  {resumeLabel || durationLabel}
-                  <span className="sr-only">, {ACCESS_LABEL[access]}</span>
+                <div className="sr-only">
+                  {instructorName} {resumeLabel || durationLabel}, {ACCESS_LABEL[access]}
                 </div>
               </div>
 
               {showProgress > 0 && (
                 <div
-                  className="absolute bottom-0 left-0 right-0 h-1 bg-white/15"
+                  className="absolute bottom-0 inset-inline-0 h-1 bg-white/15"
                   role="progressbar"
                   aria-label={`התקדמות ב־${course.title}`}
                   aria-valuemin={0}
@@ -224,7 +224,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
               className="absolute start-2 bottom-14 z-10 w-11 h-11 rounded-full bg-white text-black flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
               aria-label={`המשיכו לצפות ב־${course.title}`}
             >
-              <Play className="w-4 h-4 fill-black ms-0.5" aria-hidden />
+              <Play className="w-4 h-4 fill-black ml-0.5" data-icon="play" aria-hidden />
             </button>
           ) : null}
 

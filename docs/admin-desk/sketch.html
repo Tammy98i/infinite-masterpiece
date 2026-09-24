@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>סקיצה · דשבורדים עמוד־עמוד — Infinite Masterpiece</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600&family=Noto+Sans+Hebrew:wght@500;600;700&family=Rubik:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #010308;
+      --gold: #c8a24c;
+      --gold-soft: #f7e7b5;
+      --ink: #fff;
+      --muted: rgba(255,255,255,0.86);
+      --line: rgba(200,162,76,0.28);
+      --card: rgba(1,3,8,0.64);
+      --note: #ff7a33;
+      --heading: "Noto Sans Hebrew", "Arial Hebrew", sans-serif;
+      --body: "IBM Plex Sans Hebrew", "Arial Hebrew", sans-serif;
+      --more: rgba(109,109,110,.72);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--body);
+    }
+    :focus-visible {
+      outline: 2px solid var(--gold);
+      outline-offset: 2px;
+    }
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 24px 16px 80px; }
+    .banner {
+      border: 1px dashed var(--note);
+      color: var(--note);
+      padding: 10px 14px;
+      border-radius: 999px;
+      display: inline-flex;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    h1.page-title {
+      font-family: var(--heading);
+      font-weight: 600;
+      font-size: clamp(1.55rem, 3vw, 2.2rem);
+      margin: 0 0 8px;
+    }
+    .lede { color: var(--muted); max-width: 52rem; line-height: 1.75; margin-bottom: 18px; }
+    .note {
+      color: var(--note);
+      font-family: Rubik, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 0 0 14px;
+    }
+    .note::before { content: "→ "; }
+    .caption { font-size: 15px; font-weight: 600; margin: 0; }
+    .muted { color: rgba(255,255,255,0.62); font-size: 13px; line-height: 1.55; margin: 8px 0 0; }
+    .keep {
+      display: inline-block;
+      color: #9be7b5;
+      border: 1px solid rgba(155,231,181,.45);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+    }
+    .stamp {
+      display: inline-block;
+      color: var(--note);
+      border: 1px solid var(--note);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 4px;
+      background: #fff;
+      color: #111;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .cta.ghost { background: var(--more); color: #fff; }
+    .cta.warn {
+      background: transparent;
+      color: #f7b4b4;
+      border: 1px solid rgba(247,180,180,.4);
+    }
+    .cta:disabled { opacity: .45; cursor: not-allowed; }
+
+    .tri { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+    .glass {
+      background: var(--card);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+    }
+    .tri .tag {
+      font-size: 11px;
+      letter-spacing: .14em;
+      color: var(--gold-soft);
+      margin: 0 0 6px;
+    }
+
+    .desk {
+      display: grid;
+      grid-template-columns: 196px 1fr;
+      min-height: 760px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(0,0,0,.32);
+    }
+    .desk-nav {
+      padding: 14px 10px 20px;
+      border-inline-end: 1px solid rgba(255,255,255,.08);
+    }
+    .desk-nav span.group {
+      display: block;
+      font-size: 10px;
+      letter-spacing: .16em;
+      color: rgba(255,255,255,.38);
+      margin: 12px 8px 6px;
+    }
+    .desk-nav button {
+      display: block;
+      width: 100%;
+      text-align: start;
+      color: rgba(255,255,255,.62);
+      background: transparent;
+      border: 0;
+      border-inline-start: 2px solid transparent;
+      font-size: 12.5px;
+      min-height: 30px;
+      padding: 5px 8px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .desk-nav button.is-on {
+      color: #fff;
+      font-weight: 600;
+      border-inline-start-color: #fff;
+    }
+    .desk-nav button .why {
+      display: block;
+      font-size: 10px;
+      color: var(--note);
+      font-weight: 500;
+    }
+    .desk-main { padding: 14px 16px 18px; min-width: 0; }
+    .screen { display: none; }
+    .screen.is-on { display: block; }
+
+    .today {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin: 0 0 12px;
+      font-size: 12px;
+    }
+
+    .metrics {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .metric {
+      text-align: start;
+      min-height: 88px;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: #fff;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .metric:hover, .metric.is-on {
+      border-color: rgba(200,162,76,.55);
+      background: rgba(200,162,76,.1);
+    }
+    .metric strong { display: block; font-size: 22px; font-weight: 600; margin-bottom: 4px; }
+    .metric b { display: block; font-size: 13px; margin-bottom: 4px; }
+    .metric span { font-size: 12px; color: var(--gold-soft); }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .toolbar input[type="search"] {
+      flex: 1;
+      min-width: 180px;
+      min-height: 44px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.45);
+      color: #fff;
+      padding: 0 12px;
+      font-family: inherit;
+    }
+
+    .work {
+      display: grid;
+      grid-template-columns: 1.35fr .85fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .compact { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .compact th {
+      text-align: start;
+      color: rgba(255,255,255,.42);
+      font-weight: 400;
+      font-size: 11px;
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .compact td {
+      padding: 5px 8px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+    }
+    .compact tr { height: 34px; cursor: pointer; }
+    .compact tr.is-on { background: rgba(200,162,76,.12); }
+    .compact .name { font-weight: 500; }
+    .compact .mail { color: rgba(255,255,255,.4); font-size: 11px; }
+    .acts { display: flex; flex-wrap: wrap; gap: 6px; }
+    .acts button {
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: transparent;
+      color: #fff;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .acts button.kill { color: #f7b4b4; border-color: rgba(247,180,180,.35); }
+    .acts button.ok { color: #9be7b5; border-color: rgba(155,231,181,.4); }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      background: rgba(1,3,8,.72);
+      min-height: 240px;
+    }
+    .card h3 { margin: 0 0 4px; font-size: 18px; font-weight: 600; }
+    .card .who { color: rgba(255,255,255,.45); font-size: 12px; margin: 0 0 12px; }
+    .linkrow {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      font-size: 13px;
+    }
+    .linkrow:last-child { border-bottom: 0; }
+    .linkrow em { font-style: normal; color: rgba(255,255,255,.5); }
+    .empty-card { color: rgba(255,255,255,.45); font-size: 14px; padding-top: 28px; }
+
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .split article {
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px;
+      padding: 14px;
+      background: rgba(255,255,255,.03);
+    }
+    .split h3 { margin: 0 0 6px; font-size: 16px; }
+    .split ul { margin: 8px 0 0; padding-inline-start: 18px; color: rgba(255,255,255,.72); font-size: 13px; line-height: 1.7; }
+
+    .fold {
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px;
+      padding: 8px 12px;
+      margin-top: 12px;
+      background: rgba(0,0,0,.28);
+    }
+    .fold summary {
+      cursor: pointer;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      font-weight: 600;
+      font-size: 13px;
+    }
+    .fold p { color: rgba(255,255,255,.62); font-size: 13px; line-height: 1.6; }
+
+    .check { display: grid; gap: 8px; }
+    .check label {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      min-height: 40px;
+      font-size: 13px;
+    }
+    .check input { width: 18px; height: 18px; accent-color: var(--gold); }
+
+    .toast {
+      display: none;
+      margin-top: 10px;
+      color: var(--gold-soft);
+      font-size: 13px;
+    }
+    .toast.is-on { display: block; }
+
+    .keep-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    footer.sketch-foot { margin-top: 22px; color: rgba(255,255,255,0.55); font-size: 13px; line-height: 1.6; }
+
+    @media (max-width: 980px) {
+      .tri, .metrics, .work, .desk, .split { grid-template-columns: 1fr; }
+      .desk-nav {
+        border-inline-end: 0;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px;
+      }
+      .desk-nav span.group { width: 100%; margin: 8px 0 0; }
+      .desk-nav button { width: auto; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="banner">סקיצה לאישור · עמוד־עמוד בדשבורדים · לא קוד במוצר · 23 טאבים נשארים</p>
+    <h1 class="page-title">מה נשאר אחרי הצפיפות: מדגיש, מחבר, משפר</h1>
+    <p class="lede">
+      הטבלאות כבר נמוכות, חיפוש לפי שם ועריכה/הסרה כבר במוצר. מה שנשבר עכשיו הוא כפילות וחוסר יעד:
+      16 כרטיסים בסקירה בלי פעולה, שני מסכי משתמשים, שני CRM לאותו אדם, טפסים פתוחים ושמות שמבלבלים.
+      הלחיצה על מדד או טאב כאן מציירת את התיקון — בלי למחוק מסך.
+    </p>
+
+    <div class="tri">
+      <div class="glass">
+        <p class="tag">מדגיש</p>
+        <p class="caption">4 מדדים לחיצים</p>
+        <p class="muted">לחיוב · בקשת מרצה · ליד פתוח · ממתינות. לא 16 KPI דקורטיביים.</p>
+      </div>
+      <div class="glass">
+        <p class="tag">מחבר</p>
+        <p class="caption">אותו אדם, אותה פעולה</p>
+        <p class="muted">מסלול + ליד + פעימה הבאה בכרטיס אחד. מנוי ספרייה ומסע לא מתערבבים ב־CTA.</p>
+      </div>
+      <div class="glass">
+        <p class="tag">משפר</p>
+        <p class="caption">תווית מתי־מה</p>
+        <p class="muted">גישה ≠ משתמשים. מייסדים ≠ גלקסיה. הגדרות = מוכנות. יצירה מאחורי כפתור.</p>
+      </div>
+    </div>
+
+    <p class="note">הדגמה חיה: לחצו על מדד בסקירה או על טאב עם תווית כתומה. הטאבים בלי תווית נשארים כמו שהם.</p>
+
+    <div class="desk" aria-label="דסק דשבורדים — סקיצה">
+      <aside class="desk-nav" aria-label="טאבי אדמין">
+        <p class="caption" style="margin:0 8px 8px">אדמין · 23</p>
+        <span class="group">מבט על</span>
+        <button type="button" data-screen="overview" class="is-on">סקירה<span class="why">4 מדדים</span></button>
+        <button type="button" data-screen="keep">התראות</button>
+        <button type="button" data-screen="keep">אנליטיקות</button>
+        <span class="group">אנשים והרשאות</span>
+        <button type="button" data-screen="split">משתמשים · תפקידים · הרשאות<span class="why">הרשאות, לא חשבונות</span></button>
+        <button type="button" data-screen="users">משתמשים<span class="why">חשבונות</span></button>
+        <button type="button" data-screen="keep">צוות ומרצים</button>
+        <button type="button" data-screen="bios">צוות מייסדים<span class="why">עמוד ציבורי</span></button>
+        <button type="button" data-screen="bios">גלקסיית הצוות<span class="why">יקום וובינר</span></button>
+        <button type="button" data-screen="lecturers">בקשות מרצים<span class="why">שורה, לא כרטיס</span></button>
+        <span class="group">מסחר והכנסות</span>
+        <button type="button" data-screen="payments">מנויים ותשלומים<span class="why">קריאה · Stripe</span></button>
+        <button type="button" data-screen="connect">מסלולי כניסה<span class="why">פעימה + ליד</span></button>
+        <button type="button" data-screen="keep">נבחרת 88</button>
+        <button type="button" data-screen="pods">פודים<span class="why">תור קודם</span></button>
+        <button type="button" data-screen="keep">משפך חינמיים</button>
+        <button type="button" data-screen="connect">לידים ופניות<span class="why">אותו אדם</span></button>
+        <button type="button" data-screen="webinar">וובינר<span class="why">נרשמים קודם</span></button>
+        <button type="button" data-screen="keep">הגרלות</button>
+        <span class="group">תוכן VOD</span>
+        <button type="button" data-screen="keep">תכני VOD</button>
+        <button type="button" data-screen="keep">קטגוריות</button>
+        <button type="button" data-screen="onboarding">הדרכות<span class="why">צוות, לא ספרייה</span></button>
+        <span class="group">מערכת</span>
+        <button type="button" data-screen="settings">הגדרות<span class="why">מוכנות</span></button>
+        <button type="button" data-screen="keep">משפטי</button>
+        <button type="button" data-screen="keep">יומן פעולות</button>
+      </aside>
+
+      <div class="desk-main">
+        <section class="screen is-on" id="screen-overview" aria-label="סקירה">
+          <p class="today"><span class="stamp">היום: 16 כרטיסי KPI + כרזת קטלוג + 5 כפתורי «עבור אל»</span><span class="keep">כרזת הספרייה נשארת מעל</span></p>
+          <p class="rail-title" style="font-size:14px;font-weight:600;margin:0 0 8px">לטיפול עכשיו · 4 מדדים</p>
+          <div class="metrics" role="list">
+            <button type="button" class="metric" data-go="connect" data-person="דניאל כהן">
+              <strong>3</strong>
+              <b>לחיוב עכשיו</b>
+              <span>פעימת הססנים · דניאל כהן</span>
+            </button>
+            <button type="button" class="metric" data-go="lecturers" data-person="שירה עמית">
+              <strong>2</strong>
+              <b>בקשות מרצים</b>
+              <span>אשר או דחה בשורה</span>
+            </button>
+            <button type="button" class="metric" data-go="connect" data-person="יובל נחום">
+              <strong>5</strong>
+              <b>לידים פתוחים</b>
+              <span>יובל נחום · וובינר</span>
+            </button>
+            <button type="button" class="metric" data-go="keep" data-person="">
+              <strong>4</strong>
+              <b>ממתינות לאישור</b>
+              <span>הרצאות · נשאר בתוכן</span>
+            </button>
+          </div>
+          <p class="muted">לחיצה על מדד פותחת את הטאב והאדם. שאר 12 המספרים (חינמיים, צפיות, Paywall…) נשארים באנליטיקות — לא נמחקים.</p>
+        </section>
+
+        <section class="screen" id="screen-split" aria-label="פיצול משתמשים וגישה">
+          <p class="today"><span class="stamp">היום: שתי רשימות חשבון כמעט זהות</span><span class="keep">שני הטאבים נשארים</span></p>
+          <div class="split">
+            <article>
+              <p class="keep">טאב: משתמשים</p>
+              <h3>חשבונות</h3>
+              <p class="muted">שם, אימייל, מנוי, מסלול. חיפוש לפי שם. עריכה והסרה בשורה — כבר במוצר.</p>
+              <ul>
+                <li>תפקיד הוא שדה בחשבון, לא מסך הרשאות</li>
+                <li>חסימה נשארת פעולה נפרדת מהסרה</li>
+              </ul>
+            </article>
+            <article>
+              <p class="stamp">טאב: משתמשים · תפקידים · הרשאות</p>
+              <h3>דסקים ומפתחות</h3>
+              <p class="muted">לא רשימת יוזרים שנייה. כאן רק: תפקיד מערכת, דסק פנימי, מיילי אדמין, מייסד כדגל.</p>
+              <ul>
+                <li>מייסד = <span dir="ltr">is_founder</span>, לא role</li>
+                <li>קפטן = <span dir="ltr">pod_role</span>, לא כאן</li>
+                <li>להוריד את באדג׳ «חדש» כשהפיצול ברור</li>
+              </ul>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-users" aria-label="משתמשים">
+          <p class="today"><span class="keep">כבר במוצר: טבלה צפופה, חיפוש שם, עריכה, הסרה</span><span class="stamp">חסר: קישור למסלול/ליד בלי לעזוב</span></p>
+          <div class="toolbar">
+            <input id="user-search" type="search" placeholder="חיפוש משתמש לפי שם…" aria-label="חיפוש משתמש לפי שם" />
+            <button class="cta ghost" type="button" id="toggle-create">הוספת משתמש</button>
+          </div>
+          <div class="work">
+            <table class="compact" id="user-table">
+              <thead>
+                <tr><th>שם</th><th>תפקיד</th><th>מנוי</th><th>מסלול</th><th>פעולות</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <aside class="card" id="user-card"><p class="empty-card">בחרו אדם. הכרטיס מחבר מנוי ספרייה למסלול — בלי CTA משותף.</p></aside>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-connect" aria-label="מסלול וליד מחוברים">
+          <p class="today"><span class="stamp">היום: מסלולים = כרטיס צד + 12 KPI. לידים = CRM נפרד לאותו אדם</span><span class="keep">שני הטאבים נשארים</span></p>
+          <div class="toolbar">
+            <input id="connect-search" type="search" placeholder="חיפוש לפי שם במסלול או בליד…" aria-label="חיפוש במסלול או בליד" />
+            <span class="keep">ייצוא</span>
+            <span class="keep">אמיצים / הססנים</span>
+          </div>
+          <div class="work">
+            <table class="compact" id="connect-table">
+              <thead>
+                <tr><th>שם</th><th>מקור</th><th>מסלול</th><th>פעימה</th><th>ליד</th><th>פעולה</th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <aside class="card" id="connect-card"><p class="empty-card">בחרו שורה. כאן פעימה הבאה ופניית הליד — אותו אדם.</p></aside>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-lecturers" aria-label="בקשות מרצים">
+          <p class="today"><span class="stamp">היום: כרטיס גבוה לכל בקשה (תחום, קהל, ערך, ניסיון)</span><span class="keep">אשר / דחה / עוד מידע נשארים</span></p>
+          <table class="compact" id="lecturer-table">
+            <thead>
+              <tr><th>שם</th><th>תחום</th><th>הרצאה מוצעת</th><th>סטטוס</th><th>פעולות</th></tr>
+            </thead>
+            <tbody>
+              <tr data-name="שירה עמית">
+                <td><span class="name">שירה עמית</span> <span class="mail" dir="ltr">shira@…</span></td>
+                <td>מכירות</td>
+                <td>שיחת האבחון הראשונה</td>
+                <td>ממתינה</td>
+                <td><span class="acts"><button type="button" class="ok" data-review="approved">אשר</button><button type="button" class="kill" data-review="rejected">דחה</button><button type="button" data-review="more">עוד מידע</button></span></td>
+              </tr>
+              <tr data-name="אלון ברק">
+                <td><span class="name">אלון ברק</span> <span class="mail" dir="ltr">alon@…</span></td>
+                <td>משא ומתן</td>
+                <td>פיץ׳ ב־8 דקות</td>
+                <td>ממתינה</td>
+                <td><span class="acts"><button type="button" class="ok" data-review="approved">אשר</button><button type="button" class="kill" data-review="rejected">דחה</button><button type="button" data-review="more">עוד מידע</button></span></td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="muted">פירוט הבקשה נפתח בלחיצה על השורה — לא תופס את כל המסך מראש.</p>
+        </section>
+
+        <section class="screen" id="screen-pods" aria-label="פודים">
+          <p class="today"><span class="stamp">היום: טופס יצירה תמיד פתוח מעל התור</span><span class="keep">תור שיוך אחרי תשלום מסע נשאר</span></p>
+          <div class="toolbar">
+            <button class="cta ghost" type="button" id="toggle-pod">יצירת פוד</button>
+            <span class="keep">מנוי ספרייה לא נכנס לתור</span>
+          </div>
+          <div id="pod-create" class="fold" hidden>
+            <p class="caption">פוד חדש</p>
+            <p class="muted">שם · סוג (מסע / 88) · קפטן אופציונלי. קיבולת לפי ברירת מחדל. מייסד לא הופך לקפטן אוטומטית.</p>
+          </div>
+          <table class="compact" style="margin-top:10px">
+            <thead>
+              <tr><th>ממתין</th><th>מקור</th><th>פוד</th><th>פעולה</th></tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>דניאל כהן</td>
+                <td>הססנים · פעימה ראשונה</td>
+                <td>פוד שחר</td>
+                <td><span class="acts"><button type="button" class="ok" data-assign="דניאל כהן">שייך</button></span></td>
+              </tr>
+              <tr>
+                <td>רותם גל</td>
+                <td>נבחרת 88 · אושר</td>
+                <td>Micro-Pod 88</td>
+                <td><span class="acts"><button type="button" class="ok" data-assign="רותם גל">שייך</button></span></td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="muted">אורי שמש (מנוי ספרייה / חינמי) מופיע בהערה «לא בתור» — לא בטבלת השיוך.</p>
+        </section>
+
+        <section class="screen" id="screen-webinar" aria-label="וובינר">
+          <p class="today"><span class="stamp">היום: טופס הגדרות + מייל בדיקה מעל רשימת הנרשמים</span><span class="keep">הגדרות נשארות, רק מאחורי קיפול</span></p>
+          <div class="toolbar">
+            <input type="search" placeholder="חיפוש נרשם לפי שם…" aria-label="חיפוש נרשם לפי שם" />
+            <span class="keep">חלקי / מלא / רשימת המתנה</span>
+          </div>
+          <table class="compact">
+            <thead>
+              <tr><th>שם</th><th>סטטוס</th><th>מקור</th><th>ליד / מסלול</th></tr>
+            </thead>
+            <tbody>
+              <tr><td>יובל נחום</td><td>מלא</td><td>וובינר</td><td>ליד פתוח · הססנים טרם שילם</td></tr>
+              <tr><td>נועה לוי</td><td>חלקי</td><td>וובינר</td><td>—</td></tr>
+            </tbody>
+          </table>
+          <details class="fold">
+            <summary>הגדרות וובינר · קיפול</summary>
+            <p>תאריך, קישור זום, מייל בדיקה, המתנה. לא תופס את המסך לפני הרשימה.</p>
+          </details>
+        </section>
+
+        <section class="screen" id="screen-bios" aria-label="מייסדים וגלקסיה">
+          <p class="today"><span class="stamp">היום: שני מסכי ביו בלי כלל מתי מה</span><span class="keep">שני הטאבים נשארים</span></p>
+          <div class="split">
+            <article>
+              <p class="keep">צוות מייסדים</p>
+              <h3>עמוד ציבורי</h3>
+              <p class="muted">תמונה, ביו וקישורים בעמוד האתר. מייסד אחד פעיל. דגל <span dir="ltr">is_founder</span>, לא role.</p>
+            </article>
+            <article>
+              <p class="stamp">גלקסיית הצוות</p>
+              <h3>יקום הוובינר</h3>
+              <p class="muted">פרופילים, ציון השפעה, מסלולים ב־<span dir="ltr">#team-universe</span>. ציוני הפתיחה הם ברירת מחדל לעריכה, לא מדידה מאומתת.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-payments" aria-label="מנויים">
+          <p class="today"><span class="keep">קריאה בלבד — נכון</span><span class="stamp">חסר: תווית שמסבירה למה אין עריכה</span></p>
+          <article class="card">
+            <h3>מקור החיוב: Stripe</h3>
+            <p class="who">אין שינוי ידני כאן. פעימות הססנים מטופלות במסלולי כניסה. מנוי ספרייה ≠ תשלום מסע.</p>
+            <div class="linkrow"><em>מנוי ספרייה</em><span>חינמי / ניסיון / פרימיום / 88</span></div>
+            <div class="linkrow"><em>מסע</em><span>אמיצים מלא · הססנים 8→80→800→8,000</span></div>
+          </article>
+        </section>
+
+        <section class="screen" id="screen-onboarding" aria-label="הדרכות">
+          <p class="today"><span class="stamp">יושב תחת תוכן VOD</span><span class="keep">הטאב נשאר</span></p>
+          <article class="card">
+            <h3>הדרכת צוות — לא קורס בספרייה</h3>
+            <p class="muted">מרכז הדרכה פנימי לאדמין / מרצה / צוות. לא נכנס לפסים האקדמיים ולא נמכר כמנוי.</p>
+            <p class="muted">בסיידבר אפשר להשאיר אותו תחת תוכן, או להעביר למערכת בלי למחוק. הסקיצה לא מוחקת.</p>
+          </article>
+        </section>
+
+        <section class="screen" id="screen-settings" aria-label="מוכנות">
+          <p class="today"><span class="stamp">נקרא «הגדרות» אבל זה צ׳קליסט מוכנות</span><span class="keep">משפטי נשאר טאב נפרד</span></p>
+          <h3 style="margin:0 0 10px;font-size:18px">מוכנות להשקה</h3>
+          <div class="check">
+            <label><input type="checkbox" checked disabled /> APP_URL ב־HTTPS</label>
+            <label><input type="checkbox" checked disabled /> Supabase auth</label>
+            <label><input type="checkbox" disabled /> Resend</label>
+            <label><input type="checkbox" disabled /> Stripe — בלי זה המסלול בידני</label>
+            <label><input type="checkbox" disabled /> Zoom / וובינר</label>
+          </div>
+          <p class="muted">תוכן אתר, תקנון והגרלות לא כאן. זה מוכנות אינטגרציות.</p>
+        </section>
+
+        <section class="screen" id="screen-keep" aria-label="נשאר כמו שהוא">
+          <p class="today"><span class="keep">הטאב הזה נשאר כמו במוצר</span></p>
+          <article class="card">
+            <h3 id="keep-title">עבודה עמוקה — בלי שינוי בסקיצה</h3>
+            <p class="muted" id="keep-copy">התראות, אנליטיקות, צוות, 88, משפך, הגרלות, תכני VOD, קטגוריות, משפטי ויומן כבר שמישים אחרי הצפיפות. הסקיצה לא פותחת אותם מחדש.</p>
+          </article>
+        </section>
+
+        <p class="toast" id="desk-toast" role="status"></p>
+      </div>
+    </div>
+
+    <div class="keep-row">
+      <span class="keep">23 טאבים</span>
+      <span class="keep">עריכה / הסרה / חיפוש שם — כבר במוצר</span>
+      <span class="keep">חסימה נפרדת</span>
+      <span class="stamp">בלי תגובות / AI / אפליקציה</span>
+      <span class="stamp">בלי לערבב CTA ספרייה ומסע</span>
+    </div>
+
+    <footer class="sketch-foot">
+      מייסד = <span dir="ltr">is_founder</span>. קפטן = <span dir="ltr">pod_role</span>.
+      הססנים 8→80→800→8,000. פוד רק אחרי תשלום מסע. מנוי ספרייה לא נכנס לתור.
+      בנייה רק אחרי «קדימה».
+    </footer>
+  </div>
+
+  <script>
+    const PEOPLE = [
+      { name: "נועה לוי", mail: "noa@…", role: "אדמין", plan: "פרימיום", track: "אמיצים", source: "צוות", pulse: "שולם מלא", lead: "אין ליד פתוח", library: "גישת צוות", journey: "אמיצים · שולם", pod: "לא בתור", eighty: "—" },
+      { name: "דניאל כהן", mail: "dan@…", role: "משתמש", plan: "ניסיון", track: "הססנים", source: "מסלול", pulse: "שילם 8 · מחכה ל־80", lead: "ליד פתוח · שבוע 1", library: "ניסיון צפייה", journey: "הססנים · פעימה הבאה 80", pod: "ממתין לשיוך", eighty: "לא מועמד" },
+      { name: "יובל נחום", mail: "yuv@…", role: "משתמש", plan: "חינמי", track: "הססנים", source: "וובינר", pulse: "טרם שילם", lead: "ליד חדש מהוובינר", library: "טעימה", journey: "הססנים · טרם שילם", pod: "לא נכנס לתור", eighty: "—" },
+      { name: "רותם גל", mail: "rot@…", role: "משתמש", plan: "נבחרת 88", track: "אמיצים", source: "88", pulse: "שולם", lead: "—", library: "פרימיום 88", journey: "אמיצים · שולם", pod: "Micro-Pod 88", eighty: "ממתינה לאישור" },
+      { name: "אורי שמש", mail: "ori@…", role: "משתמש", plan: "חינמי", track: "ללא", source: "ספרייה", pulse: "—", lead: "—", library: "טעימה · חסום", journey: "לא במסע", pod: "לא נכנס — מנוי ספרייה", eighty: "—" },
+      { name: "מיכל אברמוב", mail: "michal@…", role: "מרצה", plan: "פרימיום", track: "ללא", source: "צוות", pulse: "—", lead: "—", library: "דשבורד מרצה", journey: "לא במסע", pod: "אין תשלום מסע", eighty: "—" }
+    ];
+
+    const toast = document.getElementById("desk-toast");
+    const screens = document.querySelectorAll(".screen");
+    const navButtons = document.querySelectorAll(".desk-nav button");
+
+    function say(text) {
+      toast.textContent = text;
+      toast.classList.add("is-on");
+    }
+
+    function showScreen(id) {
+      screens.forEach((el) => el.classList.toggle("is-on", el.id === "screen-" + id));
+    }
+
+    function markNav(screen, label) {
+      navButtons.forEach((btn) => {
+        const match = btn.getAttribute("data-screen") === screen && (!label || btn.textContent.includes(label));
+        btn.classList.toggle("is-on", match);
+      });
+      if (![...navButtons].some((btn) => btn.classList.contains("is-on"))) {
+        navButtons.forEach((btn) => btn.classList.toggle("is-on", btn.getAttribute("data-screen") === screen));
+      }
+    }
+
+    navButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const screen = btn.getAttribute("data-screen");
+        navButtons.forEach((b) => b.classList.remove("is-on"));
+        btn.classList.add("is-on");
+        showScreen(screen);
+        const title = document.getElementById("keep-title");
+        const copy = document.getElementById("keep-copy");
+        if (screen === "keep" && title && copy) {
+          title.textContent = btn.childNodes[0].textContent.trim();
+          copy.textContent = "הטאב «" + title.textContent + "» נשאר כמו במוצר אחרי הצפיפות. הסקיצה לא פותחת אותו מחדש ולא מוחקת אותו.";
+        }
+        say("מסך סקיצה: " + btn.childNodes[0].textContent.trim());
+      });
+    });
+
+    document.querySelectorAll(".metric").forEach((metric) => {
+      metric.addEventListener("click", () => {
+        document.querySelectorAll(".metric").forEach((m) => m.classList.remove("is-on"));
+        metric.classList.add("is-on");
+        const go = metric.getAttribute("data-go");
+        const person = metric.getAttribute("data-person");
+        showScreen(go);
+        markNav(go);
+        if (person && go === "connect") {
+          renderConnect();
+          showConnect(person);
+        }
+        say("מדד פתח את " + metric.querySelector("b").textContent + (person ? " · " + person : ""));
+      });
+    });
+
+    function renderUsers() {
+      const tbody = document.querySelector("#user-table tbody");
+      tbody.innerHTML = PEOPLE.map((p) => `
+        <tr data-name="${p.name}">
+          <td><span class="name">${p.name}</span> <span class="mail" dir="ltr">${p.mail}</span></td>
+          <td>${p.role}</td>
+          <td>${p.plan}</td>
+          <td>${p.track}</td>
+          <td><span class="acts"><button type="button" class="pick">כרטיס</button></span></td>
+        </tr>
+      `).join("");
+    }
+
+    function showUser(name) {
+      const p = PEOPLE.find((row) => row.name === name);
+      if (!p) return;
+      document.querySelectorAll("#user-table tbody tr").forEach((row) => {
+        row.classList.toggle("is-on", row.getAttribute("data-name") === name);
+      });
+      document.getElementById("user-card").innerHTML = `
+        <p class="keep">מחובר לעמוד הזה</p>
+        <h3>${p.name}</h3>
+        <p class="who" dir="ltr">${p.mail} · ${p.role}</p>
+        <div class="linkrow"><em>ספרייה</em><span>${p.library}</span></div>
+        <div class="linkrow"><em>מסע</em><span>${p.journey}</span></div>
+        <div class="linkrow"><em>ליד</em><span>${p.lead}</span></div>
+        <div class="actions" style="display:flex;gap:8px;margin-top:12px">
+          <button class="cta" type="button" data-jump="connect" data-person="${p.name}">פעימה / ליד</button>
+        </div>
+      `;
+    }
+
+    function renderConnect() {
+      const tbody = document.querySelector("#connect-table tbody");
+      const rows = PEOPLE.filter((p) => p.track !== "ללא" || p.lead !== "—");
+      tbody.innerHTML = rows.map((p) => `
+        <tr data-name="${p.name}">
+          <td><span class="name">${p.name}</span></td>
+          <td>${p.source}</td>
+          <td>${p.track}</td>
+          <td>${p.pulse}</td>
+          <td>${p.lead}</td>
+          <td><span class="acts"><button type="button" class="ok" data-pulse="${p.name}">פעימה הבאה</button></span></td>
+        </tr>
+      `).join("");
+    }
+
+    function showConnect(name) {
+      const p = PEOPLE.find((row) => row.name === name);
+      if (!p) return;
+      document.querySelectorAll("#connect-table tbody tr").forEach((row) => {
+        row.classList.toggle("is-on", row.getAttribute("data-name") === name);
+      });
+      document.getElementById("connect-card").innerHTML = `
+        <p class="keep">מסלול + ליד</p>
+        <h3>${p.name}</h3>
+        <p class="who">${p.source} · ${p.track}</p>
+        <div class="linkrow"><em>פעימה</em><span>${p.pulse}</span></div>
+        <div class="linkrow"><em>ליד</em><span>${p.lead}</span></div>
+        <div class="linkrow"><em>ספרייה</em><span>${p.library}</span></div>
+        <div class="linkrow"><em>פוד</em><span>${p.pod}</span></div>
+        <div class="linkrow"><em>88</em><span>${p.eighty}</span></div>
+        <p class="muted">מנוי ספרייה לא משנה את המסע. הססנים נשארים מחיר מלא.</p>
+      `;
+    }
+
+    renderUsers();
+    renderConnect();
+
+    document.getElementById("user-search").addEventListener("input", (event) => {
+      const q = event.target.value.trim();
+      document.querySelectorAll("#user-table tbody tr").forEach((row) => {
+        const name = row.getAttribute("data-name") || "";
+        row.style.display = !q || name.includes(q) ? "" : "none";
+      });
+    });
+
+    document.getElementById("connect-search").addEventListener("input", (event) => {
+      const q = event.target.value.trim();
+      document.querySelectorAll("#connect-table tbody tr").forEach((row) => {
+        const name = row.getAttribute("data-name") || "";
+        row.style.display = !q || name.includes(q) ? "" : "none";
+      });
+    });
+
+    document.getElementById("user-table").addEventListener("click", (event) => {
+      const row = event.target.closest("tr");
+      if (!row || !row.getAttribute("data-name")) return;
+      showUser(row.getAttribute("data-name"));
+    });
+
+    document.getElementById("user-card").addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-jump]");
+      if (!btn) return;
+      showScreen(btn.getAttribute("data-jump"));
+      markNav("connect", "מסלולי");
+      showConnect(btn.getAttribute("data-person"));
+      say("אותו אדם עבר למסלול + ליד: " + btn.getAttribute("data-person"));
+    });
+
+    document.getElementById("connect-table").addEventListener("click", (event) => {
+      const row = event.target.closest("tr");
+      if (!row) return;
+      const name = row.getAttribute("data-name");
+      showConnect(name);
+      if (event.target.closest("[data-pulse]")) {
+        say("פעימה הבאה סומנה בסקיצה ל" + name + " — במוצר זה setInstallment. הססנים 8→80→800→8,000.");
+      }
+    });
+
+    document.getElementById("toggle-create").addEventListener("click", () => {
+      say("יצירת משתמש כבר מקופלת במוצר. הסקיצה לא בונה אותה שוב.");
+    });
+
+    document.getElementById("toggle-pod").addEventListener("click", () => {
+      const box = document.getElementById("pod-create");
+      box.hidden = !box.hidden;
+    });
+
+    document.querySelector("#screen-pods").addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-assign]");
+      if (!btn) return;
+      say("שויך בסקיצה: " + btn.getAttribute("data-assign") + ". מנוי ספרייה לא נכנס לתור.");
+    });
+
+    document.getElementById("lecturer-table").addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-review]");
+      const row = event.target.closest("tr");
+      if (!row) return;
+      const name = row.getAttribute("data-name");
+      if (!btn) {
+        say("פירוט בקשה של " + name + " — נפתח רק אחרי בחירת שורה.");
+        return;
+      }
+      const action = btn.getAttribute("data-review");
+      const label = action === "approved" ? "אושרה" : action === "rejected" ? "נדחתה" : "נשלחה בקשת מידע";
+      say("בקשת " + name + " " + label + " בשורה. הכרטיס הגבוה יורד.");
+    });
+  </script>
+</body>
+</html>

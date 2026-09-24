@@ -10,6 +10,7 @@ import { UsersRolesPermissionsView } from './admin/UsersRolesPermissionsView';
 import { UsersAccountsView } from './admin/UsersAccountsView';
 import { TeamStaffView } from './admin/TeamStaffView';
 import { TeamMembersPanel } from './admin/TeamMembersPanel';
+import { PodsPanel } from './admin/PodsPanel';
 import { AdminCommandPalette } from './admin/AdminCommandPalette';
 import { AdminListControls } from './admin/AdminListControls';
 import { useUnsavedChanges } from '../hooks/useUnsavedChanges';
@@ -20,7 +21,10 @@ import type { LecturerApplication } from '../api/lecturer';
 import type { AccessLevel, Category, Course, Instructor, PublishStatus, UserProfile } from '../types';
 import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
+import { CrmCatalogStage } from '../components/CrmCatalogStage';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { Bidi } from '../components/Bidi';
+import { DeskMonogram } from '../components/DeskMonogram';
 import { isApiUnavailableMessage } from '../lib/supabaseUser';
 import { emptyAnalytics, overviewFrom, readinessPayload, type ProfileListRow } from '../lib/adminFallback';
 
@@ -107,7 +111,7 @@ export function AdminView() {
 
   if (!isAdmin) {
     return (
-      <div className="min-h-screen bg-transparent text-white pt-28 pb-24 px-4 text-right">
+      <div className="crm-desk min-h-screen bg-transparent text-white pt-28 pb-24 px-4 text-start">
         <div className="max-w-md mx-auto border border-white/10 rounded-3xl p-8">
           <h1 className="text-2xl font-medium mb-3">אין הרשאת ניהול</h1>
           <p className="text-sm text-white/50 font-light mb-6">
@@ -134,9 +138,9 @@ export function AdminView() {
   const tabMeta = TAB_META[tab];
 
   return (
-    <div className="min-h-screen bg-transparent text-white text-right">
+    <div className="crm-desk min-h-screen bg-transparent text-white text-start">
       <div className="flex min-h-screen">
-        <aside className="hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
+        <aside className="crm-desk-aside hidden lg:flex w-64 shrink-0 flex-col border-e border-white/10 sticky top-0 h-screen overflow-y-auto">
           <AdminSidebar
             groups={visibleGroups}
             tab={tab}
@@ -148,7 +152,7 @@ export function AdminView() {
         </aside>
 
         <div className="flex-1 min-w-0">
-          <header className="sticky top-0 z-20 border-b border-white/10 bg-[#050505]/90 backdrop-blur-xl px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
+          <header className="crm-desk-topbar sticky top-0 z-20 border-b border-white/10 bg-[#050505]/90 backdrop-blur-xl px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
               <button
                 type="button"
@@ -162,8 +166,8 @@ export function AdminView() {
                   שלום, {user.name.split(' ')[0] || 'אדמין'}
                 </p>
                 {user.email ? (
-                  <p className="text-[11px] text-white/40 truncate" dir="ltr">
-                    {user.email}
+                  <p className="text-[11px] text-white/40 truncate">
+                    <Bidi kind="email">{user.email}</Bidi>
                   </p>
                 ) : null}
                 <p className="text-xs text-white/35">
@@ -173,7 +177,7 @@ export function AdminView() {
             </div>
             <div className="flex items-center gap-2">
               <button type="button" onClick={() => setCommandOpen(true)} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 px-3 text-xs text-white/60 hover:border-[#b79043]/40 hover:text-white" aria-label="מעבר מהיר באדמין">
-                <Search size={15} /><span className="hidden sm:inline">מעבר מהיר</span><kbd className="hidden xl:inline text-[10px] text-white/30">⌘K</kbd>
+                <Search size={15} /><span className="hidden sm:inline">מעבר מהיר</span><kbd className="crm-desk-hotkey hidden xl:inline text-[10px] text-white/30">⌘K</kbd>
               </button>
               <button
                 type="button"
@@ -187,7 +191,7 @@ export function AdminView() {
 
           {mobileNavOpen ? <AdminMobileNav groups={visibleGroups} tab={tab} onNavigate={goTab} /> : null}
 
-          <main className="px-4 sm:px-6 lg:px-8 py-6 pb-24 max-w-7xl">
+          <main className="crm-desk-stage px-4 sm:px-6 lg:px-8 py-6 pb-24 max-w-7xl">
             {staffDesk ? (
               <p className="text-xs text-[#b79043]/80 mb-4">
                 מצב צוות מוגבל: {STAFF_DESK_LABEL[staffDesk] || staffDesk}. גישה מלאה רק לאדמין ראשי.
@@ -197,18 +201,22 @@ export function AdminView() {
             {tab === 'users' && <UsersAccountsView />}
             {tab === 'overview' && (
               <AdminPageShell group={tabMeta.group} title={tabMeta.title} description={tabMeta.description}>
-                <div className="grid gap-10">
-                  <ReadinessPanel />
-                  <OverviewPanel onNavigate={goTab} />
-                </div>
+                <OverviewPanel onNavigate={goTab} />
+              </AdminPageShell>
+            )}
+            {tab === 'settings' && (
+              <AdminPageShell group={tabMeta.group} title={tabMeta.title} description={tabMeta.description}>
+                <ReadinessPanel />
               </AdminPageShell>
             )}
             {tab === 'content' && (
-              <ContentPanel
-                categories={categories}
-                instructors={instructors}
-                onSaved={() => void reloadCatalog()}
-              />
+              <AdminPageShell group={tabMeta.group} title={tabMeta.title} description={tabMeta.description}>
+                <ContentPanel
+                  categories={categories}
+                  instructors={instructors}
+                  onSaved={() => void reloadCatalog()}
+                />
+              </AdminPageShell>
             )}
             {tab === 'analytics' && (
               <AdminPageShell group={tabMeta.group} title={tabMeta.title} description={tabMeta.description}>
@@ -228,12 +236,12 @@ export function AdminView() {
             {tab === 'tracks' && <TracksPanel />}
             {tab === 'categories' && <CategoriesPanel />}
             {tab === 'premium88' && <Premium88Panel />}
+            {tab === 'pods' && <PodsPanel />}
             {tab === 'audit' && <AuditLogsPanel />}
             {tab === 'raffles' && <RafflesPanel />}
             {tab === 'leads' && <LeadsPanel />}
             {tab === 'webinar' && <WebinarPanel />}
             {tab === 'legal' && <LegalPanel />}
-            {tab === 'settings' && <ReadinessPanel />}
             {tab === 'onboarding' && <OnboardingCenterView />}
             {tab === 'notifications' && <NotificationsPanel onNavigate={goTab} />}
           </main>
@@ -271,57 +279,56 @@ function NotificationsPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) 
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
 
   return (
-    <div className="grid gap-6 max-w-3xl">
-      <div className="flex flex-wrap items-end justify-between gap-3">
+    <div className="grid gap-3 max-w-3xl">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">התראות</p>
-          <h2 className="text-2xl font-light">תור פעולות לטיפול</h2>
-          <p className="text-sm text-white/45 mt-2">
-            סיכום אוטומטי מהמערכת. שליחה במייל או וואטסאפ תגיע בשלב הבא.
+          <h2 className="text-lg font-medium">תור פעולות לטיפול</h2>
+          <p className="text-xs text-white/45">
+            סיכום אוטומטי מהמערכת.
             {high > 0 ? ` · ${high} דחופות` : ''}
           </p>
         </div>
         <button
           type="button"
           onClick={() => void load()}
-          className="px-4 py-2 rounded-full border border-white/15 text-xs min-h-11 hover:border-white/40"
+          className="px-3 py-1.5 rounded border border-white/15 text-xs min-h-9 hover:border-white/40"
         >
           רענון
         </button>
       </div>
 
       {items.length === 0 ? (
-        <div className="border border-white/10 rounded-2xl p-8 text-sm text-white/45">
+        <div className="border border-white/10 rounded p-4 text-sm text-white/45">
           אין פריטים לטיפול כרגע. המערכת תציג כאן פעימות לחיוב, בקשות ממתינות, לידים חדשים ועוד.
         </div>
       ) : (
-        <ul className="grid gap-3">
+        <ul className="grid gap-1.5">
           {items.map((item) => (
-            <li key={item.id} className="border border-white/10 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
+            <li key={item.id} className="crm-desk-notif">
               <div className="min-w-0">
-                <div className="flex flex-wrap items-center gap-2 mb-1">
+                <p className="text-sm">
                   <span
-                    className={`text-[11px] ${
+                    className={`text-[11px] ms-0 me-2 ${
                       item.severity === 'high'
                         ? 'text-rose-300'
                         : item.severity === 'medium'
-                          ? 'text-[#b79043]'
+                          ? 'text-[#dfc47d]'
                           : 'text-white/40'
                     }`}
                   >
                     {NOTIF_SEVERITY_LABEL[item.severity]}
                   </span>
-                  <span className="text-[11px] text-white/30">{item.count}</span>
-                </div>
-                <h3 className="text-base font-light">{item.title}</h3>
-                <p className="text-sm text-white/50 mt-1">{item.detail}</p>
+                  {item.title}
+                  <span className="text-[11px] text-white/30 ms-2">{item.count}</span>
+                </p>
+                <p className="text-xs text-white/45 truncate">{item.detail}</p>
               </div>
               <button
                 type="button"
                 onClick={() => onNavigate(item.tab as Tab)}
-                className="px-4 py-2 rounded-full bg-[#b79043] text-black text-xs min-h-11 shrink-0"
+                className="crm-desk-row-act shrink-0"
               >
-                מעבר לטיפול
+                ל{TAB_META[item.tab as Tab]?.title || item.tab}
               </button>
             </li>
           ))}
@@ -517,22 +524,18 @@ function ReadinessPanel() {
 }
 
 function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
-  const { user } = useApp();
+  const { user, courses, instructors, categories } = useApp();
   const [data, setData] = useState<AdminOverview | null>(null);
-  const [analytics, setAnalytics] = useState<AdminAnalytics | null>(null);
   const [error, setError] = useState('');
 
   useEffect(() => {
-    Promise.all([adminApi.overview(), adminApi.analytics()])
-      .then(([overview, nextAnalytics]) => {
-        setData(overview);
-        setAnalytics(nextAnalytics);
-      })
+    adminApi
+      .overview()
+      .then(setData)
       .catch((err) => {
         const message = err instanceof Error ? err.message : 'טעינה נכשלה';
         if (isDeskOffline(message) && user.id !== 'guest') {
           setData(overviewFrom([profileRowFromUser(user)]));
-          setAnalytics(emptyAnalytics());
           return;
         }
         setError(message);
@@ -548,164 +551,68 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
   }
   if (!data) return <p className="text-sm text-white/40">טוען...</p>;
 
-  const cards = [
-    { label: 'סך משתמשים', value: data.users },
-    { label: 'חינמיים', value: data.free },
-    { label: 'משלמים', value: data.paying },
-    { label: 'אמיצים', value: data.braveUsers ?? 0 },
-    { label: 'הססנים', value: data.hesitantUsers ?? 0 },
-    { label: 'נבחרת 88', value: data.premium88 ?? 0 },
-    { label: 'מרצים', value: data.lecturers },
-    { label: 'בקשות מרצים', value: data.applicationsPending },
-    { label: 'הרצאות באוויר', value: data.published },
-    { label: 'צפיות החודש', value: data.viewsMonth },
-    { label: 'זמן צפייה', value: `${data.watchTimeHours} שע׳` },
-    { label: 'המרה', value: `${data.conversionRate}%` },
-    { label: 'Paywall', value: data.paywallHits },
-    { label: 'תשלומים שנכשלו', value: data.failedPayments ?? 0 },
-    { label: 'לחיוב עכשיו', value: data.dueInstallments ?? 0 },
-    { label: 'ממתינות לאישור', value: data.pending },
-  ];
-
-  const funnelSteps = analytics
-    ? [
-        { label: 'Paywall', value: analytics.funnel.paywallOpened },
-        { label: 'שדרוג', value: analytics.funnel.upgradeClicked },
-        { label: 'ניסיון', value: analytics.funnel.trialStarted },
-        { label: 'מנוי', value: analytics.funnel.subscriptionStarted },
-      ]
-    : [];
-  const funnelMax = Math.max(1, ...funnelSteps.map((step) => step.value));
-
-  const actions = [
-    { label: 'משתמשים', hint: 'ניהול הרשאות וגישה', tab: 'users' as Tab },
+  const metrics: Array<{ label: string; value: number; hint: string; tab: Tab }> = [
     {
-      label: 'תשלומים שנכשלו',
-      hint: `${data.failedPayments ?? 0} דורשים טיפול`,
-      tab: 'tracks' as Tab,
+      label: 'לחיוב עכשיו',
+      value: data.dueInstallments ?? 0,
+      hint: 'הססנים · פעימה בתור',
+      tab: 'tracks',
     },
-    { label: 'מסלולי כניסה', hint: 'אמיצים והססנים', tab: 'tracks' as Tab },
-    { label: 'תכני VOD', hint: 'העלאה ופרסום', tab: 'content' as Tab },
-    { label: 'בקשות מרצים', hint: `${data.applicationsPending} ממתינות`, tab: 'lecturers' as Tab },
+    {
+      label: 'בקשות מרצים',
+      value: data.applicationsPending,
+      hint: 'אשר / דחה בשורה',
+      tab: 'lecturers',
+    },
+    {
+      label: 'לידים פתוחים',
+      value: data.openLeads ?? 0,
+      hint: 'מסלול + וובינר',
+      tab: 'leads',
+    },
+    {
+      label: 'ממתינות',
+      value: data.pending,
+      hint: 'תוכן לאישור',
+      tab: 'content',
+    },
   ];
 
   return (
-    <div className="grid gap-8">
-      <div>
-        <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">תמונת מצב</p>
-        <h2 className="text-2xl font-light">מה קורה במערכת עכשיו</h2>
-      </div>
+    <div className="grid gap-4">
+      <CrmCatalogStage
+        courses={courses}
+        instructors={instructors}
+        categories={categories}
+        eyebrow="קטלוג אקדמי"
+        kicker="אותה שפת ספרייה — לניהול הרצאות. בלי CTA של מנוי."
+        featuredActionLabel="ניהול ההרצאה"
+        secondaryActionLabel="לקטלוג התוכן"
+        onFeaturedAction={() => onNavigate('content')}
+        onSecondaryAction={() => onNavigate('content')}
+        onSelectCourse={() => onNavigate('content')}
+      />
 
-      <div className="grid grid-cols-2 md:grid-cols-4 xl:grid-cols-8 gap-3">
-        {cards.map((card) => (
-          <div key={card.label} className="border border-white/10 rounded-2xl p-4 bg-white/[0.02]">
-            <div className="text-[11px] text-white/40 mb-2 leading-snug">{card.label}</div>
-            <div className="text-xl font-light text-white">{card.value}</div>
-          </div>
-        ))}
-      </div>
-
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
-        <section className="xl:col-span-2 border border-white/10 rounded-3xl p-6">
-          <div className="flex items-center justify-between gap-3 mb-5">
-            <h3 className="text-lg font-light">משפך המרה</h3>
+      <section aria-label="לטיפול עכשיו" className="grid gap-3">
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-2">
+          {metrics.map((metric) => (
             <button
+              key={metric.label}
               type="button"
-              onClick={() => onNavigate('funnel')}
-              className="text-xs text-[#b79043] hover:text-[#dfc47d]"
+              className="crm-desk-metric"
+              onClick={() => onNavigate(metric.tab)}
             >
-              פירוט
+              <strong>{metric.value}</strong>
+              <b>{metric.label}</b>
+              <em>{metric.hint}</em>
             </button>
-          </div>
-          {funnelSteps.length === 0 ? (
-            <p className="text-sm text-white/40">טוען משפך...</p>
-          ) : (
-            <div className="grid gap-4">
-              {funnelSteps.map((step) => (
-                <div key={step.label}>
-                  <div className="flex justify-between text-sm mb-1.5">
-                    <span className="text-white/70">{step.label}</span>
-                    <span className="text-white/45">{step.value}</span>
-                  </div>
-                  <div className="h-2 rounded-full bg-white/5 overflow-hidden">
-                    <div
-                      className="h-full rounded-full bg-gradient-to-l from-[#b79043] to-[#5b4b9a]"
-                      style={{ width: `${Math.max(6, (step.value / funnelMax) * 100)}%` }}
-                    />
-                  </div>
-                </div>
-              ))}
-              <p className="text-xs text-white/35 mt-2">
-                Conversion כולל: {data.conversionRate}% · ביטולים:{' '}
-                {analytics?.funnel.subscriptionCancelled ?? 0}
-              </p>
-            </div>
-          )}
-        </section>
-
-        <section className="border border-white/10 rounded-3xl p-6">
-          <h3 className="text-lg font-light mb-5">תוכן מוביל</h3>
-          <div className="grid gap-4">
-            {[
-              { label: 'הכי נצפה', item: data.popularContent },
-              { label: 'קטגוריה חזקה', item: data.strongestCategory },
-              { label: 'מרצה מוביל', item: data.leadingLecturer },
-              { label: 'ממיר הכי טוב', item: data.convertingContent },
-            ].map((card) => (
-              <div key={card.label} className="border-b border-white/5 pb-3 last:border-0 last:pb-0">
-                <div className="text-[11px] text-white/35 mb-1">{card.label}</div>
-                {card.item ? (
-                  <>
-                    <div className="text-sm text-white font-light">{card.item.name}</div>
-                    <div className="text-xs text-white/35 mt-1">{card.item.views} צפיות</div>
-                  </>
-                ) : (
-                  <div className="text-sm text-white/35">עדיין אין מספיק מדידה</div>
-                )}
-              </div>
-            ))}
-          </div>
-        </section>
-      </div>
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <section className="border border-white/10 rounded-3xl p-6">
-          <h3 className="text-lg font-light mb-5">פעילות אחרונה</h3>
-          {!analytics?.recent?.length ? (
-            <p className="text-sm text-white/40">עדיין אין אירועים.</p>
-          ) : (
-            <ul className="grid gap-3">
-              {analytics.recent.slice(0, 8).map((row) => (
-                <li key={row.id} className="flex items-start justify-between gap-3 text-sm border-b border-white/5 pb-3 last:border-0">
-                  <span className="text-white/75 font-light">
-                    {EVENT_LABEL[row.event] || row.event}
-                  </span>
-                  <span className="text-xs text-white/35 whitespace-nowrap">
-                    {row.createdAt.replace('T', ' ').slice(0, 16)}
-                  </span>
-                </li>
-              ))}
-            </ul>
-          )}
-        </section>
-
-        <section className="border border-white/10 rounded-3xl p-6">
-          <h3 className="text-lg font-light mb-5">פעולות מהירות</h3>
-          <div className="grid sm:grid-cols-2 gap-3">
-            {actions.map((action) => (
-              <button
-                key={action.label}
-                type="button"
-                onClick={() => onNavigate(action.tab)}
-                className="text-right border border-white/10 rounded-2xl p-4 hover:border-[#b79043]/40 transition-colors min-h-11"
-              >
-                <div className="text-sm text-white mb-1">{action.label}</div>
-                <div className="text-xs text-white/40 font-light">{action.hint}</div>
-              </button>
-            ))}
-          </div>
-        </section>
-      </div>
+          ))}
+        </div>
+        <p className="text-xs text-white/35 font-light">
+          שאר המספרים (משתמשים, צפיות, המרה…) נשארים ב«אנליטיקות» — לא נמחקו.
+          מוכנות מערכת ב«הגדרות · מוכנות».
+        </p>
+      </section>
     </div>
   );
 }
@@ -841,7 +748,7 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
           <p className="text-sm text-white/40">עדיין אין מדידות.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-right">
+            <table className="w-full text-sm text-start">
               <thead className="text-xs text-white/40 border-b border-white/10">
                 <tr>
                   <th className="py-3 font-normal">אירוע</th>
@@ -871,7 +778,7 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
                 <span className="text-white">{EVENT_LABEL[row.event] || row.event}</span>
                 {row.properties.source ? <span>מקור: {row.properties.source}</span> : null}
                 {row.properties.courseId ? <span className="text-white/35">{row.properties.courseId}</span> : null}
-                <span className="text-white/30 mr-auto">{row.createdAt.replace('T', ' ').slice(0, 16)}</span>
+                <span className="text-white/30 ms-auto">{row.createdAt.replace('T', ' ').slice(0, 16)}</span>
               </li>
             ))}
           </ul>
@@ -996,7 +903,19 @@ function ContentPanel({
 
   return (
     <div>
-      <div className="flex items-center justify-between mb-6">
+      <CrmCatalogStage
+        courses={courses}
+        instructors={instructors as Instructor[]}
+        categories={categories as Category[]}
+        eyebrow="תוכן VOD"
+        kicker="כרזות ופסים כמו בספרייה. הטבלה והפעולות הקיימות נשארות מתחת."
+        featuredActionLabel="עריכת ההרצאה"
+        secondaryActionLabel="הרצאה חדשה"
+        onFeaturedAction={(course) => setEditing(course)}
+        onSecondaryAction={() => setEditing('new')}
+        onSelectCourse={(course) => setEditing(course)}
+      />
+      <div className="flex items-center justify-between mb-6 mt-8">
         <p className="text-sm text-white/45">{courses.length} הרצאות</p>
         <button
           type="button"
@@ -1040,7 +959,7 @@ function ContentPanel({
             <button
               type="button"
               onClick={() => setEditing(course)}
-              className="flex-1 text-right cursor-pointer"
+              className="flex-1 text-start cursor-pointer"
             >
               <div className="text-white">{course.title}</div>
               <div className="text-xs text-white/40 mt-1">
@@ -1163,7 +1082,7 @@ function CourseForm({
       className="grid gap-5 max-w-3xl"
     >
       <div className="flex items-center justify-between gap-3">
-        <button type="button" onClick={() => { if (canLeave()) onCancel(); }} className="text-sm text-white/45 hover:text-white text-right cursor-pointer min-h-11">
+        <button type="button" onClick={() => { if (canLeave()) onCancel(); }} className="text-sm text-white/45 hover:text-white text-start cursor-pointer min-h-11">
           חזרה לרשימה
         </button>
         {dirty ? <span className="rounded-full border border-[#b79043]/25 bg-[#b79043]/10 px-3 py-1 text-xs text-[#dfc47d]" role="status">שינויים שלא נשמרו</span> : null}
@@ -1709,7 +1628,7 @@ function FoundersPanel() {
                 <input
                   type="url"
                   dir="ltr"
-                  className={`${fieldClass} mt-1 text-left`}
+                  className={`${fieldClass} mt-1 text-start`}
                   placeholder="https://"
                   value={linkUrl(founder, 'אתר')}
                   onChange={(e) => setLinkDraft(founder.id, 'אתר', e.target.value)}
@@ -1721,7 +1640,7 @@ function FoundersPanel() {
                 <input
                   type="url"
                   dir="ltr"
-                  className={`${fieldClass} mt-1 text-left`}
+                  className={`${fieldClass} mt-1 text-start`}
                   placeholder="https://instagram.com/"
                   value={linkUrl(founder, 'אינסטגרם')}
                   onChange={(e) => setLinkDraft(founder.id, 'אינסטגרם', e.target.value)}
@@ -1784,7 +1703,7 @@ function PaymentsPanel() {
 
   return (
     <div className="overflow-x-auto">
-      <table className="w-full text-sm text-right">
+      <table className="w-full text-sm text-start">
         <thead className="text-xs text-white/40 border-b border-white/10">
           <tr>
             <th className="py-3 font-normal">מתי</th>
@@ -1907,17 +1826,9 @@ function TracksPanel() {
   if (!data) return <p className="text-sm text-white/40">טוען...</p>;
 
   const cards = [
-    { label: 'לידים אמיצים', value: data.braveLeads },
-    { label: 'לידים הססנים', value: data.hesitantLeads },
-    { label: 'משתמשי אמיצים', value: data.braveUsers },
-    { label: 'משתמשי הססנים', value: data.hesitantUsers },
-    { label: 'שילמו 8', value: data.paid8 },
-    { label: 'שילמו 80', value: data.paid80 },
-    { label: 'שילמו 800', value: data.paid800 },
-    { label: 'שילמו 8,000', value: data.paid8000 },
-    { label: 'פעימות לחיוב', value: data.dueNow },
-    { label: 'חיובים שנכשלו', value: data.failedPayments },
-    { label: 'כרטיסי הגרלה', value: data.raffleTicketsGranted },
+    { label: 'לחיוב', value: data.dueNow },
+    { label: 'נכשלו', value: data.failedPayments },
+    { label: 'לידים חדשים', value: data.leads.filter((lead) => lead.status === 'new').length },
     { label: 'למעקב', value: data.followUp },
   ];
 
@@ -1946,12 +1857,21 @@ function TracksPanel() {
     }
   };
 
+  const leadStatusLabel = (status: string) => {
+    if (status === 'new') return 'ליד חדש';
+    if (status === 'contacted') return 'נוצר קשר';
+    if (status === 'qualified') return 'מתאים';
+    if (status === 'won') return 'נסגר';
+    if (status === 'lost') return 'אבד';
+    return status || '—';
+  };
+
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-4">
       <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <p className="text-sm text-white/45 font-light max-w-3xl">
-          כל מצטרפי מסלול האמיצים וההססנים, כולל שאלון, תוכנית תשלום ופעימות. סליקה:{' '}
-          {data.billingMode === 'stripe' ? 'Stripe מחובר' : 'פיילוט ידני'}. מועמדות לנבחרת 88 נשארת בלשונית נפרדת.
+          אותו אדם בשורה: מסלול, פעימה וליד. הססנים 8→80→800→8,000 במחיר מלא. נבחרת 88 בלשונית נפרדת.
+          סליקה: {data.billingMode === 'stripe' ? 'Stripe מחובר' : 'פיילוט ידני'}.
         </p>
         <button
           type="button"
@@ -1964,11 +1884,11 @@ function TracksPanel() {
 
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
         {cards.map((card) => (
-          <article key={card.label} className="border border-white/10 rounded-2xl p-4">
-            <p className="text-xs text-white/40 mb-1">{card.label}</p>
-            <p className="text-2xl font-light">{card.value}</p>
+          <article key={card.label} className="crm-desk-metric pointer-events-none">
+            <strong>{card.value}</strong>
+            <b>{card.label}</b>
           </article>
         ))}
       </div>
@@ -2003,44 +1923,66 @@ function TracksPanel() {
         <p className="text-sm text-white/35 self-center">{filtered.length} מצטרפים</p>
       </div>
 
-      <div className="grid gap-6 xl:grid-cols-[minmax(0,1.4fr)_minmax(320px,0.9fr)]">
-        <div className="overflow-x-auto border border-white/10 rounded-2xl">
-          <table className="w-full text-sm text-right">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.85fr)]">
+        <div className="crm-desk-table">
+          <table className="w-full text-sm text-start">
             <thead className="text-xs text-white/40 border-b border-white/10">
               <tr>
-                <th className="py-3 px-3 font-normal">מתי</th>
-                <th className="py-3 px-3 font-normal">מסלול</th>
                 <th className="py-3 px-3 font-normal">שם</th>
-                <th className="py-3 px-3 font-normal">יצירת קשר</th>
-                <th className="py-3 px-3 font-normal">תשלום</th>
-                <th className="py-3 px-3 font-normal">משתמש</th>
+                <th className="py-3 px-3 font-normal">מסלול</th>
+                <th className="py-3 px-3 font-normal">פעימה</th>
+                <th className="py-3 px-3 font-normal">ליד</th>
+                <th className="py-3 px-3 font-normal">פעולה</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/10">
               {filtered.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-6 px-3 text-white/40">
+                  <td colSpan={5} className="py-6 px-3 text-white/40">
                     אין מצטרפים לפי הסינון.
                   </td>
                 </tr>
               ) : (
                 filtered.map((row) => {
                   const active = selected?.id === row.id;
+                  const due = row.currentInstallment?.status === 'due' || row.currentInstallment?.status === 'scheduled';
                   return (
                     <tr
                       key={row.id}
                       onClick={() => setSelectedId(row.id)}
                       className={`cursor-pointer transition-colors ${active ? 'bg-[#b79043]/10' : 'hover:bg-white/[0.03]'}`}
                     >
-                      <td className="py-3 px-3 text-white/55">{row.createdAt.replace('T', ' ').slice(0, 16)}</td>
-                      <td className="py-3 px-3">{trackLabel(row.trackType)}</td>
-                      <td className="py-3 px-3">{row.name}</td>
-                      <td className="py-3 px-3 text-white/55">
-                        {row.phone}
-                        <span className="text-white/35"> · {row.email}</span>
+                      <td className="py-3 px-3">
+                        <span className="crm-desk-who">
+                          <DeskMonogram name={row.name} />
+                          <span className="crm-desk-who-text">
+                            <span className="crm-desk-who-name">{row.name}</span>
+                            <span className="crm-desk-who-mail">
+                              <Bidi kind="email">{row.email}</Bidi>
+                            </span>
+                          </span>
+                        </span>
                       </td>
+                      <td className="py-3 px-3">{trackLabel(row.trackType)}</td>
                       <td className="py-3 px-3 text-white/70">{leadPaymentSummary(row)}</td>
-                      <td className="py-3 px-3 text-white/55">{row.userId ? row.userName || 'מקושר' : 'אין עדיין'}</td>
+                      <td className="py-3 px-3 text-white/55">{leadStatusLabel(row.status)}</td>
+                      <td className="py-3 px-3">
+                        {due && row.currentInstallment ? (
+                          <button
+                            type="button"
+                            className="crm-desk-row-act"
+                            disabled={pendingId === row.currentInstallment.id}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              void setInstallment(row.currentInstallment!.id, 'paid');
+                            }}
+                          >
+                            פעימה הבאה
+                          </button>
+                        ) : (
+                          <span className="text-xs text-white/30">—</span>
+                        )}
+                      </td>
                     </tr>
                   );
                 })
@@ -2049,52 +1991,69 @@ function TracksPanel() {
           </table>
         </div>
 
-        <aside className="border border-white/10 rounded-2xl p-5 min-h-[320px]">
+        <aside className="crm-desk-title-card">
           {!selected ? (
             <p className="text-sm text-white/40">בחרו מצטרף מהטבלה.</p>
           ) : (
-            <div className="grid gap-5">
+            <div className="grid gap-3">
               <div>
-                <p className="text-[13px] uppercase tracking-[0.25em] text-[#b79043] mb-2">כרטיס מצטרף</p>
-                <h3 className="text-xl font-light">{selected.name}</h3>
-                <p className="text-sm text-white/45 mt-1">
-                  {trackLabel(selected.trackType)} · {selected.status}
-                </p>
+                <p className="crm-desk-title-keep">כרטיס דק · title card</p>
+                <div className="crm-desk-who mb-2">
+                  <DeskMonogram name={selected.name} />
+                  <span className="crm-desk-who-text">
+                    <h3 className="text-lg font-light m-0">{selected.name}</h3>
+                    <p className="crm-desk-who-mail mt-1 mb-0">
+                      <Bidi kind="email">{selected.email}</Bidi>
+                    </p>
+                  </span>
+                </div>
               </div>
 
-              <dl className="grid gap-2 text-sm">
-                <div className="flex justify-between gap-3"><dt className="text-white/40">טלפון</dt><dd>{selected.phone}</dd></div>
-                <div className="flex justify-between gap-3"><dt className="text-white/40">אימייל</dt><dd className="text-left break-all">{selected.email}</dd></div>
-                <div className="flex justify-between gap-3"><dt className="text-white/40">תחום</dt><dd>{selected.field || 'לא צוין'}</dd></div>
+              <dl className="grid gap-1.5 text-sm">
+                <div className="flex justify-between gap-3">
+                  <dt className="text-white/40">מסע</dt>
+                  <dd>
+                    {trackLabel(selected.trackType)} · {leadPaymentSummary(selected)}
+                  </dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-white/40">ליד</dt>
+                  <dd>{leadStatusLabel(selected.status)}</dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-white/40">טלפון</dt>
+                  <dd>
+                    <Bidi kind="phone">{selected.phone || '—'}</Bidi>
+                  </dd>
+                </div>
+                <div className="flex justify-between gap-3">
+                  <dt className="text-white/40">תחום</dt>
+                  <dd>{selected.field || 'לא צוין'}</dd>
+                </div>
                 {selected.hesitationReason ? (
-                  <div className="flex justify-between gap-3"><dt className="text-white/40">הססנות</dt><dd className="text-left">{selected.hesitationReason}</dd></div>
-                ) : null}
-                {selected.hasProduct ? (
-                  <div className="flex justify-between gap-3"><dt className="text-white/40">מוצר</dt><dd>{selected.hasProduct}</dd></div>
-                ) : null}
-                {selected.hasSold ? (
-                  <div className="flex justify-between gap-3"><dt className="text-white/40">מכירות</dt><dd>{selected.hasSold}</dd></div>
-                ) : null}
-                {selected.goal90 ? (
-                  <div className="flex justify-between gap-3"><dt className="text-white/40">יעד 90</dt><dd className="text-left">{selected.goal90}</dd></div>
-                ) : null}
-                {selected.links ? (
-                  <div className="flex justify-between gap-3"><dt className="text-white/40">קישורים</dt><dd className="text-left break-all">{selected.links}</dd></div>
-                ) : null}
-                {(selected.referredByLecturerName || selected.referredByLecturerId) && (
                   <div className="flex justify-between gap-3">
-                    <dt className="text-white/40">הפניה</dt>
-                    <dd>{selected.referredByLecturerName || selected.referredByLecturerId}</dd>
+                    <dt className="text-white/40">הססנות</dt>
+                    <dd className="text-start">{selected.hesitationReason}</dd>
                   </div>
-                )}
+                ) : null}
                 <div className="flex justify-between gap-3">
                   <dt className="text-white/40">משתמש</dt>
-                  <dd>{selected.userId ? selected.userName || selected.userId : 'לא מקושר עדיין'}</dd>
+                  <dd>{selected.userId ? selected.userName || 'מקושר' : 'אין עדיין'}</dd>
                 </div>
               </dl>
+              <p className="text-[11px] text-white/35 font-light">
+                מנוי ספרייה לא משנה את המסע. הססנים במחיר מלא.
+              </p>
+
+              {selected.referredByLecturerName || selected.referredByLecturerId ? (
+                <div className="flex justify-between gap-3 text-sm">
+                  <span className="text-white/40">הפניה</span>
+                  <span>{selected.referredByLecturerName || selected.referredByLecturerId}</span>
+                </div>
+              ) : null}
 
               {selected.plan ? (
-                <div className="border-t border-white/10 pt-4">
+                <div className="border-t border-white/10 pt-3">
                   <p className="text-xs text-white/40 mb-2">תוכנית תשלום</p>
                   <p className="text-sm text-white/70">
                     {selected.plan.amountBeforeVat.toLocaleString('he-IL')} ₪ לפני מע״מ ·{' '}
@@ -2103,7 +2062,7 @@ function TracksPanel() {
                 </div>
               ) : null}
 
-              <div className="border-t border-white/10 pt-4 grid gap-3">
+              <div className="border-t border-white/10 pt-3 grid gap-2">
                 <p className="text-xs text-white/40">פעימות</p>
                 {selected.installments.length === 0 ? (
                   <p className="text-sm text-white/40">אין פעימות.</p>
@@ -2181,6 +2140,7 @@ const P88_STATUS_LABEL: Record<string, string> = {
 
 const AUDIT_ACTION_LABEL: Record<string, string> = {
   user_updated: 'עדכון משתמש',
+  user_deleted: 'הסרת משתמש',
   category_created: 'יצירת קטגוריה',
   category_updated: 'עדכון קטגוריה',
   categories_reordered: 'סידור קטגוריות',
@@ -2228,14 +2188,16 @@ function CategoriesPanel() {
   };
 
   const patch = async (id: string, next: Partial<Category>) => {
+    const current = rows.find((row) => row.id === id);
+    if (!current) return;
     setPending(true);
     setError('');
     try {
       await adminApi.updateCategory(id, {
-        name: next.name,
-        description: next.description,
-        accessLevel: next.accessLevel,
-        sortOrder: next.sortOrder,
+        name: next.name ?? current.name,
+        description: next.description ?? current.description,
+        accessLevel: next.accessLevel ?? current.accessLevel,
+        sortOrder: next.sortOrder ?? current.sortOrder,
       });
       await load();
       await reloadCatalog();
@@ -2266,47 +2228,15 @@ function CategoriesPanel() {
   };
 
   return (
-    <div className="grid gap-8">
+    <div className="grid gap-4">
       <div>
         <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">קטגוריות</p>
-        <h2 className="text-2xl font-light">ניהול קטגוריות VOD</h2>
+        <h2 className="text-lg font-medium">ניהול קטגוריות VOD</h2>
       </div>
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
-      <div className="border border-white/10 rounded-3xl p-5 grid gap-3 md:grid-cols-[1fr_1fr_auto_auto] items-end">
-        <label className="text-sm text-white/50 font-light grid gap-1">
-          שם
-          <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
-        </label>
-        <label className="text-sm text-white/50 font-light grid gap-1">
-          תיאור
-          <input value={description} onChange={(e) => setDescription(e.target.value)} className={fieldClass} />
-        </label>
-        <label className="text-sm text-white/50 font-light grid gap-1">
-          גישה
-          <select
-            value={accessLevel}
-            onChange={(e) => setAccessLevel(e.target.value as AccessLevel)}
-            className={fieldClass}
-          >
-            <option value="free">חינמי</option>
-            <option value="premium">פרימיום</option>
-            <option value="premium_88">נבחרת 88</option>
-            <option value="admin_only">אדמין בלבד</option>
-          </select>
-        </label>
-        <button
-          type="button"
-          disabled={pending || !name.trim()}
-          onClick={() => void create()}
-          className="px-4 py-3 rounded-xl bg-[#b79043] text-black text-sm min-h-11 disabled:opacity-50"
-        >
-          הוספה
-        </button>
-      </div>
-
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
+        <table className="w-full text-sm text-start">
           <thead className="text-xs text-white/40 border-b border-white/10">
             <tr>
               <th className="py-3 px-3 font-normal">סדר</th>
@@ -2331,16 +2261,16 @@ function CategoriesPanel() {
                 </td>
                 <td className="py-3 px-3">
                   <input
-                    defaultValue={row.description}
+                    defaultValue={row.description || ''}
                     className={fieldClass}
                     onBlur={(e) => {
-                      if (e.target.value !== row.description) void patch(row.id, { description: e.target.value });
+                      if (e.target.value !== (row.description || '')) void patch(row.id, { description: e.target.value });
                     }}
                   />
                 </td>
                 <td className="py-3 px-3">
                   <select
-                    value={row.accessLevel || 'premium'}
+                    defaultValue={row.accessLevel || 'free'}
                     className={fieldClass}
                     onChange={(e) => void patch(row.id, { accessLevel: e.target.value as AccessLevel })}
                   >
@@ -2351,12 +2281,12 @@ function CategoriesPanel() {
                   </select>
                 </td>
                 <td className="py-3 px-3">
-                  <div className="flex gap-2">
-                    <button type="button" disabled={pending} onClick={() => void move(row.id, -1)} className="px-2 py-1 border border-white/15 rounded-lg text-xs">
-                      למעלה
+                  <div className="flex flex-wrap gap-1">
+                    <button type="button" className="crm-desk-row-act" disabled={pending} onClick={() => void move(row.id, -1)}>
+                      ↑
                     </button>
-                    <button type="button" disabled={pending} onClick={() => void move(row.id, 1)} className="px-2 py-1 border border-white/15 rounded-lg text-xs">
-                      למטה
+                    <button type="button" className="crm-desk-row-act" disabled={pending} onClick={() => void move(row.id, 1)}>
+                      ↓
                     </button>
                   </div>
                 </td>
@@ -2365,6 +2295,44 @@ function CategoriesPanel() {
           </tbody>
         </table>
       </div>
+
+      <details className="crm-desk-fold">
+        <summary>
+          <span>קטגוריה חדשה</span>
+          <span className="text-xs text-white/40">קיפול · רשימה קודם</span>
+        </summary>
+        <div className="grid gap-3 md:grid-cols-[1fr_1fr_auto_auto] items-end">
+          <label className="text-sm text-white/50 font-light grid gap-1">
+            שם
+            <input value={name} onChange={(e) => setName(e.target.value)} className={fieldClass} />
+          </label>
+          <label className="text-sm text-white/50 font-light grid gap-1">
+            תיאור
+            <input value={description} onChange={(e) => setDescription(e.target.value)} className={fieldClass} />
+          </label>
+          <label className="text-sm text-white/50 font-light grid gap-1">
+            גישה
+            <select
+              value={accessLevel}
+              onChange={(e) => setAccessLevel(e.target.value as AccessLevel)}
+              className={fieldClass}
+            >
+              <option value="free">חינמי</option>
+              <option value="premium">פרימיום</option>
+              <option value="premium_88">נבחרת 88</option>
+              <option value="admin_only">אדמין בלבד</option>
+            </select>
+          </label>
+          <button
+            type="button"
+            disabled={pending || !name.trim()}
+            onClick={() => void create()}
+            className="px-4 py-3 rounded-xl bg-[#b79043] text-black text-sm min-h-11 disabled:opacity-50"
+          >
+            הוספה
+          </button>
+        </div>
+      </details>
     </div>
   );
 }
@@ -2411,7 +2379,7 @@ function Premium88Panel() {
     <div className="grid gap-8">
       <div>
         <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">נבחרת 88</p>
-        <h2 className="text-2xl font-light">מועמדויות</h2>
+        <h2 className="text-lg font-medium">מועמדויות</h2>
         <p className="text-sm text-white/45 mt-2 font-light">
           מועמדויות מטופס `/application?type=88`. נפרד ממסלולי כניסה וממנוי הספרייה.
         </p>
@@ -2420,7 +2388,7 @@ function Premium88Panel() {
 
       <div className="grid gap-6 xl:grid-cols-[1.3fr_0.9fr]">
         <div className="overflow-x-auto border border-white/10 rounded-2xl">
-          <table className="w-full text-sm text-right">
+          <table className="w-full text-sm text-start">
             <thead className="text-xs text-white/40 border-b border-white/10">
               <tr>
                 <th className="py-3 px-3 font-normal">מתי</th>
@@ -2508,10 +2476,10 @@ function AuditLogsPanel() {
     <div className="grid gap-6">
       <div>
         <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">יומן פעולות</p>
-        <h2 className="text-2xl font-light">פעולות רגישות באדמין</h2>
+        <h2 className="text-lg font-medium">פעולות רגישות באדמין</h2>
       </div>
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
+        <table className="w-full text-sm text-start">
           <thead className="text-xs text-white/40 border-b border-white/10">
             <tr>
               <th className="py-3 px-3 font-normal">מתי</th>
@@ -2623,49 +2591,14 @@ function RafflesPanel() {
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
       <div>
         <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">הגרלות</p>
-        <h2 className="text-2xl font-light">ניהול הגרלות וכרטיסים</h2>
+        <h2 className="text-lg font-medium">ניהול הגרלות וכרטיסים</h2>
         <p className="text-sm text-white/45 mt-2">
           תקנון מאושר: {data.termsApproved ? 'כן' : 'לא'} · כרטיסים ללא שיוך: {data.unassignedTickets}
         </p>
       </div>
 
-      <div className="border border-[#b79043]/25 rounded-3xl p-6 grid gap-4 max-w-3xl">
-        <h3 className="text-lg font-light">הגרלה חדשה</h3>
-        <label className="grid gap-1 text-xs text-white/45">
-          שם
-          <input value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
-        </label>
-        <label className="grid gap-1 text-xs text-white/45">
-          תיאור
-          <textarea
-            rows={3}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            className={fieldClass}
-          />
-        </label>
-        <label className="grid gap-1 text-xs text-white/45">
-          תאריך סיום (אופציונלי)
-          <input
-            type="datetime-local"
-            value={endsAt}
-            onChange={(e) => setEndsAt(e.target.value)}
-            className={fieldClass}
-            dir="ltr"
-          />
-        </label>
-        <button
-          type="button"
-          disabled={busy || !title.trim()}
-          onClick={() => void create()}
-          className="w-fit px-6 py-3 rounded-full bg-[#b79043] text-black text-sm font-medium min-h-11 disabled:opacity-60"
-        >
-          {busy ? 'יוצר...' : 'יצירת הגרלה'}
-        </button>
-      </div>
-
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
+        <table className="w-full text-sm text-start">
           <thead className="text-xs text-white/40 border-b border-white/10">
             <tr>
               <th className="py-3 px-3 font-normal">שם</th>
@@ -2723,9 +2656,49 @@ function RafflesPanel() {
         </table>
       </div>
 
+      <details className="crm-desk-fold max-w-3xl">
+        <summary>
+          <span>הגרלה חדשה</span>
+          <span className="text-xs text-white/40">קיפול · רשימה קודם</span>
+        </summary>
+        <div className="grid gap-4">
+          <label className="grid gap-1 text-xs text-white/45">
+            שם
+            <input value={title} onChange={(e) => setTitle(e.target.value)} className={fieldClass} />
+          </label>
+          <label className="grid gap-1 text-xs text-white/45">
+            תיאור
+            <textarea
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+              className={fieldClass}
+            />
+          </label>
+          <label className="grid gap-1 text-xs text-white/45">
+            תאריך סיום (אופציונלי)
+            <input
+              type="datetime-local"
+              value={endsAt}
+              onChange={(e) => setEndsAt(e.target.value)}
+              className={fieldClass}
+              dir="ltr"
+            />
+          </label>
+          <button
+            type="button"
+            disabled={busy || !title.trim()}
+            onClick={() => void create()}
+            className="w-fit px-6 py-3 rounded-full bg-[#b79043] text-black text-sm font-medium min-h-11 disabled:opacity-60"
+          >
+            {busy ? 'יוצר...' : 'יצירת הגרלה'}
+          </button>
+        </div>
+      </details>
+
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
         <div className="p-4 text-sm text-white/50">כרטיסים אחרונים</div>
-        <table className="w-full text-sm text-right">
+        <table className="w-full text-sm text-start">
           <thead className="text-xs text-white/40 border-b border-white/10">
             <tr>
               <th className="py-3 px-3 font-normal">משתמש</th>
@@ -2799,12 +2772,11 @@ function LeadsPanel() {
   if (error) return <p className="text-sm text-rose-300">{error}</p>;
 
   return (
-    <div className="grid gap-6">
-      <div className="flex flex-wrap items-end justify-between gap-4">
+    <div className="grid gap-3">
+      <div className="flex flex-wrap items-center justify-between gap-2">
         <div>
-          <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">לידים ופניות</p>
-          <h2 className="text-2xl font-light">CRM מאוחד</h2>
-          <p className="text-sm text-white/45 mt-2">{filtered.length} רשומות</p>
+          <h2 className="text-lg font-medium">CRM מאוחד</h2>
+          <p className="text-xs text-white/45">{filtered.length} רשומות · למסלול+פעימה עברו ל«מסלולים + לידים»</p>
         </div>
         <button
           type="button"
@@ -2832,7 +2804,7 @@ function LeadsPanel() {
       </div>
 
       <div className="overflow-x-auto border border-white/10 rounded-2xl">
-        <table className="w-full text-sm text-right">
+        <table className="w-full text-sm text-start">
           <thead className="text-xs text-white/40 border-b border-white/10">
             <tr>
               <th className="py-3 px-3 font-normal">מקור</th>
@@ -2856,11 +2828,11 @@ function LeadsPanel() {
                 <tr key={`${row.source}-${row.id}`}>
                   <td className="py-3 px-3 text-white/70">{row.sourceLabel}</td>
                   <td className="py-3 px-3">{row.name}</td>
-                  <td className="py-3 px-3 text-white/55" dir="ltr">
-                    {row.phone || '—'}
+                  <td className="py-3 px-3 text-white/55">
+                    <Bidi kind="phone">{row.phone || '—'}</Bidi>
                   </td>
-                  <td className="py-3 px-3 text-white/55" dir="ltr">
-                    {row.email || '—'}
+                  <td className="py-3 px-3 text-white/55">
+                    <Bidi kind="email">{row.email || '—'}</Bidi>
                   </td>
                   <td className="py-3 px-3 text-white/55">{row.interest || '—'}</td>
                   <td className="py-3 px-3 text-white/55">{row.status || '—'}</td>
@@ -2953,7 +2925,7 @@ function LegalPanel() {
     <div className="grid gap-8 max-w-4xl">
       <div>
         <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">משפטי</p>
-        <h2 className="text-2xl font-light">תקנון, פרטיות והגרלות</h2>
+        <h2 className="text-lg font-medium">תקנון, פרטיות והגרלות</h2>
         <p className="text-sm text-white/45 mt-2">הטקסטים מוצגים בעמודי האתר הציבוריים.</p>
       </div>
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
@@ -3022,7 +2994,7 @@ function LegalPanel() {
           <p className="text-sm text-white/40">אין פניות רשומות.</p>
         ) : (
           <div className="overflow-x-auto">
-            <table className="w-full text-sm text-right">
+            <table className="w-full text-sm text-start">
               <thead>
                 <tr className="text-white/50 border-b border-white/10">
                   <th className="py-2 pe-3">תאריך</th>
@@ -3037,7 +3009,9 @@ function LegalPanel() {
                   <tr key={report.id} className="border-b border-white/5 align-top">
                     <td className="py-3 pe-3 whitespace-nowrap">{new Date(report.createdAt).toLocaleDateString('he-IL')}</td>
                     <td className="py-3 pe-3">{report.fullName}</td>
-                    <td className="py-3 pe-3" dir="ltr">{report.email}</td>
+                    <td className="py-3 pe-3">
+                      <Bidi kind="email">{report.email}</Bidi>
+                    </td>
                     <td className="py-3 pe-3">{report.status}</td>
                     <td className="py-3">
                       {report.status !== 'resolved' ? (
@@ -3176,11 +3150,11 @@ function WebinarPanel() {
   if (error && !data) return <p className="text-sm text-rose-300">{error}</p>;
 
   return (
-    <div className="grid gap-8 max-w-5xl">
+    <div className="grid gap-4 max-w-5xl">
       <div className="flex flex-wrap items-end justify-between gap-4">
         <div>
           <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">וובינר</p>
-          <h2 className="text-2xl font-light">הגדרות ולידים</h2>
+          <h2 className="text-lg font-medium">נרשמים</h2>
           <p className="text-sm text-white/45 mt-2">
             {data?.totalRegistrations ?? 0} נרשמים ·{' '}
             <a href="/webinar" target="_blank" rel="noreferrer" className="text-[#b79043] hover:underline">
@@ -3190,64 +3164,80 @@ function WebinarPanel() {
         </div>
         <button
           type="button"
-          onClick={() => void saveConfig()}
-          disabled={saving}
-          className="px-5 py-2.5 rounded-full bg-[#b79043] text-black text-sm min-h-11 disabled:opacity-60"
+          onClick={exportCsv}
+          className="px-4 py-2 rounded-full border border-white/15 text-xs min-h-11 hover:border-white/40"
         >
-          {saving ? 'שומר…' : 'שמירת הגדרות'}
+          ייצוא CSV
         </button>
       </div>
 
       {error ? <p className="text-sm text-rose-300">{error}</p> : null}
 
-      {data?.readiness ? (
-        <section className="grid gap-3 border border-[#b79043]/25 rounded-2xl p-5 bg-[#b79043]/5">
-          <h3 className="text-lg font-light">מוכנות משפך הוובינר</h3>
-          <p className="text-sm text-white/50">
-            {data.readiness.ready
-              ? 'המשפך מוכן לפרסום: תאריך, וואטסאפ ומייל מוגדרים.'
-              : 'לפני פרסום — מלאו את הפריטים החסרים. בלי זה דף התודה והתזכורות חלשים.'}
-          </p>
-          <ul className="grid gap-2">
-            {data.readiness.items.map((item) => (
-              <li key={item.id} className="flex items-start gap-3 text-sm">
-                <span className={item.ok ? 'text-[#dfc47d]' : 'text-rose-300'}>
-                  {item.ok ? 'מוכן' : item.required ? 'חסר' : 'אופציונלי'}
-                </span>
-                <span>
-                  <span className="text-white">{item.label}</span>
-                  <span className="block text-xs text-white/40 font-light">{item.hint}</span>
-                </span>
-              </li>
-            ))}
-          </ul>
-          <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end pt-2">
-            <label className="grid gap-1 text-sm">
-              <span className="text-white/50">מייל בדיקה</span>
-              <input
-                type="email"
-                value={testEmail}
-                onChange={(e) => setTestEmail(e.target.value)}
-                className={fieldClass}
-                dir="ltr"
-                autoComplete="email"
-              />
-            </label>
+      <details className="crm-desk-fold">
+        <summary>
+          <span>הגדרות ומוכנות</span>
+          <span className="text-xs text-white/40">קיפול · נרשמים קודם</span>
+        </summary>
+        <div className="grid gap-4">
+          <div className="flex flex-wrap justify-end">
             <button
               type="button"
-              onClick={() => void sendTestEmail()}
-              disabled={testEmailBusy}
-              className="px-5 py-2.5 rounded-full border border-[#b79043]/40 text-[#dfc47d] text-sm min-h-11 cursor-pointer hover:bg-[#b79043]/10 disabled:opacity-60"
+              onClick={() => void saveConfig()}
+              disabled={saving}
+              className="px-5 py-2.5 rounded-full bg-[#b79043] text-black text-sm min-h-11 disabled:opacity-60"
             >
-              {testEmailBusy ? 'שולח…' : 'שליחת מייל בדיקה'}
+              {saving ? 'שומר…' : 'שמירת הגדרות'}
             </button>
           </div>
-          {testEmailResult ? <p className="text-sm text-[#dfc47d] font-light">{testEmailResult}</p> : null}
-        </section>
-      ) : null}
 
-      {data?.funnel ? (
-        <section className="grid gap-3 border border-white/10 rounded-2xl p-5">
+          {data?.readiness ? (
+            <section className="grid gap-3 border border-[#b79043]/25 rounded-2xl p-5 bg-[#b79043]/5">
+              <h3 className="text-base font-light">מוכנות משפך הוובינר</h3>
+              <p className="text-sm text-white/50">
+                {data.readiness.ready
+                  ? 'המשפך מוכן לפרסום: תאריך, וואטסאפ ומייל מוגדרים.'
+                  : 'לפני פרסום — מלאו את הפריטים החסרים. בלי זה דף התודה והתזכורות חלשים.'}
+              </p>
+              <ul className="grid gap-2">
+                {data.readiness.items.map((item) => (
+                  <li key={item.id} className="flex items-start gap-3 text-sm">
+                    <span className={item.ok ? 'text-[#dfc47d]' : 'text-rose-300'}>
+                      {item.ok ? 'מוכן' : item.required ? 'חסר' : 'אופציונלי'}
+                    </span>
+                    <span>
+                      <span className="text-white">{item.label}</span>
+                      <span className="block text-xs text-white/40 font-light">{item.hint}</span>
+                    </span>
+                  </li>
+                ))}
+              </ul>
+              <div className="grid gap-2 sm:grid-cols-[1fr_auto] sm:items-end pt-2">
+                <label className="grid gap-1 text-sm">
+                  <span className="text-white/50">מייל בדיקה</span>
+                  <input
+                    type="email"
+                    value={testEmail}
+                    onChange={(e) => setTestEmail(e.target.value)}
+                    className={fieldClass}
+                    dir="ltr"
+                    autoComplete="email"
+                  />
+                </label>
+                <button
+                  type="button"
+                  onClick={() => void sendTestEmail()}
+                  disabled={testEmailBusy}
+                  className="px-5 py-2.5 rounded-full border border-[#b79043]/40 text-[#dfc47d] text-sm min-h-11 cursor-pointer hover:bg-[#b79043]/10 disabled:opacity-60"
+                >
+                  {testEmailBusy ? 'שולח…' : 'שליחת מייל בדיקה'}
+                </button>
+              </div>
+              {testEmailResult ? <p className="text-sm text-[#dfc47d] font-light">{testEmailResult}</p> : null}
+            </section>
+          ) : null}
+
+          {data?.funnel ? (
+            <section className="grid gap-3 border border-white/10 rounded-2xl p-5">
           <h3 className="text-lg font-light">משפך וובינר</h3>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-3 text-sm">
             {[
@@ -3429,6 +3419,8 @@ function WebinarPanel() {
           </label>
         </div>
       </section>
+        </div>
+      </details>
 
       <section className="grid gap-4 border border-white/10 rounded-2xl p-5">
         <div className="flex flex-wrap items-end justify-between gap-3">
@@ -3436,13 +3428,6 @@ function WebinarPanel() {
             <h3 className="text-lg font-light">נרשמים לוובינר</h3>
             <p className="text-sm text-white/45 mt-1">{registrations.length} רשומות</p>
           </div>
-          <button
-            type="button"
-            onClick={exportCsv}
-            className="px-4 py-2 rounded-full border border-white/15 text-xs min-h-11 hover:border-white/40"
-          >
-            ייצוא CSV
-          </button>
         </div>
         <input
           value={query}
@@ -3465,7 +3450,7 @@ function WebinarPanel() {
           ))}
         </div>
         <div className="overflow-x-auto">
-          <table className="w-full text-sm text-right">
+          <table className="w-full text-sm text-start">
             <thead>
               <tr className="text-white/50 border-b border-white/10">
                 <th className="py-2 pe-3">תאריך</th>
@@ -3484,8 +3469,12 @@ function WebinarPanel() {
                   <td className="py-3 pe-3 whitespace-nowrap">{new Date(row.createdAt).toLocaleString('he-IL')}</td>
                   <td className="py-3 pe-3 whitespace-nowrap text-white/70">{statusLabel(row.status)}</td>
                   <td className="py-3 pe-3">{row.fullName}</td>
-                  <td className="py-3 pe-3" dir="ltr">{row.phone}</td>
-                  <td className="py-3 pe-3" dir="ltr">{row.email}</td>
+                  <td className="py-3 pe-3">
+                    <Bidi kind="phone">{row.phone}</Bidi>
+                  </td>
+                  <td className="py-3 pe-3">
+                    <Bidi kind="email">{row.email}</Bidi>
+                  </td>
                   <td className="py-3 pe-3">{row.field}</td>
                   <td className="py-3 pe-3 text-white/60">
                     {row.interest}

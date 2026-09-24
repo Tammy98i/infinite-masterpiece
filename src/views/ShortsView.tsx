@@ -1,7 +1,8 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { CourseCard } from '../components/CourseCard';
-import { Zap, ArrowRight } from 'lucide-react';
+import { Zap } from 'lucide-react';
+import { DirBack } from '../components/DirArrow';
 import { EmptyState } from '../components/LibraryStates';
 
 export const ShortsView: React.FC = () => {
@@ -10,8 +11,8 @@ export const ShortsView: React.FC = () => {
   const shortCourses = courses.filter((c) => c.isShort);
 
   return (
-    <div className="min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto text-right">
-      <div className="rounded-3xl p-8 mb-10 border border-white/10 bg-white/[0.03] relative overflow-hidden">
+    <div className="library-catalog-page min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto text-start">
+      <div className="library-page-hero relative overflow-hidden p-8 mb-8 border">
         <div className="flex items-center gap-2 text-[#b79043] text-xs font-semibold mb-2">
           <Zap className="w-4 h-4" />
           <span>צפייה קצרה</span>
@@ -25,7 +26,7 @@ export const ShortsView: React.FC = () => {
       </div>
 
       {shortCourses.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">
+        <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-stretch">
           {shortCourses.map((course) => (
             <CourseCard key={course.id} course={course} />
           ))}
@@ -45,7 +46,7 @@ export const ShortsView: React.FC = () => {
         className="mt-10 inline-flex items-center gap-1.5 text-sm text-white/45 hover:text-white min-h-11 cursor-pointer"
       >
         <span>לספרייה</span>
-        <ArrowRight className="w-4 h-4" />
+        <DirBack />
       </button>
     </div>
   );

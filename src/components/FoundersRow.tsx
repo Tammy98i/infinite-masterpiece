@@ -29,7 +29,7 @@ export const FoundersRow: React.FC = () => {
               type="button"
               onClick={() => setView('instructor', { instructorId: inst.id })}
               aria-label={`${inst.name}, ${inst.title}, ${count === 0 ? 'אין הרצאות' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`}`}
-              className="shrink-0 w-[220px] sm:w-[260px] text-right rounded-2xl border border-white/10 bg-white/[0.03] p-4 hover:border-[#b79043]/50 transition-colors min-h-11 cursor-pointer"
+              className="shrink-0 w-[220px] sm:w-[260px] text-start rounded-2xl border border-white/10 bg-white/[0.03] p-4 hover:border-[#b79043]/50 transition-colors min-h-11 cursor-pointer"
             >
               <img
                 src={inst.avatarUrl}

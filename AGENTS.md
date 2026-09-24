@@ -25,6 +25,11 @@ docker compose -f docker-compose.base44.yml up -d
 - Founder: `gal@infinitemasterpiece.local` / `Masterpiece88`
 - Staff: `tami@infinitemasterpiece.local` / `Masterpiece88`
 - Lecturer: `lecturer@infinitemasterpiece.local` / `Masterpiece88`
+- Journey member (pod): `journey@infinitemasterpiece.local` / `Masterpiece88`
+- Hesitant queue (unassigned): `hesitant@infinitemasterpiece.local` / `Masterpiece88`
+- Library-only (not in pod queue): `library@infinitemasterpiece.local` / `Masterpiece88`
+- Approved 88 queue: `p88@infinitemasterpiece.local` / `Masterpiece88`
+- Gal is captain of the demo journey pod.
 
 ## Notes
 - SQLite DB persists in the `vod-data` Docker volume across restarts.
