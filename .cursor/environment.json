@@ -7,10 +7,16 @@
       "name": "dev",
       "command": "npm run dev",
       "description": "Local site + API — Vite :3000, Express :3001. Use Ports tab → 3000 → Open in Browser, or the forwarded preview URL."
+    },
+    {
+      "name": "site-3002",
+      "command": "npx vite --port=3002 --host=0.0.0.0",
+      "description": "Same site on Vite :3002 (API still :3001 via /api proxy). Use Ports tab → 3002 → Open in Browser."
     }
   ],
   "ports": [
     { "name": "site", "port": 3000 },
-    { "name": "api", "port": 3001 }
+    { "name": "api", "port": 3001 },
+    { "name": "site-3002", "port": 3002 }
   ]
 }
