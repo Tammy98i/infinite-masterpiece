@@ -1,7 +1,8 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Trophy, Megaphone, ScrollText, Infinity, ArrowLeft, Check } from 'lucide-react';
+import { Trophy, Megaphone, ScrollText, Infinity, Check } from 'lucide-react';
+import { DirNext } from '../../components/DirArrow';
 import { PROGRAM_INCLUDED } from '../data/programIncluded';
 
 const STEPS = [
@@ -127,7 +128,7 @@ export function Journey({ embedded = false }: { embedded?: boolean }) {
               className="btn-gold text-black w-full sm:w-auto px-10 py-4 text-sm"
             >
               <span>להצטרפות למסע</span>
-              <ArrowLeft className="w-4 h-4" />
+              <DirNext />
             </Link>
             {embedded ? null : (
               <Link to="/" className="text-sm text-white/40 hover:text-[#b79043] transition-colors">
