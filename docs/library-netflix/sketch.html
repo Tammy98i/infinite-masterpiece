@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>סקיצה · ספרייה + אדמין נטפליקס אקדמי — Infinite Masterpiece</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600&family=Noto+Sans+Hebrew:wght@500;600;700&family=Rubik:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --gold: #b79043;
+      --gold-soft: #dfc47d;
+      --muted: rgba(224, 237, 255, 0.72);
+      --line: rgba(255, 255, 255, 0.12);
+      --note: #ff7a33;
+      --ok: #9be7b5;
+      --r: 4px;
+      --heading: "Noto Sans Hebrew", "Arial Hebrew", sans-serif;
+      --body: "IBM Plex Sans Hebrew", "Arial Hebrew", sans-serif;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      color: #fff;
+      font-family: var(--body);
+      background: #02060f;
+    }
+    :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+    .sky {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .sky-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0.88;
+      filter: saturate(0.95) contrast(1.08) brightness(0.72);
+      transition: opacity .25s ease, filter .25s ease;
+    }
+    .sky.is-sketch .sky-img {
+      opacity: 0.72;
+      filter: saturate(0.92) contrast(1.1) brightness(0.62);
+    }
+    .veil {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity .25s ease;
+    }
+    .sky.is-today .veil-today { opacity: 1; }
+    .sky.is-sketch .veil-sketch { opacity: 1; }
+    .veil-blackout { background: rgba(3, 8, 18, 0.28); opacity: 1 !important; }
+    .veil-shade {
+      opacity: 1 !important;
+      background:
+        radial-gradient(circle at 50% 12%, transparent 10%, rgba(5, 10, 20, 0.28) 52%, rgba(5, 10, 20, 0.52) 100%),
+        linear-gradient(180deg, rgba(5, 10, 20, 0.22), rgba(5, 10, 20, 0.48));
+    }
+    .veil-lib-a { background: linear-gradient(180deg, rgba(2, 6, 14, 0.45) 0%, transparent 30%, transparent 70%, rgba(2, 6, 14, 0.55) 100%); }
+    .veil-lib-b { background: rgba(2, 6, 14, 0.22); }
+    .veil-lib-c { background: linear-gradient(90deg, rgba(5, 10, 20, 0.4), transparent 40%, rgba(5, 10, 20, 0.4)); }
+    .veil-lib-f { background: linear-gradient(180deg, transparent 40%, rgba(2, 6, 14, 0.65) 100%); }
+    .veil-lib-g { background: linear-gradient(to inline-end, rgba(5, 10, 20, 0.4), transparent 45%); }
+    .veil-lib-h { background: radial-gradient(ellipse at 50% 35%, transparent 18%, rgba(3, 8, 18, 0.42) 88%); }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 22px 16px 80px;
+    }
+    .banner {
+      border: 1px dashed var(--note);
+      color: var(--note);
+      padding: 8px 12px;
+      border-radius: 999px;
+      display: inline-flex;
+      font-size: 12.5px;
+      margin-bottom: 14px;
+      background: rgba(0, 0, 0, 0.35);
+    }
+    h1 {
+      font-family: var(--heading);
+      font-weight: 600;
+      font-size: clamp(1.35rem, 2.6vw, 1.9rem);
+      margin: 0 0 8px;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
+    }
+    .lede {
+      color: var(--muted);
+      max-width: 50rem;
+      line-height: 1.7;
+      margin: 0 0 14px;
+      font-size: 14.5px;
+    }
+    .note {
+      color: var(--note);
+      font-family: Rubik, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 0 0 14px;
+    }
+    .note::before { content: "→ "; }
+
+    .mode-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .mode-btn, .veil-btn, .zone-btn {
+      border: 1px solid var(--line);
+      background: rgba(5, 10, 20, 0.55);
+      color: #fff;
+      border-radius: var(--r);
+      padding: 10px 14px;
+      min-height: 44px;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .mode-btn.is-on, .veil-btn.is-on, .zone-btn.is-on {
+      border-color: rgba(183, 144, 67, 0.65);
+      background: rgba(183, 144, 67, 0.14);
+      color: var(--gold-soft);
+    }
+
+    .zone-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 12px; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 900px) {
+      .steps { grid-template-columns: 1fr 1fr; }
+    }
+    .step {
+      text-align: start;
+      border: 1px solid var(--line);
+      background: rgba(5, 10, 20, 0.62);
+      border-radius: var(--r);
+      padding: 10px 12px;
+      color: #fff;
+      font-family: inherit;
+      cursor: pointer;
+      min-height: 88px;
+      backdrop-filter: blur(10px);
+    }
+    .step:hover, .step.is-on {
+      border-color: rgba(183, 144, 67, 0.55);
+      background: rgba(183, 144, 67, 0.12);
+    }
+    .step .n {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--gold-soft);
+      margin: 0 0 6px;
+    }
+    .step b { display: block; font-size: 13px; margin-bottom: 4px; }
+    .step span { font-size: 12px; color: rgba(255, 255, 255, 0.55); line-height: 1.4; }
+
+    .screen { display: none; }
+    .screen.is-on { display: block; }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 800px) {
+      .compare { grid-template-columns: 1fr; }
+    }
+    .pane {
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 12px;
+      background: rgba(5, 10, 20, 0.55);
+      min-height: 180px;
+      backdrop-filter: blur(12px);
+    }
+    .pane.opaque {
+      background: #0a0a0a;
+      border-radius: 24px;
+    }
+    .pane .tag {
+      font-size: 11px;
+      margin: 0 0 8px;
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .tag.bad { color: var(--note); border: 1px solid rgba(255, 122, 51, 0.45); }
+    .tag.good { color: var(--ok); border: 1px solid rgba(155, 231, 181, 0.45); }
+
+    .veil-stack { display: grid; gap: 4px; font-size: 12px; color: rgba(255, 255, 255, 0.7); }
+    .veil-stack i {
+      display: block;
+      height: 18px;
+      border-radius: 2px;
+      font-style: normal;
+      padding: 2px 8px;
+      line-height: 14px;
+      font-size: 10px;
+    }
+    .v-lib { background: rgba(80, 120, 180, 0.35); }
+    .v-new { background: rgba(155, 231, 181, 0.28); }
+    .v-dup { outline: 1px dashed var(--note); }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 700px) {
+      .metric-row { grid-template-columns: 1fr 1fr; }
+    }
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 12px;
+      text-align: start;
+      background: rgba(5, 10, 20, 0.55);
+      color: inherit;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .metric.pill {
+      border-radius: 999px;
+      background: #0a0a0a;
+    }
+    .metric strong { display: block; font-size: 1.45rem; font-weight: 300; }
+    .metric b { display: block; font-size: 0.85rem; margin-top: 4px; }
+    .metric em { display: block; font-size: 0.7rem; font-style: normal; color: rgba(255, 255, 255, 0.4); margin-top: 2px; }
+
+    .hero {
+      position: relative;
+      border-radius: var(--r);
+      overflow: hidden;
+      min-height: 160px;
+      margin-bottom: 12px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(to inline-start, rgba(5, 10, 20, 0.15), rgba(5, 10, 20, 0.88)),
+        linear-gradient(135deg, #1a2744, #0a1428);
+      padding: 18px;
+      display: grid;
+      align-content: end;
+      gap: 6px;
+    }
+    .hero.rounded-old { border-radius: 24px; }
+    .hero .eye { font-size: 11px; letter-spacing: 0.18em; color: var(--gold); }
+    .hero h3 { margin: 0; font-size: 1.35rem; font-weight: 500; font-family: var(--heading); }
+    .hero p { margin: 0; font-size: 13px; color: rgba(255, 255, 255, 0.65); max-width: 32rem; }
+    .hero .acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .btn-play {
+      background: #fff;
+      color: #000;
+      border: 0;
+      border-radius: var(--r);
+      padding: 8px 14px;
+      min-height: 40px;
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn-more {
+      background: rgba(109, 109, 110, 0.7);
+      color: #fff;
+      border: 0;
+      border-radius: var(--r);
+      padding: 8px 14px;
+      min-height: 40px;
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .paywall-chip {
+      display: inline-block;
+      font-size: 11px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 122, 51, 0.5);
+      color: var(--note);
+      margin-bottom: 6px;
+    }
+
+    .rail-title {
+      font-size: 1.05rem;
+      font-weight: 600;
+      margin: 0 0 8px;
+    }
+    .rail {
+      display: flex;
+      gap: 8px;
+      overflow-x: auto;
+      padding-bottom: 6px;
+    }
+    .poster {
+      flex: 0 0 150px;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--r);
+      border: 1px solid var(--line);
+      background: linear-gradient(145deg, #243552, #0d1524);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+      transition: transform .2s ease;
+    }
+    .poster.glass-old {
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(8px);
+    }
+    .poster:hover { transform: scale(1.06); z-index: 2; }
+    .poster .label {
+      position: absolute;
+      inset-inline: 8px;
+      bottom: 8px;
+      font-size: 12px;
+      text-shadow: 0 1px 6px #000;
+    }
+    .poster .meta {
+      display: none;
+      position: absolute;
+      inset: 0;
+      padding: 10px;
+      background: linear-gradient(transparent 20%, rgba(2, 6, 14, 0.92));
+      align-content: end;
+      gap: 4px;
+      font-size: 11px;
+    }
+    body.is-sketch .poster:hover .meta { display: grid; }
+    body.is-sketch .poster:hover .label { display: none; }
+    .poster .play {
+      position: absolute;
+      inset-inline-start: 10px;
+      bottom: 10px;
+      width: 28px;
+      height: 28px;
+      border-radius: var(--r);
+      background: #fff;
+      color: #000;
+      display: grid;
+      place-items: center;
+      font-size: 12px;
+      opacity: 0;
+    }
+    body.is-sketch .poster:hover .play { opacity: 1; }
+
+    .desk {
+      display: grid;
+      grid-template-columns: 180px 1fr;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      overflow: hidden;
+      min-height: 360px;
+      background: rgba(5, 10, 20, 0.35);
+    }
+    @media (max-width: 800px) {
+      .desk { grid-template-columns: 1fr; }
+    }
+    .aside {
+      border-inline-end: 1px solid var(--line);
+      padding: 12px 10px;
+      background: rgba(5, 10, 20, 0.45);
+    }
+    .aside h2 { font-size: 14px; margin: 0 0 8px; }
+    .aside button {
+      width: 100%;
+      text-align: start;
+      border: 0;
+      border-inline-start: 2px solid transparent;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.55);
+      padding: 8px;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: 12.5px;
+    }
+    .aside button.is-on {
+      color: #fff;
+      font-weight: 600;
+      border-inline-start-color: #fff;
+    }
+    .main { padding: 14px; position: relative; }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      text-align: start;
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    th { color: rgba(255, 255, 255, 0.4); font-weight: 400; font-size: 11px; }
+    .who { display: flex; align-items: center; gap: 10px; }
+    .mono {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r);
+      display: grid;
+      place-items: center;
+      background: rgba(183, 144, 67, 0.2);
+      color: var(--gold-soft);
+      font-size: 13px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .thumb {
+      width: 56px;
+      height: 32px;
+      border-radius: var(--r);
+      background: linear-gradient(135deg, #2a3b58, #10182a);
+      flex-shrink: 0;
+    }
+    .who .name { display: block; }
+    .who .mail {
+      display: block;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.4);
+    }
+    .pill-btn {
+      border-radius: 999px;
+      border: 1px solid rgba(183, 144, 67, 0.5);
+      background: var(--gold);
+      color: #000;
+      padding: 6px 12px;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .sq-btn {
+      border-radius: var(--r);
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      background: transparent;
+      color: #fff;
+      padding: 6px 10px;
+      min-height: 36px;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .table-wrap {
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      overflow: hidden;
+      background: rgba(5, 10, 20, 0.38);
+    }
+    .table-wrap.old {
+      border-radius: 16px;
+      background: #0a0a0a;
+    }
+
+    .empty-old {
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      padding: 28px;
+      text-align: center;
+      color: rgba(255, 255, 255, 0.45);
+    }
+    .empty-new {
+      border-radius: var(--r);
+      border: 1px solid var(--line);
+      background: rgba(5, 10, 20, 0.55);
+      padding: 22px;
+      text-align: start;
+    }
+    .empty-new .eye { color: var(--gold); font-size: 11px; letter-spacing: 0.14em; margin-bottom: 6px; }
+    .empty-new h4 { margin: 0 0 6px; font-weight: 500; }
+    .empty-new p { margin: 0 0 12px; color: rgba(255, 255, 255, 0.55); font-size: 13px; }
+
+    .nav-demo {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      padding: 10px 12px;
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      background: rgba(5, 10, 20, 0.55);
+      margin-bottom: 12px;
+    }
+    .nav-demo a {
+      color: rgba(255, 255, 255, 0.7);
+      text-decoration: none;
+      font-size: 13px;
+    }
+    .nav-demo a.is-on { color: #fff; border-bottom: 2px solid var(--gold); }
+    .nav-demo .brand { font-weight: 600; margin-inline-end: auto; }
+
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      inset-inline-start: 50%;
+      transform: translateX(50%);
+      background: rgba(5, 10, 20, 0.92);
+      border: 1px solid rgba(183, 144, 67, 0.45);
+      color: var(--gold-soft);
+      padding: 10px 16px;
+      border-radius: var(--r);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+      z-index: 20;
+      max-width: min(90vw, 420px);
+      text-align: center;
+    }
+    .toast.is-on { opacity: 1; }
+
+    footer {
+      margin-top: 18px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+      line-height: 1.6;
+    }
+    .stamps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .stamps span {
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 6px 10px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.55);
+    }
+    .zone-admin .lib-only { display: none; }
+    .zone-lib .admin-only { display: none; }
+  </style>
+</head>
+<body class="is-today zone-lib">
+  <div class="sky is-today" id="sky" aria-hidden="true">
+    <img class="sky-img" src="https://media.base44.com/images/public/6aa94dfb715e7d446231f544/025d40d79_image.png" alt="" width="1023" height="438" />
+    <div class="veil veil-blackout"></div>
+    <div class="veil veil-shade"></div>
+    <div class="veil veil-today veil-lib-a"></div>
+    <div class="veil veil-today veil-lib-b"></div>
+    <div class="veil veil-today veil-lib-c"></div>
+    <div class="veil veil-sketch veil-lib-a"></div>
+    <div class="veil veil-sketch veil-lib-f"></div>
+    <div class="veil veil-sketch veil-lib-g"></div>
+    <div class="veil veil-sketch veil-lib-h"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="banner">סקיצה לאישור — ספרייה + אדמין נטפליקס אקדמי — לא קוד במוצר — בלי למחוק פיצ׳רים</div>
+    <h1>ספרייה אקדמית כמו נטפליקס + דסק סקירה / תוכן / אנליטיקות</h1>
+    <p class="lede">
+      אותה שמיים. יותר חושך מכוון, כרום 4px, פסים ופוסטרים קולנועיים, וריקים בשפת קטלוג.
+      בדסק: שורות תוכן עם תמונה/מונוגרם ואנליטיקות כמדדי plan-strip. הכל נשאר.
+    </p>
+    <p class="note" id="hint">בחרו אזור (ספרייה / אדמין), מצב, ושכבה.</p>
+
+    <div class="zone-row" role="group" aria-label="אזור">
+      <button type="button" class="zone-btn is-on" data-zone="lib">ספרייה ציבורית</button>
+      <button type="button" class="zone-btn" data-zone="admin">אדמין · סקירה / תוכן / אנליטיקות</button>
+    </div>
+
+    <div class="mode-row" role="group" aria-label="מצב תצוגה">
+      <button type="button" class="mode-btn is-on" data-mode="today">היום</button>
+      <button type="button" class="mode-btn" data-mode="sketch">סקיצה</button>
+      <button type="button" class="veil-btn" id="pulse-veils">הבהב ווילים</button>
+    </div>
+
+    <div class="steps lib-only" id="steps-lib" role="list">
+      <button type="button" class="step is-on" data-go="veils">
+        <div class="n">01</div>
+        <b>חושך מעל התמונה</b>
+        <span>ווילים מכוילים · כוכבים</span>
+      </button>
+      <button type="button" class="step" data-go="hero">
+        <div class="n">02</div>
+        <b>כרזה בית</b>
+        <span>play / more · בלי paywall</span>
+      </button>
+      <button type="button" class="step" data-go="rails">
+        <div class="n">03</div>
+        <b>פסים / פוסטרים</b>
+        <span>hover מטא + play</span>
+      </button>
+      <button type="button" class="step" data-go="empty">
+        <div class="n">04</div>
+        <b>ריקים / משני</b>
+        <span>קטלוג 4px</span>
+      </button>
+      <button type="button" class="step" data-go="nav">
+        <div class="n">05</div>
+        <b>ניווט</b>
+        <span>כל הקישורים נשארים</span>
+      </button>
+    </div>
+
+    <div class="steps admin-only" id="steps-admin" role="list" hidden>
+      <button type="button" class="step is-on" data-go="overview">
+        <div class="n">A1</div>
+        <b>סקירה</b>
+        <span>כרזה + 4 מדדים</span>
+      </button>
+      <button type="button" class="step" data-go="content">
+        <div class="n">A2</div>
+        <b>תכני VOD</b>
+        <span>פוסטר · מונוגרם · bulk</span>
+      </button>
+      <button type="button" class="step" data-go="analytics">
+        <div class="n">A3</div>
+        <b>אנליטיקות</b>
+        <span>metric + טבלה</span>
+      </button>
+      <button type="button" class="step" data-go="veils">
+        <div class="n">01</div>
+        <b>ווילים משותפים</b>
+        <span>שמיים מאחורי הדסק</span>
+      </button>
+      <button type="button" class="step" data-go="nav">
+        <div class="n">05</div>
+        <b>23 טאבים</b>
+        <span>בלי מחיקה</span>
+      </button>
+    </div>
+
+    <!-- 01 veils -->
+    <section class="screen is-on" id="screen-veils">
+      <div class="compare">
+        <div class="pane">
+          <span class="tag bad">היום</span>
+          <div class="veil-stack">
+            <i class="v-lib v-dup">library veil a–c כבדים</i>
+            <i class="v-lib v-dup">+ FlowPolish על rails</i>
+            <i class="v-lib">כוכבים מטושטשים</i>
+          </div>
+          <p style="font-size:12px;color:rgba(255,255,255,.45);margin:10px 0 0;line-height:1.5">ערימת שקיפות מכבה את השמיים.</p>
+        </div>
+        <div class="pane">
+          <span class="tag good">סקיצה</span>
+          <div class="veil-stack">
+            <i class="v-new">lib veil f · תחתון לקריאה</i>
+            <i class="v-new">lib veil g · צד</i>
+            <i class="v-new">lib veil h · מרכז רך</i>
+            <i class="v-lib">a–e מכוילים קלות</i>
+          </div>
+          <p style="font-size:12px;color:rgba(255,255,255,.45);margin:10px 0 0;line-height:1.5">כוכבים נראים. מסע / 88 לא נוגעים.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 hero -->
+    <section class="screen" id="screen-hero">
+      <div class="compare">
+        <div class="pane">
+          <span class="tag bad">היום</span>
+          <div class="hero rounded-old" id="hero-today">
+            <span class="paywall-chip">דורש מנוי · טעימה</span>
+            <span class="eye">קטלוג</span>
+            <h3>מחזון למערכת</h3>
+            <p>שפת paywall בכרזה מתחרה עם הקולנוע.</p>
+            <div class="acts">
+              <button type="button" class="btn-play">התחילו לצפות</button>
+              <button type="button" class="btn-more">פרטים</button>
+            </div>
+          </div>
+        </div>
+        <div class="pane">
+          <span class="tag good">סקיצה</span>
+          <div class="hero" id="hero-sketch">
+            <span class="eye">הרצאה נבחרת</span>
+            <h3>מחזון למערכת</h3>
+            <p>איך הופכים רעיון למבנה שעובד — בלי CTA של מסע בכרזה.</p>
+            <div class="acts">
+              <button type="button" class="btn-play" data-toast="Play · נשאר">התחילו לצפות</button>
+              <button type="button" class="btn-more" data-toast="פרטים · נשאר">פרטים</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 rails -->
+    <section class="screen" id="screen-rails">
+      <p class="rail-title">המשיכו מכאן</p>
+      <div class="rail" id="rail">
+        <article class="poster" data-title="10 דקות · פתיחה"><span class="label">10 דקות · פתיחה</span><div class="meta"><b>10 דקות · פתיחה</b><span>טעימה פתוחה · 12:00</span><span class="play" aria-hidden>▶</span></div></article>
+        <article class="poster" data-title="חדש בספרייה"><span class="label">חדש בספרייה</span><div class="meta"><b>חדש בספרייה</b><span>גל אברמוביץ׳ · פרק 1</span><span class="play" aria-hidden>▶</span></div></article>
+        <article class="poster" data-title="המליצו לכם"><span class="label">המליצו לכם</span><div class="meta"><b>המליצו לכם</b><span>מסלול אקדמי · המשך</span><span class="play" aria-hidden>▶</span></div></article>
+        <article class="poster" data-title="נושאים"><span class="label">נושאים</span><div class="meta"><b>נושאים</b><span>מנהיגות · מערכות</span><span class="play" aria-hidden>▶</span></div></article>
+      </div>
+      <p style="font-size:12px;color:rgba(255,255,255,.45);margin:12px 0 0" id="rail-hint">היום: זכוכית עגולה. סקיצה: 4px + מטא ב־hover.</p>
+    </section>
+
+    <!-- 04 empty -->
+    <section class="screen" id="screen-empty">
+      <div class="compare">
+        <div class="pane">
+          <span class="tag bad">היום</span>
+          <div class="empty-old">הרשימה ריקה.</div>
+        </div>
+        <div class="pane">
+          <span class="tag good">סקיצה</span>
+          <div class="empty-new">
+            <div class="eye">הרשימה שלי</div>
+            <h4>עדיין אין הרצאות שמורות</h4>
+            <p>בחרו מהכרזה או מהפסים — הכל נשאר במקומו.</p>
+            <button type="button" class="btn-play" data-toast="להמשך גלישה בספרייה">להמשיך לגלול</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 nav -->
+    <section class="screen" id="screen-nav">
+      <div class="nav-demo" aria-label="ניווט ספרייה">
+        <span class="brand">INFINITE MASTERPIECE</span>
+        <a href="#" class="is-on">ספרייה</a>
+        <a href="#">הרשימה</a>
+        <a href="#">היסטוריה</a>
+        <a href="#">10 דק׳</a>
+        <a href="#">חיפוש</a>
+        <a href="#">נושאים</a>
+      </div>
+      <div class="pane">
+        <span class="tag good">לא מוחקים</span>
+        <p style="margin:0;line-height:1.7;font-size:14px;color:rgba(255,255,255,.75)">
+          כל קישורי הספרייה וה־23 טאבים באדמין נשארים. רק חושך, כרום, hover וריקים משתנים.
+        </p>
+        <div class="stamps">
+          <span>ספרייה ≠ מסע</span>
+          <span>בלי תגובות / AI</span>
+          <span>רדיוס 4px</span>
+          <span>זהב #b79043</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- A1 overview -->
+    <section class="screen" id="screen-overview">
+      <div class="desk">
+        <aside class="aside">
+          <h2>אדמין</h2>
+          <button type="button" class="is-on">סקירה</button>
+          <button type="button" data-jump="content">תכני VOD</button>
+          <button type="button" data-jump="analytics">אנליטיקות</button>
+        </aside>
+        <div class="main">
+          <div class="hero">
+            <span class="eye">קטלוג אקדמי</span>
+            <h3>לטיפול עכשיו</h3>
+            <p>אותה כרזה — מדדים בסגנון plan-strip. שאר המספרים באנליטיקות.</p>
+            <div class="acts">
+              <button type="button" class="btn-play" data-jump="content">ניהול ההרצאה</button>
+              <button type="button" class="btn-more" data-jump="content">לקטלוג</button>
+            </div>
+          </div>
+          <div class="metric-row" id="ov-metrics">
+            <button type="button" class="metric"><strong>3</strong><b>לחיוב</b><em>הססנים</em></button>
+            <button type="button" class="metric"><strong>2</strong><b>בקשות מרצים</b><em>אשר בשורה</em></button>
+            <button type="button" class="metric"><strong>5</strong><b>לידים</b><em>פתוחים</em></button>
+            <button type="button" class="metric"><strong>4</strong><b>ממתינות</b><em>תוכן</em></button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- A2 content -->
+    <section class="screen" id="screen-content">
+      <div class="desk">
+        <aside class="aside">
+          <h2>אדמין</h2>
+          <button type="button" data-jump="overview">סקירה</button>
+          <button type="button" class="is-on">תכני VOD</button>
+          <button type="button" data-jump="analytics">אנליטיקות</button>
+        </aside>
+        <div class="main">
+          <p style="margin:0 0 10px;font-size:13px;color:rgba(255,255,255,.55)">חיפוש · סינון · bulk — נשארים. רק שורת כרום משתנה.</p>
+          <div class="table-wrap" id="content-table">
+            <table>
+              <thead>
+                <tr><th></th><th>הרצאה</th><th>סטטוס</th><th>פעולה</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><input type="checkbox" checked aria-label="בחירה" /></td>
+                  <td>
+                    <span class="who">
+                      <span class="thumb" aria-hidden></span>
+                      <span>
+                        <span class="name">מחזון למערכת</span>
+                        <span class="mail">גל אברמוביץ׳ · 12:00</span>
+                      </span>
+                    </span>
+                  </td>
+                  <td>פורסם</td>
+                  <td><button type="button" class="sq-btn content-act">עריכה</button></td>
+                </tr>
+                <tr>
+                  <td><input type="checkbox" aria-label="בחירה" /></td>
+                  <td>
+                    <span class="who">
+                      <span class="mono" aria-hidden>נט</span>
+                      <span>
+                        <span class="name">ניהול זמן טכני</span>
+                        <span class="mail">טיוטה · ממתין</span>
+                      </span>
+                    </span>
+                  </td>
+                  <td>טיוטה</td>
+                  <td><button type="button" class="sq-btn content-act">עריכה</button></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p style="font-size:11px;color:rgba(255,255,255,.35);margin:10px 0 0" id="content-hint">סקיצה: כפתור מרובע 4px. היום: pill זהב.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- A3 analytics -->
+    <section class="screen" id="screen-analytics">
+      <div class="desk">
+        <aside class="aside">
+          <h2>אדמין</h2>
+          <button type="button" data-jump="overview">סקירה</button>
+          <button type="button" data-jump="content">תכני VOD</button>
+          <button type="button" class="is-on">אנליטיקות</button>
+        </aside>
+        <div class="main">
+          <div class="metric-row" id="an-metrics">
+            <article class="metric pointer"><strong>1.2k</strong><b>צפיות</b><em>14 יום</em></article>
+            <article class="metric"><strong>38%</strong><b>השלמה</b><em>פרקים</em></article>
+            <article class="metric"><strong>86</strong><b>משתמשים פעילים</b><em>שבוע</em></article>
+            <article class="metric"><strong>12</strong><b>מרצים</b><em>במערכת</em></article>
+          </div>
+          <div class="table-wrap" id="an-table" style="margin-top:12px">
+            <table>
+              <thead>
+                <tr><th>אירוע</th><th>משתמש</th><th>זמן</th></tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>סיום פרק</td>
+                  <td><span class="who"><span class="mono">דכ</span><span class="name">דניאל כהן</span></span></td>
+                  <td dir="ltr">12:04</td>
+                </tr>
+                <tr>
+                  <td>התחלת צפייה</td>
+                  <td><span class="who"><span class="mono">נל</span><span class="name">נועה לוי</span></span></td>
+                  <td dir="ltr">11:51</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      ספרייה ≠ מסע / 88. הססנים 8→80→800→8,000. מייסד = <span dir="ltr">is_founder</span>.
+      בנייה במוצר רק אחרי «קדימה».
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    const toast = document.getElementById("toast");
+    const sky = document.getElementById("sky");
+    let mode = "today";
+    let zone = "lib";
+
+    function say(t) {
+      toast.textContent = t;
+      toast.classList.add("is-on");
+      clearTimeout(say._t);
+      say._t = setTimeout(() => toast.classList.remove("is-on"), 2200);
+    }
+
+    function setMode(next) {
+      mode = next;
+      document.body.classList.toggle("is-sketch", next === "sketch");
+      document.body.classList.toggle("is-today", next === "today");
+      sky.classList.toggle("is-sketch", next === "sketch");
+      sky.classList.toggle("is-today", next === "today");
+      document.querySelectorAll(".mode-btn").forEach((btn) => {
+        btn.classList.toggle("is-on", btn.getAttribute("data-mode") === next);
+      });
+      document.querySelectorAll("#ov-metrics .metric, #an-metrics .metric").forEach((m) => {
+        m.classList.toggle("pill", next === "today");
+      });
+      document.querySelectorAll("#rail .poster").forEach((p) => {
+        p.classList.toggle("glass-old", next === "today");
+      });
+      document.getElementById("content-table").classList.toggle("old", next === "today");
+      document.getElementById("an-table").classList.toggle("old", next === "today");
+      document.querySelectorAll(".content-act").forEach((btn) => {
+        btn.className = next === "today" ? "pill-btn content-act" : "sq-btn content-act";
+      });
+      document.getElementById("rail-hint").textContent =
+        next === "sketch" ? "סקיצה: 4px + מטא ב־hover. כל הפסים נשארים." : "היום: זכוכית עגולה / צל כבד.";
+      document.getElementById("content-hint").textContent =
+        next === "sketch" ? "סקיצה: כפתור מרובע 4px + תמונה/מונוגרם. bulk נשאר." : "היום: pill זהב · רשימה שטוחה.";
+      say(next === "sketch" ? "מצב סקיצה — חושך ופסים קולנועיים" : "מצב היום");
+    }
+
+    function setZone(next) {
+      zone = next;
+      document.body.classList.toggle("zone-lib", next === "lib");
+      document.body.classList.toggle("zone-admin", next === "admin");
+      document.querySelectorAll(".zone-btn").forEach((btn) => {
+        btn.classList.toggle("is-on", btn.getAttribute("data-zone") === next);
+      });
+      document.getElementById("steps-lib").hidden = next !== "lib";
+      document.getElementById("steps-admin").hidden = next !== "admin";
+      showScreen(next === "lib" ? "veils" : "overview");
+      say(next === "lib" ? "אזור ספרייה" : "אזור אדמין");
+    }
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach((el) => el.classList.toggle("is-on", el.id === "screen-" + id));
+      const steps = zone === "lib" ? document.querySelectorAll("#steps-lib .step") : document.querySelectorAll("#steps-admin .step");
+      steps.forEach((btn) => btn.classList.toggle("is-on", btn.getAttribute("data-go") === id));
+    }
+
+    document.querySelectorAll(".mode-btn").forEach((btn) => {
+      btn.addEventListener("click", () => setMode(btn.getAttribute("data-mode")));
+    });
+    document.querySelectorAll(".zone-btn").forEach((btn) => {
+      btn.addEventListener("click", () => setZone(btn.getAttribute("data-zone")));
+    });
+    document.querySelectorAll(".step").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const go = btn.getAttribute("data-go");
+        showScreen(go);
+        say(btn.querySelector("b").textContent);
+        if (go === "veils" || go === "rails" || go === "hero") setMode("sketch");
+      });
+    });
+    document.getElementById("pulse-veils").addEventListener("click", () => {
+      setMode(mode === "sketch" ? "today" : "sketch");
+      showScreen("veils");
+    });
+    document.body.addEventListener("click", (e) => {
+      const t = e.target.closest("[data-toast]");
+      if (t) say(t.getAttribute("data-toast"));
+      const jump = e.target.closest("[data-jump]");
+      if (jump) {
+        setZone("admin");
+        showScreen(jump.getAttribute("data-jump"));
+        setMode("sketch");
+      }
+    });
+
+    setMode("today");
+    setZone("lib");
+  </script>
+</body>
+</html>
