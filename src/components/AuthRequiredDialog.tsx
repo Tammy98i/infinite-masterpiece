@@ -58,7 +58,7 @@ export function AuthRequiredDialog({
   return (
     <div className="fixed inset-0 z-[80] flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="auth-required-title">
       <button type="button" className="absolute inset-0 bg-black/75" aria-label="סגירה" onClick={onClose} />
-      <div ref={dialogRef} className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 text-right">
+      <div ref={dialogRef} className="relative w-full max-w-md bg-[#0a0a0a] border border-white/10 rounded-3xl p-8 text-start">
         <h2 id="auth-required-title" className="text-2xl font-medium text-white mb-4">
           {title}
         </h2>

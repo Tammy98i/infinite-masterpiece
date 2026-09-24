@@ -11,12 +11,13 @@ import {
   Volume2,
   VolumeX,
 } from 'lucide-react';
-import { formatClock } from '../utils/time';
+import { ClockLabel } from '../components/ClockLabel';
 import { canPreviewEpisode, canWatchEpisode, PREVIEW_SECONDS } from '../utils/access';
 import { playbackApi } from '../api/playback';
 import { trackEvent } from '../utils/analytics';
 import { AuthRequiredDialog } from '../components/AuthRequiredDialog';
 import { AccessEndCard } from '../components/AccessEndCard';
+import { CategoryRow } from '../components/CategoryRow';
 import {
   completedChapterCount,
   episodeDisplayName,
@@ -24,6 +25,8 @@ import {
   resolvePrimaryCta,
   timeBasedCourseProgress,
 } from '../utils/coursePage';
+import { coursesInCategory } from '../utils/recommendations';
+import { getCardAccessState } from '../utils/libraryHome';
 
 type InfoTab = 'course' | 'instructor';
 
@@ -164,6 +167,15 @@ export const CourseDetailView: React.FC = () => {
     !!nextEpisode &&
     !canWatchEpisode(nextEpisode, user, course) &&
     !canPreviewEpisode(nextEpisode, user, course);
+  const relatedCourses = useMemo(() => {
+    if (!course) return [];
+    return coursesInCategory(courses, course.categoryId)
+      .filter((item) => item.id !== course.id)
+      .slice(0, 8);
+  }, [course, courses]);
+  const courseAccess = course ? getCardAccessState(course, user) : 'locked';
+  const accessLabel =
+    courseAccess === 'open' ? 'פתוח לצפייה' : courseAccess === 'preview' ? 'טעימה' : 'דורש מנוי';
 
   const setChapterInUrl = useCallback(
     (episodeId: string, replace = false) => {
@@ -369,20 +381,20 @@ export const CourseDetailView: React.FC = () => {
   if (!course) {
     if (catalogStatus === 'loading') {
       return (
-        <div className="min-h-screen text-white pt-28 px-4 sm:px-8 max-w-[1360px] mx-auto animate-pulse">
+        <div className="library-catalog-page min-h-screen text-white pt-28 px-4 sm:px-8 max-w-[1360px] mx-auto animate-pulse">
           <div className="h-4 w-48 bg-white/10 rounded mb-8" />
           <div className="h-10 w-2/3 bg-white/10 rounded mb-4" />
-          <div className="aspect-video bg-white/10 rounded-2xl" />
+          <div className="aspect-video bg-white/10 rounded-[4px]" />
         </div>
       );
     }
     return (
-      <div className="min-h-screen text-white pt-28 px-4 text-center">
+      <div className="library-catalog-page min-h-screen text-white pt-28 px-4 text-center">
         <h1 className="text-2xl font-semibold mb-4">הקורס לא נמצא</h1>
         <button
           type="button"
           onClick={() => setView('home')}
-          className="px-6 py-3 rounded-full bg-[#b79043] text-black font-semibold min-h-11"
+          className="library-hero-play inline-flex items-center justify-center px-6 py-3 text-sm font-semibold min-h-11"
         >
           חזרה לספרייה
         </button>
@@ -393,63 +405,87 @@ export const CourseDetailView: React.FC = () => {
   const totalDuration = course.episodes.reduce((s, ep) => s + ep.duration, 0);
 
   return (
-    <div className="library-catalog-page min-h-screen text-white pt-24 pb-16">
-      <div className="max-w-[1360px] mx-auto px-4 sm:px-8 text-right">
-        {/* Breadcrumb */}
-        <nav className="mb-8 text-sm text-white/45" aria-label="ניווט משני">
-          <button
-            type="button"
-            onClick={() => setView('home')}
-            className="hover:text-white min-h-11 inline-flex items-center"
-          >
-            ספרייה
-          </button>
-          <span className="mx-2 text-white/25" aria-hidden>
-            ›
-          </span>
-          <span className="text-white/70">{course.title}</span>
-        </nav>
+    <div className="library-catalog-page library-course-page min-h-screen text-white pb-16">
+      <header className="library-course-billboard relative min-h-[58vh] md:min-h-[70vh] flex items-end overflow-hidden pt-24 pb-16 md:pb-20">
+        <div className="absolute inset-0 select-none overflow-hidden">
+          <img
+            src={course.backdropImage || course.coverImage}
+            alt=""
+            aria-hidden
+            className="w-full h-full object-cover object-center scale-105"
+          />
+          <div className="library-course-veil-a absolute inset-0" />
+          <div className="library-course-veil-b absolute inset-0" />
+          <div className="library-course-veil-c absolute inset-0" />
+          <div className="library-course-veil-d absolute inset-0" />
+        </div>
 
-        {/* Summary */}
-        <header className="mb-8">
-          <h1 className="text-[28px] sm:text-[40px] lg:text-[44px] font-semibold leading-tight text-white mb-3">
+        <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 w-full text-start">
+          <nav className="mb-6 text-sm text-white/70" aria-label="ניווט משני">
+            <button
+              type="button"
+              onClick={() => setView('home')}
+              className="hover:text-white min-h-11 inline-flex items-center"
+            >
+              ספרייה
+            </button>
+            <span className="mx-2 text-white/35" aria-hidden>
+              ‹
+            </span>
+            <span className="text-white">{course.title}</span>
+          </nav>
+
+          <h1 className="text-4xl sm:text-6xl lg:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight mb-4 max-w-4xl">
             {course.title}
           </h1>
-          {course.subtitle && (
-            <p className="text-[15px] sm:text-base text-white/55 font-light leading-relaxed max-w-3xl mb-6">
+
+          {course.subtitle ? (
+            <p className="text-sm sm:text-base text-white/80 font-light leading-relaxed max-w-2xl mb-4 line-clamp-3">
               {course.subtitle}
             </p>
-          )}
+          ) : null}
 
-          {instructor && (
+          <p className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/80">
+            {instructor ? <span>{instructor.name}</span> : null}
+            {instructor ? <span aria-hidden>·</span> : null}
+            <ClockLabel seconds={totalDuration} />
+            <span aria-hidden>·</span>
+            <span>
+              {completedCount} מתוך {episodeCount} פרקים
+            </span>
+            <span aria-hidden>·</span>
+            <span>{accessLabel}</span>
+          </p>
+
+          {instructor ? (
             <button
               type="button"
               onClick={() => setView('instructor', { instructorId: instructor.id })}
               aria-label={`${instructor.name}, ${instructor.title}`}
-              className="inline-flex items-center gap-3 mb-6 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded-full"
+              className="inline-flex items-center gap-3 mb-5 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded"
             >
               <img
                 src={instructor.avatarUrl}
                 alt=""
                 aria-hidden
-                className="w-11 h-11 rounded-full object-cover border border-white/15"
+                className="w-11 h-11 rounded-full object-cover"
                 loading="lazy"
               />
-              <span className="text-right">
+              <span className="text-start">
                 <span className="block text-sm font-medium text-white">{instructor.name}</span>
-                <span className="block text-[13px] text-white/45">{instructor.title}</span>
+                <span className="block text-[13px] text-white/60">{instructor.title}</span>
               </span>
             </button>
-          )}
+          ) : null}
 
-          <div className="mb-5 max-w-md">
-            <p className="text-[13px] text-white/55 mb-2" id="course-progress-label">
+          <div className="mb-6 max-w-md">
+            <p className="text-[13px] text-white/70 mb-2" id="course-progress-label">
               {completedCount} מתוך {episodeCount} פרקים
-              <span className="text-white/30"> · </span>
-              {formatClock(totalDuration)}
+              <span className="text-white/35"> · </span>
+              <ClockLabel seconds={totalDuration} />
             </p>
             <div
-              className="h-1 rounded-full bg-white/10 overflow-hidden"
+              className="h-1 rounded-full bg-white/15 overflow-hidden"
               role="progressbar"
               aria-labelledby="course-progress-label"
               aria-valuemin={0}
@@ -464,35 +500,31 @@ export const CourseDetailView: React.FC = () => {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <button
               type="button"
               onClick={handlePrimaryCta}
-              className="inline-flex items-center justify-center gap-2 px-7 py-3 rounded-full bg-[#b79043] text-black text-sm font-semibold min-h-11 hover:bg-[#dfc47d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+              className="library-hero-play inline-flex items-center justify-center gap-2.5 px-7 py-2.5 text-sm font-semibold min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
             >
-              <Play className="w-4 h-4 fill-black" />
+              <Play className="w-5 h-5 fill-current" />
               {cta?.label || 'התחילו לצפות'}
             </button>
             <button
               type="button"
               onClick={handleListToggle}
-              className="inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full border border-white/30 text-white text-sm font-medium min-h-11 hover:border-white/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
+              className="library-hero-more inline-flex items-center justify-center gap-2 px-6 py-2.5 text-sm font-medium min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
             >
-              {isSaved ? (
-                <BookmarkCheck className="w-4 h-4 text-[#b79043]" />
-              ) : (
-                <Bookmark className="w-4 h-4" />
-              )}
+              {isSaved ? <BookmarkCheck className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
               {isSaved ? 'הסרה מהרשימה' : 'הוספה לרשימה'}
             </button>
           </div>
-        </header>
+        </div>
+      </header>
 
-        {/* Learning workspace */}
-        <div className="grid grid-cols-1 lg:grid-cols-[1.6fr_1fr] gap-6 mb-12">
-          {/* Media */}
+      <div className="relative z-10 -mt-8 max-w-[1360px] mx-auto px-4 sm:px-8 text-start">
+        <div className="grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-6 mb-10">
           <section aria-label="נגן הקורס" className="min-w-0">
-            <div className="relative aspect-video rounded-2xl overflow-hidden border border-white/10 bg-zinc-900">
+            <div className="library-course-stage relative aspect-video overflow-hidden bg-black">
               {playerOn && activeEpisode ? (
                 <>
                   {sessionLoading || !playbackUrl ? (
@@ -531,7 +563,7 @@ export const CourseDetailView: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => void startPlayback(activeEpisode.id)}
-                        className="btn-gold text-black px-5 py-2.5 text-sm"
+                        className="library-hero-play px-5 py-2.5 text-sm"
                       >
                         ניסיון נוסף
                       </button>
@@ -543,7 +575,7 @@ export const CourseDetailView: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => void startPlayback(nextEpisode.id)}
-                          className="btn-gold text-black px-6 py-3 text-sm"
+                          className="library-hero-play px-6 py-3 text-sm"
                         >
                           לפרק הבא
                         </button>
@@ -551,7 +583,7 @@ export const CourseDetailView: React.FC = () => {
                         <button
                           type="button"
                           onClick={() => setAccessCardSource('locked_card')}
-                          className="btn-gold text-black px-6 py-3 text-sm"
+                          className="library-hero-play px-6 py-3 text-sm"
                         >
                           פתיחת גישה
                         </button>
@@ -571,7 +603,7 @@ export const CourseDetailView: React.FC = () => {
                       </button>
                     </div>
                   ) : (
-                    <div className="absolute inset-x-0 bottom-0 p-3 bg-gradient-to-t from-black/80 to-transparent flex items-center gap-3">
+                    <div className="absolute inset-inline-0 bottom-0 p-3 bg-gradient-to-t from-black/85 to-transparent flex items-center gap-3">
                       <button
                         type="button"
                         onClick={() => {
@@ -580,23 +612,39 @@ export const CourseDetailView: React.FC = () => {
                           if (v.paused) void v.play();
                           else v.pause();
                         }}
-                        className="w-11 h-11 rounded-full bg-[#b79043] text-black flex items-center justify-center"
+                        className="w-11 h-11 rounded-full bg-white text-[#141414] flex items-center justify-center"
                         aria-label={isPlaying ? 'השהיה' : 'הפעלה'}
                       >
                         {isPlaying ? (
-                          <Pause className="w-4 h-4 fill-black" />
+                          <Pause className="w-4 h-4 fill-current" />
                         ) : (
-                          <Play className="w-4 h-4 fill-black ml-0.5" />
+                          <Play className="w-4 h-4 fill-current ml-0.5" />
                         )}
                       </button>
-                      <div className="flex-1 text-[12px] text-white/70 tabular-nums">
-                        {formatClock(currentTime)} / {formatClock(duration || activeEpisode.duration)}
+                      <div className="flex-1">
+                        <div className="h-1 rounded-full bg-white/20 overflow-hidden mb-1.5">
+                          <div
+                            className="h-full bg-[#b79043]"
+                            style={{
+                              width: `${Math.min(
+                                100,
+                                Math.round(
+                                  ((currentTime || 0) / Math.max(1, duration || activeEpisode.duration)) * 100
+                                )
+                              )}%`,
+                            }}
+                            aria-hidden
+                          />
+                        </div>
+                        <div className="text-[12px] text-white/70 tabular-nums">
+                          <ClockLabel seconds={currentTime} /> / <ClockLabel seconds={duration || activeEpisode.duration} />
+                        </div>
                       </div>
                       {captionTracks.length > 0 ? (
                         <button
                           type="button"
                           onClick={() => setCaptionsOn((v) => !v)}
-                          className={`px-3 py-2 rounded-full text-[12px] min-h-11 border ${
+                          className={`px-3 py-2 rounded-[4px] text-[12px] min-h-11 border ${
                             captionsOn
                               ? 'border-[#b79043] text-[#dfc47d]'
                               : 'border-white/20 text-white/50'
@@ -629,17 +677,18 @@ export const CourseDetailView: React.FC = () => {
                     aria-hidden
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/35" />
+                  <div className="absolute inset-0 bg-black/45" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-black/20 to-transparent" />
                   <button
                     type="button"
                     onClick={() => {
                       if (activeEpisode) void startPlayback(activeEpisode.id, cta?.mode === 'resume' ? 'resume' : 'play');
                       else handlePrimaryCta();
                     }}
-                    className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-[#b79043] text-black flex items-center justify-center hover:bg-[#dfc47d] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+                    className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-white text-[#141414] flex items-center justify-center hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
                     aria-label={cta?.label || 'התחילו לצפות'}
                   >
-                    <Play className="w-7 h-7 fill-black ml-1" />
+                    <Play className="w-7 h-7 fill-current ml-1" data-icon="play" />
                   </button>
                 </>
               )}
@@ -652,22 +701,21 @@ export const CourseDetailView: React.FC = () => {
               ) : null}
             </div>
             {activeEpisode && (
-              <p className="mt-3 text-sm text-white/55">
+              <p className="mt-3 text-sm text-white/60">
                 פרק {activeEpisode.episodeNumber}: {episodeDisplayName(activeEpisode.title)}
               </p>
             )}
           </section>
 
-          {/* Playlist */}
           <section
             aria-labelledby="chapters-heading"
             className="min-w-0 flex flex-col lg:max-h-[min(100%,calc((100vw-4rem)*0.62*9/16))] xl:max-h-none"
           >
-            <h2 id="chapters-heading" className="text-lg font-semibold mb-3">
+            <h2 id="chapters-heading" className="library-rail-title text-white mb-3">
               פרקים
             </h2>
             <ul
-              className={`flex flex-col gap-2 ${
+              className={`flex flex-col ${
                 course.episodes.length > 3 ? 'overflow-y-auto lg:flex-1 pe-1' : ''
               }`}
             >
@@ -703,14 +751,37 @@ export const CourseDetailView: React.FC = () => {
                         setChapterInUrl(ep.id);
                         if (playerOn) void startPlayback(ep.id);
                       }}
-                      className={`w-full text-right rounded-xl border p-3 sm:p-4 transition-colors min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] ${
-                        isActive
-                          ? 'border-[#b79043] bg-[#b79043]/10'
-                          : 'border-white/10 bg-white/[0.02] hover:border-white/25'
+                      className={`library-episode-row w-full text-start p-3 transition-colors min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] ${
+                        isActive ? 'is-active' : ''
                       }`}
                     >
                       <div className="flex items-start gap-3">
-                        <span className="text-sm text-white/35 tabular-nums w-5 shrink-0 pt-0.5">
+                        <span className="relative w-[88px] sm:w-[108px] aspect-video overflow-hidden rounded-[4px] bg-zinc-900 shrink-0">
+                          <img
+                            src={course.coverImage}
+                            alt=""
+                            aria-hidden
+                            className="w-full h-full object-cover"
+                            loading="lazy"
+                          />
+                          <span className="absolute inset-0 bg-black/25" />
+                          <span className="absolute inset-0 flex items-center justify-center">
+                            {access === 'locked' ? (
+                              <Lock className="w-4 h-4 text-white/80" aria-hidden />
+                            ) : (
+                              <Play
+                                className={`w-4 h-4 ${isActive ? 'text-white fill-white' : 'text-white/80 fill-white/80'}`}
+                                aria-hidden
+                              />
+                            )}
+                          </span>
+                          {partial > 0 && !done ? (
+                            <span className="absolute inset-inline-0 bottom-0 h-0.5 bg-white/20">
+                              <span className="block h-full bg-[#b79043]" style={{ width: `${partial}%` }} />
+                            </span>
+                          ) : null}
+                        </span>
+                        <span className="text-sm text-white/40 tabular-nums w-5 shrink-0 pt-1">
                           {ep.episodeNumber}
                         </span>
                         <div className="flex-1 min-w-0">
@@ -718,13 +789,9 @@ export const CourseDetailView: React.FC = () => {
                             {episodeDisplayName(ep.title)}
                           </div>
                           <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[13px] text-white/50">
-                            <span className="tabular-nums">{formatClock(ep.duration)}</span>
-                            {access === 'open' && (
-                              <span className="text-[#b79043]">פתוח</span>
-                            )}
-                            {access === 'preview' && (
-                              <span className="text-[#dfc47d]">טעימה</span>
-                            )}
+                            <ClockLabel seconds={ep.duration} className="tabular-nums" />
+                            {access === 'open' && <span className="text-[#b79043]">פתוח</span>}
+                            {access === 'preview' && <span className="text-[#dfc47d]">טעימה</span>}
                             {access === 'locked' && (
                               <span className="inline-flex items-center gap-1 text-white/45">
                                 <Lock className="w-3 h-3" aria-hidden />
@@ -738,29 +805,12 @@ export const CourseDetailView: React.FC = () => {
                               </span>
                             )}
                             {partial > 0 && !done && (
-                              <span>המשך מ־{formatClock(prog!.currentTime)}</span>
+                              <span>
+                                המשך מ־<ClockLabel seconds={prog!.currentTime} />
+                              </span>
                             )}
                           </div>
-                          {partial > 0 && !done && (
-                            <div className="mt-2 h-0.5 rounded-full bg-white/10 overflow-hidden">
-                              <div
-                                className="h-full bg-[#b79043]"
-                                style={{ width: `${partial}%` }}
-                                aria-hidden
-                              />
-                            </div>
-                          )}
                         </div>
-                        <span className="shrink-0 mt-0.5">
-                          {access === 'locked' ? (
-                            <Lock className="w-4 h-4 text-white/35" aria-hidden />
-                          ) : (
-                            <Play
-                              className={`w-4 h-4 ${isActive ? 'text-[#b79043] fill-[#b79043]' : 'text-white/40'}`}
-                              aria-hidden
-                            />
-                          )}
-                        </span>
                       </div>
                     </button>
                   </li>
@@ -773,7 +823,15 @@ export const CourseDetailView: React.FC = () => {
           </section>
         </div>
 
-        {/* Info area — desktop 2 cols, mobile tabs */}
+        {relatedCourses.length > 0 ? (
+          <CategoryRow
+            id="rail-more-like"
+            title="עוד בקטלוג"
+            courses={relatedCourses}
+            sectionName="more_like_this"
+          />
+        ) : null}
+
         <div className="mb-4 lg:hidden flex gap-2 border-b border-white/10 pb-2" role="tablist" aria-label="מידע על הקורס">
           {(
             [
@@ -796,8 +854,8 @@ export const CourseDetailView: React.FC = () => {
                   setInfoTab(infoTab === 'course' ? 'instructor' : 'course');
                 }
               }}
-              className={`px-4 py-2 rounded-full text-sm min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] ${
-                infoTab === id ? 'bg-[#b79043] text-black font-semibold' : 'text-white/55 hover:text-white'
+              className={`px-4 py-2 rounded-[4px] text-sm min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] ${
+                infoTab === id ? 'bg-white text-[#141414] font-semibold' : 'text-white/55 hover:text-white'
               }`}
             >
               {label}
@@ -805,14 +863,14 @@ export const CourseDetailView: React.FC = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 pb-8">
           <section
             id="panel-about-course"
             role="tabpanel"
             aria-labelledby="about-course-heading"
             className={`${infoTab === 'course' ? 'block' : 'hidden'} lg:block`}
           >
-            <h2 id="about-course-heading" className="text-xl font-semibold mb-4">
+            <h2 id="about-course-heading" className="library-rail-title text-white mb-4">
               על הקורס
             </h2>
             <p className="text-[15px] sm:text-base text-white/70 font-light leading-relaxed max-w-[65ch]">
@@ -836,21 +894,22 @@ export const CourseDetailView: React.FC = () => {
             aria-labelledby="about-instructor-heading"
             className={`${infoTab === 'instructor' ? 'block' : 'hidden'} lg:block`}
           >
-            <h2 id="about-instructor-heading" className="text-xl font-semibold mb-4">
+            <h2 id="about-instructor-heading" className="library-rail-title text-white mb-4">
               על המרצה
             </h2>
             {instructor ? (
-              <div className="rounded-2xl border border-white/10 bg-white/[0.02] p-4">
-                <img
-                  src={instructor.avatarUrl}
-                  alt={instructor.name ? `תמונת פרופיל: ${instructor.name}` : 'תמונת מרצה'}
-                  className="w-full aspect-square object-cover rounded-xl mb-4 max-w-[280px]"
-                  loading="lazy"
-                />
+              <div className="library-instructor-card p-4">
+                <div className="library-instructor-frame w-full max-w-[280px] rounded-[4px] mb-4 overflow-hidden">
+                  <img
+                    src={instructor.avatarUrl}
+                    alt={instructor.name ? `תמונת פרופיל: ${instructor.name}` : 'תמונת מרצה'}
+                    loading="lazy"
+                  />
+                </div>
                 <button
                   type="button"
                   onClick={() => setView('instructor', { instructorId: instructor.id })}
-                  className="text-base font-medium text-white hover:text-[#b79043] min-h-11"
+                  className="text-base font-medium text-white hover:text-[#dfc47d] min-h-11"
                 >
                   {instructor.name}
                 </button>

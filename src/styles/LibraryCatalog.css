@@ -1,24 +1,19 @@
-/* ui-ux-pro-max: OLED catalog + Liquid Glass on night/gold.
-   Netflix rail structure for academic courses. No red, no iOS blue. */
-
-.editorial-sky-library-veil {
-  display: none;
-  pointer-events: none;
-}
+/* Library browse over the shared space plate.
+   Keep the starfield visible, then stack dark navy layers on top. */
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-image {
-  opacity: .7;
-  filter: saturate(1.02) contrast(1.08) brightness(.74);
+  opacity: .92;
+  filter: saturate(1.08) contrast(1.06) brightness(.88);
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-blackout {
-  background: rgba(2, 6, 14, .48);
+  background: rgba(5, 10, 20, .28);
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-shade {
   background:
-    radial-gradient(circle at 50% 38%, transparent 14%, rgba(3, 8, 16, .28) 68%, rgba(2, 5, 12, .62) 100%),
-    linear-gradient(180deg, rgba(4, 8, 16, .2), rgba(3, 6, 12, .42));
+    radial-gradient(circle at 50% 16%, transparent 14%, rgba(5, 10, 20, .2) 58%, rgba(5, 10, 20, .48) 100%),
+    linear-gradient(180deg, rgba(5, 10, 20, .14), rgba(5, 10, 20, .4));
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-library-veil {
@@ -26,72 +21,103 @@
 }
 
 .editorial-sky-library-veil-a {
-  background: rgba(2, 4, 10, .28);
+  background: linear-gradient(180deg, rgba(5, 10, 20, .48) 0%, rgba(5, 10, 20, .08) 28%, transparent 50%, rgba(5, 10, 20, .55) 100%);
 }
 
 .editorial-sky-library-veil-b {
-  background: radial-gradient(70% 55% at 50% 35%, transparent 18%, rgba(2, 6, 14, .5) 100%);
+  background: rgba(3, 8, 18, .16);
 }
 
 .editorial-sky-library-veil-c {
-  background: linear-gradient(180deg, rgba(5, 10, 20, .18) 0%, rgba(5, 10, 20, .46) 42%, rgba(3, 6, 12, .58) 100%);
+  background: linear-gradient(90deg, rgba(5, 10, 20, .36), transparent 42%, rgba(5, 10, 20, .36));
 }
 
-.vod-app.library-catalog {
-  background: rgba(5, 10, 20, .5);
+.editorial-sky-library-veil-d {
+  background: radial-gradient(ellipse at 50% 0%, rgba(5, 10, 20, .04), rgba(5, 10, 20, .32) 78%);
 }
 
-.vod-app.library-catalog main {
-  background: transparent;
+.editorial-sky-library-veil-e {
+  background: linear-gradient(180deg, transparent 12%, rgba(3, 8, 18, .28) 100%);
+}
+
+.vod-app.library-catalog,
+.vod-app.library-catalog main,
+.vod-app:has(.library-flow-page),
+.library-flow-page {
+  background: transparent !important;
 }
 
 .vod-app.library-catalog .editorial-library-header.is-over-hero {
-  background: linear-gradient(180deg, rgba(0, 0, 0, .7), rgba(0, 0, 0, .22), transparent) !important;
+  background: linear-gradient(180deg, rgba(5, 10, 20, .72), transparent) !important;
   border-bottom-color: transparent !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
 }
 
 .vod-app.library-catalog .editorial-library-header.is-solid {
-  background: rgba(5, 10, 20, .94) !important;
-  border-bottom-color: rgba(223, 196, 125, .2) !important;
+  background: rgba(5, 10, 20, .78) !important;
+  border-bottom-color: var(--editorial-rule) !important;
   backdrop-filter: blur(18px) !important;
 }
 
+.library-flow-page .library-island::before,
+.library-flow-page #rail-continue,
+.library-flow-page #rail-recommended,
+.library-flow-page #rail-shorts,
+.library-flow-page #rail-new,
+.library-flow-page #rail-popular {
+  background: none;
+}
+
 .library-catalog .library-hero {
-  min-height: 560px;
+  min-height: 78vh;
 }
 
 @media (min-width: 768px) {
   .library-catalog .library-hero {
-    height: 84vh;
+    height: 88vh;
   }
 }
 
 .library-catalog .library-hero-veil-bottom {
-  background: linear-gradient(180deg, transparent 0%, rgba(5, 10, 20, .55) 48%, rgba(3, 6, 12, .82) 100%);
+  background: linear-gradient(180deg, transparent 40%, rgba(5, 10, 20, .45) 72%, rgba(5, 10, 20, .82) 100%);
 }
 
 .library-catalog .library-hero-veil-side {
-  background: linear-gradient(270deg, transparent 0%, rgba(5, 10, 20, .42) 42%, rgba(3, 6, 12, .78) 100%);
+  background: linear-gradient(270deg, transparent 8%, rgba(5, 10, 20, .32) 48%, rgba(5, 10, 20, .78) 100%);
 }
 
 .library-catalog .library-hero::after {
-  height: 38%;
-  background: linear-gradient(180deg, rgba(2, 6, 15, 0) 0%, rgba(5, 10, 20, .35) 62%, rgba(5, 10, 20, .18) 100%);
+  height: 28%;
+  background: linear-gradient(180deg, transparent, rgba(5, 10, 20, .86));
+}
+
+.library-catalog .library-hero-play {
+  background: #fff;
+  color: #141414;
+  border-radius: 4px;
+}
+
+.library-catalog .library-hero-more {
+  background: rgba(109, 109, 110, .7);
+  color: #fff;
+  border: 0;
+  border-radius: 4px;
 }
 
 .library-catalog .library-poster {
+  border: 0;
+  border-radius: 4px;
   cursor: pointer;
-  transition: transform .28s cubic-bezier(.16, 1, .3, 1), border-color .2s ease, box-shadow .2s ease;
-  border-color: rgba(223, 196, 125, .16);
+  transition: transform .2s ease, filter .2s ease;
 }
 
 .library-catalog .library-poster:hover,
 .library-catalog .library-poster:focus-within {
-  border-color: rgba(223, 196, 125, .42);
-  box-shadow: 0 16px 36px rgba(2, 6, 14, .35);
-  transform: translateY(-6px);
+  transform: scale(1.06);
+  box-shadow: none;
+  border-color: transparent;
+  z-index: 2;
 }
 
 .library-catalog .library-poster-play {
@@ -106,13 +132,140 @@
 }
 
 .library-catalog .library-rail-scroller {
-  padding-block: 14px 18px;
-  mask-image: linear-gradient(to left, transparent, #000 28px, #000 calc(100% - 36px), transparent);
-  -webkit-mask-image: linear-gradient(to left, transparent, #000 28px, #000 calc(100% - 36px), transparent);
+  gap: 8px;
+  padding-block: 6px 10px;
+  mask-image: none;
+  -webkit-mask-image: none;
+}
+
+.library-catalog .library-spacious-section,
+.library-catalog .library-island {
+  padding-block: 10px;
+}
+
+@media (min-width: 768px) {
+  .vod-app.library-catalog .library-spacious-section,
+  .vod-app.library-catalog main > section:not([class*="h-[78vh]"]):not([class*="h-[88vh]"]) {
+    padding-block: 10px;
+  }
+}
+
+.library-catalog .library-rail-title {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.library-catalog .library-plan-strip,
+.library-catalog .library-quick-action {
+  border-radius: 4px;
+  border-color: rgba(255, 255, 255, .12);
+  background: rgba(5, 10, 20, .62);
+  backdrop-filter: none;
+}
+
+.library-catalog-page,
+.library-catalog-page.library-course-page {
+  background: transparent !important;
+}
+
+.vod-app.library-catalog .editorial-library-footer {
+  background: rgba(5, 10, 20, .72) !important;
 }
 
 .library-catalog-page .library-poster {
   width: 100%;
+}
+
+.library-course-billboard,
+.library-instructor-billboard {
+  min-height: 58vh;
+}
+
+.library-instructor-frame {
+  display: block;
+  position: relative;
+  width: 100%;
+  aspect-ratio: 11 / 11;
+  overflow: hidden;
+  background: #141414;
+}
+
+.library-instructor-frame img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (min-width: 768px) {
+  .library-course-billboard,
+  .library-instructor-billboard {
+    min-height: 70vh;
+  }
+}
+
+.library-course-veil-a {
+  background: linear-gradient(180deg, rgba(5, 10, 20, .55) 0%, transparent 34%, rgba(5, 10, 20, .45) 72%, rgba(5, 10, 20, .86) 100%);
+}
+
+.library-course-veil-b {
+  background: linear-gradient(270deg, transparent 12%, rgba(5, 10, 20, .32) 52%, rgba(5, 10, 20, .72) 100%);
+}
+
+.library-course-veil-c {
+  background: rgba(5, 10, 20, .22);
+}
+
+.library-course-veil-d {
+  background: radial-gradient(ellipse at 70% 20%, transparent 0%, rgba(5, 10, 20, .4) 70%, rgba(5, 10, 20, .82) 100%);
+}
+
+.library-course-stage {
+  border-radius: 4px;
+}
+
+.library-episode-row {
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  background: transparent;
+}
+
+.library-episode-row:hover,
+.library-episode-row:focus-visible {
+  background: rgba(255, 255, 255, .06);
+}
+
+.library-episode-row.is-active {
+  background: rgba(255, 255, 255, .08);
+}
+
+.library-instructor-card {
+  border: 0;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, .04);
+}
+
+.library-catalog-page .library-page-hero,
+.library-catalog-page .library-page-toolbar {
+  border-radius: 4px;
+  border-color: rgba(255, 255, 255, .1);
+  background: rgba(5, 10, 20, .55);
+}
+
+.library-catalog-page .library-page-chip {
+  border-radius: 4px;
+}
+
+.library-catalog-page .library-page-grid {
+  gap: 8px;
+}
+
+.library-catalog-page .library-search-field {
+  border-radius: 4px;
+  background: rgba(5, 10, 20, .72);
+  border-color: rgba(255, 255, 255, .18);
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -120,7 +273,6 @@
   .library-catalog .library-poster:hover,
   .library-catalog .library-poster:focus-within {
     transform: none;
-    transition: border-color .2s ease;
   }
 
   .library-catalog .library-poster-play {

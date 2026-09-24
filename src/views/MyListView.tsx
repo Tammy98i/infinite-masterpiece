@@ -1,7 +1,8 @@
 ﻿import React from 'react';
 import { useApp } from '../context/AppContext';
 import { CourseCard } from '../components/CourseCard';
-import { Bookmark, ArrowRight } from 'lucide-react';
+import { Bookmark } from 'lucide-react';
+import { DirBack } from '../components/DirArrow';
 import { FREE_LIST_LIMIT, hasFullLibraryAccess } from '../utils/access';
 import { StartHereRail } from '../components/StartHereRail';
 import { pickStartHereCourses } from '../utils/libraryHome';
@@ -38,12 +39,12 @@ export const MyListView: React.FC = () => {
           className="flex items-center gap-1.5 text-xs font-bold text-zinc-400 hover:text-white transition-colors min-h-11 cursor-pointer"
         >
           <span>לספרייה המלאה</span>
-          <ArrowRight className="w-4 h-4" />
+          <DirBack />
         </button>
       </div>
 
       {savedCourses.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">
+        <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-stretch">
           {savedCourses.map((course) => (
             <CourseCard key={course.id} course={course} />
           ))}
