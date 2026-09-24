@@ -107,7 +107,7 @@ function WebinarRegisterCard({
 }) {
   return (
     <>
-      <p className="text-lg sm:text-xl md:text-2xl text-white font-light leading-snug mb-4 sm:mb-5 text-right">
+      <p className="text-lg sm:text-xl md:text-2xl text-white font-light leading-snug mb-4 sm:mb-5 text-start">
         {headlineParts.line1}
         {headlineParts.line2 ? (
           <>
@@ -317,7 +317,7 @@ export function WebinarLanding() {
             <SectionTitle>הוובינר הזה מתאים לך אם…</SectionTitle>
           </div>
           <div className="webinar-fit-grid grid grid-cols-1 lg:grid-cols-[1.15fr_48px_.85fr] gap-6 items-stretch">
-            <div className="glass-card webinar-fit-yes p-6 text-right">
+            <div className="glass-card webinar-fit-yes p-6 text-start">
               <h3 className="text-lg text-white mb-4 font-light text-center">מתאים אם…</h3>
               <ul className="space-y-3">
                 {WEBINAR_FIT_YES.map((item) => (
@@ -331,7 +331,7 @@ export function WebinarLanding() {
             <div className="hidden lg:flex items-stretch justify-center" aria-hidden>
               <div className="w-px bg-gradient-to-b from-transparent via-[#dfc47d]/70 to-transparent" />
             </div>
-            <div className="glass-card webinar-fit-no p-6 text-right">
+            <div className="glass-card webinar-fit-no p-6 text-start">
               <h3 className="text-lg text-white mb-4 font-light text-center">לא מתאים אם…</h3>
               <ul className="space-y-3">
                 {WEBINAR_FIT_NO.map((item) => (

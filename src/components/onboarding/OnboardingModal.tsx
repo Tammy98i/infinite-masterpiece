@@ -9,10 +9,10 @@ export const OnboardingModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-[65] flex items-center justify-center p-4 bg-black/75 backdrop-blur-sm">
-      <div className="glass bg-zinc-950/95 border border-primary/30 rounded-3xl max-w-md w-full p-8 relative shadow-2xl text-right animate-in fade-in zoom-in-95">
+      <div className="glass bg-zinc-950/95 border border-primary/30 rounded-3xl max-w-md w-full p-8 relative shadow-2xl text-start animate-in fade-in zoom-in-95">
         <button
           onClick={dismissActiveStep}
-          className="absolute top-5 left-5 text-zinc-400 hover:text-white p-1 rounded-full bg-white/5 focus-ring"
+          className="absolute top-5 end-5 text-zinc-400 hover:text-white p-1 rounded-full bg-white/5 focus-ring"
           aria-label="סגירה"
         >
           <X className="w-5 h-5" />

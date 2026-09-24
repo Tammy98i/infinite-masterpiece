@@ -27,8 +27,7 @@
 .webinar-flow-page .webinar-neural-hero::after {
   content: '';
   position: absolute;
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   bottom: 0;
   height: 34%;
   z-index: 1;
@@ -107,8 +106,7 @@
 .webinar-flow-page .webinar-editorial-grid > :is(#hosts, .team-galaxy, #webinar-fit, #webinar-faq)::after {
   content: '';
   position: absolute;
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   bottom: 0;
   height: 96px;
   pointer-events: none;

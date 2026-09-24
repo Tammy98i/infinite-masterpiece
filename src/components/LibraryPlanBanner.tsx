@@ -28,8 +28,8 @@ export function LibraryPlanBanner() {
   };
 
   return (
-    <div className="library-island library-plan-banner px-4 sm:px-8 mb-5" role="region" aria-label="סטטוס גישה לספרייה">
-      <div className="library-plan-strip max-w-7xl mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 rounded-xl border border-[#b79043]/30 border-r-4 border-r-[#b79043] bg-black/80 backdrop-blur-md px-5 py-3.5 text-right">
+    <div className="library-island library-plan-banner px-4 sm:px-8 mb-2" role="region" aria-label="סטטוס גישה לספרייה">
+      <div className="library-plan-strip max-w-[1400px] mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border border-white/10 px-4 py-2.5 text-start">
         <div className="min-w-0">
           {isTrial ? (
             <>

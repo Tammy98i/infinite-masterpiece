@@ -2,7 +2,7 @@
 import { Course } from '../types';
 import { useApp } from '../context/AppContext';
 import { Play } from 'lucide-react';
-import { formatClock } from '../utils/time';
+import { ClockLabel } from './ClockLabel';
 import { useWatchAccess } from '../utils/useWatchAccess';
 import { canPreviewEpisode, canWatchEpisode } from '../utils/access';
 import { getCardAccessState } from '../utils/libraryHome';
@@ -20,8 +20,10 @@ interface HeroBannerProps {
 }
 
 export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching }) => {
-  const { setView, user } = useApp();
+  const { setView, user, instructors } = useApp();
   const { goWatch } = useWatchAccess();
+  const instructor = instructors.find((item) => item.id === course.instructorId);
+  const totalSecs = course.episodes.reduce((sum, item) => sum + item.duration, 0);
 
   const episode =
     course.episodes.find((e) => e.id === continueWatching?.episodeId) || course.episodes[0];
@@ -59,7 +61,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
 
   return (
     <section
-      className="library-hero relative w-full min-h-[480px] md:h-[78vh] flex items-end overflow-hidden pt-24 pb-24 md:pb-36"
+      className="library-hero relative w-full min-h-[78vh] md:h-[88vh] flex items-end overflow-hidden pt-24 pb-40 md:pb-52"
       aria-label={continueWatching ? `המשך צפייה: ${course.title}` : `מומלץ: ${course.title}`}
     >
       <div className="absolute inset-0 select-none overflow-hidden">
@@ -75,20 +77,25 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           decoding="async"
           className="w-full h-full object-cover object-center scale-105"
         />
-        <div className="absolute inset-0 bg-gradient-to-t from-[#0d0b08] via-[#0d0b08]/70 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-l from-[#0d0b08]/90 via-[#0d0b08]/55 to-transparent w-full md:w-[65%] ms-auto" />
+        <div className="library-hero-veil-bottom absolute inset-0 bg-gradient-to-t from-[#0d0b08] via-[#0d0b08]/70 to-transparent" />
+        <div className="library-hero-veil-side absolute inset-0 bg-gradient-to-l from-[#0d0b08]/90 via-[#0d0b08]/55 to-transparent w-full md:w-[70%] ms-auto" />
+        <div className="absolute inset-0 bg-black/20" />
       </div>
 
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-8 w-full z-10 text-right md:max-w-2xl md:ms-0 md:me-auto">
-        <p className="text-[#b79043] text-xs sm:text-sm font-medium tracking-[0.18em] mb-4">
-          {continueWatching ? 'המשך צפייה' : 'מומלץ הערב'}
-        </p>
-
-        <h1 className="text-4xl sm:text-6xl lg:text-[4.25rem] font-bold text-white leading-[1.1] mb-5">
+      <div className="relative max-w-7xl mx-auto px-4 sm:px-8 w-full z-10 text-start md:max-w-2xl md:ms-0 md:me-auto">
+        <h1 className="text-4xl sm:text-6xl lg:text-[5rem] font-bold text-white leading-[1.05] tracking-tight mb-4">
           {course.title}
         </h1>
 
-        <p className="text-sm sm:text-base text-white/75 font-light leading-relaxed max-w-xl mb-6 line-clamp-2">
+        <p className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/80">
+          {instructor ? <span>{instructor.name}</span> : null}
+          {instructor ? <span aria-hidden>·</span> : null}
+          <ClockLabel seconds={totalSecs} />
+          <span aria-hidden>·</span>
+          <span>{canFull ? 'פתוח לצפייה' : canPreview ? 'טעימה' : 'דורש מנוי'}</span>
+        </p>
+
+        <p className="text-sm sm:text-base text-white/80 font-light leading-relaxed max-w-xl mb-6 line-clamp-2">
           {course.subtitle || course.description}
         </p>
 
@@ -96,7 +103,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           <div className="max-w-sm mb-7">
             <div className="flex items-center justify-between text-[11px] text-white/70 mb-2" id="hero-progress-label">
               <span>
-                {formatClock(continueWatching.currentTime)} / {formatClock(continueWatching.duration)}
+                <ClockLabel seconds={continueWatching.currentTime} /> / <ClockLabel seconds={continueWatching.duration} />
               </span>
               <span>המשך צפייה</span>
             </div>
@@ -117,16 +124,16 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           <button
             type="button"
             onClick={handlePlayClick}
-            className="btn-gold text-black inline-flex items-center gap-2.5 px-8 py-3 text-sm"
+            className="library-hero-play inline-flex items-center gap-2.5 px-7 py-2.5 text-sm font-semibold min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
           >
-            <Play className="w-4 h-4 fill-black" />
+            <Play className="w-5 h-5 fill-current" />
             <span>{primaryLabel}</span>
           </button>
 
           <button
             type="button"
             onClick={handleDetails}
-            className="inline-flex items-center px-7 py-3 rounded-full border border-white/35 text-white font-medium text-sm hover:bg-white/10 transition-colors min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-offset-2 focus-visible:ring-offset-black"
+            className="library-hero-more inline-flex items-center px-6 py-2.5 text-sm font-medium min-h-11 hover:bg-white/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
           >
             פרטים
           </button>

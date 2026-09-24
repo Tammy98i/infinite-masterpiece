@@ -20,12 +20,12 @@ export const ContinueWatchingRow: React.FC = () => {
 
   return (
     <section
-      className="library-spacious-section library-island library-island-flush py-8 select-none scroll-mt-24"
+      className="library-spacious-section library-island library-island-flush py-3 select-none scroll-mt-24"
       data-onboarding="continue-watching"
       aria-label="המשך צפייה — רשימת הרצאות"
     >
-      <div className="flex items-center gap-3 px-4 sm:px-8 mb-5">
-        <h2 className="text-xl sm:text-2xl font-heading font-semibold text-white">המשך צפייה</h2>
+      <div className="flex items-center gap-3 px-4 sm:px-8 mb-1">
+        <h2 className="library-rail-title font-heading text-white">המשך צפייה</h2>
         <button
           type="button"
           onClick={() => setView('history')}
@@ -39,7 +39,7 @@ export const ContinueWatchingRow: React.FC = () => {
         <button
           type="button"
           onClick={() => scroll('prev')}
-          className="rail-control absolute right-1 sm:right-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/85 text-white border border-white/15 hidden sm:flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
+          className="rail-control absolute start-1 sm:start-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/85 text-white border border-white/15 hidden sm:flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
           aria-label="הצגת פריטים קודמים"
         >
           <ChevronRight className="w-5 h-5" aria-hidden />
@@ -52,6 +52,7 @@ export const ContinueWatchingRow: React.FC = () => {
           tabIndex={0}
           onKeyDown={(e) => {
             if (e.key === 'ArrowLeft') {
+              // Visual contract in RTL: left = toward end = next cards.
               e.preventDefault();
               scroll('next');
             } else if (e.key === 'ArrowRight') {
@@ -59,7 +60,7 @@ export const ContinueWatchingRow: React.FC = () => {
               scroll('prev');
             }
           }}
-          className="flex gap-3 sm:gap-4 overflow-x-auto px-4 sm:px-8 pb-2 scroll-smooth snap-x snap-mandatory carousel-scroll focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-inset"
+          className="library-rail-scroller flex overflow-x-auto px-4 sm:px-8 scroll-smooth snap-x snap-mandatory carousel-scroll focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-inset"
         >
           {continueList.map(({ course, progress }, index) => {
             const progressPercentage = Math.min(
@@ -84,7 +85,7 @@ export const ContinueWatchingRow: React.FC = () => {
         <button
           type="button"
           onClick={() => scroll('next')}
-          className="rail-control absolute left-1 sm:left-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/85 text-white border border-white/15 hidden sm:flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
+          className="rail-control absolute end-1 sm:end-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/85 text-white border border-white/15 hidden sm:flex items-center justify-center opacity-0 group-hover/row:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
           aria-label="הצגת פריטים נוספים"
         >
           <ChevronLeft className="w-5 h-5" aria-hidden />

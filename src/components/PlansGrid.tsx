@@ -1,11 +1,12 @@
 import { Link } from 'react-router-dom';
+import { Price } from './Price';
 
 export function PlansGrid() {
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 text-right">
+    <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-6 text-start">
       <h3 className="text-lg font-medium text-white mb-2">פתיחת גישה</h3>
       <p className="text-sm text-white/50 font-light leading-relaxed mb-6">
-        גישה מלאה לספרייה נפתחת במסלול האמיצים (8,008 ₪ לפני מע״מ) או במסלול ההססנים (8,888 ₪ לפני מע״מ, בארבע פעימות). זה קצב תשלום, לא הנחה.
+        גישה מלאה לספרייה נפתחת במסלול האמיצים (<Price amount={8008} /> לפני מע״מ) או במסלול ההססנים (<Price amount={8888} /> לפני מע״מ, בארבע פעימות). זה קצב תשלום, לא הנחה.
       </p>
       <Link
         to="/pricing"
