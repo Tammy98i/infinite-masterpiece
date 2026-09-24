@@ -3,6 +3,7 @@ import { podsApi, type AdminPodRow, type QueueItem } from '../../api/pods';
 import { AdminPageShell } from './AdminPageShell';
 import { fieldClass } from './adminConstants';
 import { Bidi } from '../../components/Bidi';
+import { DeskMonogram } from '../../components/DeskMonogram';
 import { POD_KIND_LABELS, POD_STATUS_LABELS, defaultPodCapacity, type PodKind, type PodStatus } from '../../lib/pods';
 
 const SOURCE_LABEL: Record<QueueItem['source'], string> = {
@@ -103,13 +104,18 @@ export function PodsPanel() {
         {queue.length === 0 ? <p className="text-white/45 text-sm">אין ממתינים לשיוך.</p> : null}
         <div className="grid gap-2">
           {queue.map((item) => (
-            <article key={`${item.userId}-${item.kind}`} className="border border-white/10 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3">
-              <div>
-                <h3 className="text-white text-sm">{item.name}</h3>
-                <p className="text-xs text-white/55 mt-1">
-                  {SOURCE_LABEL[item.source]} · {POD_KIND_LABELS[item.kind]}
-                </p>
-                <p className="text-xs text-white/35 mt-1" dir="ltr">{item.email}</p>
+            <article key={`${item.userId}-${item.kind}`} className="crm-desk-panel p-3 flex flex-wrap items-center justify-between gap-3">
+              <div className="crm-desk-who">
+                <DeskMonogram name={item.name} />
+                <span className="crm-desk-who-text">
+                  <span className="crm-desk-who-name">{item.name}</span>
+                  <span className="text-xs text-white/55 mt-1 block">
+                    {SOURCE_LABEL[item.source]} · {POD_KIND_LABELS[item.kind]}
+                  </span>
+                  <span className="crm-desk-who-mail">
+                    <Bidi kind="email">{item.email}</Bidi>
+                  </span>
+                </span>
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <select
@@ -140,7 +146,7 @@ export function PodsPanel() {
         <h2 className="text-base text-white">רשימת פודים</h2>
         <div className="grid gap-2">
           {pods.map((pod) => (
-            <article key={pod.id} className="border border-white/10 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3">
+            <article key={pod.id} className="crm-desk-panel p-3 flex flex-wrap items-center justify-between gap-3">
               <div>
                 <h3 className="text-white text-sm">{pod.name}</h3>
                 <p className="text-xs text-white/55 mt-1">

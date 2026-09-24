@@ -1,6 +1,8 @@
 import { Fragment, useMemo, useState } from 'react';
 import { ChevronDown, Search } from 'lucide-react';
 import type { NavGroup, NavItem, Tab } from './adminNav';
+import { Bidi } from '../../components/Bidi';
+import { AsideVeils } from './AsideVeils';
 
 type AdminSidebarProps = {
   groups: NavGroup[];
@@ -10,17 +12,6 @@ type AdminSidebarProps = {
   userEmail?: string;
   onExit: () => void;
 };
-
-function AsideVeils() {
-  return (
-    <>
-      <span className="crm-desk-aside-veil crm-desk-aside-veil-a" aria-hidden />
-      <span className="crm-desk-aside-veil crm-desk-aside-veil-b" aria-hidden />
-      <span className="crm-desk-aside-veil crm-desk-aside-veil-c" aria-hidden />
-      <span className="crm-desk-aside-veil crm-desk-aside-veil-d" aria-hidden />
-    </>
-  );
-}
 
 function NavButton({ item, active, onClick }: { item: NavItem; active: boolean; onClick: () => void }) {
   const Icon = item.icon;
@@ -88,8 +79,8 @@ export function AdminSidebar({ groups, tab, onNavigate, userName, userEmail, onE
         <h2 className="crm-rail-title text-xl">לוח בקרה</h2>
         <p className="text-xs text-white/45 mt-2 font-light truncate">{userName}</p>
         {userEmail ? (
-          <p className="text-[11px] text-white/30 mt-1 truncate" dir="ltr">
-            {userEmail}
+          <p className="text-[11px] text-white/30 mt-1 truncate">
+            <Bidi kind="email">{userEmail}</Bidi>
           </p>
         ) : null}
       </div>

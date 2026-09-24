@@ -23,6 +23,8 @@ import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
 import { CrmCatalogStage } from '../components/CrmCatalogStage';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { Bidi } from '../components/Bidi';
+import { DeskMonogram } from '../components/DeskMonogram';
 import { isApiUnavailableMessage } from '../lib/supabaseUser';
 import { emptyAnalytics, overviewFrom, readinessPayload, type ProfileListRow } from '../lib/adminFallback';
 
@@ -138,7 +140,7 @@ export function AdminView() {
   return (
     <div className="crm-desk min-h-screen bg-transparent text-white text-start">
       <div className="flex min-h-screen">
-        <aside className="crm-desk-aside hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 sticky top-0 h-screen overflow-y-auto">
+        <aside className="crm-desk-aside hidden lg:flex w-64 shrink-0 flex-col border-e border-white/10 sticky top-0 h-screen overflow-y-auto">
           <AdminSidebar
             groups={visibleGroups}
             tab={tab}
@@ -164,8 +166,8 @@ export function AdminView() {
                   שלום, {user.name.split(' ')[0] || 'אדמין'}
                 </p>
                 {user.email ? (
-                  <p className="text-[11px] text-white/40 truncate" dir="ltr">
-                    {user.email}
+                  <p className="text-[11px] text-white/40 truncate">
+                    <Bidi kind="email">{user.email}</Bidi>
                   </p>
                 ) : null}
                 <p className="text-xs text-white/35">
@@ -175,7 +177,7 @@ export function AdminView() {
             </div>
             <div className="flex items-center gap-2">
               <button type="button" onClick={() => setCommandOpen(true)} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 px-3 text-xs text-white/60 hover:border-[#b79043]/40 hover:text-white" aria-label="מעבר מהיר באדמין">
-                <Search size={15} /><span className="hidden sm:inline">מעבר מהיר</span><kbd className="hidden xl:inline text-[10px] text-white/30">⌘K</kbd>
+                <Search size={15} /><span className="hidden sm:inline">מעבר מהיר</span><kbd className="crm-desk-hotkey hidden xl:inline text-[10px] text-white/30">⌘K</kbd>
               </button>
               <button
                 type="button"
@@ -189,7 +191,7 @@ export function AdminView() {
 
           {mobileNavOpen ? <AdminMobileNav groups={visibleGroups} tab={tab} onNavigate={goTab} /> : null}
 
-          <main className="px-4 sm:px-6 lg:px-8 py-6 pb-24 max-w-7xl">
+          <main className="crm-desk-stage px-4 sm:px-6 lg:px-8 py-6 pb-24 max-w-7xl">
             {staffDesk ? (
               <p className="text-xs text-[#b79043]/80 mb-4">
                 מצב צוות מוגבל: {STAFF_DESK_LABEL[staffDesk] || staffDesk}. גישה מלאה רק לאדמין ראשי.
@@ -1922,7 +1924,7 @@ function TracksPanel() {
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.85fr)]">
-        <div className="overflow-x-auto border border-white/10 rounded-2xl">
+        <div className="crm-desk-table">
           <table className="w-full text-sm text-start">
             <thead className="text-xs text-white/40 border-b border-white/10">
               <tr>
@@ -1951,9 +1953,14 @@ function TracksPanel() {
                       className={`cursor-pointer transition-colors ${active ? 'bg-[#b79043]/10' : 'hover:bg-white/[0.03]'}`}
                     >
                       <td className="py-3 px-3">
-                        <span className="text-white">{row.name}</span>
-                        <span className="block text-xs text-white/35" dir="ltr">
-                          {row.email}
+                        <span className="crm-desk-who">
+                          <DeskMonogram name={row.name} />
+                          <span className="crm-desk-who-text">
+                            <span className="crm-desk-who-name">{row.name}</span>
+                            <span className="crm-desk-who-mail">
+                              <Bidi kind="email">{row.email}</Bidi>
+                            </span>
+                          </span>
                         </span>
                       </td>
                       <td className="py-3 px-3">{trackLabel(row.trackType)}</td>
@@ -1984,17 +1991,22 @@ function TracksPanel() {
           </table>
         </div>
 
-        <aside className="border border-white/10 rounded-2xl p-4 min-h-[200px]">
+        <aside className="crm-desk-title-card">
           {!selected ? (
             <p className="text-sm text-white/40">בחרו מצטרף מהטבלה.</p>
           ) : (
             <div className="grid gap-3">
               <div>
-                <p className="text-[11px] text-[#b79043] mb-1">כרטיס דק</p>
-                <h3 className="text-lg font-light">{selected.name}</h3>
-                <p className="text-xs text-white/45 mt-1" dir="ltr">
-                  {selected.email}
-                </p>
+                <p className="crm-desk-title-keep">כרטיס דק · title card</p>
+                <div className="crm-desk-who mb-2">
+                  <DeskMonogram name={selected.name} />
+                  <span className="crm-desk-who-text">
+                    <h3 className="text-lg font-light m-0">{selected.name}</h3>
+                    <p className="crm-desk-who-mail mt-1 mb-0">
+                      <Bidi kind="email">{selected.email}</Bidi>
+                    </p>
+                  </span>
+                </div>
               </div>
 
               <dl className="grid gap-1.5 text-sm">
@@ -2010,7 +2022,9 @@ function TracksPanel() {
                 </div>
                 <div className="flex justify-between gap-3">
                   <dt className="text-white/40">טלפון</dt>
-                  <dd dir="ltr">{selected.phone || '—'}</dd>
+                  <dd>
+                    <Bidi kind="phone">{selected.phone || '—'}</Bidi>
+                  </dd>
                 </div>
                 <div className="flex justify-between gap-3">
                   <dt className="text-white/40">תחום</dt>
@@ -2814,11 +2828,11 @@ function LeadsPanel() {
                 <tr key={`${row.source}-${row.id}`}>
                   <td className="py-3 px-3 text-white/70">{row.sourceLabel}</td>
                   <td className="py-3 px-3">{row.name}</td>
-                  <td className="py-3 px-3 text-white/55" dir="ltr">
-                    {row.phone || '—'}
+                  <td className="py-3 px-3 text-white/55">
+                    <Bidi kind="phone">{row.phone || '—'}</Bidi>
                   </td>
-                  <td className="py-3 px-3 text-white/55" dir="ltr">
-                    {row.email || '—'}
+                  <td className="py-3 px-3 text-white/55">
+                    <Bidi kind="email">{row.email || '—'}</Bidi>
                   </td>
                   <td className="py-3 px-3 text-white/55">{row.interest || '—'}</td>
                   <td className="py-3 px-3 text-white/55">{row.status || '—'}</td>
@@ -2995,7 +3009,9 @@ function LegalPanel() {
                   <tr key={report.id} className="border-b border-white/5 align-top">
                     <td className="py-3 pe-3 whitespace-nowrap">{new Date(report.createdAt).toLocaleDateString('he-IL')}</td>
                     <td className="py-3 pe-3">{report.fullName}</td>
-                    <td className="py-3 pe-3" dir="ltr">{report.email}</td>
+                    <td className="py-3 pe-3">
+                      <Bidi kind="email">{report.email}</Bidi>
+                    </td>
                     <td className="py-3 pe-3">{report.status}</td>
                     <td className="py-3">
                       {report.status !== 'resolved' ? (
@@ -3453,8 +3469,12 @@ function WebinarPanel() {
                   <td className="py-3 pe-3 whitespace-nowrap">{new Date(row.createdAt).toLocaleString('he-IL')}</td>
                   <td className="py-3 pe-3 whitespace-nowrap text-white/70">{statusLabel(row.status)}</td>
                   <td className="py-3 pe-3">{row.fullName}</td>
-                  <td className="py-3 pe-3" dir="ltr">{row.phone}</td>
-                  <td className="py-3 pe-3" dir="ltr">{row.email}</td>
+                  <td className="py-3 pe-3">
+                    <Bidi kind="phone">{row.phone}</Bidi>
+                  </td>
+                  <td className="py-3 pe-3">
+                    <Bidi kind="email">{row.email}</Bidi>
+                  </td>
                   <td className="py-3 pe-3">{row.field}</td>
                   <td className="py-3 pe-3 text-white/60">
                     {row.interest}

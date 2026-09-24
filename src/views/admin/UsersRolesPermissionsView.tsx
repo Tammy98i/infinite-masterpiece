@@ -15,6 +15,8 @@ import {
   STAFF_DESK_LABEL,
   STAFF_DESK_TABS,
 } from './adminConstants';
+import { Bidi } from '../../components/Bidi';
+import { DeskMonogram } from '../../components/DeskMonogram';
 
 export type AccessSection = 'accounts' | 'roles' | 'desks' | 'admins';
 
@@ -270,7 +272,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
             className={fieldClass}
             aria-label="חיפוש משתמש לפי שם"
           />
-          <div className="overflow-x-auto border border-white/10 rounded bg-white/[0.02]">
+          <div className="crm-desk-table">
             <table className="w-full text-sm text-start">
               <thead className="text-xs text-white/45 border-b border-white/10">
                 <tr>
@@ -285,9 +287,14 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
                 {filteredUsers.map((row) => (
                   <tr key={row.id} className={`border-b border-white/5 ${selectedId === row.id ? 'bg-white/10' : ''}`}>
                     <td>
-                      <span>{row.name}</span>
-                      <span className="text-xs text-white/35 ms-2" dir="ltr">
-                        {row.email}
+                      <span className="crm-desk-who">
+                        <DeskMonogram name={row.name} />
+                        <span className="crm-desk-who-text">
+                          <span className="crm-desk-who-name">{row.name}</span>
+                          <span className="crm-desk-who-mail">
+                            <Bidi kind="email">{row.email}</Bidi>
+                          </span>
+                        </span>
                       </span>
                     </td>
                     <td className="text-white/65">{ROLE_LABEL[row.role] || row.role}</td>
@@ -318,8 +325,8 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
             <div className="crm-desk-edit-drawer grid gap-3 text-sm">
               <p className="font-medium">
                 עריכה · {selected.name}
-                <span className="text-xs text-white/40 ms-2" dir="ltr">
-                  {selected.email}
+                <span className="text-xs text-white/40 ms-2">
+                  <Bidi kind="email">{selected.email}</Bidi>
                 </span>
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
@@ -443,9 +450,9 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
           <p className="text-sm text-white/50 max-w-2xl">
             תפקיד = מה המשתמש יכול לעשות במערכת. דגל מייסד/ת הוא שכבה נוספת — מציג את האדם בעמוד הצוות.
           </p>
-          <div className="overflow-x-auto border border-white/10 rounded-2xl">
+          <div className="crm-desk-table">
             <table className="w-full text-sm text-start">
-              <thead className="text-xs text-white/45 border-b border-white/10 bg-[#0a0a0a]">
+              <thead className="text-xs text-white/45 border-b border-white/10">
                 <tr>
                   <th className="py-3 px-4 font-normal">תפקיד</th>
                   <th className="py-3 px-4 font-normal">ספרייה</th>
@@ -477,7 +484,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
           </p>
           <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
             {Object.entries(STAFF_DESK_LABEL).map(([deskId, label]) => (
-              <div key={deskId} className="border border-white/10 rounded-2xl p-4 bg-white/[0.02]">
+              <div key={deskId} className="crm-desk-panel p-4">
                 <h3 className="text-base font-light text-[#dfc47d]/90 mb-2">{label}</h3>
                 <p className="text-xs text-white/40 mb-3">{STAFF_DESK_TABS[deskId]?.length || 0} לשוניות בלוח</p>
                 <ul className="text-xs text-white/55 grid gap-1">
@@ -502,7 +509,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
             aria-label="סגירה"
             onClick={() => setDrawerOpen(false)}
           />
-          <div className="relative w-full max-w-md h-full bg-[#0a0a0a] border-e border-white/10 p-6 overflow-y-auto shadow-2xl">
+          <div className="relative w-full max-w-md h-full crm-desk-panel border-e border-white/10 p-6 overflow-y-auto shadow-2xl rounded-none">
             <div className="flex items-start justify-between gap-3 mb-6">
               <div>
                 <h2 className="text-lg font-light">משתמש חדש</h2>
