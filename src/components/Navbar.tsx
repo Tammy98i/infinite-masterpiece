@@ -87,19 +87,19 @@ export const Navbar: React.FC = () => {
             : 'is-over-hero bg-gradient-to-b from-black/80 via-black/40 to-transparent'
         }`}
       >
-        <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-10 h-20 flex items-center justify-between gap-4 sm:gap-6">
+        <div className="header-row mx-auto flex h-full w-full max-w-[1400px] items-center justify-between">
           
           {/* Start side: Logo & Main Nav */}
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
+          <div className="header-start flex items-center">
+            <div className="flex items-center">
               <button
                 type="button"
                 onClick={() => setView('home')}
-                className="flex items-center gap-4 group focus-ring rounded-xl"
+                className="header-logo flex items-center gap-2.5 sm:gap-3 lg:gap-4 group focus-ring"
                 aria-label="Infinite Masterpiece"
               >
-                <InfinityIcon className="w-8 h-8 text-[#dfc47d] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
-                <span className="hidden sm:block font-light text-[15px] tracking-[0.25em] text-white/90 leading-tight uppercase">
+                <InfinityIcon className="header-logo-mark text-[#dfc47d] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
+                <span className="header-wordmark font-light tracking-[0.22em] text-white/90 leading-tight uppercase">
                   Infinite
                   <br />
                   <span className="font-medium">Masterpiece</span>
@@ -107,7 +107,7 @@ export const Navbar: React.FC = () => {
               </button>
             </div>
 
-            <nav className="hidden md:flex items-center gap-6 text-[14px] sm:text-[15px] font-light" aria-label="ניווט הספרייה">
+            <nav className="header-nav hidden md:flex items-center font-light" aria-label="ניווט הספרייה">
               <button
                 type="button"
                 onClick={() => setView('home')}
@@ -144,7 +144,7 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setView('shorts')}
-                className={`transition-colors py-2 min-h-11 border-b-2 ${
+                className={`header-nav-wide transition-colors py-2 min-h-11 border-b-2 ${
                   currentView === 'shorts'
                     ? 'text-white border-[#b79043]'
                     : 'text-white/85 hover:text-white border-transparent'
@@ -156,10 +156,10 @@ export const Navbar: React.FC = () => {
           </div>
 
           {/* End side: Search, My List, Profile, Admin */}
-          <div className="flex items-center gap-3">
+          <div className="header-actions flex items-center">
             
             {/* Search Bar / Icon */}
-            <div className="relative flex items-center">
+            <div className="header-search relative flex items-center">
               {isSearchOpen ? (
                 <div className="relative">
                   <form
@@ -266,7 +266,7 @@ export const Navbar: React.FC = () => {
             <button
               type="button"
               onClick={() => setView(currentView === 'lecturer' ? 'home' : 'lecturer')}
-              className={`hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs min-h-11 border transition-colors duration-200 ${
+              className={`header-chip hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full min-h-11 border transition-colors duration-200 ${
                 currentView === 'lecturer'
                   ? 'border-[#b79043] text-[#b79043] bg-[#b79043]/10'
                   : 'border-white/10 text-white/55 hover:text-white'
@@ -281,7 +281,7 @@ export const Navbar: React.FC = () => {
             <button
               type="button"
               onClick={() => setView(currentView === 'admin' ? 'home' : 'admin')}
-              className={`hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs min-h-11 border transition-colors duration-200 ${
+              className={`header-chip hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full min-h-11 border transition-colors duration-200 ${
                 currentView === 'admin'
                   ? 'border-[#b79043] text-[#b79043] bg-[#b79043]/10'
                   : 'border-white/10 text-white/55 hover:text-white'
@@ -297,27 +297,29 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setAuthModalOpen(true)}
-                className="hidden sm:inline-flex items-center px-4 py-2.5 rounded-full border border-white/25 text-white/85 text-sm font-medium hover:border-white/50 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
+                className="header-login hidden sm:inline-flex items-center px-4 rounded-full border border-white/25 text-white/85 font-medium hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
               >
                 כניסה
               </button>
             )}
 
-            <AccountMenu
-              onOpenProfile={() => setView('profile')}
-              onOpenAdmin={() => setView('admin')}
-              onOpenLecturer={() => setView('lecturer')}
-            />
+            <div className="header-account">
+              <AccountMenu
+                onOpenProfile={() => setView('profile')}
+                onOpenAdmin={() => setView('admin')}
+                onOpenLecturer={() => setView('lecturer')}
+              />
+            </div>
 
             {/* Mobile Hamburger CTA */}
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/10 min-h-11 min-w-11 flex items-center justify-center"
+              className="header-burger md:hidden p-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/10 flex items-center justify-center"
               aria-label="תפריט ניווט"
               aria-expanded={isMobileMenuOpen}
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMobileMenuOpen ? <X /> : <Menu />}
             </button>
 
           </div>

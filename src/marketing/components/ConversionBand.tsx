@@ -13,6 +13,7 @@ const HIDDEN_ROUTES = [
   '/webinar',
   '/pricing',
   '/hesitation',
+  '/pod',
 ];
 
 export function ConversionBand() {
