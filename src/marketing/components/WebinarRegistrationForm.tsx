@@ -19,7 +19,7 @@ type Props = {
 };
 
 const fieldClass =
-  'w-full bg-[#0d0b08]/60 border border-[#b79043]/25 rounded-xl px-4 py-3 sm:px-5 sm:py-3.5 text-white text-base text-right focus:outline-none focus:border-[#b79043] focus:ring-1 focus:ring-[#b79043]/40 min-h-11';
+  'w-full bg-[#0d0b08]/60 border border-[#b79043]/25 rounded-xl px-4 py-3 sm:px-5 sm:py-3.5 text-white text-base text-start focus:outline-none focus:border-[#b79043] focus:ring-1 focus:ring-[#b79043]/40 min-h-11';
 
 export function WebinarRegistrationForm({
   payload,
@@ -199,7 +199,7 @@ export function WebinarRegistrationForm({
       id={formId}
       onSubmit={handleSubmit}
       onFocus={markStarted}
-      className="relative space-y-4 sm:space-y-5 text-right"
+      className="relative space-y-4 sm:space-y-5 text-start"
       aria-labelledby={`${formId}-title`}
     >
       {!compact ? (
@@ -220,13 +220,13 @@ export function WebinarRegistrationForm({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
         <div>
-          <label htmlFor={`${formId}-fullName`} className="text-sm text-white/60 mb-1.5 block text-right">
+          <label htmlFor={`${formId}-fullName`} className="text-sm text-white/60 mb-1.5 block text-start">
             שם מלא *
           </label>
           <input required id={`${formId}-fullName`} name="fullName" type="text" autoComplete="name" className={fieldClass} />
         </div>
         <div>
-          <label htmlFor={`${formId}-phone`} className="text-sm text-white/60 mb-1.5 block text-right">
+          <label htmlFor={`${formId}-phone`} className="text-sm text-white/60 mb-1.5 block text-start">
             טלפון *
           </label>
           <input
@@ -238,7 +238,7 @@ export function WebinarRegistrationForm({
             autoComplete="tel"
             placeholder="05XXXXXXXX"
             dir="ltr"
-            className={`${fieldClass} text-left`}
+            className={`${fieldClass} text-start`}
             aria-invalid={phoneInvalid || undefined}
             aria-describedby={phoneInvalid ? `${formId}-phone-hint ${formId}-error` : `${formId}-phone-hint`}
           />
@@ -249,7 +249,7 @@ export function WebinarRegistrationForm({
       </div>
 
       <div>
-          <label htmlFor={`${formId}-email`} className="text-sm text-white/60 mb-1.5 block text-right">
+          <label htmlFor={`${formId}-email`} className="text-sm text-white/60 mb-1.5 block text-start">
           אימייל *
         </label>
         <input
@@ -258,7 +258,7 @@ export function WebinarRegistrationForm({
           name="email"
           type="email"
           autoComplete="email"
-          className={`${fieldClass} text-left`}
+          className={`${fieldClass} text-start`}
           dir="ltr"
           aria-invalid={emailInvalid || undefined}
           aria-describedby={emailInvalid ? `${formId}-error` : undefined}
@@ -268,7 +268,7 @@ export function WebinarRegistrationForm({
       </div>
 
       {/* Honeypot — hidden from humans */}
-      <div aria-hidden="true" className="absolute -left-[9999px] h-0 w-0 overflow-hidden opacity-0">
+      <div aria-hidden="true" className="absolute -end-[9999px] h-0 w-0 overflow-hidden opacity-0">
         <label htmlFor={`${formId}-website`}>אתר</label>
         <input id={`${formId}-website`} name="website" type="text" tabIndex={-1} autoComplete="off" />
       </div>

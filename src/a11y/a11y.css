@@ -378,7 +378,7 @@ html.a11y-contrast-mono #a11y-widget-trigger {
 
 .a11y-outline-item {
   width: 100%;
-  text-align: right;
+  text-align: start;
   padding: 0.5rem 0.65rem;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 0.5rem;
