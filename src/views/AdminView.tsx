@@ -24,6 +24,7 @@ import { FileUploadField } from '../components/FileUploadField';
 import { CrmCatalogStage } from '../components/CrmCatalogStage';
 import { ConfirmDialog } from '../components/ConfirmDialog';
 import { Bidi } from '../components/Bidi';
+import { DeskMonogram } from '../components/DeskMonogram';
 import { isApiUnavailableMessage } from '../lib/supabaseUser';
 import { emptyAnalytics, overviewFrom, readinessPayload, type ProfileListRow } from '../lib/adminFallback';
 
@@ -190,7 +191,7 @@ export function AdminView() {
 
           {mobileNavOpen ? <AdminMobileNav groups={visibleGroups} tab={tab} onNavigate={goTab} /> : null}
 
-          <main className="px-4 sm:px-6 lg:px-8 py-6 pb-24 max-w-7xl">
+          <main className="crm-desk-stage px-4 sm:px-6 lg:px-8 py-6 pb-24 max-w-7xl">
             {staffDesk ? (
               <p className="text-xs text-[#b79043]/80 mb-4">
                 מצב צוות מוגבל: {STAFF_DESK_LABEL[staffDesk] || staffDesk}. גישה מלאה רק לאדמין ראשי.
@@ -1923,7 +1924,7 @@ function TracksPanel() {
       </div>
 
       <div className="grid gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(280px,0.85fr)]">
-        <div className="overflow-x-auto border border-white/10 rounded-2xl">
+        <div className="crm-desk-table">
           <table className="w-full text-sm text-start">
             <thead className="text-xs text-white/40 border-b border-white/10">
               <tr>
@@ -1952,9 +1953,14 @@ function TracksPanel() {
                       className={`cursor-pointer transition-colors ${active ? 'bg-[#b79043]/10' : 'hover:bg-white/[0.03]'}`}
                     >
                       <td className="py-3 px-3">
-                        <span className="text-white">{row.name}</span>
-                        <span className="block text-xs text-white/35">
-                          <Bidi kind="email">{row.email}</Bidi>
+                        <span className="crm-desk-who">
+                          <DeskMonogram name={row.name} />
+                          <span className="crm-desk-who-text">
+                            <span className="crm-desk-who-name">{row.name}</span>
+                            <span className="crm-desk-who-mail">
+                              <Bidi kind="email">{row.email}</Bidi>
+                            </span>
+                          </span>
                         </span>
                       </td>
                       <td className="py-3 px-3">{trackLabel(row.trackType)}</td>
@@ -1985,17 +1991,22 @@ function TracksPanel() {
           </table>
         </div>
 
-        <aside className="border border-white/10 rounded-2xl p-4 min-h-[200px]">
+        <aside className="crm-desk-title-card">
           {!selected ? (
             <p className="text-sm text-white/40">בחרו מצטרף מהטבלה.</p>
           ) : (
             <div className="grid gap-3">
               <div>
-                <p className="text-[11px] text-[#b79043] mb-1">כרטיס דק</p>
-                <h3 className="text-lg font-light">{selected.name}</h3>
-                <p className="text-xs text-white/45 mt-1">
-                  <Bidi kind="email">{selected.email}</Bidi>
-                </p>
+                <p className="crm-desk-title-keep">כרטיס דק · title card</p>
+                <div className="crm-desk-who mb-2">
+                  <DeskMonogram name={selected.name} />
+                  <span className="crm-desk-who-text">
+                    <h3 className="text-lg font-light m-0">{selected.name}</h3>
+                    <p className="crm-desk-who-mail mt-1 mb-0">
+                      <Bidi kind="email">{selected.email}</Bidi>
+                    </p>
+                  </span>
+                </div>
               </div>
 
               <dl className="grid gap-1.5 text-sm">
