@@ -20,6 +20,8 @@ export interface AdminOverview {
   pending: number;
   episodes: number;
   applicationsPending: number;
+  /** לידים חדשים ממסלול + וובינר — לסקירת 4 מדדים */
+  openLeads: number;
   paywallHits: number;
   upgrades: number;
   conversionRate: number;
