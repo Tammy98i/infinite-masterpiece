@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
+import { Price } from '../../components/Price';
+import { formatIls } from '../../utils/bidi';
 import { ENTRY_TRACK_FINE_PRINT } from '../../data/entryTracks';
 import { trackEvent } from '../../utils/analytics';
 
@@ -37,7 +39,7 @@ export function EntryTrackCards() {
           </p>
           <div className="mb-5">
             <p className="text-[11px] uppercase tracking-[.18em] text-[#dfc47d]">לפני מע״מ</p>
-            <p className="mt-2 text-4xl font-accent font-semibold tabular-nums leading-none text-white sm:text-5xl">8,008 ₪</p>
+            <p className="mt-2 text-4xl font-accent font-semibold leading-none text-white sm:text-5xl"><Price amount={8008} /></p>
             <p className="mt-2 text-sm text-white/70">תשלום אחד</p>
           </div>
           <FeatureList
@@ -68,7 +70,7 @@ export function EntryTrackCards() {
           </p>
           <div className="mb-5">
             <p className="text-[11px] uppercase tracking-[.18em] text-[#dfc47d]">לפני מע״מ · ארבע פעימות</p>
-            <p className="mt-2 text-4xl font-accent font-semibold tabular-nums leading-none text-white sm:text-5xl">8,888 ₪</p>
+            <p className="mt-2 text-4xl font-accent font-semibold leading-none text-white sm:text-5xl"><Price amount={8888} /></p>
             <p className="mt-2 text-sm text-white/70">8 היום · אחר כך 80 · 800 · 8,000</p>
           </div>
           <FeatureList
@@ -83,7 +85,7 @@ export function EntryTrackCards() {
             onClick={() => trackEvent('hesitant_track_clicked')}
             className="mt-auto inline-flex justify-center items-center w-full py-3 px-4 rounded-full text-white border border-[#b79043]/40 hover:border-[#dfc47d] hover:text-[#dfc47d] font-medium text-sm min-h-11"
           >
-            אני מתחיל/ה ב־8 ₪
+            אני מתחיל/ה ב־{formatIls(8)}
           </Link>
         </article>
       </div>

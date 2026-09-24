@@ -19,6 +19,7 @@ import { getRecommendedWithReasons } from '../utils/recommendations';
 import { trackEvent } from '../utils/analytics';
 import { LibraryQuickActions } from '../components/LibraryQuickActions';
 import { CatalogLoadingNotice } from '../components/CatalogLoadingNotice';
+import '../styles/LibraryFlowPolish.css';
 
 export const HomeView: React.FC = () => {
   const {
@@ -35,6 +36,28 @@ export const HomeView: React.FC = () => {
   useEffect(() => {
     trackEvent('library_view', { user_state: user.subscriptionPlan });
   }, [user.subscriptionPlan]);
+
+  useEffect(() => {
+    const reduce =
+      matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      document.documentElement.classList.contains('a11y-reduce-motion');
+    const islands = Array.from(document.querySelectorAll<HTMLElement>('.library-island'));
+    const appear = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) entry.target.classList.add('is-in');
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -10% 0px' }
+    );
+    for (const node of islands) {
+      if (reduce || node.getBoundingClientRect().top < window.innerHeight * 0.88) {
+        node.classList.add('is-in');
+      }
+      appear.observe(node);
+    }
+    return () => appear.disconnect();
+  }, [catalogStatus, courses.length, myList.length]);
 
   const continueList = getContinueWatchingList();
   const firstContinue = continueList[0];
@@ -123,7 +146,7 @@ export const HomeView: React.FC = () => {
   }
 
   return (
-    <div className="min-h-screen text-white overflow-x-hidden pb-28">
+    <div className="library-flow-page min-h-screen text-white overflow-x-hidden pb-28">
       {heroCourse ? (
         <HeroBanner
           course={heroCourse}
@@ -142,7 +165,7 @@ export const HomeView: React.FC = () => {
         <div className="min-h-[480px] md:h-[78vh] bg-zinc-900 animate-pulse" aria-busy="true" />
       )}
 
-      <div className="relative z-10 -mt-16 md:-mt-24">
+      <div className="relative z-10 -mt-6 md:-mt-10">
         <LibraryPlanBanner />
         {isLoading ? <CatalogLoadingNotice /> : null}
 

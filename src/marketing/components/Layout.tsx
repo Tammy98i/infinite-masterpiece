@@ -46,7 +46,7 @@ export function Layout({ children }: LayoutProps) {
           דילוג לתוכן הראשי
         </a>
         {onWebinar ? null : <Header />}
-        <main id="main-content" className="site-main flex-1 w-full text-center" tabIndex={-1}>
+        <main id="main-content" className="site-main flex-1 w-full text-start" tabIndex={-1}>
           {children}
         </main>
         {onWebinar ? null : <ConversionBand />}

@@ -30,46 +30,50 @@ export const CategoryView: React.FC = () => {
   const filteredCourses = filterCatalogCourses(baseCourses, user, activeFilter, selectedInstructor);
 
   return (
-    <div className="min-h-screen text-white pt-32 pb-28 px-4 sm:px-8 lg:px-10 max-w-[1400px] mx-auto">
+    <div className="library-catalog-page min-h-screen text-white pt-32 pb-28 px-4 sm:px-8 lg:px-10 max-w-[1400px] mx-auto">
       <div
-        className="rounded-3xl p-8 md:p-12 mb-14 relative overflow-hidden text-right border border-white/10"
+        className="library-page-hero relative overflow-hidden text-start p-8 md:p-12 mb-8 border"
         style={
           currentCategory.coverImage
             ? {
-                backgroundImage: `linear-gradient(to left, rgba(5,5,5,0.92), rgba(5,5,5,0.55)), url(${currentCategory.coverImage})`,
+                backgroundImage: `linear-gradient(to left, rgba(20,20,20,0.94), rgba(0,0,0,0.58)), url(${currentCategory.coverImage})`,
                 backgroundSize: 'cover',
                 backgroundPosition: 'center',
               }
             : undefined
         }
       >
-        <div className="flex items-center gap-2 text-[#b79043] text-xs mb-2">
-          <Layers className="w-4 h-4" />
-          <span>נושא</span>
-        </div>
+        <div className="absolute inset-0 bg-black/35 pointer-events-none" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-transparent to-black/40 pointer-events-none" />
+        <div className="relative">
+          <div className="flex items-center gap-2 text-white/70 text-xs mb-2">
+            <Layers className="w-4 h-4" />
+            <span>נושא</span>
+          </div>
 
-        <h1 className="text-3xl sm:text-5xl font-semibold mb-3 text-white">{currentCategory.name}</h1>
+          <h1 className="text-3xl sm:text-5xl font-semibold mb-3 text-white">{currentCategory.name}</h1>
 
-        <p className="text-white/60 text-base sm:text-lg max-w-2xl leading-relaxed font-light">
-          {currentCategory.description}
-        </p>
-        {leads.length > 0 && (
-          <p className="text-sm text-white/40 mt-4">
-            מרצים מובילים: {leads.map((i) => i.name).join(' · ')}
+          <p className="text-white/70 text-base sm:text-lg max-w-2xl leading-relaxed font-light">
+            {currentCategory.description}
           </p>
-        )}
+          {leads.length > 0 && (
+            <p className="text-sm text-white/50 mt-4">
+              מרצים מובילים: {leads.map((i) => i.name).join(' · ')}
+            </p>
+          )}
+        </div>
       </div>
 
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-8 bg-zinc-900/60 p-4 rounded-2xl border border-white/5">
+      <div className="library-page-toolbar flex flex-wrap items-center justify-between gap-4 mb-6 p-3 border">
         <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0" role="group" aria-label="סינון תכנים">
           {FILTERS.map((filter) => (
             <button
               key={filter.id}
               type="button"
               onClick={() => setActiveFilter(filter.id)}
-              className={`px-4 py-2 rounded-xl text-sm font-medium transition-all min-h-11 whitespace-nowrap ${
+              className={`library-page-chip px-4 py-2 text-sm font-medium transition-all min-h-11 whitespace-nowrap ${
                 activeFilter === filter.id
-                  ? 'bg-[#b79043] text-black'
+                  ? 'bg-white text-[#141414]'
                   : 'bg-white/5 text-zinc-300 hover:bg-white/10'
               }`}
             >
@@ -84,7 +88,7 @@ export const CategoryView: React.FC = () => {
           <select
             value={selectedInstructor}
             onChange={(e) => setSelectedInstructor(e.target.value)}
-            className="bg-zinc-800 border border-white/10 rounded-xl px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#b79043] min-h-11"
+            className="bg-[#141414] border border-white/15 rounded-[4px] px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#b79043] min-h-11"
             aria-label="סינון לפי מרצה"
           >
             <option value="all">לפי מרצה: הכול</option>
@@ -98,7 +102,7 @@ export const CategoryView: React.FC = () => {
       </div>
 
       {filteredCourses.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-8 justify-items-center">
+        <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-stretch">
           {filteredCourses.map((course, index) => (
             <CourseCard
               key={course.id}

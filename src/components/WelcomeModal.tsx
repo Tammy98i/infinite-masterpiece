@@ -28,10 +28,10 @@ export const WelcomeModal: React.FC = () => {
 
   return (
     <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-      <div className="glass bg-zinc-950/95 border border-primary/40 rounded-3xl max-w-lg w-full p-8 relative shadow-2xl text-right">
+      <div className="glass bg-zinc-950/95 border border-primary/40 rounded-3xl max-w-lg w-full p-8 relative shadow-2xl text-start">
         <button
           onClick={() => setWelcomeOpen(false)}
-          className="absolute top-6 left-6 text-zinc-400 hover:text-white p-1 rounded-full bg-white/5 focus-ring"
+          className="absolute top-6 end-6 text-zinc-400 hover:text-white p-1 rounded-full bg-white/5 focus-ring"
           aria-label="סגירה"
         >
           <X className="w-5 h-5" />

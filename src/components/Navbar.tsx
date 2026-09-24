@@ -5,7 +5,7 @@ import { Search, Mic, Shield, Menu, X, Infinity as InfinityIcon, Compass, Bookma
 import { AccountMenu } from './AccountMenu';
 import { trackEvent } from '../utils/analytics';
 import { searchSuggestions } from '../utils/searchCatalog';
-import { formatClock } from '../utils/time';
+import { isolateClock } from '../utils/time';
 import { getCardAccessState } from '../utils/libraryHome';
 
 export const Navbar: React.FC = () => {
@@ -77,25 +77,29 @@ export const Navbar: React.FC = () => {
       <header
         role="banner"
         aria-label="כותרת הספרייה"
-        className={`editorial-library-header fixed top-0 left-0 right-0 z-50 transition-all duration-300 ${
-          isScrolled || currentView !== 'home'
-            ? 'bg-[#0a0a0acc] backdrop-blur-md border-b border-white/10 shadow-xl'
-            : 'bg-gradient-to-b from-black/80 via-black/40 to-transparent'
+        className={`editorial-library-header fixed top-0 inset-inline-0 z-50 transition-all duration-300 ${
+          isScrolled ||
+          (currentView !== 'home' &&
+            currentView !== 'course' &&
+            currentView !== 'instructors' &&
+            currentView !== 'instructor')
+            ? 'is-solid bg-[#0a0a0acc] backdrop-blur-md border-b border-white/10 shadow-xl'
+            : 'is-over-hero bg-gradient-to-b from-black/80 via-black/40 to-transparent'
         }`}
       >
-        <div className="w-full max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-10 h-20 flex items-center justify-between gap-4 sm:gap-6">
+        <div className="header-row mx-auto flex h-full w-full max-w-[1400px] items-center justify-between">
           
-          {/* Right Section: Logo & Main Nav */}
-          <div className="flex items-center gap-8">
-            <div className="flex items-center gap-3">
+          {/* Start side: Logo & Main Nav */}
+          <div className="header-start flex items-center">
+            <div className="flex items-center">
               <button
                 type="button"
                 onClick={() => setView('home')}
-                className="flex items-center gap-4 group focus-ring rounded-xl"
+                className="header-logo flex items-center gap-2.5 sm:gap-3 lg:gap-4 group focus-ring"
                 aria-label="Infinite Masterpiece"
               >
-                <InfinityIcon className="w-8 h-8 text-[#dfc47d] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
-                <span className="hidden sm:block font-light text-[15px] tracking-[0.25em] text-white/90 leading-tight uppercase">
+                <InfinityIcon className="header-logo-mark text-[#dfc47d] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
+                <span className="header-wordmark font-light tracking-[0.22em] text-white/90 leading-tight uppercase">
                   Infinite
                   <br />
                   <span className="font-medium">Masterpiece</span>
@@ -103,7 +107,7 @@ export const Navbar: React.FC = () => {
               </button>
             </div>
 
-            <nav className="hidden md:flex items-center gap-6 text-[14px] sm:text-[15px] font-light" aria-label="ניווט הספרייה">
+            <nav className="header-nav hidden md:flex items-center font-light" aria-label="ניווט הספרייה">
               <button
                 type="button"
                 onClick={() => setView('home')}
@@ -140,7 +144,7 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setView('shorts')}
-                className={`transition-colors py-2 min-h-11 border-b-2 ${
+                className={`header-nav-wide transition-colors py-2 min-h-11 border-b-2 ${
                   currentView === 'shorts'
                     ? 'text-white border-[#b79043]'
                     : 'text-white/85 hover:text-white border-transparent'
@@ -151,11 +155,11 @@ export const Navbar: React.FC = () => {
             </nav>
           </div>
 
-          {/* Left Section: Search, My List, Profile, Admin */}
-          <div className="flex items-center gap-3">
+          {/* End side: Search, My List, Profile, Admin */}
+          <div className="header-actions flex items-center">
             
             {/* Search Bar / Icon */}
-            <div className="relative flex items-center">
+            <div className="header-search relative flex items-center">
               {isSearchOpen ? (
                 <div className="relative">
                   <form
@@ -163,7 +167,7 @@ export const Navbar: React.FC = () => {
                       handleSearchSubmit(e);
                       trackEvent('search_submit', { query: searchQuery.trim() });
                     }}
-                    className="flex items-center animate-in fade-in slide-in-from-left-2 duration-200"
+                    className="flex items-center search-slide-in"
                   >
                     <input
                       ref={searchInputRef}
@@ -171,18 +175,18 @@ export const Navbar: React.FC = () => {
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="חיפוש בספרייה..."
-                      className="w-56 sm:w-72 bg-zinc-900/90 border border-[#b79043]/50 rounded-full py-2 pr-9 pl-8 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 shadow-inner min-h-11"
+                      className="w-56 sm:w-72 bg-zinc-900/90 border border-[#b79043]/50 rounded-full py-2 ps-9 pe-8 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 shadow-inner min-h-11"
                       aria-label="חיפוש בספרייה"
                       aria-autocomplete="list"
                       aria-controls="library-search-suggestions"
                     />
-                    <Search className="w-4 h-4 text-[#b79043] absolute right-3 pointer-events-none" />
+                    <Search className="w-4 h-4 text-[#b79043] absolute start-3 pointer-events-none" data-icon="search" />
                     <button
                       type="button"
                       onClick={() => {
                         setIsSearchOpen(false);
                       }}
-                      className="absolute left-2.5 text-zinc-400 hover:text-white p-1 min-h-11 min-w-11 flex items-center justify-center"
+                      className="absolute end-2.5 text-zinc-400 hover:text-white p-1 min-h-11 min-w-11 flex items-center justify-center"
                       aria-label="סגירת חיפוש"
                     >
                       <X className="w-4 h-4" />
@@ -199,7 +203,7 @@ export const Navbar: React.FC = () => {
                         <li key={`${item.type}-${item.id}`} role="option">
                           <button
                             type="button"
-                            className="w-full text-right px-4 py-3 hover:bg-white/5 min-h-11 border-b border-white/5 last:border-0"
+                            className="w-full text-start px-4 py-3 hover:bg-white/5 min-h-11 border-b border-white/5 last:border-0"
                             onClick={() => {
                               trackEvent('search_result_click', {
                                 content_id: item.id,
@@ -226,7 +230,7 @@ export const Navbar: React.FC = () => {
                                     if (!course) return '';
                                     const access = getCardAccessState(course, user);
                                     const dur = course.episodes.reduce((s, ep) => s + ep.duration, 0);
-                                    return ` · ${formatClock(dur)} · ${
+                                    return ` · ${isolateClock(dur)} · ${
                                       access === 'open' ? 'פתוח' : access === 'preview' ? 'טעימה' : 'דורש מנוי'
                                     }`;
                                   })()
@@ -250,7 +254,7 @@ export const Navbar: React.FC = () => {
                   title="חיפוש בספרייה"
                   aria-label="חיפוש בספרייה"
                 >
-                  <Search className="w-5 h-5" />
+                  <Search className="w-5 h-5" data-icon="search" />
                   <span className="hidden lg:inline text-sm">חיפוש</span>
                   <kbd className="hidden xl:inline text-[10px] text-white/30">/</kbd>
                 </button>
@@ -262,7 +266,7 @@ export const Navbar: React.FC = () => {
             <button
               type="button"
               onClick={() => setView(currentView === 'lecturer' ? 'home' : 'lecturer')}
-              className={`hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs min-h-11 border transition-colors duration-200 ${
+              className={`header-chip hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full min-h-11 border transition-colors duration-200 ${
                 currentView === 'lecturer'
                   ? 'border-[#b79043] text-[#b79043] bg-[#b79043]/10'
                   : 'border-white/10 text-white/55 hover:text-white'
@@ -277,7 +281,7 @@ export const Navbar: React.FC = () => {
             <button
               type="button"
               onClick={() => setView(currentView === 'admin' ? 'home' : 'admin')}
-              className={`hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs min-h-11 border transition-colors duration-200 ${
+              className={`header-chip hidden lg:flex items-center gap-1.5 px-3 py-1.5 rounded-full min-h-11 border transition-colors duration-200 ${
                 currentView === 'admin'
                   ? 'border-[#b79043] text-[#b79043] bg-[#b79043]/10'
                   : 'border-white/10 text-white/55 hover:text-white'
@@ -293,27 +297,29 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setAuthModalOpen(true)}
-                className="hidden sm:inline-flex items-center px-4 py-2.5 rounded-full border border-white/25 text-white/85 text-sm font-medium hover:border-white/50 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
+                className="header-login hidden sm:inline-flex items-center px-4 rounded-full border border-white/25 text-white/85 font-medium hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
               >
                 כניסה
               </button>
             )}
 
-            <AccountMenu
-              onOpenProfile={() => setView('profile')}
-              onOpenAdmin={() => setView('admin')}
-              onOpenLecturer={() => setView('lecturer')}
-            />
+            <div className="header-account">
+              <AccountMenu
+                onOpenProfile={() => setView('profile')}
+                onOpenAdmin={() => setView('admin')}
+                onOpenLecturer={() => setView('lecturer')}
+              />
+            </div>
 
             {/* Mobile Hamburger CTA */}
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="md:hidden p-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/10 min-h-11 min-w-11 flex items-center justify-center"
+              className="header-burger md:hidden p-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/10 flex items-center justify-center"
               aria-label="תפריט ניווט"
               aria-expanded={isMobileMenuOpen}
             >
-              {isMobileMenuOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              {isMobileMenuOpen ? <X /> : <Menu />}
             </button>
 
           </div>
@@ -328,7 +334,7 @@ export const Navbar: React.FC = () => {
                 setView('mylist');
                 setIsMobileMenuOpen(false);
               }}
-              className="text-right px-4 py-3 rounded-xl text-base text-zinc-200 hover:bg-white/5 min-h-11"
+              className="text-start px-4 py-3 rounded-xl text-base text-zinc-200 hover:bg-white/5 min-h-11"
             >
               הרשימה
             </button>
@@ -340,7 +346,7 @@ export const Navbar: React.FC = () => {
                   setView(item.view);
                   setIsMobileMenuOpen(false);
                 }}
-                className={`text-right px-4 py-3 rounded-xl text-base min-h-11 ${
+                className={`text-start px-4 py-3 rounded-xl text-base min-h-11 ${
                   currentView === item.view ? 'bg-primary/15 text-primary-light font-bold' : 'text-zinc-200 hover:bg-white/5'
                 }`}
               >
@@ -354,7 +360,7 @@ export const Navbar: React.FC = () => {
                   setView(currentView === 'lecturer' ? 'home' : 'lecturer');
                   setIsMobileMenuOpen(false);
                 }}
-                className="text-right px-4 py-3 rounded-xl text-sm text-[#b79043] min-h-11"
+                className="text-start px-4 py-3 rounded-xl text-sm text-[#b79043] min-h-11"
               >
                 {currentView === 'lecturer' ? 'חזרה לספרייה' : 'אזור מרצה'}
               </button>
@@ -366,7 +372,7 @@ export const Navbar: React.FC = () => {
                   setView(currentView === 'admin' ? 'home' : 'admin');
                   setIsMobileMenuOpen(false);
                 }}
-                className="text-right px-4 py-3 rounded-xl text-sm text-[#b79043] min-h-11"
+                className="text-start px-4 py-3 rounded-xl text-sm text-[#b79043] min-h-11"
               >
                 {currentView === 'admin' ? 'חזרה לספרייה' : 'ניהול'}
               </button>
@@ -375,7 +381,7 @@ export const Navbar: React.FC = () => {
         )}
       </header>
 
-      <nav className="editorial-library-bottom-nav md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#0a0a0af2] backdrop-blur-xl border-t border-white/10 py-2 px-2 flex items-center justify-between" aria-label="ניווט תחתון — ספרייה">
+      <nav className="editorial-library-bottom-nav md:hidden fixed bottom-0 inset-inline-0 z-50 bg-[#0a0a0af2] backdrop-blur-xl border-t border-white/10 py-2 px-2 flex items-center justify-between" aria-label="ניווט תחתון — ספרייה">
         <button
           type="button"
           onClick={() => setView('home')}
