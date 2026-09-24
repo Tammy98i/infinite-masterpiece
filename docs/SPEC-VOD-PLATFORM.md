@@ -143,7 +143,7 @@ Overview · Content Analytics · Users · Lecturers (תור אישור) · Found
 
 `users` · `subscriptions` · `founders` · `lecturers` · `lecturer_applications` · `categories` · `videos` · `video_progress` · `watch_events` · `user_list` · `payments` · `analytics_events`
 
-תוספת לשלב 2 — Pods: ראו [`SPEC-PODS.md`](./SPEC-PODS.md) §7 (`pods` · `pod_members` · `pod_tasks` · `pod_task_submissions` · `pod_questions` · `pod_sessions`).
+Pods (בבנייה): ראו [`SPEC-PODS.md`](./SPEC-PODS.md) §7 (`pods` · `pod_members` · `pod_tasks` · `pod_task_submissions` · `pod_questions` · `pod_sessions`).
 
 רמות גישה לסרטון: `free` | `premium` | `premium_88` | `admin_only` | `draft`
 
@@ -160,6 +160,8 @@ Overview · Content Analytics · Users · Lecturers (תור אישור) · Found
 מרצים: `lecturer_application_started` · `lecturer_application_submitted` · `lecturer_approved` · `lecturer_rejected` · `lecture_uploaded` · `lecture_submitted_for_review` · `lecture_published`
 
 אדמין: `admin_opened_dashboard` · `admin_changed_user_role` · `admin_granted_access` · `admin_blocked_user` · `admin_published_video`
+
+פודים: ראו [`SPEC-PODS.md`](./SPEC-PODS.md) §9.
 
 ---
 
@@ -194,9 +196,9 @@ Overview · Content Analytics · Users · Lecturers (תור אישור) · Found
 
 ## שלב 2 (לא עכשיו)
 
-תגובות · שאלות למרצה · תשלומים למרצים · Revenue Share · AI recommendation · אפליקציה · Push · Community · Pods · Gamification · Certificates · מייל/וואטסאפ · מנוע הגרלות מלא
+תגובות · שאלות למרצה · תשלומים למרצים · Revenue Share · AI recommendation · אפליקציה · Push · Community · Gamification · Certificates · מייל/וואטסאפ · מנוע הגרלות מלא
 
-אפיון Pods (לא לבנייה עד הוצאה מסעיף זה): [`SPEC-PODS.md`](./SPEC-PODS.md). סקיצה: [`SPEC-PODS-SKETCH.md`](./SPEC-PODS-SKETCH.md).
+Pods הוצאו משלב 2 לבנייה לפי [`SPEC-PODS.md`](./SPEC-PODS.md). מייל/וואטסאפ של הפוד נשארים כאן. סקיצה: [`SPEC-PODS-SKETCH.md`](./SPEC-PODS-SKETCH.md).
 
 ---
 

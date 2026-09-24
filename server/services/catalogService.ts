@@ -393,6 +393,9 @@ export function getOverview() {
     applicationsPending: count(
       `SELECT COUNT(*) as c FROM lecturer_applications WHERE status = 'pending'`
     ),
+    openLeads:
+      count(`SELECT COUNT(*) as c FROM track_leads WHERE status = 'new'`) +
+      count(`SELECT COUNT(*) as c FROM webinar_registrations WHERE status = 'new'`),
     paywallHits: eventCount('paywall_opened'),
     upgrades: eventCount('upgrade_clicked'),
     conversionRate: users ? Math.round((paying / users) * 100) : 0,
@@ -551,6 +554,26 @@ export function updateUser(
   }
 
   return listUsers().find((u) => u.id === id);
+}
+
+export function deleteUser(id: string, actorId: string) {
+  const row = getDb().prepare(`SELECT id, role FROM users WHERE id = ?`).get(id) as SqlRow | undefined;
+  if (!row) throw Object.assign(new Error('המשתמש לא נמצא'), { status: 404 });
+  if (id === actorId) {
+    throw Object.assign(new Error('אי אפשר להסיר את החשבון שמחובר עכשיו'), { status: 400 });
+  }
+  if (String(row.role) === 'admin') {
+    const admins = Number(
+      (getDb().prepare(`SELECT COUNT(*) as c FROM users WHERE role = 'admin'`).get() as { c: number }).c || 0
+    );
+    if (admins <= 1) {
+      throw Object.assign(new Error('אי אפשר להסיר את האדמין האחרון'), { status: 400 });
+    }
+  }
+  const db = getDb();
+  db.prepare(`DELETE FROM sessions WHERE user_id = ?`).run(id);
+  db.prepare(`DELETE FROM users WHERE id = ?`).run(id);
+  return { id };
 }
 
 export function setCourseProgramWeek(id: string, week: number) {
