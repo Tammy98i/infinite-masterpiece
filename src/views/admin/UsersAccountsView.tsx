@@ -11,6 +11,7 @@ import { fieldClass, PLAN_LABEL, ROLE_LABEL } from './adminConstants';
 import { AdminListControls } from './AdminListControls';
 import { AdminStatusBadge } from './AdminStatusBadge';
 import { Bidi } from '../../components/Bidi';
+import { DeskMonogram } from '../../components/DeskMonogram';
 
 function profileRowFromAppUser(user: ReturnType<typeof useApp>['user']): ProfileListRow {
   return {
@@ -249,7 +250,7 @@ export function UsersAccountsView() {
         </select>
       </AdminListControls>
 
-      <div className="overflow-x-auto border border-white/10 rounded bg-white/[0.02]">
+      <div className="crm-desk-table">
         <table className="w-full text-sm text-start">
           <thead className="text-xs text-white/45 border-b border-white/10">
             <tr>
@@ -275,11 +276,16 @@ export function UsersAccountsView() {
                   className={`border-b border-white/5 ${selectedId === row.id ? 'bg-white/10' : ''}`}
                 >
                   <td>
-                    <span>{row.name}</span>
-                    <span className="text-xs text-white/35 ms-2">
-                      <Bidi kind="email">{row.email}</Bidi>
+                    <span className="crm-desk-who">
+                      <DeskMonogram name={row.name} />
+                      <span className="crm-desk-who-text">
+                        <span className="crm-desk-who-name">{row.name}</span>
+                        <span className="crm-desk-who-mail">
+                          <Bidi kind="email">{row.email}</Bidi>
+                        </span>
+                        {row.isFounder ? <span className="text-[10px] text-white/45">צוות</span> : null}
+                      </span>
                     </span>
-                    {row.isFounder ? <span className="text-[10px] text-white/45 ms-2">צוות</span> : null}
                   </td>
                   <td className="text-white/65">{ROLE_LABEL[row.role] || row.role}</td>
                   <td className="text-white/55">{PLAN_LABEL[row.subscriptionPlan] || row.subscriptionPlan}</td>

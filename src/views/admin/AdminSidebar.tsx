@@ -2,6 +2,7 @@ import { Fragment, useMemo, useState } from 'react';
 import { ChevronDown, Search } from 'lucide-react';
 import type { NavGroup, NavItem, Tab } from './adminNav';
 import { Bidi } from '../../components/Bidi';
+import { AsideVeils } from './AsideVeils';
 
 type AdminSidebarProps = {
   groups: NavGroup[];
@@ -11,17 +12,6 @@ type AdminSidebarProps = {
   userEmail?: string;
   onExit: () => void;
 };
-
-function AsideVeils() {
-  return (
-    <>
-      <span className="crm-desk-aside-veil crm-desk-aside-veil-a" aria-hidden />
-      <span className="crm-desk-aside-veil crm-desk-aside-veil-b" aria-hidden />
-      <span className="crm-desk-aside-veil crm-desk-aside-veil-c" aria-hidden />
-      <span className="crm-desk-aside-veil crm-desk-aside-veil-d" aria-hidden />
-    </>
-  );
-}
 
 function NavButton({ item, active, onClick }: { item: NavItem; active: boolean; onClick: () => void }) {
   const Icon = item.icon;
