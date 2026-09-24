@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, LogIn, LogOut, Mic, Shield, User } from 'lucide-react';
+import { Clock, LogIn, LogOut, Mic, Shield, User, Users } from 'lucide-react';
+import { podsApi } from '../api/pods';
 import { useUser } from '../context/UserContext';
 import { planLabel } from '../data/plans';
 import { getTrialDaysRemaining } from '../utils/recommendations';
@@ -22,7 +23,27 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
   } = useUser();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [showPod, setShowPod] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isGuest) {
+      setShowPod(false);
+      return;
+    }
+    let cancelled = false;
+    podsApi
+      .me()
+      .then((state) => {
+        if (!cancelled) setShowPod(state.showNav);
+      })
+      .catch(() => {
+        if (!cancelled) setShowPod(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isGuest, user.id]);
 
   const isUnpaid = user.subscriptionPlan === 'none';
   const isTrial = user.subscriptionPlan === 'free_trial';
@@ -212,6 +233,19 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
                 >
                   <Shield className="w-4 h-4" />
                   ניהול
+                </button>
+              )}
+              {showPod && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    navigate('/pod');
+                  }}
+                  className="w-full flex items-center justify-start gap-2 px-3 py-2.5 rounded-xl text-sm text-[#b79043] hover:bg-white/5 min-h-11"
+                >
+                  <Users className="w-4 h-4" />
+                  הפוד שלי
                 </button>
               )}
               {user.role === 'instructor' && (
