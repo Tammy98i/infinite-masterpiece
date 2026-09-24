@@ -21,21 +21,45 @@ export const TEAM_LEVEL_LABELS: Record<TeamLevel, string> = {
   founder: 'Founder', leadership: 'Leadership', core: 'Core Team', contributor: 'Contributors',
 };
 
-/** Every score changes diameter; the sun has a separate, non-overlapping size range. */
+/** Three clear sizes: founder, leadership, then the rest of the team. */
 export function starDiameter(member: Pick<TeamMember, 'impact_score' | 'hierarchy_level'>) {
   const score = Math.max(0, Math.min(100, member.impact_score));
-  return member.hierarchy_level === 'founder' ? 150 + score * 0.6 : 40 + score * 0.8;
+  if (member.hierarchy_level === 'founder') return 150 + score * 0.6;
+  if (member.hierarchy_level === 'leadership') return 88 + score * 0.22;
+  return 36 + score * 0.18;
 }
 export function sortTeam(members: TeamMember[]) {
   return [...members].sort((a, b) => TEAM_LEVELS.indexOf(a.hierarchy_level) - TEAM_LEVELS.indexOf(b.hierarchy_level)
     || a.orbit - b.orbit || a.display_order - b.display_order || b.impact_score - a.impact_score || a.id.localeCompare(b.id));
 }
-/** Six spacious slots per page; orbit and impact adjust distance without changing text orientation. */
-export function starPosition(member: TeamMember, slot: number) {
-  if (member.hierarchy_level === 'founder') return { x: 50, y: 52 };
-  const angle = [-145, -35, 145, 35, 180, 0][slot % 6] * Math.PI / 180;
-  const distance = member.orbit * 1.5 + (100 - member.impact_score) * 0.025;
-  return { x: 50 + Math.cos(angle) * (30 + distance), y: 52 + Math.sin(angle) * (30 + distance) };
+/** Evenly sample an arc, inclusive of both ends when more than one seat. */
+function sampleArc(startDeg: number, endDeg: number, count: number, index: number) {
+  if (count <= 1) return (startDeg + endDeg) / 2;
+  return startDeg + (endDeg - startDeg) * (index / (count - 1));
+}
+
+/** Side seats only. Wider horseshoe when the roster grows so names do not merge. */
+function contributorAngle(slot: number, count: number) {
+  const leftCount = Math.ceil(count / 2);
+  const onLeft = slot < leftCount;
+  const wide = count > 6;
+  const degrees = onLeft
+    ? sampleArc(wide ? 222 : 202, wide ? 138 : 148, leftCount, slot)
+    : sampleArc(wide ? 42 : 32, wide ? -42 : -22, count - leftCount, slot - leftCount);
+  return degrees * Math.PI / 180;
+}
+
+/** Leadership stays close to the sun. The rest of the team sit on two side arcs. */
+export function starPosition(member: TeamMember, slot: number, total = 6) {
+  if (member.hierarchy_level === 'founder') return { x: 50, y: 48 };
+  if (member.hierarchy_level === 'leadership') {
+    const angle = [-155, -25][slot % 2] * Math.PI / 180;
+    return { x: 50 + Math.cos(angle) * 26, y: 48 + Math.sin(angle) * 15 };
+  }
+  const count = Math.max(1, total);
+  const angle = contributorAngle(slot, count);
+  const distance = 40 + Math.max(0, count - 6) * 2 + member.orbit * 0.45 + (100 - member.impact_score) * 0.02;
+  return { x: 50 + Math.cos(angle) * distance, y: 48 + Math.sin(angle) * (distance * 0.86) };
 }
 
 export function validateTeamMember(raw: unknown): TeamMemberInput {

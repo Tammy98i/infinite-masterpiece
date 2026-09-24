@@ -35,20 +35,22 @@ interface LayoutProps {
 }
 
 export function Layout({ children }: LayoutProps) {
-  const isHome = useLocation().pathname === '/';
+  const pathname = useLocation().pathname;
+  const isHome = pathname === '/';
+  const onWebinar = pathname.startsWith('/webinar');
   return (
-    <div className={`${isHome ? 'video-home ' : ''}editorial-marketing-shell marketing-shell sky-readable min-h-screen flex flex-col relative bg-transparent text-white selection:bg-[#b79043]/30 selection:text-white`}>
+    <div className={`${isHome ? 'video-home ' : ''}${onWebinar ? 'webinar-isolated ' : ''}editorial-marketing-shell marketing-shell sky-readable min-h-screen flex flex-col relative bg-transparent text-white selection:bg-[#b79043]/30 selection:text-white`}>
 
       <div className="relative z-10 flex flex-col min-h-screen">
         <a href="#main-content" className="skip-link">
           דילוג לתוכן הראשי
         </a>
-        <Header />
-        <main id="main-content" className={`flex-1 w-full text-center ${isHome ? '' : 'pt-24'}`} tabIndex={-1}>
+        {onWebinar ? null : <Header />}
+        <main id="main-content" className="site-main flex-1 w-full text-start" tabIndex={-1}>
           {children}
         </main>
-        <ConversionBand />
-        <Footer />
+        {onWebinar ? null : <ConversionBand />}
+        {onWebinar ? null : <Footer />}
       </div>
     </div>
   );

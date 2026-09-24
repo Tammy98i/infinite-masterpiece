@@ -25,6 +25,11 @@ docker compose -f docker-compose.base44.yml up -d
 - Founder: `gal@infinitemasterpiece.local` / `Masterpiece88`
 - Staff: `tami@infinitemasterpiece.local` / `Masterpiece88`
 - Lecturer: `lecturer@infinitemasterpiece.local` / `Masterpiece88`
+- Journey member (pod): `journey@infinitemasterpiece.local` / `Masterpiece88`
+- Hesitant queue (unassigned): `hesitant@infinitemasterpiece.local` / `Masterpiece88`
+- Library-only (not in pod queue): `library@infinitemasterpiece.local` / `Masterpiece88`
+- Approved 88 queue: `p88@infinitemasterpiece.local` / `Masterpiece88`
+- Gal is captain of the demo journey pod.
 
 ## Notes
 - SQLite DB persists in the `vod-data` Docker volume across restarts.
@@ -35,7 +40,7 @@ docker compose -f docker-compose.base44.yml up -d
 - `/webinar#team-universe` renders the team galaxy; Admin → גלקסיית הצוות manages the separate `team_members` collection.
 - `initializeTeamMembers` runs after founder/catalog seeding. A `site_settings.team_members_imported` marker makes this a one-time import; CMS edits and hidden members survive restarts. Only existing founder records plus the webinar's Gleb profile are imported. Initial impact scores are editable presentation defaults, not verified measurements.
 - Public `GET /api/team-members` returns active members only. `/api/admin/team-members` GET/POST/PUT uses the existing server-side admin authentication and audit log. Only one active founder is allowed. Images use the existing authenticated `/api/upload` flow.
-- Gleb's image is absent from the repository: the new profile starts with an empty photo and renders a gold monogram, not a stock image.
+- Gleb's portrait is `public/team/gleb.jpg`. Supporting galaxy profiles (contributor) render in a smaller row under the founder and leadership, and are inserted once by name so later CMS edits survive restarts.
 - The Base44 Compose command now uses `tsx watch` alongside Vite so API source edits reload too.
 - Explicitly empty VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY must remain empty, not fall back to the project's published Supabase defaults. Otherwise local demo login returns a client-only preview token that cannot authorize API writes. With local defaults, sign out of any old preview-only session and log in again to get a real SQLite session.
 - These endpoints are implemented for the Express runtime used by Compose; the separate Vercel serverless API tree does not provide the new Team Members endpoints.
@@ -43,7 +48,7 @@ docker compose -f docker-compose.base44.yml up -d
 - Production Docker builds require `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` as build args. Supabase currently owns authentication/profiles; the broader content store still uses SQLite pending a separate asynchronous data-layer migration.
 
 ## Homepage SpaceEdu hero
-- `SpaceHero` replaces the former homepage `VideoHero` and owns its branded Infinite Masterpiece navigation, original Hebrew hero copy and webinar-phase CTAs alongside the planet-switching state, lazy video loading, entrance sequence, and responsive composition. The regular site Header is hidden on home only; all other routes retain it unchanged.
+- `SpaceHero` replaces the former homepage `VideoHero` and owns the original Hebrew hero copy and webinar-phase CTAs alongside the planet-switching state, lazy video loading, entrance sequence, and responsive composition. The same site `Header` stays fixed on the home, webinar, and other marketing routes: one height, one shape, and the same links. Webinar section anchors live in a separate sticky subnav.
 - Earth is the initial feature; Venus and Mars occupy the left/right slots. Each slot contains all three preloaded cut-out images and switches visibility by class, while non-featured video clips receive a `src` only after selection.
 - `SiteBackdropLayout` provides the persistent static `SkyBackdrop` (user-provided blue Milky Way starfield hosted on `media.base44.com`, `025d40d79_image.png`) behind every route. Translucent navy surfaces preserve the image throughout marketing and library routes; gold remains the accent color. The three planet clips are scoped to the homepage hero and unmount on navigation.
 - Reduced motion includes both the OS preference and the accessibility widget's `a11y-reduce-motion` class: clips are hidden in favor of the selected poster and planet transforms/entrance animations are disabled.

@@ -1,47 +1,53 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Menu, Search, X, Infinity as InfinityIcon } from 'lucide-react';
-import { cn } from '../lib/utils';
+import { Menu, X, Infinity as InfinityIcon } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { AccountMenu } from '../../components/AccountMenu';
 import { scrollToWebinarForm, trackWebinarCta } from '../../utils/analytics';
 import {
   WEBINAR_CTA_HEADER,
+  WEBINAR_CTA_REGISTER,
   WEBINAR_CTA_NEXT_CYCLE,
   WEBINAR_CTA_NEXT_CYCLE_SHORT,
   WEBINAR_CTA_SHORT,
   WEBINAR_REGISTER_ID,
 } from '../../constants/webinarPage';
 import { useWebinarPhase } from '../hooks/useWebinarPhase';
-import { SiteSearch } from './SiteSearch';
-
-const WEBINAR_NAV = [
-  { name: 'הצוות', to: '/webinar#hosts' },
-  { name: 'התאמה', to: '/webinar#webinar-fit' },
-  { name: 'שאלות נפוצות', to: '/webinar#webinar-faq' },
-];
 
 export function Header() {
-  const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const location = useLocation();
-  const onHome = location.pathname === '/';
   const menuRef = useRef<HTMLDivElement>(null);
   const burgerRef = useRef<HTMLButtonElement>(null);
-  const onPremium88 = location.pathname === '/premium-88';
   const onPricing = location.pathname === '/pricing';
-  const onJourney = location.pathname === '/journey';
   const onWebinarLanding = location.pathname === '/webinar';
   const onWebinar = location.pathname.startsWith('/webinar');
+  const onHesitation = location.pathname.startsWith('/hesitation');
+  const onDecision = onPricing || onHesitation;
   const { phase, liveEnter } = useWebinarPhase();
 
-  const headerCtaClass = 'btn-gold text-black text-sm px-5 py-3';
+  const headerCtaClass = 'header-cta btn-gold text-black';
+
+  const decisionCta = (className: string, onClick?: () => void) => {
+    if (onHesitation && !location.pathname.startsWith('/hesitation-success')) {
+      return (
+        <a href="#hesitation-form" onClick={onClick} className={className}>
+          המשך במסלול
+        </a>
+      );
+    }
+    return (
+      <Link to="/#pricing" onClick={onClick} className={className}>
+        בחירת מסלול
+      </Link>
+    );
+  };
 
   const headerCta = () => {
+    if (onDecision) return decisionCta(headerCtaClass);
     if (phase === 'ended') {
       return (
-        <Link to="/pricing" className={headerCtaClass}>
+        <Link to="/#pricing" className={headerCtaClass}>
           {WEBINAR_CTA_NEXT_CYCLE}
         </Link>
       );
@@ -62,23 +68,24 @@ export function Header() {
     if (onWebinarLanding) {
       return (
         <button type="button" onClick={goToWebinarForm} className={headerCtaClass}>
-          {WEBINAR_CTA_HEADER}
+          {WEBINAR_CTA_REGISTER}
         </button>
       );
     }
     return (
       <Link to={onWebinar ? `/webinar#${WEBINAR_REGISTER_ID}` : '/webinar'} className={headerCtaClass}>
-        {WEBINAR_CTA_HEADER}
+        {WEBINAR_CTA_REGISTER}
       </Link>
     );
   };
 
-  const compactBarCtaClass = 'btn-gold text-black text-[12px] px-3 py-2 shrink-0';
+  const compactBarCtaClass = 'header-cta btn-gold text-black shrink-0';
 
   const compactBarCta = () => {
+    if (onDecision) return decisionCta(compactBarCtaClass);
     if (phase === 'ended') {
       return (
-        <Link to="/pricing" className={compactBarCtaClass}>
+        <Link to="/#pricing" className={compactBarCtaClass}>
           {WEBINAR_CTA_NEXT_CYCLE_SHORT}
         </Link>
       );
@@ -113,9 +120,10 @@ export function Header() {
   const mobileHeaderCta = () => {
     const close = () => setMobileMenuOpen(false);
     const mobileClass = 'btn-gold text-black text-base block w-full text-center px-8 py-4';
+    if (onDecision) return decisionCta(mobileClass, close);
     if (phase === 'ended') {
       return (
-        <Link to="/pricing" onClick={close} className={mobileClass}>
+        <Link to="/#pricing" onClick={close} className={mobileClass}>
           {WEBINAR_CTA_NEXT_CYCLE}
         </Link>
       );
@@ -158,28 +166,11 @@ export function Header() {
   };
 
   useEffect(() => {
-    const handleScroll = () => setIsScrolled(window.scrollY > 20);
-    const handleSearch = (event: KeyboardEvent) => {
-      const target = event.target as HTMLElement;
-      if ((event.key === '/' || ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k')) && !['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
-        event.preventDefault();
-        setSearchOpen(true);
-      }
-    };
-    window.addEventListener('scroll', handleScroll);
-    window.addEventListener('keydown', handleSearch);
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      window.removeEventListener('keydown', handleSearch);
-    };
-  }, []);
-
-  useEffect(() => {
     setMobileMenuOpen(false);
-  }, [location.pathname]);
+  }, [location.pathname, location.hash]);
 
   useEffect(() => {
-    if (!onHome || !mobileMenuOpen) return;
+    if (!mobileMenuOpen) return;
     const outside = (event: MouseEvent) => {
       if (!menuRef.current?.contains(event.target as Node) && !burgerRef.current?.contains(event.target as Node)) setMobileMenuOpen(false);
     };
@@ -195,16 +186,7 @@ export function Header() {
       document.removeEventListener('click', outside);
       document.removeEventListener('keydown', escape);
     };
-  }, [onHome, mobileMenuOpen]);
-
-  const defaultNavLinks: Array<{ name: string; to: string; accent?: boolean }> = [
-    { name: 'וובינר', to: '/webinar', accent: true },
-    { name: 'תהליך', to: '/journey' },
-    { name: 'צוות המיזם', to: '/premium-88' },
-    { name: 'מחירון', to: '/pricing' },
-    { name: 'שאלות', to: '/faq' },
-  ];
-  const navLinks = onWebinar ? WEBINAR_NAV : defaultNavLinks;
+  }, [mobileMenuOpen]);
 
   const goToWebinarForm = () => {
     trackWebinarCta('header');
@@ -216,23 +198,16 @@ export function Header() {
   };
 
   return (
-    <>
     <header
       role="banner"
       aria-label="כותרת האתר"
-      className={cn(
-        'editorial-site-header fixed top-0 inset-x-0 z-50 h-20 transition-colors duration-300',
-        onHome && 'home-header',
-        isScrolled
-          ? 'bg-[#0d0b08]/82 backdrop-blur-2xl border-b border-white/[0.08]'
-          : 'bg-gradient-to-b from-[#0d0b08]/80 via-[#0d0b08]/35 to-transparent border-b border-transparent'
-      )}
+      className="editorial-site-header fixed top-0 inset-inline-0 z-50"
     >
-      <div className="header-row mx-auto grid h-full w-full max-w-[1400px] grid-cols-[auto_minmax(0,1fr)_auto] items-center gap-4 px-4 sm:px-8 lg:px-10">
-          <Link to="/" className="header-logo flex items-center gap-3 sm:gap-4 group shrink-0 min-h-11">
-            <InfinityIcon className="w-8 h-8 text-[#dfc47d] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
-            <div className="flex flex-col">
-              <span className="font-light text-[13px] sm:text-[15px] tracking-[0.25em] text-white/90 leading-tight uppercase">
+      <div className="header-row mx-auto grid h-full w-full max-w-[1400px] grid-cols-[auto_minmax(0,1fr)_auto] items-center">
+          <Link to="/" aria-label="Infinite Masterpiece, דף הבית" className="header-logo flex items-center gap-2.5 sm:gap-3 lg:gap-4 group shrink-0">
+            <InfinityIcon className="header-logo-mark text-[#dfc47d] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
+            <div className="header-wordmark flex flex-col">
+              <span className="font-light tracking-[0.22em] text-white/90 leading-tight uppercase">
                 Infinite
                 <br/>
                 <span className="font-medium">Masterpiece</span>
@@ -240,55 +215,31 @@ export function Header() {
             </div>
           </Link>
 
-          <nav className="header-links hidden lg:flex items-center justify-center gap-6 xl:gap-10 min-w-0" aria-label="ניווט ראשי">
-            {navLinks.map((link) => (
-              <Link
-                key={link.name}
-                to={link.to}
-                className={cn(
-                  'text-[13px] font-light tracking-wide transition-colors duration-300',
-                  onWebinar
-                    ? 'text-white/85 hover:text-white'
-                    : 'accent' in link && link.accent
-                    ? onWebinar && link.to === '/webinar'
-                      ? 'text-[#dfc47d] font-medium'
-                      : onPremium88 && link.to === '/premium-88'
-                      ? 'text-[#dfc47d] font-medium'
-                      : 'text-[#b79043] hover:text-[#dfc47d]'
-                    : link.to === '/pricing' && onPricing
-                    ? 'text-white font-medium'
-                    : link.to === '/journey' && onJourney
-                    ? 'text-white font-medium'
-                    : 'text-white/85 hover:text-white'
-                )}
-              >
-                {link.name}
-              </Link>
-            ))}
-          </nav>
+          <div className="header-links min-w-0" aria-hidden="true" />
 
-          <div className="header-actions flex items-center justify-end gap-2 sm:gap-3 shrink-0">
-            <button type="button" onClick={() => setSearchOpen(true)} className="flex min-h-11 min-w-11 items-center justify-center rounded-full text-white/60 transition-colors hover:bg-white/5 hover:text-white" aria-label="חיפוש באתר"><Search className="h-5 w-5" strokeWidth={1.5} /></button>
-            <div className="header-desktop hidden lg:flex items-center gap-3">
+          <div className="header-actions flex items-center justify-end shrink-0">
+            <div className="header-desktop hidden md:flex items-center">
               {headerCta()}
-              {!onWebinar ? (
-                <Link
-                  to="/library"
-                  className="px-5 py-3 rounded-full text-sm font-medium text-white/85 hover:text-[#b79043] transition-colors duration-500 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d0b08]"
-                  aria-label="כניסה לספרייה אינסופית. קורסים והרצאות אונליין"
-                >
-                  ספרייה
-                </Link>
-              ) : null}
-              <AccountMenu />
+              <Link
+                to="/library"
+                className="header-library-link text-white/85 hover:text-[#b79043] transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] focus-visible:ring-offset-2 focus-visible:ring-offset-[#0d0b08]"
+                aria-label="כניסה לספרייה אינסופית. קורסים והרצאות אונליין"
+              >
+                ספרייה
+              </Link>
+              <div className="header-account">
+                <AccountMenu />
+              </div>
             </div>
-            <div className="header-mobile flex items-center gap-2 lg:hidden">
+            <div className="header-mobile flex items-center md:hidden">
               <div className="header-compact-cta">{compactBarCta()}</div>
-              <AccountMenu />
+              <div className="header-account">
+                <AccountMenu />
+              </div>
               <button
                 type="button"
                 ref={burgerRef}
-                className="header-burger p-2 text-white/85 hover:text-white transition-colors min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
+                className="header-burger p-2 text-white/85 hover:text-white transition-colors flex items-center justify-center cursor-pointer"
                 onClick={(event) => {
                   event.stopPropagation();
                   setMobileMenuOpen((open) => !open);
@@ -297,7 +248,7 @@ export function Header() {
                 aria-controls="site-mobile-menu"
                 aria-expanded={mobileMenuOpen}
               >
-                {mobileMenuOpen ? <X className="w-6 h-6" strokeWidth={1.5} /> : <Menu className="w-6 h-6" strokeWidth={1.5} />}
+                {mobileMenuOpen ? <X strokeWidth={1.5} /> : <Menu strokeWidth={1.5} />}
               </button>
             </div>
           </div>
@@ -313,40 +264,23 @@ export function Header() {
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
-            className="header-panel lg:hidden absolute top-full left-0 right-0 bg-[#0d0b08]/95 backdrop-blur-3xl border-b border-white/[0.05]"
+            className="header-panel md:hidden absolute top-full inset-inline-0 bg-[#0d0b08]/95 backdrop-blur-3xl border-b border-white/[0.05]"
           >
             <nav className="px-6 py-8 flex flex-col gap-6" aria-label="ניווט נייד">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.name}
-                  to={link.to}
-                  className={cn(
-                    'text-lg font-light',
-                    'accent' in link && link.accent ? 'text-[#dfc47d]' : 'text-white/90 hover:text-white'
-                  )}
-                  onClick={() => setMobileMenuOpen(false)}
-                >
-                  {link.name}
-                </Link>
-              ))}
-              <div className="pt-6 border-t border-white/[0.05] flex flex-col gap-4">
+              <div className="flex flex-col gap-4">
                 {mobileHeaderCta()}
-                {!onWebinar ? (
-                  <Link
-                    to="/library"
-                    onClick={() => setMobileMenuOpen(false)}
-                    className="block w-full text-center px-8 py-3 text-sm text-white/85 hover:text-[#b79043] min-h-11"
-                  >
-                    כבר בפנים? כניסה לספרייה
-                  </Link>
-                ) : null}
+                <Link
+                  to="/library"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="block w-full text-center px-8 py-3 text-sm text-white/85 hover:text-[#b79043] min-h-11"
+                >
+                  כבר בפנים? כניסה לספרייה
+                </Link>
               </div>
             </nav>
           </motion.div>
         )}
       </AnimatePresence>
     </header>
-    <SiteSearch open={searchOpen} onClose={() => setSearchOpen(false)} />
-    </>
   );
 }

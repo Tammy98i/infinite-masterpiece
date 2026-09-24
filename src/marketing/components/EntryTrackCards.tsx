@@ -1,6 +1,8 @@
 import { useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { Check } from 'lucide-react';
+import { Price } from '../../components/Price';
+import { formatIls } from '../../utils/bidi';
 import { ENTRY_TRACK_FINE_PRINT } from '../../data/entryTracks';
 import { trackEvent } from '../../utils/analytics';
 
@@ -25,7 +27,7 @@ export function EntryTrackCards() {
   return (
     <div className="w-full max-w-4xl mx-auto">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-center items-stretch">
-        <article className="glass-card flex flex-col p-5 sm:p-6">
+        <article data-track="brave" className="glass-card flex flex-col p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3 min-h-8 mb-3">
             <h3 className="text-lg sm:text-xl font-heading text-white">מסלול האמיצים</h3>
             <span className="shrink-0 px-2.5 py-1 rounded-full bg-[#b79043] text-black text-[10px] font-semibold tracking-wide">
@@ -35,9 +37,10 @@ export function EntryTrackCards() {
           <p className="text-[13px] text-white/50 font-light mb-4 min-h-10">
             למי שכבר יודע/ת שזה הזמן להיכנס עד הסוף.
           </p>
-          <div className="mb-4 min-h-14">
-            <p className="text-2xl font-accent font-semibold tabular-nums text-white">8,008 ₪</p>
-            <p className="text-[11px] text-white/35 mt-1">+ מע״מ · תשלום מלא</p>
+          <div className="mb-5">
+            <p className="text-[11px] uppercase tracking-[.18em] text-[#dfc47d]">לפני מע״מ</p>
+            <p className="mt-2 text-4xl font-accent font-semibold leading-none text-white sm:text-5xl"><Price amount={8008} /></p>
+            <p className="mt-2 text-sm text-white/70">תשלום אחד</p>
           </div>
           <FeatureList
             items={[
@@ -55,7 +58,7 @@ export function EntryTrackCards() {
           </Link>
         </article>
 
-        <article className="glass-card flex flex-col p-5 sm:p-6">
+        <article data-track="hesitant" className="glass-card flex flex-col p-5 sm:p-6">
           <div className="flex items-center justify-between gap-3 min-h-8 mb-3">
             <h3 className="text-lg sm:text-xl font-heading text-white">מסלול ההססנים</h3>
             <span className="shrink-0 px-2.5 py-1 text-[10px] opacity-0 pointer-events-none" aria-hidden>
@@ -65,14 +68,15 @@ export function EntryTrackCards() {
           <p className="text-[13px] text-white/50 font-light mb-4 min-h-10">
             למי שרוצה להיכנס שלב שלב. גישה מלאה מההתחלה.
           </p>
-          <div className="mb-4 min-h-14">
-            <p className="text-2xl font-accent font-semibold tabular-nums text-white">8 ₪ היום</p>
-            <p className="text-[11px] text-white/35 mt-1">ואחר כך 80 · 800 · 8,000</p>
+          <div className="mb-5">
+            <p className="text-[11px] uppercase tracking-[.18em] text-[#dfc47d]">לפני מע״מ · ארבע פעימות</p>
+            <p className="mt-2 text-4xl font-accent font-semibold leading-none text-white sm:text-5xl"><Price amount={8888} /></p>
+            <p className="mt-2 text-sm text-white/70">8 היום · אחר כך 80 · 800 · 8,000</p>
           </div>
           <FeatureList
             items={[
               'גישה מלאה למיזם ולספרייה',
-              'סך הכל: 8,888 ₪ לפני מע״מ',
+              'לא הנחה ולא מסלול חלקי',
               'כרטיס כניסה אחד לכל הגרלה',
             ]}
           />
@@ -81,7 +85,7 @@ export function EntryTrackCards() {
             onClick={() => trackEvent('hesitant_track_clicked')}
             className="mt-auto inline-flex justify-center items-center w-full py-3 px-4 rounded-full text-white border border-[#b79043]/40 hover:border-[#dfc47d] hover:text-[#dfc47d] font-medium text-sm min-h-11"
           >
-            אני מתחיל/ה ב־8 ₪
+            אני מתחיל/ה ב־{formatIls(8)}
           </Link>
         </article>
       </div>

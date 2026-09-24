@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, Infinity as InfinityIcon } from 'lucide-react';
+import { DirNext } from '../../components/DirArrow';
 import { WEBINAR_CTA_ENDED, WEBINAR_CTA_HEADER, WEBINAR_CTA_NEXT_CYCLE } from '../../constants/webinarPage';
 import { useWebinarPhase } from '../hooks/useWebinarPhase';
 import './SpaceHero.css';
@@ -62,11 +62,8 @@ function PlanetSlot({ side, planet, onSelect }: { side: 'l' | 'r'; planet: Plane
 
 export function SpaceHero() {
   const rootRef = useRef<HTMLElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-  const burgerRef = useRef<HTMLButtonElement>(null);
   const [featured, setFeatured] = useState<PlanetId>('earth');
   const [loaded, setLoaded] = useState<Set<PlanetId>>(() => new Set(['earth']));
-  const [menuOpen, setMenuOpen] = useState(false);
   const { phase } = useWebinarPhase();
 
   const featuredIndex = PLANETS.findIndex((planet) => planet.id === featured);
@@ -106,24 +103,6 @@ export function SpaceHero() {
     });
   }, [featured, loaded]);
 
-  useEffect(() => {
-    if (!menuOpen) return;
-    const closeOutside = (event: MouseEvent) => {
-      if (!menuRef.current?.contains(event.target as Node) && !burgerRef.current?.contains(event.target as Node)) setMenuOpen(false);
-    };
-    const closeEscape = (event: KeyboardEvent) => {
-      if (event.key !== 'Escape') return;
-      setMenuOpen(false);
-      burgerRef.current?.focus();
-    };
-    document.addEventListener('click', closeOutside);
-    document.addEventListener('keydown', closeEscape);
-    return () => {
-      document.removeEventListener('click', closeOutside);
-      document.removeEventListener('keydown', closeEscape);
-    };
-  }, [menuOpen]);
-
   return (
     <section ref={rootRef} className="space-hero" aria-labelledby="space-hero-title" dir="ltr">
       <div className="space-sky" style={{ backgroundImage: `url(${current.poster})` }}>
@@ -145,40 +124,6 @@ export function SpaceHero() {
       </div>
 
       <div className="space-ui">
-        <header className="space-navbar">
-          <div className="space-navrow" data-open={menuOpen} dir="rtl">
-            <Link className="space-logo" to="/" aria-label="Infinite Masterpiece — דף הבית">
-              <InfinityIcon aria-hidden="true" strokeWidth={1} />
-              <span>Infinite<br /><b>Masterpiece</b></span>
-            </Link>
-            <div ref={menuRef} className="space-links" id="space-site-nav">
-              <Link to="/webinar" onClick={() => setMenuOpen(false)}>וובינר</Link>
-              <Link to="/journey" onClick={() => setMenuOpen(false)}>תהליך</Link>
-              <Link to="/premium-88" onClick={() => setMenuOpen(false)}>צוות המיזם</Link>
-              <Link to="/pricing" onClick={() => setMenuOpen(false)}>מחירון</Link>
-              <Link to="/faq" onClick={() => setMenuOpen(false)}>שאלות</Link>
-              <Link className="space-library" to="/library" onClick={() => setMenuOpen(false)}>ספרייה</Link>
-              <Link className="space-enroll" to={phase === 'ended' ? '/pricing' : '/webinar'} onClick={() => setMenuOpen(false)}>
-                {phase === 'ended' ? WEBINAR_CTA_NEXT_CYCLE : WEBINAR_CTA_HEADER}
-              </Link>
-            </div>
-            <button
-              ref={burgerRef}
-              className="space-burger"
-              type="button"
-              aria-label={menuOpen ? 'Close navigation' : 'Open navigation'}
-              aria-expanded={menuOpen}
-              aria-controls="space-site-nav"
-              onClick={(event) => {
-                event.stopPropagation();
-                setMenuOpen((open) => !open);
-              }}
-            >
-              <span /><span /><span />
-            </button>
-          </div>
-        </header>
-
         <div className="space-copy" dir="rtl">
           <h1 className="space-col space-title" id="space-hero-title">
             <span className="space-ent-mask"><span className="space-ent-line">The Masterpiece</span></span>
@@ -189,13 +134,13 @@ export function SpaceHero() {
           <div className="space-col space-cta">
             <PlanetSlot side="l" planet={left} onSelect={selectPlanet} />
             <PlanetSlot side="r" planet={right} onSelect={selectPlanet} />
-            <Link to={phase === 'ended' ? '/pricing' : '/webinar'}>
-              {phase === 'ended' ? WEBINAR_CTA_NEXT_CYCLE : WEBINAR_CTA_HEADER}<ArrowLeft aria-hidden="true" />
+            <Link to={phase === 'ended' ? '/#pricing' : '/webinar'}>
+              {phase === 'ended' ? WEBINAR_CTA_NEXT_CYCLE : WEBINAR_CTA_HEADER}<DirNext />
             </Link>
             <span className="space-label space-label-l">{left.name}</span>
             <span className="space-label space-label-r">{right.name}</span>
             <div className="space-secondary-actions">
-              {phase === 'ended' ? <p className="space-ended">{WEBINAR_CTA_ENDED}</p> : <a href="/#pricing">למסלול האמיצים והססנים</a>}
+              {phase === 'ended' ? <p className="space-ended">{WEBINAR_CTA_ENDED}</p> : <Link to="/#pricing">למסלול האמיצים והססנים</Link>}
               <Link to="/library">כבר בפנים? כניסה לספרייה</Link>
             </div>
           </div>

@@ -7,6 +7,7 @@ export const WEBINAR_AUDIENCE_LABEL = 'יוצרים, אמנים, מומחים ו
 
 export const WEBINAR_REGISTER_ID = 'webinar-register';
 export const WEBINAR_CTA_PRIMARY = 'כן. אני מגיע/ה לערב החי';
+export const WEBINAR_CTA_REGISTER = 'הרשמה לערב החי';
 export const WEBINAR_CTA_SHORT = 'אני מגיע/ה';
 export const WEBINAR_CTA_HEADER = 'אני מגיע/ה לערב החי';
 export const WEBINAR_CTA_FIT = 'כן. זה מתאים לי. אני מגיע/ה';
@@ -139,8 +140,11 @@ export const WEBINAR_FIT_NO = [
 export const WEBINAR_GLEB = {
   name: 'גלב סמירנוב',
   title: 'CCO בפועל / קריאייטיב / תוכן / צילום / מותג',
-  bio: 'מוביל את שכבת הקריאייטיב, השפה הוויזואלית, התוכן והמותג.',
+  photo: '/team/gleb.jpg',
+  bio: 'יוצר חזותי עם מעל 13 שנות ניסיון בצילום סטילס, וידאו ותוכן AI. עובד עם עסקים ומותגים בישראל, מהמסעדה השכונתית ועד למותגים מובילים, ומספר את הסיפור שלהם בשפה ויזואלית מדויקת, נקייה וכזו שמוכרת.',
 };
+
+export const WEBINAR_GLEB_PREVIOUS_BIO = 'מוביל את שכבת הקריאייטיב, השפה הוויזואלית, התוכן והמותג.';
 
 export const WEBINAR_ECOSYSTEM = [
   { title: 'שידור על', text: 'מפגש חי שמרכז את התנועה. לא עוד שידור השראה.' },

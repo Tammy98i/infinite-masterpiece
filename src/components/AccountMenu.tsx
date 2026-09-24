@@ -1,10 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, LogIn, LogOut, Mic, Shield, User } from 'lucide-react';
+import { Clock, LogIn, LogOut, Mic, Shield, User, Users } from 'lucide-react';
+import { podsApi } from '../api/pods';
 import { useUser } from '../context/UserContext';
 import { planLabel } from '../data/plans';
 import { getTrialDaysRemaining } from '../utils/recommendations';
 import { libraryPath } from '../utils/libraryPath';
+import { Bidi } from './Bidi';
 
 interface AccountMenuProps {
   onOpenProfile?: () => void;
@@ -21,7 +23,27 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
   } = useUser();
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
+  const [showPod, setShowPod] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (isGuest) {
+      setShowPod(false);
+      return;
+    }
+    let cancelled = false;
+    podsApi
+      .me()
+      .then((state) => {
+        if (!cancelled) setShowPod(state.showNav);
+      })
+      .catch(() => {
+        if (!cancelled) setShowPod(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [isGuest, user.id]);
 
   const isUnpaid = user.subscriptionPlan === 'none';
   const isTrial = user.subscriptionPlan === 'free_trial';
@@ -68,7 +90,12 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
 
   const goLecturer = () => goLibrary('lecturer');
 
-  const goPricing = () => {
+  const goLibraryAccess = () => {
+    setOpen(false);
+    navigate('/library-membership');
+  };
+
+  const goFitCheck = () => {
     setOpen(false);
     navigate('/pricing');
   };
@@ -78,10 +105,10 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
       {isTrial && trialDaysLeft !== null && trialDaysLeft >= 0 && (
         <button
           type="button"
-          onClick={goPricing}
+          onClick={goLibraryAccess}
           className="hidden md:inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-primary/10 border border-primary/30 text-primary-light text-xs font-bold min-h-11"
         >
-          <Clock className="w-3.5 h-3.5" />
+          <Clock className="w-3.5 h-3.5" data-icon="clock" />
           <span>{trialDaysLeft} ימי ניסיון נותרו</span>
         </button>
       )}
@@ -94,7 +121,7 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
         }
         aria-expanded={open}
         aria-haspopup="dialog"
-        className={`inline-flex items-center gap-2 p-1 pl-3 rounded-full border transition-all min-h-11 ${
+        className={`inline-flex items-center gap-2 p-1 pe-3 rounded-full border transition-all min-h-11 ${
           open || !isGuest
             ? 'border-primary-light bg-primary-light/10'
             : 'border-primary-light/50 bg-primary-light/10 hover:border-primary-light'
@@ -114,7 +141,7 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
           </>
         ) : (
           <>
-            <span className="text-xs font-bold text-white pr-1">הצטרפו</span>
+            <span className="text-xs font-bold text-white ps-1">הצטרפו</span>
             <span className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-light text-black flex items-center justify-center">
               <User className="w-4 h-4" />
             </span>
@@ -126,7 +153,7 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
         <div
           role="dialog"
           aria-label="אזור אישי"
-          className="absolute top-full left-0 mt-3 w-[min(92vw,380px)] rounded-3xl border border-white/10 bg-[#0a0a0af5] backdrop-blur-xl shadow-2xl shadow-black/50 p-4 z-[80] text-right"
+          className="absolute top-full end-0 mt-3 w-[min(92vw,380px)] rounded-3xl border border-white/10 bg-[#0a0a0af5] backdrop-blur-xl shadow-2xl shadow-black/50 p-4 z-[80] text-start"
         >
           {!isGuest ? (
             <div className="flex items-center gap-3 pb-4 mb-4 border-b border-white/10">
@@ -139,9 +166,9 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
               <div className="min-w-0">
                 <div className="font-bold text-white truncate">{user.name}</div>
                 {user.email ? (
-                  <div className="text-[11px] text-white/55 truncate mt-0.5" dir="ltr">
+                  <Bidi kind="email" className="text-[11px] text-white/55 truncate mt-0.5">
                     {user.email}
-                  </div>
+                  </Bidi>
                 ) : null}
                 <div className="text-[11px] text-primary-light font-semibold mt-0.5">
                   {planLabel(user.subscriptionPlan)}
@@ -174,17 +201,26 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
           )}
 
           {(isGuest || ((isUnpaid || isTrial) && user.role !== 'admin')) && (
-            <button
-              type="button"
-              onClick={goPricing}
-              className="w-full mb-4 text-right rounded-2xl border border-[#b79043]/40 bg-[#b79043]/10 p-4 hover:border-[#dfc47d] transition-colors"
-            >
-              <div className="text-sm font-semibold text-white mb-1">פתיחת גישה</div>
-              <p className="text-[11px] text-white/50 font-light leading-relaxed">
-                מסלול האמיצים או מסלול ההססנים. 8,888 ₪ לפני מע״מ.
-              </p>
-              <div className="mt-2.5 text-[11px] font-semibold text-[#b79043]">בחירת מסלול</div>
-            </button>
+            <>
+              <button
+                type="button"
+                onClick={goLibraryAccess}
+                className="w-full mb-2 text-start rounded-2xl border border-[#b79043]/40 bg-[#b79043]/10 p-4 hover:border-[#dfc47d] transition-colors"
+              >
+                <div className="text-sm font-semibold text-white mb-1">פתיחת גישה</div>
+                <p className="text-[11px] text-white/50 font-light leading-relaxed">
+                  מנוי לספרייה פותח צפייה בהרצאות ובהדרכות.
+                </p>
+                <div className="mt-2.5 text-[11px] font-semibold text-[#b79043]">למנוי הספרייה</div>
+              </button>
+              <button
+                type="button"
+                onClick={goFitCheck}
+                className="w-full mb-4 text-start px-3 py-2 text-[11px] text-white/55 hover:text-white min-h-11"
+              >
+                בדיקת התאמה למסע
+              </button>
+            </>
           )}
 
           {!isGuest && (
@@ -197,6 +233,19 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
                 >
                   <Shield className="w-4 h-4" />
                   ניהול
+                </button>
+              )}
+              {showPod && (
+                <button
+                  type="button"
+                  onClick={() => {
+                    setOpen(false);
+                    navigate('/pod');
+                  }}
+                  className="w-full flex items-center justify-start gap-2 px-3 py-2.5 rounded-xl text-sm text-[#b79043] hover:bg-white/5 min-h-11"
+                >
+                  <Users className="w-4 h-4" />
+                  הפוד שלי
                 </button>
               )}
               {user.role === 'instructor' && (
@@ -222,7 +271,7 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
               <button
                 type="button"
                 onClick={() => goLibrary('profile')}
-                className="w-full text-right px-3 py-2.5 rounded-xl text-sm text-zinc-200 hover:bg-white/5 hover:text-primary-light min-h-11"
+                className="w-full text-start px-3 py-2.5 rounded-xl text-sm text-zinc-200 hover:bg-white/5 hover:text-primary-light min-h-11"
               >
                 האזור האישי
               </button>

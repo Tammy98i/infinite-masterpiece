@@ -22,7 +22,7 @@ export const OnboardingChecklist: React.FC = () => {
   };
 
   return (
-    <div className="fixed bottom-24 md:bottom-8 left-4 z-[55] w-80 max-w-[calc(100vw-2rem)] glass border border-primary/30 rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4">
+    <div className="fixed bottom-24 md:bottom-8 end-4 z-[55] w-80 max-w-[calc(100vw-2rem)] glass border border-primary/30 rounded-2xl shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4">
       <div className="p-4 border-b border-white/10 flex items-center justify-between bg-primary/10">
         <div>
           <div className="text-xs font-bold text-primary-light">מסלול הדרכה</div>

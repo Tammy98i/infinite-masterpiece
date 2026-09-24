@@ -12,7 +12,7 @@ export function Dashboard() {
 
   const renderRoleSwitcher = () => (
     <div className="mb-12 flex flex-wrap gap-2 p-4 bg-white/[0.02] border border-white/[0.05] rounded-2xl items-center">
-      <span className="text-[11px] uppercase tracking-widest text-white/40 ml-4">תצוגת הדגמה (בחר תפקיד):</span>
+      <span className="text-[11px] uppercase tracking-widest text-white/40 me-4">תצוגת הדגמה (בחר תפקיד):</span>
       {(['FREE', 'STUDENT', 'PREMIUM_88', 'LECTURER', 'ADMIN'] as Role[]).map(r => (
         <button
           key={r}
@@ -67,7 +67,7 @@ export function Dashboard() {
         animate={{ opacity: 1, y: 0 }}
         className="relative bg-gradient-to-r from-purple-900/20 to-transparent border border-purple-500/20 rounded-[32px] p-8 md:p-12 mb-12 overflow-hidden group"
       >
-        <div className="absolute top-0 right-0 w-64 h-64 bg-purple-500/10 blur-[100px] rounded-full" />
+        <div className="absolute top-0 start-0 w-64 h-64 bg-purple-500/10 blur-[100px] rounded-full" />
         
         <div className="relative z-10 flex flex-col md:flex-row gap-8 justify-between items-start md:items-center">
           <div className="max-w-2xl">
@@ -171,11 +171,11 @@ export function Dashboard() {
       <p className="text-white/50 max-w-lg mb-10 leading-relaxed font-light">
         החשבון שלך הוא במעמד ״חינמי/הססן״. כדי לקבל גישה מלאה למסע 33 הימים, לספריית ה-VOD, לקהילה ולקפטנים, יש לשדרג למסלול המלא.
       </p>
-      <Link to="/#pricing" className="btn-gold text-black px-10 py-4 text-lg">
+      <Link to="/pricing" className="btn-gold text-black px-10 py-4 text-lg">
         שדרוג למסלול המלא
       </Link>
       
-      <div className="mt-20 w-full max-w-3xl text-right">
+      <div className="mt-20 w-full max-w-3xl text-start">
         <h3 className="text-xl font-light text-white mb-6">תכנים פתוחים עבורך:</h3>
         <div className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-6 flex justify-between items-center group cursor-pointer hover:border-[#b79043]/30 transition-colors">
           <div className="flex items-center gap-4">

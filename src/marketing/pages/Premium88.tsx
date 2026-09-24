@@ -3,15 +3,15 @@ import { Link } from 'react-router-dom';
 import { FounderRoster } from '../components/FounderRoster';
 import { trackEvent } from '../../utils/analytics';
 
-export function Premium88() {
+export function Premium88({ embedded = false }: { embedded?: boolean }) {
   useEffect(() => {
     trackEvent('premium_88_page_view');
-    window.scrollTo(0, 0);
-  }, []);
+    if (!embedded) window.scrollTo(0, 0);
+  }, [embedded]);
 
   return (
-    <div className="min-h-screen text-white selection:bg-[#b79043]/30">
-      <section className="relative pt-32 pb-16 lg:pt-40 lg:pb-20">
+    <div className={`${embedded ? '' : 'min-h-screen '}text-white selection:bg-[#b79043]/30`}>
+      <section className={`relative ${embedded ? 'pt-6 pb-10 lg:pb-12' : 'pt-32 pb-16 lg:pt-40 lg:pb-20'}`}>
         <div className="max-w-5xl mx-auto px-4 sm:px-8 lg:px-10 text-center">
           <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-6 font-semibold">
             האנשים שמאחורי שכבת העומק
@@ -47,7 +47,7 @@ export function Premium88() {
         </Link>
         <div className="mt-6">
           <a
-            href="/#depth-layer"
+            href="/#team"
             className="text-white/40 hover:text-[#b79043] transition-colors text-sm font-light"
           >
             רוצה להבין את שכבת העומק?
