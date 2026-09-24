@@ -1,0 +1,909 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>סקיצה · CRM נטפליקס אקדמי — Infinite Masterpiece</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600&family=Noto+Sans+Hebrew:wght@500;600;700&family=Rubik:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #050a14;
+      --gold: #b79043;
+      --gold-soft: #dfc47d;
+      --cream: #e0edff;
+      --muted: rgba(224, 237, 255, 0.72);
+      --line: rgba(255, 255, 255, 0.12);
+      --note: #ff7a33;
+      --ok: #9be7b5;
+      --r: 4px;
+      --heading: "Noto Sans Hebrew", "Arial Hebrew", sans-serif;
+      --body: "IBM Plex Sans Hebrew", "Arial Hebrew", sans-serif;
+      --sky: url("https://media.base44.com/images/public/6aa94dfb715e7d446231f544/025d40d79_image.png");
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      color: #fff;
+      font-family: var(--body);
+      background: #02060f;
+    }
+    :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+    /* ---- Fixed sky plate (sketch of product SkyBackdrop) ---- */
+    .sky {
+      position: fixed;
+      inset: 0;
+      z-index: 0;
+      pointer-events: none;
+      overflow: hidden;
+    }
+    .sky-img {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
+      opacity: 0.88;
+      filter: saturate(0.95) contrast(1.08) brightness(0.72);
+      transition: opacity .25s ease, filter .25s ease;
+    }
+    .sky.is-sketch .sky-img {
+      opacity: 0.68;
+      filter: saturate(0.9) contrast(1.12) brightness(0.55);
+    }
+    .veil {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity .25s ease;
+    }
+    .sky.is-today .veil-lib,
+    .sky.is-today .veil-crm-old { opacity: 1; }
+    .sky.is-sketch .veil-crm-new { opacity: 1; }
+
+    .veil-blackout { background: rgba(3, 8, 18, 0.35); opacity: 1 !important; }
+    .veil-shade {
+      opacity: 1 !important;
+      background:
+        radial-gradient(circle at 50% 12%, transparent 10%, rgba(5, 10, 20, 0.34) 52%, rgba(5, 10, 20, 0.62) 100%),
+        linear-gradient(180deg, rgba(5, 10, 20, 0.28), rgba(5, 10, 20, 0.58));
+    }
+    .veil-lib-a { background: linear-gradient(180deg, rgba(2, 6, 14, 0.45) 0%, transparent 30%, transparent 70%, rgba(2, 6, 14, 0.55) 100%); }
+    .veil-lib-b { background: rgba(2, 6, 14, 0.22); }
+    .veil-crm-old-a { background: linear-gradient(180deg, rgba(2, 6, 14, 0.58) 0%, transparent 22%, transparent 78%, rgba(2, 6, 14, 0.64) 100%); }
+    .veil-crm-old-b { background: rgba(2, 6, 14, 0.28); }
+    .veil-f { background: linear-gradient(180deg, transparent 35%, rgba(2, 6, 14, 0.72) 100%); }
+    .veil-g { background: linear-gradient(to inline-end, rgba(5, 10, 20, 0.55), transparent 42%); }
+    .veil-h { background: radial-gradient(ellipse at 50% 40%, transparent 20%, rgba(3, 8, 18, 0.5) 85%); }
+
+    .wrap {
+      position: relative;
+      z-index: 1;
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 22px 16px 80px;
+    }
+    .banner {
+      border: 1px dashed var(--note);
+      color: var(--note);
+      padding: 8px 12px;
+      border-radius: 999px;
+      display: inline-flex;
+      font-size: 12.5px;
+      margin-bottom: 14px;
+      background: rgba(0, 0, 0, 0.35);
+    }
+    h1 {
+      font-family: var(--heading);
+      font-weight: 600;
+      font-size: clamp(1.45rem, 2.8vw, 2rem);
+      margin: 0 0 8px;
+      text-shadow: 0 2px 18px rgba(0, 0, 0, 0.55);
+    }
+    .lede {
+      color: var(--muted);
+      max-width: 48rem;
+      line-height: 1.7;
+      margin: 0 0 14px;
+      font-size: 14.5px;
+    }
+    .note {
+      color: var(--note);
+      font-family: Rubik, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 0 0 14px;
+    }
+    .note::before { content: "→ "; }
+
+    .mode-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+    }
+    .mode-btn, .veil-btn {
+      border: 1px solid var(--line);
+      background: rgba(5, 10, 20, 0.55);
+      color: #fff;
+      border-radius: var(--r);
+      padding: 10px 14px;
+      min-height: 44px;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: 13px;
+    }
+    .mode-btn.is-on, .veil-btn.is-on {
+      border-color: rgba(183, 144, 67, 0.65);
+      background: rgba(183, 144, 67, 0.14);
+      color: var(--gold-soft);
+    }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 900px) {
+      .steps { grid-template-columns: 1fr 1fr; }
+    }
+    .step {
+      text-align: start;
+      border: 1px solid var(--line);
+      background: rgba(5, 10, 20, 0.62);
+      border-radius: var(--r);
+      padding: 10px 12px;
+      color: #fff;
+      font-family: inherit;
+      cursor: pointer;
+      min-height: 88px;
+      backdrop-filter: blur(10px);
+    }
+    .step:hover, .step.is-on {
+      border-color: rgba(183, 144, 67, 0.55);
+      background: rgba(183, 144, 67, 0.12);
+    }
+    .step .n {
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      color: var(--gold-soft);
+      margin: 0 0 6px;
+    }
+    .step b { display: block; font-size: 13px; margin-bottom: 4px; }
+    .step span { font-size: 12px; color: rgba(255, 255, 255, 0.55); line-height: 1.4; }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 800px) {
+      .compare { grid-template-columns: 1fr; }
+    }
+    .pane {
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 12px;
+      background: rgba(5, 10, 20, 0.55);
+      min-height: 200px;
+      backdrop-filter: blur(12px);
+    }
+    .pane.opaque {
+      background: #0a0a0a;
+      border-radius: 24px;
+    }
+    .pane .tag {
+      font-size: 11px;
+      margin: 0 0 8px;
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .tag.bad { color: var(--note); border: 1px solid rgba(255, 122, 51, 0.45); }
+    .tag.good { color: var(--ok); border: 1px solid rgba(155, 231, 181, 0.45); }
+
+    .veil-stack {
+      display: grid;
+      gap: 4px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.7);
+    }
+    .veil-stack i {
+      display: block;
+      height: 18px;
+      border-radius: 2px;
+      font-style: normal;
+      padding: 2px 8px;
+      line-height: 14px;
+      font-size: 10px;
+    }
+    .v-lib { background: rgba(80, 120, 180, 0.35); }
+    .v-crm { background: rgba(183, 144, 67, 0.35); }
+    .v-new { background: rgba(155, 231, 181, 0.28); }
+    .v-dup { outline: 1px dashed var(--note); }
+
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+    @media (max-width: 700px) {
+      .metric-row { grid-template-columns: 1fr 1fr; }
+    }
+    .metric {
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 12px;
+      text-align: start;
+      background: rgba(5, 10, 20, 0.62);
+      color: inherit;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .metric.pill {
+      border-radius: 999px;
+      background: #0a0a0a;
+    }
+    .metric strong { display: block; font-size: 1.45rem; font-weight: 300; }
+    .metric b { display: block; font-size: 0.85rem; margin-top: 4px; }
+    .metric em { display: block; font-size: 0.7rem; font-style: normal; color: rgba(255, 255, 255, 0.4); margin-top: 2px; }
+    .metric.is-on { border-color: rgba(183, 144, 67, 0.6); }
+
+    .desk {
+      display: grid;
+      grid-template-columns: 200px 1fr;
+      gap: 0;
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      overflow: hidden;
+      min-height: 420px;
+      background: rgba(5, 10, 20, 0.35);
+    }
+    @media (max-width: 800px) {
+      .desk { grid-template-columns: 1fr; }
+    }
+    .aside {
+      position: relative;
+      border-inline-end: 1px solid var(--line);
+      padding: 12px 10px;
+      background: rgba(5, 10, 20, 0.45);
+    }
+    .aside h2 { font-size: 14px; margin: 0 0 8px; }
+    .aside button {
+      width: 100%;
+      text-align: start;
+      border: 0;
+      border-inline-start: 2px solid transparent;
+      background: transparent;
+      color: rgba(255, 255, 255, 0.55);
+      padding: 8px 8px;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: 12.5px;
+      border-radius: 0;
+    }
+    .aside button.is-on {
+      color: #fff;
+      font-weight: 600;
+      border-inline-start-color: #fff;
+    }
+    .aside button .why {
+      display: block;
+      font-size: 10px;
+      font-weight: 400;
+      color: rgba(255, 255, 255, 0.32);
+      margin-top: 2px;
+    }
+    .aside button.is-on .why { color: rgba(183, 144, 67, 0.85); }
+    .aside .grp {
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.35);
+      margin: 10px 8px 4px;
+    }
+
+    .main {
+      position: relative;
+      padding: 14px;
+    }
+    .main::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(180deg, transparent 0%, rgba(2, 6, 14, 0.35) 100%);
+      opacity: 0;
+      transition: opacity .25s ease;
+    }
+    body.is-sketch .main::before { opacity: 1; }
+
+    .hero {
+      position: relative;
+      border-radius: var(--r);
+      overflow: hidden;
+      min-height: 140px;
+      margin-bottom: 12px;
+      border: 1px solid var(--line);
+      background:
+        linear-gradient(to inline-start, rgba(5, 10, 20, 0.15), rgba(5, 10, 20, 0.85)),
+        linear-gradient(135deg, #1a2744, #0a1428);
+      padding: 18px;
+      display: grid;
+      align-content: end;
+      gap: 6px;
+    }
+    .hero.rounded-old { border-radius: 24px; }
+    .hero .eye { font-size: 11px; letter-spacing: 0.2em; color: var(--gold); text-transform: uppercase; }
+    .hero h3 { margin: 0; font-size: 1.25rem; font-weight: 500; font-family: var(--heading); }
+    .hero p { margin: 0; font-size: 13px; color: rgba(255, 255, 255, 0.65); max-width: 28rem; }
+    .hero .acts { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+    .btn-play {
+      background: #fff;
+      color: #000;
+      border: 0;
+      border-radius: var(--r);
+      padding: 8px 14px;
+      min-height: 40px;
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn-more {
+      background: rgba(109, 109, 110, 0.7);
+      color: #fff;
+      border: 0;
+      border-radius: var(--r);
+      padding: 8px 14px;
+      min-height: 40px;
+      font-family: inherit;
+      font-size: 13px;
+      cursor: pointer;
+    }
+    .btn-gold-old {
+      background: var(--gold);
+      color: #000;
+      border: 0;
+      border-radius: 999px;
+      padding: 8px 16px;
+      min-height: 40px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+
+    .split {
+      display: grid;
+      grid-template-columns: 1.4fr 0.85fr;
+      gap: 10px;
+      margin-top: 12px;
+    }
+    @media (max-width: 900px) {
+      .split { grid-template-columns: 1fr; }
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 13px;
+    }
+    th, td {
+      text-align: start;
+      padding: 8px 10px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    th { color: rgba(255, 255, 255, 0.4); font-weight: 400; font-size: 11px; }
+    tr { cursor: pointer; }
+    tr:hover { background: rgba(183, 144, 67, 0.06); }
+    tr.is-on { background: rgba(183, 144, 67, 0.12); }
+    .who {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .mono {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--r);
+      display: grid;
+      place-items: center;
+      background: rgba(183, 144, 67, 0.2);
+      color: var(--gold-soft);
+      font-size: 13px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .who .name { display: block; }
+    .who .mail {
+      display: block;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.4);
+      direction: ltr;
+      unicode-bidi: isolate;
+      text-align: start;
+    }
+    .flat-name { color: #fff; }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 14px;
+      background: rgba(5, 10, 20, 0.62);
+      min-height: 200px;
+    }
+    .card.fat {
+      background: #0a0a0a;
+      border-radius: 24px;
+      padding: 24px;
+    }
+    .card .keep {
+      font-size: 11px;
+      color: var(--gold);
+      margin: 0 0 6px;
+    }
+    .card h3 { margin: 0 0 4px; font-weight: 500; font-size: 1.2rem; }
+    .card .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 13px;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+    }
+    .card .row em { font-style: normal; color: rgba(255, 255, 255, 0.4); }
+    .eps {
+      display: grid;
+      gap: 6px;
+      margin-top: 10px;
+    }
+    .ep {
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 8px 10px;
+      font-size: 12px;
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .ep.is-due { border-color: rgba(183, 144, 67, 0.5); }
+
+    .toast {
+      position: fixed;
+      bottom: 18px;
+      inset-inline-start: 50%;
+      transform: translateX(50%);
+      background: rgba(5, 10, 20, 0.92);
+      border: 1px solid rgba(183, 144, 67, 0.45);
+      color: var(--gold-soft);
+      padding: 10px 16px;
+      border-radius: var(--r);
+      font-size: 13px;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity .2s ease;
+      z-index: 20;
+      max-width: min(90vw, 420px);
+      text-align: center;
+    }
+    .toast.is-on { opacity: 1; }
+
+    footer {
+      margin-top: 18px;
+      font-size: 12px;
+      color: rgba(255, 255, 255, 0.4);
+      line-height: 1.6;
+    }
+    .stamps {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 12px;
+    }
+    .stamps span {
+      border: 1px solid var(--line);
+      border-radius: var(--r);
+      padding: 6px 10px;
+      font-size: 11px;
+      color: rgba(255, 255, 255, 0.55);
+    }
+    .screen { display: none; }
+    .screen.is-on { display: block; }
+  </style>
+</head>
+<body class="is-today">
+  <div class="sky is-today" id="sky" aria-hidden="true">
+    <img class="sky-img" src="https://media.base44.com/images/public/6aa94dfb715e7d446231f544/025d40d79_image.png" alt="" width="1023" height="438" />
+    <div class="veil veil-blackout"></div>
+    <div class="veil veil-shade"></div>
+    <div class="veil veil-lib veil-lib-a"></div>
+    <div class="veil veil-lib veil-lib-b"></div>
+    <div class="veil veil-crm-old veil-crm-old-a"></div>
+    <div class="veil veil-crm-old veil-crm-old-b"></div>
+    <div class="veil veil-crm-new veil-f"></div>
+    <div class="veil veil-crm-new veil-g"></div>
+    <div class="veil veil-crm-new veil-h"></div>
+  </div>
+
+  <div class="wrap">
+    <div class="banner">סקיצה לאישור — CRM נטפליקס אקדמי — לא קוד במוצר — בלי למחוק טאבים</div>
+    <h1>דסק CRM: שכבות כהות + שפת ספרייה אקדמית</h1>
+    <p class="lede">
+      אותה שמיים כמו בספרייה — אבל בדסק החושך מכוון (בלי כפילות library+CRM),
+      והכרום נראה כמו כרזה ופסים אקדמיים. 23 הטאבים נשארים. ספרייה ≠ מסע.
+    </p>
+    <p class="note" id="hint">לחצו על מצב או על שכבה. הדגמה חיה של הדסק אחרי השינוי.</p>
+
+    <div class="mode-row" role="group" aria-label="מצב תצוגה">
+      <button type="button" class="mode-btn is-on" data-mode="today">היום — כפול ומעומעם</button>
+      <button type="button" class="mode-btn" data-mode="sketch">סקיצה — חושך קולנועי</button>
+      <button type="button" class="veil-btn" id="pulse-veils" type="button">הבהב ווילים</button>
+    </div>
+
+    <div class="steps" role="list">
+      <button type="button" class="step is-on" data-go="veils">
+        <div class="n">01</div>
+        <b>חושך מעל התמונה</b>
+        <span>3 ווילים CRM · בלי כפילות</span>
+      </button>
+      <button type="button" class="step" data-go="chrome">
+        <div class="n">02</div>
+        <b>כרום נטפליקס</b>
+        <span>navy שקוף 4px</span>
+      </button>
+      <button type="button" class="step" data-go="overview">
+        <div class="n">03</div>
+        <b>סקירה</b>
+        <span>כרזה + 4 מדדים</span>
+      </button>
+      <button type="button" class="step" data-go="person">
+        <div class="n">04</div>
+        <b>שורת אדם</b>
+        <span>מונוגרם + כרטיס דק</span>
+      </button>
+      <button type="button" class="step" data-go="tabs">
+        <div class="n">05</div>
+        <b>כל הטאבים</b>
+        <span>23 נשארים · מתי־מה</span>
+      </button>
+    </div>
+
+    <!-- 01 veils -->
+    <section class="screen is-on" id="screen-veils">
+      <div class="compare">
+        <div class="pane">
+          <span class="tag bad">היום — כפול</span>
+          <div class="veil-stack">
+            <i class="v-lib v-dup">library veil a</i>
+            <i class="v-lib v-dup">library veil b</i>
+            <i class="v-crm v-dup">crm veil a</i>
+            <i class="v-crm v-dup">crm veil b</i>
+            <i class="v-lib">+ blackout + shade</i>
+          </div>
+          <p style="font-size:12px;color:rgba(255,255,255,.45);margin:10px 0 0;line-height:1.5">
+            שתי משפחות ווילים פעילות יחד → כוכבים נמחקים, כרום אטום מעל.
+          </p>
+        </div>
+        <div class="pane">
+          <span class="tag good">סקיצה — CRM בלבד</span>
+          <div class="veil-stack">
+            <i class="v-new">crm veil f · תחתון לקריאה</i>
+            <i class="v-new">crm veil g · צד סיידבר</i>
+            <i class="v-new">crm veil h · מרכז רך</i>
+            <i class="v-crm">crm a–e קיימים (מכוילים)</i>
+            <i style="background:transparent;border:1px dashed rgba(155,231,181,.4)">library veils כבויים בדסק</i>
+          </div>
+          <p style="font-size:12px;color:rgba(255,255,255,.45);margin:10px 0 0;line-height:1.5">
+            כוכבים עדיין נראים. הספרייה הציבורית לא משתנה.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 02 chrome -->
+    <section class="screen" id="screen-chrome">
+      <div class="compare">
+        <div class="pane opaque">
+          <span class="tag bad">היום</span>
+          <p style="margin:0 0 8px;font-size:14px">כרטיס אטום · rounded-3xl · glass</p>
+          <button type="button" class="btn-gold-old">פעולה זהובה עגולה</button>
+          <p style="font-size:12px;color:rgba(255,255,255,.4);margin:12px 0 0">bg #0a0a0a מכסה את השמיים</p>
+        </div>
+        <div class="pane">
+          <span class="tag good">סקיצה</span>
+          <p style="margin:0 0 8px;font-size:14px">פאנל navy שקוף · רדיוס 4px</p>
+          <div class="acts" style="display:flex;gap:8px;flex-wrap:wrap">
+            <button type="button" class="btn-play">ניהול ההרצאה</button>
+            <button type="button" class="btn-more">לקטלוג</button>
+          </div>
+          <p style="font-size:12px;color:rgba(255,255,255,.4);margin:12px 0 0">השמיים נשארים מאחורי הכרום</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 03 overview -->
+    <section class="screen" id="screen-overview">
+      <div class="desk">
+        <aside class="aside" aria-label="סיידבר אדמין">
+          <h2>אדמין · 23</h2>
+          <div class="grp">מבט על</div>
+          <button type="button" class="is-on" data-jump="overview">סקירה<span class="why">4 מדדים</span></button>
+          <button type="button" data-jump="tabs">התראות</button>
+          <button type="button" data-jump="tabs">אנליטיקות</button>
+          <div class="grp">אנשים</div>
+          <button type="button" data-jump="tabs">גישה · הרשאות<span class="why">דסקים</span></button>
+          <button type="button" data-jump="person">משתמשים<span class="why">חשבונות</span></button>
+          <div class="grp">מסחר</div>
+          <button type="button" data-jump="person">מסלולים + לידים<span class="why">אותו אדם</span></button>
+          <button type="button" data-jump="tabs">פודים<span class="why">תור קודם</span></button>
+        </aside>
+        <div class="main">
+          <div class="hero" id="overview-hero">
+            <span class="eye">קטלוג אקדמי</span>
+            <h3>מחזון למערכת</h3>
+            <p>אותה שפת ספרייה — לניהול הרצאות. בלי CTA של מנוי.</p>
+            <div class="acts">
+              <button type="button" class="btn-play" data-toast="ניהול הרצאה · נשאר בתוכן">ניהול ההרצאה</button>
+              <button type="button" class="btn-more" data-toast="לקטלוג התוכן">לקטלוג התוכן</button>
+            </div>
+          </div>
+          <div class="metric-row" id="metrics">
+            <button type="button" class="metric is-on" data-jump="person"><strong>3</strong><b>לחיוב עכשיו</b><em>הססנים · פעימה</em></button>
+            <button type="button" class="metric" data-jump="tabs"><strong>2</strong><b>בקשות מרצים</b><em>אשר בשורה</em></button>
+            <button type="button" class="metric" data-jump="person"><strong>5</strong><b>לידים פתוחים</b><em>מסלול + וובינר</em></button>
+            <button type="button" class="metric" data-jump="tabs"><strong>4</strong><b>ממתינות</b><em>תוכן לאישור</em></button>
+          </div>
+          <p style="font-size:11px;color:rgba(255,255,255,.35);margin:10px 0 0">שאר המספרים באנליטיקות — לא נמחקו.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- 04 person -->
+    <section class="screen" id="screen-person">
+      <div class="desk">
+        <aside class="aside">
+          <h2>אדמין · 23</h2>
+          <div class="grp">מסחר</div>
+          <button type="button" class="is-on">מסלולים + לידים<span class="why">אותו אדם</span></button>
+          <button type="button" data-jump="tabs">לידים ופניות<span class="why">CRM מאוחד</span></button>
+          <button type="button" data-jump="tabs">נבחרת 88</button>
+        </aside>
+        <div class="main">
+          <p style="margin:0 0 10px;font-size:13px;color:rgba(255,255,255,.55)">מסלול + ליד — אותו אדם. הססנים 8→80→800→8,000.</p>
+          <div class="split">
+            <div class="pane" style="padding:0;overflow:hidden" id="people-pane">
+              <table id="people">
+                <thead>
+                  <tr>
+                    <th>שם</th>
+                    <th>מסלול</th>
+                    <th>פעימה</th>
+                    <th>ליד</th>
+                  </tr>
+                </thead>
+                <tbody></tbody>
+              </table>
+            </div>
+            <aside class="card" id="thin-card">
+              <p class="keep">כרטיס דק · title card</p>
+              <h3>—</h3>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 05 tabs -->
+    <section class="screen" id="screen-tabs">
+      <div class="desk">
+        <aside class="aside" id="full-nav">
+          <h2>אדמין · 23</h2>
+        </aside>
+        <div class="main">
+          <div class="pane">
+            <span class="tag good">לא מוחקים</span>
+            <p style="margin:0;line-height:1.7;font-size:14px;color:rgba(255,255,255,.75)">
+              כל הטאבים נשארים בסיידבר. מה שמשתנה: שכבות כהות, כרום שקוף,
+              שורת אדם עם מונוגרם, וכרטיס דק קולנועי. גישה ≠ משתמשים · מייסדים ≠ גלקסיה · הגדרות = מוכנות.
+            </p>
+            <div class="stamps" style="margin-top:14px">
+              <span>23 טאבים</span>
+              <span>בלי תגובות / AI</span>
+              <span>בלי ערבוב CTA ספרייה–מסע</span>
+              <span>מייסד = is_founder</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      מייסד = <span dir="ltr">is_founder</span>. קפטן = <span dir="ltr">pod_role</span>.
+      הססנים 8→80→800→8,000. בנייה במוצר רק אחרי «קדימה».
+    </footer>
+  </div>
+
+  <div class="toast" id="toast" role="status"></div>
+
+  <script>
+    const PEOPLE = [
+      { name: "דניאל כהן", mail: "dan@infinitemasterpiece.local", track: "הססנים", pulse: "שילם 8 · מחכה ל־80", lead: "ליד פתוח · שבוע 1", mono: "דכ", journey: "הססנים · פעימה הבאה 80", library: "ניסיון צפייה", pod: "ממתין לשיוך", eps: [
+        { n: 8, label: "שולם", due: false },
+        { n: 80, label: "לחיוב", due: true },
+        { n: 800, label: "מתוזמן", due: false },
+        { n: 8000, label: "מתוזמן", due: false },
+      ]},
+      { name: "יובל נחום", mail: "yuv@infinitemasterpiece.local", track: "הססנים", pulse: "טרם שילם", lead: "ליד מהוובינר", mono: "ינ", journey: "הססנים · טרם שילם", library: "טעימה", pod: "לא בתור", eps: [
+        { n: 8, label: "ממתין", due: true },
+        { n: 80, label: "—", due: false },
+        { n: 800, label: "—", due: false },
+        { n: 8000, label: "—", due: false },
+      ]},
+      { name: "נועה לוי", mail: "noa@infinitemasterpiece.local", track: "אמיצים", pulse: "שולם מלא", lead: "אין ליד", mono: "נל", journey: "אמיצים · שולם", library: "גישת צוות", pod: "—", eps: [
+        { n: "מלא", label: "שולם", due: false },
+      ]},
+    ];
+
+    const NAV = [
+      { g: "מבט על", items: [
+        ["סקירה", "4 מדדים"], ["התראות", ""], ["אנליטיקות", "KPI"],
+      ]},
+      { g: "אנשים", items: [
+        ["גישה · הרשאות", "דסקים"], ["משתמשים", "חשבונות"], ["צוות ומרצים", ""],
+        ["מייסדים", "עמוד ציבורי"], ["גלקסיית הצוות", "וובינר"], ["בקשות מרצים", ""],
+      ]},
+      { g: "מסחר", items: [
+        ["מנויים ותשלומים", ""], ["מסלולים + לידים", "אותו אדם"], ["נבחרת 88", ""],
+        ["פודים", "תור קודם"], ["משפך חינמיים", ""], ["לידים ופניות", "CRM"],
+        ["וובינר", "נרשמים קודם"], ["הגרלות", ""],
+      ]},
+      { g: "תוכן", items: [["תכני VOD", ""], ["קטגוריות", ""], ["הדרכות", ""]]},
+      { g: "מערכת", items: [["הגדרות", "מוכנות"], ["משפטי", ""], ["יומן פעולות", ""]]},
+    ];
+
+    const toast = document.getElementById("toast");
+    const sky = document.getElementById("sky");
+    const steps = document.querySelectorAll(".step");
+    const screens = document.querySelectorAll(".screen");
+    let mode = "today";
+
+    function say(t) {
+      toast.textContent = t;
+      toast.classList.add("is-on");
+      clearTimeout(say._t);
+      say._t = setTimeout(() => toast.classList.remove("is-on"), 2200);
+    }
+
+    function setMode(next) {
+      mode = next;
+      document.body.classList.toggle("is-sketch", next === "sketch");
+      document.body.classList.toggle("is-today", next === "today");
+      sky.classList.toggle("is-sketch", next === "sketch");
+      sky.classList.toggle("is-today", next === "today");
+      document.querySelectorAll(".mode-btn").forEach((btn) => {
+        btn.classList.toggle("is-on", btn.getAttribute("data-mode") === next);
+      });
+      const hero = document.getElementById("overview-hero");
+      if (hero) hero.classList.toggle("rounded-old", next === "today");
+      document.querySelectorAll("#metrics .metric").forEach((m) => {
+        m.classList.toggle("pill", next === "today");
+      });
+      const card = document.getElementById("thin-card");
+      if (card) card.classList.toggle("fat", next === "today");
+      say(next === "sketch" ? "מצב סקיצה — חושך CRM מכוון" : "מצב היום — כפילות ווילים");
+    }
+
+    function showScreen(id) {
+      screens.forEach((el) => el.classList.toggle("is-on", el.id === "screen-" + id));
+      steps.forEach((btn) => btn.classList.toggle("is-on", btn.getAttribute("data-go") === id));
+      if (id === "overview" || id === "person" || id === "veils") {
+        /* keep mode */
+      }
+      if (id === "veils" && mode === "today") {
+        /* encourage sketch */
+      }
+    }
+
+    document.querySelectorAll(".mode-btn").forEach((btn) => {
+      btn.addEventListener("click", () => setMode(btn.getAttribute("data-mode")));
+    });
+
+    steps.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const go = btn.getAttribute("data-go");
+        showScreen(go);
+        say("שכבה " + btn.querySelector("b").textContent);
+        if (go === "veils" || go === "chrome") setMode("sketch");
+      });
+    });
+
+    document.getElementById("pulse-veils").addEventListener("click", () => {
+      setMode(mode === "sketch" ? "today" : "sketch");
+      showScreen("veils");
+    });
+
+    function renderPeople() {
+      const tb = document.querySelector("#people tbody");
+      tb.innerHTML = PEOPLE.map((p, i) => `
+        <tr data-i="${i}" class="${i === 0 ? "is-on" : ""}">
+          <td>
+            <div class="who">
+              <span class="mono" aria-hidden="true">${p.mono}</span>
+              <span>
+                <span class="name">${p.name}</span>
+                <span class="mail">${p.mail}</span>
+              </span>
+            </div>
+          </td>
+          <td>${p.track}</td>
+          <td>${p.pulse}</td>
+          <td>${p.lead}</td>
+        </tr>
+      `).join("");
+      showPerson(0);
+    }
+
+    function showPerson(i) {
+      const p = PEOPLE[i];
+      if (!p) return;
+      document.querySelectorAll("#people tbody tr").forEach((row) => {
+        row.classList.toggle("is-on", Number(row.getAttribute("data-i")) === i);
+      });
+      const eps = p.eps.map((e) => `
+        <div class="ep ${e.due ? "is-due" : ""}">
+          <span>פעימה ${e.n}</span>
+          <span>${e.label}</span>
+        </div>
+      `).join("");
+      document.getElementById("thin-card").innerHTML = `
+        <p class="keep">כרטיס דק · title card</p>
+        <h3>${p.name}</h3>
+        <p class="mail" dir="ltr" style="margin:0 0 8px;font-size:12px;color:rgba(255,255,255,.45)">${p.mail}</p>
+        <div class="row"><em>ספרייה</em><span>${p.library}</span></div>
+        <div class="row"><em>מסע</em><span>${p.journey}</span></div>
+        <div class="row"><em>ליד</em><span>${p.lead}</span></div>
+        <div class="row"><em>פוד</em><span>${p.pod}</span></div>
+        <div class="eps">${eps}</div>
+        <p style="font-size:11px;color:rgba(255,255,255,.35);margin:10px 0 0">מנוי ספרייה לא משנה את המסע. הססנים במחיר מלא.</p>
+      `;
+    }
+
+    document.getElementById("people").addEventListener("click", (e) => {
+      const row = e.target.closest("tr[data-i]");
+      if (!row) return;
+      showPerson(Number(row.getAttribute("data-i")));
+      say("נבחר · " + PEOPLE[Number(row.getAttribute("data-i"))].name);
+    });
+
+    function renderNav() {
+      const host = document.getElementById("full-nav");
+      let html = "<h2>אדמין · 23</h2>";
+      NAV.forEach((block) => {
+        html += `<div class="grp">${block.g}</div>`;
+        block.items.forEach(([label, why], idx) => {
+          const on = block.g === "מבט על" && idx === 0 ? " is-on" : "";
+          html += `<button type="button" class="${on.trim()}" data-toast="טאב נשאר · ${label}">${label}${why ? `<span class="why">${why}</span>` : ""}</button>`;
+        });
+      });
+      host.innerHTML = html;
+    }
+
+    document.body.addEventListener("click", (e) => {
+      const t = e.target.closest("[data-toast]");
+      if (t) say(t.getAttribute("data-toast"));
+      const jump = e.target.closest("[data-jump]");
+      if (jump) {
+        const id = jump.getAttribute("data-jump");
+        showScreen(id);
+        if (id === "person") setMode("sketch");
+      }
+    });
+
+    renderPeople();
+    renderNav();
+    setMode("today");
+  </script>
+</body>
+</html>
