@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
-import { ArrowRight } from 'lucide-react';
+import { DirBack } from '../../components/DirArrow';
 import { getFounderById, instructorToFounder } from '../data/founders';
 import { CATEGORIES } from '../../data/categories';
 import { catalogApi } from '../../api/catalog';
@@ -63,7 +63,7 @@ export function FounderPage() {
             to="/#team"
             className="inline-flex items-center gap-1.5 text-sm text-white/45 hover:text-white mb-12 min-h-11 cursor-pointer transition-colors duration-200"
           >
-            <ArrowRight className="w-4 h-4" />
+            <DirBack />
             צוות המיזם
           </Link>
 

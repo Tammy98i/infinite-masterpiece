@@ -1,15 +1,14 @@
 import { useState, FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Compass, Loader2, ArrowLeft } from 'lucide-react';
+import { Compass, Loader2 } from 'lucide-react';
+import { DirNext } from '../../components/DirArrow';
+import { Price } from '../../components/Price';
 import { HESITANT_INSTALLMENTS, ENTRY_TRACK_FINE_PRINT } from '../../data/entryTracks';
+import { formatIls } from '../../utils/bidi';
 import { submitTrackLead } from '../../api/tracks';
 import { checkoutApi, continueAfterTrackLead } from '../../api/checkout';
 import { trackEvent } from '../../utils/analytics';
-
-function formatAmount(amount: number) {
-  return amount.toLocaleString('he-IL');
-}
 
 export function Hesitation() {
   const navigate = useNavigate();
@@ -75,14 +74,14 @@ export function Hesitation() {
             מסלול ההססנים
           </h1>
           <p className="text-lg text-white/60 font-light max-w-xl mx-auto leading-relaxed">
-            אותו מחיר מלא, 8,888 ₪ לפני מע״מ, בארבע פעימות שמתחילות ב־8 ₪. לא הנחה ולא מסלול חלקי.
+            אותו מחיר מלא, {formatIls(8888)} לפני מע״מ, בארבע פעימות שמתחילות ב־{formatIls(8)}. לא הנחה ולא מסלול חלקי.
           </p>
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-12">
           {HESITANT_INSTALLMENTS.map((item) => (
             <div key={item.number} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-center">
-              <p className="text-xl text-white font-accent font-semibold tabular-nums mb-1">{formatAmount(item.amountBeforeVat)} ₪</p>
+              <p className="text-xl text-white font-accent font-semibold mb-1"><Price amount={item.amountBeforeVat} /></p>
               <p className="text-[11px] text-white/40 font-light leading-relaxed">{item.when}</p>
             </div>
           ))}
@@ -129,10 +128,10 @@ export function Hesitation() {
             <div className="flex items-start gap-4 pt-4">
               <input required type="checkbox" id="consent" className="mt-1.5 w-4 h-4 bg-transparent border-white/20 rounded text-[#b79043] focus:ring-[#b79043] focus:ring-offset-0" />
               <label htmlFor="consent" className="text-sm text-white/40 leading-relaxed font-light cursor-pointer">
-                ידוע לי שמסלול ההססנים הוא תשלום מלא של 8,888 ₪ לפני מע״מ בארבע פעימות, ואינו הנחה.
+                ידוע לי שמסלול ההססנים הוא תשלום מלא של {formatIls(8888)} לפני מע״מ בארבע פעימות, ואינו הנחה.
                 {checkoutEnabled
-                  ? ' אחרי השליחה תועברו לתשלום מאובטח של הפעימה הראשונה, 8 ₪ לפני מע״מ.'
-                  : ' הפרטים נקלטים כדי לפתוח את הפעימה הראשונה של 8 ₪ מול הצוות.'}
+                  ? ` אחרי השליחה תועברו לתשלום מאובטח של הפעימה הראשונה, ${formatIls(8)} לפני מע״מ.`
+                  : ` הפרטים נקלטים כדי לפתוח את הפעימה הראשונה של ${formatIls(8)} מול הצוות.`}
               </label>
             </div>
 
@@ -150,8 +149,8 @@ export function Hesitation() {
                 </div>
               ) : (
                 <div className="flex items-center justify-center gap-3">
-                  <span>{checkoutEnabled ? 'המשך לתשלום מאובטח של 8 ₪' : 'אני מתחיל/ה ב־8 ₪'}</span>
-                  <ArrowLeft className="w-5 h-5 group-hover:-translate-x-2 transition-transform" />
+                  <span>{checkoutEnabled ? <>המשך לתשלום מאובטח של <Price amount={8} /></> : <>אני מתחיל/ה ב־<Price amount={8} /></>}</span>
+                  <DirNext className="w-5 h-5" />
                 </div>
               )}
             </button>

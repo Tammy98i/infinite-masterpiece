@@ -211,7 +211,7 @@ export function WebinarThankYou() {
           ) : null}
 
           {phase === 'ended' ? null : (
-          <ol className="space-y-4 text-right mb-8">
+          <ol className="space-y-4 text-start mb-8">
             <li
               className={`rounded-2xl border px-5 py-4 ${
                 localSteps.calendar

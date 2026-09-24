@@ -8,9 +8,9 @@ export const OnboardingBanner: React.FC = () => {
   if (!activeStep || activeStep.type !== 'banner') return null;
 
   return (
-    <div className="fixed top-20 left-0 right-0 z-[63] px-4 pointer-events-none">
+    <div className="fixed top-20 inset-inline-0 z-[63] px-4 pointer-events-none">
       <div className="max-w-3xl mx-auto glass border border-primary/40 rounded-2xl p-4 flex items-center justify-between gap-4 pointer-events-auto shadow-xl bg-primary/10">
-        <div className="text-right flex-1">
+        <div className="text-start flex-1">
           <div className="text-xs font-bold text-primary-light">{activeStep.title}</div>
           <p className="text-sm text-zinc-200">{activeStep.description}</p>
         </div>

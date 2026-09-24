@@ -10,6 +10,7 @@ import {
   listCategoriesAdmin,
   listCourseWeekRows,
   listFounders,
+  deleteUser,
   listUsers,
   reorderCategories,
   reorderFounders,
@@ -343,6 +344,27 @@ router.patch('/users/:id', (req, res) => {
       after: user,
     });
     res.json({ user });
+  } catch (err) {
+    const status = (err as { status?: number }).status || 500;
+    res.status(status).json({ error: (err as Error).message });
+  }
+});
+
+router.delete('/users/:id', (req, res) => {
+  try {
+    const actor = authUser(req).id;
+    const before = listUsers().find((u) => u.id === req.params.id);
+    const result = deleteUser(req.params.id, actor);
+    writeAudit({
+      adminUserId: actor,
+      actionType: 'user_deleted',
+      entityType: 'user',
+      entityId: req.params.id,
+      before,
+      after: null,
+    });
+    trackEvent('admin_deleted_user', { userId: actor, properties: { targetId: req.params.id } });
+    res.json(result);
   } catch (err) {
     const status = (err as { status?: number }).status || 500;
     res.status(status).json({ error: (err as Error).message });

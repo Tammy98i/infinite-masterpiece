@@ -30,7 +30,7 @@ export const InstructorsView: React.FC = () => {
           <div className="library-course-veil-d absolute inset-0" />
         </div>
 
-        <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 w-full text-right grid gap-8 md:grid-cols-[minmax(220px,32%)_1fr] md:items-end">
+        <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 w-full text-start grid gap-8 md:grid-cols-[minmax(220px,32%)_1fr] md:items-end">
           <div className="library-instructor-frame relative w-full max-w-[360px] ms-auto md:ms-0">
             {featured?.avatarUrl ? (
               <img src={featured.avatarUrl} alt="" aria-hidden />
@@ -87,7 +87,7 @@ export const InstructorsView: React.FC = () => {
         </div>
       </header>
 
-      <div id="instructor-grid" className="relative z-10 -mt-8 max-w-[1360px] mx-auto px-4 sm:px-8 text-right scroll-mt-24">
+      <div id="instructor-grid" className="relative z-10 -mt-8 max-w-[1360px] mx-auto px-4 sm:px-8 text-start scroll-mt-24">
         <h2 className="library-rail-title text-white mb-4">כל המרצים</h2>
         <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {instructors.map((inst) => {
@@ -99,7 +99,7 @@ export const InstructorsView: React.FC = () => {
                 type="button"
                 onClick={() => setView('instructor', { instructorId: inst.id })}
                 aria-label={`${inst.name}, ${inst.title}, ${countLabel}`}
-                className="library-poster text-right min-h-11 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
+                className="library-poster text-start min-h-11 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
               >
                 <div className="library-instructor-frame relative overflow-hidden rounded-[4px]">
                   {inst.avatarUrl ? (
@@ -111,7 +111,7 @@ export const InstructorsView: React.FC = () => {
                   )}
                   <div className="absolute inset-0 bg-black/30" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-                  <div className="absolute bottom-2 right-2 left-2">
+                  <div className="absolute bottom-2 start-2 end-2">
                     <div className="text-[13px] font-semibold text-white truncate">{inst.name}</div>
                     <div className="text-[12px] text-white/70 truncate">
                       {inst.isFounder ? 'צוות המיזם · ' : ''}

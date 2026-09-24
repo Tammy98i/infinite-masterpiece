@@ -1,7 +1,8 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
 import { CourseCard } from '../components/CourseCard';
-import { Zap, ArrowRight } from 'lucide-react';
+import { Zap } from 'lucide-react';
+import { DirBack } from '../components/DirArrow';
 import { EmptyState } from '../components/LibraryStates';
 
 export const ShortsView: React.FC = () => {
@@ -10,7 +11,7 @@ export const ShortsView: React.FC = () => {
   const shortCourses = courses.filter((c) => c.isShort);
 
   return (
-    <div className="library-catalog-page min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto text-right">
+    <div className="library-catalog-page min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto text-start">
       <div className="library-page-hero relative overflow-hidden p-8 mb-8 border">
         <div className="flex items-center gap-2 text-[#b79043] text-xs font-semibold mb-2">
           <Zap className="w-4 h-4" />
@@ -45,7 +46,7 @@ export const ShortsView: React.FC = () => {
         className="mt-10 inline-flex items-center gap-1.5 text-sm text-white/45 hover:text-white min-h-11 cursor-pointer"
       >
         <span>לספרייה</span>
-        <ArrowRight className="w-4 h-4" />
+        <DirBack />
       </button>
     </div>
   );

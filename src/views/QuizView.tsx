@@ -20,7 +20,7 @@ export const QuizView: React.FC = () => {
   });
 
   return (
-    <div className="library-catalog-page min-h-screen text-white pt-28 pb-24 px-4 sm:px-8 max-w-6xl mx-auto text-right">
+    <div className="library-catalog-page min-h-screen text-white pt-28 pb-24 px-4 sm:px-8 max-w-6xl mx-auto text-start">
       
       <div className="text-center max-w-2xl mx-auto mb-12">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-white/10 text-white/80 text-xs font-semibold uppercase mb-3">
@@ -48,7 +48,7 @@ export const QuizView: React.FC = () => {
               <button
                 key={item.mood}
                 onClick={() => setSelectedMood(item.mood)}
-                className={`p-6 rounded-[4px] text-right transition-all flex items-center justify-between border ${
+                className={`p-6 rounded-[4px] text-start transition-all flex items-center justify-between border ${
                   isSelected
                     ? 'bg-white/10 border-white text-white'
                     : 'bg-white/5 border-white/10 text-zinc-300 hover:border-white/25'
@@ -133,7 +133,7 @@ export const QuizView: React.FC = () => {
                   <div className="text-xs font-semibold text-white/70 mb-2">ההמלצה המובילה שלנו</div>
                   <div className="flex flex-col sm:flex-row gap-6 items-center">
                     <img src={featured.coverImage} alt={featured.title} className="w-full sm:w-48 aspect-video object-cover rounded-[4px]" />
-                    <div className="flex-1 text-right">
+                    <div className="flex-1 text-start">
                       <h3 className="text-xl font-semibold text-white mb-2">{featured.title}</h3>
                       <p className="text-sm text-zinc-400 mb-4 line-clamp-2">{featured.subtitle}</p>
                       <button

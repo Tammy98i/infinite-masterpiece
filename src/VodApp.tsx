@@ -26,6 +26,7 @@ import { AdminView } from './views/AdminView';
 import { LecturerView } from './views/LecturerView';
 import { libraryPath } from './utils/libraryPath';
 import './styles/LibraryCatalog.css';
+import './styles/CrmDesk.css';
 
 export const VodApp: React.FC = () => {
   const { currentView, setView } = useApp();
@@ -99,7 +100,7 @@ export const VodApp: React.FC = () => {
   return (
     <PaywallProvider>
     <PaywallTriggers />
-    <div className="vod-app library-catalog sky-readable flex flex-col min-h-screen relative text-white bg-transparent">
+    <div className={`vod-app library-catalog sky-readable flex flex-col min-h-screen relative text-white bg-transparent${currentView === 'admin' || currentView === 'lecturer' || currentView === 'profile' ? ' crm-desk' : ''}`}>
       {currentView !== 'watch' && (
         <a href="#library-main" className="skip-link">
           דילוג לתוכן הראשי
@@ -112,7 +113,7 @@ export const VodApp: React.FC = () => {
       </main>
 
       {currentView !== 'watch' && (
-        <footer className="editorial-library-footer relative z-10 border-t border-white/10 bg-[#141414] py-10 px-4 sm:px-8 lg:px-10 text-right select-none" role="contentinfo" aria-label="תחתית הספרייה">
+        <footer className="editorial-library-footer relative z-10 border-t border-white/10 py-10 px-4 sm:px-8 lg:px-10 text-start select-none" role="contentinfo" aria-label="תחתית הספרייה">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8 text-sm text-zinc-400">
             <div>
               <p className="text-white/80 mb-1 text-sm">Infinite Masterpiece</p>

@@ -47,7 +47,7 @@ export const LecturersRow: React.FC = () => {
               setView('instructor', { instructorId: inst.id });
             }}
             aria-label={`${inst.name}, ${inst.title}`}
-            className="w-[132px] sm:w-[156px] shrink-0 text-right group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11"
+            className="w-[132px] sm:w-[156px] shrink-0 text-start group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11"
           >
             <div className="library-instructor-frame relative overflow-hidden rounded-[4px] mb-2">
               {inst.avatarUrl ? (

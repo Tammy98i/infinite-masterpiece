@@ -41,7 +41,7 @@ export const TopicsGrid: React.FC = () => {
               setView('category', { categoryId: category.id });
             }}
             aria-label={`פתיחת נושא ${category.name}, ${count} הרצאות`}
-            className="library-poster group relative aspect-[16/9] w-[168px] sm:w-[210px] shrink-0 overflow-hidden rounded-[4px] text-right focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] min-h-11"
+            className="library-poster group relative aspect-[16/9] w-[168px] sm:w-[210px] shrink-0 overflow-hidden rounded-[4px] text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] min-h-11"
           >
             {cover ? (
               <img
@@ -54,7 +54,7 @@ export const TopicsGrid: React.FC = () => {
               <div className="absolute inset-0 bg-zinc-900" />
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-            <div className="relative z-10 h-full flex flex-col justify-end p-2 text-right">
+            <div className="relative z-10 h-full flex flex-col justify-end p-2 text-start">
               <h3 className="text-[13px] font-semibold text-white leading-snug line-clamp-2">
                 {category.name}
               </h3>
