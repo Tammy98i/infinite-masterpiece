@@ -25,6 +25,9 @@ export function SkyBackdrop({ className = '' }: Props) {
       <div className="editorial-sky-crm-veil editorial-sky-crm-veil-c absolute inset-0" />
       <div className="editorial-sky-crm-veil editorial-sky-crm-veil-d absolute inset-0" />
       <div className="editorial-sky-crm-veil editorial-sky-crm-veil-e absolute inset-0" />
+      <div className="editorial-sky-crm-veil editorial-sky-crm-veil-f absolute inset-0" />
+      <div className="editorial-sky-crm-veil editorial-sky-crm-veil-g absolute inset-0" />
+      <div className="editorial-sky-crm-veil editorial-sky-crm-veil-h absolute inset-0" />
     </div>
   );
 }
