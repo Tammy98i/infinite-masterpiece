@@ -1,7 +1,8 @@
 import { randomUUID } from 'node:crypto';
 import type { DatabaseSync } from 'node:sqlite';
 import { FOUNDERS } from '../../src/marketing/data/founders.ts';
-import { WEBINAR_GLEB } from '../../src/constants/webinarPage.ts';
+import { SUPPORTING_TEAM } from '../../src/marketing/data/supportingTeam.ts';
+import { WEBINAR_GLEB, WEBINAR_GLEB_PREVIOUS_BIO } from '../../src/constants/webinarPage.ts';
 import { validateTeamMember, type TeamMember, type TeamMemberInput } from '../../src/lib/teamMembers.ts';
 
 export function initializeTeamMembers(db: DatabaseSync) {
@@ -17,7 +18,10 @@ export function initializeTeamMembers(db: DatabaseSync) {
   CREATE UNIQUE INDEX IF NOT EXISTS team_one_active_sun ON team_members(hierarchy_level)
     WHERE hierarchy_level = 'founder' AND active = 1;`);
   // One-time import, never overwrite CMS edits or re-enable hidden people on restart.
-  if (db.prepare("SELECT value FROM site_settings WHERE key = 'team_members_imported'").get()) return;
+  if (db.prepare("SELECT value FROM site_settings WHERE key = 'team_members_imported'").get()) {
+    syncPublishedProfiles(db);
+    return;
+  }
   db.exec('BEGIN');
   try {
     const founders = db.prepare('SELECT * FROM lecturers WHERE is_founder = 1 ORDER BY sort_order, name').all();
@@ -33,15 +37,41 @@ export function initializeTeamMembers(db: DatabaseSync) {
         orbit: isSun ? 0 : 1, active: true, display_order: index,
       });
     }
-    if (!founders.some(row => row.name === WEBINAR_GLEB.name)) insertMember(db, 'team-gleb', {
-      name: WEBINAR_GLEB.name, role: WEBINAR_GLEB.title, bio: WEBINAR_GLEB.bio, photo: '',
-      vision: '', contribution: WEBINAR_GLEB.bio, responsibilities: ['קריאייטיב', 'תוכן', 'צילום', 'מותג'],
-      expertise: ['קריאייטיב', 'שפה ויזואלית', 'תוכן'], hierarchy_level: 'leadership', impact_score: 85,
-      orbit: 1, active: true, display_order: founders.length,
-    });
+    if (!founders.some(row => row.name === WEBINAR_GLEB.name)) insertMember(db, 'team-gleb', glebProfile(founders.length));
     db.prepare("INSERT INTO site_settings (key, value) VALUES ('team_members_imported', '1')").run();
     db.exec('COMMIT');
   } catch (err) { db.exec('ROLLBACK'); throw err; }
+  syncPublishedProfiles(db);
+}
+
+function glebProfile(displayOrder: number): TeamMemberInput {
+  return {
+    name: WEBINAR_GLEB.name, role: WEBINAR_GLEB.title, bio: WEBINAR_GLEB.bio, photo: WEBINAR_GLEB.photo,
+    vision: '', contribution: WEBINAR_GLEB.bio, responsibilities: ['קריאייטיב', 'תוכן', 'צילום', 'מותג'],
+    expertise: ['קריאייטיב', 'שפה ויזואלית', 'תוכן', 'צילום', 'וידאו'], hierarchy_level: 'leadership', impact_score: 85,
+    orbit: 1, active: true, display_order: displayOrder,
+  };
+}
+
+/** Fill Gleb's portrait once, and add supporting people without touching later CMS edits. */
+function syncPublishedProfiles(db: DatabaseSync) {
+  const gleb = db.prepare('SELECT id, photo, bio, contribution FROM team_members WHERE name = ?').get(WEBINAR_GLEB.name) as
+    | { id: string; photo: string; bio: string; contribution: string }
+    | undefined;
+  if (gleb) {
+    const photo = gleb.photo || WEBINAR_GLEB.photo;
+    const stillDefault = gleb.bio === WEBINAR_GLEB_PREVIOUS_BIO || gleb.bio === '';
+    const bio = stillDefault ? WEBINAR_GLEB.bio : gleb.bio;
+    const contribution = gleb.contribution === WEBINAR_GLEB_PREVIOUS_BIO || gleb.contribution === '' ? WEBINAR_GLEB.bio : gleb.contribution;
+    if (photo !== gleb.photo || bio !== gleb.bio || contribution !== gleb.contribution) {
+      db.prepare('UPDATE team_members SET photo = ?, bio = ?, contribution = ? WHERE id = ?').run(photo, bio, contribution, gleb.id);
+    }
+  }
+  for (const member of SUPPORTING_TEAM) {
+    if (db.prepare('SELECT id FROM team_members WHERE name = ?').get(member.name)) continue;
+    const { id, ...input } = member;
+    insertMember(db, id, input);
+  }
 }
 
 function rowToMember(row: Record<string, unknown>): TeamMember {

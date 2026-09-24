@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @import "./styles/typography.css";
 @import "./styles/editorial-system.css";
+@import "./styles/HebrewRtl.css";
 
 @theme {
   --color-primary: #b79043;
@@ -36,7 +37,7 @@ html {
   }
 
   section[id] {
-    scroll-margin-top: 6rem;
+    scroll-margin-top: calc(var(--site-header-h) + 0.75rem);
   }
 }
 

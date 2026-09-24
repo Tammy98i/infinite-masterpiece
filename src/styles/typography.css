@@ -8,8 +8,8 @@
   --text-body-lg: clamp(1.125rem, 1.05rem + 0.25vw, 1.25rem);
   --text-body: clamp(1rem, 0.97rem + 0.15vw, 1.125rem);
   --text-small: clamp(0.875rem, 0.84rem + 0.12vw, 1rem);
-  --leading-heading: 1.22;
-  --leading-body: 1.7;
+  --leading-heading: 1.28;
+  --leading-body: 1.75;
   --tracking-heading: -0.018em;
   --measure: 40rem;
 }

@@ -74,7 +74,7 @@ export function PlatformLayout({ children }: PlatformLayoutProps) {
         </nav>
 
         <div className="p-4 border-t border-white/[0.05]">
-          <button className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-white/50 hover:bg-white/[0.03] hover:text-white transition-all text-right">
+          <button className="flex items-center gap-3 px-4 py-3 w-full rounded-xl text-white/50 hover:bg-white/[0.03] hover:text-white transition-all text-start">
             <LogOut className="w-5 h-5" strokeWidth={1} />
             <span className="font-light">התנתק</span>
           </button>
@@ -89,7 +89,7 @@ export function PlatformLayout({ children }: PlatformLayoutProps) {
       </main>
 
       {/* Mobile Bottom Navigation (PWA-ready) */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0d0b08]/90 backdrop-blur-2xl border-t border-white/[0.1] z-50 px-6 py-4 flex justify-between items-center pb-safe">
+      <nav className="md:hidden fixed bottom-0 inset-inline-0 bg-[#0d0b08]/90 backdrop-blur-2xl border-t border-white/[0.1] z-50 px-6 py-4 flex justify-between items-center pb-safe">
         {navItems.map((item) => {
           const isActive = location.pathname.startsWith(item.path);
           return (
