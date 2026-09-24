@@ -9,6 +9,7 @@ import {
   setRuntimeAdminEmails,
 } from '../../data/adminEmails';
 import { fieldClass } from './adminConstants';
+import { Bidi } from '../../components/Bidi';
 
 export function AdminEmailsCard({ onChanged }: { onChanged?: () => void }) {
   const [emails, setEmails] = useState<string[]>(() => configuredAdminEmails());
@@ -62,7 +63,7 @@ export function AdminEmailsCard({ onChanged }: { onChanged?: () => void }) {
   };
 
   return (
-    <div className="border border-white/10 rounded-2xl p-6 grid gap-4 bg-white/[0.02]">
+    <div className="crm-desk-panel p-6 grid gap-4">
       <div>
         <h2 className="text-lg font-light mb-1">מיילים עם הרשאת אדמין</h2>
         <p className="text-sm text-white/50 font-light">
@@ -73,10 +74,10 @@ export function AdminEmailsCard({ onChanged }: { onChanged?: () => void }) {
         {emails.map((email) => (
           <li
             key={email}
-            className="flex items-center justify-between gap-3 border border-white/10 rounded-xl px-4 py-2 min-h-11 bg-[#0a0a0a]"
+            className="flex items-center justify-between gap-3 crm-desk-panel px-4 py-2 min-h-11"
           >
-            <span className="text-sm text-white" dir="ltr">
-              {email}
+            <span className="text-sm text-white">
+              <Bidi kind="email">{email}</Bidi>
               {builtIn.includes(email) ? <span className="text-white/35"> · קבוע</span> : null}
             </span>
             {builtIn.includes(email) ? null : (

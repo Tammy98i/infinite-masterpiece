@@ -3,6 +3,7 @@ import { useUser } from '../../context/UserContext';
 import { LIBRARY_PLANS } from '../../constants/libraryPlans';
 import { trackEvent } from '../../utils/analytics';
 import { hasFullLibraryAccess } from '../../utils/access';
+import { formatIls } from '../../utils/bidi';
 
 export function LibraryMembership() {
   const { user, isGuest, startTrialOrSubscribe } = useUser();
@@ -27,7 +28,7 @@ export function LibraryMembership() {
         הספרייה נמכרת במנוי לצפייה — לא ברכישת קורס בודד. מנוי פותח הרצאות, הדרכות, מסלולים ועדכונים חדשים.
       </p>
       <p className="text-xs text-white/35 font-light mb-10 max-w-2xl">
-        מסלול האמיצים / ההססנים (8,888 ₪) הוא כניסה למיזם — נפרד ממנוי הספרייה.{' '}
+        מסלול האמיצים / ההססנים ({formatIls(8888)}) הוא כניסה למיזם — נפרד ממנוי הספרייה.{' '}
         <Link to="/pricing" className="text-[#b79043] hover:text-[#dfc47d] underline-offset-2 hover:underline">
           בדיקת התאמה למסלול המלא
         </Link>

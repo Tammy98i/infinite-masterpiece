@@ -25,13 +25,13 @@ export const OnboardingTooltip: React.FC = () => {
     <>
       <div className="fixed inset-0 z-[64] bg-black/50 pointer-events-none" />
       <div
-        className="fixed z-[66] w-72 glass border border-primary/40 rounded-2xl p-4 shadow-2xl text-right animate-in fade-in"
+        className="fixed z-[66] w-72 glass border border-primary/40 rounded-2xl p-4 shadow-2xl text-start animate-in fade-in"
         style={{
           top: Math.min(rect.bottom + 12, window.innerHeight - 200),
           left: Math.max(8, Math.min(rect.left, window.innerWidth - 300)),
         }}
       >
-        <button onClick={dismissActiveStep} className="absolute top-2 left-2 p-1 text-zinc-500 hover:text-white focus-ring rounded">
+        <button onClick={dismissActiveStep} className="absolute top-2 end-2 p-1 text-zinc-500 hover:text-white focus-ring rounded">
           <X className="w-3.5 h-3.5" />
         </button>
         <div className="text-xs font-bold text-primary-light mb-1">טיפ</div>

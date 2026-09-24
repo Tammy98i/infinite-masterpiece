@@ -1,15 +1,14 @@
 import { useState, FormEvent, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'motion/react';
-import { Compass, Loader2, ArrowLeft } from 'lucide-react';
+import { Compass, Loader2 } from 'lucide-react';
+import { DirNext } from '../../components/DirArrow';
+import { Price } from '../../components/Price';
 import { HESITANT_INSTALLMENTS, ENTRY_TRACK_FINE_PRINT } from '../../data/entryTracks';
+import { formatIls } from '../../utils/bidi';
 import { submitTrackLead } from '../../api/tracks';
 import { checkoutApi, continueAfterTrackLead } from '../../api/checkout';
 import { trackEvent } from '../../utils/analytics';
-
-function formatAmount(amount: number) {
-  return amount.toLocaleString('he-IL');
-}
 
 export function Hesitation() {
   const navigate = useNavigate();
@@ -40,12 +39,8 @@ export function Hesitation() {
         fullName,
         phone: String(data.get('phone') || ''),
         email,
-        field: String(data.get('field') || ''),
+        field: '',
         hesitationReason: String(data.get('hesitationReason') || ''),
-        hasProduct: String(data.get('hasProduct') || ''),
-        hasSold: String(data.get('hasSold') || ''),
-        goal90: String(data.get('goal90') || ''),
-        links: String(data.get('links') || ''),
       });
       trackEvent('hesitant_8_payment_started');
       const { redirected } = await continueAfterTrackLead({
@@ -79,14 +74,14 @@ export function Hesitation() {
             מסלול ההססנים
           </h1>
           <p className="text-lg text-white/60 font-light max-w-xl mx-auto leading-relaxed">
-            אותו מחיר מלא, 8,888 ₪ לפני מע״מ, בארבע פעימות שמתחילות ב־8 ₪. לא הנחה ולא מסלול חלקי.
+            אותו מחיר מלא, {formatIls(8888)} לפני מע״מ, בארבע פעימות שמתחילות ב־{formatIls(8)}. לא הנחה ולא מסלול חלקי.
           </p>
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-12">
           {HESITANT_INSTALLMENTS.map((item) => (
             <div key={item.number} className="rounded-2xl border border-white/10 bg-white/[0.02] p-4 text-center">
-              <p className="text-xl text-white font-accent font-semibold tabular-nums mb-1">{formatAmount(item.amountBeforeVat)} ₪</p>
+              <p className="text-xl text-white font-accent font-semibold mb-1"><Price amount={item.amountBeforeVat} /></p>
               <p className="text-[11px] text-white/40 font-light leading-relaxed">{item.when}</p>
             </div>
           ))}
@@ -98,7 +93,7 @@ export function Hesitation() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="bg-white/[0.01] border border-[#b79043]/20 backdrop-blur-2xl rounded-[32px] p-8 md:p-12 lg:p-14"
         >
-          <form onSubmit={handleSubmit} className="space-y-8">
+          <form id="hesitation-form" onSubmit={handleSubmit} className="space-y-8">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">שם מלא</label>
@@ -116,11 +111,6 @@ export function Hesitation() {
             </div>
 
             <div className="space-y-2">
-              <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">תחום יצירה / עיסוק</label>
-              <input required name="field" type="text" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors min-h-11" placeholder="לדוגמה: צלם, מעצב, מאמן, מוזיקאי" />
-            </div>
-
-            <div className="space-y-2">
               <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">על מה ההתלבטות שלך?</label>
               <select required name="hesitationReason" defaultValue="" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors appearance-none cursor-pointer min-h-11">
                 <option value="" disabled>בחר/י את הסיבה המרכזית</option>
@@ -135,52 +125,13 @@ export function Hesitation() {
               </select>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-3">
-                <label className="text-[13px] text-white/60 uppercase tracking-widest px-2 block mb-2">יש לך כבר שירות או מוצר?</label>
-                <div className="flex gap-4">
-                  <label className="flex-1 cursor-pointer">
-                    <input type="radio" name="hasProduct" value="yes" className="peer sr-only" required />
-                    <div className="text-center py-3 rounded-xl border border-white/[0.05] bg-white/[0.02] peer-checked:border-[#b79043] peer-checked:bg-[#b79043]/10 transition-colors text-white/80 peer-checked:text-white min-h-11">כן</div>
-                  </label>
-                  <label className="flex-1 cursor-pointer">
-                    <input type="radio" name="hasProduct" value="no" className="peer sr-only" />
-                    <div className="text-center py-3 rounded-xl border border-white/[0.05] bg-white/[0.02] peer-checked:border-[#b79043] peer-checked:bg-[#b79043]/10 transition-colors text-white/80 peer-checked:text-white min-h-11">עדיין לא</div>
-                  </label>
-                </div>
-              </div>
-              <div className="space-y-3">
-                <label className="text-[13px] text-white/60 uppercase tracking-widest px-2 block mb-2">כבר יצא לך למכור?</label>
-                <div className="flex gap-4">
-                  <label className="flex-1 cursor-pointer">
-                    <input type="radio" name="hasSold" value="yes" className="peer sr-only" required />
-                    <div className="text-center py-3 rounded-xl border border-white/[0.05] bg-white/[0.02] peer-checked:border-[#b79043] peer-checked:bg-[#b79043]/10 transition-colors text-white/80 peer-checked:text-white min-h-11">כן</div>
-                  </label>
-                  <label className="flex-1 cursor-pointer">
-                    <input type="radio" name="hasSold" value="no" className="peer sr-only" />
-                    <div className="text-center py-3 rounded-xl border border-white/[0.05] bg-white/[0.02] peer-checked:border-[#b79043] peer-checked:bg-[#b79043]/10 transition-colors text-white/80 peer-checked:text-white min-h-11">לא</div>
-                  </label>
-                </div>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">מה השינוי המרכזי שהיית רוצה לראות תוך 90 יום?</label>
-              <textarea required name="goal90" rows={3} className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors resize-none" />
-            </div>
-
-            <div className="space-y-2">
-              <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">לינק לאינסטגרם / אתר (רשות)</label>
-              <input name="links" type="url" dir="ltr" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors text-center min-h-11" />
-            </div>
-
             <div className="flex items-start gap-4 pt-4">
               <input required type="checkbox" id="consent" className="mt-1.5 w-4 h-4 bg-transparent border-white/20 rounded text-[#b79043] focus:ring-[#b79043] focus:ring-offset-0" />
               <label htmlFor="consent" className="text-sm text-white/40 leading-relaxed font-light cursor-pointer">
-                ידוע לי שמסלול ההססנים הוא תשלום מלא של 8,888 ₪ לפני מע״מ בארבע פעימות, ואינו הנחה.
+                ידוע לי שמסלול ההססנים הוא תשלום מלא של {formatIls(8888)} לפני מע״מ בארבע פעימות, ואינו הנחה.
                 {checkoutEnabled
-                  ? ' אחרי השליחה תועברו לתשלום מאובטח של הפעימה הראשונה, 8 ₪ לפני מע״מ.'
-                  : ' הפרטים נקלטים כדי לפתוח את הפעימה הראשונה של 8 ₪ מול הצוות.'}
+                  ? ` אחרי השליחה תועברו לתשלום מאובטח של הפעימה הראשונה, ${formatIls(8)} לפני מע״מ.`
+                  : ` הפרטים נקלטים כדי לפתוח את הפעימה הראשונה של ${formatIls(8)} מול הצוות.`}
               </label>
             </div>
 
@@ -198,8 +149,8 @@ export function Hesitation() {
                 </div>
               ) : (
                 <div className="flex items-center justify-center gap-3">
-                  <span>{checkoutEnabled ? 'המשך לתשלום מאובטח של 8 ₪' : 'אני מתחיל/ה ב־8 ₪'}</span>
-                  <ArrowLeft className="w-5 h-5 group-hover:-translate-x-2 transition-transform" />
+                  <span>{checkoutEnabled ? <>המשך לתשלום מאובטח של <Price amount={8} /></> : <>אני מתחיל/ה ב־<Price amount={8} /></>}</span>
+                  <DirNext className="w-5 h-5" />
                 </div>
               )}
             </button>
