@@ -5,19 +5,24 @@
   display: none;
 }
 
+/* Desk owns the sky: turn off library veils so stars stay visible (no double stack). */
+.site-backdrop-layout:has(.crm-desk) .editorial-sky-library-veil {
+  display: none !important;
+}
+
 .site-backdrop-layout:has(.crm-desk) .editorial-sky-image {
-  opacity: .7;
-  filter: saturate(.92) contrast(1.1) brightness(.58);
+  opacity: .68;
+  filter: saturate(.9) contrast(1.12) brightness(.55);
 }
 
 .site-backdrop-layout:has(.crm-desk) .editorial-sky-blackout {
-  background: rgba(3, 8, 18, .42);
+  background: rgba(3, 8, 18, .32);
 }
 
 .site-backdrop-layout:has(.crm-desk) .editorial-sky-shade {
   background:
-    radial-gradient(circle at 50% 12%, transparent 10%, rgba(5, 10, 20, .34) 52%, rgba(5, 10, 20, .62) 100%),
-    linear-gradient(180deg, rgba(5, 10, 20, .28), rgba(5, 10, 20, .58));
+    radial-gradient(circle at 50% 12%, transparent 10%, rgba(5, 10, 20, .28) 52%, rgba(5, 10, 20, .52) 100%),
+    linear-gradient(180deg, rgba(5, 10, 20, .22), rgba(5, 10, 20, .48));
 }
 
 .site-backdrop-layout:has(.crm-desk) .editorial-sky-crm-veil {
@@ -25,29 +30,62 @@
 }
 
 .editorial-sky-crm-veil-a {
-  background: linear-gradient(180deg, rgba(2, 6, 14, .62) 0%, rgba(5, 10, 20, .18) 26%, transparent 48%, rgba(2, 6, 14, .7) 100%);
+  background: linear-gradient(180deg, rgba(2, 6, 14, .48) 0%, rgba(5, 10, 20, .14) 26%, transparent 48%, rgba(2, 6, 14, .55) 100%);
 }
 
 .editorial-sky-crm-veil-b {
-  background: rgba(2, 6, 16, .28);
+  background: rgba(2, 6, 16, .18);
 }
 
 .editorial-sky-crm-veil-c {
-  background: linear-gradient(90deg, rgba(5, 10, 20, .5), transparent 38%, rgba(5, 10, 20, .5));
+  background: linear-gradient(90deg, rgba(5, 10, 20, .38), transparent 38%, rgba(5, 10, 20, .38));
 }
 
 .editorial-sky-crm-veil-d {
-  background: radial-gradient(ellipse at 18% 8%, rgba(5, 10, 20, .08), rgba(3, 8, 18, .46) 74%);
+  background: radial-gradient(ellipse at 18% 8%, rgba(5, 10, 20, .06), rgba(3, 8, 18, .32) 74%);
 }
 
 .editorial-sky-crm-veil-e {
-  background: linear-gradient(180deg, transparent 8%, rgba(2, 6, 14, .4) 100%);
+  background: linear-gradient(180deg, transparent 8%, rgba(2, 6, 14, .28) 100%);
+}
+
+/* Desk-specific cinematic stack (SPEC-ADMIN-NETFLIX-DESK) */
+.editorial-sky-crm-veil-f {
+  background: linear-gradient(180deg, transparent 35%, rgba(2, 6, 14, .72) 100%);
+}
+
+.editorial-sky-crm-veil-g {
+  background: linear-gradient(to inline-end, rgba(5, 10, 20, .55), transparent 42%);
+}
+
+.editorial-sky-crm-veil-h {
+  background: radial-gradient(ellipse at 50% 40%, transparent 20%, rgba(3, 8, 18, .5) 85%);
 }
 
 .crm-desk,
 .crm-desk main {
   background: transparent !important;
   color: #e8eef8;
+}
+
+/* Stage veil over main content (table readability) */
+.crm-desk-stage {
+  position: relative;
+  isolation: isolate;
+}
+
+.crm-desk-stage::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background: linear-gradient(180deg, transparent 0%, rgba(2, 6, 14, .28) 100%);
+}
+
+.crm-desk-stage > * {
+  position: relative;
+  z-index: 1;
 }
 
 .crm-desk-aside,
@@ -155,10 +193,184 @@
   color: rgba(255, 255, 255, .4);
 }
 
+.crm-desk-nav-why {
+  margin-top: 0.1rem;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, .32);
+}
+
+.crm-desk-nav-item.is-active .crm-desk-nav-why {
+  color: rgba(183, 144, 67, .85);
+}
+
+.crm-desk-metric {
+  display: grid;
+  gap: 0.35rem;
+  text-align: start;
+  min-height: 44px;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 4px;
+  background: rgba(5, 10, 20, .55);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  color: inherit;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.crm-desk-metric:hover,
+.crm-desk-metric:focus-visible {
+  border-color: rgba(183, 144, 67, .55);
+  background: rgba(183, 144, 67, .08);
+  outline: none;
+}
+
+.crm-desk-metric strong {
+  font-size: 1.5rem;
+  font-weight: 300;
+  line-height: 1.1;
+  color: #fff;
+}
+
+.crm-desk-metric b {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, .85);
+}
+
+.crm-desk-metric em {
+  font-size: 0.7rem;
+  font-style: normal;
+  color: rgba(255, 255, 255, .4);
+}
+
+/* Named panel / table chrome (Netflix academic rails language) */
+.crm-desk-panel {
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 4px;
+  background: rgba(5, 10, 20, .55);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: inherit;
+}
+
+.crm-desk-table {
+  overflow-x: auto;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 4px;
+  background: rgba(5, 10, 20, .38);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+}
+
+.crm-desk-table table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.crm-desk-title-card {
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 4px;
+  padding: 1rem;
+  min-height: 200px;
+  background: rgba(5, 10, 20, .62);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+}
+
+.crm-desk-title-card .crm-desk-title-keep {
+  font-size: 11px;
+  color: #b79043;
+  margin: 0 0 6px;
+}
+
+.crm-desk-who {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.crm-desk-mono {
+  width: 36px;
+  height: 36px;
+  flex-shrink: 0;
+  display: grid;
+  place-items: center;
+  border-radius: 4px;
+  background: rgba(183, 144, 67, .2);
+  color: #dfc47d;
+  font-size: 13px;
+  font-weight: 600;
+  line-height: 1;
+}
+
+.crm-desk-who .crm-desk-who-text {
+  min-width: 0;
+}
+
+.crm-desk-who .crm-desk-who-name {
+  display: block;
+  color: #fff;
+}
+
+.crm-desk-who .crm-desk-who-mail {
+  display: block;
+  font-size: 11px;
+  color: rgba(255, 255, 255, .4);
+}
+
+.crm-desk-fold {
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+  background: rgba(5, 10, 20, .4);
+}
+
+.crm-desk-fold > summary {
+  cursor: pointer;
+  list-style: none;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, .75);
+}
+
+.crm-desk-fold > summary::-webkit-details-marker {
+  display: none;
+}
+
+.crm-desk-fold[open] > summary {
+  margin-bottom: 0.75rem;
+  color: #dfc47d;
+}
+
+.crm-desk .p-6 {
+  padding: 0.85rem !important;
+}
+
+.crm-desk .p-5 {
+  padding: 0.75rem !important;
+}
+
+.crm-desk .gap-8 {
+  gap: 1rem !important;
+}
+
+.crm-desk .gap-10 {
+  gap: 1.25rem !important;
+}
+
 .crm-desk-nav-search {
   width: 100%;
   min-height: 44px;
-  border-radius: 4px;
+  border-radius: 4px !important;
   border: 1px solid rgba(255, 255, 255, .14);
   background: rgba(5, 10, 20, .55);
   padding-inline: 2.25rem 0.75rem;
@@ -207,6 +419,15 @@
   background: rgba(5, 10, 20, .55) !important;
 }
 
+.crm-desk .glass {
+  background: rgba(5, 10, 20, .55) !important;
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border-radius: 4px;
+  border-color: rgba(255, 255, 255, .12);
+  box-shadow: none;
+}
+
 .crm-desk .border.border-white\/10.rounded-2xl,
 .crm-desk .border.border-white\/10.rounded-3xl,
 .crm-desk .border.border-white\/10.rounded-xl {
@@ -217,6 +438,103 @@
 
 .crm-desk table {
   background: transparent;
+  font-size: 13px;
+}
+
+.crm-desk table th,
+.crm-desk table td {
+  padding-block: 4px;
+  padding-inline: 8px;
+  font-size: 13px;
+  vertical-align: middle;
+  white-space: nowrap;
+}
+
+.crm-desk table td .block {
+  display: inline;
+}
+
+.crm-desk table td .block + .block {
+  margin-inline-start: 0.45em;
+  font-size: 11px;
+}
+
+.crm-desk-page-header {
+  padding-block: 0.35rem !important;
+}
+
+.crm-desk-page-header h1 {
+  font-size: 1.125rem !important;
+  font-weight: 500 !important;
+  line-height: 1.3;
+}
+
+.crm-desk-page-header p.text-sm {
+  font-size: 12px;
+  margin-top: 0.15rem !important;
+  max-width: 42rem;
+}
+
+.crm-desk .border.border-white\/10.rounded-2xl,
+.crm-desk .border.border-white\/10.rounded-3xl,
+.crm-desk .border.border-white\/10.rounded-xl {
+  border-radius: 4px;
+}
+
+.crm-desk .rounded-full:not(.crm-hero-play):not(.crm-hero-more) {
+  border-radius: 4px;
+}
+
+.crm-desk .min-h-\[360px\],
+.crm-desk .min-h-\[320px\] {
+  min-height: 0 !important;
+}
+
+.crm-desk-row-act {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+  min-height: 44px;
+  margin-block: -8px;
+  padding: 0 8px;
+  border: 1px solid rgba(255, 255, 255, .16);
+  border-radius: 4px;
+  background: transparent;
+  color: #fff;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.crm-desk-row-act.kill {
+  color: #f7b4b4;
+  border-color: rgba(247, 180, 180, .35);
+}
+
+.crm-desk-row-act:disabled {
+  opacity: .5;
+  cursor: not-allowed;
+}
+
+.crm-desk-edit-drawer {
+  margin-top: 10px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 4px;
+  padding: 12px;
+  background: rgba(5, 10, 20, .45);
+}
+
+.crm-desk-notif {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  min-height: 44px;
+  padding: 6px 10px;
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 4px;
 }
 
 .crm-desk .crm-hero {
@@ -315,4 +633,69 @@ html.a11y-reduce-motion {
     transform: none;
     transition: none;
   }
+}
+
+/* ---- Desk RTL / BiDi ----------------------------------------------------
+   Document dir comes from <html lang="he" dir="rtl">. The desk never sets
+   direction:rtl on inner shells (avoids double-flip with Flex/Grid). */
+
+.crm-desk {
+  text-align: start;
+}
+
+.crm-desk-crumb-sep {
+  margin-inline: 0.35em;
+  color: rgba(255, 255, 255, .25);
+}
+
+/* Mixed Hebrew+Latin form fields: plaintext ≈ dir="auto" without fighting type=email/tel/url. */
+.crm-desk .crm-desk-field:not([type='email']):not([type='tel']):not([type='url']):not([type='password']):not([type='number']),
+.crm-desk textarea.crm-desk-field,
+.crm-desk input[type='text'].crm-desk-field,
+.crm-desk input[type='search'].crm-desk-field,
+.crm-desk input:not([type]).crm-desk-field {
+  unicode-bidi: plaintext;
+}
+
+/* Numeric / ID cells in dense tables stay LTR isolates even without <bdi>. */
+.crm-desk td[dir='ltr'],
+.crm-desk th[dir='ltr'],
+.crm-desk dd[dir='ltr'],
+.crm-desk [data-bidi='ltr'] {
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: start;
+}
+
+/* Keyboard hints (⌘K) and Latin badges inside Hebrew chrome. */
+.crm-desk kbd,
+.crm-desk .crm-desk-hotkey {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+}
+
+/* Fold disclosure marker: keep on inline-end; never row-reverse the summary. */
+.crm-desk-fold > summary {
+  flex-direction: row;
+}
+
+.crm-desk-fold > summary::after {
+  content: '';
+  inline-size: 0.45rem;
+  block-size: 0.45rem;
+  border-inline-end: 1.5px solid rgba(255, 255, 255, .45);
+  border-block-end: 1.5px solid rgba(255, 255, 255, .45);
+  transform: rotate(45deg);
+  transition: transform .15s ease;
+  margin-inline-start: auto;
+}
+
+.crm-desk-fold[open] > summary::after {
+  transform: rotate(-135deg);
+}
+
+/* Nav search: logical padding already set above via padding-inline. */
+.crm-desk-nav-search {
+  text-align: start;
 }
