@@ -57,10 +57,26 @@
 
 .webinar-spine a span {
   position: absolute;
-  width: 1px;
-  height: 1px;
-  overflow: hidden;
-  clip: rect(0, 0, 0, 0);
+  top: 50%;
+  right: 36px;
+  width: max-content;
+  height: auto;
+  overflow: visible;
+  clip: auto;
+  color: var(--gold);
+  font-size: 11px;
+  letter-spacing: .08em;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transform: translateY(-50%);
+  transition: opacity .2s ease;
+}
+
+.webinar-spine a:hover span,
+.webinar-spine a:focus-visible span,
+.webinar-spine a.is-on span {
+  opacity: 1;
 }
 
 .webinar-night-page .webinar-neural-hero {
@@ -122,13 +138,14 @@
   flex-wrap: wrap;
   justify-content: center;
   gap: 36px 48px;
-  margin: 8px 0 48px;
+  margin: 8px 0 36px;
   padding: 0;
   list-style: none;
 }
 
 .webinar-host-orbs li {
-  width: min(220px, 100%);
+  position: relative;
+  width: min(160px, 100%);
   text-align: center;
 }
 
@@ -157,10 +174,11 @@
 }
 
 .webinar-host-bio {
-  margin: 0;
-  color: rgba(224, 237, 255, .62);
-  font-size: 13px;
-  line-height: 1.55;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
 }
 
 .webinar-night-page .webinar-editorial-grid #hosts div.grid,
@@ -255,7 +273,27 @@
 }
 
 @media (max-width: 767px) {
-  .webinar-spine { display: none; }
+  .webinar-spine {
+    top: auto;
+    bottom: 14px;
+    right: 50%;
+    flex-direction: row;
+    transform: translateX(50%);
+    padding: 4px 8px;
+    border: 1px solid rgba(223, 196, 125, .2);
+    border-radius: 999px;
+    background: rgba(2, 6, 15, .72);
+  }
+  .webinar-spine::before {
+    top: 50%;
+    bottom: auto;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    height: 1px;
+  }
+  .webinar-spine a { width: 36px; height: 36px; }
+  .webinar-spine a span { display: none; }
   .webinar-host-orbs { gap: 28px; }
   .webinar-host-orb { width: 104px; height: 104px; }
   .webinar-task-spine {
@@ -263,6 +301,13 @@
     gap: 22px 12px;
   }
   .webinar-task-spine::before { display: none; }
+  .webinar-flow-page #problem .webinar-neural-bottlenecks li {
+    width: calc(50% - 12px);
+  }
+  .webinar-night-page,
+  .webinar-flow-page #problem.webinar-neural-afterglow {
+    padding-bottom: 88px;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

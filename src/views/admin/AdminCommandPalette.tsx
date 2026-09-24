@@ -46,7 +46,7 @@ function ResultButton({ tab, onClick }: { tab: Tab; onClick: () => void }) {
   const item = NAV_ITEMS.find(candidate => candidate.id === tab);
   if (!item) return null;
   const Icon = item.icon;
-  return <button type="button" onClick={onClick} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-4 py-3 text-right hover:bg-[#b79043]/10 focus:bg-[#b79043]/10">
+  return <button type="button" onClick={onClick} className="flex min-h-14 w-full items-center gap-3 rounded-2xl px-4 py-3 text-start hover:bg-[#b79043]/10 focus:bg-[#b79043]/10">
     <span className="flex h-9 w-9 items-center justify-center rounded-xl border border-[#b79043]/20 bg-[#b79043]/5 text-[#b79043]"><Icon size={17} /></span>
     <span className="min-w-0 flex-1"><strong className="block font-normal text-white">{item.label}</strong><span className="block truncate text-xs text-white/40">{TAB_META[tab].group} · {TAB_META[tab].description}</span></span>
   </button>;

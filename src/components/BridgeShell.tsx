@@ -17,7 +17,7 @@ export function BridgeShell() {
       <div className="relative z-10 h-0.5 w-full bg-white/[0.04]" role="progressbar" aria-label="טוען ספרייה" aria-busy="true">
         <div className="h-full w-2/5 bg-[#b79043] motion-safe:animate-pulse" />
       </div>
-      <div className="relative z-10 max-w-3xl mx-auto px-6 pt-24 text-right">
+      <div className="relative z-10 max-w-3xl mx-auto px-6 pt-24 text-start">
         <p className="text-white/50 font-light text-lg">טוען את הספרייה האינסופית</p>
         <p className="text-white/30 text-sm mt-2 font-light">המעטפת נשארת. רק התוכן מתחלף.</p>
       </div>

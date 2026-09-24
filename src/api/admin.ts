@@ -20,6 +20,8 @@ export interface AdminOverview {
   pending: number;
   episodes: number;
   applicationsPending: number;
+  /** לידים חדשים ממסלול + וובינר — לסקירת 4 מדדים */
+  openLeads: number;
   paywallHits: number;
   upgrades: number;
   conversionRate: number;
@@ -187,6 +189,10 @@ export const adminApi = {
     apiRequest<{ user: AdminUserRow }>(`/api/admin/users/${id}`, {
       method: 'PATCH',
       body: JSON.stringify(patch),
+    }),
+  deleteUser: (id: string) =>
+    apiRequest<{ id: string }>(`/api/admin/users/${id}`, {
+      method: 'DELETE',
     }),
   applications: () => apiRequest<{ applications: LecturerApplication[] }>('/api/admin/applications'),
   reviewApplication: (id: string, action: 'approved' | 'rejected' | 'more_info', adminNote?: string) =>
