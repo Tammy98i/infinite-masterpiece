@@ -1,14 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, Search, X } from 'lucide-react';
+import { Search, X } from 'lucide-react';
+import { DirNext } from '../../components/DirArrow';
 import { Link } from 'react-router-dom';
 
 const DESTINATIONS = [
   { to: '/', title: 'דף הבית', description: 'המערכת העסקית סביב היצירה', keywords: 'יצירה מערכת הכנסה' },
   { to: '/webinar', title: 'וובינר חי', description: 'היכרות, התאמה והרשמה לערב החי', keywords: 'הרשמה ערב שאלות התאמה' },
-  { to: '/journey', title: 'מסע 33 הימים', description: 'ארבעת שלבי התהליך', keywords: 'מכירות שיווק תשתיות סקייל' },
-  { to: '/pricing', title: 'מסלולים ומחיר', description: 'אמיצים או הססנים', keywords: '8008 8888 תשלום פעימות' },
-  { to: '/premium-88', title: 'צוות המיזם', description: 'האנשים שמאחורי שכבת העומק', keywords: 'מייסדים מומחים נבחרת' },
-  { to: '/faq', title: 'שאלות נפוצות', description: 'תשובות לפני קבלת החלטה', keywords: 'החזר מתאים ספרייה pods' },
+  { to: '/#journey', title: 'מסע 33 הימים', description: 'ארבעת שלבי התהליך', keywords: 'מכירות שיווק תשתיות סקייל תהליך' },
+  { to: '/#pricing', title: 'מסלולים ומחיר', description: 'אמיצים או הססנים', keywords: '8008 8888 תשלום פעימות מחירון' },
+  { to: '/#team', title: 'צוות המיזם', description: 'האנשים שמאחורי שכבת העומק', keywords: 'מייסדים מומחים נבחרת' },
+  { to: '/#faq', title: 'שאלות נפוצות', description: 'תשובות לפני קבלת החלטה', keywords: 'החזר מתאים ספרייה pods' },
   { to: '/library-membership', title: 'מנוי ספרייה', description: 'פרטי הגישה לספריית אינסוף', keywords: 'קורסים הרצאות תוכן' },
   { to: '/library', title: 'כניסה לספרייה', description: 'המשך צפייה באזור האישי', keywords: 'התחברות חשבון קורסים' },
 ];
@@ -38,8 +39,8 @@ export function SiteSearch({ open, onClose }: { open: boolean; onClose: () => vo
         <button type="button" onClick={onClose} className="flex h-11 w-11 items-center justify-center rounded-full text-white/45 hover:bg-white/5 hover:text-white" aria-label="סגירה"><X size={18} /></button>
       </div>
       <div className="max-h-[55vh] overflow-y-auto p-3">
-        {results.length ? results.map(item => <Link key={item.to} to={item.to} onClick={onClose} className="group flex min-h-16 items-center gap-4 rounded-2xl px-4 py-3 text-right hover:bg-[#b79043]/10">
-          <span className="min-w-0 flex-1"><strong className="block font-normal text-white">{item.title}</strong><span className="mt-1 block text-sm text-white/45">{item.description}</span></span><ArrowLeft size={17} className="text-white/25 transition-transform group-hover:-translate-x-1 group-hover:text-[#b79043]" />
+        {results.length ? results.map(item => <Link key={item.to} to={item.to} onClick={onClose} className="group flex min-h-16 items-center gap-4 rounded-2xl px-4 py-3 text-start hover:bg-[#b79043]/10">
+          <span className="min-w-0 flex-1"><strong className="block font-normal text-white">{item.title}</strong><span className="mt-1 block text-sm text-white/45">{item.description}</span></span><DirNext className="h-[17px] w-[17px] text-white/25 group-hover:text-[#b79043]" />
         </Link>) : <p className="px-5 py-12 text-center text-sm text-white/45">לא מצאנו עמוד מתאים. נסו ניסוח קצר יותר.</p>}
       </div>
     </section>

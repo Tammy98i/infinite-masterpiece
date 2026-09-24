@@ -12,7 +12,7 @@ export const OnboardingCompleteModal: React.FC = () => {
       <div className="glass bg-zinc-950/95 border border-primary/40 rounded-3xl max-w-md w-full p-8 text-center relative shadow-2xl">
         <button
           onClick={() => setShowCompleteModal(false)}
-          className="absolute top-5 left-5 text-zinc-400 hover:text-white focus-ring rounded p-1"
+          className="absolute top-5 end-5 text-zinc-400 hover:text-white focus-ring rounded p-1"
         >
           <X className="w-5 h-5" />
         </button>

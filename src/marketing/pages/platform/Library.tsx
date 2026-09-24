@@ -19,11 +19,11 @@ export function Library() {
           <p className="text-white/50 font-light">מאגר התוכן של Infinite Masterpiece</p>
         </div>
         <div className="relative w-full md:w-auto">
-          <Search className="absolute right-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
+          <Search className="absolute start-4 top-1/2 -translate-y-1/2 w-5 h-5 text-white/30" />
           <input 
             type="text" 
             placeholder="חיפוש שיעור או נושא..." 
-            className="w-full md:w-80 bg-white/[0.03] border border-white/[0.05] rounded-full py-3 pr-12 pl-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors"
+            className="w-full md:w-80 bg-white/[0.03] border border-white/[0.05] rounded-full py-3 ps-12 pe-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors"
           />
         </div>
       </div>
@@ -54,7 +54,7 @@ export function Library() {
               )}
               {/* Progress bar line at bottom of image */}
               {!lesson.locked && lesson.progress > 0 && (
-                <div className="absolute bottom-0 left-0 right-0 h-1 bg-white/10">
+                <div className="absolute bottom-0 inset-inline-0 h-1 bg-white/10">
                   <div className="h-full bg-[#b79043]" style={{ width: `${lesson.progress}%` }} />
                 </div>
               )}

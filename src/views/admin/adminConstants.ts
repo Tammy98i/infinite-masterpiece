@@ -1,15 +1,15 @@
 import type { Tab } from './adminNav';
 
 export const fieldClass =
-  'w-full bg-zinc-900 border border-white/10 rounded-xl p-3 text-sm text-white placeholder:text-white/30 focus:border-[#b79043] focus:ring-1 focus:ring-[#b79043]/30 focus:outline-none min-h-11 disabled:cursor-not-allowed disabled:opacity-55';
+  'crm-desk-field w-full bg-[rgba(5,10,20,.55)] border border-white/10 rounded p-2 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none min-h-11 disabled:cursor-not-allowed disabled:opacity-55';
 
 export const STAFF_DESK_TABS: Record<string, Tab[]> = {
   content: ['overview', 'content', 'categories', 'lecturers', 'founders', 'team', 'access', 'notifications', 'audit', 'onboarding'],
   support: ['overview', 'users', 'access', 'leads', 'notifications', 'audit', 'team'],
-  sales: ['overview', 'leads', 'webinar', 'tracks', 'payments', 'funnel', 'premium88', 'analytics', 'notifications', 'team', 'access'],
+  sales: ['overview', 'leads', 'webinar', 'tracks', 'payments', 'funnel', 'premium88', 'pods', 'analytics', 'notifications', 'team', 'access'],
   legal: ['overview', 'legal', 'settings', 'audit', 'notifications', 'team', 'access'],
   finance: ['overview', 'payments', 'tracks', 'analytics', 'notifications', 'audit', 'team', 'access'],
-  community: ['overview', 'users', 'access', 'leads', 'premium88', 'funnel', 'notifications', 'team'],
+  community: ['overview', 'users', 'access', 'leads', 'premium88', 'pods', 'funnel', 'notifications', 'team'],
 };
 
 export const STAFF_DESK_LABEL: Record<string, string> = {

@@ -2,9 +2,7 @@
 import { BrowserRouter, Routes, Route, Outlet, Navigate, useLocation } from 'react-router-dom';
 import { Layout, SiteBackdropLayout } from './marketing/components/Layout';
 import { Home } from './marketing/pages/Home';
-import { Premium88 } from './marketing/pages/Premium88';
 import { FounderPage } from './marketing/pages/FounderPage';
-import { FAQPage } from './marketing/pages/FAQPage';
 import { Application } from './marketing/pages/Application';
 import { ApplicationThankYou } from './marketing/pages/ApplicationThankYou';
 import { Terms } from './marketing/pages/Terms';
@@ -12,8 +10,6 @@ import { Privacy } from './marketing/pages/Privacy';
 import { Checkout } from './marketing/pages/Checkout';
 import { Hesitation } from './marketing/pages/Hesitation';
 import { HesitationSuccess } from './marketing/pages/HesitationSuccess';
-import { Pricing } from './marketing/pages/Pricing';
-import { Journey } from './marketing/pages/Journey';
 import { BridgeShell } from './components/BridgeShell';
 import { QuietBoot } from './components/QuietBoot';
 import { UserProvider } from './context/UserContext';
@@ -29,6 +25,7 @@ import { WebinarThankYou } from './marketing/pages/WebinarThankYou';
 import { AuthCallback } from './marketing/pages/AuthCallback';
 import { OAuthConsent } from './marketing/pages/OAuthConsent';
 import { UpdatePassword } from './marketing/pages/UpdatePassword';
+import { PodPage } from './pages/PodPage';
 
 const PublicLayoutWrapper = () => {
   const location = useLocation();
@@ -127,11 +124,11 @@ export default function App() {
         <Route element={<SiteBackdropLayout />}>
         <Route element={<PublicLayoutWrapper />}>
           <Route path="/" element={<Home />} />
-          <Route path="/journey" element={<Journey />} />
-          <Route path="/premium-88" element={<Premium88 />} />
+          <Route path="/journey" element={<Navigate to="/#journey" replace />} />
+          <Route path="/premium-88" element={<Navigate to="/#team" replace />} />
           <Route path="/premium-88/:founderId" element={<FounderPage />} />
-          <Route path="/faq" element={<FAQPage />} />
-          <Route path="/pricing" element={<Pricing />} />
+          <Route path="/faq" element={<Navigate to="/#faq" replace />} />
+          <Route path="/pricing" element={<Navigate to="/#pricing" replace />} />
           <Route path="/application" element={<Application />} />
           <Route path="/thank-you-application" element={<ApplicationThankYou />} />
           <Route path="/checkout" element={<Checkout />} />
@@ -146,6 +143,7 @@ export default function App() {
           <Route path="/oauth/consent" element={<OAuthConsent />} />
           <Route path="/hesitation" element={<Hesitation />} />
           <Route path="/hesitation-success" element={<HesitationSuccess />} />
+          <Route path="/pod" element={<PodPage />} />
         </Route>
 
         <Route path="/library/*" element={<LibraryRoute />} />

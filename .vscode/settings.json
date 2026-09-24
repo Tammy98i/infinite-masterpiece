@@ -1,0 +1,18 @@
+{
+  "remote.autoForwardPorts": true,
+  "remote.autoForwardPortsSource": "hybrid",
+  "remote.portsAttributes": {
+    "3000": {
+      "label": "אתר",
+      "onAutoForward": "openPreview"
+    },
+    "3001": {
+      "label": "API",
+      "onAutoForward": "silent"
+    },
+    "3002": {
+      "label": "אתר 3002",
+      "onAutoForward": "openPreview"
+    }
+  }
+}
