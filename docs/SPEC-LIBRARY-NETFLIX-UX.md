@@ -1,77 +1,52 @@
-# ספרייה + אדמין — נטפליקס אקדמי (סקיצה)
+# ספרייה + אדמין — נטפליקס אקדמי
 
-איור לפני ביצוע. לא קוד ב־`src/` עד «קדימה». לא מוחקים אף מסך, קישור, bulk, פילטר או פעולה קיימים — רק חושך, כרום, צפיפות, ריק ו־hover.
+איור + יישום מוצר. לא מוחקים אף מסך, קישור, bulk, פילטר או פעולה — רק חושך, כרום, צפיפות, ריק ו־hover.
 
 לוח אינטראקטיבי: [`library-netflix/sketch.html`](library-netflix/sketch.html)
 
 ## גבולות
 
 - ספרייה ≠ מסע / 88. CTA ספרייה לא על דף המסע.
-- בלי שלב 2: תגובות, שאלות למרצה, AI, Pods כפיצ׳ר חדש, Revenue Share, אפליקציה, gamification.
+- בלי שלב 2: תגובות, שאלות למרצה, AI, Revenue Share, אפליקציה, gamification.
 - מייסד = `is_founder`. קפטן = `pod_role`.
-- הססנים: 8 → 80 → 800 → 8,000 (מחיר מלא בפריסה, לא הנחה).
+- הססנים: 8 → 80 → 800 → 8,000.
 - RTL / BiDi לפי [`SPEC-ADMIN-RTL-BIDI.md`](SPEC-ADMIN-RTL-BIDI.md).
-- כרום CRM נשען על [`SPEC-ADMIN-NETFLIX-DESK.md`](SPEC-ADMIN-NETFLIX-DESK.md); הסקיצה הזו מרחיבה לספרייה הציבורית ולמסכי תוכן/אנליטיקות.
+- כרום CRM: [`SPEC-ADMIN-NETFLIX-DESK.md`](SPEC-ADMIN-NETFLIX-DESK.md).
 
-## מה הסקיצה מציירת
+## ספרייה ציבורית
 
-| אזור | שכבות | מתג |
+| # | שכבה | יישום |
 | --- | --- | --- |
-| ספרייה `/library` | 01 ווילים · 02 כרזה · 03 פסים · 04 ריקים · 05 ניווט | היום / סקיצה |
-| אדמין | סקירה · תכני VOD · אנליטיקות | היום / סקיצה |
+| 01 | ווילים | `SkyBackdrop` + `LibraryCatalog.css` — `a–e` + `f` תחתון / `g` צד / `h` רדיאלי; brightness מכויל |
+| 02 | כרזה | `HeroBanner` — eyebrow קולנועי; מטא בלי שפת מנוי; progress 4px; CTA לבן/אפור |
+| 03 | פסים | `CourseCard` — hover מטא + play 4px + list 4px; באדג׳ נעול שקט; FlowPolish בלי זכוכית על rails |
+| 04 | ריקים | `EmptyState` / skeleton / error — כרום 4px; My List / History / Search / Category / Shorts |
+| 05 | ניווט | `Navbar` — קישור «נושאים» → `#topics-heading`; כל הקישורים נשארים |
 
-## ספרייה ציבורית — חמש שכבות
+## אדמין
 
-| # | שכבה | היום | סקיצה |
-| --- | --- | --- | --- |
-| 01 | חושך מעל התמונה | 5 ווילי library; לפעמים עמום / FlowPolish מפריע | 2–3 ווילים חדשים מכוילים: תחתון / צד / רדיאלי; כוכבים נראים |
-| 02 | כרזה בית | כרזה + play / more | אותו CTA; כותרת קולנועית יותר; בלי שפת paywall בכרזה |
-| 03 | פסים / פוסטרים | scale + play חלש | hover צפוף (מטא קצר + play); רדיוס 4px; פחות זכוכית על rails |
-| 04 | ריקים / משני | `rounded-3xl` glass | שפת קטלוג 4px; My List / היסטוריה / חיפוש / קטגוריה |
-| 05 | ניווט | נושאים למטה | כל הקישורים נשארים; חיזוק נוכחות ז׳אנרים בלי הסרה |
+| מסך | יישום |
+| --- | --- |
+| סקירה | `CrmCatalogStage` + `crm-desk-metric`; skeleton טעינה |
+| תכני VOD | `crm-desk-table` + thumb/מונוגרם + chip סטטוס + bulk `crm-desk-panel` + פעולות `crm-desk-row-act` |
+| אנליטיקות | משפך / צפייה / מרצים כ־`crm-desk-metric`; טבלה + פיד עם `DeskMonogram` |
 
-## אדמין — שלושה מסכים
+## חוזה ווילים
 
-| מסך | היום | סקיצה |
-| --- | --- | --- |
-| סקירה | `CrmCatalogStage` + 4 מדדים; כפילות עם תוכן | כרזה + מדדים כ־plan-strip; ריקים קולנועיים |
-| תכני VOD | רשימה שטוחה, `rounded-full`, בלי פוסטר/מונוגרם | שורת כרזה/מונוגרם + `crm-desk-table` + פעולות מרובעות 4px; bulk נשאר |
-| אנליטיקות | כרטיסי `rounded-2xl`, טבלה חשופה | `crm-desk-metric` / panel; טבלה ב־`crm-desk-table`; פיד עם מונוגרם |
-
-## חוזה ווילים (ספרייה)
-
-1. `SkyBackdrop` משרת את כל האתר (תמונת שמיים משותפת).
-2. תחת `/library` (לא `.crm-desk`):
-   - ווילי library הקיימים (`a–e`) נשארים כבסיס.
-   - נוספים / מכוילים: `f` תחתון, `g` צד (inline-end), `h` רדיאלי מרכז — כמו רעיון ה־CRM אבל על מסלול הספרייה.
-3. brightness של הכוכבים: במצב סקיצה התמונה כהה יותר מעט, הווילים שקופים יותר במרכז — כוכבים נראים מאחורי כותרות.
-4. תחת `.crm-desk`: library veils כבויים (כבר בחוזה CRM); אין שינוי לספרייה מתוך דסק.
-5. FlowPolish: צמצום זכוכית כבדה על rails בלבד — לא הסרת קומפוננטות.
+1. `SkyBackdrop` לכל האתר.
+2. תחת `/library` (`.vod-app`): library veils `a–h` פעילים.
+3. תחת `.crm-desk`: library veils כבויים; CRM veils נשארים.
+4. FlowPolish: בלי radial glass על rails; plan-strip / quick-action שטוחים 4px.
 
 ## טוקנים
 
 | טוקן | ערך |
 | --- | --- |
 | זהב | `#b79043` / `#dfc47d` |
-| navy שקוף | `rgba(5, 10, 20, 0.55–0.72)` |
+| navy | `rgba(5, 10, 20, 0.55–0.72)` |
 | רדיוס | `4px` |
-| גבול | `rgba(255, 255, 255, 0.12)` |
-| כותרות | Noto Sans Hebrew / Rubik |
-| גוף | IBM Plex Sans Hebrew |
+| CTA ראשי | לבן; זהב = accent / progress |
 
 ## כלל הזהב
 
 כל מה שנשאר — נשאר. מה שמשתנה הוא חושך, שקיפות, רדיוס, hover וריקים.
-
-## מיגרציה עתידית (רק אחרי «קדימה»)
-
-קבצי מוצר משוערים:
-
-1. ווילים: `SkyBackdrop.tsx`, `LibraryCatalog.css`, `LibraryFlowPolish.css` — ווילי `f–h` + כיול brightness; צמצום התנגשות FlowPolish על rails.
-2. אדמין תוכן/אנליטיקות: `AdminView.tsx` (`OverviewPanel` / `ContentPanel` / `AnalyticsPanel`), `CrmDesk.css`, `DeskMonogram.tsx` — `crm-desk-panel` / table / metric / monogram בלי להוריד bulk/filters.
-3. ספרייה: `HeroBanner.tsx`, `CourseCard.tsx`, `HomeView.tsx`, `LibraryStates.tsx` — hover פוסטר + ריקים קולנועיים.
-4. בדיקה מול `/library` ודסק אדמין (סקירה · תוכן · אנליטיקות).
-
-## מה לא בסקיצה
-
-קוד במוצר, מחיקת טאבים/קישורים, CTA מסע על ספרייה, תגובות / AI / שלב 2.

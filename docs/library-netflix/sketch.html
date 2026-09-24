@@ -361,6 +361,35 @@
       opacity: 0;
     }
     body.is-sketch .poster:hover .play { opacity: 1; }
+    .poster .list-sq {
+      position: absolute;
+      inset-inline-end: 10px;
+      top: 10px;
+      width: 28px;
+      height: 28px;
+      border-radius: var(--r);
+      border: 1px solid rgba(255,255,255,.35);
+      background: rgba(0,0,0,.55);
+      color: #fff;
+      display: none;
+      place-items: center;
+      font-size: 16px;
+      line-height: 1;
+    }
+    body.is-sketch .poster:hover .list-sq { display: grid; }
+    .poster .badge-quiet, .poster .badge-new, .poster .badge-cont, .poster .badge-lock {
+      position: absolute;
+      top: 8px;
+      inset-inline-start: 8px;
+      z-index: 2;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: var(--r);
+      background: rgba(0,0,0,.75);
+      border: 1px solid rgba(255,255,255,.2);
+    }
+    .poster .badge-new { background: rgba(255,255,255,.9); color: #000; border: 0; }
+    .poster .badge-cont { color: var(--gold-soft); border-color: rgba(183,144,67,.55); }
 
     .desk {
       display: grid;
@@ -660,7 +689,7 @@
             <i class="v-new">lib veil h · מרכז רך</i>
             <i class="v-lib">a–e מכוילים קלות</i>
           </div>
-          <p style="font-size:12px;color:rgba(255,255,255,.45);margin:10px 0 0;line-height:1.5">כוכבים נראים. מסע / 88 לא נוגעים.</p>
+          <p style="font-size:12px;color:rgba(255,255,255,.45);margin:10px 0 0;line-height:1.5">כוכבים נראים. rails בלי זכוכית; plan-strip נשאר שטוח 4px. מסע / 88 לא נוגעים.</p>
         </div>
       </div>
     </section>
@@ -682,15 +711,32 @@
           </div>
         </div>
         <div class="pane">
-          <span class="tag good">סקיצה</span>
+          <span class="tag good">סקיצה · נבחרת</span>
           <div class="hero" id="hero-sketch">
             <span class="eye">הרצאה נבחרת</span>
             <h3>מחזון למערכת</h3>
+            <p style="font-size:12px;color:rgba(255,255,255,.7)">גל אברמוביץ׳ · 48:00</p>
             <p>איך הופכים רעיון למבנה שעובד — בלי CTA של מסע בכרזה.</p>
             <div class="acts">
               <button type="button" class="btn-play" data-toast="Play · נשאר">התחילו לצפות</button>
               <button type="button" class="btn-more" data-toast="פרטים · נשאר">פרטים</button>
             </div>
+          </div>
+        </div>
+      </div>
+      <div class="pane" style="margin-top:10px">
+        <span class="tag good">סקיצה · המשיכו לצפות</span>
+        <div class="hero" id="hero-continue">
+          <span class="eye">המשיכו מכאן</span>
+          <h3>מחזון למערכת</h3>
+          <p style="font-size:12px;color:rgba(255,255,255,.7)">פרק 2 · מבנה המערכת</p>
+          <div style="max-width:14rem;margin:8px 0 4px">
+            <div style="display:flex;justify-content:space-between;font-size:11px;color:rgba(255,255,255,.55);margin-bottom:4px"><span>12:40 / 48:00</span><span>המשך צפייה</span></div>
+            <div style="height:4px;border-radius:4px;background:rgba(255,255,255,.15);overflow:hidden"><div style="width:28%;height:100%;background:#b79043"></div></div>
+          </div>
+          <div class="acts">
+            <button type="button" class="btn-play" data-toast="המשך · נשאר">המשיכו לצפות</button>
+            <button type="button" class="btn-more">פרטים</button>
           </div>
         </div>
       </div>
@@ -700,12 +746,12 @@
     <section class="screen" id="screen-rails">
       <p class="rail-title">המשיכו מכאן</p>
       <div class="rail" id="rail">
-        <article class="poster" data-title="10 דקות · פתיחה"><span class="label">10 דקות · פתיחה</span><div class="meta"><b>10 דקות · פתיחה</b><span>טעימה פתוחה · 12:00</span><span class="play" aria-hidden>▶</span></div></article>
-        <article class="poster" data-title="חדש בספרייה"><span class="label">חדש בספרייה</span><div class="meta"><b>חדש בספרייה</b><span>גל אברמוביץ׳ · פרק 1</span><span class="play" aria-hidden>▶</span></div></article>
-        <article class="poster" data-title="המליצו לכם"><span class="label">המליצו לכם</span><div class="meta"><b>המליצו לכם</b><span>מסלול אקדמי · המשך</span><span class="play" aria-hidden>▶</span></div></article>
-        <article class="poster" data-title="נושאים"><span class="label">נושאים</span><div class="meta"><b>נושאים</b><span>מנהיגות · מערכות</span><span class="play" aria-hidden>▶</span></div></article>
+        <article class="poster" data-title="10 דקות · פתיחה"><span class="badge-quiet">טעימה</span><span class="label">10 דקות · פתיחה</span><div class="meta"><b>10 דקות · פתיחה</b><span>טעימה פתוחה · 12:00</span><span class="play" aria-hidden>▶</span><span class="list-sq" aria-hidden>+</span></div></article>
+        <article class="poster" data-title="חדש בספרייה"><span class="badge-new">חדש</span><span class="label">חדש בספרייה</span><div class="meta"><b>חדש בספרייה</b><span>גל אברמוביץ׳ · פרק 1</span><span class="play" aria-hidden>▶</span><span class="list-sq" aria-hidden>+</span></div></article>
+        <article class="poster" data-title="המליצו לכם"><span class="badge-cont">המשך</span><span class="label">המליצו לכם</span><div class="meta"><b>המליצו לכם</b><span>מסלול אקדמי · המשך</span><span class="play" aria-hidden>▶</span><span class="list-sq" aria-hidden>+</span></div></article>
+        <article class="poster" data-title="נושאים"><span class="badge-lock">🔒 נעול</span><span class="label">נושאים</span><div class="meta"><b>נושאים</b><span>מנהיגות · מערכות</span><span class="play" aria-hidden>▶</span><span class="list-sq" aria-hidden>+</span></div></article>
       </div>
-      <p style="font-size:12px;color:rgba(255,255,255,.45);margin:12px 0 0" id="rail-hint">היום: זכוכית עגולה. סקיצה: 4px + מטא ב־hover.</p>
+      <p style="font-size:12px;color:rgba(255,255,255,.45);margin:12px 0 0" id="rail-hint">היום: זכוכית עגולה. סקיצה: 4px + מטא + list + badges ב־hover.</p>
     </section>
 
     <!-- 04 empty -->
@@ -716,12 +762,32 @@
           <div class="empty-old">הרשימה ריקה.</div>
         </div>
         <div class="pane">
-          <span class="tag good">סקיצה</span>
+          <span class="tag good">הרשימה שלי</span>
           <div class="empty-new">
             <div class="eye">הרשימה שלי</div>
             <h4>עדיין אין הרצאות שמורות</h4>
             <p>בחרו מהכרזה או מהפסים — הכל נשאר במקומו.</p>
             <button type="button" class="btn-play" data-toast="להמשך גלישה בספרייה">להמשיך לגלול</button>
+          </div>
+        </div>
+      </div>
+      <div class="compare" style="margin-top:10px">
+        <div class="pane">
+          <span class="tag good">חיפוש 0</span>
+          <div class="empty-new">
+            <div class="eye">חיפוש</div>
+            <h4>לא מצאנו הרצאה</h4>
+            <p>נסו שם מרצה או נושא — או נקו מסננים.</p>
+            <button type="button" class="btn-more" data-toast="ניקוי מסננים">ניקוי מסננים</button>
+          </div>
+        </div>
+        <div class="pane">
+          <span class="tag good">היסטוריה</span>
+          <div class="empty-new">
+            <div class="eye">היסטוריה</div>
+            <h4>עוד אין צפייה</h4>
+            <p>כשתתחילו הרצאה — היא תופיע כאן.</p>
+            <button type="button" class="btn-play" data-toast="לספרייה">לספרייה</button>
           </div>
         </div>
       </div>
@@ -735,8 +801,9 @@
         <a href="#">הרשימה</a>
         <a href="#">היסטוריה</a>
         <a href="#">10 דק׳</a>
-        <a href="#">חיפוש</a>
         <a href="#">נושאים</a>
+        <a href="#">חיפוש</a>
+        <a href="#">מרצים</a>
       </div>
       <div class="pane">
         <span class="tag good">לא מוחקים</span>
@@ -844,11 +911,20 @@
           <button type="button" class="is-on">אנליטיקות</button>
         </aside>
         <div class="main">
+          <p style="margin:0 0 8px;font-size:12px;color:rgba(255,255,255,.45)">משפך · צפייה · מרצים — כולם נשארים, רק הכרום משתנה.</p>
+          <p style="margin:0 0 6px;font-size:12px;color:rgba(255,255,255,.55)">המרה</p>
           <div class="metric-row" id="an-metrics">
-            <article class="metric pointer"><strong>1.2k</strong><b>צפיות</b><em>14 יום</em></article>
-            <article class="metric"><strong>38%</strong><b>השלמה</b><em>פרקים</em></article>
-            <article class="metric"><strong>86</strong><b>משתמשים פעילים</b><em>שבוע</em></article>
-            <article class="metric"><strong>12</strong><b>מרצים</b><em>במערכת</em></article>
+            <article class="metric pointer"><strong>42</strong><b>Paywall</b></article>
+            <article class="metric"><strong>18</strong><b>שדרוג</b></article>
+            <article class="metric"><strong>9</strong><b>ניסיון</b></article>
+            <article class="metric"><strong>6</strong><b>מנוי</b></article>
+          </div>
+          <p style="margin:12px 0 6px;font-size:12px;color:rgba(255,255,255,.55)">צפייה</p>
+          <div class="metric-row" id="an-video">
+            <article class="metric"><strong>1.2k</strong><b>התחלה</b></article>
+            <article class="metric"><strong>860</strong><b>רבע</b></article>
+            <article class="metric"><strong>610</strong><b>חצי</b></article>
+            <article class="metric"><strong>380</strong><b>סיום</b></article>
           </div>
           <div class="table-wrap" id="an-table" style="margin-top:12px">
             <table>
@@ -903,7 +979,7 @@
       document.querySelectorAll(".mode-btn").forEach((btn) => {
         btn.classList.toggle("is-on", btn.getAttribute("data-mode") === next);
       });
-      document.querySelectorAll("#ov-metrics .metric, #an-metrics .metric").forEach((m) => {
+      document.querySelectorAll("#ov-metrics .metric, #an-metrics .metric, #an-video .metric").forEach((m) => {
         m.classList.toggle("pill", next === "today");
       });
       document.querySelectorAll("#rail .poster").forEach((p) => {
