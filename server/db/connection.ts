@@ -6,6 +6,7 @@ import { seedDatabase } from './seed.js';
 import { seedAdminIfMissing, seedCatalogIfEmpty, seedDemoLecturersIfMissing, seedFounderLecturers } from './catalogSeed.js';
 import { migrateSchema } from './migrate.js';
 import { initializeTeamMembers } from './teamMembers.js';
+import { initializePods } from './pods.js';
 import { seedWebinarConfigIfMissing } from '../services/webinarService.js';
 import { isProduction } from '../config/env.js';
 
@@ -44,6 +45,7 @@ export function getDb(): DatabaseSync {
 
   seedWebinarConfigIfMissing();
   initializeTeamMembers(db);
+  initializePods(db);
 
   return db;
 }

@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ChevronDown, Infinity, Search, X } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { formatIls } from '../../utils/bidi';
 
 export const FAQS = [
   {
@@ -30,7 +31,7 @@ export const FAQS = [
   },
   {
     q: "מה ההבדל בין מסלול האמיצים למסלול ההססנים?",
-    a: "מסלול האמיצים: 8,008 ₪ לפני מע״מ בתשלום מלא מראש, ו־2 כרטיסי כניסה לכל הגרלה. מסלול ההססנים: 8,888 ₪ לפני מע״מ בארבע פעימות (8, 80, 800 ו־8,000), עם גישה מלאה למיזם ולספרייה וכרטיס אחד לכל הגרלה. מסלול ההססנים אינו הנחה ואינו מסלול חלקי.",
+    a: `מסלול האמיצים: ${formatIls(8008)} לפני מע״מ בתשלום מלא מראש, ו־2 כרטיסי כניסה לכל הגרלה. מסלול ההססנים: ${formatIls(8888)} לפני מע״מ בארבע פעימות (${formatIls(8)}, ${formatIls(80)}, ${formatIls(800)} ו־${formatIls(8000)}), עם גישה מלאה למיזם ולספרייה וכרטיס אחד לכל הגרלה. מסלול ההססנים אינו הנחה ואינו מסלול חלקי.`,
   },
   {
     q: "מה ההבדל בין המסלול הראשי לנבחרת 88?",
@@ -117,14 +118,14 @@ export function FAQPage() {
           </h3>
           
           <p className="text-lg text-white/50 font-light max-w-xl mx-auto mb-12 leading-relaxed">
-            אותו מחיר מלא בפריסה שמתחילה ב־8 ₪, ואחר כך 80, 800 ו־8,000 לפי שלבי המיזם. לא הנחה ולא מסלול חלקי.
+            אותו מחיר מלא בפריסה שמתחילה ב־{formatIls(8)}, ואחר כך {formatIls(80)}, {formatIls(800)} ו־{formatIls(8000)} לפי שלבי המיזם. לא הנחה ולא מסלול חלקי.
           </p>
 
           <Link
             to="/hesitation"
             className="inline-flex flex-col items-center justify-center px-12 py-6 rounded-[24px] bg-white/[0.02] text-white border border-[#b79043]/30 hover:bg-white/[0.05] hover:border-[#b79043]/60 transition-all duration-500 text-lg shadow-[0_0_20px_rgba(183, 144, 67,0.05)] hover:shadow-[0_0_40px_rgba(183, 144, 67,0.15)] group"
           >
-            <span className="font-medium mb-1">אני מתחיל/ה ב־8 ₪</span>
+            <span className="font-medium mb-1">אני מתחיל/ה ב־{formatIls(8)}</span>
             <span className="text-sm text-white/40 group-hover:text-[#b79043] transition-colors">מסלול ההססנים. 4 פעימות</span>
           </Link>
         </div>

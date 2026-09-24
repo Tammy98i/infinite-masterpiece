@@ -31,7 +31,7 @@ function FounderCell({
         <img
           src={photoUrl || founder.image}
           alt={founder.name}
-          className={`${photo} rounded-full object-cover grayscale mx-auto mb-4 transition-opacity duration-200 group-hover:opacity-90`}
+          className={`${photo} rounded-full object-cover mx-auto mb-4`}
         />
         <h2 className="text-base md:text-lg font-medium text-white mb-1">{founder.name}</h2>
         <p className="text-[#b79043] text-[11px] md:text-xs tracking-widest mb-2 font-medium">

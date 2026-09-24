@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState, type KeyboardEvent, type ReactElement } from 'react';
 import {
-  ArrowLeft,
   BarChart3,
   ChevronDown,
   Rocket,
@@ -8,12 +7,15 @@ import {
   Tag,
   Target,
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
-import { EntryTrackCards } from './EntryTrackCards';
+import { DirNext } from '../../components/DirArrow';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Journey } from '../pages/Journey';
+import { Premium88 } from '../pages/Premium88';
+import { Pricing } from '../pages/Pricing';
 import { FAQS } from '../pages/FAQPage';
 import './TabbedSlider.css';
 
-type TabId = 'difference' | 'team' | 'platform' | 'pricing' | 'faq';
+type TabId = 'difference' | 'journey' | 'team' | 'platform' | 'pricing' | 'faq';
 
 type Tab = {
   id: TabId;
@@ -23,10 +25,11 @@ type Tab = {
 
 const TABS: Tab[] = [
   { id: 'difference', label: 'במה זה שונה', tone: 'cream' },
-  { id: 'team', label: 'נבחרת 88', tone: 'dark' },
-  { id: 'platform', label: 'הפלטפורמה', tone: 'cream' },
-  { id: 'pricing', label: 'מסלולים ומחיר', tone: 'dark' },
-  { id: 'faq', label: 'שאלות', tone: 'cream' },
+  { id: 'journey', label: 'תהליך', tone: 'dark' },
+  { id: 'team', label: 'צוות המיזם', tone: 'cream' },
+  { id: 'platform', label: 'הפלטפורמה', tone: 'dark' },
+  { id: 'pricing', label: 'מחירון', tone: 'cream' },
+  { id: 'faq', label: 'שאלות', tone: 'dark' },
 ];
 
 const DIFFERENCE_ITEMS = [
@@ -53,20 +56,17 @@ function DifferencePanel() {
           </article>
         ))}
       </div>
-      <Link to="/journey" className="tabbed-link">לפירוט מסע 33 הימים <ArrowLeft aria-hidden="true" /></Link>
+      <Link to="/#journey" className="tabbed-link">לפירוט מסע 33 הימים <DirNext /></Link>
     </div>
   );
 }
 
+function JourneyPanel() {
+  return <Journey embedded />;
+}
+
 function TeamPanel() {
-  return (
-    <div className="tabbed-content">
-      <p className="tabbed-kicker">שכבת העומק</p>
-      <h2>נבחרת 88</h2>
-      <p className="tabbed-lede">עד 88 יוצרים שעובדים קרוב יותר, לפי התאמה. זה לא חלק מבחירת המסלול.</p>
-      <Link to="/premium-88" className="tabbed-link">לעמוד נבחרת 88 <ArrowLeft aria-hidden="true" /></Link>
-    </div>
-  );
+  return <Premium88 embedded />;
 }
 
 function PlatformPanel() {
@@ -75,44 +75,35 @@ function PlatformPanel() {
       <p className="tabbed-kicker">הפלטפורמה</p>
       <h2>התכנים וההתקדמות במקום אחד.</h2>
       <p className="tabbed-lede">אחרי הכניסה, הספרייה מחזיקה את השיעורים ואת ההמשך. אין כאן מסלול נפרד.</p>
-      <Link to="/library" className="tabbed-link">כניסה לספרייה <ArrowLeft aria-hidden="true" /></Link>
+      <Link to="/library" className="tabbed-link">כניסה לספרייה <DirNext /></Link>
     </div>
   );
 }
 
 function PricingPanel() {
-  return (
-    <div className="tabbed-content tabbed-pricing">
-      <p className="tabbed-kicker">אמיצים או הססנים</p>
-      <h2>מסלולים ומחיר</h2>
-      <p className="tabbed-lede">שתי דרכי כניסה. אותו מסע. ההבדל הוא בקצב הכניסה ובכרטיסי ההגרלה.</p>
-      <EntryTrackCards />
-      <p className="tabbed-lede">מסלול ההססנים הוא אותו מחיר מלא, 8,888 ₪ לפני מע״מ, בפריסה שמתחילה ב־8 ₪. לא הנחה ולא מסלול חלקי.</p>
-      <div className="tabbed-steps" aria-label="שלבי התשלום"><span>8 ₪</span><i /><span>80 ₪</span><i /><span>800 ₪</span><i /><span>8,000 ₪</span></div>
-    </div>
-  );
+  return <Pricing embedded />;
 }
 
 function FaqPanel() {
   return (
     <div className="tabbed-content tabbed-faq">
       <p className="tabbed-kicker">בהירות לפני החלטה</p>
-      <h2>שאלות שכדאי לשאול</h2>
+      <h2>שאלות נפוצות</h2>
       <div className="tabbed-faq-list">
-        {FAQS.slice(0, 4).map(item => (
+        {FAQS.map(item => (
           <details key={item.q}>
             <summary><span>{item.q}</span><ChevronDown aria-hidden="true" /></summary>
             <p>{item.a}</p>
           </details>
         ))}
       </div>
-      <Link to="/faq" className="tabbed-button">לכל השאלות הנפוצות</Link>
     </div>
   );
 }
 
 const PANELS: Record<TabId, () => ReactElement> = {
   difference: DifferencePanel,
+  journey: JourneyPanel,
   team: TeamPanel,
   platform: PlatformPanel,
   pricing: PricingPanel,
@@ -122,31 +113,28 @@ const PANELS: Record<TabId, () => ReactElement> = {
 function tabFromHash(hash: string): TabId | null {
   const id = hash.replace(/^#/, '');
   if (id === 'gradual') return 'pricing';
+  if (id === 'process') return 'journey';
   return TABS.some(tab => tab.id === id) ? id as TabId : null;
 }
 
 export function TabbedSlider() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [active, setActive] = useState<TabId>(() => tabFromHash(window.location.hash) ?? 'difference');
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
   const activeTab = TABS.find(tab => tab.id === active) ?? TABS[0];
   const ActivePanel = PANELS[active];
 
   useEffect(() => {
-    const apply = () => {
-      const next = tabFromHash(window.location.hash);
-      if (!next) return;
-      setActive(next);
-      document.getElementById('home-topics')?.scrollIntoView({ block: 'start' });
-    };
-    apply();
-    window.addEventListener('hashchange', apply);
-    return () => window.removeEventListener('hashchange', apply);
-  }, []);
+    const next = tabFromHash(location.hash);
+    if (!next) return;
+    setActive(next);
+    document.getElementById('home-topics')?.scrollIntoView({ block: 'start' });
+  }, [location.hash]);
 
   const selectTab = (id: TabId) => {
     setActive(id);
-    const next = `${window.location.pathname}${window.location.search}#${id}`;
-    window.history.replaceState(null, '', next);
+    navigate({ pathname: '/', hash: id }, { replace: true });
   };
 
   const handleKeys = (event: KeyboardEvent<HTMLButtonElement>, index: number) => {
@@ -186,7 +174,7 @@ export function TabbedSlider() {
         id={`panel-${active}`}
         role="tabpanel"
         aria-labelledby={`tab-${active}`}
-        className={`tabbed-panel tabbed-panel--${activeTab.tone}`}
+        className={`tabbed-panel tabbed-panel--${activeTab.tone}${active === 'pricing' || active === 'journey' || active === 'team' ? ' tabbed-panel--embed' : ''}`}
       >
         <ActivePanel />
       </div>

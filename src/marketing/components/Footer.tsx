@@ -55,13 +55,13 @@ export function Footer() {
   return (
     <footer className="editorial-site-footer relative bg-[#0d0b08]/78 backdrop-blur-xl overflow-hidden pt-24 pb-14 border-t border-white/[0.08]" role="contentinfo" aria-label="תחתית האתר">
       <div className="relative z-10 max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-16 text-right mb-20">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-12 lg:gap-16 text-start mb-20">
           <div>
             <h3 className="text-[11px] uppercase tracking-[0.2em] text-[#b79043] mb-4">המסלול</h3>
             <ul className="space-y-3 text-sm text-white/50 font-light">
               <li><Link to="/#difference" className="hover:text-white transition-colors">במה זה שונה</Link></li>
-              <li><Link to="/journey" className="hover:text-white transition-colors">התהליך. 33 ימים</Link></li>
-              <li><Link to="/pricing" className="hover:text-white transition-colors">מחיר</Link></li>
+              <li><Link to="/#journey" className="hover:text-white transition-colors">התהליך. 33 ימים</Link></li>
+              <li><Link to="/#pricing" className="hover:text-white transition-colors">מחיר</Link></li>
               <li><Link to="/hesitation" className="hover:text-white transition-colors">מסלול ההססנים</Link></li>
             </ul>
           </div>
@@ -74,7 +74,7 @@ export function Footer() {
             <ul className="space-y-3 text-sm text-white/50 font-light">
               <li><Link to="/webinar" className="hover:text-white transition-colors text-[#b79043]/90">הרשמה לוובינר</Link></li>
               <li><Link to="/#team" className="hover:text-white transition-colors">מהי שכבת העומק</Link></li>
-              <li><Link to="/premium-88" className="hover:text-white transition-colors">צוות המיזם</Link></li>
+              <li><Link to="/#team" className="hover:text-white transition-colors">צוות המיזם</Link></li>
               <li><Link to="/application?type=88" className="hover:text-white transition-colors">הגשת מועמדות</Link></li>
             </ul>
           </div>
@@ -89,7 +89,7 @@ export function Footer() {
           <div>
             <h3 className="text-[11px] uppercase tracking-[0.2em] text-[#b79043] mb-4">מידע</h3>
             <ul className="space-y-3 text-sm text-white/50 font-light">
-              <li><Link to="/faq" className="hover:text-white transition-colors">שאלות</Link></li>
+              <li><Link to="/#faq" className="hover:text-white transition-colors">שאלות</Link></li>
               <li><Link to="/terms" className="hover:text-white transition-colors">תנאי שימוש</Link></li>
               <li><Link to="/privacy" className="hover:text-white transition-colors">פרטיות</Link></li>
               <li><Link to="/accessibility" className="hover:text-white transition-colors">הצהרת נגישות</Link></li>
@@ -103,7 +103,7 @@ export function Footer() {
             <span className="text-[11px] uppercase tracking-widest">© {new Date().getFullYear()} Infinite Masterpiece</span>
           </div>
           <Link
-            to="/pricing"
+            to="/#pricing"
             className="text-sm text-[#b79043] hover:text-[#dfc47d] transition-colors"
           >
             להצטרפות למסע

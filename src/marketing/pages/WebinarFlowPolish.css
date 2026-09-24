@@ -7,6 +7,17 @@
   --flow-gold: #dfc47d;
   --flow-ease: cubic-bezier(.16, 1, .3, 1);
   overflow-x: clip;
+  background:
+    linear-gradient(
+      180deg,
+      #02060f 0%,
+      #06101c 14%,
+      #071322 28%,
+      #0a1220 42%,
+      #081018 58%,
+      #0c1014 76%,
+      #0d0b08 100%
+    );
 }
 
 .webinar-flow-page .webinar-neural-hero {
@@ -16,13 +27,12 @@
 .webinar-flow-page .webinar-neural-hero::after {
   content: '';
   position: absolute;
-  left: 0;
-  right: 0;
+  inset-inline: 0;
   bottom: 0;
-  height: 22%;
+  height: 34%;
   z-index: 1;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(2, 6, 15, 0) 0%, rgba(7, 19, 34, .35) 55%, #02060f 100%);
+  background: linear-gradient(180deg, rgba(2, 6, 15, 0) 0%, rgba(6, 16, 28, .42) 48%, #02060f 100%);
 }
 
 .webinar-flow-stem {
@@ -36,7 +46,8 @@
 .webinar-flow-page #problem.webinar-neural-afterglow {
   background:
     radial-gradient(70% 50% at 50% 0%, rgba(77, 122, 168, .12), transparent 62%),
-    linear-gradient(180deg, #02060f 0%, #071322 58%, #0a1220 100%);
+    linear-gradient(180deg, #02060f 0%, #071322 58%, rgba(10, 18, 32, 0) 100%);
+  box-shadow: 0 48px 80px -40px rgba(2, 6, 15, .55);
 }
 
 .webinar-flow-page #problem.webinar-neural-afterglow .webinar-neural-plate {
@@ -46,8 +57,7 @@
 }
 
 .webinar-flow-page .webinar-editorial-grid {
-  background:
-    linear-gradient(180deg, #0a1220 0%, #081018 18%, #02060f 42%, #0c1014 72%, #0d0b08 100%);
+  background: transparent;
 }
 
 .webinar-flow-page .webinar-editorial-grid > #hosts {
@@ -91,6 +101,16 @@
   height: 1px;
   pointer-events: none;
   background: linear-gradient(90deg, transparent, rgba(223, 196, 125, .28), transparent);
+}
+
+.webinar-flow-page .webinar-editorial-grid > :is(#hosts, .team-galaxy, #webinar-fit, #webinar-faq)::after {
+  content: '';
+  position: absolute;
+  inset-inline: 0;
+  bottom: 0;
+  height: 96px;
+  pointer-events: none;
+  background: linear-gradient(180deg, rgba(2, 6, 15, 0), rgba(2, 6, 15, .35));
 }
 
 .webinar-flow-page #problem::after {
@@ -154,6 +174,85 @@
 
 .webinar-flow-page .webinar-spine a.is-on::before {
   box-shadow: 0 0 14px rgba(223, 196, 125, .45);
+}
+
+.webinar-flow-page #problem .webinar-neural-bottlenecks {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 22px 28px;
+  margin-top: 22px;
+  text-align: center;
+  counter-reset: bottle;
+}
+
+@media (min-width: 900px) {
+  .webinar-flow-page #problem .webinar-neural-bottlenecks {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    gap: 16px 12px;
+  }
+  .webinar-flow-page #problem .webinar-neural-bottlenecks li {
+    width: auto;
+  }
+}
+
+.webinar-flow-page #problem .webinar-neural-bottlenecks li {
+  display: grid;
+  justify-items: center;
+  width: 118px;
+  padding: 0;
+  border: 0;
+  grid-template-columns: none;
+  gap: 6px;
+}
+
+.webinar-flow-page #problem .webinar-neural-bottlenecks li::before {
+  counter-increment: bottle;
+  content: counter(bottle, decimal-leading-zero);
+  color: var(--flow-gold);
+  font-size: 12px;
+  letter-spacing: .16em;
+}
+
+.webinar-flow-page #problem .webinar-neural-bottlenecks h3 {
+  margin: 0;
+  color: #f4f8fd;
+  font-size: 15px;
+  font-weight: 400;
+}
+
+.webinar-flow-page #problem .webinar-neural-bottlenecks p {
+  margin: 0;
+  color: rgba(224, 237, 255, .62);
+  font-size: 13px;
+}
+
+.webinar-flow-page .webinar-fit-yes {
+  border-color: rgba(223, 196, 125, .55);
+  box-shadow: 0 18px 40px rgba(2, 6, 15, .28), inset 0 0 0 1px rgba(223, 196, 125, .12);
+}
+
+.webinar-flow-page .webinar-fit-no {
+  opacity: .62;
+  transform: none;
+}
+
+.webinar-flow-page .webinar-fit-no h3,
+.webinar-flow-page .webinar-fit-no li {
+  color: rgba(224, 237, 255, .55);
+}
+
+.webinar-night-page .team-galaxy .galaxy-heading,
+.webinar-night-page .team-galaxy .galaxy-eyebrow,
+.webinar-night-page .team-galaxy .galaxy-heading h2,
+.webinar-night-page .team-galaxy .galaxy-heading p {
+  direction: rtl;
+  letter-spacing: .04em;
+}
+
+.webinar-night-page .team-galaxy .galaxy-heading h2 {
+  font-family: var(--font-heading, Georgia, serif);
 }
 
 @media (max-width: 767px) {

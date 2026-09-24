@@ -7,7 +7,17 @@ import { InlineStarDetails } from './InlineStarDetails';
 import { StarPortrait } from './StarPortrait';
 import './TeamGalaxy.css';
 
-export function TeamGalaxy({ className = '' }: { className?: string }) {
+export function TeamGalaxy({
+  className = '',
+  eyebrow = 'האנשים מאחורי החזון',
+  title = 'הצוות שמחזיק את המערכת',
+  subtitle = 'כל אחד מביא כוח אחר. יחד הם יוצרים מערכת אחת.',
+}: {
+  className?: string;
+  eyebrow?: string;
+  title?: string;
+  subtitle?: string;
+}) {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
   const [ready, setReady] = useState(false);
@@ -75,10 +85,9 @@ export function TeamGalaxy({ className = '' }: { className?: string }) {
     onKeyDown={event => { if (event.key === 'Escape' && profile) { event.preventDefault(); close(); } }}>
     <div className="galaxy-dust" aria-hidden="true">{Array.from({ length: 30 }, (_, i) => <i key={i} style={{ left: `${(i * 37 + 13) % 100}%`, top: `${(i * 23 + 7) % 100}%`, animationDelay: `${i * -0.7}s` }} />)}</div>
     <header className="galaxy-heading">
-      <p className="galaxy-eyebrow" dir="ltr">THE PEOPLE BEHIND INFINITE MASTERPIECE</p>
-      <h2 id="galaxy-title" dir="ltr">THE PEOPLE BEHIND <em>THE VISION</em></h2>
-      <p dir="ltr">Different strengths. One system. Infinite impact.</p>
-      <span>כל אחד מביא כוח אחר. יחד הם יוצרים מערכת אחת.</span>
+      <p className="galaxy-eyebrow">{eyebrow}</p>
+      <h2 id="galaxy-title">{title}</h2>
+      <p>{subtitle}</p>
     </header>
     {!ready ? <p role="status" className="galaxy-message">טוענים את מערכת הכוכבים…</p> : !members.length ? <p className="galaxy-message" role="status">{error || 'הצוות יוצג כאן בקרוב.'}</p> : <>
       {error && <p className="galaxy-message" role="status">{error}</p>}

@@ -1,0 +1,119 @@
+/* Hebrew RTL foundation — site-wide.
+   Direction is declared once on <html lang="he" dir="rtl"> (index.html).
+   Do not sprinkle direction: rtl on inner components.
+   Decorative LTR islands (SpaceHero planets, Team Galaxy) keep an explicit dir="ltr". */
+
+html {
+  direction: rtl;
+}
+
+body {
+  direction: rtl;
+  text-align: start;
+}
+
+/* BiDi islands: emails, phones, URLs, clocks, passwords stay LTR isolates. */
+.bidi-ltr,
+.bidi-phone,
+.bidi-email,
+.bidi-clock,
+.bidi-url,
+input[type='email'],
+input[type='tel'],
+input[type='url'],
+input[type='password'],
+input[inputmode='tel'],
+input[inputmode='email'],
+input[inputmode='numeric'],
+input[inputmode='decimal'],
+a[href^='mailto:'],
+a[href^='tel:'],
+time,
+[data-bidi='ltr'] {
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: start;
+}
+
+.bidi-phone,
+.bidi-email,
+.bidi-clock,
+.bidi-url,
+time {
+  display: inline-block;
+}
+
+/* Tabular numbers / clocks / prices stay visually stable in mixed Hebrew copy. */
+.tabular-nums,
+.price,
+[data-price] {
+  unicode-bidi: isolate;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Mirror only directional glyphs. Never flip Play, Search, Check, Clock, media. */
+.icon-dir {
+  transform: scaleX(-1);
+}
+
+.icon-play,
+.icon-search,
+.icon-check,
+.icon-clock,
+.icon-media,
+[data-icon='play'],
+[data-icon='search'],
+[data-icon='check'],
+[data-icon='clock'] {
+  transform: none;
+}
+
+/* Progress / range controls stay physical LTR (media and quantity, not navigation). */
+input[type='range'] {
+  direction: ltr;
+}
+
+/* Off-screen skip / honeypot helpers use logical insets. */
+.visually-off-start {
+  position: absolute;
+  inset-inline-start: -9999px;
+}
+
+/* Drawer docks to inline-start; closed state slides outward. */
+.drawer-dock-start.is-closed {
+  transform: translateX(100%);
+}
+html[dir='ltr'] .drawer-dock-start.is-closed {
+  transform: translateX(-100%);
+}
+
+/* Forward chevron nudges toward inline-end on hover. */
+[dir='rtl'] .group:hover .icon-dir-next {
+  transform: translateX(-0.25rem);
+}
+[dir='ltr'] .group:hover .icon-dir-next {
+  transform: translateX(0.25rem);
+}
+
+/* Search field opens from inline-end (visual left in Hebrew). */
+.search-slide-in {
+  animation: search-slide-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes search-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+html.a11y-reduce-motion .search-slide-in {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .search-slide-in {
+    animation: none;
+  }
+}

@@ -13,7 +13,6 @@ import {
   WEBINAR_BOTTLENECKS,
   WEBINAR_CTA_ENDED,
   WEBINAR_CTA_REGISTER,
-  WEBINAR_CTA_NEXT_CYCLE,
   WEBINAR_DIFFERENCE_POINTS,
   WEBINAR_ENDED_NOTE,
   WEBINAR_FIT_NO,
@@ -31,7 +30,7 @@ import { captureUtmFromSearch } from '../../utils/utm';
 import { getWebinarPhase } from '../../utils/webinarTime';
 import { TeamPhoto } from '../../components/TeamPhoto';
 import { TeamGalaxy } from '../components/galaxy/TeamGalaxy';
-import { NeuralChevron, WebinarNeuralHero } from '../components/WebinarNeuralHero';
+import { WebinarNeuralHero } from '../components/WebinarNeuralHero';
 import './WebinarLanding.css';
 import './WebinarEditorialCinema.css';
 import '../components/WebinarNeuralHero.css';
@@ -108,7 +107,7 @@ function WebinarRegisterCard({
 }) {
   return (
     <>
-      <p className="text-lg sm:text-xl md:text-2xl text-white font-light leading-snug mb-4 sm:mb-5 text-right">
+      <p className="text-lg sm:text-xl md:text-2xl text-white font-light leading-snug mb-4 sm:mb-5 text-start">
         {headlineParts.line1}
         {headlineParts.line2 ? (
           <>
@@ -255,11 +254,8 @@ export function WebinarLanding() {
           <ul className="webinar-neural-bottlenecks">
             {WEBINAR_BOTTLENECKS.map((item) => (
               <li key={item.title}>
-                <NeuralChevron />
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </div>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
               </li>
             ))}
           </ul>
@@ -307,7 +303,12 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <TeamGalaxy className="webinar-island" />
+      <TeamGalaxy
+        className="webinar-island"
+        eyebrow="האנשים מאחורי החזון"
+        title="הצוות שמחזיק את המערכת"
+        subtitle="כל אחד מביא כוח אחר. יחד הם יוצרים מערכת אחת."
+      />
 
       <section id="webinar-fit" className="webinar-neural-slide webinar-island">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
@@ -315,8 +316,8 @@ export function WebinarLanding() {
             <SectionLabel>התאמה</SectionLabel>
             <SectionTitle>הוובינר הזה מתאים לך אם…</SectionTitle>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_80px_1fr] gap-6 items-stretch">
-            <div className="glass-card p-6 text-right">
+          <div className="webinar-fit-grid grid grid-cols-1 lg:grid-cols-[1.15fr_48px_.85fr] gap-6 items-stretch">
+            <div className="glass-card webinar-fit-yes p-6 text-start">
               <h3 className="text-lg text-white mb-4 font-light text-center">מתאים אם…</h3>
               <ul className="space-y-3">
                 {WEBINAR_FIT_YES.map((item) => (
@@ -330,7 +331,7 @@ export function WebinarLanding() {
             <div className="hidden lg:flex items-stretch justify-center" aria-hidden>
               <div className="w-px bg-gradient-to-b from-transparent via-[#dfc47d]/70 to-transparent" />
             </div>
-            <div className="glass-card p-6 text-right">
+            <div className="glass-card webinar-fit-no p-6 text-start">
               <h3 className="text-lg text-white mb-4 font-light text-center">לא מתאים אם…</h3>
               <ul className="space-y-3">
                 {WEBINAR_FIT_NO.map((item) => (
@@ -368,23 +369,15 @@ export function WebinarLanding() {
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(183, 144, 67,0.16),transparent_70%)]" />
         </div>
         <div className="relative z-10 max-w-[920px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          {eventEnded ? (
-            <div id={WEBINAR_REGISTER_ID} className="scroll-mt-24">
-              <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4 max-w-2xl mx-auto">
-                {WEBINAR_CTA_ENDED}
-              </p>
-              <p className="text-sm sm:text-base text-white/70 font-light mb-8">{WEBINAR_ENDED_NOTE}</p>
-              <Link to="/pricing" className="btn-gold text-black">{WEBINAR_CTA_NEXT_CYCLE}</Link>
-            </div>
-          ) : (
-            <>
           <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4 max-w-2xl mx-auto">
-            זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.
+            {eventEnded ? WEBINAR_CTA_ENDED : 'זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.'}
           </p>
-          <p className="text-sm sm:text-base text-[#b79043] font-light mb-8">מחכים לך בוובינר. גל, תמי וגלב.</p>
+          <p className="text-sm sm:text-base text-[#b79043] font-light mb-8">
+            {eventEnded ? WEBINAR_ENDED_NOTE : 'מחכים לך בוובינר. גל, תמי וגלב.'}
+          </p>
           <aside
             id={WEBINAR_REGISTER_ID}
-            aria-label="הרשמה לוובינר"
+            aria-label={eventEnded ? 'הרשמה למחזור הבא' : 'הרשמה לוובינר'}
             className={`${REGISTER_CARD_CLASS} webinar-stage-register-card mx-auto w-full max-w-xl md:max-w-2xl lg:max-w-3xl text-start scroll-mt-24`}
           >
             <WebinarRegisterCard
@@ -393,8 +386,6 @@ export function WebinarLanding() {
               headlineParts={headlineParts}
             />
           </aside>
-            </>
-          )}
           <p className="flex flex-wrap items-center justify-center gap-4 text-xs text-[#b79043]/80 font-light mt-8">
             <Link to="/terms" className="hover:text-[#dfc47d] min-h-11 inline-flex items-center">
               תנאי שימוש
