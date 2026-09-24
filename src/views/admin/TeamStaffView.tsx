@@ -8,6 +8,7 @@ import { TAB_META } from './adminNav';
 import { fieldClass, STAFF_DESK_LABEL } from './adminConstants';
 import { AdminListControls } from './AdminListControls';
 import { AdminStatusBadge } from './AdminStatusBadge';
+import { Bidi } from '../../components/Bidi';
 
 type StaffFilter = 'all' | 'lecturer' | 'staff' | 'founder';
 
@@ -131,8 +132,8 @@ export function TeamStaffView() {
                     <td>
                       {row.name}
                       {row.isFounder ? <span className="text-white/35"> · מייסד</span> : null}
-                      <span className="text-xs text-white/35 ms-2" dir="ltr">
-                        {row.email}
+                      <span className="text-xs text-white/35 ms-2">
+                        <Bidi kind="email">{row.email}</Bidi>
                       </span>
                     </td>
                     <td className="py-3 px-3 text-white/60">{row.role === 'admin' ? 'אדמין' : row.role === 'instructor' ? 'מרצה' : 'משתמש'}</td>
@@ -156,8 +157,8 @@ export function TeamStaffView() {
             <div className="grid gap-3 text-sm">
               <div>
                 <p className="text-sm font-medium">{selected.name}</p>
-                <p className="text-white/45 mt-1 break-all text-xs" dir="ltr">
-                  {selected.email}
+                <p className="text-white/45 mt-1 break-all text-xs">
+                  <Bidi kind="email">{selected.email}</Bidi>
                 </p>
               </div>
 

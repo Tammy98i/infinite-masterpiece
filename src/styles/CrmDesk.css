@@ -508,3 +508,68 @@ html.a11y-reduce-motion {
     transition: none;
   }
 }
+
+/* ---- Desk RTL / BiDi ----------------------------------------------------
+   Document dir comes from <html lang="he" dir="rtl">. The desk never sets
+   direction:rtl on inner shells (avoids double-flip with Flex/Grid). */
+
+.crm-desk {
+  text-align: start;
+}
+
+.crm-desk-crumb-sep {
+  margin-inline: 0.35em;
+  color: rgba(255, 255, 255, .25);
+}
+
+/* Mixed Hebrew+Latin form fields: plaintext ≈ dir="auto" without fighting type=email/tel/url. */
+.crm-desk .crm-desk-field:not([type='email']):not([type='tel']):not([type='url']):not([type='password']):not([type='number']),
+.crm-desk textarea.crm-desk-field,
+.crm-desk input[type='text'].crm-desk-field,
+.crm-desk input[type='search'].crm-desk-field,
+.crm-desk input:not([type]).crm-desk-field {
+  unicode-bidi: plaintext;
+}
+
+/* Numeric / ID cells in dense tables stay LTR isolates even without <bdi>. */
+.crm-desk td[dir='ltr'],
+.crm-desk th[dir='ltr'],
+.crm-desk dd[dir='ltr'],
+.crm-desk [data-bidi='ltr'] {
+  direction: ltr;
+  unicode-bidi: isolate;
+  text-align: start;
+}
+
+/* Keyboard hints (⌘K) and Latin badges inside Hebrew chrome. */
+.crm-desk kbd,
+.crm-desk .crm-desk-hotkey {
+  direction: ltr;
+  unicode-bidi: isolate;
+  display: inline-block;
+}
+
+/* Fold disclosure marker: keep on inline-end; never row-reverse the summary. */
+.crm-desk-fold > summary {
+  flex-direction: row;
+}
+
+.crm-desk-fold > summary::after {
+  content: '';
+  inline-size: 0.45rem;
+  block-size: 0.45rem;
+  border-inline-end: 1.5px solid rgba(255, 255, 255, .45);
+  border-block-end: 1.5px solid rgba(255, 255, 255, .45);
+  transform: rotate(45deg);
+  transition: transform .15s ease;
+  margin-inline-start: auto;
+}
+
+.crm-desk-fold[open] > summary::after {
+  transform: rotate(-135deg);
+}
+
+/* Nav search: logical padding already set above via padding-inline. */
+.crm-desk-nav-search {
+  text-align: start;
+}

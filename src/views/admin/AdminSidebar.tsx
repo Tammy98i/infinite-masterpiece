@@ -1,6 +1,7 @@
 import { Fragment, useMemo, useState } from 'react';
 import { ChevronDown, Search } from 'lucide-react';
 import type { NavGroup, NavItem, Tab } from './adminNav';
+import { Bidi } from '../../components/Bidi';
 
 type AdminSidebarProps = {
   groups: NavGroup[];
@@ -88,8 +89,8 @@ export function AdminSidebar({ groups, tab, onNavigate, userName, userEmail, onE
         <h2 className="crm-rail-title text-xl">לוח בקרה</h2>
         <p className="text-xs text-white/45 mt-2 font-light truncate">{userName}</p>
         {userEmail ? (
-          <p className="text-[11px] text-white/30 mt-1 truncate" dir="ltr">
-            {userEmail}
+          <p className="text-[11px] text-white/30 mt-1 truncate">
+            <Bidi kind="email">{userEmail}</Bidi>
           </p>
         ) : null}
       </div>

@@ -10,6 +10,7 @@ import { TAB_META } from './adminNav';
 import { fieldClass, PLAN_LABEL, ROLE_LABEL } from './adminConstants';
 import { AdminListControls } from './AdminListControls';
 import { AdminStatusBadge } from './AdminStatusBadge';
+import { Bidi } from '../../components/Bidi';
 
 function profileRowFromAppUser(user: ReturnType<typeof useApp>['user']): ProfileListRow {
   return {
@@ -275,8 +276,8 @@ export function UsersAccountsView() {
                 >
                   <td>
                     <span>{row.name}</span>
-                    <span className="text-xs text-white/35 ms-2" dir="ltr">
-                      {row.email}
+                    <span className="text-xs text-white/35 ms-2">
+                      <Bidi kind="email">{row.email}</Bidi>
                     </span>
                     {row.isFounder ? <span className="text-[10px] text-white/45 ms-2">צוות</span> : null}
                   </td>
@@ -318,8 +319,8 @@ export function UsersAccountsView() {
         <div className="crm-desk-edit-drawer grid gap-3 text-sm">
           <p className="text-sm font-medium">
             עריכה · {selected.name}
-            <span className="text-xs text-white/40 ms-2" dir="ltr">
-              {selected.email}
+            <span className="text-xs text-white/40 ms-2">
+              <Bidi kind="email">{selected.email}</Bidi>
             </span>
           </p>
           <p className="text-xs text-white/40">

@@ -109,7 +109,9 @@ export function PodsPanel() {
                 <p className="text-xs text-white/55 mt-1">
                   {SOURCE_LABEL[item.source]} · {POD_KIND_LABELS[item.kind]}
                 </p>
-                <p className="text-xs text-white/35 mt-1" dir="ltr">{item.email}</p>
+                <p className="text-xs text-white/35 mt-1">
+                  <Bidi kind="email">{item.email}</Bidi>
+                </p>
               </div>
               <div className="flex flex-wrap items-center gap-2">
                 <select

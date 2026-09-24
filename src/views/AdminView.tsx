@@ -23,6 +23,7 @@ import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
 import { CrmCatalogStage } from '../components/CrmCatalogStage';
 import { ConfirmDialog } from '../components/ConfirmDialog';
+import { Bidi } from '../components/Bidi';
 import { isApiUnavailableMessage } from '../lib/supabaseUser';
 import { emptyAnalytics, overviewFrom, readinessPayload, type ProfileListRow } from '../lib/adminFallback';
 
@@ -138,7 +139,7 @@ export function AdminView() {
   return (
     <div className="crm-desk min-h-screen bg-transparent text-white text-start">
       <div className="flex min-h-screen">
-        <aside className="crm-desk-aside hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 sticky top-0 h-screen overflow-y-auto">
+        <aside className="crm-desk-aside hidden lg:flex w-64 shrink-0 flex-col border-e border-white/10 sticky top-0 h-screen overflow-y-auto">
           <AdminSidebar
             groups={visibleGroups}
             tab={tab}
@@ -164,8 +165,8 @@ export function AdminView() {
                   שלום, {user.name.split(' ')[0] || 'אדמין'}
                 </p>
                 {user.email ? (
-                  <p className="text-[11px] text-white/40 truncate" dir="ltr">
-                    {user.email}
+                  <p className="text-[11px] text-white/40 truncate">
+                    <Bidi kind="email">{user.email}</Bidi>
                   </p>
                 ) : null}
                 <p className="text-xs text-white/35">
@@ -175,7 +176,7 @@ export function AdminView() {
             </div>
             <div className="flex items-center gap-2">
               <button type="button" onClick={() => setCommandOpen(true)} className="inline-flex min-h-11 items-center gap-2 rounded-full border border-white/15 px-3 text-xs text-white/60 hover:border-[#b79043]/40 hover:text-white" aria-label="מעבר מהיר באדמין">
-                <Search size={15} /><span className="hidden sm:inline">מעבר מהיר</span><kbd className="hidden xl:inline text-[10px] text-white/30">⌘K</kbd>
+                <Search size={15} /><span className="hidden sm:inline">מעבר מהיר</span><kbd className="crm-desk-hotkey hidden xl:inline text-[10px] text-white/30">⌘K</kbd>
               </button>
               <button
                 type="button"
@@ -1952,8 +1953,8 @@ function TracksPanel() {
                     >
                       <td className="py-3 px-3">
                         <span className="text-white">{row.name}</span>
-                        <span className="block text-xs text-white/35" dir="ltr">
-                          {row.email}
+                        <span className="block text-xs text-white/35">
+                          <Bidi kind="email">{row.email}</Bidi>
                         </span>
                       </td>
                       <td className="py-3 px-3">{trackLabel(row.trackType)}</td>
@@ -1992,8 +1993,8 @@ function TracksPanel() {
               <div>
                 <p className="text-[11px] text-[#b79043] mb-1">כרטיס דק</p>
                 <h3 className="text-lg font-light">{selected.name}</h3>
-                <p className="text-xs text-white/45 mt-1" dir="ltr">
-                  {selected.email}
+                <p className="text-xs text-white/45 mt-1">
+                  <Bidi kind="email">{selected.email}</Bidi>
                 </p>
               </div>
 
@@ -2010,7 +2011,9 @@ function TracksPanel() {
                 </div>
                 <div className="flex justify-between gap-3">
                   <dt className="text-white/40">טלפון</dt>
-                  <dd dir="ltr">{selected.phone || '—'}</dd>
+                  <dd>
+                    <Bidi kind="phone">{selected.phone || '—'}</Bidi>
+                  </dd>
                 </div>
                 <div className="flex justify-between gap-3">
                   <dt className="text-white/40">תחום</dt>
@@ -2814,11 +2817,11 @@ function LeadsPanel() {
                 <tr key={`${row.source}-${row.id}`}>
                   <td className="py-3 px-3 text-white/70">{row.sourceLabel}</td>
                   <td className="py-3 px-3">{row.name}</td>
-                  <td className="py-3 px-3 text-white/55" dir="ltr">
-                    {row.phone || '—'}
+                  <td className="py-3 px-3 text-white/55">
+                    <Bidi kind="phone">{row.phone || '—'}</Bidi>
                   </td>
-                  <td className="py-3 px-3 text-white/55" dir="ltr">
-                    {row.email || '—'}
+                  <td className="py-3 px-3 text-white/55">
+                    <Bidi kind="email">{row.email || '—'}</Bidi>
                   </td>
                   <td className="py-3 px-3 text-white/55">{row.interest || '—'}</td>
                   <td className="py-3 px-3 text-white/55">{row.status || '—'}</td>
@@ -2995,7 +2998,9 @@ function LegalPanel() {
                   <tr key={report.id} className="border-b border-white/5 align-top">
                     <td className="py-3 pe-3 whitespace-nowrap">{new Date(report.createdAt).toLocaleDateString('he-IL')}</td>
                     <td className="py-3 pe-3">{report.fullName}</td>
-                    <td className="py-3 pe-3" dir="ltr">{report.email}</td>
+                    <td className="py-3 pe-3">
+                      <Bidi kind="email">{report.email}</Bidi>
+                    </td>
                     <td className="py-3 pe-3">{report.status}</td>
                     <td className="py-3">
                       {report.status !== 'resolved' ? (
@@ -3453,8 +3458,12 @@ function WebinarPanel() {
                   <td className="py-3 pe-3 whitespace-nowrap">{new Date(row.createdAt).toLocaleString('he-IL')}</td>
                   <td className="py-3 pe-3 whitespace-nowrap text-white/70">{statusLabel(row.status)}</td>
                   <td className="py-3 pe-3">{row.fullName}</td>
-                  <td className="py-3 pe-3" dir="ltr">{row.phone}</td>
-                  <td className="py-3 pe-3" dir="ltr">{row.email}</td>
+                  <td className="py-3 pe-3">
+                    <Bidi kind="phone">{row.phone}</Bidi>
+                  </td>
+                  <td className="py-3 pe-3">
+                    <Bidi kind="email">{row.email}</Bidi>
+                  </td>
                   <td className="py-3 pe-3">{row.field}</td>
                   <td className="py-3 pe-3 text-white/60">
                     {row.interest}

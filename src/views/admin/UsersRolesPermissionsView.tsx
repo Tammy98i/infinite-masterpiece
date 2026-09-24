@@ -15,6 +15,7 @@ import {
   STAFF_DESK_LABEL,
   STAFF_DESK_TABS,
 } from './adminConstants';
+import { Bidi } from '../../components/Bidi';
 
 export type AccessSection = 'accounts' | 'roles' | 'desks' | 'admins';
 
@@ -286,8 +287,8 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
                   <tr key={row.id} className={`border-b border-white/5 ${selectedId === row.id ? 'bg-white/10' : ''}`}>
                     <td>
                       <span>{row.name}</span>
-                      <span className="text-xs text-white/35 ms-2" dir="ltr">
-                        {row.email}
+                      <span className="text-xs text-white/35 ms-2">
+                        <Bidi kind="email">{row.email}</Bidi>
                       </span>
                     </td>
                     <td className="text-white/65">{ROLE_LABEL[row.role] || row.role}</td>
@@ -318,8 +319,8 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
             <div className="crm-desk-edit-drawer grid gap-3 text-sm">
               <p className="font-medium">
                 עריכה · {selected.name}
-                <span className="text-xs text-white/40 ms-2" dir="ltr">
-                  {selected.email}
+                <span className="text-xs text-white/40 ms-2">
+                  <Bidi kind="email">{selected.email}</Bidi>
                 </span>
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
