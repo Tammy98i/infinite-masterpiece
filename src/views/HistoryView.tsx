@@ -5,6 +5,7 @@ import { DirBack } from '../components/DirArrow';
 import { ClockLabel } from '../components/ClockLabel';
 import { useWatchAccess } from '../utils/useWatchAccess';
 import { StartHereRail } from '../components/StartHereRail';
+import { EmptyState } from '../components/LibraryStates';
 import { pickStartHereCourses } from '../utils/libraryHome';
 
 function formatWhen(ts: number) {
@@ -37,10 +38,16 @@ export const HistoryView: React.FC = () => {
       </div>
 
       {items.length === 0 ? (
-        <>
-          <p className="mb-6 text-sm text-white/70">עוד אין צפייה בחשבון הזה.</p>
+        <div className="grid gap-8">
+          <EmptyState
+            eyebrow="היסטוריה"
+            title="עוד אין צפייה בחשבון הזה"
+            body="כשתתחילו הרצאה — היא תופיע כאן להמשך מהיר."
+            actionLabel="לספרייה"
+            onAction={() => setView('home')}
+          />
           <StartHereRail {...pickStartHereCourses(courses, user)} />
-        </>
+        </div>
       ) : (
         <div className="divide-y divide-white/10">
           {items.map(({ course, episode, progress }) => {

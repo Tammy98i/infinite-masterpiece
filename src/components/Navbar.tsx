@@ -152,6 +152,21 @@ export const Navbar: React.FC = () => {
               >
                 10 דק׳
               </button>
+              <button
+                type="button"
+                onClick={() => {
+                  if (currentView !== 'home') setView('home');
+                  requestAnimationFrame(() => {
+                    document.getElementById('topics-heading')?.scrollIntoView({
+                      behavior: 'smooth',
+                      block: 'start',
+                    });
+                  });
+                }}
+                className="header-nav-wide transition-colors py-2 min-h-11 border-b-2 text-white/85 hover:text-white border-transparent"
+              >
+                נושאים
+              </button>
             </nav>
           </div>
 

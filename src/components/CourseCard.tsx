@@ -27,7 +27,7 @@ interface CourseCardProps {
 const ACCESS_LABEL: Record<CardAccessState, string> = {
   open: 'פתוח',
   preview: 'טעימה',
-  locked: 'דורש מנוי',
+  locked: 'נעול',
 };
 
 export const CourseCard: React.FC<CourseCardProps> = ({
@@ -68,6 +68,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   const badge = cardBadgeLabel(access, layout === 'continue' ? 'continue' : 'card');
   const showNew = showNewBadge && isCourseNew(course);
   const showProgress = layout === 'continue' ? Math.max(progPct, 4) : progPct;
+  const badgeDisplay =
+    badge === 'דורש מנוי' ? 'נעול' : badge === 'טעימה' ? 'טעימה' : badge;
 
   const handleCardClick = () => {
     trackEvent('content_card_click', {
@@ -118,6 +120,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({
         ? 'w-[180px] sm:w-[210px]'
         : 'w-[168px] sm:w-[210px]';
 
+  const metaLine = [instructorName, resumeLabel || durationLabel, ACCESS_LABEL[access]]
+    .filter(Boolean)
+    .join(' · ');
+
   return (
     <div
       className={`relative shrink-0 text-start ${widthClass}`}
@@ -134,9 +140,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
       )}
 
       <div className={`relative ${rank ? 'me-10 sm:me-14' : ''}`}>
-        <div
-          className="library-poster relative overflow-hidden rounded-[4px]"
-        >
+        <div className="library-poster relative overflow-hidden rounded-[4px]">
           <button
             type="button"
             onClick={handleCardClick}
@@ -160,40 +164,45 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                 }`}
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-              <span className="library-poster-play absolute inset-0 z-[1] flex items-center justify-center">
-                <span className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-black">
+              <span className="library-poster-play absolute inset-0 z-[3] flex items-center justify-center">
+                <span className="library-poster-play-inner">
                   <Play className="ml-0.5 h-4 w-4 fill-black" data-icon="play" aria-hidden />
                 </span>
               </span>
 
+              <div className="library-poster-meta" aria-hidden>
+                <b className="line-clamp-2">{title}</b>
+                <span className="line-clamp-1">{metaLine}</span>
+              </div>
+
               {showDurationBadge && !badge && (
-                <span className="absolute top-2 start-2 z-10 rounded bg-black/75 px-2 py-0.5 text-[12px] font-medium text-white">
+                <span className="absolute top-2 start-2 z-10 rounded-[4px] bg-black/75 px-2 py-0.5 text-[12px] font-medium text-white">
                   <ClockLabel seconds={totalSecs} />
                 </span>
               )}
 
               {showNew && (
-                <span className="absolute top-2 end-14 z-10 rounded bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-black">
+                <span className="absolute top-2 end-14 z-10 rounded-[4px] bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-black">
                   חדש
                 </span>
               )}
 
-              {badge ? (
+              {badgeDisplay ? (
                 <span
-                  className={`absolute top-2 start-2 z-10 inline-flex items-center gap-1 rounded px-2 py-0.5 text-[11px] font-medium ${
-                    badge === 'המשך'
+                  className={`absolute top-2 start-2 z-10 inline-flex items-center gap-1 rounded-[4px] px-2 py-0.5 text-[11px] font-medium ${
+                    badgeDisplay === 'המשך'
                       ? 'border border-[#b79043]/70 bg-black/75 text-[#dfc47d]'
-                      : badge === 'טעימה'
-                        ? 'border border-[#b79043]/60 bg-black/70 text-[#dfc47d]'
-                        : 'bg-black/75 text-white/90'
+                      : badgeDisplay === 'טעימה'
+                        ? 'border border-white/25 bg-black/70 text-white/90'
+                        : 'border border-white/20 bg-black/70 text-white/85'
                   }`}
                 >
-                  {badge === 'דורש מנוי' ? <Lock className="w-3 h-3" aria-hidden /> : null}
-                  {badge}
+                  {badgeDisplay === 'נעול' ? <Lock className="w-3 h-3" aria-hidden /> : null}
+                  {badgeDisplay}
                 </span>
               ) : null}
 
-              <div className="absolute bottom-2 start-2 end-2 z-[1] text-start pointer-events-none">
+              <div className="library-poster-title-dock absolute bottom-2 start-2 end-2 z-[1] text-start pointer-events-none transition-opacity duration-200">
                 <div className="text-[13px] font-semibold text-white leading-snug line-clamp-1">
                   {title}
                 </div>
@@ -221,7 +230,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
             <button
               type="button"
               onClick={handlePlayClick}
-              className="absolute start-2 bottom-14 z-10 w-11 h-11 rounded-full bg-white text-black flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
+              className="absolute start-2 bottom-14 z-10 w-11 h-11 rounded-[4px] bg-white text-black flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
               aria-label={`המשיכו לצפות ב־${course.title}`}
             >
               <Play className="w-4 h-4 fill-black ml-0.5" data-icon="play" aria-hidden />
@@ -231,7 +240,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
           <button
             type="button"
             onClick={handleListClick}
-            className="absolute end-2 top-2 z-10 w-11 h-11 rounded-full border border-white/35 bg-black/55 text-white flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
+            className="library-poster-list absolute end-2 top-2 z-10 w-11 h-11 rounded-[4px] border border-white/35 bg-black/55 text-white flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
             aria-label={isSaved ? `הסרה של ${course.title} מהרשימה` : `הוספת ${course.title} לרשימה`}
             aria-pressed={isSaved}
           >

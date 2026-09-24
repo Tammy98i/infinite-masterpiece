@@ -5,6 +5,7 @@ import { Bookmark } from 'lucide-react';
 import { DirBack } from '../components/DirArrow';
 import { FREE_LIST_LIMIT, hasFullLibraryAccess } from '../utils/access';
 import { StartHereRail } from '../components/StartHereRail';
+import { EmptyState } from '../components/LibraryStates';
 import { pickStartHereCourses } from '../utils/libraryHome';
 
 export const MyListView: React.FC = () => {
@@ -50,7 +51,16 @@ export const MyListView: React.FC = () => {
           ))}
         </div>
       ) : (
-        <StartHereRail {...pickStartHereCourses(courses, user)} />
+        <div className="grid gap-8">
+          <EmptyState
+            eyebrow="הרשימה שלי"
+            title="עדיין אין הרצאות שמורות"
+            body="בחרו מהכרזה או מהפסים — הכל נשאר במקומו."
+            actionLabel="להמשיך לגלול"
+            onAction={() => setView('home')}
+          />
+          <StartHereRail {...pickStartHereCourses(courses, user)} />
+        </div>
       )}
     </div>
   );

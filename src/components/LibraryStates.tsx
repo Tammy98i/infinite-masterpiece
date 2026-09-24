@@ -3,9 +3,8 @@ import React from 'react';
 export function CourseCardSkeleton() {
   return (
     <div className="shrink-0 w-[220px] sm:w-[260px] animate-pulse" aria-hidden>
-      <div className="aspect-[16/9] rounded-xl bg-white/10" />
-      <div className="mt-2 h-3 w-3/4 rounded bg-white/10" />
-      <div className="mt-2 h-2.5 w-1/2 rounded bg-white/5" />
+      <div className="aspect-[16/9] rounded-[4px] bg-white/10" />
+      <div className="mt-2 h-2.5 w-2/3 rounded-[4px] bg-white/10" />
     </div>
   );
 }
@@ -13,8 +12,8 @@ export function CourseCardSkeleton() {
 export function RailSkeleton({ title }: { title: string }) {
   return (
     <section className="py-8 px-4 sm:px-8" aria-busy="true" aria-label={`${title} בטעינה`}>
-      <div className="h-5 w-40 rounded bg-white/10 mb-4 animate-pulse" />
-      <div className="flex gap-5 overflow-hidden">
+      <div className="h-4 w-36 rounded-[4px] bg-white/10 mb-4 animate-pulse" />
+      <div className="flex gap-2 overflow-hidden">
         {Array.from({ length: 4 }).map((_, i) => (
           <CourseCardSkeleton key={i} />
         ))}
@@ -31,7 +30,7 @@ export function SectionError({
   onRetry?: () => void;
 }) {
   return (
-    <div className="mx-4 sm:mx-8 my-6 rounded-2xl border border-white/10 bg-white/[0.03] px-5 py-6 text-center flex flex-col items-center gap-4">
+    <div className="library-empty-panel mx-4 sm:mx-8 my-6 px-5 py-6 flex flex-col items-start gap-4">
       <p className="text-sm text-white/60" role="alert">
         {message}
       </p>
@@ -39,7 +38,7 @@ export function SectionError({
         <button
           type="button"
           onClick={onRetry}
-          className="shrink-0 px-4 py-2 rounded-full border border-white/20 text-sm text-white/80 hover:border-[#b79043] min-h-11 cursor-pointer"
+          className="library-empty-cta shrink-0 px-4 py-2 text-sm min-h-11 cursor-pointer"
         >
           ניסיון נוסף
         </button>
@@ -53,21 +52,24 @@ export function EmptyState({
   body,
   actionLabel,
   onAction,
+  eyebrow = 'ספרייה',
 }: {
   title: string;
   body: string;
   actionLabel?: string;
   onAction?: () => void;
+  eyebrow?: string;
 }) {
   return (
-    <div className="rounded-3xl border border-white/10 bg-white/[0.03] p-10 sm:p-14 text-center max-w-lg mx-auto">
-      <h3 className="font-heading text-xl text-white mb-3">{title}</h3>
-      <p className="text-sm text-white/50 font-light leading-relaxed mb-8">{body}</p>
+    <div className="library-empty-panel p-8 sm:p-10">
+      <p className="library-empty-eye">{eyebrow}</p>
+      <h3 className="font-heading text-xl text-white">{title}</h3>
+      <p className="text-sm text-white/55 font-light leading-relaxed mb-6">{body}</p>
       {actionLabel && onAction ? (
         <button
           type="button"
           onClick={onAction}
-          className="px-8 py-3 rounded-full bg-[#b79043] text-black text-sm font-semibold min-h-11 cursor-pointer hover:bg-[#dfc47d] transition-colors duration-500"
+          className="library-empty-cta px-6 py-2.5 text-sm font-semibold min-h-11 cursor-pointer transition-colors duration-200"
         >
           {actionLabel}
         </button>
@@ -79,7 +81,7 @@ export function EmptyState({
 export function PlayerSkeleton() {
   return (
     <div className="absolute inset-0 flex flex-col items-center justify-center gap-4 bg-black" aria-busy="true" aria-label="טוען נגן">
-      <div className="w-16 h-16 rounded-full border border-[#b79043]/30 bg-white/[0.03] animate-pulse" />
+      <div className="w-16 h-16 rounded-[4px] border border-[#b79043]/30 bg-white/[0.03] animate-pulse" />
       <p className="text-sm text-white/45">טוען נגן</p>
     </div>
   );

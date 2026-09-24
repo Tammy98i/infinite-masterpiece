@@ -77,13 +77,16 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           decoding="async"
           className="w-full h-full object-cover object-center scale-105"
         />
-        <div className="library-hero-veil-bottom absolute inset-0 bg-gradient-to-t from-[#0d0b08] via-[#0d0b08]/70 to-transparent" />
-        <div className="library-hero-veil-side absolute inset-0 bg-gradient-to-l from-[#0d0b08]/90 via-[#0d0b08]/55 to-transparent w-full md:w-[70%] ms-auto" />
-        <div className="absolute inset-0 bg-black/20" />
+        <div className="library-hero-veil-bottom absolute inset-0" />
+        <div className="library-hero-veil-side absolute inset-0 w-full md:w-[70%] ms-auto" />
+        <div className="absolute inset-0 bg-black/15" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-8 w-full z-10 text-start md:max-w-2xl md:ms-0 md:me-auto">
-        <h1 className="text-4xl sm:text-6xl lg:text-[5rem] font-bold text-white leading-[1.05] tracking-tight mb-4">
+        <p className="mb-2 text-[11px] font-medium tracking-[0.18em] text-[#b79043]">
+          {continueWatching ? 'המשיכו מכאן' : 'הרצאה נבחרת'}
+        </p>
+        <h1 className="text-4xl sm:text-5xl lg:text-[4.25rem] font-semibold text-white leading-[1.08] tracking-tight mb-4">
           {course.title}
         </h1>
 
@@ -91,8 +94,12 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           {instructor ? <span>{instructor.name}</span> : null}
           {instructor ? <span aria-hidden>·</span> : null}
           <ClockLabel seconds={totalSecs} />
-          <span aria-hidden>·</span>
-          <span>{canFull ? 'פתוח לצפייה' : canPreview ? 'טעימה' : 'דורש מנוי'}</span>
+          {continueWatching?.episodeTitle ? (
+            <>
+              <span aria-hidden>·</span>
+              <span>{continueWatching.episodeTitle}</span>
+            </>
+          ) : null}
         </p>
 
         <p className="text-sm sm:text-base text-white/80 font-light leading-relaxed max-w-xl mb-6 line-clamp-2">
@@ -108,7 +115,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
               <span>המשך צפייה</span>
             </div>
             <div
-              className="h-1 rounded-full bg-white/15 overflow-hidden"
+              className="h-1 rounded-[4px] bg-white/15 overflow-hidden"
               role="progressbar"
               aria-labelledby="hero-progress-label"
               aria-valuemin={0}
