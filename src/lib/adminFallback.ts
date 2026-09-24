@@ -52,6 +52,7 @@ export function overviewFrom(profiles: ProfileListRow[]) {
     pending: 0,
     episodes,
     applicationsPending: 0,
+    openLeads: 0,
     paywallHits: 0,
     upgrades: 0,
     conversionRate: users ? Math.round((paying / users) * 100) : 0,
