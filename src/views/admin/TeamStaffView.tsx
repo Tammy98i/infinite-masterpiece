@@ -8,6 +8,8 @@ import { TAB_META } from './adminNav';
 import { fieldClass, STAFF_DESK_LABEL } from './adminConstants';
 import { AdminListControls } from './AdminListControls';
 import { AdminStatusBadge } from './AdminStatusBadge';
+import { Bidi } from '../../components/Bidi';
+import { DeskMonogram } from '../../components/DeskMonogram';
 
 type StaffFilter = 'all' | 'lecturer' | 'staff' | 'founder';
 
@@ -102,9 +104,9 @@ export function TeamStaffView() {
       </AdminListControls>
 
       <div className="grid gap-3 xl:grid-cols-[1.4fr_0.8fr]">
-        <div className="overflow-x-auto border border-white/10 rounded bg-white/[0.02]">
+        <div className="crm-desk-table">
           <table className="w-full text-sm text-start">
-            <thead className="text-xs text-white/45 border-b border-white/10 bg-[#0a0a0a]">
+            <thead className="text-xs text-white/45 border-b border-white/10">
               <tr>
                 <th className="py-3 px-3 font-normal">שם</th>
                 <th className="py-3 px-3 font-normal">תפקיד</th>
@@ -128,11 +130,18 @@ export function TeamStaffView() {
                       selectedId === row.id ? 'bg-[#b79043]/10' : index % 2 === 0 ? 'bg-transparent' : 'bg-white/[0.015]'
                     } hover:bg-[#b79043]/5 transition-colors`}
                   >
-                    <td>
-                      {row.name}
-                      {row.isFounder ? <span className="text-white/35"> · מייסד</span> : null}
-                      <span className="text-xs text-white/35 ms-2" dir="ltr">
-                        {row.email}
+                    <td className="py-3 px-3">
+                      <span className="crm-desk-who">
+                        <DeskMonogram name={row.name} />
+                        <span className="crm-desk-who-text">
+                          <span className="crm-desk-who-name">
+                            {row.name}
+                            {row.isFounder ? <span className="text-white/35"> · מייסד</span> : null}
+                          </span>
+                          <span className="crm-desk-who-mail">
+                            <Bidi kind="email">{row.email}</Bidi>
+                          </span>
+                        </span>
                       </span>
                     </td>
                     <td className="py-3 px-3 text-white/60">{row.role === 'admin' ? 'אדמין' : row.role === 'instructor' ? 'מרצה' : 'משתמש'}</td>
@@ -149,16 +158,22 @@ export function TeamStaffView() {
           </table>
         </div>
 
-        <aside className="border border-white/10 rounded p-3 bg-white/[0.02]">
+        <aside className="crm-desk-title-card">
           {!selected ? (
             <p className="text-sm text-white/45">בחרו איש צוות או מרצה.</p>
           ) : (
             <div className="grid gap-3 text-sm">
               <div>
-                <p className="text-sm font-medium">{selected.name}</p>
-                <p className="text-white/45 mt-1 break-all text-xs" dir="ltr">
-                  {selected.email}
-                </p>
+                <p className="crm-desk-title-keep">כרטיס דק · title card</p>
+                <div className="crm-desk-who">
+                  <DeskMonogram name={selected.name} />
+                  <span className="crm-desk-who-text">
+                    <span className="crm-desk-who-name">{selected.name}</span>
+                    <span className="crm-desk-who-mail">
+                      <Bidi kind="email">{selected.email}</Bidi>
+                    </span>
+                  </span>
+                </div>
               </div>
 
               <label className="grid gap-1 text-white/50">

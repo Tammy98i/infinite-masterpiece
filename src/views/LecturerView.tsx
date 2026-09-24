@@ -15,6 +15,9 @@ import { captionTracksFromVttUrl, vttUrlFromCaptionTracks } from '../constants/c
 import { trackEvent } from '../utils/analytics';
 import { FileUploadField } from '../components/FileUploadField';
 import { CrmCatalogStage } from '../components/CrmCatalogStage';
+import { AsideVeils } from './admin/AsideVeils';
+import { DeskMonogram } from '../components/DeskMonogram';
+import { Bidi } from '../components/Bidi';
 
 const fieldClass =
   'w-full bg-[rgba(5,10,20,.55)] border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#b79043] focus:outline-none min-h-11';
@@ -387,14 +390,15 @@ function LecturerDashboard({
   return (
     <div className="crm-desk min-h-screen bg-transparent text-white text-start" dir="rtl">
       <div className="flex min-h-screen">
-        <aside className="crm-desk-aside hidden lg:flex w-64 shrink-0 flex-col border-s border-white/10 bg-[#080808] sticky top-0 h-screen overflow-y-auto">
+        <aside className="crm-desk-aside hidden lg:flex w-64 shrink-0 flex-col border-e border-white/10 sticky top-0 h-screen overflow-y-auto">
+          <AsideVeils />
           <div className="p-5 border-b border-white/10">
             <p className="text-[11px] uppercase tracking-[0.28em] text-[#b79043] mb-2">מרצה</p>
             <h1 className="text-xl font-light">דשבורד מרצה</h1>
             <p className="text-xs text-white/40 mt-2 font-light truncate">{user.name}</p>
             {user.email ? (
-              <p className="text-[11px] text-white/30 mt-1 truncate" dir="ltr">
-                {user.email}
+              <p className="text-[11px] text-white/30 mt-1 truncate">
+                <Bidi kind="email">{user.email}</Bidi>
               </p>
             ) : null}
             {stats?.isFounder ? (
@@ -438,8 +442,8 @@ function LecturerDashboard({
                 <p className="text-[11px] tracking-[0.2em] text-[#b79043] uppercase truncate">Infinite Masterpiece</p>
                 <p className="text-sm text-white/70 font-light truncate">שלום, {user.name}</p>
                 {user.email ? (
-                  <p className="text-[11px] text-white/40 truncate" dir="ltr">
-                    {user.email}
+                  <p className="text-[11px] text-white/40 truncate">
+                    <Bidi kind="email">{user.email}</Bidi>
                   </p>
                 ) : null}
               </div>
@@ -454,10 +458,13 @@ function LecturerDashboard({
           </header>
 
           {mobileNavOpen ? (
-            <div className="crm-desk-aside lg:hidden border-b border-white/10 bg-[#080808] p-3 grid gap-1">{navItems.map(navButton)}</div>
+            <div className="crm-desk-aside lg:hidden relative border-b border-white/10 p-3 grid gap-1">
+              <AsideVeils />
+              {navItems.map(navButton)}
+            </div>
           ) : null}
 
-          <main className="px-4 sm:px-6 lg:px-8 py-8 pb-24 max-w-7xl">
+          <main className="crm-desk-stage px-4 sm:px-6 lg:px-8 py-8 pb-24 max-w-7xl">
             {error ? <p className="text-sm text-rose-300 mb-4">{error}</p> : null}
 
             {tab === 'overview' && stats ? (
@@ -896,15 +903,15 @@ function OverviewHome({
 
       <div className="grid grid-cols-2 md:grid-cols-3 xl:grid-cols-5 gap-3">
         {kpis.map((card) => (
-          <div key={card.label} className="crm-kpi border border-white/10 rounded-2xl p-4 bg-[#0A0A0A]">
-            <div className="text-[11px] text-white/40 mb-2">{card.label}</div>
-            <div className="text-2xl font-light tabular-nums">{card.value}</div>
+          <div key={card.label} className="crm-desk-metric pointer-events-none">
+            <strong>{card.value}</strong>
+            <b>{card.label}</b>
           </div>
         ))}
       </div>
 
       <div className="grid gap-4 lg:grid-cols-[1.4fr_1fr]">
-        <div className="border border-white/10 rounded-2xl p-5">
+        <div className="crm-desk-panel p-5">
           <h3 className="text-sm font-light mb-4">צפיות ב־14 הימים האחרונים</h3>
           {stats.viewsByDay.length === 0 ? (
             <p className="text-sm text-white/40">עדיין אין צפיות למדידה.</p>
