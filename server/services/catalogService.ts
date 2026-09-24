@@ -393,6 +393,9 @@ export function getOverview() {
     applicationsPending: count(
       `SELECT COUNT(*) as c FROM lecturer_applications WHERE status = 'pending'`
     ),
+    openLeads:
+      count(`SELECT COUNT(*) as c FROM track_leads WHERE status = 'new'`) +
+      count(`SELECT COUNT(*) as c FROM webinar_registrations WHERE status = 'new'`),
     paywallHits: eventCount('paywall_opened'),
     upgrades: eventCount('upgrade_clicked'),
     conversionRate: users ? Math.round((paying / users) * 100) : 0,

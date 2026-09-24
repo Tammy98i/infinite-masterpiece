@@ -155,6 +155,101 @@
   color: rgba(255, 255, 255, .4);
 }
 
+.crm-desk-nav-why {
+  margin-top: 0.1rem;
+  font-size: 10px;
+  font-weight: 400;
+  letter-spacing: 0.02em;
+  color: rgba(255, 255, 255, .32);
+}
+
+.crm-desk-nav-item.is-active .crm-desk-nav-why {
+  color: rgba(183, 144, 67, .85);
+}
+
+.crm-desk-metric {
+  display: grid;
+  gap: 0.35rem;
+  text-align: start;
+  min-height: 44px;
+  padding: 0.85rem 1rem;
+  border: 1px solid rgba(255, 255, 255, .12);
+  border-radius: 4px;
+  background: rgba(255, 255, 255, .02);
+  color: inherit;
+  cursor: pointer;
+  transition: border-color .15s ease, background .15s ease;
+}
+
+.crm-desk-metric:hover,
+.crm-desk-metric:focus-visible {
+  border-color: rgba(183, 144, 67, .55);
+  background: rgba(183, 144, 67, .06);
+  outline: none;
+}
+
+.crm-desk-metric strong {
+  font-size: 1.5rem;
+  font-weight: 300;
+  line-height: 1.1;
+  color: #fff;
+}
+
+.crm-desk-metric b {
+  font-size: 0.85rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, .85);
+}
+
+.crm-desk-metric em {
+  font-size: 0.7rem;
+  font-style: normal;
+  color: rgba(255, 255, 255, .4);
+}
+
+.crm-desk-fold {
+  border: 1px solid rgba(255, 255, 255, .1);
+  border-radius: 4px;
+  padding: 0.75rem 1rem;
+}
+
+.crm-desk-fold > summary {
+  cursor: pointer;
+  list-style: none;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  font-size: 0.9rem;
+  color: rgba(255, 255, 255, .75);
+}
+
+.crm-desk-fold > summary::-webkit-details-marker {
+  display: none;
+}
+
+.crm-desk-fold[open] > summary {
+  margin-bottom: 0.75rem;
+  color: #dfc47d;
+}
+
+.crm-desk .p-6 {
+  padding: 0.85rem !important;
+}
+
+.crm-desk .p-5 {
+  padding: 0.75rem !important;
+}
+
+.crm-desk .gap-8 {
+  gap: 1rem !important;
+}
+
+.crm-desk .gap-10 {
+  gap: 1.25rem !important;
+}
+
 .crm-desk-nav-search {
   width: 100%;
   min-height: 44px;

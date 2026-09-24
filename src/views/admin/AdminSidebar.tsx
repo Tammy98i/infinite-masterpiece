@@ -31,7 +31,10 @@ function NavButton({ item, active, onClick }: { item: NavItem; active: boolean; 
       className={`crm-desk-nav-item ${active ? 'is-active' : ''}`}
     >
       <Icon className="w-4 h-4 shrink-0 opacity-80" aria-hidden />
-      <span className="flex-1 truncate">{item.label}</span>
+      <span className="flex-1 min-w-0 text-start">
+        <span className="block truncate">{item.label}</span>
+        {item.why ? <span className="crm-desk-nav-why block truncate">{item.why}</span> : null}
+      </span>
       {item.badge ? (
         <span className="crm-desk-nav-badge">{item.badge}</span>
       ) : !item.ready ? (
@@ -66,6 +69,7 @@ export function AdminSidebar({ groups, tab, onNavigate, userName, userEmail, onE
           (item) =>
             item.label.toLowerCase().includes(q) ||
             item.id.includes(q) ||
+            (item.why || '').toLowerCase().includes(q) ||
             (item.keywords || '').toLowerCase().includes(q)
         ),
       }))

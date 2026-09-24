@@ -93,73 +93,20 @@ export function PodsPanel() {
   };
 
   return (
-    <AdminPageShell group="מסחר והכנסות" title="פודים" description="שיוך ידני אחרי תשלום מסע או אישור 88. מנוי ספרייה לא נכנס לתור.">
+    <AdminPageShell group="מסחר והכנסות" title="פודים" description="תור שיוך קודם. מנוי ספרייה לא נכנס לתור.">
       {error ? <p role="alert" className="text-[#dfc47d]">{error}</p> : null}
       {notice ? <p role="status" className="text-[#dfc47d]">{notice}</p> : null}
       {loading ? <p role="status">טוענים פודים…</p> : null}
 
-      <section className="grid gap-4 border border-white/10 rounded-3xl p-5">
-        <h2 className="text-lg text-white">פוד חדש</h2>
-        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-          <label className="text-sm text-white/70">
-            שם
-            <input className={`${fieldClass} mt-2`} value={name} onChange={(event) => setName(event.target.value)} />
-          </label>
-          <label className="text-sm text-white/70">
-            סוג
-            <select className={`${fieldClass} mt-2`} value={kind} onChange={(event) => setKind(event.target.value as PodKind)}>
-              <option value="journey">מסע</option>
-              <option value="micro_88">Micro-Pod · 88</option>
-            </select>
-          </label>
-          <label className="text-sm text-white/70">
-            מזהה קפטן (אופציונלי)
-            <input className={`${fieldClass} mt-2`} value={captainUserId} onChange={(event) => setCaptainUserId(event.target.value)} dir="ltr" />
-          </label>
-          <button type="button" className="btn-gold self-end min-h-11" onClick={() => void create()}>
-            יצירת פוד
-          </button>
-        </div>
-      </section>
-
       <section className="grid gap-3">
-        <h2 className="text-lg text-white">רשימת פודים</h2>
-        <div className="grid gap-3">
-          {pods.map((pod) => (
-            <article key={pod.id} className="border border-white/10 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
-              <div>
-                <h3 className="text-white text-lg">{pod.name}</h3>
-                <p className="text-sm text-white/55 mt-1">
-                  {POD_KIND_LABELS[pod.kind]} · {POD_STATUS_LABELS[pod.status]} · קפטן {pod.captain?.name || 'טרם מונה'} ·{' '}
-                  <Bidi kind="ltr">{String(pod.occupied)}</Bidi>/<Bidi kind="ltr">{String(pod.capacity)}</Bidi>
-                </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                {pod.status !== 'active' && pod.captain ? (
-                  <button type="button" className="btn-secondary min-h-11 px-4" onClick={() => void setStatus(pod.id, 'active')}>
-                    הפעלה
-                  </button>
-                ) : null}
-                {pod.status !== 'closed' ? (
-                  <button type="button" className="min-h-11 rounded-full border border-white/20 px-4" onClick={() => void closePod(pod.id)}>
-                    סגירה
-                  </button>
-                ) : null}
-              </div>
-            </article>
-          ))}
-        </div>
-      </section>
-
-      <section className="grid gap-3">
-        <h2 className="text-lg text-white">תור שיוך</h2>
-        {queue.length === 0 ? <p className="text-white/45">אין ממתינים לשיוך.</p> : null}
-        <div className="grid gap-3">
+        <h2 className="text-base text-white">תור שיוך</h2>
+        {queue.length === 0 ? <p className="text-white/45 text-sm">אין ממתינים לשיוך.</p> : null}
+        <div className="grid gap-2">
           {queue.map((item) => (
-            <article key={`${item.userId}-${item.kind}`} className="border border-white/10 rounded-2xl p-5 flex flex-wrap items-center justify-between gap-4">
+            <article key={`${item.userId}-${item.kind}`} className="border border-white/10 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 className="text-white">{item.name}</h3>
-                <p className="text-sm text-white/55 mt-1">
+                <h3 className="text-white text-sm">{item.name}</h3>
+                <p className="text-xs text-white/55 mt-1">
                   {SOURCE_LABEL[item.source]} · {POD_KIND_LABELS[item.kind]}
                 </p>
                 <p className="text-xs text-white/35 mt-1" dir="ltr">{item.email}</p>
@@ -190,9 +137,65 @@ export function PodsPanel() {
       </section>
 
       <section className="grid gap-3">
-        <h2 className="text-lg text-white">לא נכנסו לתור</h2>
+        <h2 className="text-base text-white">רשימת פודים</h2>
+        <div className="grid gap-2">
+          {pods.map((pod) => (
+            <article key={pod.id} className="border border-white/10 rounded-2xl p-3 flex flex-wrap items-center justify-between gap-3">
+              <div>
+                <h3 className="text-white text-sm">{pod.name}</h3>
+                <p className="text-xs text-white/55 mt-1">
+                  {POD_KIND_LABELS[pod.kind]} · {POD_STATUS_LABELS[pod.status]} · קפטן {pod.captain?.name || 'טרם מונה'} ·{' '}
+                  <Bidi kind="ltr">{String(pod.occupied)}</Bidi>/<Bidi kind="ltr">{String(pod.capacity)}</Bidi>
+                </p>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                {pod.status !== 'active' && pod.captain ? (
+                  <button type="button" className="btn-secondary min-h-11 px-4" onClick={() => void setStatus(pod.id, 'active')}>
+                    הפעלה
+                  </button>
+                ) : null}
+                {pod.status !== 'closed' ? (
+                  <button type="button" className="min-h-11 rounded-full border border-white/20 px-4" onClick={() => void closePod(pod.id)}>
+                    סגירה
+                  </button>
+                ) : null}
+              </div>
+            </article>
+          ))}
+        </div>
+      </section>
+
+      <details className="crm-desk-fold">
+        <summary>
+          <span>פוד חדש</span>
+          <span className="text-xs text-white/40">קיפול · רשימה קודם</span>
+        </summary>
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
+          <label className="text-sm text-white/70">
+            שם
+            <input className={`${fieldClass} mt-2`} value={name} onChange={(event) => setName(event.target.value)} />
+          </label>
+          <label className="text-sm text-white/70">
+            סוג
+            <select className={`${fieldClass} mt-2`} value={kind} onChange={(event) => setKind(event.target.value as PodKind)}>
+              <option value="journey">מסע</option>
+              <option value="micro_88">Micro-Pod · 88</option>
+            </select>
+          </label>
+          <label className="text-sm text-white/70">
+            מזהה קפטן (אופציונלי)
+            <input className={`${fieldClass} mt-2`} value={captainUserId} onChange={(event) => setCaptainUserId(event.target.value)} dir="ltr" />
+          </label>
+          <button type="button" className="btn-gold self-end min-h-11" onClick={() => void create()}>
+            יצירת פוד
+          </button>
+        </div>
+      </details>
+
+      <section className="grid gap-2">
+        <h2 className="text-base text-white">לא נכנסו לתור</h2>
         <p className="text-sm text-white/45">מנוי ספרייה בלבד, בלי תשלום מסע ובלי אישור 88.</p>
-        <ul className="grid gap-2">
+        <ul className="grid gap-1">
           {libraryOnly.slice(0, 12).map((item) => (
             <li key={item.userId} className="text-sm text-white/60">
               {item.name} · {item.stamp}
