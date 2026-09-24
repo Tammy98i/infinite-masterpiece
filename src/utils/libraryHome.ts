@@ -67,10 +67,10 @@ export function getCardAccessState(
 export function cardBadgeLabel(
   access: CardAccessState,
   layout: 'card' | 'continue' = 'card'
-): 'המשך' | 'טעימה' | 'נעול' | '' {
+): 'המשך' | 'טעימה' | 'דורש מנוי' | '' {
   if (layout === 'continue') return 'המשך';
   if (access === 'preview') return 'טעימה';
-  if (access === 'locked') return 'נעול';
+  if (access === 'locked') return 'דורש מנוי';
   return '';
 }
 

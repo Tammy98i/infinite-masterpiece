@@ -8,8 +8,8 @@ test('continue cards always show המשך', () => {
   assert.equal(cardBadgeLabel('preview', 'continue'), 'המשך');
 });
 
-test('regular cards show טעימה or נעול, not an open badge', () => {
+test('regular cards show טעימה or דורש מנוי, not an open badge', () => {
   assert.equal(cardBadgeLabel('preview', 'card'), 'טעימה');
-  assert.equal(cardBadgeLabel('locked', 'card'), 'נעול');
+  assert.equal(cardBadgeLabel('locked', 'card'), 'דורש מנוי');
   assert.equal(cardBadgeLabel('open', 'card'), '');
 });

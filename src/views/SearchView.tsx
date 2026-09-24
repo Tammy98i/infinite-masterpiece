@@ -5,19 +5,18 @@ import { searchCourses, searchSuggestions } from '../utils/searchCatalog';
 import { LIBRARY_TOPIC_IDS, getCardAccessState } from '../utils/libraryHome';
 import { formatClock } from '../utils/time';
 import { trackEvent } from '../utils/analytics';
-import { useWatchAccess } from '../utils/useWatchAccess';
 import { EmptyState } from '../components/LibraryStates';
 import { EMPTY_FILTERS, SearchFilters, type SearchFilterState } from '../components/SearchFilters';
+import { CourseCard } from '../components/CourseCard';
 
 const ACCESS_LABEL = {
   open: 'פתוח',
   preview: 'טעימה',
-  locked: 'דורש מסלול',
+  locked: 'דורש מנוי',
 } as const;
 
 export const SearchView: React.FC = () => {
   const { searchQuery, setSearchQuery, courses, instructors, categories, user, setView } = useApp();
-  const { goWatch } = useWatchAccess();
   const [filters, setFilters] = useState<SearchFilterState>(EMPTY_FILTERS);
   const query = searchQuery.trim();
   const queryLower = query.toLowerCase();
@@ -53,16 +52,11 @@ export const SearchView: React.FC = () => {
     const course = courses.find((c) => c.id === courseId);
     if (!course) return;
     trackEvent('search_result_click', { content_id: course.id });
-    const access = getCardAccessState(course, user);
-    if (access === 'locked' || access === 'preview') {
-      goWatch(course.id, course.episodes[0]?.id, 'search');
-      return;
-    }
     setView('course', { courseId: course.id });
   };
 
   return (
-    <div className="min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto">
+    <div className="library-catalog-page min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto">
       <div className="max-w-3xl mx-auto text-center mb-10">
         <h1 className="text-3xl sm:text-4xl font-heading font-semibold mb-6 text-white">חיפוש בספרייה</h1>
 
@@ -77,50 +71,40 @@ export const SearchView: React.FC = () => {
               }
             }}
             placeholder="שם הרצאה, מרצה או נושא"
-            className="w-full bg-zinc-900 border border-[#b79043]/50 rounded-full py-4 pr-12 pl-6 text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 min-h-11"
+            className="library-search-field w-full border py-4 ps-12 pe-6 text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 min-h-11"
             autoFocus
             aria-label="חיפוש בספרייה"
             enterKeyHint="search"
           />
-          <Search className="w-5 h-5 text-[#b79043] absolute right-4 pointer-events-none" />
+          <Search className="w-5 h-5 text-[#b79043] absolute start-4 pointer-events-none" data-icon="search" />
         </div>
       </div>
 
       {query ? (
         <div>
-          <h2 className="text-lg font-semibold mb-4 text-right border-b border-white/10 pb-3 flex items-center justify-between gap-3">
+          <h2 className="text-lg font-semibold mb-4 text-start border-b border-white/10 pb-3 flex items-center justify-between gap-3">
             <span>תוצאות עבור {query}</span>
             <span className="text-sm font-medium text-[#b79043]">{results.length === baseResults.length ? results.length : `${results.length} מתוך ${baseResults.length}`}</span>
           </h2>
           <SearchFilters value={filters} onChange={setFilters} activeCount={activeFilterCount} />
 
           {results.length > 0 ? (
-            <ul className="grid min-w-0 gap-4" role="list">
-              {results.map((course) => {
+            <ul className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5" role="list">
+              {results.map((course, index) => {
                 const instructor = instructors.find((i) => i.id === course.instructorId);
                 const duration = course.episodes.reduce((s, ep) => s + ep.duration, 0);
                 const access = getCardAccessState(course, user);
                 return (
                   <li key={course.id} className="min-w-0">
-                    <button
-                      type="button"
-                      onClick={() => openResult(course.id)}
-                      aria-label={course.title}
-                      className="w-full min-w-0 flex items-center gap-3 sm:gap-4 rounded-2xl border border-white/10 bg-white/[0.02] p-3 text-right hover:border-[#b79043]/50 transition-colors duration-500 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] cursor-pointer"
-                    >
-                      <img
-                        src={course.coverImage}
-                        alt=""
-                        aria-hidden
-                        className="w-24 sm:w-36 aspect-video object-cover rounded-lg shrink-0"
-                      />
-                      <div className="min-w-0 flex-1">
-                        <div className="text-[15px] font-semibold text-white truncate">{course.title}</div>
-                        <div className="text-[13px] text-white/55 mt-1 truncate">
-                          {instructor?.name || 'מרצה'} · {formatClock(duration)} · {ACCESS_LABEL[access]}
-                        </div>
-                      </div>
-                    </button>
+                    <CourseCard
+                      course={course}
+                      fullWidth
+                      sectionName="search"
+                      position={index}
+                    />
+                    <p className="sr-only">
+                      {instructor?.name || 'מרצה'} · {formatClock(duration)} · {ACCESS_LABEL[access]}
+                    </p>
                   </li>
                 );
               })}

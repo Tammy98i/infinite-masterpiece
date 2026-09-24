@@ -1,5 +1,4 @@
 import React, { useEffect, useMemo } from 'react';
-import { Link } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { ContinueWatchingRow } from '../components/ContinueWatchingRow';
 import { CategoryRow } from '../components/CategoryRow';
@@ -20,6 +19,7 @@ import { getRecommendedWithReasons } from '../utils/recommendations';
 import { trackEvent } from '../utils/analytics';
 import { LibraryQuickActions } from '../components/LibraryQuickActions';
 import { CatalogLoadingNotice } from '../components/CatalogLoadingNotice';
+import '../styles/LibraryFlowPolish.css';
 
 export const HomeView: React.FC = () => {
   const {
@@ -36,6 +36,28 @@ export const HomeView: React.FC = () => {
   useEffect(() => {
     trackEvent('library_view', { user_state: user.subscriptionPlan });
   }, [user.subscriptionPlan]);
+
+  useEffect(() => {
+    const reduce =
+      matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      document.documentElement.classList.contains('a11y-reduce-motion');
+    const islands = Array.from(document.querySelectorAll<HTMLElement>('.library-island'));
+    const appear = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) entry.target.classList.add('is-in');
+        }
+      },
+      { threshold: 0.12, rootMargin: '0px 0px -10% 0px' }
+    );
+    for (const node of islands) {
+      if (reduce || node.getBoundingClientRect().top < window.innerHeight * 0.88) {
+        node.classList.add('is-in');
+      }
+      appear.observe(node);
+    }
+    return () => appear.disconnect();
+  }, [catalogStatus, courses.length, myList.length]);
 
   const continueList = getContinueWatchingList();
   const firstContinue = continueList[0];
@@ -109,7 +131,7 @@ export const HomeView: React.FC = () => {
     return (
       <div className="min-h-screen text-white pt-32 px-4 text-center">
         <h1 className="text-2xl font-semibold mb-3">לא הצלחנו לטעון את הספרייה</h1>
-        <p className="text-white/50 mb-8">נסו שוב, או חזרו לאתר הראשי.</p>
+        <p className="text-white/50 mb-8">נסו שוב בעוד רגע.</p>
         <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
           <button
             type="button"
@@ -118,16 +140,13 @@ export const HomeView: React.FC = () => {
           >
             טעינה מחדש
           </button>
-          <Link to="/" className="px-6 py-3 rounded-full border border-white/20 text-white/80 min-h-11 inline-flex items-center">
-            חזרה לאתר הראשי
-          </Link>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen text-white overflow-x-hidden pb-28">
+    <div className="library-flow-page min-h-screen text-white overflow-x-hidden pb-28">
       {heroCourse ? (
         <HeroBanner
           course={heroCourse}
@@ -146,9 +165,8 @@ export const HomeView: React.FC = () => {
         <div className="min-h-[480px] md:h-[78vh] bg-zinc-900 animate-pulse" aria-busy="true" />
       )}
 
-      <div className="relative z-10 -mt-16 md:-mt-24">
+      <div className="relative z-10 -mt-6 md:-mt-10">
         <LibraryPlanBanner />
-        <LibraryQuickActions />
         {isLoading ? <CatalogLoadingNotice /> : null}
 
         {catalogStatus === 'error' && (
@@ -165,6 +183,8 @@ export const HomeView: React.FC = () => {
             <StartHereRail {...pickStartHereCourses(courses, user)} />
           )}
         </div>
+
+        <LibraryQuickActions />
 
         {savedCourses.length > 0 ? (
           <CategoryRow

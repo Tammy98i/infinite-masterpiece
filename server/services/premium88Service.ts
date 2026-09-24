@@ -39,8 +39,8 @@ export function createPremium88Application(input: {
   const field = String(input.field || '').trim();
   const businessStage = String(input.businessStage || '').trim();
   const goal = String(input.goal || '').trim();
-  if (!fullName || !phone || !email || !field || !businessStage || !goal) {
-    throw Object.assign(new Error('נא למלא את כל השדות החובה'), { status: 400 });
+  if (!fullName || !phone || !email) {
+    throw Object.assign(new Error('נא למלא שם, טלפון ואימייל'), { status: 400 });
   }
 
   const id = randomUUID();

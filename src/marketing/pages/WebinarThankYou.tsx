@@ -129,6 +129,22 @@ export function WebinarThankYou() {
     markLocal('whatsapp');
   };
 
+  const whatsappHref = useMemo(() => {
+    const url = config.whatsappGroupUrl.trim();
+    if (!url) return '';
+    const draft = 'שלום, נרשמתי לערב החי של Infinite Masterpiece.';
+    try {
+      const parsed = new URL(url);
+      const host = parsed.hostname.replace(/^www\./, '');
+      const isChat = host === 'wa.me' || host === 'api.whatsapp.com';
+      if (!isChat || parsed.searchParams.has('text')) return url;
+      parsed.searchParams.set('text', draft);
+      return parsed.toString();
+    } catch {
+      return url;
+    }
+  }, [config.whatsappGroupUrl]);
+
   const persistPersonPicked = (picked: boolean) => {
     setPersonPicked(picked);
     if (picked) {
@@ -153,7 +169,7 @@ export function WebinarThankYou() {
   };
 
   return (
-    <div className="min-h-screen relative pt-32 pb-32 flex items-center justify-center">
+    <div className="min-h-screen relative pt-16 pb-32 flex items-center justify-center">
       <div className="absolute inset-0 bg-gradient-to-b from-[#0d0b08]/35 via-transparent to-[#0d0b08]/50" />
 
       <div className="relative z-10 max-w-2xl mx-auto px-4 sm:px-6 text-center">
@@ -177,7 +193,7 @@ export function WebinarThankYou() {
           </p>
 
           {phase === 'ended' ? (
-            <Link to="/pricing" className="btn-gold text-black mb-8 w-full px-5 py-3 text-sm">
+            <Link to="/webinar#webinar-register" className="btn-gold text-black mb-8 w-full px-5 py-3 text-sm">
               {WEBINAR_CTA_NEXT_CYCLE}
             </Link>
           ) : null}
@@ -195,7 +211,7 @@ export function WebinarThankYou() {
           ) : null}
 
           {phase === 'ended' ? null : (
-          <ol className="space-y-4 text-right mb-8">
+          <ol className="space-y-4 text-start mb-8">
             <li
               className={`rounded-2xl border px-5 py-4 ${
                 localSteps.calendar
@@ -283,15 +299,15 @@ export function WebinarThankYou() {
                     ) : null}
                   </p>
                   <p className="text-xs text-white/45 font-light mb-3">נעדכן רק כשיש משהו שחשוב לדעת.</p>
-                  {config.whatsappGroupUrl ? (
+                  {whatsappHref ? (
                     <a
-                      href={config.whatsappGroupUrl}
+                      href={whatsappHref}
                       target="_blank"
                       rel="noreferrer"
                       onClick={markWhatsapp}
                       className="btn-gold text-black gap-2 px-5 py-2 text-sm"
                     >
-                      {localSteps.whatsapp ? 'הצטרפת' : 'הצטרפות עכשיו'}
+                      {localSteps.whatsapp ? 'ההודעה נפתחה' : 'פתיחת וואטסאפ עם הודעה מוכנה'}
                     </a>
                   ) : (
                     <p className="text-xs text-white/40 font-light">הקישור יישלח באישור המייל.</p>
@@ -335,10 +351,10 @@ export function WebinarThankYou() {
           )}
 
           <Link
-            to="/"
+            to="/webinar"
             className="inline-flex items-center justify-center rounded-full border border-white/15 px-6 py-3 text-sm text-white/75 hover:text-white min-h-11 cursor-pointer transition-colors duration-200 mb-3"
           >
-            חזרה לאתר
+            חזרה לוובינר
           </Link>
 
           {phase === 'ended' ? null : (
