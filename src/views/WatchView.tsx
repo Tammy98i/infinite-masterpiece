@@ -1,7 +1,8 @@
 ﻿import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useApp } from '../context/AppContext';
-import { ArrowRight, Lock, Maximize, Minimize, Pause, Play, Volume2, VolumeX } from 'lucide-react';
-import { formatClock } from '../utils/time';
+import { Lock, Maximize, Minimize, Pause, Play, Volume2, VolumeX } from 'lucide-react';
+import { DirBack } from '../components/DirArrow';
+import { ClockLabel } from '../components/ClockLabel';
 import { canPreviewEpisode, canWatchEpisode, episodeAccess, hasFullLibraryAccess, PREVIEW_SECONDS } from '../utils/access';
 import { trackEvent } from '../utils/analytics';
 import { playbackApi } from '../api/playback';
@@ -281,6 +282,7 @@ export const WatchView: React.FC = () => {
         e.preventDefault();
         togglePlay();
       } else if (e.key === 'l' || e.key === 'L' || e.key === 'ArrowRight') {
+        // Media contract (YouTube): physical right seeks forward on the timeline.
         e.preventDefault();
         seekTo(currentTime + 10);
       } else if (e.key === 'j' || e.key === 'J' || e.key === 'ArrowLeft') {
@@ -431,7 +433,7 @@ export const WatchView: React.FC = () => {
           onClick={() => setView('course', { courseId: course.id })}
           className="flex items-center gap-2 text-start min-h-11 focus-ring rounded-lg"
         >
-          <ArrowRight className="w-5 h-5 text-white/80" />
+          <DirBack className="w-5 h-5 text-white/80" />
           <span className="text-sm text-white">
             פרק {episode.episodeNumber} · {episodeName(episode.title)}
           </span>
@@ -491,8 +493,8 @@ export const WatchView: React.FC = () => {
       </div>
 
       <aside
-        className={`absolute top-0 bottom-0 start-0 z-30 flex flex-col w-[min(100%,280px)] bg-black/90 border-e border-white/10 transition-transform duration-300 ${
-          showEpisodes ? 'translate-x-0' : '-translate-x-full rtl:translate-x-full'
+        className={`drawer-dock-start absolute top-0 bottom-0 start-0 z-30 flex flex-col w-[min(100%,280px)] bg-black/90 border-e border-white/10 transition-transform duration-300 ${
+          showEpisodes ? 'translate-x-0' : 'is-closed'
         }`}
         aria-label="פרקים"
         onClick={(e) => e.stopPropagation()}
@@ -527,7 +529,7 @@ export const WatchView: React.FC = () => {
                   {episodeName(ep.title)}
                   {lockedEp && <Lock className="inline w-3 h-3 ms-1.5 text-white/35" />}
                 </span>
-                <span className="text-[11px] text-white/35 tabular-nums">{formatClock(ep.duration)}</span>
+                <ClockLabel seconds={ep.duration} className="text-[11px] text-white/35 tabular-nums" />
               </button>
             );
           })}
@@ -577,7 +579,7 @@ export const WatchView: React.FC = () => {
             />
           </label>
           <span className="text-[11px] text-white/45 tabular-nums shrink-0">
-            נותרו <span dir="ltr">{formatClock(remaining)}</span>
+            נותרו <ClockLabel seconds={remaining} />
           </span>
         </div>
 
@@ -609,9 +611,7 @@ export const WatchView: React.FC = () => {
                 {nextLocked ? 'פתיחת גישה' : 'הבא'}
               </button>
             ) : null}
-            <span className="text-sm text-white/40 tabular-nums" dir="ltr">
-              {formatClock(currentTime)}
-            </span>
+            <ClockLabel seconds={currentTime} className="text-sm text-white/40 tabular-nums" />
           </div>
         </div>
       </div>

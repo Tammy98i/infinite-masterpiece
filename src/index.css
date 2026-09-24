@@ -37,7 +37,7 @@ html {
   }
 
   section[id] {
-    scroll-margin-top: 6rem;
+    scroll-margin-top: calc(var(--site-header-h) + 0.75rem);
   }
 }
 

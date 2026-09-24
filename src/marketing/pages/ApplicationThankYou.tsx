@@ -1,5 +1,6 @@
 import { motion } from 'motion/react';
-import { CheckCircle2, ArrowRight } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
+import { DirBack } from '../../components/DirArrow';
 import { Link, useSearchParams } from 'react-router-dom';
 
 export function ApplicationThankYou() {
@@ -50,7 +51,7 @@ export function ApplicationThankYou() {
               className="inline-flex items-center gap-2 text-white/70 hover:text-white font-medium min-h-11"
             >
               חזרה לעמוד הראשי
-              <ArrowRight className="w-4 h-4" />
+              <DirBack />
             </Link>
           </div>
         </motion.div>

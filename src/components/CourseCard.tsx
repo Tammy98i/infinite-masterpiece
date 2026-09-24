@@ -2,7 +2,8 @@
 import { Course, WatchProgress } from '../types';
 import { useApp } from '../context/AppContext';
 import { Play, Plus, Check, Lock } from 'lucide-react';
-import { formatClock } from '../utils/time';
+import { formatClock, isolateClock } from '../utils/time';
+import { ClockLabel } from './ClockLabel';
 import { useWatchAccess } from '../utils/useWatchAccess';
 import { useMyListToggle } from '../utils/useMyListToggle';
 import { cardBadgeLabel, getCardAccessState, isCourseNew, type CardAccessState } from '../utils/libraryHome';
@@ -56,7 +57,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
     : formatClock(totalSecs);
   const resumeLabel =
     progress && layout === 'continue'
-      ? `המשך מדקה ${formatClock(progress.currentTime)}`
+      ? `המשך מדקה ${isolateClock(progress.currentTime)}`
       : undefined;
   const episodeTitle = progress
     ? course.episodes.find((e) => e.id === progress.episodeId)?.title
@@ -167,7 +168,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
 
               {showDurationBadge && !badge && (
                 <span className="absolute top-2 start-2 z-10 rounded bg-black/75 px-2 py-0.5 text-[12px] font-medium text-white">
-                  {formatClock(totalSecs)}
+                  <ClockLabel seconds={totalSecs} />
                 </span>
               )}
 

@@ -1,7 +1,8 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { Clock, ArrowRight, Play } from 'lucide-react';
-import { formatClock } from '../utils/time';
+import { Clock, Play } from 'lucide-react';
+import { DirBack } from '../components/DirArrow';
+import { ClockLabel } from '../components/ClockLabel';
 import { useWatchAccess } from '../utils/useWatchAccess';
 import { StartHereRail } from '../components/StartHereRail';
 import { pickStartHereCourses } from '../utils/libraryHome';
@@ -31,7 +32,7 @@ export const HistoryView: React.FC = () => {
           className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white min-h-11"
         >
           <span>לספרייה</span>
-          <ArrowRight className="w-4 h-4" />
+          <DirBack />
         </button>
       </div>
 
@@ -68,9 +69,13 @@ export const HistoryView: React.FC = () => {
                     <div className="h-full bg-[#b79043]" style={{ width: `${pct}%` }} />
                   </div>
                   <div className="text-[11px] text-white/35 mt-1">
-                    {progress.completed
-                      ? 'הושלם'
-                      : `${formatClock(progress.currentTime)} מתוך ${formatClock(progress.duration)}`}
+                    {progress.completed ? (
+                      'הושלם'
+                    ) : (
+                      <>
+                        <ClockLabel seconds={progress.currentTime} /> מתוך <ClockLabel seconds={progress.duration} />
+                      </>
+                    )}
                     {' · '}
                     {formatWhen(progress.updatedAt)}
                   </div>

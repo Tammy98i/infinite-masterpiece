@@ -78,3 +78,42 @@ input[type='range'] {
   position: absolute;
   inset-inline-start: -9999px;
 }
+
+/* Drawer docks to inline-start; closed state slides outward. */
+.drawer-dock-start.is-closed {
+  transform: translateX(100%);
+}
+html[dir='ltr'] .drawer-dock-start.is-closed {
+  transform: translateX(-100%);
+}
+
+/* Forward chevron nudges toward inline-end on hover. */
+[dir='rtl'] .group:hover .icon-dir-next {
+  transform: translateX(-0.25rem);
+}
+[dir='ltr'] .group:hover .icon-dir-next {
+  transform: translateX(0.25rem);
+}
+
+/* Search field opens from inline-end (visual left in Hebrew). */
+.search-slide-in {
+  animation: search-slide-in 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+@keyframes search-slide-in {
+  from {
+    opacity: 0;
+    transform: translateX(-0.5rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+html.a11y-reduce-motion .search-slide-in {
+  animation: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .search-slide-in {
+    animation: none;
+  }
+}

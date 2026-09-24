@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import { useApp } from '../context/AppContext';
-import { Layers, Clock, ArrowRight, Play, CheckCircle2 } from 'lucide-react';
+import { Layers, Clock, Play, CheckCircle2 } from 'lucide-react';
 import { CourseCard } from '../components/CourseCard';
 
 export const LearningPathsView: React.FC = () => {

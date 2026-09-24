@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
+import { DirNext } from '../../components/DirArrow';
 import { WEBINAR_CTA_ENDED, WEBINAR_CTA_HEADER, WEBINAR_CTA_NEXT_CYCLE } from '../../constants/webinarPage';
 import { useWebinarPhase } from '../hooks/useWebinarPhase';
 import { VideoBackground } from '../../components/VideoBackground';
@@ -60,10 +60,10 @@ export function VideoHero() {
         <p className="vh-sub">הבעיה היא לא שאין לך כישרון. הבעיה היא שאין סביב הכישרון שלך מערכת עסקית. אנו הופכים יצירה לעסק, השפעה וחופש.</p>
         <div className="vh-ctas">
           <Link to={phase === 'ended' ? '/pricing' : '/webinar'} className="vh-btn vh-primary">
-            {phase === 'ended' ? WEBINAR_CTA_NEXT_CYCLE : WEBINAR_CTA_HEADER}<ArrowLeft aria-hidden="true" />
+            {phase === 'ended' ? WEBINAR_CTA_NEXT_CYCLE : WEBINAR_CTA_HEADER}<DirNext />
           </Link>
           {phase === 'ended' ? <p className="vh-ended">{WEBINAR_CTA_ENDED}</p> : (
-            <Link to="/pricing" className="vh-btn vh-ghost">למסלול האמיצים והססנים<ArrowLeft aria-hidden="true" /></Link>
+            <Link to="/pricing" className="vh-btn vh-ghost">למסלול האמיצים והססנים<DirNext /></Link>
           )}
         </div>
         <Link to="/library" className="vh-library">כבר בפנים? כניסה לספרייה</Link>

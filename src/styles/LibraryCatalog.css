@@ -1,17 +1,19 @@
-/* Netflix browse layout for the academic library.
-   Black field, dense 16:9 rails. Gold instead of Netflix red. */
+/* Library browse over the shared space plate.
+   Keep the starfield visible, then stack dark navy layers on top. */
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-image {
-  opacity: .22;
-  filter: saturate(.55) brightness(.28);
+  opacity: .92;
+  filter: saturate(1.08) contrast(1.06) brightness(.88);
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-blackout {
-  background: rgba(0, 0, 0, .62);
+  background: rgba(5, 10, 20, .28);
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-shade {
-  background: rgba(20, 20, 20, .55);
+  background:
+    radial-gradient(circle at 50% 16%, transparent 14%, rgba(5, 10, 20, .2) 58%, rgba(5, 10, 20, .48) 100%),
+    linear-gradient(180deg, rgba(5, 10, 20, .14), rgba(5, 10, 20, .4));
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-library-veil {
@@ -19,47 +21,43 @@
 }
 
 .editorial-sky-library-veil-a {
-  background: linear-gradient(180deg, rgba(0, 0, 0, .72), rgba(20, 20, 20, .28) 42%, rgba(0, 0, 0, .78));
+  background: linear-gradient(180deg, rgba(5, 10, 20, .48) 0%, rgba(5, 10, 20, .08) 28%, transparent 50%, rgba(5, 10, 20, .55) 100%);
 }
 
 .editorial-sky-library-veil-b {
-  background: rgba(0, 0, 0, .38);
+  background: rgba(3, 8, 18, .16);
 }
 
 .editorial-sky-library-veil-c {
-  background: linear-gradient(90deg, rgba(20, 20, 20, .55), transparent 46%, rgba(20, 20, 20, .55));
+  background: linear-gradient(90deg, rgba(5, 10, 20, .36), transparent 42%, rgba(5, 10, 20, .36));
 }
 
 .editorial-sky-library-veil-d {
-  background: radial-gradient(ellipse at 50% 0%, rgba(0, 0, 0, .2), rgba(20, 20, 20, .62) 78%);
+  background: radial-gradient(ellipse at 50% 0%, rgba(5, 10, 20, .04), rgba(5, 10, 20, .32) 78%);
 }
 
 .editorial-sky-library-veil-e {
-  background: rgba(20, 20, 20, .42);
+  background: linear-gradient(180deg, transparent 12%, rgba(3, 8, 18, .28) 100%);
 }
 
 .vod-app.library-catalog,
 .vod-app.library-catalog main,
 .vod-app:has(.library-flow-page),
 .library-flow-page {
-  background: #141414 !important;
-}
-
-.vod-app.library-catalog .editorial-library-header {
-  height: 68px !important;
+  background: transparent !important;
 }
 
 .vod-app.library-catalog .editorial-library-header.is-over-hero {
-  background: linear-gradient(180deg, rgba(0, 0, 0, .72), transparent) !important;
+  background: linear-gradient(180deg, rgba(5, 10, 20, .72), transparent) !important;
   border-bottom-color: transparent !important;
   box-shadow: none !important;
   backdrop-filter: none !important;
 }
 
 .vod-app.library-catalog .editorial-library-header.is-solid {
-  background: #141414 !important;
-  border-bottom-color: rgba(255, 255, 255, .08) !important;
-  backdrop-filter: none !important;
+  background: rgba(5, 10, 20, .78) !important;
+  border-bottom-color: var(--editorial-rule) !important;
+  backdrop-filter: blur(18px) !important;
 }
 
 .library-flow-page .library-island::before,
@@ -82,16 +80,16 @@
 }
 
 .library-catalog .library-hero-veil-bottom {
-  background: linear-gradient(180deg, transparent 40%, rgba(20, 20, 20, .55) 72%, #141414 100%);
+  background: linear-gradient(180deg, transparent 40%, rgba(5, 10, 20, .45) 72%, rgba(5, 10, 20, .82) 100%);
 }
 
 .library-catalog .library-hero-veil-side {
-  background: linear-gradient(270deg, transparent 8%, rgba(20, 20, 20, .35) 48%, rgba(20, 20, 20, .82) 100%);
+  background: linear-gradient(270deg, transparent 8%, rgba(5, 10, 20, .32) 48%, rgba(5, 10, 20, .78) 100%);
 }
 
 .library-catalog .library-hero::after {
   height: 28%;
-  background: linear-gradient(180deg, transparent, #141414);
+  background: linear-gradient(180deg, transparent, rgba(5, 10, 20, .86));
 }
 
 .library-catalog .library-hero-play {
@@ -162,14 +160,17 @@
 .library-catalog .library-quick-action {
   border-radius: 4px;
   border-color: rgba(255, 255, 255, .12);
-  background: rgba(20, 20, 20, .72);
+  background: rgba(5, 10, 20, .62);
   backdrop-filter: none;
 }
 
 .library-catalog-page,
-.library-catalog-page.library-course-page,
+.library-catalog-page.library-course-page {
+  background: transparent !important;
+}
+
 .vod-app.library-catalog .editorial-library-footer {
-  background: #141414 !important;
+  background: rgba(5, 10, 20, .72) !important;
 }
 
 .library-catalog-page .library-poster {
@@ -207,19 +208,19 @@
 }
 
 .library-course-veil-a {
-  background: linear-gradient(180deg, rgba(0, 0, 0, .55) 0%, transparent 34%, rgba(20, 20, 20, .55) 72%, #141414 100%);
+  background: linear-gradient(180deg, rgba(5, 10, 20, .55) 0%, transparent 34%, rgba(5, 10, 20, .45) 72%, rgba(5, 10, 20, .86) 100%);
 }
 
 .library-course-veil-b {
-  background: linear-gradient(270deg, transparent 12%, rgba(20, 20, 20, .38) 52%, rgba(0, 0, 0, .78) 100%);
+  background: linear-gradient(270deg, transparent 12%, rgba(5, 10, 20, .32) 52%, rgba(5, 10, 20, .72) 100%);
 }
 
 .library-course-veil-c {
-  background: rgba(0, 0, 0, .28);
+  background: rgba(5, 10, 20, .22);
 }
 
 .library-course-veil-d {
-  background: radial-gradient(ellipse at 70% 20%, transparent 0%, rgba(20, 20, 20, .45) 70%, #141414 100%);
+  background: radial-gradient(ellipse at 70% 20%, transparent 0%, rgba(5, 10, 20, .4) 70%, rgba(5, 10, 20, .82) 100%);
 }
 
 .library-course-stage {
@@ -250,7 +251,7 @@
 .library-catalog-page .library-page-toolbar {
   border-radius: 4px;
   border-color: rgba(255, 255, 255, .1);
-  background: rgba(20, 20, 20, .55);
+  background: rgba(5, 10, 20, .55);
 }
 
 .library-catalog-page .library-page-chip {
@@ -263,7 +264,7 @@
 
 .library-catalog-page .library-search-field {
   border-radius: 4px;
-  background: #141414;
+  background: rgba(5, 10, 20, .72);
   border-color: rgba(255, 255, 255, .18);
 }
 

@@ -111,6 +111,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
           tabIndex={0}
           onKeyDown={(e) => {
             if (e.key === 'ArrowLeft') {
+              // Visual contract in RTL: left = toward end = next cards.
               e.preventDefault();
               scroll('next');
             } else if (e.key === 'ArrowRight') {

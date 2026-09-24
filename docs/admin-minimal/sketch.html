@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>סקיצה · דסק מנימליסטי — Infinite Masterpiece</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600&family=Noto+Sans+Hebrew:wght@500;600;700&family=Rubik:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #010308;
+      --gold: #c8a24c;
+      --gold-soft: #f7e7b5;
+      --ink: #fff;
+      --muted: rgba(255,255,255,0.78);
+      --line: rgba(200,162,76,0.22);
+      --card: rgba(1,3,8,0.7);
+      --note: #ff7a33;
+      --ok: #9be7b5;
+      --heading: "Noto Sans Hebrew", "Arial Hebrew", sans-serif;
+      --body: "IBM Plex Sans Hebrew", "Arial Hebrew", sans-serif;
+      --more: rgba(109,109,110,.72);
+      --r: 4px;
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--body);
+    }
+    :focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+    .wrap { max-width: 1280px; margin: 0 auto; padding: 22px 16px 72px; }
+    .banner {
+      border: 1px dashed var(--note);
+      color: var(--note);
+      padding: 8px 12px;
+      border-radius: 999px;
+      display: inline-flex;
+      font-size: 12.5px;
+      margin-bottom: 14px;
+    }
+    h1 {
+      font-family: var(--heading);
+      font-weight: 600;
+      font-size: clamp(1.45rem, 2.8vw, 2rem);
+      margin: 0 0 8px;
+    }
+    .lede { color: var(--muted); max-width: 48rem; line-height: 1.7; margin: 0 0 16px; font-size: 14.5px; }
+    .note {
+      color: var(--note);
+      font-family: Rubik, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 0 0 14px;
+    }
+    .note::before { content: "→ "; }
+
+    .steps {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+    .step {
+      text-align: start;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.03);
+      border-radius: 8px;
+      padding: 10px 12px;
+      color: #fff;
+      font-family: inherit;
+      cursor: pointer;
+      min-height: 88px;
+    }
+    .step:hover, .step.is-on {
+      border-color: rgba(200,162,76,.55);
+      background: rgba(200,162,76,.1);
+    }
+    .step .n {
+      font-size: 11px;
+      letter-spacing: .14em;
+      color: var(--gold-soft);
+      margin: 0 0 6px;
+    }
+    .step b { display: block; font-size: 13px; margin-bottom: 4px; }
+    .step span { font-size: 12px; color: rgba(255,255,255,.55); line-height: 1.4; }
+
+    .compare {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .pane {
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 10px;
+      padding: 12px;
+      background: rgba(0,0,0,.35);
+      min-height: 210px;
+    }
+    .pane .tag {
+      font-size: 11px;
+      margin: 0 0 8px;
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 6px;
+    }
+    .tag.bad { color: var(--note); border: 1px solid rgba(255,122,51,.45); }
+    .tag.good { color: var(--ok); border: 1px solid rgba(155,231,181,.45); }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .kpi {
+      border: 1px solid rgba(255,255,255,.08);
+      border-radius: 14px;
+      padding: 12px 10px;
+      background: rgba(255,255,255,.02);
+    }
+    .kpi i { display: block; font-style: normal; font-size: 10px; color: rgba(255,255,255,.4); margin-bottom: 6px; }
+    .kpi strong { font-size: 18px; font-weight: 500; }
+    .metric-row {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+    }
+    .metric {
+      text-align: start;
+      border: 1px solid rgba(255,255,255,.14);
+      border-radius: var(--r);
+      padding: 10px;
+      background: rgba(255,255,255,.04);
+      color: #fff;
+      font-family: inherit;
+      cursor: pointer;
+      min-height: 72px;
+    }
+    .metric:hover, .metric.is-on {
+      border-color: rgba(200,162,76,.55);
+      background: rgba(200,162,76,.1);
+    }
+    .metric strong { display: block; font-size: 20px; margin-bottom: 2px; }
+    .metric b { display: block; font-size: 12.5px; }
+    .metric em { display: block; font-style: normal; font-size: 11px; color: var(--gold-soft); margin-top: 4px; }
+
+    .desk {
+      display: grid;
+      grid-template-columns: 168px 1fr;
+      min-height: 640px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 12px;
+      overflow: hidden;
+      background: rgba(0,0,0,.38);
+    }
+    .nav {
+      padding: 12px 8px;
+      border-inline-end: 1px solid rgba(255,255,255,.08);
+    }
+    .nav .brand { font-size: 13px; font-weight: 600; margin: 0 6px 10px; }
+    .nav .g {
+      display: block;
+      font-size: 10px;
+      letter-spacing: .14em;
+      color: rgba(255,255,255,.35);
+      margin: 10px 6px 4px;
+    }
+    .nav button {
+      display: block;
+      width: 100%;
+      text-align: start;
+      background: transparent;
+      border: 0;
+      border-inline-start: 2px solid transparent;
+      color: rgba(255,255,255,.58);
+      font: inherit;
+      font-size: 12px;
+      min-height: 28px;
+      padding: 4px 6px;
+      cursor: pointer;
+    }
+    .nav button.is-on {
+      color: #fff;
+      font-weight: 600;
+      border-inline-start-color: #fff;
+    }
+    .nav button .why {
+      display: block;
+      font-size: 10px;
+      color: var(--note);
+      font-weight: 500;
+    }
+    .main { padding: 12px 14px 16px; min-width: 0; }
+    .screen { display: none; }
+    .screen.is-on { display: block; }
+    .rail-title { font-size: 13px; font-weight: 600; margin: 0 0 8px; }
+    .tiny { font-size: 12px; color: rgba(255,255,255,.5); margin: 0 0 10px; line-height: 1.5; }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .toolbar input[type="search"] {
+      flex: 1;
+      min-width: 160px;
+      min-height: 44px;
+      border-radius: var(--r);
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.45);
+      color: #fff;
+      padding: 0 10px;
+      font: inherit;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 36px;
+      padding: 0 12px;
+      border: 0;
+      border-radius: var(--r);
+      background: #fff;
+      color: #111;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+      font-size: 12.5px;
+    }
+    .cta.ghost { background: var(--more); color: #fff; }
+    .cta.warn {
+      background: transparent;
+      color: #f7b4b4;
+      border: 1px solid rgba(247,180,180,.35);
+    }
+
+    .work {
+      display: grid;
+      grid-template-columns: 1.4fr .75fr;
+      gap: 10px;
+      align-items: start;
+    }
+    table.dense {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+    table.dense th {
+      text-align: start;
+      color: rgba(255,255,255,.4);
+      font-weight: 400;
+      font-size: 11px;
+      padding: 5px 6px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    table.dense td {
+      padding: 4px 6px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      height: 32px;
+    }
+    table.dense tr { cursor: pointer; }
+    table.dense tr.is-on { background: rgba(200,162,76,.12); }
+    .name { font-weight: 500; }
+    .mail { color: rgba(255,255,255,.38); font-size: 11px; }
+    .acts { display: flex; gap: 4px; flex-wrap: wrap; }
+    .acts button {
+      min-height: 26px;
+      padding: 0 8px;
+      border-radius: var(--r);
+      border: 1px solid rgba(255,255,255,.16);
+      background: transparent;
+      color: #fff;
+      font: inherit;
+      font-size: 11.5px;
+      cursor: pointer;
+    }
+    .acts button.ok { color: var(--ok); border-color: rgba(155,231,181,.35); }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      padding: 12px;
+      background: rgba(1,3,8,.78);
+      min-height: 220px;
+    }
+    .card h3 { margin: 0 0 2px; font-size: 16px; font-weight: 600; }
+    .card .who { color: rgba(255,255,255,.42); font-size: 11.5px; margin: 0 0 10px; }
+    .row {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+      padding: 6px 0;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      font-size: 12.5px;
+    }
+    .row:last-child { border-bottom: 0; }
+    .row em { font-style: normal; color: rgba(255,255,255,.45); }
+    .empty { color: rgba(255,255,255,.42); font-size: 13px; padding-top: 24px; }
+
+    .split { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .split article {
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 8px;
+      padding: 12px;
+      background: rgba(255,255,255,.03);
+    }
+    .split h3 { margin: 0 0 4px; font-size: 14px; }
+    .split p { margin: 0; font-size: 12.5px; color: rgba(255,255,255,.62); line-height: 1.55; }
+
+    .fold {
+      border: 1px solid rgba(255,255,255,.12);
+      border-radius: var(--r);
+      padding: 6px 10px;
+      margin-top: 8px;
+      background: rgba(0,0,0,.28);
+    }
+    .fold summary {
+      cursor: pointer;
+      min-height: 36px;
+      display: flex;
+      align-items: center;
+      font-size: 12.5px;
+      font-weight: 600;
+    }
+    .fold p { font-size: 12.5px; color: rgba(255,255,255,.58); line-height: 1.55; }
+
+    .rules {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 14px;
+    }
+    .keep {
+      display: inline-block;
+      color: var(--ok);
+      border: 1px solid rgba(155,231,181,.4);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+    }
+    .stamp {
+      display: inline-block;
+      color: var(--note);
+      border: 1px solid var(--note);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .toast {
+      display: none;
+      margin-top: 8px;
+      color: var(--gold-soft);
+      font-size: 12.5px;
+    }
+    .toast.is-on { display: block; }
+    footer {
+      margin-top: 18px;
+      color: rgba(255,255,255,.5);
+      font-size: 12.5px;
+      line-height: 1.6;
+    }
+
+    @media (max-width: 980px) {
+      .steps, .compare, .desk, .work, .split, .kpi-grid, .metric-row { grid-template-columns: 1fr; }
+      .desk .nav {
+        border-inline-end: 0;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+        display: flex;
+        flex-wrap: wrap;
+        gap: 2px;
+      }
+      .nav .g { width: 100%; }
+      .nav button { width: auto; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      * { transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="banner">סקיצה לאישור · מנימליסטי פרקטי · לא קוד במוצר · בלי להוריד טאבים</p>
+    <h1>דסק צפוף: פחות מקום, אותו תוכן, יותר מובן</h1>
+    <p class="lede">
+      הטבלאות כבר נמוכות. מה שעדיין תופס מסך: 16 כרטיסים בסקירה, שני CRM לאותו אדם,
+      טפסים פתוחים, ושמות כפולים. חמש שכבות — בלי למחוק פעולה.
+    </p>
+
+    <div class="steps" role="list">
+      <button type="button" class="step is-on" data-go="overview">
+        <p class="n">01</p>
+        <b>4 מדדים</b>
+        <span>במקום 16 KPI</span>
+      </button>
+      <button type="button" class="step" data-go="connect">
+        <p class="n">02</p>
+        <b>אותו אדם</b>
+        <span>פעימה + ליד בשורה</span>
+      </button>
+      <button type="button" class="step" data-go="labels">
+        <p class="n">03</p>
+        <b>תווית מתי־מה</b>
+        <span>גישה ≠ משתמשים</span>
+      </button>
+      <button type="button" class="step" data-go="folds">
+        <p class="n">04</p>
+        <b>טפסים בקיפול</b>
+        <span>רשימה קודם</span>
+      </button>
+      <button type="button" class="step" data-go="language">
+        <p class="n">05</p>
+        <b>שפת שולחן</b>
+        <span>4px · כותרת אחת</span>
+      </button>
+    </div>
+
+    <p class="note">לחצו על שכבה או על מדד. הדגמה חיה של הדסק אחרי השינוי.</p>
+
+    <div class="compare" id="compare-overview" aria-label="לפני ואחרי סקירה">
+      <div class="pane">
+        <span class="tag bad">היום · תופס מסך</span>
+        <div class="kpi-grid" aria-hidden="true">
+          <div class="kpi"><i>משתמשים</i><strong>248</strong></div>
+          <div class="kpi"><i>חינמיים</i><strong>180</strong></div>
+          <div class="kpi"><i>משלמים</i><strong>42</strong></div>
+          <div class="kpi"><i>אמיצים</i><strong>11</strong></div>
+          <div class="kpi"><i>הססנים</i><strong>9</strong></div>
+          <div class="kpi"><i>88</i><strong>4</strong></div>
+          <div class="kpi"><i>מרצים</i><strong>14</strong></div>
+          <div class="kpi"><i>בקשות</i><strong>2</strong></div>
+          <div class="kpi"><i>הרצאות</i><strong>36</strong></div>
+          <div class="kpi"><i>צפיות</i><strong>1.2k</strong></div>
+          <div class="kpi"><i>זמן</i><strong>88ש</strong></div>
+          <div class="kpi"><i>המרה</i><strong>3%</strong></div>
+          <div class="kpi"><i>Paywall</i><strong>77</strong></div>
+          <div class="kpi"><i>נכשלו</i><strong>3</strong></div>
+          <div class="kpi"><i>לחיוב</i><strong>3</strong></div>
+          <div class="kpi"><i>ממתינות</i><strong>4</strong></div>
+        </div>
+      </div>
+      <div class="pane">
+        <span class="tag good">סקיצה · 4 מדדים לחיצים</span>
+        <div class="metric-row">
+          <button type="button" class="metric" data-person="דניאל כהן" data-jump="connect">
+            <strong>3</strong><b>לחיוב עכשיו</b><em>דניאל · פעימה 80</em>
+          </button>
+          <button type="button" class="metric" data-person="שירה עמית" data-jump="lecturers">
+            <strong>2</strong><b>בקשות מרצים</b><em>אשר בשורה</em>
+          </button>
+          <button type="button" class="metric" data-person="יובל נחום" data-jump="connect">
+            <strong>5</strong><b>לידים פתוחים</b><em>יובל · וובינר</em>
+          </button>
+          <button type="button" class="metric" data-jump="keep">
+            <strong>4</strong><b>ממתינות</b><em>נשאר בתוכן</em>
+          </button>
+        </div>
+        <p class="tiny" style="margin-top:10px">שאר 12 המספרים נשארים באנליטיקות — לא נמחקים.</p>
+      </div>
+    </div>
+
+    <div class="desk" aria-label="דסק מנימליסטי">
+      <aside class="nav" aria-label="23 טאבים">
+        <p class="brand">אדמין · 23</p>
+        <span class="g">מבט על</span>
+        <button type="button" class="is-on" data-screen="overview">סקירה<span class="why">4 מדדים</span></button>
+        <button type="button" data-screen="keep">התראות</button>
+        <button type="button" data-screen="keep">אנליטיקות</button>
+        <span class="g">אנשים</span>
+        <button type="button" data-screen="labels">גישה · הרשאות<span class="why">דסקים</span></button>
+        <button type="button" data-screen="connect">משתמשים<span class="why">חשבונות</span></button>
+        <button type="button" data-screen="labels">מייסדים / גלקסיה<span class="why">מתי מה</span></button>
+        <button type="button" data-screen="lecturers">בקשות מרצים<span class="why">שורה</span></button>
+        <span class="g">מסחר</span>
+        <button type="button" data-screen="connect">מסלולים + לידים<span class="why">אותו אדם</span></button>
+        <button type="button" data-screen="folds">פודים<span class="why">תור קודם</span></button>
+        <button type="button" data-screen="folds">וובינר<span class="why">נרשמים קודם</span></button>
+        <span class="g">מערכת</span>
+        <button type="button" data-screen="labels">הגדרות<span class="why">מוכנות</span></button>
+        <button type="button" data-screen="language">שפת שולחן<span class="why">4px</span></button>
+      </aside>
+
+      <div class="main">
+        <section class="screen is-on" id="screen-overview">
+          <p class="rail-title">לטיפול עכשיו</p>
+          <p class="tiny">כרזת הקטלוג נשארת מעל אם רוצים — לא מחליפה את ארבעת המדדים.</p>
+          <div class="metric-row" id="overview-metrics">
+            <button type="button" class="metric" data-person="דניאל כהן" data-jump="connect"><strong>3</strong><b>לחיוב</b><em>הססנים 8→80</em></button>
+            <button type="button" class="metric" data-jump="lecturers"><strong>2</strong><b>מרצים</b><em>אשר / דחה</em></button>
+            <button type="button" class="metric" data-person="יובל נחום" data-jump="connect"><strong>5</strong><b>לידים</b><em>וובינר</em></button>
+            <button type="button" class="metric" data-jump="keep"><strong>4</strong><b>ממתינות</b><em>תוכן</em></button>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-connect">
+          <p class="rail-title">מסלול + ליד · אותו אדם</p>
+          <div class="toolbar">
+            <input id="q" type="search" placeholder="חיפוש לפי שם…" aria-label="חיפוש לפי שם" />
+            <span class="keep">ייצוא</span>
+            <span class="keep">אמיצים / הססנים</span>
+          </div>
+          <div class="work">
+            <table class="dense" id="people">
+              <thead>
+                <tr><th>שם</th><th>מסלול</th><th>פעימה</th><th>ליד</th><th></th></tr>
+              </thead>
+              <tbody></tbody>
+            </table>
+            <aside class="card" id="card"><p class="empty">בחרו שורה. ספרייה ומסע בכרטיס דק — בלי CTA משותף.</p></aside>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-labels">
+          <p class="rail-title">תווית מתי־מה · בלי למחוק טאב</p>
+          <div class="split">
+            <article>
+              <span class="keep">משתמשים</span>
+              <h3>חשבונות</h3>
+              <p>שם, אימייל, מנוי, מסלול. חיפוש / עריכה / הסרה — כבר במוצר.</p>
+            </article>
+            <article>
+              <span class="stamp">גישה · הרשאות</span>
+              <h3>דסקים ומפתחות</h3>
+              <p>לא רשימת יוזרים שנייה. תפקיד מערכת, דסק, מיילי אדמין. מייסד = <span dir="ltr">is_founder</span>.</p>
+            </article>
+            <article>
+              <span class="keep">מייסדים</span>
+              <h3>עמוד ציבורי</h3>
+              <p>ביו ותמונה באתר. מייסד אחד פעיל.</p>
+            </article>
+            <article>
+              <span class="stamp">גלקסיה</span>
+              <h3>יקום הוובינר</h3>
+              <p>פרופילים וציון השפעה ב־<span dir="ltr">#team-universe</span>.</p>
+            </article>
+          </div>
+          <div class="fold" style="margin-top:10px">
+            <p class="rail-title" style="margin:8px 0">הגדרות = מוכנות</p>
+            <p class="tiny">APP_URL · Supabase · Resend · Stripe · Zoom. תוכן אתר ומשפטי נשארים בטאבים שלהם.</p>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-lecturers">
+          <p class="rail-title">בקשות מרצים · שורה, לא כרטיס גבוה</p>
+          <table class="dense">
+            <thead><tr><th>שם</th><th>תחום</th><th>הרצאה</th><th>סטטוס</th><th></th></tr></thead>
+            <tbody>
+              <tr>
+                <td><span class="name">שירה עמית</span></td>
+                <td>מכירות</td>
+                <td>שיחת אבחון</td>
+                <td>ממתינה</td>
+                <td><span class="acts"><button type="button" class="ok" data-toast="אושרה בשורה · שירה">אשר</button><button type="button" data-toast="נדחתה · שירה">דחה</button></span></td>
+              </tr>
+              <tr>
+                <td><span class="name">אלון ברק</span></td>
+                <td>משא ומתן</td>
+                <td>פיץ׳ ב־8 דק׳</td>
+                <td>ממתינה</td>
+                <td><span class="acts"><button type="button" class="ok" data-toast="אושר · אלון">אשר</button><button type="button" data-toast="נדחה · אלון">דחה</button></span></td>
+              </tr>
+            </tbody>
+          </table>
+          <p class="tiny">פירוט הבקשה נפתח בלחיצה על השורה — לא תופס את כל המסך מראש.</p>
+        </section>
+
+        <section class="screen" id="screen-folds">
+          <p class="rail-title">רשימה קודם · טופס מאחורי קיפול</p>
+          <div class="toolbar">
+            <button class="cta ghost" type="button" id="toggle-pod">יצירת פוד</button>
+            <span class="keep">מנוי ספרייה לא נכנס לתור</span>
+          </div>
+          <div id="pod-box" class="fold" hidden>
+            <p class="tiny">שם · סוג מסע/88 · קפטן אופציונלי. קיבולת ברירת מחדל.</p>
+          </div>
+          <table class="dense" style="margin-top:8px">
+            <thead><tr><th>ממתין</th><th>מקור</th><th>פוד</th><th></th></tr></thead>
+            <tbody>
+              <tr><td>דניאל כהן</td><td>הססנים · פעימה ראשונה</td><td>פוד שחר</td><td><span class="acts"><button class="ok" type="button" data-toast="שויך · דניאל">שייך</button></span></td></tr>
+              <tr><td>רותם גל</td><td>נבחרת 88</td><td>Micro-Pod 88</td><td><span class="acts"><button class="ok" type="button" data-toast="שויך · רותם">שייך</button></span></td></tr>
+            </tbody>
+          </table>
+          <details class="fold">
+            <summary>הגדרות וובינר · קיפול</summary>
+            <p>תאריך, זום, מייל בדיקה — אחרי רשימת הנרשמים, לא מעליה.</p>
+          </details>
+        </section>
+
+        <section class="screen" id="screen-language">
+          <p class="rail-title">שפת שולחן אחידה</p>
+          <div class="split">
+            <article>
+              <span class="tag bad">להוריד נפח</span>
+              <p style="margin-top:8px">כרטיסים <span dir="ltr">rounded-3xl</span>, ריווח <span dir="ltr">p-6</span>, כותרת H2 + תת־כותרת + באדג׳ «חדש» על כל דבר. KPI בלי פעולה.</p>
+            </article>
+            <article>
+              <span class="tag good">להשאיר / לצמצם</span>
+              <p style="margin-top:8px">רדיוס 4px. כותרת עמוד אחת 18px. שורת טבלה ~32px. חיפוש 44px לנגישות. פעולה בשורה. באדג׳ רק כשיש יעד ברור.</p>
+            </article>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-keep">
+          <p class="rail-title">נשאר כמו במוצר</p>
+          <div class="card">
+            <p class="empty">התראות, אנליטיקות, תוכן VOD, 88, הגרלות, משפטי, יומן — אחרי הצפיפות. הסקיצה לא פותחת אותם מחדש ולא מוחקת.</p>
+          </div>
+        </section>
+
+        <p class="toast" id="toast" role="status"></p>
+      </div>
+    </div>
+
+    <div class="rules">
+      <span class="keep">23 טאבים</span>
+      <span class="keep">עריכה / הסרה / חיפוש שם</span>
+      <span class="keep">חסימה נפרדת</span>
+      <span class="stamp">בלי תגובות / AI</span>
+      <span class="stamp">בלי ערבוב CTA ספרייה–מסע</span>
+    </div>
+
+    <footer>
+      מייסד = <span dir="ltr">is_founder</span>. קפטן = <span dir="ltr">pod_role</span>.
+      הססנים 8→80→800→8,000. בנייה רק אחרי «קדימה».
+    </footer>
+  </div>
+
+  <script>
+    const PEOPLE = [
+      { name: "דניאל כהן", mail: "dan@…", track: "הססנים", pulse: "שילם 8 · מחכה ל־80", lead: "ליד פתוח · שבוע 1", library: "ניסיון צפייה", journey: "הססנים · פעימה הבאה 80", pod: "ממתין לשיוך", eighty: "—" },
+      { name: "יובל נחום", mail: "yuv@…", track: "הססנים", pulse: "טרם שילם", lead: "ליד חדש מהוובינר", library: "טעימה", journey: "הססנים · טרם שילם", pod: "לא בתור", eighty: "—" },
+      { name: "נועה לוי", mail: "noa@…", track: "אמיצים", pulse: "שולם מלא", lead: "אין ליד", library: "גישת צוות", journey: "אמיצים · שולם", pod: "—", eighty: "—" },
+      { name: "רותם גל", mail: "rot@…", track: "אמיצים", pulse: "שולם", lead: "—", library: "פרימיום 88", journey: "אמיצים · שולם", pod: "Micro-Pod 88", eighty: "ממתינה" }
+    ];
+
+    const toast = document.getElementById("toast");
+    const screens = document.querySelectorAll(".screen");
+    const navBtns = document.querySelectorAll(".nav button");
+    const steps = document.querySelectorAll(".step");
+
+    function say(t) {
+      toast.textContent = t;
+      toast.classList.add("is-on");
+    }
+
+    function showScreen(id) {
+      screens.forEach((el) => el.classList.toggle("is-on", el.id === "screen-" + id));
+      navBtns.forEach((btn) => btn.classList.toggle("is-on", btn.getAttribute("data-screen") === id));
+      const map = {
+        overview: "overview",
+        connect: "connect",
+        labels: "labels",
+        folds: "folds",
+        lecturers: "folds",
+        language: "language",
+      };
+      steps.forEach((btn) => {
+        btn.classList.toggle("is-on", map[id] === btn.getAttribute("data-go"));
+      });
+    }
+
+    steps.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const go = btn.getAttribute("data-go");
+        showScreen(go);
+        say("שכבה " + btn.querySelector("b").textContent);
+      });
+    });
+
+    navBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        showScreen(btn.getAttribute("data-screen"));
+        say("מסך: " + btn.childNodes[0].textContent.trim());
+      });
+    });
+
+    function renderPeople() {
+      const tb = document.querySelector("#people tbody");
+      tb.innerHTML = PEOPLE.map((p) => `
+        <tr data-name="${p.name}">
+          <td><span class="name">${p.name}</span> <span class="mail" dir="ltr">${p.mail}</span></td>
+          <td>${p.track}</td>
+          <td>${p.pulse}</td>
+          <td>${p.lead}</td>
+          <td><span class="acts"><button type="button" class="ok" data-pulse="${p.name}">פעימה הבאה</button></span></td>
+        </tr>
+      `).join("");
+    }
+
+    function showPerson(name) {
+      const p = PEOPLE.find((x) => x.name === name);
+      if (!p) return;
+      document.querySelectorAll("#people tbody tr").forEach((row) => {
+        row.classList.toggle("is-on", row.getAttribute("data-name") === name);
+      });
+      document.getElementById("card").innerHTML = `
+        <span class="keep">כרטיס דק</span>
+        <h3>${p.name}</h3>
+        <p class="who" dir="ltr">${p.mail}</p>
+        <div class="row"><em>ספרייה</em><span>${p.library}</span></div>
+        <div class="row"><em>מסע</em><span>${p.journey}</span></div>
+        <div class="row"><em>ליד</em><span>${p.lead}</span></div>
+        <div class="row"><em>פוד</em><span>${p.pod}</span></div>
+        <div class="row"><em>88</em><span>${p.eighty}</span></div>
+        <p class="tiny" style="margin-top:8px">מנוי ספרייה לא משנה את המסע. הססנים במחיר מלא.</p>
+      `;
+    }
+
+    renderPeople();
+
+    document.getElementById("q").addEventListener("input", (e) => {
+      const q = e.target.value.trim();
+      document.querySelectorAll("#people tbody tr").forEach((row) => {
+        const name = row.getAttribute("data-name") || "";
+        row.style.display = !q || name.includes(q) ? "" : "none";
+      });
+    });
+
+    document.getElementById("people").addEventListener("click", (e) => {
+      const row = e.target.closest("tr");
+      if (!row || !row.getAttribute("data-name")) return;
+      const name = row.getAttribute("data-name");
+      showPerson(name);
+      if (e.target.closest("[data-pulse]")) {
+        say("פעימה הבאה · " + name + " · 8→80→800→8,000");
+      }
+    });
+
+    document.querySelectorAll(".metric").forEach((m) => {
+      m.addEventListener("click", () => {
+        document.querySelectorAll(".metric").forEach((x) => x.classList.remove("is-on"));
+        m.classList.add("is-on");
+        const jump = m.getAttribute("data-jump");
+        const person = m.getAttribute("data-person");
+        if (jump) showScreen(jump);
+        if (person && jump === "connect") showPerson(person);
+        say("מדד פתח: " + (m.querySelector("b")?.textContent || "") + (person ? " · " + person : ""));
+      });
+    });
+
+    document.getElementById("toggle-pod").addEventListener("click", () => {
+      const box = document.getElementById("pod-box");
+      box.hidden = !box.hidden;
+    });
+
+    document.body.addEventListener("click", (e) => {
+      const t = e.target.closest("[data-toast]");
+      if (!t) return;
+      say(t.getAttribute("data-toast"));
+    });
+  </script>
+</body>
+</html>

@@ -1,5 +1,5 @@
-import { ArrowLeft } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
+import { DirNext } from '../../components/DirArrow';
 
 const HIDDEN_ROUTES = [
   '/application',
@@ -13,6 +13,7 @@ const HIDDEN_ROUTES = [
   '/webinar',
   '/pricing',
   '/hesitation',
+  '/pod',
 ];
 
 export function ConversionBand() {
@@ -31,7 +32,7 @@ export function ConversionBand() {
         <div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto sm:flex-row">
           <Link to="/#pricing" className="btn-gold min-w-44 gap-2">
             לצפייה במסלולים
-            <ArrowLeft className="h-4 w-4" aria-hidden="true" />
+            <DirNext className="h-4 w-4" />
           </Link>
           <Link to="/webinar" className="btn-secondary min-w-44">להכיר בערב החי</Link>
         </div>

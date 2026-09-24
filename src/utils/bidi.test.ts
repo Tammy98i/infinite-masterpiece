@@ -1,6 +1,8 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+  formatIls,
+  isolateLtr,
   isPhysicalUtility,
   rtlPhysicalToLogical,
   toLogicalUtility,
@@ -42,6 +44,14 @@ test('isPhysicalUtility detects leftover physical utilities', () => {
   assert.equal(isPhysicalUtility('pr-12'), true);
   assert.equal(isPhysicalUtility('pe-12'), false);
   assert.equal(isPhysicalUtility('left-1/2'), false);
+});
+
+test('formatIls isolates shekel amounts inside Hebrew copy', () => {
+  const out = formatIls(8008);
+  assert.equal(out[0], '\u2066');
+  assert.equal(out.at(-1), '\u2069');
+  assert.match(out, /₪/);
+  assert.equal(isolateLtr('12:04'), '\u206612:04\u2069');
 });
 
 test('media and search icons stay unmirrored', () => {
