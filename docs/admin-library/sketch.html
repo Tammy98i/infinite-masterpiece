@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>סקיצה · עמוד אחד פרקטי — Infinite Masterpiece</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Hebrew:wght@400;500;600&family=Noto+Sans+Hebrew:wght@500;600;700&family=Rubik:wght@500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #010308;
+      --gold: #c8a24c;
+      --gold-soft: #f7e7b5;
+      --ink: #fff;
+      --muted: rgba(255,255,255,0.86);
+      --line: rgba(200,162,76,0.28);
+      --card: rgba(1,3,8,0.64);
+      --note: #ff7a33;
+      --heading: "Noto Sans Hebrew", "Arial Hebrew", sans-serif;
+      --body: "IBM Plex Sans Hebrew", "Arial Hebrew", sans-serif;
+      --more: rgba(109,109,110,.72);
+    }
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: var(--body);
+    }
+    .wrap { max-width: 1240px; margin: 0 auto; padding: 24px 16px 80px; }
+    .banner {
+      border: 1px dashed var(--note);
+      color: var(--note);
+      padding: 10px 14px;
+      border-radius: 999px;
+      display: inline-flex;
+      font-size: 13px;
+      margin-bottom: 16px;
+    }
+    h1.page-title {
+      font-family: var(--heading);
+      font-weight: 600;
+      font-size: clamp(1.55rem, 3vw, 2.2rem);
+      margin: 0 0 8px;
+    }
+    .lede { color: var(--muted); max-width: 50rem; line-height: 1.75; margin-bottom: 18px; }
+    .note {
+      color: var(--note);
+      font-family: Rubik, sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+      margin: 0 0 14px;
+    }
+    .note::before { content: "→ "; }
+    .headline {
+      font-family: var(--heading);
+      font-size: clamp(1.3rem, 2.4vw, 1.8rem);
+      font-weight: 700;
+      line-height: 1.3;
+      margin: 0 0 10px;
+    }
+    .sub { color: var(--muted); max-width: 44rem; line-height: 1.65; margin: 0 0 16px; }
+    .grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
+    .glass {
+      background: var(--card);
+      backdrop-filter: blur(14px);
+      border: 1px solid var(--line);
+      border-radius: 20px;
+      padding: 16px;
+    }
+    .caption { font-size: 15px; font-weight: 600; margin: 0; }
+    .muted { color: rgba(255,255,255,0.62); font-size: 13px; line-height: 1.55; margin: 8px 0 0; }
+    .keep {
+      display: inline-block;
+      color: #9be7b5;
+      border: 1px solid rgba(155,231,181,.45);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+    }
+    .stamp {
+      display: inline-block;
+      color: var(--note);
+      border: 1px solid var(--note);
+      padding: 2px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 600;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 40px;
+      padding: 0 14px;
+      border: 0;
+      border-radius: 4px;
+      background: #fff;
+      color: #111;
+      font-weight: 700;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .cta.ghost { background: var(--more); color: #fff; }
+    .cta.warn {
+      background: transparent;
+      color: #f7b4b4;
+      border: 1px solid rgba(247,180,180,.4);
+    }
+
+    .tri { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-bottom: 16px; }
+    .tri .tag {
+      font-size: 11px;
+      letter-spacing: .14em;
+      color: var(--gold-soft);
+      margin: 0 0 6px;
+    }
+
+    .desk {
+      display: grid;
+      grid-template-columns: 176px 1fr;
+      min-height: 720px;
+      border: 1px solid rgba(255,255,255,.1);
+      border-radius: 18px;
+      overflow: hidden;
+      background: rgba(0,0,0,.32);
+    }
+    .desk-nav {
+      padding: 14px 10px;
+      border-inline-end: 1px solid rgba(255,255,255,.08);
+    }
+    .desk-nav span.group {
+      display: block;
+      font-size: 10px;
+      letter-spacing: .16em;
+      color: rgba(255,255,255,.38);
+      margin: 12px 8px 6px;
+    }
+    .desk-nav a {
+      display: block;
+      color: rgba(255,255,255,.62);
+      text-decoration: none;
+      font-size: 12.5px;
+      min-height: 30px;
+      padding: 5px 8px;
+      border-inline-start: 2px solid transparent;
+    }
+    .desk-nav a.is-on {
+      color: #fff;
+      font-weight: 600;
+      border-inline-start-color: #fff;
+    }
+    .desk-main { padding: 14px 14px 18px; min-width: 0; }
+
+    .urgent {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    .chip {
+      text-align: start;
+      min-height: 72px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.04);
+      color: #fff;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .chip:hover, .chip.is-on {
+      border-color: rgba(200,162,76,.55);
+      background: rgba(200,162,76,.1);
+    }
+    .chip b { display: block; font-size: 13px; margin-bottom: 4px; }
+    .chip span { font-size: 12px; color: var(--gold-soft); }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .toolbar input[type="search"] {
+      flex: 1;
+      min-width: 180px;
+      min-height: 44px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: rgba(0,0,0,.45);
+      color: #fff;
+      padding: 0 12px;
+      font-family: inherit;
+    }
+
+    .work {
+      display: grid;
+      grid-template-columns: 1.35fr .85fr;
+      gap: 12px;
+      align-items: start;
+    }
+    .compact { width: 100%; border-collapse: collapse; font-size: 13px; }
+    .compact th {
+      text-align: start;
+      color: rgba(255,255,255,.42);
+      font-weight: 400;
+      font-size: 11px;
+      padding: 6px 8px;
+      border-bottom: 1px solid rgba(255,255,255,.1);
+    }
+    .compact td {
+      padding: 5px 8px;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      white-space: nowrap;
+    }
+    .compact tr { height: 32px; cursor: pointer; }
+    .compact tr.is-gone { display: none; }
+    .compact tr.is-on { background: rgba(200,162,76,.12); }
+    .compact .name { font-weight: 500; }
+    .compact .mail { color: rgba(255,255,255,.4); font-size: 11px; }
+    .acts { display: flex; gap: 6px; }
+    .acts button {
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,.18);
+      background: transparent;
+      color: #fff;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+    }
+    .acts button.kill { color: #f7b4b4; border-color: rgba(247,180,180,.35); }
+
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 14px;
+      background: rgba(1,3,8,.72);
+      min-height: 280px;
+    }
+    .card h3 { margin: 0 0 4px; font-size: 18px; font-weight: 600; }
+    .card .who { color: rgba(255,255,255,.45); font-size: 12px; margin: 0 0 12px; }
+    .linkrow {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255,255,255,.08);
+      font-size: 13px;
+    }
+    .linkrow:last-child { border-bottom: 0; }
+    .linkrow em { font-style: normal; color: rgba(255,255,255,.5); }
+    .empty-card { color: rgba(255,255,255,.45); font-size: 14px; padding-top: 36px; }
+
+    .drawer {
+      display: none;
+      margin-top: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      padding: 12px;
+      background: rgba(1,3,8,.72);
+    }
+    .drawer.is-on { display: block; }
+    .drawer label { display: grid; gap: 4px; font-size: 12px; color: rgba(255,255,255,.6); }
+    .drawer select {
+      min-height: 40px;
+      border-radius: 4px;
+      border: 1px solid rgba(255,255,255,.16);
+      background: #0a0a0a;
+      color: #fff;
+      font-family: inherit;
+    }
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+    .toast { display: none; margin-top: 8px; color: var(--gold-soft); font-size: 13px; }
+    .toast.is-on { display: block; }
+
+    .fold {
+      margin-top: 28px;
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      overflow: hidden;
+      background:
+        linear-gradient(180deg, rgba(2,6,14,.72), rgba(2,6,14,.88)),
+        radial-gradient(ellipse at 70% 18%, rgba(80,120,200,.18), transparent 42%),
+        #040814;
+      padding: 22px 18px 26px;
+    }
+    .billboard {
+      position: relative;
+      min-height: 220px;
+      border-radius: 12px;
+      overflow: hidden;
+      margin-bottom: 14px;
+      background:
+        linear-gradient(90deg, rgba(2,6,14,.92) 8%, rgba(2,6,14,.35) 58%, rgba(2,6,14,.7)),
+        linear-gradient(180deg, transparent 40%, rgba(2,6,14,.95)),
+        radial-gradient(circle at 72% 40%, #3a5a8c 0%, #12182a 55%, #05070e 100%);
+      padding: 28px 22px 20px;
+    }
+    .billboard h2 {
+      font-family: var(--heading);
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      margin: 6px 0 8px;
+      max-width: 18ch;
+    }
+    .rail-title { font-size: 14px; font-weight: 600; margin: 0 0 8px; }
+    .rail { display: flex; gap: 8px; overflow: hidden; margin-bottom: 12px; }
+    .poster {
+      flex: 0 0 132px;
+      aspect-ratio: 16 / 9;
+      border-radius: 4px;
+      background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.78)), linear-gradient(135deg, #1a2744, #0b1220);
+      position: relative;
+    }
+    .poster:nth-child(2) { background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.78)), linear-gradient(135deg, #3a2a18, #120c08); }
+    .poster:nth-child(3) { background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.78)), linear-gradient(135deg, #163028, #07110e); }
+    .poster:nth-child(4) { background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.78)), linear-gradient(135deg, #2a1838, #0c0812); }
+    .poster:nth-child(5) { background: linear-gradient(180deg, transparent 45%, rgba(0,0,0,.78)), linear-gradient(135deg, #183040, #081016); }
+    .poster b {
+      position: absolute;
+      inset-inline-start: 8px;
+      bottom: 8px;
+      font-size: 12px;
+    }
+    .poster i {
+      position: absolute;
+      inset-inline-end: 6px;
+      top: 6px;
+      font-style: normal;
+      font-size: 10px;
+      background: rgba(0,0,0,.55);
+      padding: 2px 6px;
+      border-radius: 3px;
+    }
+    .pill {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      border: 1px solid var(--line);
+      background: rgba(1,3,8,0.64);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+
+    .keep-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+    footer.sketch-foot { margin-top: 22px; color: rgba(255,255,255,0.55); font-size: 13px; line-height: 1.6; }
+
+    @media (max-width: 980px) {
+      .tri, .urgent, .work, .desk { grid-template-columns: 1fr; }
+      .desk-nav { border-inline-end: 0; border-bottom: 1px solid rgba(255,255,255,.08); display: flex; flex-wrap: wrap; gap: 4px; }
+      .desk-nav span.group { width: 100%; margin: 8px 0 0; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <p class="banner">סקיצה לאישור · עמוד אחד · לא קוד במוצר · לא מוחקים מסכים</p>
+    <h1 class="page-title">עמוד אחד: מדגיש, מחבר, משפר</h1>
+    <p class="lede">
+      במקום 23 טאבים לטיפול יומיומי — דסק אחד. למעלה מה דחוף, באמצע חיפוש לפי שם וטבלה צפופה,
+      בצד אותו אדם: מנוי, מסלול, ליד, פוד, 88. הסיידבר נשאר לעבודה עמוקה. הספרייה נשארת עמוד אחד משלה למטה.
+    </p>
+
+    <div class="tri">
+      <div class="glass">
+        <p class="tag">מדגיש</p>
+        <p class="caption">לטיפול עכשיו</p>
+        <p class="muted">שם + פועל. לא «מעבר לטיפול». לחיצה ממקדת את האדם בטבלה.</p>
+      </div>
+      <div class="glass">
+        <p class="tag">מחבר</p>
+        <p class="caption">אותו יוזר, אותו מסך</p>
+        <p class="muted">מנוי ספרייה ומסלול מסע בכרטיס אחד. בלי לערבב CTA. פוד רק אחרי תשלום מסע.</p>
+      </div>
+      <div class="glass">
+        <p class="tag">משפר</p>
+        <p class="caption">טבלה נמוכה + פעולות</p>
+        <p class="muted">32px לשורה. חיפוש לפי שם. עריכה והסרה בשורה. יצירה מאחורי כפתור. חסימה נשארת.</p>
+      </div>
+    </div>
+
+    <p class="note">הדגמה חיה: לחצו על כרטיס דחוף, חפשו שם, ערכו או הסירו. הטאבים בסיידבר לא נמחקים.</p>
+
+    <div class="desk" aria-label="דסק אדמין מחובר">
+      <aside class="desk-nav">
+        <p class="caption" style="margin:0 8px 8px">אדמין</p>
+        <span class="group">מבט על</span>
+        <a class="is-on" href="#desk">סקירה · עמוד אחד</a>
+        <a href="#library-fold">התראות</a>
+        <a href="#library-fold">אנליטיקות</a>
+        <span class="group">אנשים</span>
+        <a href="#desk">משתמשים</a>
+        <a href="#desk">גישה והרשאות</a>
+        <a href="#desk">צוות ומרצים</a>
+        <a href="#desk">מייסדים</a>
+        <a href="#desk">גלקסיה</a>
+        <a href="#desk">בקשות מרצים</a>
+        <span class="group">מסחר</span>
+        <a href="#desk">מנויים</a>
+        <a href="#desk">מסלולים</a>
+        <a href="#desk">נבחרת 88</a>
+        <a href="#desk">פודים</a>
+        <a href="#desk">לידים</a>
+        <a href="#desk">וובינר</a>
+        <a href="#desk">הגרלות</a>
+        <span class="group">תוכן</span>
+        <a href="#desk">תכני VOD</a>
+        <a href="#desk">קטגוריות</a>
+        <span class="group">מערכת</span>
+        <a href="#desk">הגדרות</a>
+        <a href="#desk">יומן</a>
+      </aside>
+
+      <div class="desk-main" id="desk">
+        <p class="rail-title">לטיפול עכשיו</p>
+        <div class="urgent" role="list">
+          <button type="button" class="chip" data-person="דניאל כהן">
+            <b>דניאל כהן</b>
+            <span>פעימה הבאה · הססנים 8→80</span>
+          </button>
+          <button type="button" class="chip" data-person="יובל נחום">
+            <b>יובל נחום</b>
+            <span>פתח כרטיס ליד</span>
+          </button>
+          <button type="button" class="chip" data-person="רותם גל">
+            <b>רותם גל</b>
+            <span>אשר מועמדות 88</span>
+          </button>
+          <button type="button" class="chip" data-person="מיכל אברמוב">
+            <b>מיכל אברמוב</b>
+            <span>מרצה פעילה · כרטיס צוות</span>
+          </button>
+        </div>
+
+        <div class="toolbar">
+          <input id="user-search" type="search" placeholder="חיפוש משתמש לפי שם…" aria-label="חיפוש משתמש לפי שם" />
+          <button class="cta ghost" type="button" id="toggle-create">הוספת משתמש</button>
+          <span class="keep">ייצוא</span>
+          <span class="keep">חסימה</span>
+        </div>
+        <div class="drawer" id="create-box">
+          <p class="caption">חשבון חדש</p>
+          <p class="muted">אותו טופס היום. רק סגור עד שלוחצים. שם · אימייל · סיסמה · תפקיד.</p>
+        </div>
+
+        <div class="work">
+          <table class="compact" id="user-table">
+            <thead>
+              <tr>
+                <th>שם</th>
+                <th>תפקיד</th>
+                <th>מנוי</th>
+                <th>מסלול</th>
+                <th>פעולות</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+          <aside class="card" id="person-card" aria-live="polite">
+            <p class="empty-card">בחרו אדם מהטבלה או מהפס הדחוף. כאן מתחברים מנוי, מסלול, ליד ופוד — בלי לעזוב.</p>
+          </aside>
+        </div>
+
+        <div class="drawer" id="edit-box">
+          <p class="caption" id="edit-title">עריכת משתמש</p>
+          <div class="grid3" style="margin-top:10px">
+            <label>תפקיד
+              <select><option>משתמש</option><option>מרצה</option><option>אדמין</option></select>
+            </label>
+            <label>מנוי
+              <select><option>חינמי</option><option>ניסיון</option><option>פרימיום</option><option>נבחרת 88</option></select>
+            </label>
+            <label>מסלול
+              <select><option>ללא</option><option>אמיצים</option><option>הססנים</option></select>
+            </label>
+          </div>
+          <div class="actions">
+            <button class="cta" type="button" id="save-edit">שמירה</button>
+            <button class="cta ghost" type="button" id="block-edit">חסימה</button>
+            <button class="cta warn" type="button" id="close-edit">סגירה</button>
+          </div>
+        </div>
+        <p class="toast" id="user-toast" role="status"></p>
+      </div>
+    </div>
+
+    <section class="fold" id="library-fold" aria-label="ספרייה עמוד אחד">
+      <p class="note">גם הספרייה היא עמוד אחד: כרזה + פסים. שכבות כהות מעל החלל. לא מסע ולא 88.</p>
+      <div class="billboard">
+        <p class="pill"><span class="dot"></span> הרצאה נבחרת · טכניקת מכירה</p>
+        <h2>שיחת המכירה הראשונה בלי סקריפט מת</h2>
+        <p class="sub">42 דקות לטכנאי מכירות. טעימה לחינמי. מנוי ספרייה פותח את ההמשך.</p>
+        <div class="actions">
+          <button class="cta" type="button">▶ הפעלה</button>
+          <button class="cta ghost" type="button">ℹ מידע נוסף</button>
+        </div>
+      </div>
+      <p class="rail-title">המשיכו לצפות · מומלץ לטכנאים · עד 10 דקות</p>
+      <div class="rail" aria-hidden="true">
+        <div class="poster"><i>המשך</i><b>משא ומתן</b></div>
+        <div class="poster"><i>טעימה</i><b>אבחון לקוח</b></div>
+        <div class="poster"><i>דורש מנוי</i><b>תמחור</b></div>
+        <div class="poster"><b>פיץ׳ ב־8 דק׳</b></div>
+        <div class="poster"><b>גל ברק</b></div>
+      </div>
+      <div class="keep-row">
+        <span class="keep">Paywall אחרי טעימה</span>
+        <span class="keep">באנר מנוי ספרייה</span>
+        <span class="keep">מרצים · נושאים · המשך</span>
+        <span class="stamp">בלי תגובות / דירוג</span>
+        <span class="stamp">בלי CTA מסע כאן</span>
+      </div>
+    </section>
+
+    <footer class="sketch-foot">
+      23 הטאבים נשארים. העמוד האחד מחבר יוזר↔ליד↔מסלול↔פוד↔88.
+      הסרה מתווספת; חסימה לא מוחלפת. מייסד = <span dir="ltr">is_founder</span>.
+      הססנים 8→80→800→8,000. בנייה רק אחרי «קדימה».
+    </footer>
+  </div>
+  <script>
+    const PEOPLE = [
+      { name: "נועה לוי", mail: "noa@…", role: "אדמין", plan: "פרימיום", track: "אמיצים", library: "גישת צוות מלאה", journey: "אמיצים · שולם מלא", lead: "אין ליד פתוח", pod: "לא קפטן / לא בתור", eighty: "—", deep: "מסך מלא: צוות ומרצים" },
+      { name: "דניאל כהן", mail: "dan@…", role: "משתמש", plan: "ניסיון", track: "הססנים", library: "ניסיון צפייה", journey: "הססנים · שילם 8 ₪ · מחכה ל־80", lead: "ליד פתוח · שבוע 1", pod: "ממתין לשיוך אחרי פעימה", eighty: "לא מועמד", deep: "מסך מלא: מסלולי כניסה" },
+      { name: "מיכל אברמוב", mail: "michal@…", role: "מרצה", plan: "פרימיום", track: "ללא", library: "דשבורד מרצה + התכנים שלה", journey: "לא במסע", lead: "—", pod: "לא נכנס — אין תשלום מסע", eighty: "—", deep: "מסך מלא: תכני VOD" },
+      { name: "אורי שמש", mail: "ori@…", role: "משתמש", plan: "חינמי", track: "ללא", library: "טעימה בלבד · חסום", journey: "לא במסע", lead: "—", pod: "לא נכנס — מנוי ספרייה/חינמי", eighty: "—", deep: "מסך מלא: משתמשים" },
+      { name: "רותם גל", mail: "rot@…", role: "משתמש", plan: "נבחרת 88", track: "אמיצים", library: "פרימיום 88", journey: "אמיצים · שולם", lead: "—", pod: "Micro-Pod 88 נפרד", eighty: "ממתינה לאישור", deep: "מסך מלא: נבחרת 88" },
+      { name: "תמר לוין", mail: "tami@…", role: "אדמין", plan: "פרימיום", track: "ללא", library: "דסק צוות", journey: "לא במסע", lead: "—", pod: "—", eighty: "—", deep: "מסך מלא: גישה והרשאות" },
+      { name: "גל ברק", mail: "gal@…", role: "מרצה", plan: "פרימיום", track: "ללא", library: "מייסד + מרצה", journey: "לא במסע", lead: "—", pod: "—", eighty: "—", deep: "מסך מלא: צוות מייסדים" },
+      { name: "יובל נחום", mail: "yuv@…", role: "משתמש", plan: "חינמי", track: "הססנים", library: "טעימה", journey: "הססנים · טרם שילם", lead: "ליד חדש מהוובינר", pod: "לא נכנס לתור", eighty: "—", deep: "מסך מלא: לידים ופניות" }
+    ];
+
+    const tbody = document.querySelector("#user-table tbody");
+    const card = document.getElementById("person-card");
+    const search = document.getElementById("user-search");
+    const toast = document.getElementById("user-toast");
+    const editBox = document.getElementById("edit-box");
+    const createBox = document.getElementById("create-box");
+    const editTitle = document.getElementById("edit-title");
+
+    function say(text) {
+      toast.textContent = text;
+      toast.classList.add("is-on");
+    }
+
+    function renderRows() {
+      tbody.innerHTML = PEOPLE.map((p) => `
+        <tr data-name="${p.name}">
+          <td><span class="name">${p.name}</span> <span class="mail" dir="ltr">${p.mail}</span></td>
+          <td>${p.role}</td>
+          <td>${p.plan}</td>
+          <td>${p.track}</td>
+          <td><span class="acts"><button type="button" class="pick">כרטיס</button><button type="button" class="edit">עריכה</button><button type="button" class="kill">הסרה</button></span></td>
+        </tr>
+      `).join("");
+    }
+
+    function showPerson(name) {
+      const p = PEOPLE.find((row) => row.name === name);
+      if (!p) return;
+      document.querySelectorAll(".compact tbody tr").forEach((row) => {
+        row.classList.toggle("is-on", row.getAttribute("data-name") === name);
+      });
+      document.querySelectorAll(".chip").forEach((chip) => {
+        chip.classList.toggle("is-on", chip.getAttribute("data-person") === name);
+      });
+      card.innerHTML = `
+        <p class="tag" style="color:var(--gold-soft);font-size:11px;letter-spacing:.12em;margin:0 0 6px">מחובר לעמוד הזה</p>
+        <h3>${p.name}</h3>
+        <p class="who" dir="ltr">${p.mail} · ${p.role}</p>
+        <div class="linkrow"><em>ספרייה</em><span>${p.library}</span></div>
+        <div class="linkrow"><em>מסע</em><span>${p.journey}</span></div>
+        <div class="linkrow"><em>ליד</em><span>${p.lead}</span></div>
+        <div class="linkrow"><em>פוד</em><span>${p.pod}</span></div>
+        <div class="linkrow"><em>נבחרת 88</em><span>${p.eighty}</span></div>
+        <div class="actions">
+          <button class="cta" type="button" data-edit="${p.name}">עריכה כאן</button>
+          <button class="cta ghost" type="button">${p.deep}</button>
+        </div>
+      `;
+    }
+
+    function filterBy(q) {
+      tbody.querySelectorAll("tr").forEach((row) => {
+        const name = row.getAttribute("data-name") || "";
+        row.style.display = row.classList.contains("is-gone") ? "none" : (!q || name.includes(q) ? "" : "none");
+      });
+    }
+
+    renderRows();
+
+    search.addEventListener("input", () => filterBy(search.value.trim()));
+    document.getElementById("toggle-create").addEventListener("click", () => createBox.classList.toggle("is-on"));
+
+    document.querySelectorAll(".chip").forEach((chip) => {
+      chip.addEventListener("click", () => {
+        const name = chip.getAttribute("data-person");
+        search.value = name.split(" ")[0];
+        filterBy(search.value);
+        showPerson(name);
+        say("ממוקד: " + name + " — מנוי, מסלול וליד באותו כרטיס.");
+      });
+    });
+
+    tbody.addEventListener("click", (event) => {
+      const btn = event.target.closest("button");
+      const row = event.target.closest("tr");
+      if (!row) return;
+      const name = row.getAttribute("data-name");
+      if (!btn || btn.classList.contains("pick")) {
+        showPerson(name);
+        return;
+      }
+      if (btn.classList.contains("kill")) {
+        if (window.confirm("להסיר את " + name + "? החשבון יימחק. חסימה נשארת פעולה נפרדת.")) {
+          row.classList.add("is-gone");
+          row.style.display = "none";
+          card.innerHTML = '<p class="empty-card">הוסר בסקיצה: ' + name + ". במוצר זה יידרש API למחיקה. חסימה נשארת.</p>";
+          say("הוסר מהטבלה: " + name);
+        }
+        return;
+      }
+      if (btn.classList.contains("edit")) {
+        showPerson(name);
+        editTitle.textContent = "עריכה · " + name;
+        editBox.classList.add("is-on");
+      }
+    });
+
+    card.addEventListener("click", (event) => {
+      const btn = event.target.closest("[data-edit]");
+      if (!btn) return;
+      editTitle.textContent = "עריכה · " + btn.getAttribute("data-edit");
+      editBox.classList.add("is-on");
+    });
+
+    document.getElementById("save-edit").addEventListener("click", () => {
+      say("נשמר בסקיצה. במוצר נשאר אותו updateUser.");
+      editBox.classList.remove("is-on");
+    });
+    document.getElementById("block-edit").addEventListener("click", () => say("חסימה נשארת. לא מחליפה הסרה."));
+    document.getElementById("close-edit").addEventListener("click", () => editBox.classList.remove("is-on"));
+  </script>
+</body>
+</html>

@@ -1,6 +1,8 @@
 import { Fragment, useMemo, useState } from 'react';
 import { ChevronDown, Search } from 'lucide-react';
 import type { NavGroup, NavItem, Tab } from './adminNav';
+import { Bidi } from '../../components/Bidi';
+import { AsideVeils } from './AsideVeils';
 
 type AdminSidebarProps = {
   groups: NavGroup[];
@@ -17,20 +19,17 @@ function NavButton({ item, active, onClick }: { item: NavItem; active: boolean; 
     <button
       type="button"
       onClick={onClick}
-      className={`w-full flex items-center gap-2.5 rounded-xl px-3 py-2.5 text-sm min-h-11 text-start transition-colors duration-200 cursor-pointer ${
-        active
-          ? 'bg-[#b79043]/15 text-[#dfc47d] border border-[#b79043]/40'
-          : 'text-white/60 hover:text-white hover:bg-white/[0.04] border border-transparent'
-      }`}
+      className={`crm-desk-nav-item ${active ? 'is-active' : ''}`}
     >
       <Icon className="w-4 h-4 shrink-0 opacity-80" aria-hidden />
-      <span className="font-light flex-1 truncate">{item.label}</span>
+      <span className="flex-1 min-w-0 text-start">
+        <span className="block truncate">{item.label}</span>
+        {item.why ? <span className="crm-desk-nav-why block truncate">{item.why}</span> : null}
+      </span>
       {item.badge ? (
-        <span className="text-[10px] tracking-wide text-[#b79043] border border-[#b79043]/40 rounded-full px-2 py-0.5 shrink-0">
-          {item.badge}
-        </span>
+        <span className="crm-desk-nav-badge">{item.badge}</span>
       ) : !item.ready ? (
-        <span className="text-[10px] text-white/30 shrink-0">בקרוב</span>
+        <span className="crm-desk-nav-badge">בקרוב</span>
       ) : null}
     </button>
   );
@@ -61,6 +60,7 @@ export function AdminSidebar({ groups, tab, onNavigate, userName, userEmail, onE
           (item) =>
             item.label.toLowerCase().includes(q) ||
             item.id.includes(q) ||
+            (item.why || '').toLowerCase().includes(q) ||
             (item.keywords || '').toLowerCase().includes(q)
         ),
       }))
@@ -73,13 +73,14 @@ export function AdminSidebar({ groups, tab, onNavigate, userName, userEmail, onE
 
   return (
     <>
+      <AsideVeils />
       <div className="p-5 border-b border-white/10">
-        <p className="text-[11px] uppercase tracking-[0.28em] text-[#b79043] mb-2">ניהול</p>
-        <h2 className="text-xl font-light">לוח בקרה</h2>
+        <p className="text-[11px] text-white/45 mb-2">ניהול</p>
+        <h2 className="crm-rail-title text-xl">לוח בקרה</h2>
         <p className="text-xs text-white/45 mt-2 font-light truncate">{userName}</p>
         {userEmail ? (
-          <p className="text-[11px] text-white/30 mt-1 truncate" dir="ltr">
-            {userEmail}
+          <p className="text-[11px] text-white/30 mt-1 truncate">
+            <Bidi kind="email">{userEmail}</Bidi>
           </p>
         ) : null}
       </div>
@@ -92,50 +93,44 @@ export function AdminSidebar({ groups, tab, onNavigate, userName, userEmail, onE
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="חיפוש..."
-            className="w-full bg-zinc-900/80 border border-white/10 rounded-xl py-2.5 ps-9 pe-3 text-sm text-white placeholder:text-white/35 focus:border-[#b79043] focus:outline-none min-h-11"
+            className="crm-desk-nav-search"
           />
         </label>
       </div>
 
-      <nav className="flex-1 p-3 overflow-y-auto">
-        <div className="grid gap-2">
-          {filteredGroups.map((group) => {
-            const open = query ? true : openGroups[group.id] ?? group.id === activeGroupId;
-            return (
-              <div key={group.id}>
-                <button
-                  type="button"
-                  onClick={() => toggleGroup(group.id)}
-                  className="w-full flex items-center justify-between gap-2 px-2 py-1.5 text-[11px] uppercase tracking-[0.18em] text-white/40 hover:text-white/60 cursor-pointer"
-                >
-                  <span>{group.label}</span>
-                  <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
-                </button>
-                {open ? (
-                  <div className="grid gap-0.5 mt-0.5">
-                    {group.items.map((item) => (
-                      <Fragment key={item.id}>
-                        <NavButton
-                          item={item}
-                          active={tab === item.id}
-                          onClick={() => onNavigate(item.id)}
-                        />
-                      </Fragment>
-                    ))}
-                  </div>
-                ) : null}
-              </div>
-            );
-          })}
-        </div>
+      <nav className="crm-desk-nav flex-1 p-3 overflow-y-auto">
+        {filteredGroups.map((group) => {
+          const open = query ? true : openGroups[group.id] ?? group.id === activeGroupId;
+          return (
+            <div key={group.id}>
+              <button
+                type="button"
+                onClick={() => toggleGroup(group.id)}
+                className="crm-desk-nav-group-label"
+              >
+                <span>{group.label}</span>
+                <ChevronDown className={`w-3.5 h-3.5 transition-transform ${open ? 'rotate-180' : ''}`} />
+              </button>
+              {open ? (
+                <div className="grid gap-0.5">
+                  {group.items.map((item) => (
+                    <Fragment key={item.id}>
+                      <NavButton
+                        item={item}
+                        active={tab === item.id}
+                        onClick={() => onNavigate(item.id)}
+                      />
+                    </Fragment>
+                  ))}
+                </div>
+              ) : null}
+            </div>
+          );
+        })}
       </nav>
 
       <div className="p-4 border-t border-white/10">
-        <button
-          type="button"
-          onClick={onExit}
-          className="w-full px-4 py-2.5 rounded-full border border-white/15 text-sm min-h-11 cursor-pointer hover:border-white/40 transition-colors"
-        >
+        <button type="button" onClick={onExit} className="crm-desk-nav-exit">
           לספרייה
         </button>
       </div>
@@ -154,12 +149,15 @@ export function AdminMobileNav({
 }) {
   const items = groups.flatMap((g) => g.items);
   return (
-    <div className="lg:hidden border-b border-white/10 bg-[#080808] p-3 grid gap-1 max-h-[50vh] overflow-y-auto">
-      {items.map((item) => (
-        <Fragment key={item.id}>
-          <NavButton item={item} active={tab === item.id} onClick={() => onNavigate(item.id)} />
-        </Fragment>
-      ))}
+    <div className="crm-desk-aside lg:hidden relative border-b border-white/10 p-3 max-h-[50vh] overflow-y-auto">
+      <AsideVeils />
+      <nav className="crm-desk-nav">
+        {items.map((item) => (
+          <Fragment key={item.id}>
+            <NavButton item={item} active={tab === item.id} onClick={() => onNavigate(item.id)} />
+          </Fragment>
+        ))}
+      </nav>
     </div>
   );
 }
