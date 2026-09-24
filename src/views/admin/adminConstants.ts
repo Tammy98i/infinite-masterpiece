@@ -1,7 +1,7 @@
 import type { Tab } from './adminNav';
 
 export const fieldClass =
-  'w-full bg-[rgba(5,10,20,.55)] border border-white/10 rounded-xl p-3 text-sm text-white placeholder:text-white/30 focus:border-[#b79043] focus:ring-1 focus:ring-[#b79043]/30 focus:outline-none min-h-11 disabled:cursor-not-allowed disabled:opacity-55';
+  'crm-desk-field w-full bg-[rgba(5,10,20,.55)] border border-white/10 rounded p-2 text-sm text-white placeholder:text-white/30 focus:border-white/40 focus:outline-none min-h-11 disabled:cursor-not-allowed disabled:opacity-55';
 
 export const STAFF_DESK_TABS: Record<string, Tab[]> = {
   content: ['overview', 'content', 'categories', 'lecturers', 'founders', 'team', 'access', 'notifications', 'audit', 'onboarding'],

@@ -1,16 +1,17 @@
 {
   "name": "VOD local preview",
   "install": "npm install",
-  "start": "npm run dev",
+  "start": "npx concurrently -k -n api,web,web2 \"npm run server\" \"vite --port=3000 --host=0.0.0.0 --strictPort\" \"vite --port=3002 --host=0.0.0.0 --strictPort\"",
   "terminals": [
     {
       "name": "dev",
-      "command": "npm run dev",
-      "description": "Local site + API — Vite :3000, Express :3001. Use Ports tab → 3000 → Open in Browser, or the forwarded preview URL."
+      "command": "npx concurrently -k -n api,web,web2 \"npm run server\" \"vite --port=3000 --host=0.0.0.0 --strictPort\" \"vite --port=3002 --host=0.0.0.0 --strictPort\"",
+      "description": "Site on :3000 and :3002 + API :3001. In Agents Window: plug icon → Forwarded Ports → 3000 (or 3002) → Open in Browser. Do not use a raw localhost URL that is not forwarded."
     }
   ],
   "ports": [
     { "name": "site", "port": 3000 },
-    { "name": "api", "port": 3001 }
+    { "name": "api", "port": 3001 },
+    { "name": "site-3002", "port": 3002 }
   ]
 }
