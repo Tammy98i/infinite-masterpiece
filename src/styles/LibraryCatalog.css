@@ -2,8 +2,8 @@
    Keep the starfield visible, then stack dark navy layers on top. */
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-image {
-  opacity: .92;
-  filter: saturate(1.08) contrast(1.06) brightness(.88);
+  opacity: .78;
+  filter: saturate(.95) contrast(1.1) brightness(.68);
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-blackout {
@@ -37,7 +37,20 @@
 }
 
 .editorial-sky-library-veil-e {
-  background: linear-gradient(180deg, transparent 12%, rgba(3, 8, 18, .28) 100%);
+  background: linear-gradient(180deg, transparent 12%, rgba(3, 8, 18, .22) 100%);
+}
+
+/* Calibrated library veils — bottom / side / soft radial (stars stay readable) */
+.editorial-sky-library-veil-f {
+  background: linear-gradient(180deg, transparent 40%, rgba(2, 6, 14, .62) 100%);
+}
+
+.editorial-sky-library-veil-g {
+  background: linear-gradient(to inline-end, rgba(5, 10, 20, .38), transparent 45%);
+}
+
+.editorial-sky-library-veil-h {
+  background: radial-gradient(ellipse at 50% 35%, transparent 18%, rgba(3, 8, 18, .4) 88%);
 }
 
 .vod-app.library-catalog,
@@ -129,6 +142,86 @@
 .library-catalog .library-poster:hover .library-poster-play,
 .library-catalog .library-poster:focus-within .library-poster-play {
   opacity: 1;
+}
+
+.library-catalog .library-poster-play-inner {
+  display: grid;
+  place-items: center;
+  width: 2.25rem;
+  height: 2.25rem;
+  border-radius: 4px;
+  background: #fff;
+  color: #141414;
+}
+
+.library-catalog .library-poster-meta {
+  display: none;
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  padding: .65rem .7rem;
+  background: linear-gradient(transparent 22%, rgba(2, 6, 14, .92));
+  align-content: end;
+  gap: .2rem;
+  pointer-events: none;
+}
+
+.library-catalog .library-poster:hover .library-poster-meta,
+.library-catalog .library-poster:focus-within .library-poster-meta {
+  display: grid;
+}
+
+.library-catalog .library-poster:hover .library-poster-title-dock,
+.library-catalog .library-poster:focus-within .library-poster-title-dock {
+  opacity: 0;
+}
+
+.library-catalog .library-poster-meta b {
+  font-size: .8rem;
+  font-weight: 600;
+  line-height: 1.25;
+  color: #fff;
+}
+
+.library-catalog .library-poster-meta span {
+  font-size: .7rem;
+  color: rgba(255, 255, 255, .72);
+}
+
+.library-catalog .library-poster-list {
+  border-radius: 4px !important;
+}
+
+.library-catalog .library-empty-panel {
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, .12);
+  background: rgba(5, 10, 20, .55);
+  text-align: start;
+  max-width: 36rem;
+  margin-inline: 0;
+  padding: 1.35rem 1.4rem;
+}
+
+.library-catalog .library-empty-panel .library-empty-eye {
+  color: #b79043;
+  font-size: .7rem;
+  letter-spacing: .14em;
+  margin-bottom: .4rem;
+}
+
+.library-catalog .library-empty-panel h3 {
+  font-weight: 500;
+  margin-bottom: .4rem;
+}
+
+.library-catalog .library-empty-cta {
+  border-radius: 4px !important;
+  background: #fff !important;
+  color: #141414 !important;
+}
+
+.library-catalog .library-empty-cta:hover {
+  background: #f3f3f3 !important;
 }
 
 .library-catalog .library-rail-scroller {

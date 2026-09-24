@@ -61,41 +61,35 @@
   display: none;
 }
 
-.library-flow-page #rail-continue {
-  background: radial-gradient(70% 50% at 50% 0%, rgba(183, 144, 67, .08), transparent 62%);
-}
-
+/* Rails stay clear over the sky — no radial glass washes */
+.library-flow-page #rail-continue,
 .library-flow-page #rail-recommended,
-.library-flow-page #rail-new {
+.library-flow-page #rail-new,
+.library-flow-page #rail-shorts,
+.library-flow-page #rail-popular {
   background: transparent;
 }
 
-.library-flow-page #rail-shorts {
-  background: radial-gradient(60% 40% at 80% 40%, rgba(77, 122, 168, .07), transparent 58%);
-}
-
-.library-flow-page #rail-popular {
-  background: radial-gradient(55% 45% at 20% 50%, rgba(183, 144, 67, .06), transparent 64%);
-}
-
 .library-flow-page .library-plan-strip {
-  border-color: rgba(223, 196, 125, .22);
-  background: linear-gradient(180deg, rgba(16, 24, 42, .52), rgba(5, 10, 20, .4));
-  backdrop-filter: blur(16px) saturate(.55);
-  -webkit-backdrop-filter: blur(16px) saturate(.55);
+  border-color: rgba(255, 255, 255, .12);
+  border-radius: 4px;
+  background: rgba(5, 10, 20, .62);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
 }
 
 .library-flow-page .library-quick-action {
-  border-color: rgba(223, 196, 125, .18);
-  background: linear-gradient(180deg, rgba(16, 24, 42, .42), rgba(5, 10, 20, .32));
-  backdrop-filter: blur(14px) saturate(.5);
-  -webkit-backdrop-filter: blur(14px) saturate(.5);
+  border-color: rgba(255, 255, 255, .12);
+  border-radius: 4px;
+  background: rgba(5, 10, 20, .55);
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
   transition: border-color .2s ease, background-color .2s ease;
 }
 
 .library-flow-page .library-quick-action:hover {
-  border-color: rgba(223, 196, 125, .4);
-  background: linear-gradient(180deg, rgba(22, 30, 48, .5), rgba(12, 16, 26, .38));
+  border-color: rgba(183, 144, 67, .45);
+  background: rgba(183, 144, 67, .1);
 }
 
 .library-flow-page .library-island.is-in .library-quick-action {
