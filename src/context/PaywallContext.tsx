@@ -1,6 +1,7 @@
 import React, { createContext, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { trackEvent } from '../utils/analytics';
+import { formatIls } from '../utils/bidi';
 
 export interface PaywallPayload {
   source?: string;
@@ -189,7 +190,7 @@ function copyBySource(source: string): { title: string; body: string } {
   const map: Record<string, { title: string; body: string }> = {
     first_login: {
       title: 'ברוכים הבאים לספרייה',
-      body: 'פתיחת גישה נעשית במנוי לספרייה — לא ברכישת קורס בודד. מנוי פותח הרצאות, הדרכות ועדכונים. מסלול המיזם המלא (8888 ₪) הוא נפרד — «בדיקת התאמה».',
+      body: `פתיחת גישה נעשית במנוי לספרייה — לא ברכישת קורס בודד. מנוי פותח הרצאות, הדרכות ועדכונים. מסלול המיזם המלא (${formatIls(8888)}) הוא נפרד — «בדיקת התאמה».`,
     },
     return_visit: {
       title: 'שמחים שחזרתם',

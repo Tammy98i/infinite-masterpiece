@@ -282,7 +282,7 @@ export const AuthModal: React.FC = () => {
                 dir="ltr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`${fieldClass} text-left`}
+                className={`${fieldClass} text-start`}
               />
             </label>
             <AuthAlert kind={errorKind} message={error} />
@@ -317,7 +317,7 @@ export const AuthModal: React.FC = () => {
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 disabled={otpSent}
-                className={`${fieldClass} text-left`}
+                className={`${fieldClass} text-start`}
                 aria-describedby="auth-phone-hint"
               />
               <p id="auth-phone-hint" className="mt-1 text-[11px] text-white/35 font-light">
@@ -337,7 +337,7 @@ export const AuthModal: React.FC = () => {
                   pattern="\d{6}"
                   value={otp}
                   onChange={(e) => setOtp(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                  className={`${fieldClass} text-left tracking-[0.4em]`}
+                  className={`${fieldClass} text-start tracking-[0.4em]`}
                 />
               </label>
             ) : null}
@@ -387,7 +387,7 @@ export const AuthModal: React.FC = () => {
                 dir="ltr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`${fieldClass} text-left`}
+                className={`${fieldClass} text-start`}
               />
             </label>
             <label className="block text-center">

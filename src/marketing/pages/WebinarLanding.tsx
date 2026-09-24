@@ -9,10 +9,11 @@ import {
   type WebinarPublicPayload,
 } from '../../constants/webinar';
 import {
+  WEBINAR_AUDIENCE_LABEL,
   WEBINAR_BOTTLENECKS,
   WEBINAR_CTA_ENDED,
   WEBINAR_CTA_REGISTER,
-  WEBINAR_CTA_NEXT_CYCLE,
+  WEBINAR_DIFFERENCE_POINTS,
   WEBINAR_ENDED_NOTE,
   WEBINAR_FIT_NO,
   WEBINAR_FIT_YES,
@@ -23,18 +24,29 @@ import {
   WEBINAR_TRACKS_FINE_PRINT,
 } from '../../constants/webinarPage';
 import { WebinarRegistrationForm } from '../components/WebinarRegistrationForm';
-import { WebinarStickyCta } from '../components/WebinarStickyCta';
 import { WebinarSectionCta } from '../components/WebinarSocialProof';
 import { trackEvent, trackWebinarCta, scrollToWebinarForm } from '../../utils/analytics';
 import { captureUtmFromSearch } from '../../utils/utm';
 import { getWebinarPhase } from '../../utils/webinarTime';
 import { TeamPhoto } from '../../components/TeamPhoto';
 import { TeamGalaxy } from '../components/galaxy/TeamGalaxy';
-import { NeuralChevron, WebinarNeuralHero } from '../components/WebinarNeuralHero';
+import { WebinarNeuralHero } from '../components/WebinarNeuralHero';
 import './WebinarLanding.css';
 import './WebinarEditorialCinema.css';
 import '../components/WebinarNeuralHero.css';
 import './WebinarNeuralSlides.css';
+import './WebinarNightLanguage.css';
+import './WebinarFlowPolish.css';
+
+const WEBINAR_ISLANDS = [
+  { id: 'webinar-hero', title: 'פתיחה' },
+  { id: 'problem', title: 'הבעיה' },
+  { id: 'hosts', title: 'הערב החי' },
+  { id: 'team-universe', title: 'הצוות' },
+  { id: 'webinar-fit', title: 'התאמה' },
+  { id: 'webinar-faq', title: 'שאלות' },
+  { id: 'webinar-register', title: 'הרשמה' },
+] as const;
 
 function FaqItem({ q, a, ...props }: { q: string; a: string } & HTMLAttributes<HTMLDetailsElement>) {
   return (
@@ -74,7 +86,7 @@ function HostFaces() {
               src={host.src}
               name={host.name}
               alt={host.name}
-              className="w-[72px] h-[72px] rounded-full border-2 border-[#b79043] text-base"
+              className="webinar-host-orb w-[72px] h-[72px] rounded-full border-2 border-[#b79043] text-base"
             />
           </span>
         ))}
@@ -95,7 +107,7 @@ function WebinarRegisterCard({
 }) {
   return (
     <>
-      <p className="text-lg sm:text-xl md:text-2xl text-white font-light leading-snug mb-4 sm:mb-5 text-right">
+      <p className="text-lg sm:text-xl md:text-2xl text-white font-light leading-snug mb-4 sm:mb-5 text-start">
         {headlineParts.line1}
         {headlineParts.line2 ? (
           <>
@@ -120,8 +132,8 @@ export function WebinarLanding() {
     abVariant: 'a',
     activeHeadline: DEFAULT_WEBINAR_CONFIG.heroHeadline,
   }));
-  const fitRef = useRef<HTMLElement>(null);
   const fitTracked = useRef(false);
+  const [activeIsland, setActiveIsland] = useState('webinar-hero');
   const [now, setNow] = useState(() => Date.now());
   const [configReady, setConfigReady] = useState(false);
 
@@ -143,19 +155,29 @@ export function WebinarLanding() {
   }, []);
 
   useEffect(() => {
-    const node = fitRef.current;
-    if (!node) return;
-    const observer = new IntersectionObserver(
+    const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches
+      || document.documentElement.classList.contains('a11y-reduce-motion');
+    const islands = Array.from(document.querySelectorAll<HTMLElement>('.webinar-island'));
+    const appear = new IntersectionObserver(
       (entries) => {
-        if (fitTracked.current || !entries.some((e) => e.isIntersecting)) return;
-        fitTracked.current = true;
-        trackEvent('webinar_fit_section_viewed');
-        observer.disconnect();
+        for (const entry of entries) {
+          if (!entry.isIntersecting) continue;
+          entry.target.classList.add('is-in');
+          const id = entry.target.id === 'webinar-register-bottom' ? 'webinar-register' : entry.target.id;
+          if (id) setActiveIsland(id);
+          if (id === 'webinar-fit' && !fitTracked.current) {
+            fitTracked.current = true;
+            trackEvent('webinar_fit_section_viewed');
+          }
+        }
       },
-      { threshold: 0.35 }
+      { threshold: 0.14, rootMargin: '0px 0px -16% 0px' }
     );
-    observer.observe(node);
-    return () => observer.disconnect();
+    for (const node of islands) {
+      if (reduce) node.classList.add('is-in');
+      appear.observe(node);
+    }
+    return () => appear.disconnect();
   }, []);
 
   const { config, activeHeadline } = payload;
@@ -192,14 +214,24 @@ export function WebinarLanding() {
     },
   ];
 
+  const eveningFeats = [...WEBINAR_DIFFERENCE_POINTS.map((item) => item.title), config.costLabel];
+
   return (
-    <div className="webinar-stage-page w-full pb-28">
-      <nav className="webinar-section-nav" aria-label="ניווט בתוך עמוד הוובינר">
-        <a href="#webinar-fit">למי זה</a>
-        <a href="#webinar-register">{eventEnded ? 'המחזור הבא' : 'הרשמה'}</a>
-        <a href="#webinar-faq">שאלות</a>
+    <div className="webinar-stage-page webinar-night-page webinar-flow-page w-full">
+      <nav className="webinar-spine" aria-label="מיקום בעמוד הוובינר">
+        {WEBINAR_ISLANDS.map((island) => (
+          <a
+            key={island.id}
+            href={`#${island.id}`}
+            className={activeIsland === island.id ? 'is-on' : ''}
+            aria-current={activeIsland === island.id ? 'true' : undefined}
+            aria-label={island.title}
+          >
+            <span>{island.title}</span>
+          </a>
+        ))}
       </nav>
-      <div className="webinar-neural-overture">
+
       <WebinarNeuralHero
         config={config}
         headlineParts={headlineParts}
@@ -208,8 +240,8 @@ export function WebinarLanding() {
         onRegister={scrollToForm}
       />
 
-      <section id="problem" className="webinar-neural-afterglow">
-        <span className="webinar-neural-stem" aria-hidden="true" />
+      <section id="problem" className="webinar-neural-afterglow webinar-island">
+        <div className="webinar-flow-stem" aria-hidden="true" />
         <div className="webinar-neural-plate">
           <SectionLabel>הבעיה</SectionLabel>
           <SectionTitle>
@@ -217,55 +249,49 @@ export function WebinarLanding() {
             <br />
             <span>הבעיה היא שאין סביבו מערכת.</span>
           </SectionTitle>
+          <p className="webinar-neural-sub">{config.heroSubheadline}</p>
           <p className="webinar-neural-hold">{WEBINAR_HOLDING_LINE}</p>
           <ul className="webinar-neural-bottlenecks">
             {WEBINAR_BOTTLENECKS.map((item) => (
               <li key={item.title}>
-                <NeuralChevron />
-                <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.text}</p>
-                </div>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
               </li>
             ))}
           </ul>
         </div>
       </section>
-      </div>
 
       <div className="webinar-editorial-grid">
-      <section id="hosts" className="webinar-neural-slide">
+      <section id="hosts" className="webinar-neural-slide webinar-island">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>הערב החי</SectionLabel>
           <SectionTitle>לא באים רק ללמוד. באים לבצע.</SectionTitle>
-          <p className="text-white/50 font-light leading-relaxed max-w-3xl mb-10">
+          <p className="text-white/50 font-light leading-relaxed max-w-3xl mx-auto mb-4">
             גל, תמי וגלב בלייב. שיעור מכירות, משימת ביצוע, ואז פעולה שנשלחת לעולם.
           </p>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          <p className="webinar-host-feats">{eveningFeats.join(' · ')}</p>
+          <ul className="webinar-host-orbs">
             {hosts.map((leader) => (
-              <article key={leader.name} className="glass-card overflow-hidden">
-                <div className="aspect-[4/3] overflow-hidden bg-[#0b1020]">
-                  <TeamPhoto
-                    src={leader.image}
-                    name={leader.name}
-                    alt={leader.name}
-                    className="w-full h-full text-6xl"
-                  />
-                </div>
-                <div className="p-6">
-                  <h3 className="text-xl text-white mb-1">{leader.name}</h3>
-                  <p className="text-sm text-[#b79043] mb-3">{leader.title}</p>
-                  <p className="text-sm text-white/50 font-light leading-relaxed">{leader.bio}</p>
-                </div>
-              </article>
+              <li key={leader.name}>
+                <TeamPhoto
+                  src={leader.image}
+                  name={leader.name}
+                  alt={leader.name}
+                  className="webinar-host-orb"
+                />
+                <h3>{leader.name}</h3>
+                <p className="webinar-host-role">{leader.title}</p>
+                <p className="webinar-host-bio">{leader.bio}</p>
+              </li>
             ))}
-          </div>
-          <ol className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+          </ul>
+          <ol className="webinar-task-spine">
             {WEBINAR_TASK_STEPS.map((item, index) => (
-              <li key={item.title} className="glass-card p-5">
-                <p className="text-[11px] text-[#b79043] mb-3">{String(index + 1).padStart(2, '0')}</p>
-                <h3 className="text-white mb-2">{item.title}</h3>
-                <p className="text-sm text-white/50 font-light leading-relaxed">{item.text}</p>
+              <li key={item.title}>
+                <i>{String(index + 1).padStart(2, '0')}</i>
+                <h3>{item.title}</h3>
+                <p>{item.text}</p>
               </li>
             ))}
           </ol>
@@ -273,19 +299,25 @@ export function WebinarLanding() {
             שני מסלולי כניסה לפיילוט, אמיצים והססנים, יוצגו בסוף הערב. לא נדרש להחליט עכשיו.
           </p>
           <p className="mt-3 text-[11px] text-white/35 font-light leading-relaxed">{WEBINAR_TRACKS_FINE_PRINT}</p>
+          <p className="webinar-host-meta">{config.location} · {config.durationMinutes} דקות · {WEBINAR_AUDIENCE_LABEL}</p>
         </div>
       </section>
 
-      <TeamGalaxy />
+      <TeamGalaxy
+        className="webinar-island"
+        eyebrow="האנשים מאחורי החזון"
+        title="הצוות שמחזיק את המערכת"
+        subtitle="כל אחד מביא כוח אחר. יחד הם יוצרים מערכת אחת."
+      />
 
-      <section id="webinar-fit" ref={fitRef} className="webinar-neural-slide">
+      <section id="webinar-fit" className="webinar-neural-slide webinar-island">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <SectionLabel>התאמה</SectionLabel>
             <SectionTitle>הוובינר הזה מתאים לך אם…</SectionTitle>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-[1fr_80px_1fr] gap-6 items-stretch">
-            <div className="glass-card p-6 text-right">
+          <div className="webinar-fit-grid grid grid-cols-1 lg:grid-cols-[1.15fr_48px_.85fr] gap-6 items-stretch">
+            <div className="glass-card webinar-fit-yes p-6 text-start">
               <h3 className="text-lg text-white mb-4 font-light text-center">מתאים אם…</h3>
               <ul className="space-y-3">
                 {WEBINAR_FIT_YES.map((item) => (
@@ -299,7 +331,7 @@ export function WebinarLanding() {
             <div className="hidden lg:flex items-stretch justify-center" aria-hidden>
               <div className="w-px bg-gradient-to-b from-transparent via-[#dfc47d]/70 to-transparent" />
             </div>
-            <div className="glass-card p-6 text-right">
+            <div className="glass-card webinar-fit-no p-6 text-start">
               <h3 className="text-lg text-white mb-4 font-light text-center">לא מתאים אם…</h3>
               <ul className="space-y-3">
                 {WEBINAR_FIT_NO.map((item) => (
@@ -317,7 +349,7 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <section id="webinar-faq" className="webinar-neural-slide">
+      <section id="webinar-faq" className="webinar-neural-slide webinar-island">
         <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <SectionLabel>שאלות</SectionLabel>
@@ -331,29 +363,21 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <section id="webinar-register-bottom" className="webinar-neural-slide relative overflow-hidden">
+      <section id="webinar-register-bottom" className="webinar-neural-slide webinar-island relative overflow-hidden">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0d0b08]/20 to-[#0d0b08]/50" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(183, 144, 67,0.16),transparent_70%)]" />
         </div>
         <div className="relative z-10 max-w-[920px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          {eventEnded ? (
-            <div id={WEBINAR_REGISTER_ID} className="scroll-mt-24">
-              <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4 max-w-2xl mx-auto">
-                {WEBINAR_CTA_ENDED}
-              </p>
-              <p className="text-sm sm:text-base text-white/70 font-light mb-8">{WEBINAR_ENDED_NOTE}</p>
-              <Link to="/pricing" className="btn-gold text-black">{WEBINAR_CTA_NEXT_CYCLE}</Link>
-            </div>
-          ) : (
-            <>
           <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4 max-w-2xl mx-auto">
-            זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.
+            {eventEnded ? WEBINAR_CTA_ENDED : 'זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.'}
           </p>
-          <p className="text-sm sm:text-base text-[#b79043] font-light mb-8">מחכים לך בוובינר. גל, תמי וגלב.</p>
+          <p className="text-sm sm:text-base text-[#b79043] font-light mb-8">
+            {eventEnded ? WEBINAR_ENDED_NOTE : 'מחכים לך בוובינר. גל, תמי וגלב.'}
+          </p>
           <aside
             id={WEBINAR_REGISTER_ID}
-            aria-label="הרשמה לוובינר"
+            aria-label={eventEnded ? 'הרשמה למחזור הבא' : 'הרשמה לוובינר'}
             className={`${REGISTER_CARD_CLASS} webinar-stage-register-card mx-auto w-full max-w-xl md:max-w-2xl lg:max-w-3xl text-start scroll-mt-24`}
           >
             <WebinarRegisterCard
@@ -362,8 +386,6 @@ export function WebinarLanding() {
               headlineParts={headlineParts}
             />
           </aside>
-            </>
-          )}
           <p className="flex flex-wrap items-center justify-center gap-4 text-xs text-[#b79043]/80 font-light mt-8">
             <Link to="/terms" className="hover:text-[#dfc47d] min-h-11 inline-flex items-center">
               תנאי שימוש
@@ -379,16 +401,6 @@ export function WebinarLanding() {
       </section>
       </div>
 
-      {eventEnded ? null : (
-        <WebinarStickyCta
-          date={config.date}
-          time={config.time}
-          registrationCount={payload.registrationCount}
-          eventNight={eventNight}
-          zoomLink={config.zoomLink}
-          whatsappGroupUrl={config.whatsappGroupUrl}
-        />
-      )}
     </div>
   );
 }

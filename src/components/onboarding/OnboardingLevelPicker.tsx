@@ -29,9 +29,9 @@ export const OnboardingLevelPicker: React.FC<Props> = ({ userId, role, onClose }
 
   return (
     <div className="fixed inset-0 z-[70] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-      <div className="glass bg-zinc-950/95 border border-primary/40 rounded-3xl max-w-lg w-full p-8 relative shadow-2xl text-right">
+      <div className="glass bg-zinc-950/95 border border-primary/40 rounded-3xl max-w-lg w-full p-8 relative shadow-2xl text-start">
         {onClose && (
-          <button onClick={onClose} className="absolute top-6 left-6 text-zinc-400 hover:text-white text-sm focus-ring rounded px-2 py-1">
+          <button onClick={onClose} className="absolute top-6 end-6 text-zinc-400 hover:text-white text-sm focus-ring rounded px-2 py-1">
             דילוג
           </button>
         )}
@@ -45,7 +45,7 @@ export const OnboardingLevelPicker: React.FC<Props> = ({ userId, role, onClose }
                 key={lvl.id}
                 disabled={isLoading}
                 onClick={() => handleSelect(lvl.id)}
-                className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/50 hover:bg-primary/5 transition-all text-right focus-ring"
+                className="flex items-start gap-4 p-4 rounded-2xl bg-white/5 border border-white/10 hover:border-primary/50 hover:bg-primary/5 transition-all text-start focus-ring"
               >
                 <div className="w-10 h-10 rounded-xl bg-primary/20 text-primary-light flex items-center justify-center shrink-0">
                   <Icon className="w-5 h-5" />
