@@ -55,19 +55,19 @@ export const OnboardingCenterView: React.FC = () => {
     <div className="grid gap-8">
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          <div className="glass rounded-2xl p-4 border border-white/10">
+          <div className="crm-desk-panel p-4 border border-white/10">
             <div className="text-xs text-zinc-500 mb-1">התחילו מסלול</div>
             <div className="text-2xl font-accent font-semibold tabular-nums text-primary-light">{stats.totalStarted}</div>
           </div>
-          <div className="glass rounded-2xl p-4 border border-white/10">
+          <div className="crm-desk-panel p-4 border border-white/10">
             <div className="text-xs text-zinc-500 mb-1">סיימו מסלול</div>
             <div className="text-2xl font-accent font-semibold tabular-nums text-emerald-400">{stats.totalCompleted}</div>
           </div>
-          <div className="glass rounded-2xl p-4 border border-white/10">
+          <div className="crm-desk-panel p-4 border border-white/10">
             <div className="text-xs text-zinc-500 mb-1">אחוז השלמה</div>
             <div className="text-2xl font-accent font-semibold tabular-nums text-white">{stats.completionRate}%</div>
           </div>
-          <div className="glass rounded-2xl p-4 border border-white/10">
+          <div className="crm-desk-panel p-4 border border-white/10">
             <div className="text-xs text-zinc-500 mb-1">בונוסים שנפתחו</div>
             <div className="text-2xl font-accent font-semibold tabular-nums text-white">{stats.bonusesUnlockedCount}</div>
           </div>
@@ -75,7 +75,7 @@ export const OnboardingCenterView: React.FC = () => {
       )}
 
       {stats && stats.stepsWithMostSkips.length > 0 && (
-        <div className="glass rounded-2xl p-5 border border-white/10">
+        <div className="crm-desk-panel p-5 border border-white/10">
           <div className="flex items-center gap-2 text-sm font-bold text-zinc-300 mb-3">
             <BarChart3 className="w-4 h-4 text-primary-light" />
             שלבים עם הכי הרבה דילוגים
@@ -91,7 +91,7 @@ export const OnboardingCenterView: React.FC = () => {
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        <div className="lg:col-span-4 glass rounded-2xl p-4 border border-white/10">
+        <div className="lg:col-span-4 crm-desk-panel p-4 border border-white/10">
           <div className="font-bold text-white mb-4 flex items-center gap-2">
             <BookOpen className="w-4 h-4 text-primary-light" />
             מסלולי הדרכה
@@ -114,7 +114,7 @@ export const OnboardingCenterView: React.FC = () => {
           </div>
         </div>
 
-        <div className="lg:col-span-8 glass rounded-2xl p-5 border border-white/10">
+        <div className="lg:col-span-8 crm-desk-panel p-5 border border-white/10">
           {selectedPath ? (
             <>
               <div className="flex items-center justify-between mb-4 pb-4 border-b border-white/10">
