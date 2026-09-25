@@ -79,7 +79,8 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
         />
         <div className="library-hero-veil-bottom absolute inset-0" />
         <div className="library-hero-veil-side absolute inset-0 w-full md:w-[70%] ms-auto" />
-        <div className="absolute inset-0 bg-black/15" />
+        <div className="library-hero-depth absolute inset-0" />
+        <div className="absolute inset-0 bg-gradient-to-t from-[#02060e] via-transparent to-black/25" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-8 w-full z-10 text-start md:max-w-2xl md:ms-0 md:me-auto">

@@ -28,10 +28,10 @@
   position: absolute;
   inset-inline: 0;
   bottom: 0;
-  height: 42%;
+  height: 48%;
   z-index: 2;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(2, 6, 15, 0) 0%, rgba(5, 10, 20, .22) 58%, rgba(5, 10, 20, .08) 100%);
+  background: linear-gradient(180deg, rgba(2, 6, 15, 0) 0%, rgba(2, 6, 14, .45) 48%, rgba(2, 6, 14, .92) 100%);
 }
 
 .library-island {

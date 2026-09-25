@@ -2,18 +2,18 @@
    Keep the starfield visible, then stack dark navy layers on top. */
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-image {
-  opacity: .78;
-  filter: saturate(.95) contrast(1.1) brightness(.68);
+  opacity: .62;
+  filter: saturate(.88) contrast(1.14) brightness(.48);
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-blackout {
-  background: rgba(5, 10, 20, .28);
+  background: rgba(5, 10, 20, .46);
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-shade {
   background:
-    radial-gradient(circle at 50% 16%, transparent 14%, rgba(5, 10, 20, .2) 58%, rgba(5, 10, 20, .48) 100%),
-    linear-gradient(180deg, rgba(5, 10, 20, .14), rgba(5, 10, 20, .4));
+    radial-gradient(circle at 50% 14%, transparent 10%, rgba(5, 10, 20, .32) 54%, rgba(5, 10, 20, .62) 100%),
+    linear-gradient(180deg, rgba(5, 10, 20, .28), rgba(5, 10, 20, .58));
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-library-veil {
@@ -21,36 +21,49 @@
 }
 
 .editorial-sky-library-veil-a {
-  background: linear-gradient(180deg, rgba(5, 10, 20, .48) 0%, rgba(5, 10, 20, .08) 28%, transparent 50%, rgba(5, 10, 20, .55) 100%);
+  background: linear-gradient(180deg, rgba(5, 10, 20, .62) 0%, rgba(5, 10, 20, .18) 24%, transparent 46%, rgba(5, 10, 20, .72) 100%);
 }
 
 .editorial-sky-library-veil-b {
-  background: rgba(3, 8, 18, .16);
+  background: rgba(2, 6, 14, .28);
 }
 
 .editorial-sky-library-veil-c {
-  background: linear-gradient(90deg, rgba(5, 10, 20, .36), transparent 42%, rgba(5, 10, 20, .36));
+  background: linear-gradient(90deg, rgba(5, 10, 20, .48), transparent 40%, rgba(5, 10, 20, .48));
 }
 
 .editorial-sky-library-veil-d {
-  background: radial-gradient(ellipse at 50% 0%, rgba(5, 10, 20, .04), rgba(5, 10, 20, .32) 78%);
+  background: radial-gradient(ellipse at 50% 0%, rgba(5, 10, 20, .1), rgba(5, 10, 20, .46) 78%);
 }
 
 .editorial-sky-library-veil-e {
-  background: linear-gradient(180deg, transparent 12%, rgba(3, 8, 18, .22) 100%);
+  background: linear-gradient(180deg, transparent 8%, rgba(2, 6, 14, .36) 100%);
 }
 
 /* Calibrated library veils — bottom / side / soft radial (stars stay readable) */
 .editorial-sky-library-veil-f {
-  background: linear-gradient(180deg, transparent 40%, rgba(2, 6, 14, .62) 100%);
+  background: linear-gradient(180deg, transparent 32%, rgba(2, 6, 14, .78) 100%);
 }
 
 .editorial-sky-library-veil-g {
-  background: linear-gradient(to inline-end, rgba(5, 10, 20, .38), transparent 45%);
+  background: linear-gradient(to inline-end, rgba(5, 10, 20, .52), transparent 42%);
 }
 
 .editorial-sky-library-veil-h {
-  background: radial-gradient(ellipse at 50% 35%, transparent 18%, rgba(3, 8, 18, .4) 88%);
+  background: radial-gradient(ellipse at 50% 35%, transparent 12%, rgba(2, 6, 14, .55) 90%);
+}
+
+/* Extra depth layers — Netflix cinema plate over space */
+.editorial-sky-library-veil-i {
+  background: linear-gradient(180deg, rgba(0, 0, 0, .35) 0%, transparent 22%, transparent 55%, rgba(0, 0, 0, .5) 100%);
+}
+
+.editorial-sky-library-veil-j {
+  background: radial-gradient(circle at 72% 28%, rgba(5, 10, 20, .05), rgba(2, 6, 14, .42) 70%);
+}
+
+.editorial-sky-library-veil-k {
+  background: linear-gradient(185deg, transparent 0%, rgba(5, 10, 20, .2) 40%, rgba(2, 6, 14, .58) 100%);
 }
 
 .vod-app.library-catalog,
@@ -93,16 +106,16 @@
 }
 
 .library-catalog .library-hero-veil-bottom {
-  background: linear-gradient(180deg, transparent 40%, rgba(5, 10, 20, .45) 72%, rgba(5, 10, 20, .82) 100%);
+  background: linear-gradient(180deg, transparent 28%, rgba(5, 10, 20, .55) 62%, rgba(2, 6, 14, .94) 100%);
 }
 
 .library-catalog .library-hero-veil-side {
-  background: linear-gradient(270deg, transparent 8%, rgba(5, 10, 20, .32) 48%, rgba(5, 10, 20, .78) 100%);
+  background: linear-gradient(270deg, transparent 4%, rgba(5, 10, 20, .42) 42%, rgba(2, 6, 14, .88) 100%);
 }
 
 .library-catalog .library-hero::after {
-  height: 28%;
-  background: linear-gradient(180deg, transparent, rgba(5, 10, 20, .86));
+  height: 36%;
+  background: linear-gradient(180deg, transparent, rgba(2, 6, 14, .96));
 }
 
 .library-catalog .library-hero-play {
@@ -435,4 +448,132 @@
 
 .a11y-reduce-motion .library-catalog .library-poster-play {
   opacity: 1;
+}
+
+/* ——— Netflix academic depth (additive; keep all existing features) ——— */
+
+.library-flow-page {
+  /* Soft cinema plateau under rails so posters read like Netflix rows */
+  background:
+    linear-gradient(180deg, transparent 0%, rgba(2, 6, 14, .55) 18%, rgba(2, 6, 14, .72) 100%);
+}
+
+.library-catalog .library-rail-title {
+  font-size: clamp(1.05rem, 1.6vw, 1.35rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+}
+
+.library-catalog .library-rail-see-all {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: rgba(255, 255, 255, 0.55);
+  transition: color 0.2s ease, transform 0.2s ease;
+}
+
+.library-catalog .library-rail-see-all:hover {
+  color: #fff;
+}
+
+.library-catalog .group\/row:hover .library-rail-see-all {
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.library-catalog .library-rail-scroller {
+  /* Edge fades like Netflix carousels */
+  mask-image: linear-gradient(
+    to left,
+    transparent 0,
+    #000 1.5rem,
+    #000 calc(100% - 1.5rem),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to left,
+    transparent 0,
+    #000 1.5rem,
+    #000 calc(100% - 1.5rem),
+    transparent 100%
+  );
+}
+
+.library-catalog .group\/row:hover .library-poster:not(:hover):not(:focus-within) {
+  filter: brightness(0.72);
+}
+
+.library-catalog .library-poster:hover,
+.library-catalog .library-poster:focus-within {
+  transform: scale(1.08);
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55);
+  filter: brightness(1.05);
+}
+
+.library-catalog .library-poster-progress {
+  height: 3px;
+  background: rgba(255, 255, 255, 0.22);
+}
+
+.library-catalog .library-poster-progress > div {
+  background: #e50914;
+  box-shadow: 0 0 0 0.5px rgba(229, 9, 20, 0.35);
+}
+
+/* Academic gold progress when continue uses brand tone via data attr */
+.library-catalog .library-poster-progress.is-brand > div {
+  background: #b79043;
+  box-shadow: none;
+}
+
+.library-catalog .library-rank-mark {
+  font-size: clamp(4.5rem, 9vw, 7rem);
+  font-weight: 800;
+  line-height: 0.85;
+  color: transparent;
+  -webkit-text-stroke: 2px rgba(183, 144, 67, 0.75);
+  text-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+  opacity: 0.95;
+}
+
+.library-catalog .library-hero-meta-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  border-radius: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  background: rgba(0, 0, 0, 0.45);
+  padding: 0.2rem 0.55rem;
+  font-size: 0.75rem;
+  color: rgba(255, 255, 255, 0.9);
+}
+
+.library-catalog .library-hero-depth {
+  background: rgba(0, 0, 0, 0.32);
+}
+
+.vod-app.library-catalog .editorial-library-header.is-over-hero {
+  background: linear-gradient(180deg, rgba(2, 6, 14, .88), rgba(2, 6, 14, .35), transparent) !important;
+}
+
+.vod-app.library-catalog .editorial-library-header.is-solid {
+  background: rgba(2, 6, 14, .9) !important;
+}
+
+.library-flow-page .library-plan-strip {
+  background: rgba(2, 6, 14, .78);
+  border-color: rgba(255, 255, 255, .1);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .library-catalog .group\/row:hover .library-poster:not(:hover):not(:focus-within) {
+    filter: none;
+  }
+}
+
+.a11y-reduce-motion .library-catalog .group\/row:hover .library-poster:not(:hover):not(:focus-within) {
+  filter: none;
 }
