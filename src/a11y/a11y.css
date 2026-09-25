@@ -120,8 +120,10 @@ html.a11y-text-150 {
 /* Counter-invert: keep widget readable under invert/mono filters */
 html.a11y-contrast-invert #a11y-widget-panel,
 html.a11y-contrast-invert #a11y-widget-trigger,
+html.a11y-contrast-invert #a11y-widget-dock,
 html.a11y-contrast-mono #a11y-widget-panel,
-html.a11y-contrast-mono #a11y-widget-trigger {
+html.a11y-contrast-mono #a11y-widget-trigger,
+html.a11y-contrast-mono #a11y-widget-dock {
   filter: invert(1) hue-rotate(180deg);
 }
 
@@ -141,17 +143,32 @@ html.a11y-contrast-mono #a11y-widget-trigger {
   }
 }
 
-/* Widget UI */
-#a11y-widget-trigger {
+/* Widget UI — docked to the trigger (above on phone, beside on tablet/desktop) */
+#a11y-widget-dock {
   position: fixed;
-  bottom: 5.5rem;
-  inset-inline-start: 1.25rem;
   z-index: 9990;
+  bottom: max(5.25rem, calc(env(safe-area-inset-bottom, 0px) + 4.5rem));
+  inset-inline-start: max(1rem, env(safe-area-inset-inline-start, 0px));
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  width: 3rem;
+  pointer-events: none;
+}
+
+#a11y-widget-dock > * {
+  pointer-events: auto;
+}
+
+#a11y-widget-trigger {
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   justify-content: center;
   width: 3rem;
   height: 3rem;
+  flex-shrink: 0;
   border: 1px solid rgba(183, 144, 67, 0.4);
   border-radius: 9999px;
   background: #0a0a0a;
@@ -162,9 +179,9 @@ html.a11y-contrast-mono #a11y-widget-trigger {
 }
 
 @media (min-width: 768px) {
-  #a11y-widget-trigger {
-    bottom: 1.5rem;
-    inset-inline-start: 1.5rem;
+  #a11y-widget-dock {
+    bottom: max(1.5rem, calc(env(safe-area-inset-bottom, 0px) + 1rem));
+    inset-inline-start: max(1.5rem, env(safe-area-inset-inline-start, 0px));
   }
 }
 
@@ -184,23 +201,53 @@ html.a11y-contrast-mono #a11y-widget-trigger {
 #a11y-widget-backdrop {
   position: fixed;
   inset: 0;
-  z-index: 9991;
-  background: rgba(0, 0, 0, 0.55);
+  z-index: 9989;
+  background: rgba(0, 0, 0, 0.45);
 }
 
 #a11y-widget-panel {
-  position: fixed;
-  top: 0;
-  inset-inline-end: 0;
-  z-index: 9992;
+  position: absolute;
+  z-index: 1;
   display: flex;
   flex-direction: column;
-  width: min(100%, 22rem);
-  max-height: 100dvh;
+  /* Phone: float above the button, flush to the same start edge */
+  bottom: calc(100% + 0.75rem);
+  inset-inline-start: 0;
+  width: min(20.5rem, calc(100vw - 2rem));
+  max-height: min(70dvh, 34rem);
+  overflow: hidden;
   background: #0a0a0a;
   color: #fff;
-  border-inline-start: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 1rem;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.5);
+}
+
+/* Tablet+: open beside the button, toward page center */
+@media (min-width: 640px) {
+  #a11y-widget-panel {
+    bottom: 0;
+    inset-inline-start: calc(100% + 0.75rem);
+    width: min(22rem, calc(100vw - 6.5rem));
+    max-height: min(78dvh, 38rem);
+  }
+}
+
+@media (min-width: 1024px) {
+  #a11y-widget-panel {
+    width: min(24rem, calc(100vw - 7rem));
+    max-height: min(80dvh, 42rem);
+  }
+}
+
+/* Very short landscape: keep panel above so it stays on-screen */
+@media (max-height: 540px) {
+  #a11y-widget-panel {
+    bottom: calc(100% + 0.5rem);
+    inset-inline-start: 0;
+    width: min(22rem, calc(100vw - 2rem));
+    max-height: min(68dvh, 22rem);
+  }
 }
 
 .a11y-panel-header {
@@ -244,8 +291,15 @@ html.a11y-contrast-mono #a11y-widget-trigger {
 
 .a11y-toggle-grid {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 0.75rem;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.65rem;
+}
+
+@media (min-width: 640px) {
+  .a11y-toggle-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.75rem;
+  }
 }
 
 .a11y-toggle-card {
@@ -262,7 +316,13 @@ html.a11y-contrast-mono #a11y-widget-trigger {
   color: #fff;
   text-align: center;
   cursor: pointer;
-  min-height: 5.5rem;
+  min-height: 5rem;
+}
+
+@media (min-width: 640px) {
+  .a11y-toggle-card {
+    min-height: 5.5rem;
+  }
 }
 
 .a11y-toggle-card:hover {
