@@ -214,7 +214,7 @@ html.a11y-contrast-mono #a11y-widget-dock {
   bottom: calc(100% + 0.75rem);
   inset-inline-start: 0;
   width: min(20.5rem, calc(100vw - 2rem));
-  max-height: min(70dvh, 34rem);
+  max-height: min(62dvh, 30rem);
   overflow: hidden;
   background: #0a0a0a;
   color: #fff;
@@ -229,14 +229,14 @@ html.a11y-contrast-mono #a11y-widget-dock {
     bottom: 0;
     inset-inline-start: calc(100% + 0.75rem);
     width: min(22rem, calc(100vw - 6.5rem));
-    max-height: min(78dvh, 38rem);
+    max-height: min(68dvh, 34rem);
   }
 }
 
 @media (min-width: 1024px) {
   #a11y-widget-panel {
     width: min(24rem, calc(100vw - 7rem));
-    max-height: min(80dvh, 42rem);
+    max-height: min(72dvh, 36rem);
   }
 }
 
