@@ -125,7 +125,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
     >
       {rank != null && (
         <span
-          className="absolute end-0 bottom-6 z-0 text-6xl sm:text-7xl font-accent font-bold leading-none text-[#b79043]/45 pointer-events-none select-none"
+          className="library-rank-mark absolute end-0 bottom-4 z-0 pointer-events-none select-none"
           aria-hidden
         >
           {rank}
@@ -206,14 +206,16 @@ export const CourseCard: React.FC<CourseCardProps> = ({
 
               {showProgress > 0 && (
                 <div
-                  className="absolute bottom-0 inset-inline-0 h-1 bg-white/15"
+                  className={`library-poster-progress absolute bottom-0 inset-inline-0 ${
+                    layout === 'continue' ? '' : 'is-brand'
+                  }`}
                   role="progressbar"
                   aria-label={`התקדמות ב־${course.title}`}
                   aria-valuemin={0}
                   aria-valuemax={100}
                   aria-valuenow={Math.round(showProgress)}
                 >
-                  <div className="h-full bg-[#b79043]" style={{ width: `${showProgress}%` }} />
+                  <div className="h-full" style={{ width: `${showProgress}%` }} />
                 </div>
               )}
             </div>

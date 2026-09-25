@@ -119,7 +119,7 @@ export const HomeView: React.FC = () => {
     return dedupeCourses(list, {
       excludeIds: excludeForRails,
       softExcludeIds: softHero,
-      limit: 5,
+      limit: 10,
     });
   }, [courses, excludeForRails, softHero, weeklyPopularIds]);
 
@@ -214,6 +214,8 @@ export const HomeView: React.FC = () => {
                 courses={recommendedDeduped}
                 sectionName="recommended"
                 reasons={reasons}
+                onSeeAll={() => setView('search')}
+                seeAllLabel="הצג הכל"
               />
             )}
 
@@ -235,6 +237,8 @@ export const HomeView: React.FC = () => {
               courses={newest}
               sectionName="new"
               showNewBadge
+              onSeeAll={() => setView('search')}
+              seeAllLabel="הצג הכל"
             />
 
             <CategoryRow
@@ -243,6 +247,8 @@ export const HomeView: React.FC = () => {
               courses={weekly}
               ranked
               sectionName="weekly"
+              onSeeAll={() => setView('search')}
+              seeAllLabel="הצג הכל"
             />
 
             <TopicsGrid />

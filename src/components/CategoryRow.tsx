@@ -79,15 +79,16 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
       className="library-spacious-section library-island py-3 select-none relative group/row scroll-mt-24"
       aria-label={`${title} — רשימת הרצאות`}
     >
-      <div className="mx-auto flex max-w-[1400px] items-center gap-4 px-4 sm:px-8 lg:px-10 mb-1">
+      <div className="mx-auto flex max-w-[1400px] items-center gap-3 px-4 sm:px-8 lg:px-10 mb-1">
         <h2 className="library-rail-title text-white tracking-tight">{title}</h2>
         {onSeeAll && (
           <button
             type="button"
             onClick={onSeeAll}
-            className="text-sm text-white/55 hover:text-white transition-colors min-h-11 px-1"
+            className="library-rail-see-all min-h-11 px-1"
           >
-            {seeAllLabel}
+            <span>{seeAllLabel}</span>
+            <ChevronLeft className="w-4 h-4 opacity-80" aria-hidden />
           </button>
         )}
       </div>

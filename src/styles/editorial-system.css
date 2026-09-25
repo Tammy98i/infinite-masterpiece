@@ -67,20 +67,37 @@ html, body, #root { width: 100%; min-height: 100%; margin: 0; }
 body { background: var(--editorial-ink); }
 
 .editorial-sky-backdrop { background: var(--editorial-ink); }
-.editorial-sky-image { opacity: .9; filter: saturate(1.08) contrast(1.04); }
-.editorial-sky-blackout { background: rgba(3, 8, 18, .3); }
+.editorial-sky-image { opacity: .82; filter: saturate(1.04) contrast(1.08) brightness(.78); }
+.editorial-sky-blackout { background: rgba(3, 8, 18, .42); }
 .editorial-sky-shade {
   background:
-    radial-gradient(circle at 50% 42%, transparent 18%, rgba(5, 10, 20, .18) 72%, rgba(5, 10, 20, .48) 100%),
-    linear-gradient(180deg, rgba(5, 10, 20, .12), rgba(5, 10, 20, .34));
+    radial-gradient(circle at 50% 38%, transparent 12%, rgba(5, 10, 20, .28) 68%, rgba(5, 10, 20, .58) 100%),
+    linear-gradient(180deg, rgba(5, 10, 20, .22), rgba(5, 10, 20, .48));
   backdrop-filter: none;
 }
 .editorial-sky-library-veil { display: none; }
+.editorial-sky-depth-veil { display: none; }
+
+/* Sitewide depth veils — darken the starfield without hiding it */
+.editorial-sky-depth-veil-a,
+.editorial-sky-depth-veil-b,
+.editorial-sky-depth-veil-c {
+  display: block;
+}
+.editorial-sky-depth-veil-a {
+  background: linear-gradient(180deg, rgba(2, 6, 14, .42) 0%, transparent 32%, transparent 58%, rgba(2, 6, 14, .62) 100%);
+}
+.editorial-sky-depth-veil-b {
+  background: radial-gradient(ellipse at 50% 20%, rgba(5, 10, 20, .12), rgba(3, 8, 18, .48) 75%);
+}
+.editorial-sky-depth-veil-c {
+  background: linear-gradient(90deg, rgba(5, 10, 20, .36), transparent 38%, transparent 62%, rgba(5, 10, 20, .36));
+}
 
 .editorial-marketing-shell,
 .vod-app {
   color: var(--editorial-cream);
-  background: rgba(5, 10, 20, .42);
+  background: rgba(5, 10, 20, .52);
 }
 
 .editorial-marketing-shell.sky-readable,
@@ -90,7 +107,7 @@ body { background: var(--editorial-ink); }
 .vod-app main { color: var(--editorial-cream); }
 
 .editorial-marketing-shell:not(.video-home) main {
-  background: rgba(5, 10, 20, .68);
+  background: rgba(5, 10, 20, .74);
 }
 
 /* Normalize legacy utility surfaces into the editorial palette. */
