@@ -453,9 +453,9 @@
 /* ——— Netflix academic depth (additive; keep all existing features) ——— */
 
 .library-flow-page {
-  /* Soft cinema plateau under rails so posters read like Netflix rows */
+  /* Soft cinema plateau under rails — dark enough for posters, stars still peek */
   background:
-    linear-gradient(180deg, transparent 0%, rgba(2, 6, 14, .55) 18%, rgba(2, 6, 14, .72) 100%);
+    linear-gradient(180deg, transparent 0%, rgba(2, 6, 14, .42) 18%, rgba(2, 6, 14, .62) 100%);
 }
 
 .library-catalog .library-rail-title {

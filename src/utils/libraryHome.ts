@@ -139,7 +139,7 @@ export function pickWeeklyPopular(
   if (weeklyPopularIds.length > 0) {
     const byId = new Map(courses.map((c) => [c.id, c]));
     const ranked = weeklyPopularIds.map((id) => byId.get(id)).filter(Boolean) as Course[];
-    if (ranked.length >= Math.min(3, limit)) return ranked.slice(0, limit);
+    if (ranked.length >= limit) return ranked.slice(0, limit);
     const rest = [...courses]
       .filter((c) => !weeklyPopularIds.includes(c.id))
       .sort((a, b) => b.reviewCount - a.reviewCount || b.rating - a.rating);
