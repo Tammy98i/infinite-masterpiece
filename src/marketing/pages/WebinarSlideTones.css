@@ -1,59 +1,96 @@
-/* Webinar slide tones: night (tension) vs gilt (clarity / CTA).
-   Semantic rhythm — not mechanical zebra. Sky/atmosphere stays behind. */
+/* Webinar slide tones — same space continuum.
+   night = deep navy. gilt = gold nebula glow IN space (not parchment).
+   Text stays cream/white; only the atmosphere warms. */
 
 .webinar-stage-page {
-  --tone-ink: #0a1424;
-  --tone-ink-soft: rgba(10, 20, 36, 0.72);
-  --tone-ink-mute: rgba(10, 20, 36, 0.55);
-  --tone-gilt-wash: #efe2c0;
-  --tone-gilt-mid: #e4d0a0;
-  --tone-gilt-deep: #c9a85a;
+  --tone-cream: #e0edff;
+  --tone-cream-soft: rgba(224, 237, 255, 0.72);
+  --tone-cream-mute: rgba(224, 237, 255, 0.52);
   --tone-gold: #b79043;
   --tone-gold-light: #dfc47d;
+  --tone-space: #050a14;
 }
 
-/* Default / explicit night — keep existing night language */
+/* Keep the page in one space tunnel — no hard chapter walls */
+.webinar-flow-page.webinar-stage-page {
+  background:
+    radial-gradient(120% 40% at 50% 12%, rgba(80, 120, 180, 0.08), transparent 55%),
+    radial-gradient(90% 35% at 70% 55%, rgba(183, 144, 67, 0.06), transparent 50%),
+    linear-gradient(
+      180deg,
+      #02060f 0%,
+      #06101c 22%,
+      #071322 48%,
+      #0a1018 72%,
+      #050a14 100%
+    );
+}
+
 .webinar-stage-page [data-tone='night'],
 .webinar-stage-page .webinar-tone-night {
-  color: var(--editorial-cream, #e0edff);
+  color: var(--tone-cream);
 }
 
-/* Gilt plane: warm parchment wash, navy type */
+/* Gilt = warmer pocket of the same sky — translucent gold dust, not a new site */
 .webinar-stage-page [data-tone='gilt'],
 .webinar-stage-page .webinar-tone-gilt {
   position: relative;
   isolation: isolate;
-  color: var(--tone-ink);
+  color: var(--tone-cream);
   background:
-    radial-gradient(90% 55% at 50% 0%, rgba(223, 196, 125, 0.45), transparent 62%),
+    radial-gradient(75% 55% at 50% 35%, rgba(223, 196, 125, 0.22), transparent 68%),
+    radial-gradient(55% 40% at 20% 80%, rgba(183, 144, 67, 0.1), transparent 60%),
+    radial-gradient(50% 35% at 85% 20%, rgba(223, 196, 125, 0.08), transparent 55%),
     linear-gradient(
       180deg,
-      rgba(243, 230, 196, 0.94) 0%,
-      rgba(232, 212, 160, 0.92) 48%,
-      rgba(214, 186, 120, 0.9) 100%
+      rgba(8, 14, 26, 0.15) 0%,
+      rgba(18, 14, 8, 0.28) 45%,
+      rgba(8, 12, 22, 0.2) 100%
     ) !important;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 248, 230, 0.55),
-    inset 0 -40px 80px rgba(183, 144, 67, 0.12);
+  box-shadow: none;
 }
 
-/* Soft warm exit instead of the night fade from flow polish */
+/* Soft seams — inhale/exhale into the next pocket of space */
+.webinar-flow-page .webinar-editorial-grid > [data-tone='gilt']::before {
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(223, 196, 125, 0.42),
+    transparent
+  ) !important;
+  opacity: 0.85;
+}
+
 .webinar-flow-page .webinar-editorial-grid > [data-tone='gilt']::after {
-  background: linear-gradient(180deg, rgba(214, 186, 120, 0), rgba(200, 170, 100, 0.35)) !important;
-  height: 72px !important;
+  background: linear-gradient(
+    180deg,
+    rgba(5, 10, 20, 0),
+    rgba(5, 10, 20, 0.45)
+  ) !important;
+  height: 120px !important;
 }
 
+.webinar-flow-page .webinar-editorial-grid > [data-tone='night']::after {
+  background: linear-gradient(
+    180deg,
+    rgba(5, 10, 20, 0),
+    rgba(5, 10, 20, 0.35)
+  ) !important;
+  height: 100px !important;
+}
+
+/* Type stays in the night language — cream on space */
 .webinar-stage-page [data-tone='gilt'] :is(h1, h2, h3, h4),
 .webinar-stage-page .webinar-tone-gilt :is(h1, h2, h3, h4),
 .webinar-stage-page [data-tone='gilt'] :is(h1, h2, h3, h4).text-white,
 .webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] :is(h1, h2, h3, h4) {
-  color: var(--tone-ink) !important;
+  color: var(--tone-cream) !important;
 }
 
 .webinar-stage-page [data-tone='gilt'] :is(p, li, span, label, summary, em, strong),
 .webinar-stage-page .webinar-tone-gilt :is(p, li, span, label, summary, em, strong),
 .webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] :is(p, li, span, label, summary, em, strong) {
-  color: var(--tone-ink-soft) !important;
+  color: var(--tone-cream-soft) !important;
 }
 
 .webinar-stage-page [data-tone='gilt'] .text-\[11px\],
@@ -65,7 +102,7 @@
 .webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] .text-\[11px\],
 .webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] .text-\[\#b79043\],
 .webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] .text-\[\#dfc47d\] {
-  color: var(--tone-gold) !important;
+  color: var(--tone-gold-light) !important;
 }
 
 .webinar-stage-page [data-tone='gilt'] .text-white,
@@ -75,100 +112,100 @@
 .webinar-stage-page [data-tone='gilt'] .text-white\/45,
 .webinar-stage-page [data-tone='gilt'] .text-white\/40,
 .webinar-stage-page [data-tone='gilt'] .text-white\/35 {
-  color: var(--tone-ink-soft) !important;
+  color: var(--tone-cream-soft) !important;
 }
 
+/* Cards: same glass as night, slightly warmer gold rim */
 .webinar-stage-page [data-tone='gilt'] .glass-card,
 .webinar-stage-page .webinar-tone-gilt .glass-card,
 .webinar-stage-page [data-tone='gilt'] .webinar-stage-register-card,
 .webinar-stage-page [data-tone='gilt'] .rounded-3xl,
 .webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] .glass-card,
 .webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] .webinar-stage-register-card {
-  border-color: rgba(183, 144, 67, 0.35) !important;
-  background: rgba(255, 250, 235, 0.82) !important;
-  color: var(--tone-ink) !important;
-  box-shadow: 0 18px 48px rgba(90, 60, 10, 0.12);
-  backdrop-filter: blur(10px) saturate(0.85);
-  -webkit-backdrop-filter: blur(10px) saturate(0.85);
+  border-color: rgba(223, 196, 125, 0.32) !important;
+  background: linear-gradient(
+    180deg,
+    rgba(16, 24, 42, 0.58),
+    rgba(8, 12, 22, 0.48)
+  ) !important;
+  color: var(--tone-cream) !important;
+  box-shadow: 0 24px 60px rgba(2, 6, 15, 0.35), 0 0 40px rgba(183, 144, 67, 0.06);
+  backdrop-filter: blur(16px) saturate(0.55);
+  -webkit-backdrop-filter: blur(16px) saturate(0.55);
 }
 
 .webinar-stage-page [data-tone='gilt'] .glass-card :is(h3, p, span, li),
 .webinar-stage-page [data-tone='gilt'] .webinar-stage-register-card :is(h3, p, span, li, label),
 .webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] .glass-card :is(h3, p, span, li) {
-  color: var(--tone-ink-soft) !important;
+  color: var(--tone-cream-soft) !important;
 }
 
 .webinar-stage-page [data-tone='gilt'] .btn-gold,
 .webinar-stage-page .webinar-tone-gilt .btn-gold {
-  background: var(--tone-ink) !important;
-  color: var(--tone-gilt-wash) !important;
+  background: var(--tone-gold-light) !important;
+  color: #050a14 !important;
   border-color: transparent;
 }
 
 .webinar-stage-page [data-tone='gilt'] .btn-gold:hover,
 .webinar-stage-page .webinar-tone-gilt .btn-gold:hover {
-  background: #142038 !important;
-  color: #fff8e8 !important;
+  background: #f0e0a8 !important;
+  color: #050a14 !important;
 }
 
-/* Hosts on gilt */
+/* Hosts — still space, warmer dust */
 .webinar-stage-page #hosts[data-tone='gilt'] .webinar-host-role,
 .webinar-stage-page #hosts[data-tone='gilt'] .webinar-host-bio,
 .webinar-stage-page #hosts[data-tone='gilt'] .webinar-host-feats,
 .webinar-stage-page #hosts[data-tone='gilt'] .webinar-host-meta {
-  color: var(--tone-ink-mute) !important;
+  color: var(--tone-cream-mute) !important;
 }
 
 .webinar-stage-page #hosts[data-tone='gilt'] .webinar-host-orb {
-  border-color: var(--tone-gold) !important;
-  box-shadow: 0 10px 28px rgba(90, 60, 10, 0.18);
+  border-color: rgba(223, 196, 125, 0.7) !important;
+  box-shadow: 0 0 24px rgba(183, 144, 67, 0.22);
 }
 
 .webinar-stage-page #hosts[data-tone='gilt'] .webinar-task-spine li {
-  border-color: rgba(183, 144, 67, 0.28);
-  background: rgba(255, 250, 235, 0.55);
+  border-color: rgba(223, 196, 125, 0.22);
+  background: rgba(8, 14, 26, 0.45);
 }
 
 .webinar-stage-page #hosts[data-tone='gilt'] .webinar-task-spine i {
-  color: var(--tone-gold);
-}
-
-/* Fit divider on gilt */
-.webinar-stage-page #webinar-fit[data-tone='gilt'] .via-\[\#dfc47d\]\/70 {
-  --tw-gradient-via: rgba(183, 144, 67, 0.55);
+  color: var(--tone-gold-light);
 }
 
 .webinar-stage-page #webinar-fit[data-tone='gilt'] .bg-gradient-to-b {
   background-image: linear-gradient(
     to bottom,
     transparent,
-    rgba(183, 144, 67, 0.55),
+    rgba(223, 196, 125, 0.55),
     transparent
   ) !important;
 }
 
-/* Register gilt: drop dark overlays that fight the wash */
+/* Register — gold nebula pocket; keep form night-glass */
 .webinar-stage-page #webinar-register-bottom[data-tone='gilt'] > .absolute {
-  opacity: 0.35;
+  opacity: 0.85;
 }
 
 .webinar-stage-page #webinar-register-bottom[data-tone='gilt'] .webinar-stage-register-card form input,
 .webinar-stage-page #webinar-register-bottom[data-tone='gilt'] .webinar-stage-register-card form textarea {
-  color: var(--tone-ink) !important;
-  background: rgba(255, 252, 245, 0.9) !important;
-  border-color: rgba(183, 144, 67, 0.35) !important;
+  color: var(--tone-cream) !important;
+  background: rgba(224, 237, 255, 0.05) !important;
+  border-color: rgba(223, 196, 125, 0.28) !important;
 }
 
 .webinar-stage-page #webinar-register-bottom[data-tone='gilt'] a {
-  color: var(--tone-gold) !important;
+  color: var(--tone-gold-light) !important;
 }
 
 .webinar-stage-page #webinar-register-bottom[data-tone='gilt'] a:hover {
-  color: var(--tone-ink) !important;
+  color: #fff !important;
 }
 
-/* Soft seam into / out of gilt — keeps scroll rhythm natural */
-.webinar-stage-page [data-tone='gilt'] {
+.webinar-stage-page [data-tone='gilt'],
+.webinar-stage-page [data-tone='night'] {
   scroll-margin-top: calc(var(--site-header-h, 64px) + var(--webinar-subnav-h, 0px));
 }
 
