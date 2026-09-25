@@ -33,6 +33,7 @@ export const ShortsView: React.FC = () => {
         </div>
       ) : (
         <EmptyState
+          eyebrow="10 דקות"
           title="אין עדיין הרצאות קצרות"
           body="כשיתווספו שיעורים עד 10 דקות, הם יופיעו כאן."
           actionLabel="לספרייה"

@@ -116,6 +116,7 @@ export const CategoryView: React.FC = () => {
         </div>
       ) : (
         <EmptyState
+          eyebrow="נושא"
           title="אין תכנים שמתאימים לסינון"
           body="אפשר לבחור סינון אחר, או לחזור לנושא מלא."
         />

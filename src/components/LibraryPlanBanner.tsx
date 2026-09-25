@@ -57,7 +57,7 @@ export function LibraryPlanBanner() {
         <button
           type="button"
           onClick={goLibraryAccess}
-          className="shrink-0 px-5 py-2.5 rounded-full bg-[#b79043] text-black text-sm font-semibold hover:bg-[#dfc47d] min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+          className="library-plan-cta shrink-0 px-5 py-2.5 rounded-[4px] bg-white text-[#141414] text-sm font-semibold hover:bg-[#f3f3f3] min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
         >
           פתיחת גישה
         </button>

@@ -1,10 +1,10 @@
 ﻿import React from 'react';
 import { useApp } from '../context/AppContext';
 import { CourseCard } from '../components/CourseCard';
-import { Bookmark } from 'lucide-react';
 import { DirBack } from '../components/DirArrow';
 import { FREE_LIST_LIMIT, hasFullLibraryAccess } from '../utils/access';
 import { StartHereRail } from '../components/StartHereRail';
+import { EmptyState } from '../components/LibraryStates';
 import { pickStartHereCourses } from '../utils/libraryHome';
 
 export const MyListView: React.FC = () => {
@@ -17,10 +17,7 @@ export const MyListView: React.FC = () => {
     <div className="library-catalog-page min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto">
       <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8">
         <div>
-          <div className="flex items-center gap-2 text-[#b79043] text-xs font-semibold mb-1">
-            <Bookmark className="w-4 h-4" />
-            <span>רשימת צפייה אישית</span>
-          </div>
+          <p className="library-page-eyebrow mb-1">הרשימה שלי</p>
           <h1 className="text-3xl sm:text-4xl font-heading font-semibold text-white">
             הרשימה שלי ({savedCourses.length})
           </h1>
@@ -36,7 +33,7 @@ export const MyListView: React.FC = () => {
         <button
           type="button"
           onClick={() => setView('home')}
-          className="flex items-center gap-1.5 text-xs font-bold text-zinc-400 hover:text-white transition-colors min-h-11 cursor-pointer"
+          className="library-page-back flex items-center gap-1.5 text-xs font-medium transition-colors min-h-11 cursor-pointer px-2"
         >
           <span>לספרייה המלאה</span>
           <DirBack />
@@ -50,7 +47,16 @@ export const MyListView: React.FC = () => {
           ))}
         </div>
       ) : (
-        <StartHereRail {...pickStartHereCourses(courses, user)} />
+        <div className="grid gap-8">
+          <EmptyState
+            eyebrow="הרשימה שלי"
+            title="עדיין אין הרצאות שמורות"
+            body="בחרו מהכרזה או מהפסים — הכל נשאר במקומו."
+            actionLabel="להמשיך לגלול"
+            onAction={() => setView('home')}
+          />
+          <StartHereRail quiet {...pickStartHereCourses(courses, user)} />
+        </div>
       )}
     </div>
   );

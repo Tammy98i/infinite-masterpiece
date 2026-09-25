@@ -111,6 +111,7 @@ export const SearchView: React.FC = () => {
             </ul>
           ) : (
             <EmptyState
+              eyebrow="חיפוש"
               title="לא מצאנו הרצאה שמתאימה לחיפוש"
               body={activeFilterCount > 0 ? 'אין תוצאות שמתאימות למסננים שבחרתם. אפשר לנקות מסנן אחד או יותר.' : 'אפשר לנסות שם מרצה, נושא, או לבחור אחד מהנושאים הפופולריים.'}
               actionLabel={activeFilterCount > 0 ? 'ניקוי מסננים' : undefined}

@@ -1,10 +1,11 @@
 import React from 'react';
 import { useApp } from '../context/AppContext';
-import { Clock, Play } from 'lucide-react';
+import { Play } from 'lucide-react';
 import { DirBack } from '../components/DirArrow';
 import { ClockLabel } from '../components/ClockLabel';
 import { useWatchAccess } from '../utils/useWatchAccess';
 import { StartHereRail } from '../components/StartHereRail';
+import { EmptyState } from '../components/LibraryStates';
 import { pickStartHereCourses } from '../utils/libraryHome';
 
 function formatWhen(ts: number) {
@@ -20,16 +21,13 @@ export const HistoryView: React.FC = () => {
     <div className="library-catalog-page min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-4xl mx-auto">
       <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8">
         <div>
-          <div className="flex items-center gap-2 text-[#b79043] text-xs mb-1">
-            <Clock className="w-4 h-4" />
-            <span>לאחרונה בספרייה</span>
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-semibold">היסטוריה</h1>
+          <p className="library-page-eyebrow mb-1">היסטוריה</p>
+          <h1 className="text-3xl sm:text-4xl font-heading font-semibold">היסטוריה</h1>
         </div>
         <button
           type="button"
           onClick={() => setView('home')}
-          className="flex items-center gap-1.5 text-xs text-zinc-400 hover:text-white min-h-11"
+          className="library-page-back flex items-center gap-1.5 text-xs font-medium min-h-11 px-2"
         >
           <span>לספרייה</span>
           <DirBack />
@@ -37,10 +35,16 @@ export const HistoryView: React.FC = () => {
       </div>
 
       {items.length === 0 ? (
-        <>
-          <p className="mb-6 text-sm text-white/70">עוד אין צפייה בחשבון הזה.</p>
-          <StartHereRail {...pickStartHereCourses(courses, user)} />
-        </>
+        <div className="grid gap-8">
+          <EmptyState
+            eyebrow="היסטוריה"
+            title="עוד אין צפייה בחשבון הזה"
+            body="כשתתחילו הרצאה — היא תופיע כאן להמשך מהיר."
+            actionLabel="לספרייה"
+            onAction={() => setView('home')}
+          />
+          <StartHereRail quiet {...pickStartHereCourses(courses, user)} />
+        </div>
       ) : (
         <div className="divide-y divide-white/10">
           {items.map(({ course, episode, progress }) => {
@@ -65,7 +69,7 @@ export const HistoryView: React.FC = () => {
                 <div className="flex-1 min-w-0">
                   <div className="text-sm font-medium truncate">{course.title}</div>
                   <div className="text-xs text-white/40 mt-1 truncate">{episode.title}</div>
-                  <div className="mt-2 h-1 rounded-full bg-white/10 overflow-hidden">
+                  <div className="mt-2 h-1 rounded-[4px] bg-white/10 overflow-hidden">
                     <div className="h-full bg-[#b79043]" style={{ width: `${pct}%` }} />
                   </div>
                   <div className="text-[11px] text-white/35 mt-1">

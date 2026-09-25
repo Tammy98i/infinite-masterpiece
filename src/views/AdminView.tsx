@@ -544,12 +544,25 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
 
   if (error) {
     return (
-      <p className="text-sm text-rose-300" role="alert">
-        {error}
-      </p>
+      <div className="crm-desk-panel p-5">
+        <p className="text-sm text-rose-300" role="alert">
+          {error}
+        </p>
+      </div>
     );
   }
-  if (!data) return <p className="text-sm text-white/40">טוען...</p>;
+  if (!data) {
+    return (
+      <div className="grid gap-3" aria-busy="true" aria-label="טוען סקירה">
+        <div className="crm-desk-panel h-40 animate-pulse" />
+        <div className="grid grid-cols-2 xl:grid-cols-4 gap-2">
+          {Array.from({ length: 4 }).map((_, i) => (
+            <div key={i} className="crm-desk-metric animate-pulse min-h-[5.5rem]" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   const metrics: Array<{ label: string; value: number; hint: string; tab: Tab }> = [
     {
@@ -591,6 +604,7 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
         onFeaturedAction={() => onNavigate('content')}
         onSecondaryAction={() => onNavigate('content')}
         onSelectCourse={() => onNavigate('content')}
+        compact
       />
 
       <section aria-label="לטיפול עכשיו" className="grid gap-3">
@@ -677,8 +691,26 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
       });
   }, []);
 
-  if (error) return <p className="text-sm text-rose-300">{error}</p>;
-  if (!data) return <p className="text-sm text-white/40">טוען...</p>;
+  if (error) {
+    return (
+      <div className="crm-desk-panel p-5">
+        <p className="text-sm text-rose-300" role="alert">
+          {error}
+        </p>
+      </div>
+    );
+  }
+  if (!data) {
+    return (
+      <div className="grid gap-4" aria-busy="true" aria-label="טוען אנליטיקות">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="crm-desk-metric animate-pulse min-h-[5rem]" />
+          ))}
+        </div>
+      </div>
+    );
+  }
 
   const funnel = [
     { label: 'Paywall', value: data.funnel.paywallOpened },
@@ -687,6 +719,12 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
     { label: 'מנוי', value: data.funnel.subscriptionStarted },
     { label: 'ביטולים', value: data.funnel.subscriptionCancelled },
   ];
+  const funnelHints = funnel.map((card, index) => {
+    if (index === 0) return card.value > 0 ? '100%' : '—';
+    const prev = funnel[index - 1]?.value ?? 0;
+    if (prev <= 0) return '—';
+    return `${Math.round((card.value / prev) * 100)}% מהקודם`;
+  });
   const video = [
     { label: 'התחלה', value: data.video.started },
     { label: 'רבע', value: data.video.p25 },
@@ -702,64 +740,68 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
   ];
 
   return (
-    <div className="grid gap-10">
+    <div className="grid gap-6">
       <section>
-        <h2 className="text-lg font-light mb-4">
+        <h2 className="text-sm font-medium text-white/70 mb-3">
           {focus === 'funnel' ? 'משפך משתמשים חינמיים' : 'המרה'}
         </h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-          {funnel.map((card) => (
-            <div key={card.label} className="border border-white/10 rounded-2xl p-5">
-              <div className="text-xs text-white/40 mb-2">{card.label}</div>
-              <div className="text-2xl font-light">{card.value}</div>
-            </div>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+          {funnel.map((card, index) => (
+            <article key={card.label} className="crm-desk-metric pointer-events-none">
+              <strong>{card.value}</strong>
+              <b>{card.label}</b>
+              <em>{funnelHints[index]}</em>
+            </article>
           ))}
         </div>
       </section>
       {focus === 'funnel' ? null : (
         <>
       <section>
-        <h2 className="text-lg font-light mb-4">צפייה</h2>
-        <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
+        <h2 className="text-sm font-medium text-white/70 mb-3">צפייה</h2>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
           {video.map((card) => (
-            <div key={card.label} className="border border-white/10 rounded-2xl p-5">
-              <div className="text-xs text-white/40 mb-2">{card.label}</div>
-              <div className="text-2xl font-light">{card.value}</div>
-            </div>
+            <article key={card.label} className="crm-desk-metric pointer-events-none">
+              <strong>{card.value}</strong>
+              <b>{card.label}</b>
+            </article>
           ))}
         </div>
       </section>
       <section>
-        <h2 className="text-lg font-light mb-4">מרצים</h2>
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <h2 className="text-sm font-medium text-white/70 mb-3">מרצים</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2">
           {lecturers.map((card) => (
-            <div key={card.label} className="border border-white/10 rounded-2xl p-5">
-              <div className="text-xs text-white/40 mb-2">{card.label}</div>
-              <div className="text-2xl font-light">{card.value}</div>
-            </div>
+            <article key={card.label} className="crm-desk-metric pointer-events-none">
+              <strong>{card.value}</strong>
+              <b>{card.label}</b>
+            </article>
           ))}
         </div>
       </section>
         </>
       )}
       <section>
-        <h2 className="text-lg font-light mb-4">אירועים</h2>
+        <h2 className="text-sm font-medium text-white/70 mb-3">אירועים</h2>
         {data.totals.length === 0 ? (
-          <p className="text-sm text-white/40">עדיין אין מדידות.</p>
+          <div className="crm-desk-panel p-5">
+            <p className="text-[11px] tracking-[0.14em] text-[#b79043] mb-2">אנליטיקות</p>
+            <p className="text-sm text-white/70">עדיין אין מדידות.</p>
+          </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm text-start">
+          <div className="crm-desk-table">
+            <table className="text-sm text-start">
               <thead className="text-xs text-white/40 border-b border-white/10">
                 <tr>
-                  <th className="py-3 font-normal">אירוע</th>
-                  <th className="py-3 font-normal">כמות</th>
+                  <th className="py-3 px-3 font-normal">אירוע</th>
+                  <th className="py-3 px-3 font-normal">כמות</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-white/10">
+              <tbody>
                 {data.totals.map((row) => (
-                  <tr key={row.event}>
-                    <td className="py-3">{EVENT_LABEL[row.event] || row.event}</td>
-                    <td className="py-3 text-white/70">{row.count}</td>
+                  <tr key={row.event} className="border-b border-white/8">
+                    <td className="py-3 px-3">{EVENT_LABEL[row.event] || row.event}</td>
+                    <td className="py-3 px-3 text-white/70">{row.count}</td>
                   </tr>
                 ))}
               </tbody>
@@ -768,20 +810,46 @@ function AnalyticsPanel({ focus }: { focus?: 'funnel' } = {}) {
         )}
       </section>
       <section>
-        <h2 className="text-lg font-light mb-4">אחרונים</h2>
+        <h2 className="text-sm font-medium text-white/70 mb-3">אחרונים</h2>
         {data.recent.length === 0 ? (
-          <p className="text-sm text-white/40">אין אירועים עדיין.</p>
+          <div className="crm-desk-panel p-5">
+            <p className="text-sm text-white/55">אין אירועים עדיין.</p>
+          </div>
         ) : (
-          <ul className="grid gap-2">
-            {data.recent.slice(0, 40).map((row) => (
-              <li key={row.id} className="text-sm text-white/55 border-b border-white/5 py-2 flex flex-wrap gap-x-3">
-                <span className="text-white">{EVENT_LABEL[row.event] || row.event}</span>
-                {row.properties.source ? <span>מקור: {row.properties.source}</span> : null}
-                {row.properties.courseId ? <span className="text-white/35">{row.properties.courseId}</span> : null}
-                <span className="text-white/30 ms-auto">{row.createdAt.replace('T', ' ').slice(0, 16)}</span>
-              </li>
-            ))}
-          </ul>
+          <div className="crm-desk-table">
+            <ul className="divide-y divide-white/8">
+              {data.recent.slice(0, 40).map((row) => {
+                const label = EVENT_LABEL[row.event] || row.event;
+                const source =
+                  typeof row.properties.source === 'string' ? row.properties.source : null;
+                const courseId =
+                  typeof row.properties.courseId === 'string' ? row.properties.courseId : null;
+                const who = source || label;
+                const detailParts = [
+                  source ? `מקור: ${source}` : null,
+                  courseId ? `הרצאה · ${courseId.replace(/^course[-_]?/i, '').slice(0, 24)}` : null,
+                ].filter(Boolean);
+                return (
+                  <li key={row.id} className="px-3 py-2.5 flex flex-wrap items-center gap-x-3 gap-y-1 text-sm">
+                    <span className="crm-desk-who min-w-0">
+                      <DeskMonogram name={who} />
+                      <span className="min-w-0">
+                        <span className="block text-white truncate">{label}</span>
+                        {detailParts.length > 0 ? (
+                          <span className="block text-[11px] text-white/40 truncate">
+                            {detailParts.join(' · ')}
+                          </span>
+                        ) : null}
+                      </span>
+                    </span>
+                    <span className="text-white/35 ms-auto" dir="ltr">
+                      {row.createdAt.replace('T', ' ').slice(0, 16)}
+                    </span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
         )}
       </section>
     </div>
@@ -920,7 +988,7 @@ function ContentPanel({
         <button
           type="button"
           onClick={() => setEditing('new')}
-          className="px-4 py-2.5 rounded-full bg-[#b79043] text-black text-sm min-h-11 cursor-pointer hover:bg-[#dfc47d]"
+          className="crm-desk-row-act px-4 py-2.5 min-h-11 cursor-pointer bg-[#b79043] text-black border-transparent hover:bg-[#dfc47d]"
         >
           הרצאה חדשה
         </button>
@@ -928,11 +996,11 @@ function ContentPanel({
       {error && <p role="alert" className="text-sm text-rose-300 mb-4">{error}</p>}
       {bulkFeedback && <p role="status" className="text-sm text-[#b79043] mb-4">{bulkFeedback}</p>}
       <AdminListControls query={query} onQueryChange={setQuery} placeholder="חיפוש הרצאה לפי שם…" count={filteredCourses.length} total={courses.length}>
-        <select value={statusFilter} onChange={event => setStatusFilter(event.target.value)} className="min-h-11 rounded-xl border border-white/10 bg-[#0a0a0a] px-3 text-sm text-white/70" aria-label="סינון הרצאות לפי סטטוס">
+        <select value={statusFilter} onChange={event => setStatusFilter(event.target.value)} className="min-h-11 rounded-[4px] border border-white/10 bg-[rgba(5,10,20,0.72)] px-3 text-sm text-white/70" aria-label="סינון הרצאות לפי סטטוס">
           <option value="all">כל הסטטוסים</option>{Object.entries(STATUS_LABEL).map(([value, label]) => <option key={value} value={value}>{label}</option>)}
         </select>
       </AdminListControls>
-      <div className="sticky top-[9.5rem] z-10 mt-3 flex flex-wrap items-center gap-2 rounded-2xl border border-white/10 bg-[#090909]/95 p-3 shadow-xl backdrop-blur-md">
+      <div className="crm-desk-panel sticky top-[9.5rem] z-10 mt-3 flex flex-wrap items-center gap-2 p-3">
         <label className="flex min-h-11 cursor-pointer items-center gap-2 px-2 text-sm text-white/65">
           <input type="checkbox" checked={allFilteredSelected} disabled={pending || filteredCourses.length === 0} ref={input => { if (input) input.indeterminate = !allFilteredSelected && filteredCourses.some(course => selectedIds.has(course.id)); }} onChange={() => setSelectedIds(current => {
             const next = new Set(current);
@@ -943,61 +1011,132 @@ function ContentPanel({
         </label>
         <span className="text-xs text-white/35">{selectedIds.size ? `${selectedIds.size} נבחרו` : 'לא נבחרו הרצאות'}</span>
         {selectedIds.size > 0 ? <div className="flex flex-wrap gap-2 sm:ms-auto">
-          <button type="button" onClick={() => setBulkStatus('published')} className="min-h-10 rounded-xl bg-[#b79043] px-4 text-xs font-medium text-black">פרסום נבחרים</button>
-          <button type="button" onClick={() => setBulkStatus('draft')} className="min-h-10 rounded-xl border border-white/15 px-4 text-xs text-white/70">העברה לטיוטה</button>
-          <button type="button" onClick={() => setBulkStatus('blocked')} className="min-h-10 rounded-xl border border-rose-400/30 px-4 text-xs text-rose-300">חסימת נבחרים</button>
+          <button type="button" onClick={() => setBulkStatus('published')} className="crm-desk-row-act min-h-10 bg-[#b79043] px-4 text-xs font-medium text-black border-transparent">פרסום נבחרים</button>
+          <button type="button" onClick={() => setBulkStatus('draft')} className="crm-desk-row-act min-h-10 px-4 text-xs text-white/70">העברה לטיוטה</button>
+          <button type="button" onClick={() => setBulkStatus('blocked')} className="crm-desk-row-act min-h-10 px-4 text-xs text-rose-300 border-rose-400/30">חסימת נבחרים</button>
           <button type="button" onClick={() => setSelectedIds(new Set())} className="min-h-10 px-3 text-xs text-white/40 hover:text-white">ניקוי בחירה</button>
         </div> : null}
       </div>
-      <div className="divide-y divide-white/10 border-t border-white/10">
-        {filteredCourses.length === 0 ? <p className="py-10 text-center text-sm text-white/40">לא נמצאו הרצאות לפי הסינון הנוכחי.</p> : filteredCourses.map((course) => (
-          <div key={course.id} className="py-4 flex flex-col sm:flex-row sm:items-center gap-3">
-            <label className="flex min-h-11 min-w-11 items-center justify-start sm:justify-center gap-2 text-xs text-white/50">
-              <input type="checkbox" aria-label={`בחירת הרצאה: ${course.title}`} checked={selectedIds.has(course.id)} disabled={pending} onChange={() => toggleSelected(course.id)} className="h-4 w-4 accent-[#b79043]" />
-              <span className="sm:hidden">בחירת הרצאה</span>
-            </label>
+      <div className="crm-desk-table mt-3">
+        {filteredCourses.length === 0 ? (
+          <div className="p-6">
+            <p className="text-[11px] tracking-[0.14em] text-[#b79043] mb-2">תוכן VOD</p>
+            <p className="text-sm text-white/70 mb-4">לא נמצאו הרצאות לפי הסינון הנוכחי.</p>
             <button
               type="button"
-              onClick={() => setEditing(course)}
-              className="flex-1 text-start cursor-pointer"
+              onClick={() => { setQuery(''); setStatusFilter('all'); }}
+              className="crm-desk-row-act px-4 py-2 text-xs"
             >
-              <div className="text-white">{course.title}</div>
-              <div className="text-xs text-white/40 mt-1">
-                {STATUS_LABEL[course.status || 'draft']} · {course.episodes.length} פרקים
-                {instructors.find((i) => i.id === course.instructorId)?.isFounder ? ' · מייסד' : ''}
-              </div>
+              ניקוי סינון
             </button>
-            <div className="flex flex-wrap gap-2">
-              {course.status !== 'published' && (
-                <button
-                  type="button"
-                  onClick={() => void setStatus(course.id, 'published')}
-                  className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer"
-                >
-                  פרסום
-                </button>
-              )}
-              {course.status === 'published' && (
-                <button
-                  type="button"
-                  onClick={() => void setStatus(course.id, 'draft')}
-                  className="px-3 py-2 rounded-full border border-white/15 text-xs min-h-11 cursor-pointer"
-                >
-                  להסתרה
-                </button>
-              )}
-              {course.status !== 'blocked' && (
-                <button
-                  type="button"
-                  onClick={() => void setStatus(course.id, 'blocked')}
-                  className="px-3 py-2 rounded-full border border-white/15 text-xs text-rose-300 min-h-11 cursor-pointer"
-                >
-                  חסימה
-                </button>
-              )}
-            </div>
           </div>
-        ))}
+        ) : (
+          <table className="text-sm text-start">
+            <thead className="text-xs text-white/40 border-b border-white/10">
+              <tr>
+                <th className="py-3 px-3 font-normal w-12" />
+                <th className="py-3 px-3 font-normal">הרצאה</th>
+                <th className="py-3 px-3 font-normal">סטטוס</th>
+                <th className="py-3 px-3 font-normal">פעולות</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filteredCourses.map((course) => {
+                const instructor = instructors.find((i) => i.id === course.instructorId);
+                const status = course.status || 'draft';
+                return (
+                  <tr key={course.id} className="border-b border-white/8">
+                    <td className="py-3 px-3 align-middle">
+                      <input
+                        type="checkbox"
+                        aria-label={`בחירת הרצאה: ${course.title}`}
+                        checked={selectedIds.has(course.id)}
+                        disabled={pending}
+                        onChange={() => toggleSelected(course.id)}
+                        className="h-4 w-4 accent-[#b79043]"
+                      />
+                    </td>
+                    <td className="py-3 px-3">
+                      <button
+                        type="button"
+                        onClick={() => setEditing(course)}
+                        className="crm-desk-who text-start cursor-pointer w-full"
+                      >
+                        {course.coverImage ? (
+                          <img
+                            src={course.coverImage}
+                            alt=""
+                            className="h-8 w-14 rounded-[4px] object-cover shrink-0"
+                          />
+                        ) : (
+                          <DeskMonogram name={course.title} />
+                        )}
+                        <span className="min-w-0">
+                          <span className="block text-white truncate">{course.title}</span>
+                          <span className="block text-[11px] text-white/40 truncate">
+                            {instructor?.name || 'מרצה'} · {course.episodes.length} פרקים
+                            {instructor?.isFounder ? ' · מייסד' : ''}
+                          </span>
+                        </span>
+                      </button>
+                    </td>
+                    <td className="py-3 px-3">
+                      <span
+                        className={`inline-flex rounded-[4px] border px-2 py-0.5 text-[11px] ${
+                          status === 'published'
+                            ? 'border-[rgba(155,231,181,0.45)] text-[#9be7b5]'
+                            : status === 'blocked'
+                              ? 'border-[rgba(247,180,180,0.45)] text-[#f7b4b4]'
+                              : 'border-white/25 text-white/70'
+                        }`}
+                      >
+                        {STATUS_LABEL[status]}
+                      </span>
+                    </td>
+                    <td className="py-3 px-3">
+                      <div className="flex flex-wrap gap-2">
+                        {status !== 'published' && (
+                          <button
+                            type="button"
+                            onClick={() => void setStatus(course.id, 'published')}
+                            className="crm-desk-row-act px-3 py-2 text-xs min-h-11 cursor-pointer"
+                          >
+                            פרסום
+                          </button>
+                        )}
+                        {status === 'published' && (
+                          <button
+                            type="button"
+                            onClick={() => void setStatus(course.id, 'draft')}
+                            className="crm-desk-row-act px-3 py-2 text-xs min-h-11 cursor-pointer"
+                          >
+                            להסתרה
+                          </button>
+                        )}
+                        {status !== 'blocked' && (
+                          <button
+                            type="button"
+                            onClick={() => void setStatus(course.id, 'blocked')}
+                            className="crm-desk-row-act px-3 py-2 text-xs text-rose-300 min-h-11 cursor-pointer"
+                          >
+                            חסימה
+                          </button>
+                        )}
+                        <button
+                          type="button"
+                          onClick={() => setEditing(course)}
+                          className="crm-desk-row-act px-3 py-2 text-xs min-h-11 cursor-pointer"
+                        >
+                          עריכה
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
       </div>
       <ConfirmDialog
         open={bulkStatus !== null}

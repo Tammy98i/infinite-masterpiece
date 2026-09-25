@@ -97,7 +97,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
           <button
             type="button"
             onClick={() => scroll('prev')}
-            className="rail-control absolute start-1 sm:start-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/85 text-white border border-white/15 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover/row:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
+            className="rail-control absolute start-1 sm:start-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-[4px] bg-black/85 text-white border border-white/15 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover/row:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
             aria-label="הצגת פריטים קודמים"
           >
             <ChevronRight className="w-5 h-5" aria-hidden />
@@ -142,7 +142,7 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
           <button
             type="button"
             onClick={() => scroll('next')}
-            className="rail-control absolute end-1 sm:end-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-full bg-black/85 text-white border border-white/15 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover/row:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
+            className="rail-control absolute end-1 sm:end-2 top-1/2 -translate-y-1/2 z-20 w-11 h-11 rounded-[4px] bg-black/85 text-white border border-white/15 flex items-center justify-center opacity-100 sm:opacity-0 sm:group-hover/row:opacity-100 transition-opacity focus-visible:opacity-100 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
             aria-label="הצגת פריטים נוספים"
           >
             <ChevronLeft className="w-5 h-5" aria-hidden />

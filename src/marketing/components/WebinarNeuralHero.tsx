@@ -104,7 +104,7 @@ export function WebinarNeuralHero({
   );
 
   return (
-    <section ref={rootRef} id="webinar-hero" className="webinar-stage-hero webinar-neural-hero is-slim webinar-island" dir="rtl">
+    <section ref={rootRef} id="webinar-hero" className="webinar-stage-hero webinar-neural-hero is-slim webinar-island" data-tone="night" dir="rtl">
       <video
         ref={videoRef}
         className="webinar-neural-art"

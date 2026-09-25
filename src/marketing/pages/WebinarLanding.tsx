@@ -37,6 +37,7 @@ import '../components/WebinarNeuralHero.css';
 import './WebinarNeuralSlides.css';
 import './WebinarNightLanguage.css';
 import './WebinarFlowPolish.css';
+import './WebinarSlideTones.css';
 
 const WEBINAR_ISLANDS = [
   { id: 'webinar-hero', title: 'פתיחה' },
@@ -240,7 +241,7 @@ export function WebinarLanding() {
         onRegister={scrollToForm}
       />
 
-      <section id="problem" className="webinar-neural-afterglow webinar-island">
+      <section id="problem" className="webinar-neural-afterglow webinar-island" data-tone="night">
         <div className="webinar-flow-stem" aria-hidden="true" />
         <div className="webinar-neural-plate">
           <SectionLabel>הבעיה</SectionLabel>
@@ -263,7 +264,7 @@ export function WebinarLanding() {
       </section>
 
       <div className="webinar-editorial-grid">
-      <section id="hosts" className="webinar-neural-slide webinar-island">
+      <section id="hosts" className="webinar-neural-slide webinar-island" data-tone="gilt">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>הערב החי</SectionLabel>
           <SectionTitle>לא באים רק ללמוד. באים לבצע.</SectionTitle>
@@ -304,13 +305,13 @@ export function WebinarLanding() {
       </section>
 
       <TeamGalaxy
-        className="webinar-island"
+        className="webinar-island webinar-tone-night"
         eyebrow="האנשים מאחורי החזון"
         title="הצוות שמחזיק את המערכת"
         subtitle="כל אחד מביא כוח אחר. יחד הם יוצרים מערכת אחת."
       />
 
-      <section id="webinar-fit" className="webinar-neural-slide webinar-island">
+      <section id="webinar-fit" className="webinar-neural-slide webinar-island" data-tone="gilt">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <SectionLabel>התאמה</SectionLabel>
@@ -349,7 +350,7 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <section id="webinar-faq" className="webinar-neural-slide webinar-island">
+      <section id="webinar-faq" className="webinar-neural-slide webinar-island" data-tone="night">
         <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <SectionLabel>שאלות</SectionLabel>
@@ -363,7 +364,7 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <section id="webinar-register-bottom" className="webinar-neural-slide webinar-island relative overflow-hidden">
+      <section id="webinar-register-bottom" className="webinar-neural-slide webinar-island relative overflow-hidden" data-tone="gilt">
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0d0b08]/20 to-[#0d0b08]/50" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(183, 144, 67,0.16),transparent_70%)]" />
