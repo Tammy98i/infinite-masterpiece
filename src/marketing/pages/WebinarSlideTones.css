@@ -37,23 +37,10 @@
     inset 0 -40px 80px rgba(183, 144, 67, 0.12);
 }
 
-.webinar-stage-page [data-tone='gilt']::before,
-.webinar-stage-page .webinar-tone-gilt::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  background:
-    linear-gradient(90deg, rgba(10, 20, 36, 0.06), transparent 28%, transparent 72%, rgba(10, 20, 36, 0.06)),
-    radial-gradient(ellipse at 70% 100%, rgba(183, 144, 67, 0.18), transparent 55%);
-  opacity: 0.9;
-}
-
-.webinar-stage-page [data-tone='gilt'] > *,
-.webinar-stage-page .webinar-tone-gilt > * {
-  position: relative;
-  z-index: 1;
+/* Soft warm exit instead of the night fade from flow polish */
+.webinar-flow-page .webinar-editorial-grid > [data-tone='gilt']::after {
+  background: linear-gradient(180deg, rgba(214, 186, 120, 0), rgba(200, 170, 100, 0.35)) !important;
+  height: 72px !important;
 }
 
 .webinar-stage-page [data-tone='gilt'] :is(h1, h2, h3, h4),
