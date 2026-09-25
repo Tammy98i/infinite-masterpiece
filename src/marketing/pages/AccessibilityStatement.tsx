@@ -32,6 +32,10 @@ export function AccessibilityStatement() {
               בהתאם לחוק שוויון זכויות לאנשים עם מוגבלויות והתקנות להתאמות נגישות לשירות, ולתקן הישראלי{' '}
               {config?.standard || 'ת"י 5568 / WCAG 2.0 AA'}.
             </p>
+            <p className="mt-3 text-sm text-slate-500">
+              הצהרה זו היא טיוטת עבודה טכנית פנימית. לפני הסתמכות עליה מול אכיפה או פרסום כביקורת מוסמכת,
+              יש להביאה לאישור מורשה נגישות השירות.
+            </p>
           </section>
 
           <section>
@@ -91,8 +95,11 @@ export function AccessibilityStatement() {
             <h2 className="text-xl font-semibold text-white mb-4">מגבלות נגישות ידועות</h2>
             <ul className="list-disc list-inside space-y-2">
               <li>נגן וידאו: כתוביות WebVTT לכל פרק; כתוביות מלאות מותאמות לתוכן מועלות ידנית. חלק מהפקדים תלויים בספק הווידאו.</li>
-              <li>מסמכים דיגיטיים להורדה (PDF וכד&apos;) — ייתכן שטרם הונגשו במלואם לפי ת&quot;י 5568 חלק 2.</li>
+              <li>מסמכים דיגיטליים להורדה (PDF וכד&apos;) — ייתכן שטרם הונגשו במלואם לפי ת&quot;י 5568 חלק 2.</li>
               <li>אנימציות ואפקטים ויזואליים — ניתן להפחית באמצעות כלי ההעדפות, לא תמיד להסיר לחלוטין.</li>
+              <li>
+                מספר טלפון לרכז/ת נגישות יפורסם כאן מיד עם אישור פרטי הקשר בהגדרות המערכת; עד אז הפנייה העיקרית היא בדוא&quot;ל ובטופס הדיווח.
+              </li>
             </ul>
           </section>
 
@@ -159,11 +166,11 @@ export function AccessibilityStatement() {
           <section>
             <p>
               <span className="text-white/70">תאריך ביקורת הנגישות האחרונה: </span>
-              {config?.lastAuditDate || '22 באוגוסט 2026'}
+              {config?.lastAuditDate || '25 בספטמבר 2026'}
             </p>
             <p>
               <span className="text-white/70">תאריך עדכון ההצהרה: </span>
-              {config?.statementUpdated || '22 באוגוסט 2026'}
+              {config?.statementUpdated || '25 בספטמבר 2026'}
             </p>
           </section>
 

@@ -92,32 +92,32 @@ export function Application() {
             </p>
           </div>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form onSubmit={handleSubmit} className="space-y-6" dir="rtl" noValidate>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
                 <label htmlFor="fullName" className="text-sm font-medium text-slate-300">שם מלא *</label>
-                <input required type="text" id="fullName" name="fullName" className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all" />
+                <input required type="text" id="fullName" name="fullName" aria-required="true" autoComplete="name" className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all" />
               </div>
               <div className="space-y-2">
                 <label htmlFor="phone" className="text-sm font-medium text-slate-300">טלפון נייד *</label>
-                <input required type="tel" id="phone" name="phone" dir="ltr" inputMode="tel" autoComplete="tel" className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all" />
+                <input required type="tel" id="phone" name="phone" dir="ltr" inputMode="tel" autoComplete="tel" aria-required="true" className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all" />
               </div>
             </div>
 
             <div className="space-y-2">
               <label htmlFor="email" className="text-sm font-medium text-slate-300">כתובת אימייל *</label>
-              <input required type="email" id="email" name="email" dir="ltr" autoComplete="email" className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all" />
+              <input required type="email" id="email" name="email" dir="ltr" autoComplete="email" aria-required="true" className="w-full bg-transparent border border-white/10 rounded-xl px-4 py-3 text-white focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500 transition-all" />
             </div>
 
             <div className="flex items-start gap-3 pt-2">
-              <input required type="checkbox" id="consent" className="mt-1 w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500" />
+              <input required type="checkbox" id="consent" aria-required="true" className="mt-1 w-4 h-4 rounded border-slate-700 bg-slate-900 text-amber-500 focus:ring-amber-500" />
               <label htmlFor="consent" className="text-sm text-slate-400">
                 אני מאשר/ת את <a href="/terms" className="text-[#dfc47d] hover:underline">תקנון האתר</a> ו<a href="/privacy" className="text-[#dfc47d] hover:underline">מדיניות הפרטיות</a>, ומסכים/ה לקבלת עדכונים ותכנים שיווקיים (ניתן להסיר את עצמך בכל עת).
               </label>
             </div>
 
             <div className="pt-6">
-              {error ? <p className="text-sm text-rose-300 mb-4">{error}</p> : null}
+              {error ? <p className="text-sm text-rose-300 mb-4" role="alert">{error}</p> : null}
               <button
                 type="submit"
                 disabled={isSubmitting}

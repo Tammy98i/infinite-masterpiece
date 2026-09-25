@@ -1,6 +1,7 @@
 import { ReactNode, useEffect, useRef } from 'react';
 import { Outlet, useLocation } from 'react-router-dom';
 import { SkyBackdrop } from '../../components/SkyBackdrop';
+import { SkipLink } from '../../a11y/SkipLink';
 import { Header } from './Header';
 import { Footer } from './Footer';
 import { ConversionBand } from './ConversionBand';
@@ -42,9 +43,7 @@ export function Layout({ children }: LayoutProps) {
     <div className={`${isHome ? 'video-home ' : ''}${onWebinar ? 'webinar-isolated ' : ''}editorial-marketing-shell marketing-shell sky-readable min-h-screen flex flex-col relative bg-transparent text-white selection:bg-[#b79043]/30 selection:text-white`}>
 
       <div className="relative z-10 flex flex-col min-h-screen">
-        <a href="#main-content" className="skip-link">
-          דילוג לתוכן הראשי
-        </a>
+        <SkipLink href="#main-content" />
         {onWebinar ? null : <Header />}
         <main id="main-content" className="site-main flex-1 w-full text-start" tabIndex={-1}>
           {children}

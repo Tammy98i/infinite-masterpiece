@@ -40,12 +40,26 @@
       @media (prefers-reduced-motion: reduce) {
         #quiet-boot { display: none !important; }
       }
+      .sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        white-space: nowrap;
+        border: 0;
+      }
     </style>
     <script>
       (function(){try{var raw=localStorage.getItem("site_a11y_prefs_v1");if(!raw)return;var p=JSON.parse(raw);if(p.version!==2)return;var c=document.documentElement.classList;c.toggle("a11y-links",!!p.links);c.toggle("a11y-contrast-high",p.contrast==='high');c.toggle("a11y-contrast-invert",p.contrast==='invert');c.toggle("a11y-contrast-mono",p.contrast==='mono');c.toggle("a11y-contrast-dark",p.contrast==='dark');c.toggle("a11y-contrast-light",p.contrast==='light');c.toggle("a11y-sat-low",p.saturation==='low');c.toggle("a11y-sat-high",p.saturation==='high');c.toggle("a11y-text-115",p.textSize===115);c.toggle("a11y-text-130",p.textSize===130);c.toggle("a11y-text-150",p.textSize===150);c.toggle("a11y-lines-16",p.lineSpacing==='16');c.toggle("a11y-lines-20",p.lineSpacing==='20');c.toggle("a11y-readable-font",!!p.readableFont);c.toggle("a11y-headings",!!p.headings);c.toggle("a11y-cursor-black",!!p.cursorBlack);c.toggle("a11y-cursor-large",!!p.cursorLarge);c.toggle("a11y-reduce-motion",!!p.reduceMotion);c.toggle("a11y-large-targets",!!p.largeTargets);c.toggle("a11y-mute-media",!!p.muteMedia)}catch(e){}})();
     </script>
   </head>
   <body>
+    <!-- Shell skip link for first paint / static IS 5568 audits; removed after React hydrates. -->
+    <a id="shell-skip-link" href="#main-content" class="skip-link">דלג לתוכן הראשי</a>
+    <h1 id="shell-doc-heading" class="sr-only">Infinite Masterpiece | יצירת המופת האינסופית</h1>
     <noscript>
       <p style="padding:1rem;background:#111;color:#fff;font-family:'IBM Plex Sans Hebrew',sans-serif">
         לצפייה מלאה נדרש JavaScript.

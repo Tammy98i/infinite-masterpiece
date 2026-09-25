@@ -93,26 +93,26 @@ export function Hesitation() {
           transition={{ duration: 0.8, delay: 0.2 }}
           className="bg-white/[0.01] border border-[#b79043]/20 backdrop-blur-2xl rounded-[32px] p-8 md:p-12 lg:p-14"
         >
-          <form id="hesitation-form" onSubmit={handleSubmit} className="space-y-8">
+          <form id="hesitation-form" dir="rtl" onSubmit={handleSubmit} className="space-y-8" noValidate>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">שם מלא</label>
-                <input required name="fullName" type="text" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors min-h-11" />
+                <label htmlFor="hesitation-fullName" className="text-[13px] text-white/60 uppercase tracking-widest px-2">שם מלא</label>
+                <input required id="hesitation-fullName" name="fullName" type="text" aria-required="true" autoComplete="name" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors min-h-11" />
               </div>
               <div className="space-y-2">
-                <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">טלפון נייד</label>
-                <input required name="phone" type="tel" dir="ltr" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors text-center min-h-11" />
+                <label htmlFor="hesitation-phone" className="text-[13px] text-white/60 uppercase tracking-widest px-2">טלפון נייד</label>
+                <input required id="hesitation-phone" name="phone" type="tel" dir="ltr" inputMode="tel" autoComplete="tel" aria-required="true" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors text-center min-h-11" />
               </div>
             </div>
 
             <div className="space-y-2">
-              <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">אימייל</label>
-              <input required name="email" type="email" dir="ltr" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors text-center min-h-11" />
+              <label htmlFor="hesitation-email" className="text-[13px] text-white/60 uppercase tracking-widest px-2">אימייל</label>
+              <input required id="hesitation-email" name="email" type="email" dir="ltr" autoComplete="email" aria-required="true" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors text-center min-h-11" />
             </div>
 
             <div className="space-y-2">
-              <label className="text-[13px] text-white/60 uppercase tracking-widest px-2">על מה ההתלבטות שלך?</label>
-              <select required name="hesitationReason" defaultValue="" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors appearance-none cursor-pointer min-h-11">
+              <label htmlFor="hesitation-reason" className="text-[13px] text-white/60 uppercase tracking-widest px-2">על מה ההתלבטות שלך?</label>
+              <select required id="hesitation-reason" name="hesitationReason" defaultValue="" aria-required="true" className="w-full bg-white/[0.03] border border-white/[0.05] rounded-xl px-5 py-4 text-white focus:outline-none focus:border-[#b79043]/50 transition-colors appearance-none cursor-pointer min-h-11">
                 <option value="" disabled>בחר/י את הסיבה המרכזית</option>
                 <option value="price" className="bg-[#0d0b08] text-white">המחיר. זה כרגע גדול עליי</option>
                 <option value="not_sure_fit" className="bg-[#0d0b08] text-white">לא בטוח/ה אם זה מתאים ספציפית לי</option>
@@ -126,7 +126,7 @@ export function Hesitation() {
             </div>
 
             <div className="flex items-start gap-4 pt-4">
-              <input required type="checkbox" id="consent" className="mt-1.5 w-4 h-4 bg-transparent border-white/20 rounded text-[#b79043] focus:ring-[#b79043] focus:ring-offset-0" />
+              <input required type="checkbox" id="consent" aria-required="true" className="mt-1.5 w-4 h-4 bg-transparent border-white/20 rounded text-[#b79043] focus:ring-[#b79043] focus:ring-offset-0" />
               <label htmlFor="consent" className="text-sm text-white/40 leading-relaxed font-light cursor-pointer">
                 ידוע לי שמסלול ההססנים הוא תשלום מלא של {formatIls(8888)} לפני מע״מ בארבע פעימות, ואינו הנחה.
                 {checkoutEnabled
@@ -135,7 +135,7 @@ export function Hesitation() {
               </label>
             </div>
 
-            {error ? <p className="text-sm text-rose-300">{error}</p> : null}
+            {error ? <p className="text-sm text-rose-300" role="alert">{error}</p> : null}
 
             <button
               type="submit"

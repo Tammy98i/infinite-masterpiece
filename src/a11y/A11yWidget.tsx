@@ -232,23 +232,10 @@ export function A11yWidget() {
         {announcement}
       </div>
 
-      <button
-        ref={triggerRef}
-        id="a11y-widget-trigger"
-        type="button"
-        onClick={() => setOpen(true)}
-        aria-label={DICT.triggerLabel}
-        aria-expanded={open}
-        aria-controls="a11y-widget-panel"
-        aria-keyshortcuts="Alt+A"
-        className={isAnyActive(prefs) ? 'a11y-active' : undefined}
-      >
-        <Accessibility className="w-6 h-6" aria-hidden />
-      </button>
+      {open ? <div id="a11y-widget-backdrop" aria-hidden="true" onClick={handleClose} /> : null}
 
-      {open ? (
-        <>
-          <div id="a11y-widget-backdrop" aria-hidden="true" onClick={handleClose} />
+      <div id="a11y-widget-dock" data-open={open ? 'true' : undefined}>
+        {open ? (
           <div
             id="a11y-widget-panel"
             role="dialog"
@@ -403,8 +390,22 @@ export function A11yWidget() {
               </Link>
             </div>
           </div>
-        </>
-      ) : null}
+        ) : null}
+
+        <button
+          ref={triggerRef}
+          id="a11y-widget-trigger"
+          type="button"
+          onClick={() => setOpen((prev) => !prev)}
+          aria-label={DICT.triggerLabel}
+          aria-expanded={open}
+          aria-controls="a11y-widget-panel"
+          aria-keyshortcuts="Alt+A"
+          className={isAnyActive(prefs) ? 'a11y-active' : undefined}
+        >
+          <Accessibility className="w-6 h-6" aria-hidden />
+        </button>
+      </div>
     </>
   );
 }

@@ -44,7 +44,7 @@ function PlanetSlot({ side, planet, onSelect }: { side: 'l' | 'r'; planet: Plane
     <button
       className={`space-planet space-planet-${side}`}
       type="button"
-      aria-label={`Feature planet ${planet.name}`}
+      aria-label={`הצגת כוכב הלכת ${planet.name}`}
       onClick={() => onSelect(planet)}
     >
       {PLANETS.map((item) => (
@@ -150,7 +150,7 @@ export function SpaceHero() {
       <button
         className="space-scroll"
         type="button"
-        aria-label="Scroll to next section"
+        aria-label="גלילה לחלק הבא"
         onClick={() => rootRef.current?.nextElementSibling?.scrollIntoView({ behavior: 'smooth' })}
       >
         <svg viewBox="0 0 26 33" fill="none" aria-hidden="true">
