@@ -44,13 +44,16 @@
 }
 
 .webinar-stage-page [data-tone='gilt'] :is(h1, h2, h3, h4),
-.webinar-stage-page .webinar-tone-gilt :is(h1, h2, h3, h4) {
+.webinar-stage-page .webinar-tone-gilt :is(h1, h2, h3, h4),
+.webinar-stage-page [data-tone='gilt'] :is(h1, h2, h3, h4).text-white,
+.webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] :is(h1, h2, h3, h4) {
   color: var(--tone-ink) !important;
 }
 
 .webinar-stage-page [data-tone='gilt'] :is(p, li, span, label, summary, em, strong),
-.webinar-stage-page .webinar-tone-gilt :is(p, li, span, label, summary, em, strong) {
-  color: var(--tone-ink-soft);
+.webinar-stage-page .webinar-tone-gilt :is(p, li, span, label, summary, em, strong),
+.webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] :is(p, li, span, label, summary, em, strong) {
+  color: var(--tone-ink-soft) !important;
 }
 
 .webinar-stage-page [data-tone='gilt'] .text-\[11px\],
@@ -58,7 +61,10 @@
 .webinar-stage-page [data-tone='gilt'] .text-\[\#dfc47d\],
 .webinar-stage-page [data-tone='gilt'] .text-\[\#dfc47d\]\/80,
 .webinar-stage-page [data-tone='gilt'] .text-\[\#b79043\]\/80,
-.webinar-stage-page .webinar-tone-gilt .text-\[11px\] {
+.webinar-stage-page .webinar-tone-gilt .text-\[11px\],
+.webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] .text-\[11px\],
+.webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] .text-\[\#b79043\],
+.webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] .text-\[\#dfc47d\] {
   color: var(--tone-gold) !important;
 }
 
@@ -75,18 +81,21 @@
 .webinar-stage-page [data-tone='gilt'] .glass-card,
 .webinar-stage-page .webinar-tone-gilt .glass-card,
 .webinar-stage-page [data-tone='gilt'] .webinar-stage-register-card,
-.webinar-stage-page [data-tone='gilt'] .rounded-3xl {
+.webinar-stage-page [data-tone='gilt'] .rounded-3xl,
+.webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] .glass-card,
+.webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] .webinar-stage-register-card {
   border-color: rgba(183, 144, 67, 0.35) !important;
-  background: rgba(255, 250, 235, 0.72) !important;
-  color: var(--tone-ink);
+  background: rgba(255, 250, 235, 0.82) !important;
+  color: var(--tone-ink) !important;
   box-shadow: 0 18px 48px rgba(90, 60, 10, 0.12);
   backdrop-filter: blur(10px) saturate(0.85);
   -webkit-backdrop-filter: blur(10px) saturate(0.85);
 }
 
 .webinar-stage-page [data-tone='gilt'] .glass-card :is(h3, p, span, li),
-.webinar-stage-page [data-tone='gilt'] .webinar-stage-register-card :is(h3, p, span, li, label) {
-  color: var(--tone-ink-soft);
+.webinar-stage-page [data-tone='gilt'] .webinar-stage-register-card :is(h3, p, span, li, label),
+.webinar-stage-page .webinar-editorial-grid > [data-tone='gilt'] .glass-card :is(h3, p, span, li) {
+  color: var(--tone-ink-soft) !important;
 }
 
 .webinar-stage-page [data-tone='gilt'] .btn-gold,
