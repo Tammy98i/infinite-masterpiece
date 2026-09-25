@@ -6,6 +6,10 @@ const FADE_MS = 520;
 /** Covers first paint so fonts and header height settle without a flash. */
 export function QuietBoot() {
   useEffect(() => {
+    // React SkipLink / page H1 take over; drop static shell copies to avoid duplicate Tab stops / H1s.
+    document.getElementById('shell-skip-link')?.remove();
+    document.getElementById('shell-doc-heading')?.remove();
+
     const el = document.getElementById('quiet-boot');
     if (!el) return;
 

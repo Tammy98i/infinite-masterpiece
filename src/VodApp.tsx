@@ -25,6 +25,7 @@ import { InstructorProfileView } from './views/InstructorProfileView';
 import { AdminView } from './views/AdminView';
 import { LecturerView } from './views/LecturerView';
 import { libraryPath } from './utils/libraryPath';
+import { SkipLink } from './a11y/SkipLink';
 import './styles/LibraryCatalog.css';
 import './styles/CrmDesk.css';
 
@@ -102,9 +103,7 @@ export const VodApp: React.FC = () => {
     <PaywallTriggers />
     <div className={`vod-app library-catalog sky-readable flex flex-col min-h-screen relative text-white bg-transparent${currentView === 'admin' || currentView === 'lecturer' || currentView === 'profile' ? ' crm-desk' : ''}`}>
       {currentView !== 'watch' && (
-        <a href="#library-main" className="skip-link">
-          דילוג לתוכן הראשי
-        </a>
+        <SkipLink href="#library-main" />
       )}
       {currentView !== 'watch' && currentView !== 'admin' && currentView !== 'lecturer' && <Navbar />}
 

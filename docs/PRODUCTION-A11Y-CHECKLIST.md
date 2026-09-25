@@ -36,8 +36,8 @@ npm run a11y:audit               # HTML סטטי בלבד — SPA מוגבל
 ```
 
 - [ ] `lint` — ללא שגיאות
-- [ ] `a11y:smoke` — 5/5 PASS
-- [ ] `a11y:audit` — ידוע: skip-link/headings נכשלים על shell בלבד; לא מחליף בדיקת דפדפן
+- [ ] `a11y:smoke` — PASS (כולל sync של bootstrap + skip-link סטטי)
+- [ ] `a11y:audit` — 8/8 על ה-shell אחרי skip-link + H1 סטטי ב־`index.html` (תוכן SPA עדיין דורש בדיקת דפדפן)
 
 ---
 

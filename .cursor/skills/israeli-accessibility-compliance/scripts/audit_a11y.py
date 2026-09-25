@@ -194,7 +194,7 @@ def run_audit(url):
         print(f"Error fetching URL: {e}", file=sys.stderr)
         sys.exit(1)
 
-    soup = BeautifulSoup(response.text, "html.parser")
+    soup = BeautifulSoup(response.content, "html.parser")
 
     checks = {
         "lang_attribute": check_lang_attribute(soup),

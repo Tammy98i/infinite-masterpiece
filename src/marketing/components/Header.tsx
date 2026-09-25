@@ -218,7 +218,7 @@ export function Header() {
           <div className="header-links min-w-0" aria-hidden="true" />
 
           <div className="header-actions flex items-center justify-end shrink-0">
-            <div className="header-desktop hidden md:flex items-center">
+            <nav className="header-desktop hidden md:flex items-center" aria-label="ניווט ראשי">
               {headerCta()}
               <Link
                 to="/library"
@@ -230,7 +230,7 @@ export function Header() {
               <div className="header-account">
                 <AccountMenu />
               </div>
-            </div>
+            </nav>
             <div className="header-mobile flex items-center md:hidden">
               <div className="header-compact-cta">{compactBarCta()}</div>
               <div className="header-account">

@@ -16,8 +16,8 @@ export const A11Y_CONTACT_PHONE_DISPLAY = pick(
   process.env.VITE_A11Y_CONTACT_PHONE_DISPLAY,
   A11Y_CONTACT_PHONE,
 );
-export const A11Y_LAST_AUDIT_DATE = pick(process.env.A11Y_LAST_AUDIT_DATE, process.env.VITE_A11Y_LAST_AUDIT_DATE) || '22 באוגוסט 2026';
-export const A11Y_STATEMENT_UPDATED = pick(process.env.A11Y_STATEMENT_UPDATED, process.env.VITE_A11Y_STATEMENT_UPDATED) || '22 באוגוסט 2026';
+export const A11Y_LAST_AUDIT_DATE = pick(process.env.A11Y_LAST_AUDIT_DATE, process.env.VITE_A11Y_LAST_AUDIT_DATE) || '25 בספטמבר 2026';
+export const A11Y_STATEMENT_UPDATED = pick(process.env.A11Y_STATEMENT_UPDATED, process.env.VITE_A11Y_STATEMENT_UPDATED) || '25 בספטמבר 2026';
 /** Target response time for accessibility inquiries (business days). Legal cure window is up to 60 days. */
 export const A11Y_RESPONSE_DAYS = Number(process.env.A11Y_RESPONSE_DAYS || '14') || 14;
 
