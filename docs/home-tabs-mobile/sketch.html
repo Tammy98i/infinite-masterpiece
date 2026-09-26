@@ -1,0 +1,335 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Home Tabs — סקיצת סרגל מובייל</title>
+  <style>
+    :root {
+      --navy: #050a14;
+      --navy-2: #0a1220;
+      --gold: #b79043;
+      --champagne: #dfc47d;
+      --cream: #f7f4eb;
+      --muted: rgba(223, 196, 125, 0.58);
+      --ring: rgba(183, 144, 67, 0.32);
+      --font: "IBM Plex Sans Hebrew", "Segoe UI", Tahoma, sans-serif;
+      --serif: Georgia, "Times New Roman", serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: #02040a; color: var(--cream); font-family: var(--font); }
+    body {
+      background:
+        radial-gradient(ellipse at 50% 12%, rgba(183, 144, 67, 0.1), transparent 40%),
+        linear-gradient(180deg, #03060f, #05070b 50%, #02040a);
+      min-height: 100vh;
+    }
+    .page { max-width: 1100px; margin: 0 auto; padding: 28px 16px 90px; }
+    .doc-head { text-align: center; margin-bottom: 26px; }
+    .doc-head .eyebrow { color: var(--gold); letter-spacing: 0.22em; font-size: 11px; margin: 0 0 10px; }
+    .doc-head h1 {
+      font-family: var(--serif); font-weight: 400;
+      font-size: clamp(1.45rem, 4vw, 2.1rem); color: var(--champagne); margin: 0 0 12px;
+    }
+    .doc-head p { color: var(--muted); max-width: 40rem; margin: 0 auto; line-height: 1.75; font-size: 0.95rem; }
+
+    .understand {
+      border: 1px solid var(--ring);
+      background: rgba(8, 12, 22, 0.88);
+      border-radius: 12px;
+      padding: 18px 20px;
+      margin: 0 auto 28px;
+      max-width: 720px;
+      line-height: 1.75;
+      color: var(--muted);
+      font-size: 0.94rem;
+    }
+    .understand h2 { margin: 0 0 10px; color: var(--champagne); font-size: 1.05rem; font-weight: 600; }
+    .understand ol { margin: 0; padding-inline-start: 1.2rem; }
+    .understand li { margin: 0.45rem 0; }
+    .understand strong { color: var(--champagne); font-weight: 600; }
+
+    .frames {
+      display: flex; flex-wrap: wrap; gap: 28px;
+      justify-content: center; align-items: flex-start;
+    }
+    .col { width: min(100%, 320px); }
+    .col h3 {
+      text-align: center; margin: 0 0 12px;
+      color: var(--gold); font-size: 0.78rem; letter-spacing: 0.14em; font-weight: 600;
+    }
+    .phone {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 9 / 17.5;
+      border: 1px solid rgba(183, 144, 67, 0.35);
+      border-radius: 32px;
+      background: #04070f;
+      overflow: hidden;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    }
+    .phone-notch {
+      position: absolute; top: 10px; left: 50%; transform: translateX(-50%);
+      width: 86px; height: 18px; border-radius: 999px; background: #02040a; z-index: 3;
+    }
+    .phone-header {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 42px 16px 10px;
+      border-bottom: 1px solid rgba(183, 144, 67, 0.18);
+      color: var(--champagne); font-size: 10px; letter-spacing: 0.12em;
+    }
+    .phone-header .logo { font-family: var(--serif); font-size: 11px; }
+
+    /* —— TODAY: cramped scroll strip —— */
+    .rail-today {
+      display: flex; gap: 10px; align-items: center;
+      padding: 12px 14px;
+      overflow: hidden;
+      border-bottom: 1px solid rgba(183, 144, 67, 0.25);
+      background: rgba(5, 10, 20, 0.96);
+    }
+    .rail-today .tab {
+      flex: 0 0 auto;
+      font-size: 11px; font-weight: 600;
+      color: rgba(223, 196, 125, 0.45);
+      padding: 8px 2px;
+      white-space: nowrap;
+    }
+    .rail-today .tab.is-on {
+      color: var(--champagne);
+      box-shadow: inset 0 -1px var(--gold);
+    }
+
+    /* —— PROPOSED: featured center + peeks —— */
+    .rail-next {
+      position: relative;
+      display: grid;
+      grid-template-columns: 1fr 1.55fr 1fr;
+      align-items: center;
+      gap: 4px;
+      padding: 14px 8px 12px;
+      border-bottom: 1px solid rgba(183, 144, 67, 0.28);
+      background: rgba(5, 10, 20, 0.97);
+      overflow: hidden;
+    }
+    .rail-next::before,
+    .rail-next::after {
+      content: "";
+      position: absolute; top: 0; bottom: 0; width: 28px; z-index: 2; pointer-events: none;
+    }
+    .rail-next::before {
+      inset-inline-start: 0;
+      background: linear-gradient(to left, transparent, rgba(5, 10, 20, 0.95));
+    }
+    .rail-next::after {
+      inset-inline-end: 0;
+      background: linear-gradient(to right, transparent, rgba(5, 10, 20, 0.95));
+    }
+    .rail-next .tab {
+      min-height: 44px;
+      border: 0; background: transparent; cursor: pointer;
+      font: 600 11px/1.2 var(--font);
+      color: rgba(223, 196, 125, 0.38);
+      text-align: center;
+      padding: 8px 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: clip;
+      transition: color .2s ease, transform .2s ease, opacity .2s ease;
+    }
+    .rail-next .tab.is-peek {
+      opacity: 0.55;
+      transform: scale(0.92);
+    }
+    .rail-next .tab.is-on {
+      color: var(--champagne);
+      font-size: 13px;
+      font-weight: 700;
+      opacity: 1;
+      transform: scale(1);
+      box-shadow: inset 0 -2px var(--gold);
+      text-shadow: 0 0 18px rgba(183, 144, 67, 0.35);
+    }
+
+    .content {
+      padding: 22px 18px;
+      text-align: center;
+    }
+    .content .kicker { color: var(--gold); font-size: 10px; letter-spacing: 0.2em; margin: 0 0 10px; }
+    .content h4 {
+      margin: 0 0 12px; color: var(--champagne);
+      font-family: var(--serif); font-weight: 400; font-size: 1.15rem; line-height: 1.25;
+    }
+    .content .lines { display: grid; gap: 8px; margin-top: 18px; }
+    .content .lines i {
+      display: block; height: 8px; border-radius: 999px;
+      background: rgba(223, 196, 125, 0.12); margin-inline: auto;
+    }
+    .content .lines i:nth-child(1) { width: 92%; }
+    .content .lines i:nth-child(2) { width: 78%; }
+    .content .lines i:nth-child(3) { width: 86%; }
+    .content .lines i:nth-child(4) { width: 64%; }
+
+    .callouts {
+      margin-top: 14px;
+      display: grid; gap: 8px;
+      font-size: 0.78rem; color: var(--muted); line-height: 1.5;
+    }
+    .callouts span {
+      display: block;
+      border: 1px dashed rgba(183, 144, 67, 0.28);
+      border-radius: 8px;
+      padding: 8px 10px;
+      background: rgba(5, 10, 20, 0.55);
+    }
+    .callouts b { color: var(--champagne); font-weight: 600; }
+
+    .legend {
+      margin: 36px auto 0;
+      max-width: 720px;
+      border: 1px solid var(--ring);
+      border-radius: 12px;
+      padding: 16px 18px;
+      color: var(--muted);
+      font-size: 0.9rem;
+      line-height: 1.7;
+    }
+    .legend h2 { margin: 0 0 8px; color: var(--champagne); font-size: 1rem; }
+    .legend code {
+      color: var(--gold); font-size: 0.82em;
+      background: rgba(183, 144, 67, 0.1); padding: 1px 6px; border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="doc-head">
+      <p class="eyebrow">SKETCH · HOME TABS MOBILE</p>
+      <h1>סרגל נושאים במובייל — נבחר במרכז + הצצה</h1>
+      <p>
+        סקיצה ל־<code>TabbedSlider</code> בעמוד הבית: בגרסת מובייל הטאב הנבחר תופס את הבמה,
+        והשכנים מציצים מהצד כדי לרמוז שיש עוד עמודים ללחיצה.
+      </p>
+    </header>
+
+    <section class="understand" aria-labelledby="understand-title">
+      <h2 id="understand-title">מה הבנתי</h2>
+      <ol>
+        <li><strong>הסרגל:</strong> שורת הטאבים הדביקה של עמוד הבית (במה זה שונה / תהליך / צוות / פלטפורמה / מחירון / שאלות) — לא תפריט המבורגר ולא ספיין הוובינר.</li>
+        <li><strong>היום במובייל:</strong> כל הטאבים בשורה גלילה צפופה; הנבחר מסומן בקו זהב, אבל לא «בעיקר» — קשה לראות שיש עוד.</li>
+        <li><strong>הרצון:</strong> הנבחר מופיע <strong>בעיקר במרכז</strong>; מהצד מציצים טאבים שכנים (חצי / מעומעמים) כרמז שיש עוד עמודים.</li>
+        <li><strong>אינטראקציה:</strong> לחיצה על טאב מציץ → מעבר מיידי לאותו פאנל (כמו היום: החלפת תוכן + hash).</li>
+        <li><strong>מחוץ לסקופ לסקיצה:</strong> דסקטופ נשאר מיושר־מרכז מלא; אין שינוי בתוכן הפאנלים עצמם.</li>
+      </ol>
+    </section>
+
+    <div class="frames">
+      <div class="col">
+        <h3>היום — גלילה צפופה</h3>
+        <div class="phone" aria-hidden="true">
+          <div class="phone-notch"></div>
+          <div class="phone-header">
+            <span>⋯</span>
+            <span class="logo">INFINITE MASTERPIECE</span>
+            <span>⌕</span>
+          </div>
+          <div class="rail-today">
+            <span class="tab is-on">במה זה שונה</span>
+            <span class="tab">תהליך</span>
+            <span class="tab">צוות המיזם</span>
+            <span class="tab">הפלטפורמה</span>
+          </div>
+          <div class="content">
+            <p class="kicker">במה זה שונה</p>
+            <h4>אנחנו לא מוכרים חלומות</h4>
+            <div class="lines"><i></i><i></i><i></i><i></i></div>
+          </div>
+        </div>
+        <div class="callouts">
+          <span>הנבחר רק עם קו תחתון — לא שולט ברוחב.</span>
+          <span>שאר הטאבים נחתכים בלי רמז ברור שיש עוד.</span>
+        </div>
+      </div>
+
+      <div class="col">
+        <h3>הצעה — Featured Center Rail</h3>
+        <div class="phone" id="phone-next">
+          <div class="phone-notch"></div>
+          <div class="phone-header">
+            <span>⋯</span>
+            <span class="logo">INFINITE MASTERPIECE</span>
+            <span>⌕</span>
+          </div>
+          <div class="rail-next" role="tablist" aria-label="בחירת נושא — סקיצה">
+            <button type="button" class="tab is-peek" data-i="0" role="tab">תהליך</button>
+            <button type="button" class="tab is-on" data-i="1" role="tab" aria-selected="true">במה זה שונה</button>
+            <button type="button" class="tab is-peek" data-i="2" role="tab">צוות המיזם</button>
+          </div>
+          <div class="content">
+            <p class="kicker" id="kicker">במה זה שונה</p>
+            <h4 id="headline">אנחנו לא מוכרים חלומות</h4>
+            <div class="lines"><i></i><i></i><i></i><i></i></div>
+          </div>
+        </div>
+        <div class="callouts">
+          <span><b>נבחר במרכז</b> — גדול, זהב מלא, קו תחתון.</span>
+          <span><b>הצצה לשכנים</b> — מעומעמים / חתוכים בקצוות.</span>
+          <span><b>לחיצה</b> — השכן הופך לנבחר והסרגל «מזין» אותו למרכז.</span>
+        </div>
+      </div>
+    </div>
+
+    <section class="legend">
+      <h2>התנהגות מוצעת (ליישום בהמשך)</h2>
+      <p>
+        ב־≤900px: הסרגל מציג שלושה «חריצים» — <code>prev · active · next</code>.
+        הטאב הפעיל תמיד בחריץ המרכזי; לחיצה על prev/next מזיזה את המדד ומעדכנת את הפאנל
+        (אותו <code>selectTab</code> + hash כמו היום). Edge-fade מסמן שיש עוד מעבר לקצוות הרשימה.
+        דסקטופ: ללא שינוי — כל הטאבים בשורה ממורכזת.
+      </p>
+      <p style="margin-top:10px">
+        קבצים צפויים: <code>TabbedSlider.tsx</code> · <code>TabbedSlider.css</code>
+      </p>
+    </section>
+  </div>
+
+  <script>
+    const labels = [
+      { label: 'במה זה שונה', kicker: 'במה זה שונה', headline: 'אנחנו לא מוכרים חלומות' },
+      { label: 'תהליך', kicker: 'תהליך', headline: 'מסע 33 הימים' },
+      { label: 'צוות המיזם', kicker: 'צוות', headline: 'האנשים שמחזיקים את המערכת' },
+      { label: 'הפלטפורמה', kicker: 'הפלטפורמה', headline: 'הספרייה אחרי הכניסה' },
+      { label: 'מחירון', kicker: 'מחירון', headline: 'שתי דרכי כניסה' },
+      { label: 'שאלות', kicker: 'שאלות', headline: 'בהירות לפני החלטה' },
+    ];
+    let active = 0;
+    const tabs = [...document.querySelectorAll('.rail-next .tab')];
+    const kicker = document.getElementById('kicker');
+    const headline = document.getElementById('headline');
+
+    function render() {
+      const prev = labels[(active + labels.length - 1) % labels.length];
+      const cur = labels[active];
+      const next = labels[(active + 1) % labels.length];
+      const slots = [prev, cur, next];
+      tabs.forEach((btn, i) => {
+        btn.textContent = slots[i].label;
+        btn.classList.toggle('is-on', i === 1);
+        btn.classList.toggle('is-peek', i !== 1);
+        btn.setAttribute('aria-selected', i === 1 ? 'true' : 'false');
+      });
+      kicker.textContent = cur.kicker;
+      headline.textContent = cur.headline;
+    }
+
+    tabs.forEach((btn, i) => {
+      btn.addEventListener('click', () => {
+        if (i === 0) active = (active + labels.length - 1) % labels.length;
+        if (i === 2) active = (active + 1) % labels.length;
+        render();
+      });
+    });
+    render();
+  </script>
+</body>
+</html>
