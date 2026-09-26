@@ -235,9 +235,10 @@
 }
 .webinar-stage-page .webinar-editorial-grid #problem > div > p:not(:first-child) {
   max-width: 530px;
-  margin: 0 0 30px;
+  margin: 0 auto 30px;
   color: rgba(7, 16, 29, .7);
   font-size: 14px;
+  text-align: center;
 }
 .webinar-stage-page .webinar-editorial-grid #problem .grid {
   display: grid;
@@ -256,7 +257,7 @@
 .webinar-stage-page .webinar-editorial-grid #problem .glass-card p { display: block; color: rgba(7, 16, 29, .58); }
 
 .webinar-stage-page .webinar-editorial-grid #hosts { padding-inline: clamp(28px, 4vw, 54px); }
-.webinar-stage-page .webinar-editorial-grid #hosts > div > p { max-width: 500px; }
+.webinar-stage-page .webinar-editorial-grid #hosts > div > p { max-width: 500px; margin-inline: auto; text-align: center; }
 .webinar-stage-page .webinar-editorial-grid #hosts .grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
