@@ -266,7 +266,7 @@
   box-shadow: none;
 }
 .webinar-stage-page #webinar-faq summary { min-height: 48px; font-size: 13px; text-shadow: none; }
-.webinar-stage-page #webinar-faq details p { padding-bottom: 16px; color: rgba(244, 248, 252, .8); text-shadow: none; }
+.webinar-stage-page #webinar-faq details p { padding-bottom: 16px; color: rgba(223, 196, 125, .84); text-shadow: none; }
 
 .webinar-stage-page #webinar-register-bottom {
   background: var(--stage-navy-deep);

@@ -161,7 +161,7 @@
 
 .webinar-host-orbs h3 {
   margin: 14px 0 4px;
-  color: #f4f8fd;
+  color: #dfc47d;
   font-size: 18px;
   font-weight: 400;
 }
@@ -229,7 +229,7 @@
 
 .webinar-task-spine h3 {
   margin: 12px 0 6px;
-  color: #f4f8fd;
+  color: #dfc47d;
   font-size: 15px;
   font-weight: 400;
 }
@@ -267,7 +267,7 @@
 
 .webinar-spine a:focus-visible,
 .webinar-night-page :is(a, button, summary):focus-visible {
-  outline: 2px solid #9fe0ff;
+  outline: 2px solid #dfc47d;
   outline-offset: 3px;
   border-radius: 8px;
 }

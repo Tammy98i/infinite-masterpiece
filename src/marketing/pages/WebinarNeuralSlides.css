@@ -35,7 +35,7 @@
   width: 1px;
   height: 36px;
   margin-bottom: -1px;
-  background: linear-gradient(180deg, rgba(186, 200, 214, .7), rgba(206, 220, 232, .92) 52%, rgba(182, 198, 212, .68));
+  background: linear-gradient(180deg, rgba(223, 196, 125, .55), rgba(223, 196, 125, .78) 52%, rgba(183, 144, 67, .55));
 }
 
 .webinar-stage-page #problem.webinar-neural-afterglow .webinar-neural-plate {
@@ -60,14 +60,14 @@
 .webinar-stage-page .webinar-neural-afterglow h2 {
   max-width: none;
   margin: 0 0 14px;
-  color: #f4f8fd;
+  color: #dfc47d;
   font-size: clamp(26px, 3.4vw, 36px);
   font-weight: 500;
   line-height: 1.15;
 }
 
 .webinar-stage-page .webinar-neural-afterglow h2 span {
-  color: #f4f8fd;
+  color: #dfc47d;
 }
 
 .webinar-stage-page #problem.webinar-neural-afterglow .webinar-neural-hold {
@@ -93,7 +93,7 @@
   grid-template-columns: 14px minmax(0, 1fr);
   gap: 12px;
   padding: 13px 4px;
-  border-top: 1px solid rgba(196, 214, 232, .14);
+  border-top: 1px solid rgba(223, 196, 125, .14);
 }
 
 .webinar-neural-bottlenecks .webinar-neural-chev {
@@ -102,7 +102,7 @@
   margin-top: 3px;
   flex: none;
   fill: none;
-  stroke: rgba(214, 232, 250, .9);
+  stroke: rgba(223, 196, 125, .9);
   stroke-width: 1.75;
   stroke-linecap: round;
   stroke-linejoin: round;
@@ -164,7 +164,7 @@
   max-width: 720px;
   margin-inline: auto;
   margin-bottom: 16px;
-  color: #f4f8fd;
+  color: #dfc47d;
   font-size: clamp(26px, 3.2vw, 40px);
   font-weight: 500;
   line-height: 1.15;
@@ -265,7 +265,7 @@
 
 .webinar-stage-page .webinar-editorial-grid #webinar-faq summary {
   min-height: 52px;
-  color: #f4f8fd;
+  color: #dfc47d;
 }
 
 .webinar-stage-page .webinar-editorial-grid #webinar-faq details p {
@@ -318,7 +318,7 @@
 
 .webinar-neural-afterglow :is(a, button):focus-visible,
 .webinar-neural-slide :is(a, button, summary):focus-visible {
-  outline: 2px solid #9fe0ff;
+  outline: 2px solid #dfc47d;
   outline-offset: 3px;
   border-radius: 8px;
 }

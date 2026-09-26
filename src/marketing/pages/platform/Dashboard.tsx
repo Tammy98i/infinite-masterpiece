@@ -197,7 +197,7 @@ export function Dashboard() {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-3xl font-light text-white tracking-tight">אזור קפטן / מדריך</h1>
-            <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold">סגל</span>
+            <span className="bg-[#b79043]/10 text-[#dfc47d] border border-[#b79043]/20 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold">סגל</span>
           </div>
           <p className="text-white/50 font-light">Pod Alpha. 12 תלמידים פעילים</p>
         </div>
