@@ -66,7 +66,8 @@ export const CategoryRow: React.FC<CategoryRowProps> = ({
   const scroll = (dir: 'prev' | 'next') => {
     const el = rowRef.current;
     if (!el) return;
-    const delta = dir === 'next' ? -340 : 340;
+    const cardStep = window.matchMedia('(max-width: 639px)').matches ? 168 : 340;
+    const delta = dir === 'next' ? -cardStep : cardStep;
     el.scrollBy({ left: delta, behavior: 'smooth' });
     trackEvent(dir === 'next' ? 'carousel_next_click' : 'carousel_previous_click', {
       section_name: railName,

@@ -405,8 +405,8 @@ export const CourseDetailView: React.FC = () => {
   const totalDuration = course.episodes.reduce((s, ep) => s + ep.duration, 0);
 
   return (
-    <div className="library-catalog-page library-course-page min-h-screen text-white pb-16">
-      <header className="library-course-billboard relative min-h-[58vh] md:min-h-[70vh] flex items-end overflow-hidden pt-24 pb-16 md:pb-20">
+    <div className="library-catalog-page library-course-page library-bottom-clearance min-h-screen text-white">
+      <header className="library-course-billboard relative min-h-[52vh] sm:min-h-[58vh] md:min-h-[70vh] flex items-end overflow-hidden pt-24 pb-12 sm:pb-16 md:pb-20">
         <div className="absolute inset-0 select-none overflow-hidden">
           <img
             src={course.backdropImage || course.coverImage}
@@ -435,7 +435,7 @@ export const CourseDetailView: React.FC = () => {
             <span className="text-white">{course.title}</span>
           </nav>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight mb-4 max-w-4xl">
+          <h1 className="text-3xl sm:text-5xl lg:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight mb-3 sm:mb-4 max-w-4xl">
             {course.title}
           </h1>
 

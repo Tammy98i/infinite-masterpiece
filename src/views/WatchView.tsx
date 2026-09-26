@@ -423,7 +423,7 @@ export const WatchView: React.FC = () => {
       </div>
 
       <div
-        className={`absolute inset-inline-0 top-0 z-20 flex items-center justify-between gap-4 px-5 pt-4 transition-opacity duration-300 ${
+        className={`absolute inset-inline-0 top-0 z-20 flex items-start sm:items-center justify-between gap-2 sm:gap-4 px-3 sm:px-5 pt-[max(0.75rem,env(safe-area-inset-top,0px))] transition-opacity duration-300 ${
           chromeOn ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -431,30 +431,30 @@ export const WatchView: React.FC = () => {
         <button
           type="button"
           onClick={() => setView('course', { courseId: course.id })}
-          className="flex items-center gap-2 text-start min-h-11 focus-ring rounded-lg"
+          className="flex items-center gap-2 text-start min-h-11 min-w-0 flex-1 focus-ring rounded-lg"
         >
-          <DirBack className="w-5 h-5 text-white/80" />
-          <span className="text-sm text-white">
+          <DirBack className="w-5 h-5 text-white/80 shrink-0" />
+          <span className="text-sm text-white truncate">
             פרק {episode.episodeNumber} · {episodeName(episode.title)}
           </span>
           {previewing ? (
-            <span className="text-[11px] text-[#b79043] border border-[#b79043]/40 rounded-full px-2 py-0.5">
+            <span className="shrink-0 text-[11px] text-[#b79043] border border-[#b79043]/40 rounded-full px-2 py-0.5">
               טעימה
             </span>
           ) : null}
           {!isGuest && user.email ? (
-            <span className="hidden sm:inline text-[11px] text-white/45 truncate max-w-[200px]" dir="ltr">
+            <span className="hidden md:inline text-[11px] text-white/45 truncate max-w-[160px]" dir="ltr">
               {user.email}
             </span>
           ) : null}
         </button>
 
-        <div className="flex items-center gap-1">
+        <div className="flex items-center gap-0.5 sm:gap-1 shrink-0">
           {captionTracks.length > 0 ? (
             <button
               type="button"
               onClick={() => setCaptionsOn((v) => !v)}
-              className={`px-3 py-2 rounded-full text-[12px] min-h-11 border cursor-pointer ${
+              className={`px-2 sm:px-3 py-2 rounded-full text-[11px] sm:text-[12px] min-h-11 border cursor-pointer ${
                 captionsOn ? 'border-[#b79043] text-[#dfc47d]' : 'border-white/20 text-white/50'
               }`}
               aria-pressed={captionsOn}
@@ -465,7 +465,7 @@ export const WatchView: React.FC = () => {
           <button
             type="button"
             onClick={() => cycleSpeed(playbackRate >= 2 ? -1 : 1)}
-            className="px-3 py-2 rounded-full text-[12px] min-h-11 border border-white/20 text-white/70 hover:border-[#b79043] cursor-pointer"
+            className="px-2 sm:px-3 py-2 rounded-full text-[11px] sm:text-[12px] min-h-11 border border-white/20 text-white/70 hover:border-[#b79043] cursor-pointer"
             aria-label={`מהירות ${playbackRate}`}
           >
             {playbackRate}x
@@ -560,7 +560,7 @@ export const WatchView: React.FC = () => {
       )}
 
       <div
-        className={`absolute inset-inline-0 bottom-0 z-20 px-5 pb-6 transition-opacity duration-300 ${
+        className={`absolute inset-inline-0 bottom-0 z-20 px-3 sm:px-5 pb-[max(1.25rem,env(safe-area-inset-bottom,0px))] transition-opacity duration-300 ${
           chromeOn && !showEndOverlay ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={(e) => e.stopPropagation()}

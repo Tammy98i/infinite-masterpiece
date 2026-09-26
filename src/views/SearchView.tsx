@@ -56,7 +56,7 @@ export const SearchView: React.FC = () => {
   };
 
   return (
-    <div className="library-catalog-page min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto">
+    <div className="library-catalog-page library-bottom-clearance min-h-screen text-white pt-28 px-4 sm:px-8 max-w-7xl mx-auto">
       <div className="max-w-3xl mx-auto text-center mb-10">
         <h1 className="text-3xl sm:text-4xl font-heading font-semibold mb-6 text-white">חיפוש בספרייה</h1>
 
@@ -89,7 +89,7 @@ export const SearchView: React.FC = () => {
           <SearchFilters value={filters} onChange={setFilters} activeCount={activeFilterCount} />
 
           {results.length > 0 ? (
-            <ul className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5" role="list">
+            <ul className="library-page-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" role="list">
               {results.map((course, index) => {
                 const instructor = instructors.find((i) => i.id === course.instructorId);
                 const duration = course.episodes.reduce((s, ep) => s + ep.duration, 0);

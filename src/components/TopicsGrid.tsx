@@ -41,7 +41,7 @@ export const TopicsGrid: React.FC = () => {
               setView('category', { categoryId: category.id });
             }}
             aria-label={`פתיחת נושא ${category.name}, ${count} הרצאות`}
-            className="library-poster group relative aspect-[16/9] w-[168px] sm:w-[210px] shrink-0 overflow-hidden rounded-[4px] text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] min-h-11"
+            className="library-poster group relative aspect-[16/9] w-[148px] sm:w-[168px] md:w-[210px] shrink-0 overflow-hidden rounded-[4px] text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] min-h-11"
           >
             {cover ? (
               <img

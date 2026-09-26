@@ -11,7 +11,7 @@ export const ShortsView: React.FC = () => {
   const shortCourses = courses.filter((c) => c.isShort);
 
   return (
-    <div className="library-catalog-page min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto text-start">
+    <div className="library-catalog-page library-bottom-clearance min-h-screen text-white pt-28 px-4 sm:px-8 max-w-7xl mx-auto text-start">
       <div className="library-page-hero relative overflow-hidden p-8 mb-8 border">
         <div className="flex items-center gap-2 text-[#b79043] text-xs font-semibold mb-2">
           <Zap className="w-4 h-4" />
@@ -26,7 +26,7 @@ export const ShortsView: React.FC = () => {
       </div>
 
       {shortCourses.length > 0 ? (
-        <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-stretch">
+        <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-stretch">
           {shortCourses.map((course) => (
             <CourseCard key={course.id} course={course} />
           ))}

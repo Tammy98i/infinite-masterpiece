@@ -30,7 +30,7 @@ export const CategoryView: React.FC = () => {
   const filteredCourses = filterCatalogCourses(baseCourses, user, activeFilter, selectedInstructor);
 
   return (
-    <div className="library-catalog-page min-h-screen text-white pt-32 pb-28 px-4 sm:px-8 lg:px-10 max-w-[1400px] mx-auto">
+    <div className="library-catalog-page library-bottom-clearance min-h-screen text-white pt-32 px-4 sm:px-8 lg:px-10 max-w-[1400px] mx-auto">
       <div
         className="library-page-hero relative overflow-hidden text-start p-8 md:p-12 mb-8 border"
         style={
@@ -64,14 +64,14 @@ export const CategoryView: React.FC = () => {
         </div>
       </div>
 
-      <div className="library-page-toolbar flex flex-wrap items-center justify-between gap-4 mb-6 p-3 border">
-        <div className="flex items-center gap-2 overflow-x-auto pb-1 sm:pb-0" role="group" aria-label="סינון תכנים">
+      <div className="library-page-toolbar flex flex-col sm:flex-row sm:flex-wrap sm:items-center sm:justify-between gap-3 sm:gap-4 mb-6 p-3 border">
+        <div className="flex min-w-0 items-center gap-2 overflow-x-auto pb-1 sm:pb-0 -mx-1 px-1" role="group" aria-label="סינון תכנים">
           {FILTERS.map((filter) => (
             <button
               key={filter.id}
               type="button"
               onClick={() => setActiveFilter(filter.id)}
-              className={`library-page-chip px-4 py-2 text-sm font-medium transition-all min-h-11 whitespace-nowrap ${
+              className={`library-page-chip px-3 sm:px-4 py-2 text-sm font-medium transition-all min-h-11 whitespace-nowrap shrink-0 ${
                 activeFilter === filter.id
                   ? 'bg-white text-[#141414]'
                   : 'bg-white/5 text-zinc-300 hover:bg-white/10'
@@ -83,12 +83,12 @@ export const CategoryView: React.FC = () => {
           ))}
         </div>
 
-        <label className="flex items-center gap-2 text-sm text-white/55">
+        <label className="flex w-full sm:w-auto items-center gap-2 text-sm text-white/55">
           <span className="sr-only">לפי מרצה</span>
           <select
             value={selectedInstructor}
             onChange={(e) => setSelectedInstructor(e.target.value)}
-            className="bg-[#141414] border border-white/15 rounded-[4px] px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#b79043] min-h-11"
+            className="w-full sm:w-auto bg-[#141414] border border-white/15 rounded-[4px] px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#b79043] min-h-11"
             aria-label="סינון לפי מרצה"
           >
             <option value="all">לפי מרצה: הכול</option>
@@ -102,7 +102,7 @@ export const CategoryView: React.FC = () => {
       </div>
 
       {filteredCourses.length > 0 ? (
-        <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-stretch">
+        <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-stretch">
           {filteredCourses.map((course, index) => (
             <CourseCard
               key={course.id}

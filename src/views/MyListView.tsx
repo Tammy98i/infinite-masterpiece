@@ -14,7 +14,7 @@ export const MyListView: React.FC = () => {
   const isFreeList = user.role !== 'admin' && !hasFullLibraryAccess(user);
 
   return (
-    <div className="library-catalog-page min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto">
+    <div className="library-catalog-page library-bottom-clearance min-h-screen text-white pt-28 px-4 sm:px-8 max-w-7xl mx-auto">
       <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8">
         <div>
           <p className="library-page-eyebrow mb-1">הרשימה שלי</p>
@@ -41,7 +41,7 @@ export const MyListView: React.FC = () => {
       </div>
 
       {savedCourses.length > 0 ? (
-        <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-stretch">
+        <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-stretch">
           {savedCourses.map((course) => (
             <CourseCard key={course.id} course={course} />
           ))}

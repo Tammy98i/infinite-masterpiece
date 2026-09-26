@@ -146,7 +146,7 @@ export const HomeView: React.FC = () => {
   }
 
   return (
-    <div className="library-flow-page min-h-screen text-white overflow-x-hidden pb-28">
+    <div className="library-flow-page library-bottom-clearance min-h-screen text-white overflow-x-hidden">
       {heroCourse ? (
         <HeroBanner
           course={heroCourse}
