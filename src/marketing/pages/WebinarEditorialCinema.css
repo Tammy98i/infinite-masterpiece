@@ -2,7 +2,7 @@
 .webinar-stage-page {
   --cinema-navy: #050a14;
   --cinema-navy-soft: #0a1a2f;
-  --cinema-white: #e0edff;
+  --cinema-white: #dfc47d;
   --cinema-gold: #b79043;
   --cinema-gold-light: #dfc47d;
   background: var(--cinema-navy);
@@ -86,7 +86,7 @@
   inset-inline-start: 50%;
   transform: translateX(-50%);
   width: max-content;
-  color: rgba(224, 237, 255, .72);
+  color: rgba(223, 196, 125, .72);
   font-size: 11px;
 }
 .webinar-stage-page .webinar-stage-copy {
@@ -131,7 +131,7 @@
 .webinar-stage-page .webinar-stage-subheadline {
   max-width: 540px;
   margin: 0 0 12px;
-  color: rgba(224, 237, 255, .76);
+  color: rgba(223, 196, 125, .76);
   font-size: 15px;
   line-height: 1.75;
 }
@@ -151,7 +151,7 @@
   padding: 12px 28px;
   font-size: 13px;
 }
-.webinar-stage-page .webinar-stage-secondary { color: rgba(224, 237, 255, .6); }
+.webinar-stage-page .webinar-stage-secondary { color: rgba(223, 196, 125, .6); }
 
 .webinar-editorial-grid {
   position: relative;
@@ -263,7 +263,7 @@
 }
 .webinar-stage-page .webinar-editorial-grid #hosts article.glass-card {
   border: 1px solid rgba(223, 196, 125, .2);
-  background: rgba(224, 237, 255, .025);
+  background: rgba(223, 196, 125, .025);
 }
 .webinar-stage-page .webinar-editorial-grid #hosts article > div:first-child { aspect-ratio: 4 / 5; }
 .webinar-stage-page .webinar-editorial-grid #hosts article > div:last-child { padding: 12px 8px 14px; }
@@ -408,7 +408,7 @@
 /* One full-bleed slide per section, in the site's navy / cream / gold. */
 .webinar-stage-page {
   background: transparent;
-  color: var(--editorial-cream, #e0edff);
+  color: var(--editorial-cream, #dfc47d);
 }
 .webinar-stage-page .webinar-stage-hero {
   width: 100%;
@@ -441,13 +441,13 @@
 .webinar-stage-page .webinar-editorial-grid .team-galaxy {
   width: 100%;
   background: transparent;
-  color: var(--editorial-cream, #e0edff);
+  color: var(--editorial-cream, #dfc47d);
 }
 .webinar-stage-page .webinar-editorial-grid .team-galaxy { min-height: 70vh; }
 .webinar-stage-page .webinar-editorial-grid > :is(#problem, #webinar-fit, #webinar-register-bottom),
 .webinar-stage-page .webinar-editorial-grid > :is(#problem, #webinar-fit, #webinar-register-bottom) :is(h2, h3, p, li, span, label, summary),
 .webinar-stage-page .webinar-editorial-grid > :is(#hosts, #webinar-faq) :is(h2, h3, p, li, span, summary) {
-  color: var(--editorial-cream, #e0edff);
+  color: var(--editorial-cream, #dfc47d);
 }
 .webinar-stage-page .webinar-editorial-grid > section > div {
   width: min(100%, 1100px);
@@ -457,22 +457,22 @@
 .webinar-stage-page .webinar-editorial-grid #problem .glass-card {
   border-bottom-color: rgba(223, 196, 125, .22);
 }
-.webinar-stage-page .webinar-editorial-grid #problem .glass-card p { color: rgba(224, 237, 255, .74); }
-.webinar-stage-page .webinar-editorial-grid #problem > div > p:not(:first-child) { color: rgba(224, 237, 255, .84); }
+.webinar-stage-page .webinar-editorial-grid #problem .glass-card p { color: rgba(223, 196, 125, .74); }
+.webinar-stage-page .webinar-editorial-grid #problem > div > p:not(:first-child) { color: rgba(223, 196, 125, .84); }
 .webinar-stage-page .webinar-editorial-grid #webinar-fit .glass-card,
 .webinar-stage-page .webinar-editorial-grid #webinar-fit .rounded-3xl,
 .webinar-stage-page .webinar-editorial-grid .webinar-stage-register-card {
   border: 1px solid rgba(223, 196, 125, .28);
   border-radius: 1.25rem;
   background: rgba(8, 14, 26, .55);
-  color: var(--editorial-cream, #e0edff);
+  color: var(--editorial-cream, #dfc47d);
   box-shadow: none;
 }
 .webinar-stage-page .webinar-editorial-grid .webinar-stage-register-card form label,
-.webinar-stage-page .webinar-editorial-grid .webinar-stage-register-card form label span { color: rgba(224, 237, 255, .84); }
+.webinar-stage-page .webinar-editorial-grid .webinar-stage-register-card form label span { color: rgba(223, 196, 125, .84); }
 .webinar-stage-page .webinar-editorial-grid .webinar-stage-register-card form input {
-  color: var(--editorial-cream, #e0edff) !important;
-  background: rgba(224, 237, 255, .04) !important;
+  color: var(--editorial-cream, #dfc47d) !important;
+  background: rgba(223, 196, 125, .04) !important;
 }
 
 @media (max-width: 767px) {

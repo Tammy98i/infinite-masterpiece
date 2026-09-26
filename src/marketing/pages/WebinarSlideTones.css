@@ -3,9 +3,9 @@
    Text stays cream/white; only the atmosphere warms. */
 
 .webinar-stage-page {
-  --tone-cream: #e0edff;
-  --tone-cream-soft: rgba(224, 237, 255, 0.72);
-  --tone-cream-mute: rgba(224, 237, 255, 0.52);
+  --tone-cream: #dfc47d;
+  --tone-cream-soft: rgba(223, 196, 125, 0.72);
+  --tone-cream-mute: rgba(223, 196, 125, 0.52);
   --tone-gold: #b79043;
   --tone-gold-light: #dfc47d;
   --tone-space: #050a14;
@@ -192,7 +192,7 @@
 .webinar-stage-page #webinar-register-bottom[data-tone='gilt'] .webinar-stage-register-card form input,
 .webinar-stage-page #webinar-register-bottom[data-tone='gilt'] .webinar-stage-register-card form textarea {
   color: var(--tone-cream) !important;
-  background: rgba(224, 237, 255, 0.05) !important;
+  background: rgba(223, 196, 125, 0.05) !important;
   border-color: rgba(223, 196, 125, 0.28) !important;
 }
 
