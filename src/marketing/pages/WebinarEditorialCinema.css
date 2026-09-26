@@ -289,7 +289,8 @@
 .webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-heading { text-align: start; }
 .webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-heading h2 { font-size: clamp(31px, 3vw, 48px); }
 .webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-layout { display: block; }
-.webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-map { height: 390px; }
+.webinar-stage-page .webinar-editorial-grid .team-galaxy:not(.is-orbital) .galaxy-map { height: 390px; }
+.webinar-stage-page .webinar-editorial-grid .team-galaxy.is-orbital { min-height: 0; }
 .webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-map-footer { align-items: center; }
 .webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-panel-slot { padding-top: 18px; }
 .webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-idle { min-height: 190px; padding: 22px; }
@@ -401,7 +402,7 @@
   .webinar-stage-page .webinar-editorial-grid #hosts ol { grid-template-columns: repeat(2, 1fr); }
   .webinar-stage-page .webinar-editorial-grid #webinar-fit .grid { grid-template-columns: 1fr; }
   .webinar-stage-page .webinar-editorial-grid .team-galaxy { padding-inline: 16px; }
-  .webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-map { height: 500px; }
+  .webinar-stage-page .webinar-editorial-grid .team-galaxy:not(.is-orbital) .galaxy-map { height: 500px; }
   .webinar-stage-page .webinar-editorial-grid .webinar-stage-register-card { padding: 20px !important; }
 }
 

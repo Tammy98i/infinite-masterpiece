@@ -3,23 +3,10 @@
 ## Problem
 Desktop elliptical map is absolute-positioned. On ≤767px the same layout scales stars to ~25px for contributors — effectively invisible. Users see a heading and empty space.
 
-## Proposal (sketch only — desktop unchanged)
+## Shipped behavior (≤1199px Orbital Stage)
 
-### Mobile ≤767 — Orbital Stage
-- Large founder “sun” (≥120px) fixed at top
-- Satellite members in a horizontal snap-scroll orbit rail (72px+ portraits)
-- Gold orbit rings + star dust for space atmosphere
-- Tap opens bottom sheet with role + bio
-- Escape / close control; 44px targets
-
-### Tablet 768–1199 — Horseshoe
-- Founder centered and large
-- Team split into two readable side columns (arc metaphor)
-- Soft orbit ellipses behind
-- Selection shows bottom detail strip
-
-### Desktop ≥1200
-- Keep current `TeamGalaxy` map as-is
-
-## Implementation note
-Same `/api/team-members` data; branch layout by `matchMedia` inside `TeamGalaxy.tsx` (or CSS+markup variants). Do not remove desktop galaxy.
+- Large featured sun (default founder Gal) at top
+- Horizontal snap-scroll rail of everyone except the featured member
+- Tap avatar → that person becomes the featured sun; bio under the name
+- Outside click / Escape → reset featured to Gal
+- Desktop ≥1200 keeps the elliptical map unchanged
