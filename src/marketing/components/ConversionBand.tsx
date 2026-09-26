@@ -34,7 +34,7 @@ export function ConversionBand() {
             לצפייה במסלולים
             <DirNext className="h-4 w-4" />
           </Link>
-          <Link to="/webinar" className="btn-secondary min-w-44">להכיר בערב החי</Link>
+          <Link to="/webinar" className="btn-secondary min-w-44 text-[#dfc47d]">להכיר בערב החי</Link>
         </div>
       </div>
     </section>
