@@ -417,11 +417,11 @@ export const Navbar: React.FC = () => {
         )}
       </header>
 
-      <nav className="editorial-library-bottom-nav lg:hidden fixed bottom-0 inset-inline-0 z-50 bg-[#0a0a0af2] backdrop-blur-xl border-t border-white/10 flex items-center justify-between" aria-label="ניווט תחתון — ספרייה">
+      <nav className="editorial-library-bottom-nav lg:hidden fixed bottom-0 left-0 right-0 z-50 w-full bg-[#0a0a0af2] backdrop-blur-xl border-t border-white/10 flex items-center justify-between" aria-label="ניווט תחתון — ספרייה">
         <button
           type="button"
           onClick={() => setView('home')}
-          className={`library-bottom-nav-item flex flex-col items-center gap-1 min-h-11 min-w-11 ${
+          className={`library-bottom-nav-item flex flex-1 flex-col items-center justify-center gap-1 min-h-11 ${
             currentView === 'home' ? 'text-primary-light font-bold' : 'text-zinc-400'
           }`}
         >
@@ -431,7 +431,7 @@ export const Navbar: React.FC = () => {
         <button
           type="button"
           onClick={() => setView('search')}
-          className={`library-bottom-nav-item flex flex-col items-center gap-1 min-h-11 min-w-11 ${
+          className={`library-bottom-nav-item flex flex-1 flex-col items-center justify-center gap-1 min-h-11 ${
             currentView === 'search' ? 'text-primary-light font-bold' : 'text-zinc-400'
           }`}
         >
@@ -441,7 +441,7 @@ export const Navbar: React.FC = () => {
         <button
           type="button"
           onClick={() => setView('history')}
-          className={`library-bottom-nav-item flex flex-col items-center gap-1 min-h-11 min-w-11 ${
+          className={`library-bottom-nav-item flex flex-1 flex-col items-center justify-center gap-1 min-h-11 ${
             currentView === 'history' ? 'text-primary-light font-bold' : 'text-zinc-400'
           }`}
         >
@@ -452,7 +452,7 @@ export const Navbar: React.FC = () => {
           type="button"
           onClick={() => setView('mylist')}
           data-onboarding="my-list"
-          className={`library-bottom-nav-item flex flex-col items-center gap-1 min-h-11 min-w-11 ${
+          className={`library-bottom-nav-item flex flex-1 flex-col items-center justify-center gap-1 min-h-11 ${
             currentView === 'mylist' ? 'text-primary-light font-bold' : 'text-zinc-400'
           }`}
         >
@@ -462,7 +462,7 @@ export const Navbar: React.FC = () => {
         <button
           type="button"
           onClick={() => setView('profile')}
-          className={`library-bottom-nav-item flex flex-col items-center gap-1 min-h-11 min-w-11 ${
+          className={`library-bottom-nav-item flex flex-1 flex-col items-center justify-center gap-1 min-h-11 ${
             currentView === 'profile' ? 'text-primary-light font-bold' : 'text-zinc-400'
           }`}
         >
