@@ -306,9 +306,30 @@ body { background: var(--editorial-ink); }
   background: var(--editorial-ink) !important;
   backdrop-filter: none !important;
 }
-.editorial-site-footer h3 { color: var(--editorial-gold-light); }
-.editorial-site-footer a:hover,
-.editorial-library-footer a:hover { color: var(--editorial-gold-light); }
+
+/* Footer copy stays brand gold even under sky-readable heading remaps. */
+.editorial-marketing-shell .editorial-site-footer,
+.editorial-marketing-shell .editorial-site-footer :is(h3, a, span, p, li) {
+  color: var(--editorial-gold-light);
+  text-shadow: none;
+}
+.editorial-marketing-shell .editorial-site-footer h3,
+.editorial-marketing-shell .editorial-site-footer h3 a {
+  color: var(--editorial-gold);
+}
+.editorial-marketing-shell .editorial-site-footer a:hover,
+.editorial-library-footer a:hover {
+  color: var(--editorial-gold-light);
+}
+
+.editorial-marketing-shell .conversion-band :is(h2, p) {
+  color: var(--editorial-gold-light);
+  text-shadow: none;
+}
+.editorial-marketing-shell .conversion-band .text-\[\#b79043\],
+.editorial-marketing-shell .conversion-band [class*='tracking'] {
+  color: var(--editorial-gold);
+}
 
 /* Library: retain media-led browsing, but use the same restrained frame. */
 .vod-app { background: transparent; }
