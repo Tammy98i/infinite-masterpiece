@@ -128,6 +128,11 @@ body { background: var(--editorial-ink); }
   letter-spacing: -.035em;
 }
 
+/* Marketing + webinar section titles read as centered compositions. */
+.editorial-marketing-shell :is(h1, h2, h3, h4) {
+  text-align: center;
+}
+
 .editorial-marketing-shell.sky-readable :is(p, li, label, dd, figcaption, summary, dt),
 .vod-app.sky-readable :is(p, li, label, dd, figcaption, summary, dt) {
   text-shadow: none;

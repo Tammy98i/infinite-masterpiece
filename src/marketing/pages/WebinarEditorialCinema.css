@@ -101,7 +101,7 @@
   border: 0;
   background: transparent;
   box-shadow: none;
-  text-align: start;
+  text-align: center;
   direction: rtl;
 }
 .webinar-stage-page .webinar-stage-copy::before {
@@ -112,10 +112,11 @@
   font: 400 12px/1.2 Georgia, 'Times New Roman', serif;
   letter-spacing: .2em;
   direction: ltr;
+  text-align: center;
 }
 .webinar-stage-page .webinar-stage-copy h1 {
   max-width: 600px;
-  margin: 0 0 20px;
+  margin: 0 auto 20px;
   color: var(--cinema-white);
   font-family: Georgia, 'Times New Roman', var(--font-heading);
   font-size: clamp(48px, 5.1vw, 74px);
@@ -130,7 +131,7 @@
 }
 .webinar-stage-page .webinar-stage-subheadline {
   max-width: 540px;
-  margin: 0 0 12px;
+  margin: 0 auto 12px;
   color: rgba(223, 196, 125, .76);
   font-size: 15px;
   line-height: 1.75;
@@ -144,7 +145,7 @@
   font-size: 11px;
   letter-spacing: .03em;
 }
-.webinar-stage-page .webinar-stage-actions { align-items: flex-start; }
+.webinar-stage-page .webinar-stage-actions { align-items: center; }
 .webinar-stage-page .webinar-stage-actions .btn-gold {
   width: min(100%, 390px);
   min-height: 48px;
@@ -218,10 +219,10 @@
   font-weight: 400;
   line-height: 1.08;
   letter-spacing: -.035em;
-  text-align: start;
+  text-align: center;
 }
-.webinar-stage-page .webinar-editorial-grid .text-center { text-align: start; }
-.webinar-stage-page .webinar-editorial-grid .mx-auto { margin-inline: 0; }
+.webinar-stage-page .webinar-editorial-grid .text-center { text-align: center; }
+.webinar-stage-page .webinar-editorial-grid .mx-auto { margin-inline: auto; }
 .webinar-stage-page .webinar-editorial-grid :is(#problem, #hosts, #webinar-fit, #webinar-faq) > div > div:first-child,
 .webinar-stage-page .webinar-editorial-grid :is(#problem, #hosts) > div > p:first-child {
   color: var(--cinema-gold);
@@ -286,7 +287,7 @@
     radial-gradient(ellipse at 45% 44%, rgba(183, 144, 67, .13), transparent 50%),
     #050a14;
 }
-.webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-heading { text-align: start; }
+.webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-heading { text-align: center; }
 .webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-heading h2 { font-size: clamp(31px, 3vw, 48px); }
 .webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-layout { display: block; }
 .webinar-stage-page .webinar-editorial-grid .team-galaxy:not(.is-orbital) .galaxy-map { height: 390px; }
@@ -338,7 +339,7 @@
   width: 100%;
   max-width: none;
   padding: 0;
-  text-align: start;
+  text-align: center;
 }
 .webinar-stage-page .webinar-editorial-grid #webinar-register-bottom > .relative > p:first-child {
   font-family: Georgia, 'Times New Roman', var(--font-heading);

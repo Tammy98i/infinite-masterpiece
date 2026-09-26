@@ -189,7 +189,7 @@
 .webinar-stage-page :is(#problem, #hosts, #webinar-fit) .text-\[\#b79043\],
 .webinar-stage-page :is(#problem, #hosts, #webinar-fit) .text-\[\#dfc47d\] { color: var(--stage-gold-light); }
 .webinar-stage-page :is(#problem, #hosts, #webinar-fit) > div { max-width: 1040px; }
-.webinar-stage-page :is(#problem, #hosts, #webinar-fit) h2 { max-width: 650px; margin-bottom: 16px; font-size: clamp(26px, 3vw, 40px); line-height: 1.12; }
+.webinar-stage-page :is(#problem, #hosts, #webinar-fit) h2 { max-width: 650px; margin-inline: auto; margin-bottom: 16px; font-size: clamp(26px, 3vw, 40px); line-height: 1.12; text-align: center; }
 .webinar-stage-page :is(#problem, #hosts, #webinar-fit) .text-\[11px\] { color: var(--stage-gold-light); }
 
 .webinar-stage-page #problem { min-height: 280px; display: grid; align-items: center; padding-block: 44px; }
