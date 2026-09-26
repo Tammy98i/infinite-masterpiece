@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Team Galaxy — סקיצת מובייל / טאבלט</title>
+  <style>
+    :root {
+      --navy: #05070b;
+      --navy-2: #0a1020;
+      --gold: #b79043;
+      --champagne: #dfc47d;
+      --cream: #f7f4eb;
+      --muted: rgba(247, 244, 235, 0.62);
+      --ring: rgba(183, 144, 67, 0.35);
+      --font: "IBM Plex Sans Hebrew", "Segoe UI", Tahoma, sans-serif;
+      --serif: Georgia, "Times New Roman", serif;
+    }
+    * { box-sizing: border-box; }
+    html, body { margin: 0; background: #02040a; color: var(--cream); font-family: var(--font); }
+    body {
+      background:
+        radial-gradient(ellipse at 50% 18%, rgba(183, 144, 67, 0.08), transparent 42%),
+        radial-gradient(ellipse at 70% 80%, rgba(40, 70, 120, 0.18), transparent 50%),
+        linear-gradient(180deg, #03060f, #05070b 40%, #02040a);
+      min-height: 100vh;
+    }
+    .page { max-width: 1180px; margin: 0 auto; padding: 28px 16px 80px; }
+    .doc-head { text-align: center; margin-bottom: 28px; }
+    .doc-head .eyebrow { color: var(--gold); letter-spacing: 0.22em; font-size: 11px; margin: 0 0 10px; }
+    .doc-head h1 { font-family: var(--serif); font-weight: 400; font-size: clamp(1.5rem, 4vw, 2.2rem); color: var(--champagne); margin: 0 0 10px; }
+    .doc-head p { color: var(--muted); max-width: 46rem; margin: 0 auto; line-height: 1.7; font-size: 0.95rem; }
+    .tabs { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; margin: 22px 0 18px; }
+    .tabs button {
+      min-height: 44px; padding: 0 16px; border-radius: 999px; border: 1px solid var(--ring);
+      background: rgba(5, 10, 20, 0.7); color: var(--cream); cursor: pointer; font: inherit;
+    }
+    .tabs button[aria-selected="true"] {
+      background: linear-gradient(180deg, rgba(183, 144, 67, 0.35), rgba(183, 144, 67, 0.12));
+      border-color: rgba(223, 196, 125, 0.55); color: #fff8e7;
+    }
+    .panel { display: none; }
+    .panel.is-on { display: block; }
+    .note {
+      border: 1px solid rgba(183, 144, 67, 0.22);
+      background: rgba(8, 12, 22, 0.85);
+      border-radius: 10px;
+      padding: 14px 16px;
+      margin-bottom: 18px;
+      color: var(--muted);
+      line-height: 1.65;
+      font-size: 0.9rem;
+    }
+    .note strong { color: var(--champagne); font-weight: 500; }
+    .frame-row { display: flex; flex-wrap: wrap; gap: 22px; justify-content: center; align-items: flex-start; }
+    .device {
+      position: relative;
+      border: 1px solid rgba(183, 144, 67, 0.28);
+      border-radius: 28px;
+      background: #04070f;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45), inset 0 0 0 1px rgba(255,255,255,0.03);
+      overflow: hidden;
+    }
+    .device.phone { width: 360px; height: 740px; }
+    .device.tablet { width: 720px; max-width: 100%; height: 640px; }
+    .device .bezel {
+      height: 36px; display: flex; align-items: center; justify-content: center;
+      border-bottom: 1px solid rgba(183, 144, 67, 0.12);
+      color: rgba(247, 244, 235, 0.4); font-size: 11px; letter-spacing: 0.08em;
+    }
+    .device .screen {
+      position: relative; height: calc(100% - 36px); overflow: hidden;
+      background:
+        radial-gradient(circle at 50% 28%, rgba(183, 144, 67, 0.12), transparent 38%),
+        radial-gradient(ellipse at 50% 100%, rgba(20, 40, 80, 0.35), transparent 55%),
+        #05070b;
+    }
+    .dust { position: absolute; inset: 0; pointer-events: none; }
+    .dust i {
+      position: absolute; width: 2px; height: 2px; border-radius: 50%;
+      background: #ddbf78; opacity: 0.35;
+    }
+    .orbit-ring {
+      position: absolute; left: 50%; border: 1px solid rgba(183, 144, 67, 0.18);
+      border-radius: 50%; transform: translateX(-50%); pointer-events: none;
+    }
+    .heading-block { text-align: center; padding: 18px 18px 8px; position: relative; z-index: 2; }
+    .heading-block .eyebrow { color: var(--gold); font-size: 10px; letter-spacing: 0.2em; margin: 0 0 8px; }
+    .heading-block h2 {
+      font-family: var(--serif); font-weight: 400; font-size: 1.35rem; color: var(--champagne);
+      margin: 0 0 8px; line-height: 1.35;
+    }
+    .heading-block p { margin: 0; color: var(--muted); font-size: 0.78rem; line-height: 1.55; }
+
+    /* —— Mobile: Orbital Stage —— */
+    .mobile-stage { position: relative; z-index: 2; padding: 4px 0 0; height: calc(100% - 110px); display: flex; flex-direction: column; }
+    .sun-card {
+      display: grid; justify-items: center; gap: 8px; padding: 8px 16px 6px; flex: 0 0 auto;
+    }
+    .sun-card .portrait {
+      width: 132px; height: 132px; border-radius: 50%; padding: 5px;
+      border: 2px solid #e7c978; background: #11100b;
+      box-shadow: 0 0 36px rgba(183, 144, 67, 0.35), 0 0 80px rgba(183, 144, 67, 0.12);
+      position: relative;
+    }
+    .sun-card .portrait img { width: 100%; height: 100%; object-fit: cover; object-position: center 18%; border-radius: 50%; display: block; }
+    .sun-card .flare {
+      position: absolute; top: -18px; left: 50%; transform: translateX(-50%);
+      color: var(--champagne); font-size: 22px; text-shadow: 0 0 12px var(--gold);
+    }
+    .sun-card .name { font-size: 1.05rem; font-weight: 500; }
+    .sun-card .role { font-size: 10px; letter-spacing: 0.14em; color: var(--gold); }
+    .orbit-label {
+      text-align: center; color: rgba(223, 196, 125, 0.7); font-size: 10px; letter-spacing: 0.16em;
+      margin: 10px 0 6px;
+    }
+    .orbit-track {
+      position: relative; flex: 1; min-height: 0;
+      display: flex; flex-direction: column;
+    }
+    .orbit-track .ring-a {
+      top: 18%; width: 128%; height: 210px; left: 50%;
+    }
+    .orbit-track .ring-b {
+      top: 8%; width: 150%; height: 260px; left: 50%; opacity: 0.55;
+    }
+    .sat-rail {
+      position: relative; z-index: 2;
+      display: flex; gap: 14px; overflow-x: auto; scroll-snap-type: x mandatory;
+      padding: 18px 22px 28px; -webkit-overflow-scrolling: touch;
+      scrollbar-width: none;
+    }
+    .sat-rail::-webkit-scrollbar { display: none; }
+    .sat {
+      scroll-snap-align: center; flex: 0 0 auto; width: 92px;
+      display: grid; justify-items: center; gap: 8px; cursor: pointer;
+      background: none; border: 0; color: inherit; font: inherit; padding: 0;
+    }
+    .sat .orb {
+      width: 72px; height: 72px; border-radius: 50%; padding: 3px;
+      border: 1px solid rgba(183, 144, 67, 0.75); background: #11100b;
+      box-shadow: 0 0 18px rgba(183, 144, 67, 0.22);
+      transition: transform 0.25s ease, box-shadow 0.25s ease;
+    }
+    .sat.is-active .orb, .sat:focus-visible .orb {
+      transform: scale(1.08);
+      box-shadow: 0 0 28px rgba(183, 144, 67, 0.45);
+      border-color: #e7c978;
+    }
+    .sat .orb img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: center 20%; display: block; }
+    .sat .nm { font-size: 11px; text-align: center; line-height: 1.25; width: 88px; color: #fff8e7; }
+    .hint {
+      text-align: center; font-size: 11px; color: rgba(247, 244, 235, 0.45);
+      padding: 0 16px 10px; position: relative; z-index: 2;
+    }
+    .sheet {
+      position: absolute; inset-inline: 10px; bottom: 10px; z-index: 5;
+      border: 1px solid rgba(183, 144, 67, 0.35);
+      border-radius: 16px 16px 18px 18px;
+      background: rgba(5, 8, 16, 0.94);
+      backdrop-filter: blur(12px);
+      padding: 14px 14px 16px;
+      transform: translateY(110%);
+      transition: transform 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+      box-shadow: 0 -12px 40px rgba(0, 0, 0, 0.45);
+    }
+    .sheet.is-open { transform: translateY(0); }
+    .sheet .grab {
+      width: 42px; height: 4px; border-radius: 99px; background: rgba(183, 144, 67, 0.35);
+      margin: 0 auto 12px;
+    }
+    .sheet .row { display: flex; gap: 12px; align-items: center; }
+    .sheet .mini {
+      width: 52px; height: 52px; border-radius: 50%; border: 1px solid var(--gold);
+      object-fit: cover; object-position: center 20%; flex-shrink: 0;
+    }
+    .sheet h3 { margin: 0 0 4px; font-size: 1.05rem; font-weight: 500; }
+    .sheet .role { margin: 0; color: var(--gold); font-size: 11px; }
+    .sheet .bio { margin: 10px 0 0; color: var(--muted); font-size: 12.5px; line-height: 1.65; }
+    .sheet .close {
+      position: absolute; top: 10px; left: 10px; width: 40px; height: 40px;
+      border: 0; background: transparent; color: var(--champagne); font-size: 22px; cursor: pointer;
+    }
+
+    /* —— Tablet: Horseshoe constellation —— */
+    .tablet-stage { position: relative; z-index: 2; height: calc(100% - 108px); padding: 8px 20px 16px; }
+    .tablet-map {
+      position: relative; height: 100%;
+      display: grid; grid-template-columns: 1fr 200px 1fr; align-items: center; gap: 8px;
+    }
+    .tablet-map .orbit-mid {
+      position: absolute; left: 50%; top: 50%; width: 58%; height: 78%;
+      transform: translate(-50%, -50%); border: 1px solid rgba(183, 144, 67, 0.2);
+      border-radius: 50%; pointer-events: none;
+    }
+    .tablet-map .orbit-out {
+      position: absolute; left: 50%; top: 50%; width: 88%; height: 94%;
+      transform: translate(-50%, -50%); border: 1px solid rgba(183, 144, 67, 0.12);
+      border-radius: 50%; pointer-events: none;
+    }
+    .col-sats {
+      display: flex; flex-direction: column; gap: 14px; align-items: center; position: relative; z-index: 2;
+    }
+    .col-sats.left { align-items: flex-end; padding-inline-end: 8px; }
+    .col-sats.right { align-items: flex-start; padding-inline-start: 8px; }
+    .t-sat {
+      display: flex; align-items: center; gap: 10px; background: none; border: 0;
+      color: inherit; font: inherit; cursor: pointer; padding: 4px; min-height: 44px;
+    }
+    .col-sats.left .t-sat { flex-direction: row-reverse; text-align: end; }
+    .t-sat .orb {
+      width: 58px; height: 58px; border-radius: 50%; padding: 3px;
+      border: 1px solid rgba(183, 144, 67, 0.7); background: #11100b;
+      box-shadow: 0 0 16px rgba(183, 144, 67, 0.2); flex-shrink: 0;
+    }
+    .t-sat.is-active .orb { border-color: #e7c978; box-shadow: 0 0 26px rgba(183, 144, 67, 0.4); }
+    .t-sat .orb img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: center 20%; display: block; }
+    .t-sat .nm { font-size: 12px; color: #fff8e7; max-width: 9rem; line-height: 1.3; }
+    .tablet-sun {
+      position: relative; z-index: 3; display: grid; justify-items: center; gap: 8px; text-align: center;
+    }
+    .tablet-sun .portrait {
+      width: 148px; height: 148px; border-radius: 50%; padding: 6px;
+      border: 2px solid #e7c978; background: #11100b;
+      box-shadow: 0 0 40px rgba(183, 144, 67, 0.35);
+      position: relative;
+    }
+    .tablet-sun .portrait img { width: 100%; height: 100%; border-radius: 50%; object-fit: cover; object-position: center 18%; display: block; }
+    .tablet-sun .flare {
+      position: absolute; top: -20px; left: 50%; transform: translateX(-50%);
+      color: var(--champagne); font-size: 26px; text-shadow: 0 0 14px var(--gold);
+    }
+    .tablet-sun .name { font-size: 1.15rem; }
+    .tablet-sun .role { font-size: 10px; letter-spacing: 0.14em; color: var(--gold); }
+    .tablet-detail {
+      position: absolute; inset-inline: 24px; bottom: 14px; z-index: 6;
+      border: 1px solid rgba(183, 144, 67, 0.3);
+      border-radius: 12px; background: rgba(5, 8, 16, 0.92);
+      padding: 12px 16px; display: none; gap: 12px; align-items: center;
+    }
+    .tablet-detail.is-open { display: flex; }
+    .tablet-detail img {
+      width: 56px; height: 56px; border-radius: 50%; border: 1px solid var(--gold);
+      object-fit: cover; object-position: center 20%;
+    }
+    .tablet-detail .copy h3 { margin: 0 0 4px; font-size: 1rem; }
+    .tablet-detail .copy p { margin: 0; color: var(--muted); font-size: 12.5px; line-height: 1.55; }
+
+    .principles {
+      margin-top: 28px;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 12px;
+    }
+    .principles article {
+      border: 1px solid rgba(183, 144, 67, 0.2);
+      border-radius: 10px;
+      padding: 14px 16px;
+      background: rgba(8, 12, 22, 0.75);
+    }
+    .principles h3 { margin: 0 0 8px; color: var(--champagne); font-size: 0.95rem; font-weight: 500; }
+    .principles p { margin: 0; color: var(--muted); font-size: 0.85rem; line-height: 1.6; }
+    .legend { margin-top: 18px; text-align: center; color: rgba(247, 244, 235, 0.4); font-size: 12px; }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="doc-head">
+      <p class="eyebrow">SKETCH · TEAM GALAXY RESPONSIVE</p>
+      <h1>גלקסיית הצוות — מובייל וטאבלט</h1>
+      <p>
+        בדסקטופ המפה האליפטית עובדת. במובייל אותה מפה מתכווצת לכוכבים של ~25px — כמעט בלתי נראים.
+        ההצעה: לשמור את שפת החלל/זהב, אבל להחליף את ה־layout לחוויית מגע קריאה.
+      </p>
+    </header>
+
+    <div class="tabs" role="tablist" aria-label="גרסאות סקיצה">
+      <button type="button" role="tab" aria-selected="true" data-tab="mobile">מובייל · Orbital Stage</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="tablet">טאבלט · Horseshoe</button>
+      <button type="button" role="tab" aria-selected="false" data-tab="why">למה זה נשבר עכשיו</button>
+    </div>
+
+    <section class="panel is-on" id="panel-mobile" role="tabpanel">
+      <div class="note">
+        <strong>מובייל (≤767px) — Orbital Stage:</strong>
+        השמש (מייסד) גדולה וקבועה למעלה. שאר הצוות על מסלול אופקי עם scroll-snap —
+        פורטרטים גדולים למגע. לחיצה פותחת כרטיס תחתון (sheet) עם תפקיד וביו.
+        טבעות זהב + אבק כוכבים נשארים כאווירת חלל, בלי לדרוש מפה רחבה.
+      </div>
+      <div class="frame-row">
+        <div class="device phone" aria-label="סקיצת מובייל">
+          <div class="bezel">390 × 844 · orbital stage</div>
+          <div class="screen" id="mobile-screen">
+            <div class="dust" aria-hidden="true"></div>
+            <header class="heading-block">
+              <p class="eyebrow">האנשים מאחורי החזון</p>
+              <h2>הצוות שמחזיק את המערכת</h2>
+              <p>כל אחד מביא כוח אחר. יחד — מערכת אחת.</p>
+            </header>
+            <div class="mobile-stage">
+              <div class="sun-card">
+                <div class="portrait">
+                  <span class="flare" aria-hidden="true">✦</span>
+                  <img src="/public/team/gal.png" alt="" />
+                </div>
+                <div class="name">גל אברמוביץ׳</div>
+                <div class="role">FOUNDER / VISIONARY</div>
+              </div>
+              <p class="orbit-label">מסלול הצוות</p>
+              <div class="orbit-track">
+                <div class="orbit-ring ring-a" aria-hidden="true"></div>
+                <div class="orbit-ring ring-b" aria-hidden="true"></div>
+                <div class="sat-rail" id="sat-rail" tabindex="0" aria-label="חברי צוות במסלול">
+                  <!-- filled by script -->
+                </div>
+              </div>
+              <p class="hint">החליקו בין הכוכבים · לחצו לפתיחת פרופיל</p>
+            </div>
+            <div class="sheet" id="mobile-sheet" aria-live="polite">
+              <div class="grab" aria-hidden="true"></div>
+              <button type="button" class="close" id="sheet-close" aria-label="סגירה">×</button>
+              <div class="row">
+                <img class="mini" id="sheet-img" src="" alt="" />
+                <div>
+                  <h3 id="sheet-name"></h3>
+                  <p class="role" id="sheet-role"></p>
+                </div>
+              </div>
+              <p class="bio" id="sheet-bio"></p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-tablet" role="tabpanel">
+      <div class="note">
+        <strong>טאבלט (768–1199px) — Horseshoe:</strong>
+        המייסד במרכז בגודל קריא. המנהיגות והצוות בשתי עמודות קשת (ימין/שמאל),
+        עם טבעות מסלול מאחור — עדיין «גלקסיה», אבל בלי לכווץ פורטרטים ל־25px.
+        בחירה מציגה פס פרטים בתחתית המסך.
+      </div>
+      <div class="frame-row">
+        <div class="device tablet" aria-label="סקיצת טאבלט">
+          <div class="bezel">768 × 1024 · horseshoe constellation</div>
+          <div class="screen" id="tablet-screen">
+            <div class="dust" aria-hidden="true"></div>
+            <header class="heading-block">
+              <p class="eyebrow">האנשים מאחורי החזון</p>
+              <h2>הצוות שמחזיק את המערכת</h2>
+              <p>כל אחד מביא כוח אחר. יחד הם יוצרים מערכת אחת.</p>
+            </header>
+            <div class="tablet-stage">
+              <div class="tablet-map">
+                <div class="orbit-mid" aria-hidden="true"></div>
+                <div class="orbit-out" aria-hidden="true"></div>
+                <div class="col-sats right" id="tab-right"></div>
+                <div class="tablet-sun">
+                  <div class="portrait">
+                    <span class="flare" aria-hidden="true">✦</span>
+                    <img src="/public/team/gal.png" alt="" />
+                  </div>
+                  <div class="name">גל אברמוביץ׳</div>
+                  <div class="role">FOUNDER / VISIONARY</div>
+                </div>
+                <div class="col-sats left" id="tab-left"></div>
+              </div>
+              <div class="tablet-detail" id="tablet-detail">
+                <img id="td-img" src="" alt="" />
+                <div class="copy">
+                  <h3 id="td-name"></h3>
+                  <p id="td-bio"></p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" id="panel-why" role="tabpanel">
+      <div class="note">
+        <strong>מה קורה היום ב־≤767px:</strong>
+        אותה מפת אחוזים של הדסקטופ + <code>--star-scale: .58</code> + גובה מפה ~500px.
+        תורמים יורדים ל־~25×25px; שמות נחתכים/נערמים; אין מחווה של גלילה אופקית.
+        המשתמש רואה כותרת + כמה נקודות זהב — לא גלקסיית צוות.
+      </div>
+      <div class="principles">
+        <article>
+          <h3>1. שמש קריאה</h3>
+          <p>המייסד תמיד ≥120px במובייל. זה העוגן הוויזואלי — לא נקודה במרכז מפה מכווצת.</p>
+        </article>
+        <article>
+          <h3>2. מסלול למגע</h3>
+          <p>שאר הצוות ב־scroll-snap אופקי (מובייל) או קשת דו־עמודתית (טאבלט). יעד מגע ≥44px.</p>
+        </article>
+        <article>
+          <h3>3. פרטים בגיליון</h3>
+          <p>לא להרחיב את המפה כלפי מטה כמו בדסקטופ. פרופיל ב־bottom sheet / פס תחתון.</p>
+        </article>
+        <article>
+          <h3>4. אווירת חלל נשארת</h3>
+          <p>טבעות זהב, אבק כוכבים, ✦, רקע חלל — בלי לנסות לדחוס 12 כוכבים על 350px רוחב.</p>
+        </article>
+        <article>
+          <h3>5. דסקטופ לא משתנה</h3>
+          <p>המפה האליפטית הנוכחית נשארת מ־1200px ומעלה. השינוי הוא layout חלופי לפי breakpoint בלבד.</p>
+        </article>
+        <article>
+          <h3>6. נגישות</h3>
+          <p>כפתורים אמיתיים, aria-expanded, Escape לסגירת sheet, כיבוד reduce-motion.</p>
+        </article>
+      </div>
+    </section>
+
+    <div class="principles" style="margin-top:32px">
+      <article>
+        <h3>המלצת מימוש</h3>
+        <p>
+          ב־<code>TeamGalaxy.tsx</code>: render כפול לפי <code>matchMedia('(max-width: 767px)')</code>
+          ו־tablet עד 1199px — אותם נתוני API, layout אחר. בלי להסיר את מפת הדסקטופ.
+        </p>
+      </article>
+      <article>
+        <h3>מה לא לעשות</h3>
+        <p>לא «לזום־אאוט» את המפה הקיימת. לא גריד כרטיסים שטוח שמאבד את מטאפורת החלל. לא נקודות קטנות בלי שם.</p>
+      </article>
+    </div>
+    <p class="legend">סקיצה בלבד · לא מחובר ל־production · תמונות מ־/public/team</p>
+  </div>
+
+  <script>
+    const TEAM = [
+      { name: 'תמי אליאן', role: 'Leadership', photo: '/public/team/tami.png', bio: 'מובילה את תפעול המערכת והחיבור בין החזון לביצוע היומיומי.' },
+      { name: 'גלב סמירנוב', role: 'Leadership', photo: '/public/team/gleb.jpg', bio: 'שותף להובלה הטכנולוגית והארכיטקטורה של הפלטפורמה.' },
+      { name: 'אליאור לוי', role: 'Contributor', photo: '/public/team/elior.jpg', bio: 'תרומה יצירתית ומערכתית למסע הלמידה.' },
+      { name: 'ג׳ני פוקריבאילו', role: 'Contributor', photo: '/public/team/jenny.jpg', bio: 'נוכחות ומסר — מחברת אנשים לסיפור.' },
+      { name: 'איתן בוקי', role: 'Contributor', photo: '/public/team/eitan-buki.jpg', bio: 'כוח ביצועי שמחזיק את הקצב בשטח.' },
+      { name: 'ירון אברמוביץ׳', role: 'Contributor', photo: '/public/team/yaron.jpg', bio: 'תמיכה במעגלים הפנימיים של המערכת.' },
+      { name: 'עדי מונסונגו', role: 'Contributor', photo: '/public/team/adi.jpg', bio: 'דיוק, קצב, ונוכחות שקטה.' },
+      { name: 'שיר סטון', role: 'Contributor', photo: '/public/team/shir.jpg', bio: 'שכבת חוויה ותוכן שמחברת קהל.' },
+      { name: 'תמי פינקלשטיין', role: 'Contributor', photo: '/public/team/tami-finkelstein.jpg', bio: 'ליווי ותיאום מאחורי הקלעים.' },
+      { name: 'דולב נירן', role: 'Contributor', photo: '/public/team/dolev.jpg', bio: 'תנועה קדימה — ביצוע ומעקב.' },
+      { name: 'עדי קלינר', role: 'Contributor', photo: '/public/team/adi-kaliner.jpg', bio: 'חיבור אנושי שמרחיב את המעגל.' },
+    ];
+
+    function dust(el) {
+      for (let i = 0; i < 28; i++) {
+        const s = document.createElement('i');
+        s.style.left = ((i * 37 + 11) % 100) + '%';
+        s.style.top = ((i * 23 + 9) % 100) + '%';
+        s.style.opacity = String(0.2 + (i % 5) * 0.08);
+        el.appendChild(s);
+      }
+    }
+    dust(document.querySelector('#mobile-screen .dust'));
+    dust(document.querySelector('#tablet-screen .dust'));
+
+    const rail = document.getElementById('sat-rail');
+    const sheet = document.getElementById('mobile-sheet');
+    TEAM.forEach((m, idx) => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'sat' + (idx === 0 ? ' is-active' : '');
+      b.innerHTML = `<span class="orb"><img src="${m.photo}" alt="" /></span><span class="nm">${m.name}</span>`;
+      b.addEventListener('click', () => {
+        rail.querySelectorAll('.sat').forEach(n => n.classList.remove('is-active'));
+        b.classList.add('is-active');
+        document.getElementById('sheet-img').src = m.photo;
+        document.getElementById('sheet-name').textContent = m.name;
+        document.getElementById('sheet-role').textContent = m.role;
+        document.getElementById('sheet-bio').textContent = m.bio;
+        sheet.classList.add('is-open');
+      });
+      rail.appendChild(b);
+    });
+    document.getElementById('sheet-close').addEventListener('click', () => sheet.classList.remove('is-open'));
+
+    const left = document.getElementById('tab-left');
+    const right = document.getElementById('tab-right');
+    const detail = document.getElementById('tablet-detail');
+    TEAM.forEach((m, idx) => {
+      const col = idx % 2 === 0 ? right : left;
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 't-sat';
+      b.innerHTML = `<span class="orb"><img src="${m.photo}" alt="" /></span><span class="nm">${m.name}</span>`;
+      b.addEventListener('click', () => {
+        document.querySelectorAll('.t-sat').forEach(n => n.classList.remove('is-active'));
+        b.classList.add('is-active');
+        document.getElementById('td-img').src = m.photo;
+        document.getElementById('td-name').textContent = m.name;
+        document.getElementById('td-bio').textContent = m.bio + ' · ' + m.role;
+        detail.classList.add('is-open');
+      });
+      col.appendChild(b);
+    });
+
+    document.querySelectorAll('.tabs button').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.tabs button').forEach(b => b.setAttribute('aria-selected', 'false'));
+        btn.setAttribute('aria-selected', 'true');
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('is-on'));
+        document.getElementById('panel-' + btn.dataset.tab).classList.add('is-on');
+      });
+    });
+  </script>
+</body>
+</html>

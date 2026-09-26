@@ -29,7 +29,7 @@ html {
   body {
     font-family: var(--font-body);
     background-color: #050a14;
-    color: #e0edff;
+    color: #dfc47d;
     margin: 0;
     padding: 0;
     overflow-x: hidden;
@@ -125,7 +125,7 @@ html.a11y-reduce-motion .page-fade {
 }
 
 .glass {
-  background: rgba(224, 237, 255, 0.035);
+  background: rgba(223, 196, 125, 0.035);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid rgba(223, 196, 125, 0.2);
@@ -210,16 +210,16 @@ html.a11y-reduce-motion .page-fade {
   background: #2a3142;
 }
 
-/* Night-sky readability — kept in this file so Tailwind v4 actually emits it. */
+/* Night-sky readability — gold body text (no cool lavender / zinc purple cast). */
 .sky-readable {
-  color: #f4f4f5;
+  color: #dfc47d;
 }
 
 .sky-readable h1,
 .sky-readable h2,
 .sky-readable h3,
 .sky-readable h4 {
-  color: #e0edff;
+  color: #dfc47d;
   text-shadow:
     0 1px 2px rgba(5, 10, 20, 0.9),
     0 4px 22px rgba(5, 10, 20, 0.75);
@@ -248,38 +248,46 @@ html.a11y-reduce-motion .page-fade {
 
 .sky-readable .text-white\/20,
 .sky-readable .text-white\/25 {
-  color: rgb(255 255 255 / 0.8);
+  color: rgb(223 196 125 / 0.7);
 }
 
 .sky-readable .text-white\/30,
 .sky-readable .text-white\/35 {
-  color: rgb(255 255 255 / 0.86);
+  color: rgb(223 196 125 / 0.76);
 }
 
 .sky-readable .text-white\/40,
 .sky-readable .text-white\/45 {
-  color: rgb(255 255 255 / 0.9);
+  color: rgb(223 196 125 / 0.82);
 }
 
 .sky-readable .text-white\/50,
 .sky-readable .text-white\/55 {
-  color: rgb(255 255 255 / 0.94);
+  color: rgb(223 196 125 / 0.88);
 }
 
 .sky-readable .text-white\/60,
 .sky-readable .text-white\/65,
 .sky-readable .text-white\/70 {
-  color: rgb(255 255 255 / 0.96);
+  color: rgb(223 196 125 / 0.92);
+}
+
+.sky-readable .text-white\/80,
+.sky-readable .text-white\/85,
+.sky-readable .text-white\/90,
+.sky-readable .text-white {
+  color: #dfc47d;
 }
 
 .sky-readable .text-slate-300,
+.sky-readable .text-zinc-300,
 .sky-readable .text-zinc-400,
 .sky-readable .text-zinc-500 {
-  color: rgb(244 244 245 / 0.92);
+  color: rgb(223 196 125 / 0.88);
 }
 
 .sky-readable .text-zinc-600 {
-  color: rgb(228 228 231 / 0.82);
+  color: rgb(223 196 125 / 0.72);
 }
 
 .sky-readable a:not(.text-black) {
@@ -293,7 +301,7 @@ html.a11y-reduce-motion .page-fade {
 
 .sky-readable .hover\:text-white:hover,
 .sky-readable .hover\:text-zinc-200:hover {
-  color: #e0edff;
+  color: #dfc47d;
 }
 
 .sky-readable .hover\:text-\[\#b79043\]:hover,
@@ -337,7 +345,7 @@ html.a11y-contrast-high .sky-readable .text-white\/40,
 html.a11y-contrast-high .sky-readable .text-white\/45,
 html.a11y-contrast-high .sky-readable .text-white\/50,
 html.a11y-contrast-high .sky-readable .text-white\/55 {
-  color: #e0edff;
+  color: #dfc47d;
 }
 
 .btn-gold {

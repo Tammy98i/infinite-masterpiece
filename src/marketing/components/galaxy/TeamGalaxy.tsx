@@ -7,6 +7,12 @@ import { InlineStarDetails } from './InlineStarDetails';
 import { StarPortrait } from './StarPortrait';
 import './TeamGalaxy.css';
 
+const COMPACT_MQ = '(max-width: 1199px)';
+
+function memberSummary(member: TeamMember) {
+  return member.bio || member.contribution || 'פרטים נוספים יתווספו בקרוב.';
+}
+
 export function TeamGalaxy({
   className = '',
   eyebrow = 'האנשים מאחורי החזון',
@@ -20,10 +26,16 @@ export function TeamGalaxy({
 }) {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
+  const [featuredId, setFeaturedId] = useState<string | null>(null);
+  const [compact, setCompact] = useState(() =>
+    typeof window !== 'undefined' ? window.matchMedia(COMPACT_MQ).matches : false
+  );
   const [ready, setReady] = useState(false);
   const [error, setError] = useState('');
   const [paused, setPaused] = useState(false);
   const lastTrigger = useRef<HTMLButtonElement | null>(null);
+  const sectionRef = useRef<HTMLElement | null>(null);
+
   useEffect(() => {
     let cancelled = false;
     const load = () => teamMembersApi.list().then(res => {
@@ -36,15 +48,45 @@ export function TeamGalaxy({
     window.addEventListener('team-members-updated', refresh);
     return () => { cancelled = true; clearInterval(timer); window.removeEventListener('focus', refresh); window.removeEventListener('team-members-updated', refresh); };
   }, []);
+
+  useEffect(() => {
+    const mq = window.matchMedia(COMPACT_MQ);
+    const sync = () => setCompact(mq.matches);
+    sync();
+    mq.addEventListener('change', sync);
+    return () => mq.removeEventListener('change', sync);
+  }, []);
+
   const founder = members.find(member => member.hierarchy_level === 'founder');
   const leaders = members.filter(member => member.hierarchy_level === 'leadership');
   const contributors = members.filter(member => member.hierarchy_level !== 'founder' && member.hierarchy_level !== 'leadership');
   const satellites = [...leaders, ...contributors];
   const profile = members.find(member => member.id === selected);
+
+  const featuredMember =
+    (featuredId ? members.find(member => member.id === featuredId) : null) || founder || null;
+  const orbitalRail = members.filter(member => member.id !== featuredMember?.id);
+  const showFeaturedBio = Boolean(featuredId && featuredMember);
+
   const close = (restoreFocus = true) => {
     setSelected(null);
     if (restoreFocus) lastTrigger.current?.focus({ preventScroll: true });
   };
+
+  const resetOrbital = () => setFeaturedId(null);
+
+  useEffect(() => {
+    if (!compact || !featuredId) return;
+    const onPointerDown = (event: PointerEvent) => {
+      const target = event.target;
+      if (!(target instanceof Element)) return;
+      if (target.closest('.galaxy-orbit-sat') || target.closest('.galaxy-motion-toggle')) return;
+      resetOrbital();
+    };
+    document.addEventListener('pointerdown', onPointerDown);
+    return () => document.removeEventListener('pointerdown', onPointerDown);
+  }, [compact, featuredId]);
+
   const renderStar = (member: TeamMember, slot: number) => {
     const sun = member.hierarchy_level === 'founder';
     const featured = sun || member.hierarchy_level === 'leadership';
@@ -80,9 +122,100 @@ export function TeamGalaxy({
       </button>
     </motion.div>;
   };
-  return <motion.section id="team-universe" className={`team-galaxy ${paused ? 'galaxy-paused' : ''} ${className}`.trim()}
-    aria-labelledby="galaxy-title" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 1 }}
-    onKeyDown={event => { if (event.key === 'Escape' && profile) { event.preventDefault(); close(); } }}>
+
+  const renderOrbital = () => {
+    if (!featuredMember) return null;
+    const isFounderFeatured = featuredMember.hierarchy_level === 'founder' && !featuredId;
+    return (
+      <div className="galaxy-orbital" dir="rtl">
+        <div
+          className={`galaxy-orbital-featured ${featuredMember.hierarchy_level === 'founder' ? 'is-founder' : ''}`}
+          aria-live="polite"
+        >
+          <div className="galaxy-orbital-sun">
+            <span className="galaxy-flare" aria-hidden="true">✦</span>
+            <StarPortrait member={featuredMember} />
+          </div>
+          <p className="galaxy-orbital-name" dir="auto">{featuredMember.name}</p>
+          <p className="galaxy-orbital-role" dir="auto">
+            {featuredMember.hierarchy_level === 'founder'
+              ? (featuredMember.role || 'FOUNDER / VISIONARY')
+              : featuredMember.role}
+          </p>
+          {showFeaturedBio ? (
+            <p className="galaxy-orbital-bio" dir="auto">{memberSummary(featuredMember)}</p>
+          ) : null}
+          {isFounderFeatured ? (
+            <p className="galaxy-orbital-hint">בחרו כוכב במסלול כדי להכיר את הצוות</p>
+          ) : null}
+        </div>
+
+        <p className="galaxy-orbital-label">מסלול הצוות</p>
+        <div className="galaxy-orbital-track">
+          <div className="galaxy-orbital-ring galaxy-orbital-ring-a" aria-hidden="true" />
+          <div className="galaxy-orbital-ring galaxy-orbital-ring-b" aria-hidden="true" />
+          <div className="galaxy-orbit-rail" role="list" aria-label="חברי הצוות במסלול">
+            {orbitalRail.map((member) => (
+              <button
+                key={member.id}
+                type="button"
+                role="listitem"
+                className="galaxy-orbit-sat"
+                data-member-id={member.id}
+                aria-pressed={featuredId === member.id}
+                aria-label={`הצגת ${member.name}`}
+                onClick={(event) => {
+                  event.stopPropagation();
+                  lastTrigger.current = event.currentTarget;
+                  setFeaturedId(member.id);
+                }}
+              >
+                <span className="galaxy-orbit-sat-orb">
+                  <StarPortrait member={member} />
+                </span>
+                <span className="galaxy-orbit-sat-name" dir="auto">{member.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="galaxy-map-footer galaxy-orbital-footer">
+          <button
+            type="button"
+            className="galaxy-motion-toggle"
+            onClick={() => setPaused(value => !value)}
+            aria-pressed={paused}
+            aria-label={paused ? 'הפעלת תנועת הכוכבים' : 'השהיית תנועת הכוכבים'}
+          >
+            {paused ? <Play size={16} /> : <Pause size={16} />}
+          </button>
+        </div>
+      </div>
+    );
+  };
+
+  return <motion.section
+    ref={sectionRef}
+    id="team-universe"
+    className={`team-galaxy ${paused ? 'galaxy-paused' : ''} ${compact ? 'is-orbital' : ''} ${className}`.trim()}
+    aria-labelledby="galaxy-title"
+    initial={{ opacity: 0 }}
+    whileInView={{ opacity: 1 }}
+    viewport={{ once: true, amount: 0.1 }}
+    transition={{ duration: 1 }}
+    onKeyDown={event => {
+      if (event.key !== 'Escape') return;
+      if (compact && featuredId) {
+        event.preventDefault();
+        resetOrbital();
+        return;
+      }
+      if (profile) {
+        event.preventDefault();
+        close();
+      }
+    }}
+  >
     <div className="galaxy-dust" aria-hidden="true">{Array.from({ length: 30 }, (_, i) => <i key={i} style={{ left: `${(i * 37 + 13) % 100}%`, top: `${(i * 23 + 7) % 100}%`, animationDelay: `${i * -0.7}s` }} />)}</div>
     <header className="galaxy-heading">
       <p className="galaxy-eyebrow">{eyebrow}</p>
@@ -91,25 +224,26 @@ export function TeamGalaxy({
     </header>
     {!ready ? <p role="status" className="galaxy-message">טוענים את מערכת הכוכבים…</p> : !members.length ? <p className="galaxy-message" role="status">{error || 'הצוות יוצג כאן בקרוב.'}</p> : <>
       {error && <p className="galaxy-message" role="status">{error}</p>}
-      <div className="galaxy-layout" dir="ltr">
-        <div className="galaxy-map-wrap">
-          <div className={`galaxy-map ${profile ? 'has-selection' : ''}`}
-            onClick={event => {
-              if (event.target instanceof Element && !event.target.closest('.galaxy-star') && profile) close(false);
-            }}>
-            <div className="galaxy-orbits" aria-hidden="true">
-              {[0, 1, 2, 3].map((ring) => <motion.div key={ring} className={`galaxy-orbit galaxy-orbit-${ring}`} initial={{ opacity: 0, scale: 0.85 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.25 + ring * 0.12, duration: 1.5 }}><span /></motion.div>)}
+      {compact ? renderOrbital() : (
+        <div className="galaxy-layout" dir="ltr">
+          <div className="galaxy-map-wrap">
+            <div className={`galaxy-map ${profile ? 'has-selection' : ''}`}
+              onClick={event => {
+                if (event.target instanceof Element && !event.target.closest('.galaxy-star') && profile) close(false);
+              }}>
+              <div className="galaxy-orbits" aria-hidden="true">
+                {[0, 1, 2, 3].map((ring) => <motion.div key={ring} className={`galaxy-orbit galaxy-orbit-${ring}`} initial={{ opacity: 0, scale: 0.85 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.25 + ring * 0.12, duration: 1.5 }}><span /></motion.div>)}
+              </div>
+              {founder && renderStar(founder, 0)}
+              {satellites.map(renderStar)}
+              <div className="galaxy-manifesto" aria-hidden="true"><InfinityIcon size={30} strokeWidth={1} /><span>A MORE CREATIVE WORLD<br />IS POSSIBLE.</span></div>
             </div>
-            {founder && renderStar(founder, 0)}
-            {satellites.map(renderStar)}
-            <div className="galaxy-manifesto" aria-hidden="true"><InfinityIcon size={30} strokeWidth={1} /><span>A MORE CREATIVE WORLD<br />IS POSSIBLE.</span></div>
-          </div>
-          <div className="galaxy-map-footer">
-            <button type="button" className="galaxy-motion-toggle" onClick={() => setPaused(value => !value)} aria-pressed={paused} aria-label={paused ? 'הפעלת תנועת הכוכבים' : 'השהיית תנועת הכוכבים'}>{paused ? <Play size={16} /> : <Pause size={16} />}</button>
+            <div className="galaxy-map-footer">
+              <button type="button" className="galaxy-motion-toggle" onClick={() => setPaused(value => !value)} aria-pressed={paused} aria-label={paused ? 'הפעלת תנועת הכוכבים' : 'השהיית תנועת הכוכבים'}>{paused ? <Play size={16} /> : <Pause size={16} />}</button>
+            </div>
           </div>
         </div>
-
-      </div>
+      )}
       <p className="galaxy-bottom-note">מערכת אחת. כוחות שונים. השפעה אינסופית.</p>
     </>}
   </motion.section>;

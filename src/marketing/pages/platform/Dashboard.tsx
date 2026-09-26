@@ -39,7 +39,7 @@ export function Dashboard() {
               שלום, {user.fullName}
             </h1>
             {isPremium && (
-              <span className="bg-purple-500/20 text-purple-300 border border-purple-500/30 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold flex items-center gap-1">
+              <span className="bg-[#b79043]/20 text-[#dfc47d] border border-[#b79043]/30 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold flex items-center gap-1">
                 <Crown className="w-3 h-3" /> 88
               </span>
             )}
@@ -65,14 +65,14 @@ export function Dashboard() {
       <motion.div 
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="relative bg-gradient-to-r from-purple-900/20 to-transparent border border-purple-500/20 rounded-[32px] p-8 md:p-12 mb-12 overflow-hidden group"
+        className="relative bg-gradient-to-r from-[#b79043]/15 to-transparent border border-[#b79043]/25 rounded-[32px] p-8 md:p-12 mb-12 overflow-hidden group"
       >
-        <div className="absolute top-0 start-0 w-64 h-64 bg-purple-500/10 blur-[100px] rounded-full" />
+        <div className="absolute top-0 start-0 w-64 h-64 bg-[#b79043]/10 blur-[100px] rounded-full" />
         
         <div className="relative z-10 flex flex-col md:flex-row gap-8 justify-between items-start md:items-center">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-purple-500/20 text-purple-300 text-xs font-medium mb-6">
-              <span className="w-2 h-2 rounded-full bg-purple-400 animate-pulse" />
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#b79043]/20 text-[#dfc47d] text-xs font-medium mb-6">
+              <span className="w-2 h-2 rounded-full bg-[#b79043] animate-pulse" />
               משימת היום
             </div>
             <h2 className="text-3xl text-white font-light mb-4">בניית נכס התוכן הראשון שלך</h2>
@@ -105,13 +105,13 @@ export function Dashboard() {
               </div>
             </div>
             {isPremium && (
-              <div className="bg-purple-900/10 backdrop-blur-md rounded-2xl p-6 border border-purple-500/20">
+              <div className="bg-[#b79043]/10 backdrop-blur-md rounded-2xl p-6 border border-[#b79043]/25">
                 <div className="flex items-center gap-2 mb-2">
-                  <Crown className="w-4 h-4 text-purple-400" />
-                  <span className="text-xs font-medium text-purple-300">הטבת 88</span>
+                  <Crown className="w-4 h-4 text-[#b79043]" />
+                  <span className="text-xs font-medium text-[#dfc47d]">הטבת 88</span>
                 </div>
                 <p className="text-[11px] text-white/60 mb-3">Hot Seat אישי השבוע עם המייסד.</p>
-                <button className="text-[11px] bg-purple-500/20 text-purple-300 px-4 py-2 rounded-lg w-full hover:bg-purple-500/30 transition-colors">שריין שעה</button>
+                <button className="text-[11px] bg-[#b79043]/20 text-[#dfc47d] px-4 py-2 rounded-lg w-full hover:bg-[#b79043]/30 transition-colors">שריין שעה</button>
               </div>
             )}
           </div>
@@ -197,7 +197,7 @@ export function Dashboard() {
         <div>
           <div className="flex items-center gap-3 mb-2">
             <h1 className="text-3xl font-light text-white tracking-tight">אזור קפטן / מדריך</h1>
-            <span className="bg-blue-500/10 text-blue-400 border border-blue-500/20 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold">סגל</span>
+            <span className="bg-[#b79043]/10 text-[#dfc47d] border border-[#b79043]/20 px-3 py-1 rounded-full text-[10px] uppercase tracking-widest font-bold">סגל</span>
           </div>
           <p className="text-white/50 font-light">Pod Alpha. 12 תלמידים פעילים</p>
         </div>
@@ -269,7 +269,7 @@ export function Dashboard() {
           { label: "סה״כ משתמשים", value: "342", color: "text-white" },
           { label: "מנויי 88 פרימיום", value: "88/88", color: "text-[#b79043]" },
           { label: "הכנסות חודשיות", value: "₪450K", color: "text-green-400" },
-          { label: "הססנים פעילים", value: "45", color: "text-purple-400" }
+          { label: "הססנים פעילים", value: "45", color: "text-[#b79043]" }
         ].map((stat, i) => (
           <div key={i} className="bg-white/[0.02] border border-white/[0.05] rounded-2xl p-6 text-center">
             <div className={`text-3xl font-accent font-semibold tabular-nums mb-2 ${stat.color}`}>{stat.value}</div>
