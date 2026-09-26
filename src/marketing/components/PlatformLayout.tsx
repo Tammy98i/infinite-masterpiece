@@ -61,7 +61,7 @@ export function PlatformLayout({ children }: PlatformLayoutProps) {
                   to={item.path}
                   className={`flex items-center gap-3 px-4 py-3 rounded-xl transition-all ${
                     isActive 
-                      ? 'bg-purple-900/20 text-purple-300 border border-purple-500/20' 
+                      ? 'bg-[#b79043]/15 text-[#dfc47d] border border-[#b79043]/25' 
                       : 'text-white/50 hover:bg-white/[0.03] hover:text-white'
                   }`}
                 >

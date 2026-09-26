@@ -103,7 +103,7 @@
 .webinar-neural-sub {
   max-width: 36rem;
   margin: 0 auto 14px;
-  color: rgba(224, 237, 255, .68);
+  color: rgba(223, 196, 125, .68);
   font-size: 14px;
   font-weight: 300;
   line-height: 1.65;
@@ -130,7 +130,7 @@
 
 .webinar-host-meta {
   margin: 18px auto 0;
-  color: rgba(224, 237, 255, .42);
+  color: rgba(223, 196, 125, .42);
 }
 
 .webinar-host-orbs {
@@ -236,7 +236,7 @@
 
 .webinar-task-spine p {
   margin: 0;
-  color: rgba(224, 237, 255, .68);
+  color: rgba(223, 196, 125, .68);
   font-size: 13px;
   line-height: 1.5;
 }
