@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type KeyboardEvent, type ReactElement } from 'react';
+import { useEffect, useRef, useState, useSyncExternalStore, type KeyboardEvent, type ReactElement } from 'react';
 import {
   BarChart3,
   ChevronDown,
@@ -32,6 +32,22 @@ const TABS: Tab[] = [
   { id: 'faq', label: 'שאלות', tone: 'dark' },
 ];
 
+const COMPACT_QUERY = '(max-width: 900px)';
+
+function subscribeCompact(onChange: () => void) {
+  const query = window.matchMedia(COMPACT_QUERY);
+  query.addEventListener('change', onChange);
+  return () => query.removeEventListener('change', onChange);
+}
+
+function getCompactSnapshot() {
+  return window.matchMedia(COMPACT_QUERY).matches;
+}
+
+function useCompactTabs() {
+  return useSyncExternalStore(subscribeCompact, getCompactSnapshot, () => false);
+}
+
 const DIFFERENCE_ITEMS = [
   { icon: Target, title: 'מתחילים ממכירה', body: 'לא מאפס' },
   { icon: Tag, title: 'מציגים ערך ברור', body: 'ומוכרים אותו' },
@@ -39,7 +55,6 @@ const DIFFERENCE_ITEMS = [
   { icon: Settings, title: 'בונים מערכת עסקית', body: 'סביב היצירה' },
   { icon: Rocket, title: 'סקייל, חופש והשפעה', body: 'בקצב שלך' },
 ];
-
 
 function DifferencePanel() {
   return (
@@ -120,10 +135,14 @@ function tabFromHash(hash: string): TabId | null {
 export function TabbedSlider() {
   const navigate = useNavigate();
   const location = useLocation();
+  const compact = useCompactTabs();
   const [active, setActive] = useState<TabId>(() => tabFromHash(window.location.hash) ?? 'difference');
   const tabRefs = useRef<Array<HTMLButtonElement | null>>([]);
-  const activeTab = TABS.find(tab => tab.id === active) ?? TABS[0];
+  const activeIndex = Math.max(0, TABS.findIndex(tab => tab.id === active));
+  const activeTab = TABS[activeIndex] ?? TABS[0];
   const ActivePanel = PANELS[active];
+  const prevTab = TABS[(activeIndex - 1 + TABS.length) % TABS.length];
+  const nextTab = TABS[(activeIndex + 1) % TABS.length];
 
   useEffect(() => {
     const next = tabFromHash(location.hash);
@@ -146,13 +165,25 @@ export function TabbedSlider() {
     tabRefs.current[nextIndex]?.focus();
   };
 
+  const railTabs = compact
+    ? [
+        { tab: prevTab, index: (activeIndex - 1 + TABS.length) % TABS.length, slot: 'peek-prev' as const },
+        { tab: activeTab, index: activeIndex, slot: 'featured' as const },
+        { tab: nextTab, index: (activeIndex + 1) % TABS.length, slot: 'peek-next' as const },
+      ]
+    : TABS.map((tab, index) => ({ tab, index, slot: 'flat' as const }));
+
   return (
     <section id="home-topics" className="tabbed-slider" dir="rtl" aria-label="תוכן עמוד הבית">
       <div className="tabbed-tabs-wrap">
-        <div className="tabbed-tabs" role="tablist" aria-label="בחירת נושא">
-          {TABS.map((tab, index) => (
+        <div
+          className={`tabbed-tabs${compact ? ' tabbed-tabs--featured' : ''}`}
+          role="tablist"
+          aria-label="בחירת נושא"
+        >
+          {railTabs.map(({ tab, index, slot }) => (
             <button
-              key={tab.id}
+              key={`${slot}-${tab.id}`}
               ref={node => { tabRefs.current[index] = node; }}
               type="button"
               role="tab"
@@ -160,6 +191,7 @@ export function TabbedSlider() {
               aria-controls={`panel-${tab.id}`}
               aria-selected={active === tab.id}
               tabIndex={active === tab.id ? 0 : -1}
+              className={slot === 'flat' ? undefined : `tabbed-tab--${slot}`}
               onClick={() => selectTab(tab.id)}
               onKeyDown={event => handleKeys(event, index)}
             >
