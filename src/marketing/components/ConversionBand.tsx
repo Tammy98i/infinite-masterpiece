@@ -34,7 +34,6 @@ export function ConversionBand() {
             לצפייה במסלולים
             <DirNext className="h-4 w-4" />
           </Link>
-          {/* Kept off the gold fill — secondary outline CTA as requested exception */}
           <Link to="/webinar" className="btn-secondary min-w-44">להכיר בערב החי</Link>
         </div>
       </div>
