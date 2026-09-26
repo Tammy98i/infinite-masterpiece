@@ -103,7 +103,7 @@
 .webinar-neural-sub {
   max-width: 36rem;
   margin: 0 auto 14px;
-  color: rgba(224, 237, 255, .68);
+  color: rgba(223, 196, 125, .68);
   font-size: 14px;
   font-weight: 300;
   line-height: 1.65;
@@ -130,7 +130,7 @@
 
 .webinar-host-meta {
   margin: 18px auto 0;
-  color: rgba(224, 237, 255, .42);
+  color: rgba(223, 196, 125, .42);
 }
 
 .webinar-host-orbs {
@@ -161,7 +161,7 @@
 
 .webinar-host-orbs h3 {
   margin: 14px 0 4px;
-  color: #f4f8fd;
+  color: #dfc47d;
   font-size: 18px;
   font-weight: 400;
 }
@@ -229,14 +229,14 @@
 
 .webinar-task-spine h3 {
   margin: 12px 0 6px;
-  color: #f4f8fd;
+  color: #dfc47d;
   font-size: 15px;
   font-weight: 400;
 }
 
 .webinar-task-spine p {
   margin: 0;
-  color: rgba(224, 237, 255, .68);
+  color: rgba(223, 196, 125, .68);
   font-size: 13px;
   line-height: 1.5;
 }
@@ -267,7 +267,7 @@
 
 .webinar-spine a:focus-visible,
 .webinar-night-page :is(a, button, summary):focus-visible {
-  outline: 2px solid #9fe0ff;
+  outline: 2px solid #dfc47d;
   outline-offset: 3px;
   border-radius: 8px;
 }

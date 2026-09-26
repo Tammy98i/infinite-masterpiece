@@ -36,7 +36,7 @@
   box-shadow: none;
 }
 .video-home .conversion-band h2 { color: #dfc47d; font-size: clamp(2.2rem, 4vw, 3.8rem); }
-.video-home .conversion-band p { color: rgba(224, 237, 255, .68); }
+.video-home .conversion-band p { color: rgba(223, 196, 125, .68); }
 .video-home footer { border-top: 0; background: #050a14; }
 
 @media (max-width: 579px), (max-height: 620px) {

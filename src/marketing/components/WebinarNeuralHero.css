@@ -4,11 +4,11 @@
   padding: calc(var(--c) * 36) calc(var(--c) * 32) calc(var(--c) * 28);
 }
 .webinar-neural-hero {
-  --ink: #ffffff;
-  --sub: #a2a9b8;
-  --feat: #e2ebf5;
-  --hair: rgba(196, 214, 232, .72);
-  --chev: rgba(214, 232, 250, .9);
+  --ink: #dfc47d;
+  --sub: rgba(223, 196, 125, .72);
+  --feat: #dfc47d;
+  --hair: rgba(223, 196, 125, .72);
+  --chev: rgba(223, 196, 125, .9);
   --veil: 6, 10, 18;
   --c: min(calc(100vw / 860), calc(100dvh / 980));
   --blur: calc(var(--c) * 26);
@@ -71,7 +71,7 @@
   background: rgba(255, 255, 255, .04);
   backdrop-filter: blur(var(--blur)) saturate(.45);
   -webkit-backdrop-filter: blur(var(--blur)) saturate(.45);
-  color: #f4f8fd;
+  color: #dfc47d;
   font-size: calc(var(--c) * 13);
   letter-spacing: .08em;
 }
@@ -96,7 +96,7 @@
 }
 .webinar-neural-when {
   margin: 0;
-  color: rgba(244, 248, 253, .58);
+  color: rgba(223, 196, 125, .58);
   font-size: 13px;
   letter-spacing: .08em;
 }
@@ -234,17 +234,17 @@
 .webinar-neural-rule {
   width: 1px;
   height: 36px;
-  background: linear-gradient(180deg, rgba(186, 200, 214, .7), rgba(206, 220, 232, .92) 52%, rgba(182, 198, 212, .68));
+  background: linear-gradient(180deg, rgba(223, 196, 125, .55), rgba(223, 196, 125, .78) 52%, rgba(183, 144, 67, .55));
 }
 .webinar-stage-page .webinar-neural-hero .webinar-stage-meta {
   margin: 0;
-  color: #f4f8fd;
+  color: #dfc47d;
   font-size: 13px;
   letter-spacing: 0;
 }
 
 .webinar-neural-hero :is(a, button):focus-visible {
-  outline: 2px solid #9fe0ff;
+  outline: 2px solid #dfc47d;
   outline-offset: 3px;
   border-radius: 8px;
 }
