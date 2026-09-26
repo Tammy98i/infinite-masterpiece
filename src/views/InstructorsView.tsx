@@ -21,8 +21,8 @@ export const InstructorsView: React.FC = () => {
   };
 
   return (
-    <div className="library-catalog-page library-instructor-index min-h-screen text-white pb-24">
-      <header className="library-instructor-billboard relative min-h-[58vh] md:min-h-[70vh] flex items-end overflow-hidden pt-24 pb-16 md:pb-20">
+    <div className="library-catalog-page library-instructor-index library-bottom-clearance min-h-screen text-white">
+      <header className="library-instructor-billboard relative min-h-[52vh] sm:min-h-[58vh] md:min-h-[70vh] flex items-end overflow-hidden pt-24 pb-12 sm:pb-16 md:pb-20">
         <div className="absolute inset-0 select-none overflow-hidden bg-[#141414]">
           <div className="library-course-veil-a absolute inset-0" />
           <div className="library-course-veil-b absolute inset-0" />
@@ -42,7 +42,7 @@ export const InstructorsView: React.FC = () => {
           </div>
           <div>
           <p className="text-[13px] text-white/70 mb-3">המרצים של הספרייה</p>
-          <h1 className="text-4xl sm:text-6xl lg:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight mb-4">
+          <h1 className="text-3xl sm:text-5xl lg:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight mb-3 sm:mb-4">
             מרצים
           </h1>
           <p className="text-sm sm:text-base text-white/80 font-light leading-relaxed max-w-2xl mb-4">
@@ -89,7 +89,7 @@ export const InstructorsView: React.FC = () => {
 
       <div id="instructor-grid" className="relative z-10 -mt-8 max-w-[1360px] mx-auto px-4 sm:px-8 text-start scroll-mt-24">
         <h2 className="library-rail-title text-white mb-4">כל המרצים</h2>
-        <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {instructors.map((inst) => {
             const count = courses.filter((c) => c.instructorId === inst.id).length;
             const countLabel = count === 0 ? 'אין הרצאות עדיין' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`;

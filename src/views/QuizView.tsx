@@ -20,7 +20,7 @@ export const QuizView: React.FC = () => {
   });
 
   return (
-    <div className="library-catalog-page min-h-screen text-white pt-28 pb-24 px-4 sm:px-8 max-w-6xl mx-auto text-start">
+    <div className="library-catalog-page library-bottom-clearance min-h-screen text-white pt-28 px-4 sm:px-8 max-w-6xl mx-auto text-start">
       
       <div className="text-center max-w-2xl mx-auto mb-12">
         <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-[4px] bg-white/10 text-white/80 text-xs font-semibold uppercase mb-3">

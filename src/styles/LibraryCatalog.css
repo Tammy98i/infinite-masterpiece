@@ -83,12 +83,40 @@
 }
 
 .library-catalog .library-hero {
-  min-height: 78vh;
+  min-height: min(72vh, 34rem);
+  padding-bottom: 7.5rem;
+}
+
+@media (min-width: 640px) {
+  .library-catalog .library-hero {
+    min-height: min(78vh, 40rem);
+    padding-bottom: 9rem;
+  }
 }
 
 @media (min-width: 768px) {
   .library-catalog .library-hero {
+    min-height: 82vh;
+    height: auto;
+    padding-bottom: 10rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .library-catalog .library-hero {
     height: 88vh;
+    padding-bottom: 13rem;
+  }
+}
+
+/* Shared bottom clearance for fixed library bottom nav (< lg). */
+.library-bottom-clearance {
+  padding-bottom: calc(var(--library-bottom-nav-h, 3.75rem) + env(safe-area-inset-bottom, 0px) + 1.25rem);
+}
+
+@media (min-width: 1024px) {
+  .library-bottom-clearance {
+    padding-bottom: 4rem;
   }
 }
 
@@ -326,7 +354,15 @@
 
 .library-course-billboard,
 .library-instructor-billboard {
-  min-height: 58vh;
+  min-height: min(52vh, 28rem);
+}
+
+@media (max-width: 639px) {
+  .library-course-billboard h1,
+  .library-instructor-billboard h1 {
+    font-size: clamp(1.75rem, 7vw, 2.25rem);
+    line-height: 1.1;
+  }
 }
 
 .library-instructor-frame {
@@ -407,6 +443,12 @@
 
 .library-catalog-page .library-page-grid {
   gap: 8px;
+}
+
+@media (min-width: 640px) and (max-width: 1023px) {
+  .library-catalog-page .library-page-grid {
+    gap: 12px;
+  }
 }
 
 .library-catalog-page .library-search-field {

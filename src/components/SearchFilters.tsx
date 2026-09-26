@@ -5,7 +5,7 @@ export function SearchFilters({ value, onChange, activeCount }: { value: SearchF
   const field = (key: keyof SearchFilterState, next: string) => onChange({ ...value, [key]: next });
   const control = 'min-h-11 min-w-0 w-full rounded-xl border border-white/10 bg-[#0a0a0a] px-2 sm:px-3 text-xs sm:text-sm text-white/70 outline-none focus:border-[#b79043] sm:w-auto';
   return <div className="mb-6 rounded-2xl border border-white/10 bg-white/[0.025] p-3">
-    <div className="grid grid-cols-2 items-center gap-2 sm:flex sm:flex-wrap">
+    <div className="grid grid-cols-2 items-stretch gap-2 sm:flex sm:flex-wrap sm:items-center">
       <span className="col-span-2 me-1 inline-flex items-center gap-2 text-sm text-white/50 sm:col-span-1"><SlidersHorizontal size={16} className="text-[#b79043]" />סינון</span>
       <select value={value.duration} onChange={event => field('duration', event.target.value)} className={control} aria-label="סינון לפי משך"><option value="all">כל המשכים</option><option value="short">עד 15 דקות</option><option value="medium">15–45 דקות</option><option value="long">מעל 45 דקות</option></select>
       <select value={value.level} onChange={event => field('level', event.target.value)} className={control} aria-label="סינון לפי רמה"><option value="all">כל הרמות</option><option value="למתחילים">למתחילים</option><option value="מתקדם">מתקדם</option><option value="לכל הרמות">לכל הרמות</option></select>

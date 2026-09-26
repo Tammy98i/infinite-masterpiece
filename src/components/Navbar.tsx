@@ -123,7 +123,7 @@ export const Navbar: React.FC = () => {
               </button>
             </div>
 
-            <nav className="header-nav hidden md:flex items-center font-light" aria-label="ניווט הספרייה">
+            <nav className="header-nav hidden lg:flex items-center font-light" aria-label="ניווט הספרייה">
               <button
                 type="button"
                 onClick={() => setView('home')}
@@ -351,7 +351,7 @@ export const Navbar: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="header-burger md:hidden p-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/10 flex items-center justify-center"
+              className="header-burger lg:hidden p-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/10 flex items-center justify-center"
               aria-label="תפריט ניווט"
               aria-expanded={isMobileMenuOpen}
             >
@@ -363,7 +363,7 @@ export const Navbar: React.FC = () => {
 
         {/* Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
-          <nav className="md:hidden bg-zinc-950 border-b border-white/10 px-6 py-5 grid gap-2" aria-label="ניווט נייד — ספרייה">
+          <nav className="lg:hidden bg-zinc-950 border-b border-white/10 px-6 py-5 grid gap-2" aria-label="ניווט נייד — ספרייה">
             <button
               type="button"
               onClick={() => {
@@ -417,57 +417,57 @@ export const Navbar: React.FC = () => {
         )}
       </header>
 
-      <nav className="editorial-library-bottom-nav md:hidden fixed bottom-0 inset-inline-0 z-50 bg-[#0a0a0af2] backdrop-blur-xl border-t border-white/10 py-2 px-2 flex items-center justify-between" aria-label="ניווט תחתון — ספרייה">
+      <nav className="editorial-library-bottom-nav lg:hidden fixed bottom-0 left-0 right-0 z-50 w-full bg-[#0a0a0af2] backdrop-blur-xl border-t border-white/10 flex items-center justify-between" aria-label="ניווט תחתון — ספרייה">
         <button
           type="button"
           onClick={() => setView('home')}
-          className={`flex flex-col items-center gap-1 min-h-11 min-w-11 ${
+          className={`library-bottom-nav-item flex flex-1 flex-col items-center justify-center gap-1 min-h-11 ${
             currentView === 'home' ? 'text-primary-light font-bold' : 'text-zinc-400'
           }`}
         >
-          <Compass className="w-5 h-5" />
-          <span className="text-[10px]">ספרייה</span>
+          <Compass className="library-bottom-nav-icon" aria-hidden />
+          <span className="library-bottom-nav-label">ספרייה</span>
         </button>
         <button
           type="button"
           onClick={() => setView('search')}
-          className={`flex flex-col items-center gap-1 min-h-11 min-w-11 ${
+          className={`library-bottom-nav-item flex flex-1 flex-col items-center justify-center gap-1 min-h-11 ${
             currentView === 'search' ? 'text-primary-light font-bold' : 'text-zinc-400'
           }`}
         >
-          <Search className="w-5 h-5" />
-          <span className="text-[10px]">חיפוש</span>
+          <Search className="library-bottom-nav-icon" aria-hidden />
+          <span className="library-bottom-nav-label">חיפוש</span>
         </button>
         <button
           type="button"
           onClick={() => setView('history')}
-          className={`flex flex-col items-center gap-1 min-h-11 min-w-11 ${
+          className={`library-bottom-nav-item flex flex-1 flex-col items-center justify-center gap-1 min-h-11 ${
             currentView === 'history' ? 'text-primary-light font-bold' : 'text-zinc-400'
           }`}
         >
-          <History className="w-5 h-5" />
-          <span className="text-[10px]">היסטוריה</span>
+          <History className="library-bottom-nav-icon" aria-hidden />
+          <span className="library-bottom-nav-label">היסטוריה</span>
         </button>
         <button
           type="button"
           onClick={() => setView('mylist')}
           data-onboarding="my-list"
-          className={`flex flex-col items-center gap-1 min-h-11 min-w-11 ${
+          className={`library-bottom-nav-item flex flex-1 flex-col items-center justify-center gap-1 min-h-11 ${
             currentView === 'mylist' ? 'text-primary-light font-bold' : 'text-zinc-400'
           }`}
         >
-          <Bookmark className="w-5 h-5" />
-          <span className="text-[10px]">הרשימה</span>
+          <Bookmark className="library-bottom-nav-icon" aria-hidden />
+          <span className="library-bottom-nav-label">הרשימה</span>
         </button>
         <button
           type="button"
           onClick={() => setView('profile')}
-          className={`flex flex-col items-center gap-1 min-h-11 min-w-11 ${
+          className={`library-bottom-nav-item flex flex-1 flex-col items-center justify-center gap-1 min-h-11 ${
             currentView === 'profile' ? 'text-primary-light font-bold' : 'text-zinc-400'
           }`}
         >
-          <User className="w-5 h-5" />
-          <span className="text-[10px]">חשבון</span>
+          <User className="library-bottom-nav-icon" aria-hidden />
+          <span className="library-bottom-nav-label">חשבון</span>
         </button>
       </nav>
     </>

@@ -106,10 +106,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   const widthClass = fullWidth
     ? 'w-full'
     : layout === 'continue'
-      ? 'w-[240px] sm:w-[280px]'
+      ? 'w-[200px] sm:w-[240px] md:w-[280px]'
       : rank
-        ? 'w-[180px] sm:w-[210px]'
-        : 'w-[168px] sm:w-[210px]';
+        ? 'w-[148px] sm:w-[180px] md:w-[210px]'
+        : 'w-[148px] sm:w-[168px] md:w-[210px]';
 
   /* Hover meta: only טעימה / נעול — not «פתוח» (polish 04) */
   const accessMeta = access === 'open' ? null : ACCESS_LABEL[access];

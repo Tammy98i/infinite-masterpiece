@@ -61,7 +61,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
 
   return (
     <section
-      className="library-hero relative w-full min-h-[78vh] md:h-[88vh] flex items-end overflow-hidden pt-24 pb-40 md:pb-52"
+      className="library-hero relative w-full flex items-end overflow-hidden pt-24"
       aria-label={continueWatching ? `המשך צפייה: ${course.title}` : `מומלץ: ${course.title}`}
     >
       <div className="absolute inset-0 select-none overflow-hidden">
@@ -86,7 +86,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
         <p className="mb-2 text-[11px] font-medium tracking-[0.18em] text-[#b79043]">
           {continueWatching ? 'המשיכו מכאן' : 'הרצאה נבחרת'}
         </p>
-        <h1 className="text-4xl sm:text-5xl lg:text-[4.25rem] font-semibold text-white leading-[1.08] tracking-tight mb-4">
+        <h1 className="text-3xl sm:text-5xl lg:text-[4.25rem] font-semibold text-white leading-[1.08] tracking-tight mb-3 sm:mb-4">
           {course.title}
         </h1>
 

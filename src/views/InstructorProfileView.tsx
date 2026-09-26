@@ -48,8 +48,8 @@ export const InstructorProfileView: React.FC = () => {
   };
 
   return (
-    <div className="library-catalog-page library-instructor-page min-h-screen text-white pb-28">
-      <header className="library-instructor-billboard relative min-h-[58vh] md:min-h-[70vh] flex items-end overflow-hidden pt-24 pb-16 md:pb-20">
+    <div className="library-catalog-page library-instructor-page library-bottom-clearance min-h-screen text-white">
+      <header className="library-instructor-billboard relative min-h-[52vh] sm:min-h-[58vh] md:min-h-[70vh] flex items-end overflow-hidden pt-24 pb-12 sm:pb-16 md:pb-20">
         <div className="absolute inset-0 select-none overflow-hidden bg-[#141414]">
           <div className="library-course-veil-a absolute inset-0" />
           <div className="library-course-veil-b absolute inset-0" />
@@ -80,7 +80,7 @@ export const InstructorProfileView: React.FC = () => {
             מרצים
           </button>
 
-          <h1 className="text-4xl sm:text-6xl lg:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight mb-3 max-w-4xl">
+          <h1 className="text-3xl sm:text-5xl lg:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight mb-3 max-w-4xl">
             {instructor.name}
           </h1>
           <p className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/80">
@@ -150,7 +150,7 @@ export const InstructorProfileView: React.FC = () => {
         <section id="instructor-lectures" className="scroll-mt-24">
           <h2 className="library-rail-title text-white mb-4">הרצאות בספרייה</h2>
           {lectures.length > 0 ? (
-            <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-stretch">
+            <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 justify-items-stretch">
               {lectures.map((course) => (
                 <CourseCard key={course.id} course={course} fullWidth />
               ))}
