@@ -38,6 +38,7 @@ import './WebinarNeuralSlides.css';
 import './WebinarNightLanguage.css';
 import './WebinarFlowPolish.css';
 import './WebinarSlideTones.css';
+import './WebinarCinematicHosts.css';
 import { WebinarBlueGoldBackdrop } from '../components/WebinarBlueGoldBackdrop';
 
 const WEBINAR_ISLANDS = [
@@ -266,45 +267,49 @@ export function WebinarLanding() {
       </section>
 
       <div className="webinar-editorial-grid">
-      <section id="hosts" className="webinar-neural-slide webinar-island webinar-blue-gold-section" data-tone="gilt">
-        <WebinarBlueGoldBackdrop />
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
-          <SectionLabel>הערב החי</SectionLabel>
-          <SectionTitle>לא באים רק ללמוד. באים לבצע.</SectionTitle>
-          <p className="text-white/50 font-light leading-relaxed max-w-3xl mx-auto mb-4">
-            גל, תמי וגלב בלייב. שיעור מכירות, משימת ביצוע, ואז פעולה שנשלחת לעולם.
-          </p>
-          <p className="webinar-host-feats">{eveningFeats.join(' · ')}</p>
-          <ul className="webinar-host-orbs">
-            {hosts.map((leader) => (
-              <li key={leader.name}>
-                <TeamPhoto
-                  src={leader.image}
-                  name={leader.name}
-                  alt={leader.name}
-                  className="webinar-host-orb"
-                />
+      <section id="hosts" className="webinar-cinematic webinar-island" dir="rtl">
+        <header className="intro">
+          <div className="intro-copy">
+            <p className="eyebrow">הערב החי</p>
+            <h2>לא באים רק ללמוד. <span className="gold">באים לבצע.</span></h2>
+            <p className="lede">
+              גל, תמי וגלב בלייב. שיעור מכירות, משימת ביצוע, ואז פעולה שנשלחת לעולם.
+            </p>
+          </div>
+          <p className="feat">{eveningFeats.join(' · ')}</p>
+        </header>
+        <div className="hosts">
+          {hosts.map((leader) => (
+            <article className="host" key={leader.name}>
+              <div className="portrait">
+                <TeamPhoto src={leader.image} name={leader.name} alt={leader.name} />
+              </div>
+              <div className="host-body">
                 <h3>{leader.name}</h3>
-                <p className="webinar-host-role">{leader.title}</p>
-                <p className="webinar-host-bio">{leader.bio}</p>
-              </li>
-            ))}
-          </ul>
-          <ol className="webinar-task-spine">
-            {WEBINAR_TASK_STEPS.map((item, index) => (
-              <li key={item.title}>
-                <i>{String(index + 1).padStart(2, '0')}</i>
+                <p className="role">{leader.title}</p>
+                <p className="bio">{leader.bio}</p>
+              </div>
+            </article>
+          ))}
+        </div>
+        <div className="tasks">
+          {WEBINAR_TASK_STEPS.map((item, index) => (
+            <div className="task" key={item.title}>
+              <div className="task-head">
+                <span className="num">{String(index + 1).padStart(2, '0')}</span>
                 <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </li>
-            ))}
-          </ol>
-          <p id="tracks" className="text-sm text-[#dfc47d]/80 font-light leading-relaxed max-w-2xl mx-auto">
+              </div>
+              <p>{item.text}</p>
+            </div>
+          ))}
+        </div>
+        <footer className="closing">
+          <p id="tracks" className="tracks">
             שני מסלולי כניסה לפיילוט, אמיצים והססנים, יוצגו בסוף הערב. לא נדרש להחליט עכשיו.
           </p>
-          <p className="mt-3 text-[11px] text-white/35 font-light leading-relaxed">{WEBINAR_TRACKS_FINE_PRINT}</p>
-          <p className="webinar-host-meta">{config.location} · {config.durationMinutes} דקות · {WEBINAR_AUDIENCE_LABEL}</p>
-        </div>
+          <p className="fine">{WEBINAR_TRACKS_FINE_PRINT}</p>
+          <p className="meta">{config.location} · {config.durationMinutes} דקות · {WEBINAR_AUDIENCE_LABEL}</p>
+        </footer>
       </section>
 
       <TeamGalaxy
