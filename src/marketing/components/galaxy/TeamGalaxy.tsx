@@ -62,7 +62,7 @@ export function TeamGalaxy({
     const diameter = starDiameter(member);
     return <motion.div key={member.id}
       className={`galaxy-star-anchor ${sun ? 'galaxy-sun' : ''} ${featured ? 'galaxy-featured' : ''} ${isSelected ? 'is-selected' : ''}`}
-      style={{ left: `${position.x}%`, top: `${position.y}%`, '--star-x': `${position.x}%`, '--star-size': `${diameter}px`, '--star-glow': `${10 + member.impact_score * 0.28}px` } as CSSProperties}
+      style={{ left: `${position.x}%`, top: `${position.y}%`, '--star-x': `${position.x}%`, '--star-size': `${diameter}px`, '--portrait-boost': ['גלב סמירנוב', 'תמי אליאן'].includes(member.name.trim()) ? 1.15 : 1, '--star-glow': `${10 + member.impact_score * 0.28}px` } as CSSProperties}
       initial={{ opacity: 0 }} animate={{ left: `${position.x}%`, top: `${position.y}%`, opacity: profile && !isSelected ? 0.32 : 1 }}
       transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: isSelected ? 0 : sun ? 0 : Math.min(slot * 0.04, 0.28) }}>
       <button type="button" className="galaxy-star" data-member-id={member.id} data-impact={member.impact_score}
@@ -72,7 +72,7 @@ export function TeamGalaxy({
           lastTrigger.current = event.currentTarget;
           setSelected(current => current === member.id ? null : member.id);
         }}>
-        <span className="galaxy-stellar-body"><StarPortrait member={member} /><span className="galaxy-flare" aria-hidden="true">✦</span></span>
+        <span className="galaxy-stellar-body"><StarPortrait member={member} /></span>
         <span className="galaxy-star-name" dir="auto">{member.name}</span>
         {isSelected
           ? <InlineStarDetails member={member} />
