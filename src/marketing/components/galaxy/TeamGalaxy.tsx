@@ -12,11 +12,13 @@ export function TeamGalaxy({
   eyebrow = 'האנשים מאחורי החזון',
   title = 'הצוות שמחזיק את המערכת',
   subtitle = 'כל אחד מביא כוח אחר. יחד הם יוצרים מערכת אחת.',
+  mobileCarousel = false,
 }: {
   className?: string;
   eyebrow?: string;
   title?: string;
   subtitle?: string;
+  mobileCarousel?: boolean;
 }) {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [selected, setSelected] = useState<string | null>(null);
@@ -24,6 +26,29 @@ export function TeamGalaxy({
   const [error, setError] = useState('');
   const [paused, setPaused] = useState(false);
   const lastTrigger = useRef<HTMLButtonElement | null>(null);
+  const mapRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!mobileCarousel || paused || selected || members.length < 2) return;
+    const timer = window.setInterval(() => {
+      const map = mapRef.current;
+      if (!map || !window.matchMedia('(max-width: 767px)').matches ||
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+        document.documentElement.classList.contains('a11y-reduce-motion') ||
+        document.hidden || map.contains(document.activeElement) ||
+        (window.matchMedia('(hover: hover)').matches && map.matches(':hover'))) return;
+      const bounds = map.getBoundingClientRect();
+      if (bounds.bottom <= 0 || bounds.top >= window.innerHeight) return;
+      const cards = Array.from<HTMLElement>(map.querySelectorAll('.galaxy-star-anchor'));
+      if (!cards.length) return;
+      const center = bounds.left + bounds.width / 2;
+      const current = cards.reduce<number>((nearest, card, index) =>
+        Math.abs(card.getBoundingClientRect().left + card.offsetWidth / 2 - center) <
+        Math.abs(cards[nearest].getBoundingClientRect().left + cards[nearest].offsetWidth / 2 - center) ? index : nearest, 0);
+      const next = cards[(current + 1) % cards.length];
+      map.scrollTo({ left: next.offsetLeft - (map.clientWidth - next.offsetWidth) / 2, behavior: 'smooth' });
+    }, 3500);
+    return () => window.clearInterval(timer);
+  }, [mobileCarousel, paused, selected, members.length]);
   useEffect(() => {
     let cancelled = false;
     const load = () => teamMembersApi.list().then(res => {
@@ -80,7 +105,7 @@ export function TeamGalaxy({
       </button>
     </motion.div>;
   };
-  return <motion.section id="team-universe" className={`team-galaxy ${paused ? 'galaxy-paused' : ''} ${className}`.trim()}
+  return <motion.section id="team-universe" className={`team-galaxy ${mobileCarousel ? 'galaxy-mobile-carousel' : ''} ${paused ? 'galaxy-paused' : ''} ${className}`.trim()}
     aria-labelledby="galaxy-title" initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true, amount: 0.1 }} transition={{ duration: 1 }}
     onKeyDown={event => { if (event.key === 'Escape' && profile) { event.preventDefault(); close(); } }}>
     <div className="galaxy-dust" aria-hidden="true">{Array.from({ length: 30 }, (_, i) => <i key={i} style={{ left: `${(i * 37 + 13) % 100}%`, top: `${(i * 23 + 7) % 100}%`, animationDelay: `${i * -0.7}s` }} />)}</div>
@@ -93,7 +118,7 @@ export function TeamGalaxy({
       {error && <p className="galaxy-message" role="status">{error}</p>}
       <div className="galaxy-layout" dir="ltr">
         <div className="galaxy-map-wrap">
-          <div className={`galaxy-map ${profile ? 'has-selection' : ''}`}
+          <div ref={mapRef} className={`galaxy-map ${profile ? 'has-selection' : ''}`}
             onClick={event => {
               if (event.target instanceof Element && !event.target.closest('.galaxy-star') && profile) close(false);
             }}>

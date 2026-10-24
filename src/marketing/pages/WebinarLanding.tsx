@@ -307,6 +307,7 @@ export function WebinarLanding() {
       </section>
 
       <TeamGalaxy
+        mobileCarousel
         className="webinar-island webinar-tone-night"
         eyebrow="האנשים מאחורי החזון"
         title="הצוות שמחזיק את המערכת"

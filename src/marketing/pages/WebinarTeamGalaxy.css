@@ -38,6 +38,63 @@
   opacity: 0;
 }
 
+/* The mobile team strip advances itself; profile selection and the existing
+   motion control pause it. Desktop keeps the original galaxy composition. */
+@media (max-width: 767px) {
+  .webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel .galaxy-map {
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+    height: 490px;
+    min-height: 490px;
+    padding: 40px calc(50% - 100px) 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    touch-action: pan-x pan-y;
+  }
+
+  #team-universe.galaxy-mobile-carousel .galaxy-map::-webkit-scrollbar { display: none; }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star-anchor {
+    position: relative;
+    flex: 0 0 200px;
+    width: 200px;
+    height: auto;
+    left: auto !important;
+    top: auto !important;
+    scroll-snap-align: center;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star {
+    width: 100%;
+    transform: none;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-stellar-body {
+    width: calc(108px * var(--portrait-boost, 1));
+    height: calc(108px * var(--portrait-boost, 1));
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star-name,
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star-anchor:not(.galaxy-sun):not(.is-selected) .galaxy-star-name {
+    width: 200px;
+    font-size: 18px;
+    line-height: 1.5;
+    overflow-wrap: normal;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-inline-details {
+    width: min(280px, 78vw);
+    max-height: 230px;
+    top: calc(100% + 62px);
+  }
+
+  #team-universe.galaxy-mobile-carousel .galaxy-orbits,
+  #team-universe.galaxy-mobile-carousel .galaxy-manifesto { display: none; }
+}
+
 @media (max-width: 767px) {
   .webinar-flow-page .webinar-editorial-grid #team-universe .galaxy-map {
     height: 760px;
@@ -48,16 +105,16 @@
     width: 160px;
   }
 
-  .webinar-flow-page #team-universe .galaxy-star-anchor:not(.is-selected) {
+  .webinar-flow-page #team-universe:not(.galaxy-mobile-carousel) .galaxy-star-anchor:not(.is-selected) {
     left: clamp(36px, var(--star-x), calc(100% - 36px)) !important;
   }
 
-  .webinar-flow-page #team-universe .galaxy-featured:not(.galaxy-sun):not(.is-selected) {
+  .webinar-flow-page #team-universe:not(.galaxy-mobile-carousel) .galaxy-featured:not(.galaxy-sun):not(.is-selected) {
     left: clamp(40%, var(--star-x), 60%) !important;
     top: 25% !important;
   }
 
-  .webinar-flow-page #team-universe .galaxy-star-anchor:not(.galaxy-sun):not(.is-selected) .galaxy-star-name {
+  .webinar-flow-page #team-universe:not(.galaxy-mobile-carousel) .galaxy-star-anchor:not(.galaxy-sun):not(.is-selected) .galaxy-star-name {
     width: 60px;
     overflow-wrap: anywhere;
   }
