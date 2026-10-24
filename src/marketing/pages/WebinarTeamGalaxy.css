@@ -12,12 +12,12 @@
   opacity: 1;
   translate: none;
   transition: none;
-  padding-block: 32px 16px;
+  padding-block: 48px 28px;
 }
 
 .webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel .galaxy-map {
-  height: 440px;
-  min-height: 440px;
+  height: 520px;
+  min-height: 520px;
 }
 
 .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-bottom-note {
@@ -68,19 +68,19 @@
 @media (max-width: 767px) {
   .webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel {
     min-height: 0;
-    padding: 20px 12px 12px;
+    padding: 32px 16px 24px;
   }
 
-  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-heading { margin-bottom: 0; }
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-heading { margin-bottom: 16px; }
   .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-bottom-note { margin-top: 8px; }
 
   .webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel .galaxy-map {
     display: flex;
     align-items: flex-start;
-    gap: 24px;
-    height: 320px;
-    min-height: 320px;
-    padding: 20px calc(50% - 100px) 0;
+    gap: 32px;
+    height: 440px;
+    min-height: 440px;
+    padding: 28px calc(50% - 100px) 0;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
