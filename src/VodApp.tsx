@@ -32,6 +32,7 @@ import './styles/CrmDesk.css';
 import './styles/LibraryCharcoalTheme.css';
 import './styles/LibraryWeekly.css';
 import './styles/LibraryBrowseRefined.css';
+import './styles/LibraryNetflix.css';
 
 export const VodApp: React.FC = () => {
   const { currentView, setView } = useApp();
@@ -105,7 +106,7 @@ export const VodApp: React.FC = () => {
   return (
     <PaywallProvider>
     <PaywallTriggers />
-    <div className={`vod-app library-catalog sky-readable${currentView === 'home' ? ' library-weekly' : ''} flex flex-col min-h-screen relative text-white bg-transparent${currentView === 'admin' || currentView === 'lecturer' || currentView === 'profile' ? ' crm-desk' : ''}`}>
+    <div className={`vod-app library-catalog sky-readable${currentView === 'home' ? ' library-weekly' : ' library-netflix'} flex flex-col min-h-screen relative text-white bg-transparent${currentView === 'admin' || currentView === 'lecturer' || currentView === 'profile' ? ' crm-desk' : ''}`}>
       {currentView !== 'watch' && (
         <a href="#library-main" className="skip-link">
           דילוג לתוכן הראשי

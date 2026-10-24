@@ -39,7 +39,7 @@
   border-color: #26272A !important;
   box-shadow: none !important;
 }
-.vod-app.library-catalog :is(.soundstage-console,.soundstage-plan-strip,.library-plan-strip,.library-quick-action,.soundstage-fader,.library-empty-panel,.library-start-here-quiet,.library-page-hero,.library-page-toolbar,.library-search-field,.library-instructor-card,.soundstage-card,.soundstage-topic-tile,.library-instructor-frame) {
+.vod-app.library-catalog :is(.soundstage-console,.soundstage-plan-strip,.library-plan-strip,.library-quick-action,.soundstage-fader,.library-empty-panel,.library-start-here-quiet,.library-page-toolbar,.library-search-field,.library-instructor-card,.soundstage-card,.soundstage-topic-tile,.library-instructor-frame) {
   background: rgba(38,39,42,.78) !important;
   border-color: rgba(246,241,231,.12) !important;
   box-shadow: none !important;

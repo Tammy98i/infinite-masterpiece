@@ -1,0 +1,179 @@
+/* Inner-library companion to LibraryWeekly: presentation only.
+   Keep desk workspaces and player geometry intact; no marketing selectors. */
+.vod-app.library-catalog.library-netflix {
+  --netflix-gutter: 48px;
+  --netflix-surface: #1c1c1e;
+  --netflix-rule: rgba(246,241,231,.12);
+  color: #F6F1E7;
+  font-family: system-ui, -apple-system, "Segoe UI", "Arial Hebrew", Arial, sans-serif;
+}
+.library-netflix :is(button, input, select, textarea) { font-family: inherit; }
+.library-netflix .editorial-library-header {
+  height: 72px;
+  padding-inline: var(--netflix-gutter);
+  border-bottom: 1px solid var(--netflix-rule) !important;
+  box-shadow: none !important;
+}
+.library-netflix .editorial-library-header.is-over-hero {
+  background: linear-gradient(180deg,rgba(16,17,19,.98),rgba(16,17,19,.75)) !important;
+}
+.library-netflix .header-row { max-width: none; height: 72px; padding: 0; }
+.library-netflix .header-start { gap: 32px; }
+.library-netflix .header-logo { gap: 10px; }
+.library-netflix .header-logo-mark { width: 34px; height: 18px; stroke-width: 2.2; color: #C6A46C; opacity: 1; }
+.library-netflix .header-wordmark { color: #C6A46C; font-size: 20px; font-weight: 800; letter-spacing: .04em; }
+.library-netflix .header-nav { gap: 6px; }
+.library-netflix .header-nav-wide { display: inline-flex; }
+.library-netflix .header-actions { gap: 8px; }
+.library-netflix :is(.header-nav > button,.header-login,.header-search > button) {
+  min-height: 44px; padding: 8px 12px; border-radius: 6px;
+  font-size: 14px; font-weight: 500; color: #F6F1E7; background: transparent;
+}
+.library-netflix .header-nav > button:hover { color: #C6A46C; background: rgba(198,164,108,.1); }
+.library-netflix .header-nav > button.border-\[\#b79043\] { color: #C6A46C; border-radius: 0; border-color: #C6A46C; }
+.library-netflix .header-search input { border-radius: 6px; background: #1c1c1e; }
+.library-netflix #library-main > .library-catalog-page:not(.crm-desk) {
+  width: 100%; max-width: none; min-width: 0;
+  padding-inline: var(--netflix-gutter); padding-top: 120px; padding-bottom: 88px;
+}
+/* Billboards own their edge-to-edge art; all content shares the same gutter. */
+.library-netflix #library-main > :is(.library-course-page,.library-instructor-page,.library-instructor-index) {
+  padding-inline: 0 !important; padding-top: 0 !important;
+}
+.library-netflix :is(.library-course-billboard,.library-instructor-billboard) {
+  min-height: 640px; padding-block: 144px 88px;
+}
+.library-netflix :is(.library-course-billboard,.library-instructor-billboard) > .relative {
+  max-width: none; padding-inline: var(--netflix-gutter); margin-inline: 0;
+}
+.library-netflix :is(.library-course-page,.library-instructor-page,.library-instructor-index) > div.relative {
+  max-width: none; padding-inline: var(--netflix-gutter); margin-inline: 0;
+}
+.library-netflix .library-instructor-billboard > .relative {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.5fr); gap: 48px; align-items: center;
+}
+.library-netflix .library-instructor-billboard .library-instructor-frame {
+  width: 100%; max-width: 360px; aspect-ratio: 4/5; margin-inline: auto;
+  border-radius: 8px; border: 1px solid rgba(198,164,108,.35);
+  overflow: hidden; background: var(--netflix-surface) !important; box-shadow: none;
+}
+.library-netflix .library-instructor-frame img { width: 100%; height: 100%; object-fit: cover; }
+.library-netflix h1 { font-size: clamp(32px,3.8vw,58px); line-height: 1.15; letter-spacing: -.025em; font-weight: 800; text-wrap: balance; }
+.library-netflix :is(.library-course-billboard,.library-instructor-billboard) h1 { max-width: 950px; }
+.library-netflix :is(.library-rail-title,.soundstage-section-header h2) {
+  font-size: 22px; font-weight: 700; line-height: 1.4;
+  border-inline-start: 3px solid #C6A46C; padding-inline-start: 14px;
+}
+.library-netflix :is(.library-hero-play,.library-hero-more,.library-empty-cta,.library-plan-cta,.soundstage-btn-primary,.soundstage-btn-secondary) {
+  min-height: 48px; border-radius: 6px !important; padding: 12px 24px;
+  font-size: 15px; font-weight: 700; line-height: 1.5;
+}
+.library-netflix :is(.library-page-hero,.library-empty-panel,.library-start-here-quiet) {
+  background-color: rgba(28,28,30,.88) !important;
+  border: 1px solid var(--netflix-rule) !important;
+  border-radius: 8px !important; box-shadow: none !important;
+}
+.library-netflix .library-page-hero { padding: 32px !important; margin-bottom: 32px; }
+.library-netflix .library-page-hero:has(h1) {
+  min-height: 280px; display: flex; flex-direction: column; justify-content: center;
+  border-inline-start: 3px solid #C6A46C !important;
+}
+.library-netflix .library-page-hero h1 { font-size: clamp(32px,3.8vw,52px); }
+.library-netflix .library-page-hero p { line-height: 1.8; }
+.library-netflix .library-page-toolbar { border-radius: 8px; padding: 12px 16px; margin-bottom: 28px; }
+.library-netflix :is(.library-page-chip,.library-search-field) { border-radius: 6px; }
+.library-netflix .library-page-chip { min-height: 44px; }
+.library-netflix .library-empty-panel { max-width: none; padding: 32px; }
+.library-netflix .library-empty-panel p { max-width: 44rem; line-height: 1.8; }
+.library-netflix .library-empty-panel h3 { font-size: 24px; line-height: 1.4; }
+/* A single card rhythm for search, topic, saved, shorts, profiles and related rails. */
+.library-netflix .library-page-grid { grid-template-columns: repeat(5,minmax(0,1fr)); gap: 28px 16px; align-items: stretch; }
+.library-netflix .library-page-grid > *, .library-netflix .library-course-card { min-width: 0; }
+.library-netflix .library-page-grid .library-course-card { width: 100%; height: 100%; }
+.library-netflix .premium-course-card {
+  display: flex; flex-direction: column; width: 100%; max-width: none; height: 100%;
+  padding: 0; overflow: hidden; background: #1c1c1e; border: 1px solid var(--netflix-rule);
+  border-radius: 8px; box-shadow: none; cursor: pointer;
+  transition: border-color .2s, box-shadow .2s;
+}
+.library-netflix .premium-course-card:hover { border-color: #C6A46C; box-shadow: 0 8px 28px rgba(0,0,0,.4); }
+.library-netflix .premium-course-poster { width: 100%; flex-shrink: 0; aspect-ratio: 16/9; border-radius: 0; }
+.library-netflix .premium-course-poster::after { pointer-events: none; }
+.library-netflix .premium-course-body { display: flex; flex-direction: column; gap: 10px; padding: 14px; }
+.library-netflix .premium-course-title {
+  display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 2;
+  overflow: hidden; height: 2.8em; line-height: 1.4; font-size: 16px; font-weight: 700;
+}
+.library-netflix .premium-course-signature { display: none; }
+.library-netflix .premium-course-details { min-height: 20px; gap: 8px; font-size: 12px; color: #c8c4bc; }
+.library-netflix .premium-course-instructor { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; color: #C6A46C; }
+.library-netflix .premium-course-access { color: #c8c4bc; }
+.library-netflix .premium-course-card :is(.premium-course-play,.premium-course-add) {
+  inset: auto; bottom: 8px; inset-inline-end: 8px; width: 36px; height: 36px;
+  margin: 0; color: #F6F1E7; border-color: #C6A46C; background: rgba(16,17,19,.9);
+}
+.library-netflix .premium-course-card .premium-course-add { inset-inline-end: 52px; border-color: rgba(246,241,231,.5); }
+.library-netflix .premium-course-card button:hover { background: #C6A46C; color: #101113; }
+.library-netflix :is(.premium-course-badge,.premium-course-new,.premium-course-duration) {
+  top: 8px; bottom: auto; color: #C6A46C; border-color: rgba(198,164,108,.6);
+  border-radius: 4px; background: rgba(16,17,19,.9); font-size: 11px; padding: 4px 7px;
+}
+.library-netflix .premium-course-badge { right: 8px; max-width: calc(100% - 68px); }
+.library-netflix .premium-course-duration { left: 8px; }
+.library-netflix .premium-course-new { top: 38px; left: 8px; }
+.library-netflix .premium-course-progress > div { background: #C6A46C; }
+.library-netflix .premium-course-rank { font-size: 22px; }
+.library-netflix .library-rail-scroller { gap: 16px; min-width: 0; max-width: 100%; align-items: stretch; }
+.library-netflix .library-rail-scroller > .snap-start { flex: 0 0 calc((100% - 64px)/5); min-width: 0; }
+.library-netflix .library-rail-scroller .library-course-card { width: 100%; }
+.library-netflix .library-start-here-quiet { min-width: 0; max-width: 100%; }
+.library-netflix .library-start-here-quiet .library-rail-scroller > .snap-start { flex-basis: calc((100% - 32px)/3); }
+.library-netflix .rail-control { border-radius: 6px !important; }
+.library-netflix .library-instructor-index .library-page-grid .library-instructor-frame {
+  aspect-ratio: 4/5; border-radius: 8px; border: 1px solid var(--netflix-rule); box-shadow: none;
+}
+.library-netflix .library-instructor-index .library-poster:hover .library-instructor-frame { border-color: #C6A46C; }
+.library-netflix .library-instructor-page #instructor-lectures { margin-top: 40px; }
+.library-netflix .library-episode-row { border-radius: 8px; }
+.library-netflix .editorial-library-footer { padding: 32px var(--netflix-gutter) 40px; }
+.library-netflix .editorial-library-footer > div, .library-netflix .editorial-library-footer > p { max-width: none; }
+.library-netflix .editorial-library-footer :is(button,a) { color: #c8c4bc; }
+.library-netflix :is(button,a,input,select,textarea):focus-visible { outline: 2px solid #C6A46C; outline-offset: 3px; }
+/* Desks retain their dense working layout, with matching surfaces and typography. */
+.library-netflix.crm-desk :is(.crm-desk-panel,.crm-desk-table,.crm-desk-title-card,.crm-desk-metric,.crm-desk-fold,.crm-kpi,.crm-poster) { border-radius: 8px; box-shadow: none; }
+.library-netflix.crm-desk .crm-desk-nav-item { border-radius: 6px; }
+.library-netflix.crm-desk .crm-desk-nav-item.is-active { color: #C6A46C; border-inline-start-color: #C6A46C; background: rgba(198,164,108,.08); }
+.library-netflix.crm-desk h1 { font-size: clamp(28px,3vw,42px); }
+@media (max-width: 1100px) {
+  .vod-app.library-catalog.library-netflix { --netflix-gutter: 32px; }
+  .library-netflix .header-start { gap: 16px; }
+  .library-netflix .header-nav > button { padding-inline: 8px; }
+  .library-netflix .library-page-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .library-netflix .library-rail-scroller > .snap-start { flex-basis: calc((100% - 32px)/3); }
+}
+@media (max-width: 767px) {
+  .vod-app.library-catalog.library-netflix { --netflix-gutter: 20px; }
+  .library-netflix .header-nav { display: none; }
+  .library-netflix .header-row { gap: 8px; }
+  .library-netflix .header-actions { gap: 4px; }
+  .library-netflix .header-search > button { padding-inline: 8px; }
+  .library-netflix .header-search input { width: min(46vw,224px); }
+  .library-netflix #library-search-suggestions { width: min(80vw,320px); }
+  .library-netflix #library-main > .library-catalog-page:not(.crm-desk) { padding-top: 104px; }
+  .library-netflix :is(.library-course-billboard,.library-instructor-billboard) { min-height: 540px; padding-block: 112px 64px; }
+  .library-netflix .library-instructor-billboard > .relative { grid-template-columns: 1fr; gap: 24px; }
+  .library-netflix .library-instructor-billboard .library-instructor-frame { max-width: 200px; aspect-ratio: 1; margin-inline: 0 auto; }
+  .library-netflix .library-page-hero { padding: 24px !important; }
+  .library-netflix .library-page-hero:has(h1) { min-height: 240px; }
+  .library-netflix .library-page-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px 12px; }
+  .library-netflix .premium-course-title { font-size: 14px; }
+  .library-netflix .premium-course-body { padding: 10px; }
+  .library-netflix .premium-course-details { font-size: 11px; }
+  .library-netflix .premium-course-card :is(.premium-course-play,.premium-course-add) { width: 32px; height: 32px; }
+  .library-netflix .premium-course-card .premium-course-add { inset-inline-end: 48px; }
+  .library-netflix .premium-course-duration { font-size: 10px; padding: 3px 4px; }
+  .library-netflix .library-rail-scroller > .snap-start,
+  .library-netflix .library-start-here-quiet .library-rail-scroller > .snap-start { flex-basis: 76%; }
+  .library-netflix .library-empty-panel { padding: 24px; }
+  .library-netflix .editorial-library-footer { padding-bottom: 104px; }
+}
