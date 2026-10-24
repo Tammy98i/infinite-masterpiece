@@ -11,9 +11,9 @@
 docker compose -f docker-compose.base44.yml up -d
 ```
 - Single `node:22-alpine` service, source bind-mounted, `node_modules` in a named volume.
-- `npm ci` syncs the lockfile at container start, then `concurrently` runs Vite and `tsx watch` from the bind-mounted source.
+- `npm install` runs at container start, then `npm run dev`.
 - Vite has `allowedHosts: true` — no host allowlist needed.
-- The Compose health check probes both the API (`/api/health` on 3001) and the live frontend (`/` on 3000); a healthy API alone does not prove the preview is available.
+- Health check: `GET /api/health` (returns JSON with service status).
 
 ## Secrets
 - All external services (Stripe, S3, Resend, Supabase, Gemini, Zoom) are **optional** — the app boots and runs in degraded/lead-only mode without them.
