@@ -27,28 +27,43 @@ export function TeamGalaxy({
   const [paused, setPaused] = useState(false);
   const lastTrigger = useRef<HTMLButtonElement | null>(null);
   const mapRef = useRef<HTMLDivElement | null>(null);
+  const [mobileMode, setMobileMode] = useState(false);
+  const [activeMobileId, setActiveMobileId] = useState<string | null>(null);
   useEffect(() => {
-    if (!mobileCarousel || paused || selected || members.length < 2) return;
+    const query = window.matchMedia('(max-width: 767px)');
+    const update = () => setMobileMode(mobileCarousel && query.matches);
+    update();
+    query.addEventListener('change', update);
+    return () => query.removeEventListener('change', update);
+  }, [mobileCarousel]);
+  useEffect(() => {
+    if (mobileMode && members.length) {
+      setActiveMobileId(current => members.some(member => member.id === current) ? current : members[0].id);
+    }
+  }, [mobileMode, members]);
+  useEffect(() => {
+    if (!mobileMode || paused || members.length < 2) return;
     const timer = window.setInterval(() => {
       const map = mapRef.current;
-      if (!map || !window.matchMedia('(max-width: 767px)').matches ||
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      if (!map || window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
         document.documentElement.classList.contains('a11y-reduce-motion') ||
-        document.hidden || map.contains(document.activeElement) ||
-        (window.matchMedia('(hover: hover)').matches && map.matches(':hover'))) return;
+        document.hidden || map.querySelector(':focus-visible')) return;
       const bounds = map.getBoundingClientRect();
       if (bounds.bottom <= 0 || bounds.top >= window.innerHeight) return;
-      const cards = Array.from<HTMLElement>(map.querySelectorAll('.galaxy-star-anchor'));
-      if (!cards.length) return;
-      const center = bounds.left + bounds.width / 2;
-      const current = cards.reduce<number>((nearest, card, index) =>
-        Math.abs(card.getBoundingClientRect().left + card.offsetWidth / 2 - center) <
-        Math.abs(cards[nearest].getBoundingClientRect().left + cards[nearest].offsetWidth / 2 - center) ? index : nearest, 0);
-      const next = cards[(current + 1) % cards.length];
-      map.scrollTo({ left: next.offsetLeft - (map.clientWidth - next.offsetWidth) / 2, behavior: 'smooth' });
-    }, 3500);
+      const ids = Array.from<HTMLButtonElement>(map.querySelectorAll('.galaxy-star')).map(button => button.dataset.memberId!);
+      setActiveMobileId(current => ids[(ids.indexOf(current ?? '') + 1) % ids.length]);
+    }, 5000);
     return () => window.clearInterval(timer);
-  }, [mobileCarousel, paused, selected, members.length]);
+  }, [mobileMode, paused, members.length]);
+  useEffect(() => {
+    const map = mapRef.current;
+    if (!mobileMode || !map || !activeMobileId) return;
+    const button = Array.from<HTMLButtonElement>(map.querySelectorAll('.galaxy-star')).find(item => item.dataset.memberId === activeMobileId);
+    const card = button?.parentElement;
+    if (!card) return;
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('a11y-reduce-motion');
+    map.scrollTo({ left: card.offsetLeft - (map.clientWidth - card.offsetWidth) / 2, behavior: reduced ? 'instant' : 'smooth' });
+  }, [mobileMode, activeMobileId]);
   useEffect(() => {
     let cancelled = false;
     const load = () => teamMembersApi.list().then(res => {
@@ -65,15 +80,16 @@ export function TeamGalaxy({
   const leaders = members.filter(member => member.hierarchy_level === 'leadership');
   const contributors = members.filter(member => member.hierarchy_level !== 'founder' && member.hierarchy_level !== 'leadership');
   const satellites = [...leaders, ...contributors];
-  const profile = members.find(member => member.id === selected);
+  const profile = members.find(member => member.id === (mobileMode ? activeMobileId : selected));
   const close = (restoreFocus = true) => {
-    setSelected(null);
+    if (mobileMode) { setPaused(true); setActiveMobileId(null); }
+    else setSelected(null);
     if (restoreFocus) lastTrigger.current?.focus({ preventScroll: true });
   };
   const renderStar = (member: TeamMember, slot: number) => {
     const sun = member.hierarchy_level === 'founder';
     const featured = sun || member.hierarchy_level === 'leadership';
-    const isSelected = selected === member.id;
+    const isSelected = profile?.id === member.id;
     const naturalPosition = starPosition(
       member,
       member.hierarchy_level === 'leadership' ? leaders.findIndex(item => item.id === member.id) : contributors.findIndex(item => item.id === member.id),
@@ -91,11 +107,12 @@ export function TeamGalaxy({
       initial={{ opacity: 0 }} animate={{ left: `${position.x}%`, top: `${position.y}%`, opacity: profile && !isSelected ? 0.32 : 1 }}
       transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: isSelected ? 0 : sun ? 0 : Math.min(slot * 0.04, 0.28) }}>
       <button type="button" className="galaxy-star" data-member-id={member.id} data-impact={member.impact_score}
-        aria-label={isSelected ? `סגירת פרטי ${member.name}` : `הצגת פרטי ${member.name}`} aria-expanded={isSelected}
+        aria-label={isSelected && !mobileMode ? `סגירת פרטי ${member.name}` : `הצגת פרטי ${member.name}`} aria-expanded={isSelected}
         aria-controls={isSelected ? `team-inline-details-${member.id}` : undefined}
         onClick={event => {
           lastTrigger.current = event.currentTarget;
-          setSelected(current => current === member.id ? null : member.id);
+          if (mobileMode) setActiveMobileId(member.id);
+          else setSelected(current => current === member.id ? null : member.id);
         }}>
         <span className="galaxy-stellar-body"><StarPortrait member={member} /></span>
         <span className="galaxy-star-name" dir="auto">{member.name}</span>
