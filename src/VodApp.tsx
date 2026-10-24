@@ -31,6 +31,7 @@ import './styles/LibraryCatalog.css';
 import './styles/CrmDesk.css';
 import './styles/LibraryCharcoalTheme.css';
 import './styles/LibraryWeekly.css';
+import './styles/LibraryBrowseRefined.css';
 
 export const VodApp: React.FC = () => {
   const { currentView, setView } = useApp();
