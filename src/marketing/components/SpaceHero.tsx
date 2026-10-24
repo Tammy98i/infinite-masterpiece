@@ -128,7 +128,7 @@ export function SpaceHero() {
       <div className="space-ui">
         <div className="space-copy" dir="rtl">
           <h1 className="space-col space-title" id="space-hero-title">
-            <span className="space-ent-mask"><span className="space-ent-line">The Masterpiece</span></span>
+            <span className="space-ent-mask"><span className="space-ent-line">Infinite Masterpiece</span></span>
             <span className="space-ent-mask space-title-wide"><span className="space-ent-line">Framework</span></span>
           </h1>
           <div className="space-col space-rule"><span /></div>

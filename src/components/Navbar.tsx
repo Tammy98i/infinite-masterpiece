@@ -116,9 +116,7 @@ export const Navbar: React.FC = () => {
               >
                 <InfinityIcon className="header-logo-mark text-[#dfc47d] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
                 <span className="header-wordmark font-light tracking-[0.22em] text-white/90 leading-tight uppercase">
-                  Infinite
-                  <br />
-                  <span className="font-medium">Masterpiece</span>
+                  IM
                 </span>
               </button>
             </div>
