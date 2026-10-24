@@ -138,7 +138,7 @@ export const VodApp: React.FC = () => {
               <Link to="/accessibility" className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11 inline-flex items-center">הצהרת נגישות</Link>
             </div>
           </div>
-          <p className="max-w-7xl mx-auto mt-4 text-sm text-zinc-600">Infinite Masterpiece © כל הזכויות שמורות.</p>
+          <p className="max-w-7xl mx-auto mt-4 text-sm text-zinc-600">© {new Date().getFullYear()} כל הזכויות שמורות ל <bdi dir="ltr">TAMMY ELIAN</bdi></p>
         </footer>
       )}
 
