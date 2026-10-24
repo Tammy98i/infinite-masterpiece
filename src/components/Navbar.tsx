@@ -93,7 +93,7 @@ export const Navbar: React.FC = () => {
       <header
         role="banner"
         aria-label="כותרת הספרייה"
-        className={`editorial-library-header fixed top-0 inset-inline-0 z-50 transition-all duration-300 ${
+        className={`editorial-library-header library-compact-header fixed top-0 inset-inline-0 z-50 transition-all duration-300 ${
           isScrolled ||
           (currentView !== 'home' &&
             currentView !== 'course' &&
@@ -116,9 +116,8 @@ export const Navbar: React.FC = () => {
               >
                 <InfinityIcon className="header-logo-mark text-[#dfc47d] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
                 <span className="header-wordmark font-light tracking-[0.22em] text-white/90 leading-tight uppercase">
-                  {currentView === 'course' ? 'ספרייה' : 'IM'}
+                  IM
                 </span>
-                {currentView === 'home' && <span className="weekly-brand-name">Infinite Masterpiece</span>}
               </button>
             </div>
 
