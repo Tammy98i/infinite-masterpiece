@@ -157,6 +157,13 @@
     width: 160px;
   }
 
+  .webinar-flow-page #team-universe .galaxy-star-name,
+  .webinar-flow-page #team-universe .galaxy-inline-details {
+    background: transparent;
+    box-shadow: none;
+    text-shadow: none;
+  }
+
   .webinar-flow-page #team-universe .galaxy-inline-details {
     max-height: 240px;
   }
