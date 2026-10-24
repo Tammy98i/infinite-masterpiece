@@ -38,8 +38,6 @@ import './WebinarNeuralSlides.css';
 import './WebinarNightLanguage.css';
 import './WebinarFlowPolish.css';
 import './WebinarSlideTones.css';
-import './WebinarCinematicHosts.css';
-import { WebinarBlueGoldBackdrop } from '../components/WebinarBlueGoldBackdrop';
 
 const WEBINAR_ISLANDS = [
   { id: 'webinar-hero', title: 'פתיחה' },
@@ -243,8 +241,7 @@ export function WebinarLanding() {
         onRegister={scrollToForm}
       />
 
-      <section id="problem" className="webinar-neural-afterglow webinar-island webinar-blue-gold-section" data-tone="night">
-        <WebinarBlueGoldBackdrop />
+      <section id="problem" className="webinar-neural-afterglow webinar-island" data-tone="night">
         <div className="webinar-flow-stem" aria-hidden="true" />
         <div className="webinar-neural-plate">
           <SectionLabel>הבעיה</SectionLabel>
@@ -267,49 +264,44 @@ export function WebinarLanding() {
       </section>
 
       <div className="webinar-editorial-grid">
-      <section id="hosts" className="webinar-cinematic webinar-island" dir="rtl">
-        <header className="intro">
-          <div className="intro-copy">
-            <p className="eyebrow">הערב החי</p>
-            <h2>לא באים רק ללמוד. <span className="gold">באים לבצע.</span></h2>
-            <p className="lede">
-              גל, תמי וגלב בלייב. שיעור מכירות, משימת ביצוע, ואז פעולה שנשלחת לעולם.
-            </p>
-          </div>
-          <p className="feat">{eveningFeats.join(' · ')}</p>
-        </header>
-        <div className="hosts">
-          {hosts.map((leader) => (
-            <article className="host" key={leader.name}>
-              <div className="portrait">
-                <TeamPhoto src={leader.image} name={leader.name} alt={leader.name} />
-              </div>
-              <div className="host-body">
+      <section id="hosts" className="webinar-neural-slide webinar-island" data-tone="gilt">
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <SectionLabel>הערב החי</SectionLabel>
+          <SectionTitle>לא באים רק ללמוד. באים לבצע.</SectionTitle>
+          <p className="text-white/50 font-light leading-relaxed max-w-3xl mx-auto mb-4">
+            גל, תמי וגלב בלייב. שיעור מכירות, משימת ביצוע, ואז פעולה שנשלחת לעולם.
+          </p>
+          <p className="webinar-host-feats">{eveningFeats.join(' · ')}</p>
+          <ul className="webinar-host-orbs">
+            {hosts.map((leader) => (
+              <li key={leader.name}>
+                <TeamPhoto
+                  src={leader.image}
+                  name={leader.name}
+                  alt={leader.name}
+                  className="webinar-host-orb"
+                />
                 <h3>{leader.name}</h3>
-                <p className="role">{leader.title}</p>
-                <p className="bio">{leader.bio}</p>
-              </div>
-            </article>
-          ))}
-        </div>
-        <div className="tasks">
-          {WEBINAR_TASK_STEPS.map((item, index) => (
-            <div className="task" key={item.title}>
-              <div className="task-head">
-                <span className="num">{String(index + 1).padStart(2, '0')}</span>
+                <p className="webinar-host-role">{leader.title}</p>
+                <p className="webinar-host-bio">{leader.bio}</p>
+              </li>
+            ))}
+          </ul>
+          <ol className="webinar-task-spine">
+            {WEBINAR_TASK_STEPS.map((item, index) => (
+              <li key={item.title}>
+                <i>{String(index + 1).padStart(2, '0')}</i>
                 <h3>{item.title}</h3>
-              </div>
-              <p>{item.text}</p>
-            </div>
-          ))}
-        </div>
-        <footer className="closing">
-          <p id="tracks" className="tracks">
+                <p>{item.text}</p>
+              </li>
+            ))}
+          </ol>
+          <p id="tracks" className="text-sm text-[#dfc47d]/80 font-light leading-relaxed max-w-2xl mx-auto">
             שני מסלולי כניסה לפיילוט, אמיצים והססנים, יוצגו בסוף הערב. לא נדרש להחליט עכשיו.
           </p>
-          <p className="fine">{WEBINAR_TRACKS_FINE_PRINT}</p>
-          <p className="meta">{config.location} · {config.durationMinutes} דקות · {WEBINAR_AUDIENCE_LABEL}</p>
-        </footer>
+          <p className="mt-3 text-[11px] text-white/35 font-light leading-relaxed">{WEBINAR_TRACKS_FINE_PRINT}</p>
+          <p className="webinar-host-meta">{config.location} · {config.durationMinutes} דקות · {WEBINAR_AUDIENCE_LABEL}</p>
+        </div>
       </section>
 
       <TeamGalaxy
@@ -319,8 +311,7 @@ export function WebinarLanding() {
         subtitle="כל אחד מביא כוח אחר. יחד הם יוצרים מערכת אחת."
       />
 
-      <section id="webinar-fit" className="webinar-neural-slide webinar-island webinar-blue-gold-section" data-tone="gilt">
-        <WebinarBlueGoldBackdrop />
+      <section id="webinar-fit" className="webinar-neural-slide webinar-island" data-tone="gilt">
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <SectionLabel>התאמה</SectionLabel>
@@ -359,8 +350,7 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <section id="webinar-faq" className="webinar-neural-slide webinar-island webinar-blue-gold-section" data-tone="night">
-        <WebinarBlueGoldBackdrop />
+      <section id="webinar-faq" className="webinar-neural-slide webinar-island" data-tone="night">
         <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <SectionLabel>שאלות</SectionLabel>
@@ -374,8 +364,11 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <section id="webinar-register-bottom" className="webinar-neural-slide webinar-island webinar-blue-gold-section relative overflow-hidden" data-tone="gilt">
-        <WebinarBlueGoldBackdrop />
+      <section id="webinar-register-bottom" className="webinar-neural-slide webinar-island relative overflow-hidden" data-tone="gilt">
+        <div className="absolute inset-0 pointer-events-none" aria-hidden>
+          <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0d0b08]/20 to-[#0d0b08]/50" />
+          <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(183, 144, 67,0.16),transparent_70%)]" />
+        </div>
         <div className="relative z-10 max-w-[920px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <p className="text-2xl md:text-3xl text-white font-light leading-tight mb-4 max-w-2xl mx-auto">
             {eventEnded ? WEBINAR_CTA_ENDED : 'זה לא עוד וובינר. זה הצעד שמתחיל מערכת חדשה בחיים שלך.'}
