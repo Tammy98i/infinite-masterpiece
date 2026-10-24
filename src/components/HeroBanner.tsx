@@ -59,14 +59,15 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
     >
       <img
         className="charcoal-sky"
-        src="https://media.base44.com/images/public/6aa94dfb715e7d446231f544/39d83ce2e_generated_af120ace.png"
+        src="https://media.base44.com/images/public/6aa94dfb715e7d446231f544/364c01099_generated_b5fa72e8.jpg"
         alt=""
       />
       <div className="charcoal-shade" aria-hidden="true" />
       <div className="charcoal-inner">
         <div className="charcoal-copy">
           <p className="charcoal-eyebrow">
-            {continueWatching ? 'המשיכו מכאן' : 'הרצאה נבחרת'}
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1l2.6 7.4L22 12l-7.4 3.6L12 23l-2.6-7.4L2 12l7.4-3.6z" /></svg>
+            {continueWatching ? 'המשיכו מכאן' : 'בחירת השבוע'}
           </p>
           <h1 className="charcoal-title">{course.title}</h1>
           <p className="charcoal-meta">

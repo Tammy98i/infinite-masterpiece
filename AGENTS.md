@@ -11,9 +11,9 @@
 docker compose -f docker-compose.base44.yml up -d
 ```
 - Single `node:22-alpine` service, source bind-mounted, `node_modules` in a named volume.
-- `npm install` runs at container start, then `npm run dev`.
+- `npm ci` syncs the lockfile at container start, then `concurrently` runs Vite and `tsx watch` from the bind-mounted source.
 - Vite has `allowedHosts: true` — no host allowlist needed.
-- Health check: `GET /api/health` (returns JSON with service status).
+- The Compose health check probes both the API (`/api/health` on 3001) and the live frontend (`/` on 3000); a healthy API alone does not prove the preview is available.
 
 ## Secrets
 - All external services (Stripe, S3, Resend, Supabase, Gemini, Zoom) are **optional** — the app boots and runs in degraded/lead-only mode without them.
@@ -54,4 +54,5 @@ docker compose -f docker-compose.base44.yml up -d
 - Reduced motion includes both the OS preference and the accessibility widget's `a11y-reduce-motion` class: clips are hidden in favor of the selected poster and planet transforms/entrance animations are disabled.
 - Verify the reversible Earth → Venus → Mars → Earth cycle, initial one-video loading, menu Escape/outside-click closure, and layouts at desktop, tablet, narrow phone, and short landscape.
 - Public marketing routes share an elegant conversion system through `marketing-shell`: refined `glass-card`, primary `btn-gold`, secondary `btn-secondary`, balanced heading/body wrapping, and a reusable `ConversionBand` before the footer. The conversion band is intentionally hidden on transactional, legal, authentication, and webinar routes where a dedicated conversion flow already exists.
+- The library HOME now uses the approved weekly-curation layout in `LibraryWeekly.css`, scoped by the `library-weekly` class only when `currentView === 'home'`. Real course images remain data-bound; the hero uses the approved static bronze artwork. Existing charcoal selectors contain `!important` and high-specificity `:is()` groups, so check computed hero typography, page background and footer colors after changes. Verify the hero details button and return through the library logo (the preview navigation helper can leave the nested view out of sync with the URL).
 - Library routes use the separate starfield asset (`39d83ce2e_generated_af120ace.png`) with one shared charcoal shade in `SkyBackdrop`. `LibraryCharcoalTheme.css`, imported after the catalog/desk styles, scopes charcoal surfaces and champagne accents to `.vod-app.library-catalog`; the hero's duplicate sky layers are hidden so the backdrop is continuous. Check `/library/search`, `/library/instructors`, a live course/profile, and the rails below the hero when changing this theme; marketing must keep its original backdrop.
