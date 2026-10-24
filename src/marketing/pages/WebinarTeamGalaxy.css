@@ -63,6 +63,15 @@
   opacity: 0;
 }
 
+/* On desktop, featured members keep their larger portrait only in the
+   overview or center spotlight; side stars use the regular team sizing. */
+@media (min-width: 768px) {
+  .webinar-flow-page #team-universe .galaxy-map.has-selection .galaxy-featured:not(.is-selected) .galaxy-stellar-body {
+    width: calc(var(--satellite-size) * var(--star-scale));
+    height: calc(var(--satellite-size) * var(--star-scale));
+  }
+}
+
 /* Profiles advance on every screen; only mobile uses the horizontal strip.
    The existing motion control pauses playback on both layouts. */
 @media (max-width: 767px) {
