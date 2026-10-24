@@ -29,6 +29,7 @@ const LecturerView = lazy(() => import('./views/LecturerView').then((m) => ({ de
 import { libraryPath } from './utils/libraryPath';
 import './styles/LibraryCatalog.css';
 import './styles/CrmDesk.css';
+import './styles/LibraryCharcoalTheme.css';
 
 export const VodApp: React.FC = () => {
   const { currentView, setView } = useApp();

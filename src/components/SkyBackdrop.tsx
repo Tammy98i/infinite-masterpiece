@@ -5,10 +5,10 @@ type Props = {
 
 /** Fixed night-sky plate. Pair with `.sky-readable` on the content shell. */
 export function SkyBackdrop({ className = '', library = false }: Props) {
-  // The selected library asset is shown as-is, without the marketing tint or veils.
+  // Library routes share one charcoal plate, including nested profiles and desks.
   if (library) {
     return (
-      <div className={`editorial-sky-backdrop fixed inset-0 z-0 pointer-events-none overflow-hidden ${className}`} aria-hidden="true">
+      <div className={`editorial-sky-backdrop library-sky-backdrop fixed inset-0 z-0 pointer-events-none overflow-hidden ${className}`} aria-hidden="true">
         <img
           src="https://media.base44.com/images/public/6aa94dfb715e7d446231f544/39d83ce2e_generated_af120ace.png"
           alt=""
@@ -16,6 +16,7 @@ export function SkyBackdrop({ className = '', library = false }: Props) {
           height={571}
           className="library-sky-image absolute inset-0 h-full w-full object-cover object-center"
         />
+        <div className="library-sky-shade absolute inset-0" />
       </div>
     );
   }

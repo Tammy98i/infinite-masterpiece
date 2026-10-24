@@ -1,0 +1,113 @@
+/* Library-only charcoal/champagne finish. Marketing and semantic status colors stay unchanged. */
+.library-sky-backdrop { background: #101113; }
+.site-backdrop-layout .library-sky-image {
+  filter: grayscale(.72) brightness(.52);
+}
+.library-sky-shade {
+  background: linear-gradient(90deg, rgba(16,17,19,.46) 0%, rgba(16,17,19,.7) 46%, rgba(16,17,19,.94) 100%), linear-gradient(0deg, rgba(10,10,11,.78), transparent 72%);
+}
+.vod-app.library-catalog {
+  --editorial-ink: #101113;
+  --editorial-ink-soft: #26272A;
+  --editorial-cream: #F6F1E7;
+  --editorial-paper: #e1ded6;
+  --editorial-gold: #C6A46C;
+  --editorial-gold-light: #d8bc8e;
+  --editorial-rule: rgba(198,164,108,.24);
+  --editorial-muted: rgba(246,241,231,.72);
+  --flow-night: #101113;
+  --flow-navy: #26272A;
+  --flow-ink: #101113;
+  --flow-gold: #C6A46C;
+  color: #F6F1E7;
+}
+/* One continuous fixed backdrop: no second image or extra darkening in the hero. */
+.vod-app.library-catalog .library-charcoal-hero {
+  background: transparent;
+  border-color: transparent;
+}
+.vod-app.library-catalog .charcoal-sky,
+.vod-app.library-catalog .charcoal-shade { display: none; }
+.vod-app.library-catalog .library-flow-page { --flow-gold: #C6A46C; }
+.vod-app.library-catalog.sky-readable :is(h1,h2,h3,h4) {
+  color: #F6F1E7;
+  text-shadow: none;
+}
+.vod-app.library-catalog.sky-readable :is(p,li,label,dd,figcaption,summary,dt) { text-shadow: none; }
+.vod-app.library-catalog :is(.editorial-library-header.is-over-hero,.editorial-library-header.is-solid,.editorial-library-bottom-nav,.editorial-library-footer) {
+  background: rgba(16,17,19,.94) !important;
+  border-color: #26272A !important;
+  box-shadow: none !important;
+}
+.vod-app.library-catalog :is(.soundstage-console,.soundstage-plan-strip,.library-plan-strip,.library-quick-action,.soundstage-fader,.library-empty-panel,.library-start-here-quiet,.library-page-hero,.library-page-toolbar,.library-search-field,.library-instructor-card,.soundstage-card,.soundstage-topic-tile,.library-instructor-frame) {
+  background: rgba(38,39,42,.78) !important;
+  border-color: rgba(246,241,231,.12) !important;
+  box-shadow: none !important;
+}
+.vod-app.library-catalog :is(.soundstage-card,.soundstage-topic-tile,.soundstage-fader):is(:hover,:focus-within) {
+  border-color: #C6A46C !important;
+  box-shadow: 0 8px 24px rgba(0,0,0,.24) !important;
+}
+.vod-app.library-catalog :is(.library-hero-play,.soundstage-btn-primary,.library-empty-cta,.library-plan-cta,.library-poster-play-inner,.soundstage-scope-play,.crm-hero-play) {
+  background: #C6A46C !important;
+  color: #171614 !important;
+  border-color: #C6A46C !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+.vod-app.library-catalog :is(.library-hero-play,.soundstage-btn-primary,.library-empty-cta,.library-plan-cta,.crm-hero-play):hover {
+  background: #d8bc8e !important;
+  color: #101113 !important;
+  filter: none;
+  box-shadow: 0 8px 24px rgba(0,0,0,.24) !important;
+}
+.vod-app.library-catalog :is(.library-hero-more,.soundstage-btn-secondary,.rail-control,.crm-hero-more) {
+  background: rgba(16,17,19,.78) !important;
+  color: #F6F1E7 !important;
+  border-color: rgba(198,164,108,.5) !important;
+  box-shadow: none !important;
+}
+.vod-app.library-catalog :is(.library-hero-more,.soundstage-btn-secondary,.rail-control,.crm-hero-more):hover {
+  background: #26272A !important;
+  border-color: #C6A46C !important;
+}
+.vod-app.library-catalog :is(.soundstage-eyebrow,.soundstage-badge,.soundstage-timecode,.library-topic-count,.library-page-eyebrow,.library-empty-eye,.library-poster-meta span,.library-page-back:hover,.crm-desk-title-keep) {
+  color: #C6A46C !important;
+}
+.vod-app.library-catalog :is(.soundstage-badge,.soundstage-timecode,.soundstage-card-dur) {
+  background: rgba(16,17,19,.88);
+  border-color: rgba(198,164,108,.5);
+}
+.vod-app.library-catalog :is(.soundstage-fader-led,.soundstage-cue-line,.soundstage-progress-bar,.soundstage-filmstrip-cell.is-active) {
+  background: #C6A46C;
+  box-shadow: none;
+  border-color: #C6A46C;
+}
+.vod-app.library-catalog .soundstage-progress { background: rgba(198,164,108,.18); }
+.vod-app.library-catalog .soundstage-lecturer-ring {
+  background: #26272A;
+  border-color: #C6A46C;
+  box-shadow: none;
+}
+.vod-app.library-catalog .library-course-stage { border-color: rgba(198,164,108,.4); }
+.vod-app.library-catalog .library-instructor-billboard > .bg-\[\#141414\] { background: transparent; }
+.vod-app.library-catalog .library-course-veil-a { background: linear-gradient(180deg, rgba(16,17,19,.62), transparent 34%, rgba(16,17,19,.92)); }
+.vod-app.library-catalog .library-course-veil-b { background: linear-gradient(270deg, transparent 12%, rgba(16,17,19,.42) 52%, rgba(16,17,19,.82)); }
+.vod-app.library-catalog .library-course-veil-c { background: rgba(16,17,19,.26); }
+.vod-app.library-catalog .library-course-veil-d { background: radial-gradient(ellipse at 70% 20%, transparent, rgba(16,17,19,.48) 70%, rgba(16,17,19,.88)); }
+.vod-app.library-catalog .library-episode-row { border-color: rgba(246,241,231,.12); }
+.vod-app.library-catalog .library-episode-row:is(:hover,:focus-visible,.is-active) { background: rgba(198,164,108,.12); border-color: #C6A46C; }
+/* Legacy brand utilities still used by individual views and menus. No status colors are remapped. */
+.vod-app.library-catalog :is([class~="text-[#b79043]"],[class~="text-[#D99B43]"],[class~="text-[#dfc47d]"]) { color: #C6A46C; }
+.vod-app.library-catalog :is([class~="bg-[#b79043]"],[class~="bg-[#D99B43]"]) { background-color: #C6A46C; }
+.vod-app.library-catalog :is([class~="border-[#b79043]"],[class~="border-[#D99B43]"]) { border-color: #C6A46C; }
+/* Keep signed-in desks on the same neutral surfaces without touching their layout. */
+.vod-app.library-catalog.crm-desk :is(.crm-desk-panel,.crm-desk-table,.crm-desk-title-card,.crm-desk-metric,.crm-desk-fold,.crm-desk-edit-drawer,.crm-kpi,.crm-poster,.glass,.crm-desk-nav-search) {
+  background: rgba(38,39,42,.82) !important;
+  border-color: rgba(246,241,231,.12);
+}
+.vod-app.library-catalog.crm-desk :is(.crm-desk-topbar,.crm-desk-page-header) { background: rgba(16,17,19,.94) !important; }
+.vod-app.library-catalog.crm-desk :is(.bg-zinc-900,.bg-zinc-900\/80,.bg-zinc-800,.bg-\[\#0a0a0a\],.bg-\[\#0A0A0A\],.bg-\[\#090909\]\/95,.bg-\[\#080808\],.bg-\[\#050505\]\/90,.bg-\[\#050505\]\/95) {
+  background: rgba(38,39,42,.82) !important;
+}
+.vod-app.library-catalog.crm-desk [class*="crm-desk-aside-veil-"] { background: rgba(16,17,19,.2); }
