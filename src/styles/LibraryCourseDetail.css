@@ -1,0 +1,134 @@
+/* Course-only Lecturer Stage finish. Preserve billboard, player/chapter columns,
+   recommendations and information order; all content and behavior stay data-bound. */
+.vod-app.library-catalog .library-course-page {
+  --course-gold: #C6A46C;
+  --course-cream: #E8E2D7;
+  --course-rule: #2f2819;
+  color: var(--course-cream);
+  font-family: "Helvetica Neue", Arial, "Arial Hebrew", sans-serif;
+}
+.vod-app.library-catalog .library-course-page :is(h1,h2,h3) {
+  font-family: Georgia, "Times New Roman", serif;
+  color: var(--course-cream);
+  letter-spacing: normal;
+}
+.vod-app.library-catalog .library-course-page .library-course-billboard {
+  border-bottom: 1px solid var(--course-rule);
+}
+.vod-app.library-catalog .library-course-page .library-course-veil-a {
+  background: linear-gradient(180deg,rgba(9,10,11,.6),rgba(9,10,11,.25) 30%,rgba(9,10,11,.94));
+}
+.vod-app.library-catalog .library-course-page .library-course-veil-b {
+  background: linear-gradient(270deg,rgba(9,10,11,.72),rgba(9,10,11,.32) 58%,transparent);
+}
+.vod-app.library-catalog .library-course-page .library-course-billboard h1 {
+  font-size: clamp(36px,5vw,68px);
+  line-height: 1.12;
+  max-width: 20ch;
+}
+.vod-app.library-catalog .library-course-page nav {
+  color: #bdb4a2;
+}
+.vod-app.library-catalog .library-course-page nav button {
+  color: var(--course-gold);
+}
+.vod-app.library-catalog .library-course-page :is(.library-hero-play,.library-hero-more) {
+  min-height: 48px;
+  border-radius: 0 !important;
+  padding: 12px 28px;
+  font-weight: 600;
+  transition: background .2s,border-color .2s,color .2s;
+}
+.vod-app.library-catalog .library-course-page .library-hero-more {
+  background: rgba(9,10,11,.7) !important;
+  border: 1px solid #6b5c3d !important;
+  color: var(--course-cream) !important;
+}
+.vod-app.library-catalog .library-course-page .library-hero-more:hover {
+  border-color: var(--course-gold) !important;
+  color: var(--course-gold) !important;
+}
+.vod-app.library-catalog .library-course-page .library-course-stage {
+  border: 1px solid #6b5c3d;
+  border-radius: 0;
+  box-shadow: 0 20px 50px rgba(0,0,0,.35);
+}
+.vod-app.library-catalog .library-course-page .library-course-stage > button {
+  background: var(--course-gold) !important;
+  color: #090A0B !important;
+  border: 1px solid #ddbf86;
+  box-shadow: 0 0 32px rgba(198,164,108,.18);
+}
+.vod-app.library-catalog .library-course-page .library-rail-title {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 26px;
+  font-weight: 600;
+  border: 0;
+  padding-inline-start: 0;
+}
+.vod-app.library-catalog .library-course-page .library-rail-title::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: linear-gradient(to left,#4a3f2a,transparent);
+}
+.vod-app.library-catalog .library-course-page .library-course-viewing > section[aria-labelledby] {
+  padding: 20px;
+  background: rgba(14,15,16,.96);
+  border: 1px solid var(--course-rule);
+}
+.vod-app.library-catalog .library-course-page .library-episode-row {
+  border-radius: 0;
+  border-inline-start: 2px solid transparent;
+  border-bottom: 1px solid var(--course-rule);
+}
+.vod-app.library-catalog .library-course-page .library-episode-row.is-active {
+  background: rgba(198,164,108,.12);
+  border-inline-start-color: var(--course-gold);
+}
+.vod-app.library-catalog .library-course-page .library-episode-row:hover {
+  background: rgba(198,164,108,.08);
+}
+.vod-app.library-catalog .library-course-page .library-instructor-card {
+  background: #0e0f10 !important;
+  border: 1px solid var(--course-rule) !important;
+  border-radius: 0;
+  padding: 24px;
+}
+.vod-app.library-catalog .library-course-page .library-instructor-frame {
+  aspect-ratio: 3/4;
+  padding: 6px;
+  border: 1px solid var(--course-gold) !important;
+  border-radius: 0;
+  background: #0d0e10 !important;
+}
+.vod-app.library-catalog .library-course-page .library-instructor-frame img {
+  position: static;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.vod-app.library-catalog .library-course-page [role="tablist"] {
+  border-color: var(--course-rule);
+}
+.vod-app.library-catalog .library-course-page [role="tab"] {
+  border-radius: 0;
+}
+.vod-app.library-catalog .library-course-page [role="tab"][aria-selected="true"] {
+  background: var(--course-gold) !important;
+  color: #090A0B !important;
+}
+.vod-app.library-catalog .library-course-page :is(button,a):focus-visible {
+  outline: 2px solid var(--course-gold);
+  outline-offset: 3px;
+}
+@media (max-width: 767px) {
+  .vod-app.library-catalog .library-course-page .library-course-viewing > section[aria-labelledby] { padding: 16px; }
+  .vod-app.library-catalog .library-course-page .library-rail-title { font-size: 24px; }
+  .vod-app.library-catalog .library-course-page .library-hero-more,
+  .vod-app.library-catalog .library-course-page .library-hero-play { padding-inline: 20px; }
+  .vod-app.library-catalog .library-course-page .library-instructor-card { padding: 20px; }
+}

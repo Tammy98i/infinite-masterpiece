@@ -522,7 +522,7 @@ export const CourseDetailView: React.FC = () => {
       </header>
 
       <div className="relative z-10 -mt-8 max-w-[1360px] mx-auto px-4 sm:px-8 text-start">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-6 mb-10">
+        <div className="library-course-viewing grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-6 mb-10">
           <section aria-label="נגן הקורס" className="min-w-0">
             <div className="library-course-stage relative aspect-video overflow-hidden bg-black">
               {playerOn && activeEpisode ? (
