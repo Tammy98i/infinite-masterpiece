@@ -36,6 +36,10 @@ docker compose -f docker-compose.base44.yml up -d
 - The repo's own `docker-compose.yml` builds a production image — do NOT use it for dev (it freezes source).
 - `npm run lint` = `tsc --noEmit`; `npm test` includes the galaxy math/validation and in-memory SQLite CRUD tests.
 
+## Webinar background
+- `WebinarBlueGoldBackdrop` is decorative and opt-in via `webinar-blue-gold-section` on problem, hosts, fit, FAQ and registration only. Never apply it to the neural hero or team galaxy. It preserves the approved 18-second sky drift, 7-second glow breathing and star grid, with reduced-motion overrides.
+- Legacy section-ID rules constrain direct div widths and hide the registration section's first div. The backdrop must override `display`, `width` and `max-width`; verify its bounding box matches each section at desktop/mobile rather than checking the gradient alone.
+
 ## Team galaxy
 - `/webinar#team-universe` renders the team galaxy; Admin → גלקסיית הצוות manages the separate `team_members` collection.
 - `initializeTeamMembers` runs after founder/catalog seeding. A `site_settings.team_members_imported` marker makes this a one-time import; CMS edits and hidden members survive restarts. Only existing founder records plus the webinar's Gleb profile are imported. Initial impact scores are editable presentation defaults, not verified measurements.

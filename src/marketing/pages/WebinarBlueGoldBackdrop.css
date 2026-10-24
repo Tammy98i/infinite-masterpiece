@@ -1,0 +1,115 @@
+/* Approved night-blue/gold atmosphere. Only opt-in content sections change;
+   the hero, galaxy, typography, content geometry and controls stay untouched. */
+.webinar-flow-page.webinar-stage-page .webinar-blue-gold-section {
+  position: relative;
+  isolation: isolate;
+  background: transparent !important;
+}
+
+/* Retire the old atmospheric overlays, not their layout footprint. */
+.webinar-flow-page .webinar-blue-gold-section::before,
+.webinar-flow-page .webinar-blue-gold-section::after {
+  visibility: hidden;
+}
+
+.webinar-flow-page.webinar-stage-page .webinar-blue-gold-section > .webinar-blue-gold-backdrop {
+  position: absolute;
+  isolation: isolate;
+  overflow: hidden;
+  box-sizing: border-box;
+  inset: 0;
+  z-index: -1;
+  /* Legacy section-ID rules constrain/hide direct div children. */
+  display: block !important;
+  width: 100% !important;
+  max-width: none !important;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  pointer-events: none;
+  border: 1px solid #263548;
+  background: radial-gradient(ellipse at 50% 48%, #182333 0%, #111b28 44%, #0b111a 100%);
+  box-shadow: 0 14px 38px rgba(11, 17, 26, .18), inset 0 1px rgba(246, 241, 231, .08);
+}
+
+.webinar-blue-gold-backdrop::before {
+  content: "";
+  position: absolute;
+  inset: -35%;
+  z-index: -1;
+  background:
+    radial-gradient(ellipse 30% 42% at 20% 58%, rgba(198, 164, 108, .14), transparent 74%),
+    radial-gradient(ellipse 24% 46% at 75% 24%, rgba(76, 111, 153, .18), transparent 76%),
+    radial-gradient(ellipse 20% 36% at 83% 82%, rgba(198, 164, 108, .09), transparent 70%),
+    linear-gradient(122deg, #0b111a 8%, #182333 48%, #101925 72%, #0b111a 100%);
+  animation: webinar-sky-drift 18s ease-in-out infinite alternate;
+}
+
+.webinar-blue-gold-backdrop::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image:
+    radial-gradient(circle, rgba(246, 241, 231, .52) 0 1px, transparent 1.35px),
+    radial-gradient(circle, rgba(198, 164, 108, .5) 0 .8px, transparent 1.2px);
+  background-size: 97px 83px, 131px 109px;
+  background-position: 12px 19px, 55px 46px;
+  opacity: .42;
+  mask-image: linear-gradient(90deg, transparent, #000 16%, #000 85%, transparent);
+}
+
+.webinar-blue-gold-glow {
+  position: absolute;
+  width: 220px;
+  height: 220px;
+  border-radius: 50%;
+  filter: blur(45px);
+  pointer-events: none;
+  opacity: .22;
+  animation: webinar-glow-breathe 7s ease-in-out infinite alternate;
+}
+
+.webinar-blue-gold-glow.one {
+  top: 84px;
+  left: 94px;
+  background: radial-gradient(circle, #c6a46c 0, rgba(198, 164, 108, .35) 34%, transparent 72%);
+}
+
+.webinar-blue-gold-glow.two {
+  right: 115px;
+  top: -30px;
+  width: 260px;
+  height: 260px;
+  background: radial-gradient(circle, #547294 0, rgba(63, 92, 123, .4) 38%, transparent 72%);
+  animation-delay: -3.5s;
+}
+
+.webinar-blue-gold-seam {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 50%;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(198, 164, 108, .18) 20%, rgba(246, 241, 231, .22) 50%, rgba(198, 164, 108, .18) 80%, transparent);
+  box-shadow: 0 0 18px rgba(198, 164, 108, .16);
+  opacity: .7;
+}
+
+@keyframes webinar-sky-drift {
+  from { transform: translate3d(-1.2%, .5%, 0) scale(1); }
+  to { transform: translate3d(1.2%, -.5%, 0) scale(1.035); }
+}
+
+@keyframes webinar-glow-breathe {
+  from { opacity: .13; transform: scale(.92); }
+  to { opacity: .28; transform: scale(1.08); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .webinar-blue-gold-backdrop::before,
+  .webinar-blue-gold-glow { animation: none; }
+}
+
+.a11y-reduce-motion .webinar-blue-gold-backdrop::before,
+.a11y-reduce-motion .webinar-blue-gold-glow { animation: none; }
