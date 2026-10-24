@@ -38,6 +38,7 @@ import './WebinarNeuralSlides.css';
 import './WebinarNightLanguage.css';
 import './WebinarFlowPolish.css';
 import './WebinarSlideTones.css';
+import './WebinarTextAlignment.css';
 
 const WEBINAR_ISLANDS = [
   { id: 'webinar-hero', title: 'פתיחה' },

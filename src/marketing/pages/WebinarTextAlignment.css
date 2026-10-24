@@ -1,0 +1,19 @@
+/* Center banner copy only; preserve shared navigation, RTL direction and layout.
+   Legacy ID selectors and text-start utilities require this scoped override. */
+.webinar-flow-page .webinar-island,
+.webinar-flow-page .webinar-island * {
+  text-align: center !important;
+}
+
+/* Center width-constrained text blocks within their existing banner/cell. */
+.webinar-flow-page .webinar-island :is(h1, h2, h3, h4, p) {
+  margin-inline: auto;
+}
+
+/* Give copy the available row width beside existing icons and checkboxes. */
+.webinar-flow-page #webinar-fit li > span,
+.webinar-flow-page #webinar-faq summary > span,
+.webinar-flow-page .webinar-stage-register-card label.flex > span {
+  flex: 1;
+  min-width: 0;
+}
