@@ -1,4 +1,4 @@
-﻿import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { useUser } from '../context/UserContext';
 import { Search, Mic, Shield, Menu, X, Infinity as InfinityIcon, Compass, Bookmark, User, History } from 'lucide-react';
@@ -116,7 +116,7 @@ export const Navbar: React.FC = () => {
               >
                 <InfinityIcon className="header-logo-mark text-[#dfc47d] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
                 <span className="header-wordmark font-light tracking-[0.22em] text-white/90 leading-tight uppercase">
-                  IM
+                  {currentView === 'course' ? 'ספרייה' : 'IM'}
                 </span>
                 {currentView === 'home' && <span className="weekly-brand-name">Infinite Masterpiece</span>}
               </button>

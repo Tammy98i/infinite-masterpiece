@@ -108,7 +108,7 @@ export const VodApp: React.FC = () => {
   return (
     <PaywallProvider>
     <PaywallTriggers />
-    <div className={`vod-app library-catalog sky-readable${currentView === 'home' ? ' library-weekly' : ' library-netflix'}${['mylist', 'history', 'shorts', 'category', 'instructors', 'instructor'].includes(currentView) ? ' library-stage' : ''} flex flex-col min-h-screen relative text-white bg-transparent${currentView === 'admin' || currentView === 'lecturer' || currentView === 'profile' ? ' crm-desk' : ''}`}>
+    <div className={`vod-app library-catalog sky-readable${currentView === 'home' ? ' library-weekly' : ' library-netflix'}${currentView === 'course' ? ' library-premiere' : ''}${['mylist', 'history', 'shorts', 'category', 'instructors', 'instructor'].includes(currentView) ? ' library-stage' : ''} flex flex-col min-h-screen relative text-white bg-transparent${currentView === 'admin' || currentView === 'lecturer' || currentView === 'profile' ? ' crm-desk' : ''}`}>
       {currentView !== 'watch' && (
         <a href="#library-main" className="skip-link">
           דילוג לתוכן הראשי
