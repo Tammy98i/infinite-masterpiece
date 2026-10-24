@@ -60,6 +60,8 @@ export function WebinarNeuralHero({
     if (!video || !root) return;
     const query = matchMedia('(prefers-reduced-motion: reduce)');
     const sync = () => {
+      // React does not reliably apply the `muted` prop to <video>; enforce it so the hero clip never plays sound.
+      video.muted = true;
       if (prefersReducedMotion()) {
         video.pause();
         root.classList.add('is-entered');

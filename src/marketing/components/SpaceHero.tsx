@@ -94,6 +94,8 @@ export function SpaceHero() {
     if (!videos) return;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('a11y-reduce-motion');
     videos.forEach((video) => {
+      // React does not reliably apply the `muted` prop to <video>; enforce it so hero clips never play sound.
+      video.muted = true;
       if (reduced || video.dataset.planet !== featured) {
         video.pause();
         return;
