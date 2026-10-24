@@ -29,7 +29,7 @@ export const InstructorProfileView: React.FC = () => {
 
   if (!instructor) {
     return (
-      <div className="library-catalog-page min-h-screen text-white pt-28 px-4 text-start">
+      <div className="library-catalog-page library-page-polished library-instructor-missing min-h-screen text-white pt-28 px-4 text-start">
         <button
           type="button"
           onClick={() => setView('instructors')}

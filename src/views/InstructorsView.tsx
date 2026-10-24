@@ -1,5 +1,6 @@
 ﻿import React, { useMemo } from 'react';
 import { useApp } from '../context/AppContext';
+import { LibraryStageAtmosphere } from '../components/LibraryStageAtmosphere';
 
 function portraitLetter(name: string) {
   return name.trim().charAt(0) || 'מ';
@@ -23,12 +24,7 @@ export const InstructorsView: React.FC = () => {
   return (
     <div className="library-catalog-page library-instructor-index library-page-polished min-h-screen text-white pb-24">
       <header className="library-instructor-billboard relative min-h-[58vh] md:min-h-[70vh] flex items-end overflow-hidden pt-24 pb-16 md:pb-20">
-        <div className="absolute inset-0 select-none overflow-hidden bg-[#141414]">
-          <div className="library-course-veil-a absolute inset-0" />
-          <div className="library-course-veil-b absolute inset-0" />
-          <div className="library-course-veil-c absolute inset-0" />
-          <div className="library-course-veil-d absolute inset-0" />
-        </div>
+        <LibraryStageAtmosphere />
 
         <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 w-full text-start grid gap-8 md:grid-cols-[minmax(220px,32%)_1fr] md:items-end">
           <div className="library-instructor-frame relative w-full max-w-[360px] ms-auto md:ms-0">
@@ -109,9 +105,7 @@ export const InstructorsView: React.FC = () => {
                       {portraitLetter(inst.name)}
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-black/30" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
-                  <div className="absolute bottom-2 start-2 end-2">
+                  <div className="library-stage-caption">
                     <div className="text-[13px] font-semibold text-white truncate">{inst.name}</div>
                     <div className="text-[12px] text-white/70 truncate">
                       {inst.isFounder ? 'צוות המיזם · ' : ''}

@@ -1,157 +1,243 @@
-/* Small, view-specific refinements on top of LibraryNetflix.
-   All selectors stay inside the six polished browse views; no player/desk rules. */
-.library-netflix .library-page-polished {
-  --page-panel: rgba(28, 28, 30, .88);
-  --page-muted: #c8c4bc;
+/* Approved “Lecturer Stage” presentation, scoped to six library browse views.
+   Existing catalog data, handlers, access checks and card actions are unchanged. */
+.vod-app.library-catalog.library-stage {
+  --stage-gutter: 80px;
+  --editorial-gold: #C6A46C;
+  --editorial-cream: #E8E2D7;
+  background: #090A0B !important;
+  color: #E8E2D7;
+  direction: rtl;
+  font-family: "Helvetica Neue", Arial, "Arial Hebrew", sans-serif;
 }
-.library-netflix .library-page-polished .library-collection-heading {
-  min-height: 208px;
-  align-items: center;
-  gap: 24px;
-  padding: 32px;
-  margin-bottom: 32px;
-  border: 1px solid var(--netflix-rule);
-  border-inline-start: 3px solid var(--editorial-gold);
-  border-radius: 8px;
-  background: linear-gradient(115deg, rgba(198, 164, 108, .07), transparent 65%), var(--page-panel);
+.library-stage *, .library-stage *::before, .library-stage *::after { box-sizing: border-box; }
+.vod-app.library-stage :is(p,li,label,dd,dt,figcaption,summary) { font-family: inherit; }
+@keyframes rise {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
 }
-.library-netflix .library-collection-heading > div { min-width: 0; }
-.library-netflix .library-page-polished .library-page-eyebrow {
-  font-size: 12px;
-  font-weight: 600;
-  letter-spacing: .04em;
-  margin-bottom: 12px;
+@keyframes sweep {
+  0% { transform: translateX(-30%); opacity: .15; }
+  50% { opacity: .45; }
+  100% { transform: translateX(30%); opacity: .15; }
 }
-.library-netflix .library-collection-heading h1 { font-size: clamp(30px, 3.3vw, 48px); }
-.library-netflix .library-page-polished .library-page-back {
-  padding: 10px 16px;
-  border: 1px solid var(--netflix-rule);
-  border-radius: 6px;
-  color: var(--page-muted);
-  background: rgba(16, 17, 19, .6);
+.vod-app.library-stage #library-main { animation: none; }
+.vod-app.library-stage #library-main > .library-page-polished {
+  max-width: none;
+  width: 100%;
+  padding: 136px var(--stage-gutter) 0;
+  color: #E8E2D7;
 }
-.library-netflix .library-page-polished .library-page-back:hover { border-color: var(--editorial-gold); }
-.library-netflix .library-page-polished .library-empty-panel {
-  min-height: 240px;
+.vod-app.library-stage .library-page-polished :is(h1,h2,h3) {
+  font-family: Georgia, "Times New Roman", serif;
+  color: #E8E2D7;
+  letter-spacing: normal;
+  text-wrap: initial;
+}
+.vod-app.library-stage #library-main > :is(.library-instructor-index,.library-instructor-page) { padding: 0 !important; }
+/* Directory billboard: the exact stage, scrim, portrait and light sweep. */
+.vod-app.library-stage .library-instructor-billboard {
+  position: relative;
+  min-height: 760px;
+  padding: 48px var(--stage-gutter) 80px;
   display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
+  align-items: flex-end;
+  border-bottom: 1px solid #2a2418;
 }
-.library-netflix .library-page-polished .library-start-here-quiet { margin-top: 4px; }
-/* Saved items keep the shared landscape-card rhythm; history stays a list. */
-.library-netflix .library-history-page > .divide-y {
-  max-width: 1100px;
-  margin-inline: auto;
-  border-top: 0;
+.library-stage-atmosphere, .library-stage-background, .library-stage-scrim { position: absolute; inset: 0; pointer-events: none; }
+.library-stage-background { width: 100%; height: 100%; object-fit: cover; opacity: .5; }
+.library-stage-scrim { background: linear-gradient(to top,#090A0B 4%,rgba(9,10,11,.55) 55%,rgba(9,10,11,.85)); }
+.library-stage-light {
+  position: absolute; top: 0; left: 20%; width: 50%; height: 100%; pointer-events: none;
+  background: radial-gradient(ellipse at 50% 0,rgba(198,164,108,.35),transparent 65%);
+  animation: sweep 9s ease-in-out infinite alternate;
 }
-.library-netflix .library-history-page > .divide-y > button {
-  gap: 24px;
-  padding: 24px 16px;
-  border-radius: 8px;
+.vod-app.library-stage .library-instructor-billboard > .relative {
+  position: relative;
+  display: grid;
+  grid-template-columns: 400px minmax(0,1fr);
+  gap: 64px;
+  align-items: end;
+  width: 100%; max-width: none; margin: 0; padding: 0;
+  animation: rise 1s cubic-bezier(.16,1,.3,1) both;
 }
-.library-netflix .library-history-page > .divide-y > button > img {
-  width: 192px;
-  aspect-ratio: 16/9;
-  border: 1px solid var(--netflix-rule);
+.vod-app.library-stage .library-instructor-billboard .library-instructor-frame {
+  width: 100%; max-width: none; aspect-ratio: auto; margin: 0; border-radius: 0;
+  border: 1px solid #C6A46C !important;
+  padding: 10px; background: #0d0e10 !important;
+  box-shadow: 0 30px 80px rgba(0,0,0,.8),0 0 40px rgba(198,164,108,.15) !important;
 }
-.library-netflix .library-history-page > .divide-y > button > div { max-width: 720px; }
-/* A quiet energy accent for short viewing, without introducing new artwork. */
-.library-netflix .library-shorts-page .library-page-hero {
-  min-height: 264px;
-  background-image: radial-gradient(ellipse at 12% 30%, rgba(198, 164, 108, .12), transparent 65%);
+.vod-app.library-stage .library-instructor-frame > img {
+  display: block; position: static; inset: auto; width: 100%; height: auto; aspect-ratio: 3/4; object-fit: cover;
 }
-.library-netflix .library-shorts-page .library-page-hero > div:first-child { margin-bottom: 16px; }
-.library-netflix .library-shorts-page .library-page-hero p { color: var(--page-muted); }
-/* Preserve each topic's inline background image and existing filter behavior. */
-.library-netflix .library-topic-page .library-page-hero { min-height: 304px; }
-.library-netflix .library-topic-page .library-page-toolbar { gap: 16px; }
-.library-netflix .library-topic-page .library-page-chip { border: 1px solid transparent; }
-.library-netflix .library-topic-page .library-page-chip:not(.bg-\[\#D99B43\]) {
-  background: rgba(16, 17, 19, .65);
-  border-color: var(--netflix-rule);
+.vod-app.library-stage .library-instructor-frame > div[aria-hidden] { aspect-ratio: 3/4; height: auto; }
+.vod-app.library-stage .library-instructor-billboard h1 { font-size: 92px; line-height: 1.05; margin: 0 0 20px; font-weight: 700; }
+.vod-app.library-stage .library-instructor-billboard > .relative > div:last-child { min-width: 0; }
+.vod-app.library-stage .library-instructor-billboard > .relative > div:last-child > p:first-child {
+  font-size: 14px; letter-spacing: .08em; color: #C6A46C; margin-bottom: 14px;
 }
-.library-netflix .library-topic-page select { border-color: rgba(198, 164, 108, .4); }
-/* Directory: a compact introduction; profile: a little more room for biography. */
-.library-netflix .library-page-polished.library-instructor-index .library-instructor-billboard {
-  min-height: 540px;
-  padding-block: 128px 72px;
+.vod-app.library-stage .library-instructor-billboard p.font-light { font-size: 18px; line-height: 1.7; color: #cfc7b8; max-width: 620px; margin: 0 0 18px; }
+.vod-app.library-stage .library-instructor-billboard p.flex { display: flex; gap: 10px; font-size: 14px; color: #bdb4a2; margin-bottom: 28px; flex-wrap: wrap; }
+.vod-app.library-stage .library-instructor-billboard div.flex { gap: 14px; }
+/* Primary/secondary contract: transition, hover, active and focus. */
+.vod-app.library-stage :is(.library-hero-play,.library-hero-more,.library-empty-cta) {
+  min-height: 46px; padding: 0 32px; font-size: 15px; font-weight: 600 !important;
+  cursor: pointer; border-radius: 0 !important; font-family: inherit;
+  transition: background .2s,color .2s,border-color .2s,box-shadow .2s;
+  transform: none; filter: none;
 }
-.library-netflix .library-page-polished .library-instructor-billboard > .relative {
-  grid-template-columns: minmax(220px, 28%) minmax(0, 1fr);
-  gap: 56px;
+.vod-app.library-stage :is(.library-hero-play,.library-empty-cta) {
+  background: #C6A46C !important; color: #090A0B !important;
+  border: 1px solid #C6A46C !important; box-shadow: none !important;
 }
-.library-netflix .library-page-polished .library-instructor-billboard .library-instructor-frame {
-  max-width: 300px;
-  margin-inline: 0 auto;
+.vod-app.library-stage :is(.library-hero-play,.library-empty-cta):hover { background: #ddbf86 !important; box-shadow: 0 0 24px rgba(198,164,108,.4) !important; }
+.vod-app.library-stage .library-hero-more {
+  background: transparent !important; color: #E8E2D7 !important;
+  border: 1px solid #6b5c3d !important; box-shadow: none !important;
 }
-.library-netflix .library-instructor-index.library-page-polished .library-instructor-billboard .library-instructor-frame {
-  max-width: 260px;
+.vod-app.library-stage .library-hero-more:hover { background: transparent !important; border-color: #C6A46C !important; color: #C6A46C !important; }
+.vod-app.library-stage :is(.library-hero-play,.library-hero-more,.library-empty-cta):active { opacity: .85; }
+.vod-app.library-stage :is(button,a,select):focus-visible { outline: 2px solid #C6A46C; outline-offset: 3px; --tw-ring-shadow: 0 0 #0000; }
+/* Directory and profile section geometry. */
+.vod-app.library-stage :is(#instructor-grid,.library-instructor-page > div.relative) {
+  padding: 64px var(--stage-gutter) 0; margin: 0; max-width: none;
+  animation: rise .9s cubic-bezier(.16,1,.3,1) .3s both;
 }
-.library-netflix .library-page-polished.library-instructor-index #instructor-grid { margin-top: 0; }
-.library-netflix .library-page-polished.library-instructor-index .library-page-grid { gap: 24px; }
-.library-netflix .library-page-polished.library-instructor-index .library-poster { align-self: start; }
-.library-netflix .library-page-polished.library-instructor-index .library-poster .library-instructor-frame {
-  border-color: var(--netflix-rule) !important;
-  transition: border-color .2s;
+.vod-app.library-stage .library-rail-title {
+  font-size: 30px; margin: 0 0 24px; font-weight: 600; color: #E8E2D7;
+  display: flex; align-items: center; gap: 16px; padding: 0; border: 0;
 }
-.library-netflix .library-page-polished.library-instructor-index .library-poster:is(:hover, :focus-visible) .library-instructor-frame {
-  border-color: var(--editorial-gold) !important;
+.vod-app.library-stage .library-rail-title::after { content: ""; flex: 1; height: 1px; background: linear-gradient(to left,transparent,#4a3f2a); }
+.vod-app.library-stage .library-page-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 22px; }
+.vod-app.library-stage .library-instructor-index .library-poster { background: none; border: 0; padding: 0; text-align: start; color: inherit; cursor: pointer; font-family: inherit; display: block; transform: none; }
+.vod-app.library-stage .library-instructor-index .library-page-grid .library-instructor-frame {
+  position: relative; border: 1px solid #C6A46C !important; padding: 6px;
+  border-radius: 0; aspect-ratio: auto; background: #0d0e10 !important;
+  box-shadow: none !important; transition: box-shadow .25s,border-color .25s;
 }
-.library-netflix .library-page-polished.library-instructor-index .library-instructor-frame > .absolute:last-child {
-  inset-inline: 16px;
-  bottom: 16px;
+.vod-app.library-stage .library-instructor-index .library-poster:hover .library-instructor-frame { box-shadow: 0 0 28px rgba(198,164,108,.35) !important; border-color: #e3c98e !important; }
+.vod-app.library-stage .library-instructor-frame .library-stage-caption {
+  position: absolute; inset: 6px; background: linear-gradient(to top,rgba(9,10,11,.92),transparent 55%);
+  display: flex; flex-direction: column; justify-content: flex-end; padding: 12px;
 }
-.library-netflix .library-page-polished.library-instructor-index .library-instructor-frame > .absolute:last-child > div:first-child {
-  font-size: 16px;
-  line-height: 1.5;
+.vod-app.library-stage .library-stage-caption > div:first-child { font-size: 15px; color: #E8E2D7; }
+.vod-app.library-stage .library-stage-caption > div:nth-child(2) { font-size: 12px; color: #cfc7b8; }
+.vod-app.library-stage .library-stage-caption > div:last-child { font-size: 11px; color: #C6A46C; margin-top: 2px; }
+/* Compact collection headings and empty states. */
+.vod-app.library-stage .library-collection-heading {
+  display: flex; justify-content: space-between; align-items: center; gap: 24px;
+  min-height: 0; border: 0; border-bottom: 1px solid #2a2418;
+  padding: 0 0 22px; margin: 0 0 28px; background: none; border-radius: 0;
 }
-.library-netflix .library-page-polished.library-instructor-index .library-instructor-frame > .absolute:last-child > div:last-child { color: #d8bc8e; }
-.library-netflix .library-instructor-page.library-page-polished > div.relative { margin-top: 0; }
-.library-netflix .library-page-polished .library-instructor-about {
-  max-width: 72ch;
-  padding-block: 24px;
-  border-block: 1px solid var(--netflix-rule);
+.vod-app.library-stage .library-collection-heading h1 { font-size: 40px; margin: 0; font-weight: 600; line-height: 1.1; }
+.vod-app.library-stage :is(.library-page-eyebrow,.library-empty-eye) { font-size: 14px; letter-spacing: .08em; color: #C6A46C; margin: 0 0 14px; }
+.vod-app.library-stage :is(.library-page-back,.library-shorts-page > button,.library-instructor-billboard button:first-child:not(.library-hero-play),.library-instructor-missing button) {
+  background: none; border: 0; color: #C6A46C !important; font-size: 14px; cursor: pointer;
+  display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0;
+  border-radius: 0; transition: color .2s; font-family: inherit;
 }
-.library-netflix .library-page-polished .library-instructor-about p { line-height: 1.9; color: var(--page-muted); }
-.library-netflix .library-instructor-page.library-page-polished ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
+.vod-app.library-stage :is(.library-page-back,.library-shorts-page > button,.library-instructor-billboard button:first-child:not(.library-hero-play),.library-instructor-missing button):hover { color: #e8d3a6 !important; }
+.vod-app.library-stage .library-page-polished .library-empty-panel {
+  min-height: 0; width: 100%; max-width: none; display: block;
+  border: 1px solid #2f2819 !important; background: #0e0f10 !important;
+  padding: 44px; text-align: center; margin: 0 0 28px; border-radius: 0 !important;
 }
-.library-netflix .library-instructor-page.library-page-polished ul > li {
-  margin: 0;
-  padding: 10px 16px;
-  border: 1px solid var(--netflix-rule);
-  border-radius: 6px;
-  background: var(--page-panel);
-  color: var(--page-muted);
+.vod-app.library-stage .library-empty-panel .library-empty-eye { margin-bottom: 10px; }
+.vod-app.library-stage .library-empty-panel h3 { font-size: 26px; margin: 0 0 10px; font-weight: 600; }
+.vod-app.library-stage .library-empty-panel p:not(.library-empty-eye) { margin: 0 auto 20px; max-width: none; color: #bdb4a2; font-size: 15px; line-height: normal; }
+.vod-app.library-stage .library-empty-panel .library-empty-cta { margin: 0; }
+.vod-app.library-stage .library-page-polished > .grid:not(.library-page-grid) { gap: 0; }
+/* Existing recommendations and course actions stay available with the new skin. */
+.vod-app.library-stage .library-start-here-quiet { background: none !important; border: 0 !important; border-radius: 0 !important; padding: 0 !important; margin: 0; }
+.vod-app.library-stage .library-start-here-quiet .soundstage-section-header { padding-inline: 0 !important; }
+.vod-app.library-stage .library-start-here-quiet .library-rail-scroller { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 18px; padding: 0 !important; overflow: visible; }
+.vod-app.library-stage .library-start-here-quiet .library-rail-scroller > div { min-width: 0; width: 100%; }
+.vod-app.library-stage .library-start-here-quiet .soundstage-filmstrip { display: none; }
+.vod-app.library-stage .premium-course-card { border: 1px solid #2f2819; border-radius: 0; background: #0e0f10; }
+.vod-app.library-stage .premium-course-body { padding: 12px; }
+.vod-app.library-stage .premium-course-title { font-size: 14px; color: #cfc7b8; }
+/* History remains real resume rows; progress widths are still data-driven. */
+.vod-app.library-stage .library-history-page > .divide-y { border-top: 0; max-width: none; }
+.vod-app.library-stage .library-history-page > .divide-y > button {
+  display: flex; gap: 20px; align-items: center; width: 100%; padding: 18px 0;
+  border: 0; border-bottom: 1px solid #22201a; background: none; color: inherit;
+  text-align: start; cursor: pointer; font-family: inherit; transition: background .2s; border-radius: 0;
 }
+.vod-app.library-stage .library-history-page > .divide-y > button:hover { background: rgba(198,164,108,.05); }
+.vod-app.library-stage .library-history-page > .divide-y > button > img { width: 150px; aspect-ratio: 16/9; object-fit: cover; border: 1px solid #3a3020; border-radius: 0; }
+.vod-app.library-stage .library-history-page .h-1 { height: 3px; background: #26231b; margin: 8px 0; }
+.vod-app.library-stage .library-history-page .h-1 > div { background: #C6A46C; }
+/* Topics keep their inline, data-bound background image (never replace it). */
+.vod-app.library-stage .library-page-polished .library-page-hero {
+  position: relative; border: 1px solid #2f2819 !important; padding: 44px 48px !important;
+  background-color: #0b0c0d !important; border-radius: 0 !important; margin-bottom: 28px;
+  min-height: 0; display: block; overflow: hidden;
+}
+.vod-app.library-stage .library-shorts-page .library-page-hero { background-image: linear-gradient(120deg,#14110b,#0b0c0d); }
+.vod-app.library-stage .library-topic-page .library-page-hero { min-height: 300px; }
+.vod-app.library-stage .library-page-hero h1 { font-size: 52px; line-height: 1.1; margin: 0 0 14px; font-weight: 700; }
+.vod-app.library-stage .library-page-hero p { margin: 0; font-size: 17px; line-height: 1.7; color: #cfc7b8; max-width: 640px; }
+.vod-app.library-stage .library-page-hero > .flex { font-size: 13px; color: #C6A46C; margin-bottom: 12px; }
+.vod-app.library-stage .library-page-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; border: 1px solid #2f2819 !important; background: #0e0f10 !important; padding: 12px; margin-bottom: 28px; border-radius: 0; }
+.vod-app.library-stage .library-page-toolbar > div { gap: 10px; }
+.vod-app.library-stage .library-page-chip { min-height: 44px; padding: 0 20px; font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; border-radius: 0; transition: background .2s,border-color .2s,color .2s; }
+.vod-app.library-stage .library-page-chip.bg-\[\#D99B43\] { background: #C6A46C; color: #090A0B; border: 1px solid #C6A46C; }
+.vod-app.library-stage .library-page-chip:not(.bg-\[\#D99B43\]) { background: #090A0B; color: #cfc7b8; border: 1px solid #4a3f2a; }
+.vod-app.library-stage .library-page-chip:not(.bg-\[\#D99B43\]):hover { border-color: #C6A46C; }
+.vod-app.library-stage .library-page-toolbar select { min-height: 44px; background: #090A0B; border: 1px solid #4a3f2a; color: #E8E2D7; padding: 0 12px; font-size: 14px; font-family: inherit; border-radius: 0; }
+/* Profile is a framed, inset stage, not a duplicate full-width billboard. */
+.vod-app.library-stage .library-instructor-page .library-instructor-billboard { margin: 120px var(--stage-gutter) 0; padding: 56px; min-height: 0; background: #0b0c0d; border: 1px solid #2f2819; }
+.vod-app.library-stage .library-instructor-page .library-instructor-billboard > .absolute { display: none; }
+.vod-app.library-stage .library-instructor-page .library-instructor-billboard > .relative { grid-template-columns: 360px minmax(0,1fr); gap: 56px; }
+.vod-app.library-stage .library-instructor-page .library-instructor-billboard h1 { font-size: 72px; margin: 6px 0 14px; }
+.vod-app.library-stage .library-instructor-page .library-instructor-billboard a { font-size: 14px; color: #C6A46C; cursor: pointer; }
+.vod-app.library-stage .library-instructor-page > div.relative { padding-top: 48px; }
+.vod-app.library-stage .library-instructor-about { max-width: 72ch; margin-bottom: 36px; }
+.vod-app.library-stage .library-instructor-page :is(p,li) { color: #cfc7b8; }
+.vod-app.library-stage .library-instructor-page #instructor-lectures { margin-top: 0; }
+/* Footer only changes on the six stage pages; all links are retained. */
+.vod-app.library-catalog.library-stage .editorial-library-footer { margin-top: 90px; border-top: 1px solid #22201a !important; padding: 40px var(--stage-gutter); background: #090A0B !important; color: #a79f8e; }
+.vod-app.library-stage .editorial-library-footer > div { max-width: none; gap: 30px; }
+.vod-app.library-stage .editorial-library-footer :is(a,button) { color: #a79f8e; transition: color .2s; min-height: 44px; display: inline-flex; align-items: center; cursor: pointer; }
+.vod-app.library-stage .editorial-library-footer :is(a,button):hover { color: #E8E2D7; }
+/* Responsive adaptations preserve the desktop proportions without fixed canvas widths. */
 @media (max-width: 1100px) {
-  .library-netflix .library-page-polished .library-instructor-billboard > .relative { gap: 32px; }
+  .vod-app.library-catalog.library-stage { --stage-gutter: 32px; }
+  .vod-app.library-stage .library-instructor-billboard > .relative { grid-template-columns: minmax(220px,32%) minmax(0,1fr); gap: 32px; }
+  .vod-app.library-stage .library-instructor-page .library-instructor-billboard { padding: 32px; }
+  .vod-app.library-stage .library-instructor-page .library-instructor-billboard > .relative { grid-template-columns: minmax(200px,34%) minmax(0,1fr); gap: 32px; }
+  .vod-app.library-stage .library-instructor-billboard h1 { font-size: 64px; }
+  .vod-app.library-stage .library-instructor-page .library-instructor-billboard h1 { font-size: 56px; }
+  .vod-app.library-stage .library-page-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
 }
 @media (max-width: 767px) {
-  .library-netflix .library-page-polished .library-collection-heading {
-    min-height: 200px;
-    flex-wrap: wrap;
-    gap: 16px;
-    padding: 24px 20px;
-    margin-bottom: 24px;
-  }
-  .library-netflix .library-page-polished .library-collection-heading > div { flex-basis: 100%; }
-  .library-netflix .library-page-polished .library-empty-panel { min-height: 220px; }
-  .library-netflix .library-history-page > .divide-y > button { gap: 12px; padding: 20px 0; }
-  .library-netflix .library-history-page > .divide-y > button > img { width: 100px; }
-  .library-netflix .library-topic-page .library-page-hero { min-height: 280px; }
-  .library-netflix .library-page-polished .library-instructor-billboard > .relative { grid-template-columns: 1fr; gap: 24px; }
-  .library-netflix .library-page-polished.library-instructor-index .library-instructor-billboard { min-height: 0; padding-block: 112px 48px; }
-  .library-netflix .library-page-polished .library-instructor-billboard .library-instructor-frame,
-  .library-netflix .library-page-polished.library-instructor-index .library-instructor-billboard .library-instructor-frame { max-width: 184px; aspect-ratio: 1; }
-  .library-netflix .library-page-polished.library-instructor-index .library-page-grid { gap: 20px 12px; }
-  .library-netflix .library-page-polished.library-instructor-index .library-instructor-frame > .absolute:last-child { inset-inline: 10px; bottom: 10px; }
-  .library-netflix .library-page-polished.library-instructor-index .library-instructor-frame > .absolute:last-child > div:first-child { font-size: 14px; }
+  .vod-app.library-catalog.library-stage { --stage-gutter: 20px; }
+  .vod-app.library-stage #library-main > .library-page-polished { padding-top: 112px; }
+  .vod-app.library-stage .library-instructor-billboard { min-height: 0; padding: 112px 20px 48px; }
+  .vod-app.library-stage .library-instructor-billboard > .relative,
+  .vod-app.library-stage .library-instructor-page .library-instructor-billboard > .relative { grid-template-columns: minmax(0,1fr); gap: 28px; }
+  .vod-app.library-stage .library-instructor-billboard .library-instructor-frame { max-width: 240px; }
+  .vod-app.library-stage .library-instructor-billboard h1,
+  .vod-app.library-stage .library-instructor-page .library-instructor-billboard h1 { font-size: 44px; }
+  .vod-app.library-stage .library-instructor-billboard p.font-light { font-size: 16px; }
+  .vod-app.library-stage :is(#instructor-grid,.library-instructor-page > div.relative) { padding-top: 40px; }
+  .vod-app.library-stage .library-page-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px 12px; }
+  .vod-app.library-stage .library-collection-heading { flex-wrap: wrap; gap: 14px; }
+  .vod-app.library-stage .library-collection-heading h1 { font-size: 32px; }
+  .vod-app.library-stage .library-rail-title { font-size: 26px; }
+  .vod-app.library-stage .library-page-polished .library-empty-panel { padding: 28px 20px; }
+  .vod-app.library-stage .library-page-polished .library-page-hero { padding: 28px 24px !important; }
+  .vod-app.library-stage .library-page-hero h1 { font-size: 36px; }
+  .vod-app.library-stage .library-page-toolbar > div { flex-wrap: wrap; overflow: visible; }
+  .vod-app.library-stage .library-page-chip { padding-inline: 12px; }
+  .vod-app.library-stage .library-page-toolbar > label,
+  .vod-app.library-stage .library-page-toolbar select { width: 100%; }
+  .vod-app.library-stage .library-start-here-quiet .library-rail-scroller { grid-template-columns: repeat(2,minmax(0,1fr)); }
+  .vod-app.library-stage .library-instructor-page .library-instructor-billboard { margin: 112px 20px 0; padding: 24px; }
+  .vod-app.library-stage .library-history-page > .divide-y > button { gap: 12px; }
+  .vod-app.library-stage .library-history-page > .divide-y > button > img { width: 100px; }
+  .vod-app.library-stage .editorial-library-footer { padding-bottom: 104px; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .library-netflix .library-page-polished.library-instructor-index .library-poster .library-instructor-frame { transition: none; }
+  .vod-app.library-stage :is(.library-stage-light,.library-instructor-billboard > .relative,#instructor-grid,.library-instructor-page > div.relative) { animation: none; }
 }
-.a11y-reduce-motion .library-netflix .library-page-polished.library-instructor-index .library-poster .library-instructor-frame { transition: none; }
+.a11y-reduce-motion .vod-app.library-stage :is(.library-stage-light,.library-instructor-billboard > .relative,#instructor-grid,.library-instructor-page > div.relative) { animation: none; }
