@@ -1,0 +1,73 @@
+/* Keep the webinar's galaxy stage stable in both overview and profile states.
+   Scope these rules here: other TeamGalaxy placements keep their own layout. */
+.webinar-flow-page .webinar-editorial-grid #team-universe .galaxy-map {
+  height: 560px;
+  min-height: 560px;
+  padding-bottom: 0;
+}
+
+/* Reserve separate vertical bands for the founder's name, role and motto. */
+.webinar-flow-page #team-universe .galaxy-sun:not(.is-selected) .galaxy-star-name {
+  width: 240px;
+}
+
+.webinar-flow-page #team-universe .galaxy-sun:not(.is-selected) .galaxy-star-role {
+  top: calc(100% + 68px);
+}
+
+.webinar-flow-page #team-universe .galaxy-manifesto {
+  bottom: 12px;
+}
+
+/* Center every selected profile in the same reserved space. Keep lengthy
+   biographies readable by scrolling inside the details, not growing the banner. */
+.webinar-flow-page #team-universe .galaxy-star-anchor.is-selected {
+  top: 22% !important;
+}
+
+.webinar-flow-page #team-universe .galaxy-inline-details {
+  max-height: 180px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #b79043 transparent;
+  pointer-events: auto;
+}
+
+.webinar-flow-page #team-universe .galaxy-map.has-selection .galaxy-manifesto {
+  opacity: 0;
+}
+
+@media (max-width: 767px) {
+  .webinar-flow-page .webinar-editorial-grid #team-universe .galaxy-map {
+    height: 760px;
+    min-height: 760px;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-sun:not(.is-selected) .galaxy-star-name {
+    width: 160px;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-star-anchor:not(.is-selected) {
+    left: clamp(36px, var(--star-x), calc(100% - 36px)) !important;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-featured:not(.galaxy-sun):not(.is-selected) {
+    left: clamp(40%, var(--star-x), 60%) !important;
+    top: 25% !important;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-star-anchor:not(.galaxy-sun):not(.is-selected) .galaxy-star-name {
+    width: 60px;
+    overflow-wrap: anywhere;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-sun:not(.is-selected) .galaxy-star-role {
+    top: calc(100% + 46px);
+    width: 160px;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-inline-details {
+    max-height: 240px;
+  }
+}
