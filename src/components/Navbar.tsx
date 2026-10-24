@@ -284,7 +284,7 @@ export const Navbar: React.FC = () => {
                     setIsSearchOpen(true);
                   }}
                   data-onboarding="search"
-                  className="px-3 rounded-full border border-white/10 text-zinc-300 hover:text-white hover:border-[#b79043]/40 hover:bg-white/5 transition-colors min-h-11 min-w-11 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
+                  className="px-4 rounded-full border border-[#D99B43]/35 bg-[#17140f]/90 text-[#F2EFEB] hover:border-[#D99B43] hover:bg-[#D99B43]/15 transition-colors min-h-11 min-w-11 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D99B43]"
                   title="חיפוש בספרייה"
                   aria-label="חיפוש בספרייה"
                 >

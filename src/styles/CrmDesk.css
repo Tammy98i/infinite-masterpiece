@@ -11,18 +11,18 @@
 }
 
 .site-backdrop-layout:has(.crm-desk) .editorial-sky-image {
-  opacity: .68;
-  filter: saturate(.9) contrast(1.12) brightness(.55);
+  opacity: .52;
+  filter: sepia(.72) hue-rotate(-12deg) saturate(1.1) contrast(1.12) brightness(.45);
 }
 
 .site-backdrop-layout:has(.crm-desk) .editorial-sky-blackout {
-  background: rgba(3, 8, 18, .32);
+  background: rgba(11, 10, 8, .56);
 }
 
 .site-backdrop-layout:has(.crm-desk) .editorial-sky-shade {
   background:
-    radial-gradient(circle at 50% 12%, transparent 10%, rgba(5, 10, 20, .28) 52%, rgba(5, 10, 20, .52) 100%),
-    linear-gradient(180deg, rgba(5, 10, 20, .22), rgba(5, 10, 20, .48));
+    radial-gradient(circle at 50% 12%, rgba(217, 155, 67, .07) 10%, rgba(16, 13, 9, .45) 52%, rgba(11, 10, 8, .78) 100%),
+    linear-gradient(180deg, rgba(16, 13, 9, .32), rgba(11, 10, 8, .72));
 }
 
 .site-backdrop-layout:has(.crm-desk) .editorial-sky-crm-veil {
@@ -30,42 +30,42 @@
 }
 
 .editorial-sky-crm-veil-a {
-  background: linear-gradient(180deg, rgba(2, 6, 14, .48) 0%, rgba(5, 10, 20, .14) 26%, transparent 48%, rgba(2, 6, 14, .55) 100%);
+  background: linear-gradient(180deg, rgba(11, 10, 8, .58) 0%, rgba(217, 155, 67, .05) 26%, transparent 48%, rgba(11, 10, 8, .68) 100%);
 }
 
 .editorial-sky-crm-veil-b {
-  background: rgba(2, 6, 16, .18);
+  background: rgba(14, 12, 9, .28);
 }
 
 .editorial-sky-crm-veil-c {
-  background: linear-gradient(90deg, rgba(5, 10, 20, .38), transparent 38%, rgba(5, 10, 20, .38));
+  background: linear-gradient(90deg, rgba(11, 10, 8, .48), transparent 38%, rgba(11, 10, 8, .48));
 }
 
 .editorial-sky-crm-veil-d {
-  background: radial-gradient(ellipse at 18% 8%, rgba(5, 10, 20, .06), rgba(3, 8, 18, .32) 74%);
+  background: radial-gradient(ellipse at 18% 8%, rgba(217, 155, 67, .06), rgba(11, 10, 8, .48) 74%);
 }
 
 .editorial-sky-crm-veil-e {
-  background: linear-gradient(180deg, transparent 8%, rgba(2, 6, 14, .28) 100%);
+  background: linear-gradient(180deg, transparent 8%, rgba(11, 10, 8, .38) 100%);
 }
 
-/* Desk-specific cinematic stack (SPEC-ADMIN-NETFLIX-DESK) */
+/* Desk-specific cinematic stack (Warm Tungsten & Gold) */
 .editorial-sky-crm-veil-f {
-  background: linear-gradient(180deg, transparent 35%, rgba(2, 6, 14, .72) 100%);
+  background: linear-gradient(180deg, transparent 35%, rgba(11, 10, 8, .8) 100%);
 }
 
 .editorial-sky-crm-veil-g {
-  background: linear-gradient(to inline-end, rgba(5, 10, 20, .55), transparent 42%);
+  background: linear-gradient(to inline-end, rgba(16, 13, 9, .58), transparent 42%);
 }
 
 .editorial-sky-crm-veil-h {
-  background: radial-gradient(ellipse at 50% 40%, transparent 20%, rgba(3, 8, 18, .5) 85%);
+  background: radial-gradient(ellipse at 50% 40%, transparent 20%, rgba(11, 10, 8, .58) 85%);
 }
 
 .crm-desk,
 .crm-desk main {
   background: transparent !important;
-  color: #e8eef8;
+  color: #F2EFEB;
 }
 
 /* Stage veil over main content (table readability) */

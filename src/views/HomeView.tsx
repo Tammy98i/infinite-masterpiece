@@ -165,8 +165,14 @@ export const HomeView: React.FC = () => {
         <div className="min-h-[480px] md:h-[78vh] bg-zinc-900 animate-pulse" aria-busy="true" />
       )}
 
-      <div className="relative z-10 -mt-6 md:-mt-10">
-        <LibraryPlanBanner />
+      <div className="relative z-10">
+        <div className="soundstage-console-dock max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-10 mb-8">
+          <div className="soundstage-console">
+            <LibraryPlanBanner />
+            <LibraryQuickActions />
+          </div>
+        </div>
+
         {isLoading ? <CatalogLoadingNotice /> : null}
 
         {catalogStatus === 'error' && (
@@ -176,15 +182,20 @@ export const HomeView: React.FC = () => {
           />
         )}
 
-        <div id="rail-continue">
+        <div id="rail-continue" className="soundstage-split-stage max-w-[1400px] mx-auto">
           {continueList.length > 0 ? (
-            <ContinueWatchingRow />
+            <div className="soundstage-split-rails grid grid-cols-1 xl:grid-cols-[1.5fr_1fr] gap-6 items-start">
+              <div className="min-w-0">
+                <ContinueWatchingRow />
+              </div>
+              <div className="min-w-0">
+                <StartHereRail {...pickStartHereCourses(courses, user)} />
+              </div>
+            </div>
           ) : (
             <StartHereRail {...pickStartHereCourses(courses, user)} />
           )}
         </div>
-
-        <LibraryQuickActions />
 
         {savedCourses.length > 0 ? (
           <CategoryRow

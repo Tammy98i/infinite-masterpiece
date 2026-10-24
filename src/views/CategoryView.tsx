@@ -71,10 +71,10 @@ export const CategoryView: React.FC = () => {
               key={filter.id}
               type="button"
               onClick={() => setActiveFilter(filter.id)}
-              className={`library-page-chip px-4 py-2 text-sm font-medium transition-all min-h-11 whitespace-nowrap ${
+              className={`library-page-chip px-4 py-2 text-sm font-semibold transition-all min-h-11 whitespace-nowrap cursor-pointer ${
                 activeFilter === filter.id
-                  ? 'bg-white text-[#141414]'
-                  : 'bg-white/5 text-zinc-300 hover:bg-white/10'
+                  ? 'bg-[#D99B43] text-[#0B0D11]'
+                  : 'bg-[#0B0D11] border border-[#D99B43]/25 text-[#F2EFEB]/80 hover:border-[#D99B43]'
               }`}
             >
               {filter.label}
@@ -88,7 +88,7 @@ export const CategoryView: React.FC = () => {
           <select
             value={selectedInstructor}
             onChange={(e) => setSelectedInstructor(e.target.value)}
-            className="bg-[#141414] border border-white/15 rounded-[4px] px-3 py-2.5 text-sm text-white focus:outline-none focus:ring-2 focus:ring-[#b79043] min-h-11"
+            className="bg-[#0B0D11] border border-[#D99B43]/30 rounded-[6px] px-3 py-2.5 text-sm text-[#F2EFEB] focus:outline-none focus:ring-2 focus:ring-[#D99B43] min-h-11"
             aria-label="סינון לפי מרצה"
           >
             <option value="all">לפי מרצה: הכול</option>

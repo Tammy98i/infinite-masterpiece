@@ -21,20 +21,20 @@ export const LecturersRow: React.FC = () => {
 
   return (
     <section className="library-spacious-section library-island py-3 select-none scroll-mt-24" aria-labelledby="lecturers-heading">
-      <div className="flex items-center justify-between gap-3 px-4 sm:px-8 mb-1">
-        <h2 id="lecturers-heading" className="library-rail-title text-white tracking-tight">
+      <div className="soundstage-section-header mx-auto flex max-w-[1400px] items-baseline justify-between gap-3 px-4 sm:px-8 lg:px-10 mb-3 pb-3 border-b border-[#D99B43]/20">
+        <h2 id="lecturers-heading" className="library-rail-title text-[#F2EFEB] tracking-tight">
           המרצים שלנו
         </h2>
         <button
           type="button"
           onClick={() => setView('instructors')}
-          className="text-sm text-white/55 hover:text-white transition-colors min-h-11 px-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded"
+          className="text-sm text-[#D99B43] hover:text-[#f0b45f] font-medium transition-colors min-h-11 px-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D99B43] rounded"
         >
           לכל המרצים
         </button>
       </div>
 
-      <div className="library-rail-scroller flex overflow-x-auto px-4 sm:px-8">
+      <div className="library-rail-scroller mx-auto max-w-[1400px] flex overflow-x-auto px-4 sm:px-8 lg:px-10">
         {list.map(({ inst, count }) => (
           <button
             key={inst.id}
@@ -47,26 +47,24 @@ export const LecturersRow: React.FC = () => {
               setView('instructor', { instructorId: inst.id });
             }}
             aria-label={`${inst.name}, ${inst.title}`}
-            className="w-[132px] sm:w-[156px] shrink-0 text-start group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11"
+            className="soundstage-lecturer-badge w-[136px] sm:w-[152px] shrink-0 text-center flex flex-col items-center group focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D99B43] rounded min-h-11"
           >
-            <div className="library-instructor-frame relative overflow-hidden rounded-[4px] mb-2">
+            <div className="soundstage-lecturer-ring relative w-[112px] h-[112px] sm:w-[126px] sm:h-[126px] rounded-full overflow-hidden mb-3">
               {inst.avatarUrl ? (
                 <img
                   src={inst.avatarUrl}
                   alt=""
                   aria-hidden
-                  className="group-hover:brightness-110 transition-[filter] duration-200 motion-reduce:transition-none"
+                  className="w-full h-full object-cover group-hover:brightness-110 transition-[filter,transform] duration-200 group-hover:scale-105 motion-reduce:transition-none"
                 />
               ) : (
-                <div className="w-full h-full flex items-center justify-center bg-[#1a1a1a] text-[#b79043] text-2xl font-semibold" aria-hidden>
+                <div className="w-full h-full flex items-center justify-center bg-[#14110c] text-[#D99B43] text-2xl font-bold" aria-hidden>
                   {inst.name.trim().charAt(0) || 'מ'}
                 </div>
               )}
-              <div className="absolute inset-0 bg-black/25 pointer-events-none" />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
             </div>
-            <div className="text-[13px] font-medium text-white truncate">{inst.name}</div>
-            <div className="text-[12px] text-white/55 mt-0.5 truncate">{inst.title}</div>
+            <div className="text-[14px] font-bold text-[#F2EFEB] truncate w-full">{inst.name}</div>
+            <div className="text-[12px] text-[#b5a892] mt-0.5 truncate w-full">{inst.title}</div>
             <div className="sr-only">
               {count === 0 ? 'אין הרצאות עדיין' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`}
             </div>

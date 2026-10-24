@@ -32,7 +32,7 @@ export const LearningPathsView: React.FC = () => {
               <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center mb-8 border-b border-white/10 pb-8">
                 <div className="lg:col-span-8">
                   <div className="flex items-center gap-3 mb-2">
-                    <span className="px-3 py-1 rounded-[4px] bg-white text-[#141414] font-semibold text-xs">
+                    <span className="px-3 py-1 rounded-[4px] bg-[#D99B43] text-[#0B0D11] font-bold text-xs">
                       מסלול משולב • {path.totalDurationHours} שעות
                     </span>
                     <span className="text-xs text-zinc-400">{pathCourses.length} קורסים מובנים</span>
@@ -68,7 +68,7 @@ export const LearningPathsView: React.FC = () => {
                 <div className="flex gap-6 overflow-x-auto pb-4 scroll-smooth">
                   {pathCourses.map((course, i) => (
                     <div key={course.id} className="relative shrink-0">
-                      <div className="absolute -top-3 -start-3 z-30 w-8 h-8 rounded-full bg-white text-[#141414] font-bold text-sm flex items-center justify-center border-2 border-[#141414]">
+                      <div className="absolute -top-3 -start-3 z-30 w-8 h-8 rounded-full bg-[#D99B43] text-[#0B0D11] font-bold text-sm flex items-center justify-center border-2 border-[#0B0D11]">
                         {i + 1}
                       </div>
                       <CourseCard course={course} />
