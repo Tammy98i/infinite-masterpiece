@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useApp } from './context/AppContext';
 import { Navbar } from './components/Navbar';
@@ -22,8 +22,10 @@ import { ShortsView } from './views/ShortsView';
 import { LearningPathsView } from './views/LearningPathsView';
 import { InstructorsView } from './views/InstructorsView';
 import { InstructorProfileView } from './views/InstructorProfileView';
-import { AdminView } from './views/AdminView';
-import { LecturerView } from './views/LecturerView';
+// Role-gated desks are the heaviest views; keep them out of the library bundle
+// so the catalog loads without them, and fetch them only when actually opened.
+const AdminView = lazy(() => import('./views/AdminView').then((m) => ({ default: m.AdminView })));
+const LecturerView = lazy(() => import('./views/LecturerView').then((m) => ({ default: m.LecturerView })));
 import { libraryPath } from './utils/libraryPath';
 import './styles/LibraryCatalog.css';
 import './styles/CrmDesk.css';
@@ -109,7 +111,9 @@ export const VodApp: React.FC = () => {
       {currentView !== 'watch' && currentView !== 'admin' && currentView !== 'lecturer' && <Navbar />}
 
       <main id="library-main" key={currentView} className="relative z-10 flex-grow page-fade" tabIndex={-1}>
-        {renderView()}
+        <Suspense fallback={<div className="py-24 text-center text-white/50 font-light">טוען…</div>}>
+          {renderView()}
+        </Suspense>
       </main>
 
       {currentView !== 'watch' && (
