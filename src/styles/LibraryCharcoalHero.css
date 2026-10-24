@@ -1,0 +1,159 @@
+/* Approved charcoal direction, isolated to the featured library section. */
+.library-charcoal-hero {
+  width: 100%;
+  height: 922px;
+  box-sizing: border-box;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 104px 92px;
+  background: #101113;
+  color: #F6F1E7;
+  border: 1px solid #26272A;
+  direction: rtl;
+  font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+.library-charcoal-hero .charcoal-sky {
+  position: absolute;
+  inset: 0;
+  z-index: -2;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  filter: grayscale(.72) brightness(.52);
+}
+.library-charcoal-hero .charcoal-shade {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, rgba(16,17,19,.46) 0%, rgba(16,17,19,.7) 46%, rgba(16,17,19,.94) 100%), linear-gradient(0deg, rgba(10,10,11,.78), transparent 72%);
+}
+.library-charcoal-hero .charcoal-inner {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  gap: 86px;
+}
+.library-charcoal-hero .charcoal-copy {
+  grid-column: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  max-width: 610px;
+  min-width: 0;
+}
+.vod-app.sky-readable .library-charcoal-hero p,
+.vod-app.sky-readable .library-charcoal-hero h1 {
+  text-shadow: none;
+}
+.library-charcoal-hero .charcoal-eyebrow {
+  font-size: 14px;
+  letter-spacing: .15em;
+  color: #C6A46C;
+  font-weight: 700;
+  margin: 0 0 22px;
+}
+.vod-app.sky-readable .library-charcoal-hero .charcoal-title {
+  font-size: 76px;
+  line-height: 1.04;
+  letter-spacing: -.045em;
+  font-weight: 850;
+  color: #F6F1E7;
+  margin: 0 0 24px;
+}
+.library-charcoal-hero .charcoal-title::after {
+  content: "";
+  display: block;
+  width: 112px;
+  height: 2px;
+  margin-top: 24px;
+  background: linear-gradient(90deg, #C6A46C, rgba(198,164,108,.08));
+  animation: glint 1.1s cubic-bezier(.16,1,.3,1) both;
+}
+.library-charcoal-hero .charcoal-meta {
+  font-size: 17px;
+  color: #C6A46C;
+  margin: 0 0 28px;
+  font-weight: 550;
+}
+.library-charcoal-hero .charcoal-description {
+  font-size: 21px;
+  line-height: 1.65;
+  color: #e1ded6;
+  margin: 0 0 38px;
+  max-width: 560px;
+}
+.library-charcoal-hero .charcoal-actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.library-charcoal-hero .charcoal-button {
+  min-height: 56px;
+  box-sizing: border-box;
+  padding: 0 28px;
+  border: 1px solid #C6A46C;
+  border-radius: 3px;
+  background: transparent;
+  color: #F6F1E7;
+  font: 700 16px system-ui, -apple-system, "Segoe UI", sans-serif;
+  cursor: pointer;
+  transition: background-color .2s ease, color .2s ease, box-shadow .2s ease;
+}
+.library-charcoal-hero .charcoal-button.primary {
+  background: #C6A46C;
+  color: #171614;
+  border-color: #C6A46C;
+}
+.library-charcoal-hero .charcoal-button:hover {
+  background: #d8bc8e;
+  color: #101113;
+  box-shadow: 0 8px 24px rgba(0,0,0,.24);
+}
+.library-charcoal-hero .charcoal-button:active {
+  background: #aa8954;
+  box-shadow: none;
+}
+.library-charcoal-hero .charcoal-button:focus-visible {
+  outline: 2px solid #F6F1E7;
+  outline-offset: 4px;
+}
+.library-charcoal-hero .charcoal-balance {
+  grid-column: 2;
+  min-height: 510px;
+  border: 1px solid rgba(246,241,231,.12);
+  background: linear-gradient(145deg, rgba(38,39,42,.32), rgba(16,17,19,.08));
+  box-shadow: inset 0 1px rgba(255,255,255,.06);
+  position: relative;
+}
+.library-charcoal-hero .charcoal-balance::before {
+  content: "";
+  position: absolute;
+  inset: 22px;
+  border: 1px solid rgba(246,241,231,.08);
+}
+@keyframes glint {
+  from { opacity: 0; transform: translateX(-12px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+/* Preserve the approved desktop proportions without overflowing smaller screens. */
+@media (max-width: 1023px) {
+  .library-charcoal-hero { height: auto; min-height: 922px; padding: 128px 32px 64px; }
+  .library-charcoal-hero .charcoal-inner { grid-template-columns: 1fr; gap: 48px; }
+  .library-charcoal-hero .charcoal-balance { grid-column: 1; min-height: 260px; }
+}
+@media (max-width: 599px) {
+  .library-charcoal-hero { padding-inline: 24px; }
+  .vod-app.sky-readable .library-charcoal-hero .charcoal-title { font-size: 48px; }
+  .library-charcoal-hero .charcoal-description { font-size: 18px; }
+  .library-charcoal-hero .charcoal-actions { flex-wrap: wrap; }
+  .library-charcoal-hero .charcoal-button { padding-inline: 20px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .library-charcoal-hero .charcoal-title::after { animation: none; }
+}
+.a11y-reduce-motion .library-charcoal-hero .charcoal-title::after { animation: none; }

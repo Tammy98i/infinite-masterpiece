@@ -30,7 +30,7 @@
 .galaxy-star-anchor { position: absolute; width: 0; height: 0; z-index: 2; }
 .galaxy-star-anchor:has(:focus-visible), .galaxy-star-anchor:hover { z-index: 3; }
 .galaxy-star { display: flex; flex-direction: column; align-items: center; position: relative; transform: translate(-50%, -50%); border: 0; background: transparent; cursor: pointer; color: #dfc47d; padding: 0; min-width: 44px; min-height: 44px; }
-.galaxy-stellar-body { display: block; position: relative; width: calc(var(--star-size) * var(--star-scale)); height: calc(var(--star-size) * var(--star-scale)); border-radius: 50%; box-shadow: 0 0 var(--star-glow) #b7904333, 0 0 3px #dfc47d; transition: width .6s, height .6s, box-shadow .4s, transform .5s, filter .5s; }
+.galaxy-stellar-body { display: block; position: relative; width: calc(var(--star-size) * var(--star-scale) * var(--portrait-boost, 1)); height: calc(var(--star-size) * var(--star-scale) * var(--portrait-boost, 1)); border-radius: 50%; box-shadow: 0 0 var(--star-glow) #b7904333, 0 0 3px #dfc47d; transition: width .6s, height .6s, box-shadow .4s, transform .5s, filter .5s; }
 .galaxy-stellar-body::before { content: ''; position: absolute; inset: -8px; border: 1px solid #b7904338; border-radius: 50%; animation: galaxy-glow 10s ease-in-out infinite; pointer-events: none; }
 .galaxy-portrait { display: flex; width: 100%; height: 100%; padding: 4px; border: 1px solid #b79043bb; border-radius: 50%; background: #11100b; position: relative; overflow: hidden; }
 .galaxy-portrait img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: center 20%; border-radius: 50%; }
@@ -111,7 +111,7 @@
 @media (max-width: 767px) {
   .team-galaxy { --star-scale: .58; padding: 48px 16px 28px; }
   .galaxy-sun:not(.is-selected) .galaxy-stellar-body { width: 96px; height: 96px; }
-  .galaxy-featured:not(.galaxy-sun):not(.is-selected) .galaxy-stellar-body { width: 64px; height: 64px; }
+  .galaxy-featured:not(.galaxy-sun):not(.is-selected) .galaxy-stellar-body { width: calc(64px * var(--portrait-boost, 1)); height: calc(64px * var(--portrait-boost, 1)); }
   .galaxy-heading { margin-bottom: 8px; }
   .galaxy-heading h2 { font-size: 27px; line-height: 1.35; }
   .galaxy-heading h2 em { display: block; }

@@ -1,4 +1,4 @@
-﻿import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import {
@@ -405,7 +405,7 @@ export const CourseDetailView: React.FC = () => {
   const totalDuration = course.episodes.reduce((s, ep) => s + ep.duration, 0);
 
   return (
-    <div className="library-catalog-page library-course-page min-h-screen text-white pb-16">
+    <div className="library-catalog-page library-course-page premiere-page min-h-screen text-white">
       <header className="library-course-billboard relative min-h-[58vh] md:min-h-[70vh] flex items-end overflow-hidden pt-24 pb-16 md:pb-20">
         <div className="absolute inset-0 select-none overflow-hidden">
           <img
@@ -420,7 +420,7 @@ export const CourseDetailView: React.FC = () => {
           <div className="library-course-veil-d absolute inset-0" />
         </div>
 
-        <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 w-full text-start">
+        <div className="premiere-hero-copy relative z-10 text-start">
           <nav className="mb-6 text-sm text-white/70" aria-label="ניווט משני">
             <button
               type="button"
@@ -429,10 +429,6 @@ export const CourseDetailView: React.FC = () => {
             >
               ספרייה
             </button>
-            <span className="mx-2 text-white/35" aria-hidden>
-              ‹
-            </span>
-            <span className="text-white">{course.title}</span>
           </nav>
 
           <h1 className="text-4xl sm:text-6xl lg:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight mb-4 max-w-4xl">
@@ -444,61 +440,6 @@ export const CourseDetailView: React.FC = () => {
               {course.subtitle}
             </p>
           ) : null}
-
-          <p className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/80">
-            {instructor ? <span>{instructor.name}</span> : null}
-            {instructor ? <span aria-hidden>·</span> : null}
-            <ClockLabel seconds={totalDuration} />
-            <span aria-hidden>·</span>
-            <span>
-              {completedCount} מתוך {episodeCount} פרקים
-            </span>
-            <span aria-hidden>·</span>
-            <span>{accessLabel}</span>
-          </p>
-
-          {instructor ? (
-            <button
-              type="button"
-              onClick={() => setView('instructor', { instructorId: instructor.id })}
-              aria-label={`${instructor.name}, ${instructor.title}`}
-              className="inline-flex items-center gap-3 mb-5 min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded"
-            >
-              <img
-                src={instructor.avatarUrl}
-                alt=""
-                aria-hidden
-                className="w-11 h-11 rounded-full object-cover"
-                loading="lazy"
-              />
-              <span className="text-start">
-                <span className="block text-sm font-medium text-white">{instructor.name}</span>
-                <span className="block text-[13px] text-white/60">{instructor.title}</span>
-              </span>
-            </button>
-          ) : null}
-
-          <div className="mb-6 max-w-md">
-            <p className="text-[13px] text-white/70 mb-2" id="course-progress-label">
-              {completedCount} מתוך {episodeCount} פרקים
-              <span className="text-white/35"> · </span>
-              <ClockLabel seconds={totalDuration} />
-            </p>
-            <div
-              className="h-1 rounded-full bg-white/15 overflow-hidden"
-              role="progressbar"
-              aria-labelledby="course-progress-label"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={Math.round(timeProgress)}
-              aria-valuetext={`${Math.round(timeProgress)} אחוז מהקורס`}
-            >
-              <div
-                className={`h-full transition-all ${timeProgress > 0 ? 'bg-[#b79043]' : 'bg-transparent'}`}
-                style={{ width: `${timeProgress}%` }}
-              />
-            </div>
-          </div>
 
           <div className="flex flex-wrap items-center gap-3">
             <button
@@ -519,10 +460,17 @@ export const CourseDetailView: React.FC = () => {
             </button>
           </div>
         </div>
+        <div className="premiere-band">
+          {instructor && <div><button type="button" onClick={() => setView('instructor', { instructorId: instructor.id })} aria-label={`${instructor.name}, ${instructor.title}`}><b>{instructor.name}</b>{instructor.title}</button></div>}
+          <div><b><ClockLabel seconds={totalDuration} /></b></div>
+          <div><b>{completedCount} מתוך {episodeCount} פרקים</b></div>
+          <div className="premiere-access">{accessLabel}</div>
+        </div>
       </header>
 
-      <div className="relative z-10 -mt-8 max-w-[1360px] mx-auto px-4 sm:px-8 text-start">
-        <div className="grid grid-cols-1 lg:grid-cols-[1.7fr_1fr] gap-6 mb-10">
+      <div className="premiere-body relative z-10 text-start">
+        <div className="library-course-viewing">
+          <i className="premiere-corner a" aria-hidden="true" /><i className="premiere-corner b" aria-hidden="true" /><i className="premiere-corner c" aria-hidden="true" /><i className="premiere-corner d" aria-hidden="true" />
           <section aria-label="נגן הקורס" className="min-w-0">
             <div className="library-course-stage relative aspect-video overflow-hidden bg-black">
               {playerOn && activeEpisode ? (
@@ -677,15 +625,14 @@ export const CourseDetailView: React.FC = () => {
                     aria-hidden
                     className="w-full h-full object-cover"
                   />
-                  <div className="absolute inset-0 bg-black/45" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#141414] via-black/20 to-transparent" />
+                  <div className="premiere-player-veil absolute inset-0" />
                   <button
                     type="button"
                     onClick={() => {
                       if (activeEpisode) void startPlayback(activeEpisode.id, cta?.mode === 'resume' ? 'resume' : 'play');
                       else handlePrimaryCta();
                     }}
-                    className="absolute inset-0 m-auto w-16 h-16 rounded-full bg-white text-[#141414] flex items-center justify-center hover:bg-white/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
+                    className="premiere-player-play"
                     aria-label={cta?.label || 'התחילו לצפות'}
                   >
                     <Play className="w-7 h-7 fill-current ml-1" data-icon="play" />
@@ -700,11 +647,28 @@ export const CourseDetailView: React.FC = () => {
                 />
               ) : null}
             </div>
-            {activeEpisode && (
-              <p className="mt-3 text-sm text-white/60">
-                פרק {activeEpisode.episodeNumber}: {episodeDisplayName(activeEpisode.title)}
-              </p>
-            )}
+          <div className="premiere-progress">
+            <p className="text-[13px] text-white/70 mb-2" id="course-progress-label">
+              {completedCount} מתוך {episodeCount} פרקים
+
+            </p>
+            <div
+              className="h-1 rounded-full bg-white/15 overflow-hidden"
+              role="progressbar"
+              aria-labelledby="course-progress-label"
+              aria-valuemin={0}
+              aria-valuemax={100}
+              aria-valuenow={Math.round(timeProgress)}
+              aria-valuetext={`${Math.round(timeProgress)} אחוז מהקורס`}
+            >
+              <div
+                className={`h-full transition-all ${timeProgress > 0 ? 'bg-[#b79043]' : 'bg-transparent'}`}
+                style={{ width: `${timeProgress}%` }}
+              />
+            </div>
+          </div>
+
+
           </section>
 
           <section
@@ -756,7 +720,7 @@ export const CourseDetailView: React.FC = () => {
                       }`}
                     >
                       <div className="flex items-start gap-3">
-                        <span className="relative w-[88px] sm:w-[108px] aspect-video overflow-hidden rounded-[4px] bg-zinc-900 shrink-0">
+                        <span className="premiere-episode-thumbnail relative w-[88px] sm:w-[108px] aspect-video overflow-hidden rounded-[4px] bg-zinc-900 shrink-0">
                           <img
                             src={course.coverImage}
                             alt=""
@@ -781,7 +745,7 @@ export const CourseDetailView: React.FC = () => {
                             </span>
                           ) : null}
                         </span>
-                        <span className="text-sm text-white/40 tabular-nums w-5 shrink-0 pt-1">
+                        <span className="premiere-episode-number">
                           {ep.episodeNumber}
                         </span>
                         <div className="flex-1 min-w-0">
@@ -863,7 +827,7 @@ export const CourseDetailView: React.FC = () => {
           ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-10 pb-8">
+        <div className="premiere-info">
           <section
             id="panel-about-course"
             role="tabpanel"
@@ -898,7 +862,7 @@ export const CourseDetailView: React.FC = () => {
               על המרצה
             </h2>
             {instructor ? (
-              <div className="library-instructor-card p-4">
+              <div className="library-instructor-card">
                 <div className="library-instructor-frame w-full max-w-[280px] rounded-[4px] mb-4 overflow-hidden">
                   <img
                     src={instructor.avatarUrl}
@@ -906,17 +870,12 @@ export const CourseDetailView: React.FC = () => {
                     loading="lazy"
                   />
                 </div>
-                <button
-                  type="button"
-                  onClick={() => setView('instructor', { instructorId: instructor.id })}
-                  className="text-base font-medium text-white hover:text-[#dfc47d] min-h-11"
-                >
-                  {instructor.name}
-                </button>
-                <p className="text-[13px] text-[#b79043]/90 mt-1">{instructor.title}</p>
-                {instructor.bio && (
-                  <p className="text-[14px] text-white/55 font-light leading-relaxed mt-3">{instructor.bio}</p>
-                )}
+                <div className="premiere-instructor-copy">
+                  <h3>{instructor.name}</h3>
+                  <p className="premiere-instructor-role">{instructor.title}</p>
+                  {instructor.bio && <p>{instructor.bio}</p>}
+                  <button type="button" className="premiere-profile" onClick={() => setView('instructor', { instructorId: instructor.id })}>{instructor.name}</button>
+                </div>
               </div>
             ) : (
               <p className="text-sm text-white/45">פרטי המרצה אינם זמינים</p>

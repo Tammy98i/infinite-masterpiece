@@ -38,6 +38,8 @@ import './WebinarNeuralSlides.css';
 import './WebinarNightLanguage.css';
 import './WebinarFlowPolish.css';
 import './WebinarSlideTones.css';
+import './WebinarTextAlignment.css';
+import './WebinarTeamGalaxy.css';
 
 const WEBINAR_ISLANDS = [
   { id: 'webinar-hero', title: 'פתיחה' },
@@ -305,6 +307,7 @@ export function WebinarLanding() {
       </section>
 
       <TeamGalaxy
+        mobileCarousel
         className="webinar-island webinar-tone-night"
         eyebrow="האנשים מאחורי החזון"
         title="הצוות שמחזיק את המערכת"

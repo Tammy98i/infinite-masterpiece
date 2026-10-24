@@ -1,0 +1,41 @@
+/* Center banner copy only; preserve shared navigation, RTL direction and layout.
+   Legacy ID selectors and text-start utilities require this scoped override. */
+.webinar-flow-page .webinar-island,
+.webinar-flow-page .webinar-island * {
+  text-align: center !important;
+}
+
+/* Center width-constrained text blocks within their existing banner/cell. */
+.webinar-flow-page .webinar-island :is(h1, h2, h3, h4, p) {
+  /* Beat the older editorial .mx-auto reset, which offsets narrow copy. */
+  margin-inline: auto !important;
+}
+
+/* Equal side tracks keep the text on the cell's true center, even when
+   an icon or checkbox occupies only one side. Keep their existing order. */
+.webinar-flow-page #webinar-fit li,
+.webinar-flow-page #webinar-faq summary,
+.webinar-flow-page .webinar-stage-register-card label.flex {
+  display: grid;
+  grid-template-columns: 1rem minmax(0, 1fr) 1rem;
+  column-gap: 0.75rem;
+}
+
+.webinar-flow-page #webinar-fit li > span,
+.webinar-flow-page #webinar-faq summary > span,
+.webinar-flow-page .webinar-stage-register-card label.flex > span {
+  grid-column: 2;
+  grid-row: 1;
+  min-width: 0;
+}
+
+.webinar-flow-page #webinar-fit li > svg,
+.webinar-flow-page .webinar-stage-register-card label.flex > input {
+  grid-column: 1;
+  grid-row: 1;
+}
+
+.webinar-flow-page #webinar-faq summary > svg {
+  grid-column: 3;
+  grid-row: 1;
+}

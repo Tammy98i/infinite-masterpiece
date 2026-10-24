@@ -78,7 +78,7 @@ function LibraryFallback() {
   return <BridgeShell />;
 }
 
-const VodShell = lazy(async () => {
+const importVodShell = async () => {
   const [{ AppProvider }, { ToastProvider }, { OnboardingProvider }, vod] = await Promise.all([
     import('./context/AppContext'),
     import('./context/ToastContext'),
@@ -101,7 +101,9 @@ const VodShell = lazy(async () => {
   }
 
   return { default: LibraryApp };
-});
+};
+
+const VodShell = lazy(importVodShell);
 
 function LibraryRoute() {
   return (
@@ -111,6 +113,31 @@ function LibraryRoute() {
   );
 }
 
+/**
+ * Warms the library bundle while the visitor is still on another route, so the
+ * first navigation to /library renders without waiting for the chunk download.
+ */
+function LibraryPrefetch() {
+  const location = useLocation();
+  const onLibrary = location.pathname.startsWith('/library');
+
+  useEffect(() => {
+    if (onLibrary) return;
+    const idle = (window as Window & {
+      requestIdleCallback?: (cb: () => void, options?: { timeout: number }) => number;
+    }).requestIdleCallback;
+    const warm = () => void importVodShell().catch(() => undefined);
+    if (idle) {
+      const id = idle(warm, { timeout: 2500 });
+      return () => (window as Window & { cancelIdleCallback?: (id: number) => void }).cancelIdleCallback?.(id);
+    }
+    const timer = window.setTimeout(warm, 1200);
+    return () => window.clearTimeout(timer);
+  }, [onLibrary]);
+
+  return null;
+}
+
 export default function App() {
   return (
     <UserProvider>
@@ -118,6 +145,7 @@ export default function App() {
       <MotionA11yProvider>
       <QuietBoot />
       <ScrollManager />
+      <LibraryPrefetch />
       <AuthModal />
       <A11yWidget />
       <Routes>
