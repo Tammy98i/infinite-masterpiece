@@ -6,6 +6,31 @@
   padding-bottom: 0;
 }
 
+/* This section has its own profile transitions. Do not combine the island's
+   CSS reveal with Motion's section fade: that dims all text and portraits. */
+.webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel {
+  opacity: 1;
+  translate: none;
+  transition: none;
+  padding-block: 32px 16px;
+}
+
+.webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel .galaxy-map {
+  height: 440px;
+  min-height: 440px;
+}
+
+.webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-bottom-note {
+  color: #d3dbe5;
+  margin-top: 8px;
+}
+
+.webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-inline-bio { color: #f7f4eb; }
+.webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-inline-role { color: #dfc47d; }
+.webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-map.has-selection .galaxy-star-anchor:not(.is-selected) {
+  opacity: .6 !important;
+}
+
 /* Reserve separate vertical bands for the founder's name, role and motto. */
 .webinar-flow-page #team-universe .galaxy-sun:not(.is-selected) .galaxy-star-name {
   width: 240px;
@@ -38,12 +63,12 @@
   opacity: 0;
 }
 
-/* Mobile advances the active portrait and its details together. The motion
-   control pauses playback; desktop keeps the original galaxy composition. */
+/* Profiles advance on every screen; only mobile uses the horizontal strip.
+   The existing motion control pauses playback on both layouts. */
 @media (max-width: 767px) {
   .webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel {
     min-height: 0;
-    padding: 28px 12px 16px;
+    padding: 20px 12px 12px;
   }
 
   .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-heading { margin-bottom: 0; }
@@ -53,9 +78,9 @@
     display: flex;
     align-items: flex-start;
     gap: 24px;
-    height: 370px;
-    min-height: 370px;
-    padding: 24px calc(50% - 100px) 0;
+    height: 320px;
+    min-height: 320px;
+    padding: 20px calc(50% - 100px) 0;
     overflow-x: auto;
     overflow-y: hidden;
     scroll-snap-type: x mandatory;
@@ -81,8 +106,8 @@
   }
 
   .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-stellar-body {
-    width: calc(108px * var(--portrait-boost, 1));
-    height: calc(108px * var(--portrait-boost, 1));
+    width: calc(96px * var(--portrait-boost, 1));
+    height: calc(96px * var(--portrait-boost, 1));
   }
 
   .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star-name,
@@ -95,8 +120,8 @@
 
   .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-inline-details {
     width: min(280px, 78vw);
-    max-height: 150px;
-    top: calc(100% + 56px);
+    max-height: 132px;
+    top: calc(100% + 52px);
   }
 
   #team-universe.galaxy-mobile-carousel .galaxy-orbits,
