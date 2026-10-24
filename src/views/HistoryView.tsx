@@ -18,8 +18,8 @@ export const HistoryView: React.FC = () => {
   const items = getWatchHistory();
 
   return (
-    <div className="library-catalog-page library-browse-refined min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8">
+    <div className="library-catalog-page library-browse-refined library-page-polished library-history-page min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-4xl mx-auto">
+      <div className="library-collection-heading flex items-center justify-between border-b border-white/10 pb-6 mb-8">
         <div>
           <p className="library-page-eyebrow mb-1">היסטוריה</p>
           <h1 className="text-3xl sm:text-4xl font-heading font-semibold">היסטוריה</h1>

@@ -33,6 +33,7 @@ import './styles/LibraryCharcoalTheme.css';
 import './styles/LibraryWeekly.css';
 import './styles/LibraryBrowseRefined.css';
 import './styles/LibraryNetflix.css';
+import './styles/LibraryPagePolish.css';
 
 export const VodApp: React.FC = () => {
   const { currentView, setView } = useApp();

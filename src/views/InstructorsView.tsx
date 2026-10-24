@@ -21,7 +21,7 @@ export const InstructorsView: React.FC = () => {
   };
 
   return (
-    <div className="library-catalog-page library-instructor-index min-h-screen text-white pb-24">
+    <div className="library-catalog-page library-instructor-index library-page-polished min-h-screen text-white pb-24">
       <header className="library-instructor-billboard relative min-h-[58vh] md:min-h-[70vh] flex items-end overflow-hidden pt-24 pb-16 md:pb-20">
         <div className="absolute inset-0 select-none overflow-hidden bg-[#141414]">
           <div className="library-course-veil-a absolute inset-0" />

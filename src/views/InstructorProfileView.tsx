@@ -48,7 +48,7 @@ export const InstructorProfileView: React.FC = () => {
   };
 
   return (
-    <div className="library-catalog-page library-instructor-page min-h-screen text-white pb-28">
+    <div className="library-catalog-page library-instructor-page library-page-polished min-h-screen text-white pb-28">
       <header className="library-instructor-billboard relative min-h-[58vh] md:min-h-[70vh] flex items-end overflow-hidden pt-24 pb-16 md:pb-20">
         <div className="absolute inset-0 select-none overflow-hidden bg-[#141414]">
           <div className="library-course-veil-a absolute inset-0" />
@@ -128,7 +128,7 @@ export const InstructorProfileView: React.FC = () => {
 
       <div className="relative z-10 -mt-8 max-w-[1360px] mx-auto px-4 sm:px-8 text-start">
         {instructor.bio ? (
-          <section className="mb-8 max-w-3xl">
+          <section className="library-instructor-about mb-8 max-w-3xl">
             <h2 className="library-rail-title text-white mb-3">על המרצה</h2>
             <p className="text-white/70 font-light leading-relaxed">{instructor.bio}</p>
           </section>
