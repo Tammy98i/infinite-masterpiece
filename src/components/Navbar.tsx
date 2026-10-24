@@ -118,6 +118,7 @@ export const Navbar: React.FC = () => {
                 <span className="header-wordmark font-light tracking-[0.22em] text-white/90 leading-tight uppercase">
                   IM
                 </span>
+                {currentView === 'home' && <span className="weekly-brand-name">Infinite Masterpiece</span>}
               </button>
             </div>
 

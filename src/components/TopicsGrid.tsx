@@ -5,7 +5,13 @@ import { coursesInCategory } from '../utils/recommendations';
 import { trackEvent } from '../utils/analytics';
 
 export const TopicsGrid: React.FC = () => {
-  const { categories, courses, setView } = useApp();
+  const { categories, courses, setView, currentView } = useApp();
+  const topicArtwork = [
+    'https://media.base44.com/images/public/6aa94dfb715e7d446231f544/3f0a5d20e_generated_e815267b.jpg',
+    'https://media.base44.com/images/public/6aa94dfb715e7d446231f544/4c6f01d5c_generated_7933bc55.jpg',
+    'https://media.base44.com/images/public/6aa94dfb715e7d446231f544/a8e035f35_generated_5e419867.jpg',
+    'https://media.base44.com/images/public/6aa94dfb715e7d446231f544/60e4cb956_generated_f27d1c4e.jpg',
+  ];
 
   const topics = LIBRARY_TOPIC_IDS.map((id) => {
     const category = categories.find((c) => c.id === id);
@@ -32,7 +38,7 @@ export const TopicsGrid: React.FC = () => {
       </div>
 
       <div className="library-rail-scroller mx-auto max-w-[1400px] flex overflow-x-auto px-4 sm:px-8 lg:px-10">
-        {topics.map(({ category, count, cover }) => (
+        {topics.map(({ category, count, cover }, index) => (
           <button
             key={category.id}
             type="button"
@@ -43,9 +49,9 @@ export const TopicsGrid: React.FC = () => {
             aria-label={`פתיחת נושא ${category.name}, ${count} הרצאות`}
             className="library-poster soundstage-topic-tile group relative aspect-[2.39/1] w-[220px] sm:w-[280px] shrink-0 overflow-hidden rounded-[4px] text-start focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D99B43] min-h-11"
           >
-            {cover ? (
+            {cover || currentView === 'home' ? (
               <img
-                src={cover}
+                src={cover || topicArtwork[index % topicArtwork.length]}
                 alt=""
                 aria-hidden
                 className="absolute inset-0 w-full h-full object-cover brightness-[0.58] saturate-[0.82] group-hover:brightness-75 transition-[filter] duration-200 motion-reduce:transition-none"

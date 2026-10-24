@@ -44,7 +44,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   showDurationBadge = false,
   showNewBadge = false,
 }) => {
-  const { setView, isInMyList, getCourseProgress, user, instructors } = useApp();
+  const { setView, isInMyList, getCourseProgress, user, instructors, currentView } = useApp();
   const { goWatch } = useWatchAccess();
   const toggleList = useMyListToggle();
 
@@ -110,7 +110,15 @@ export const CourseCard: React.FC<CourseCardProps> = ({
       {rank != null && (
         <span className="premium-course-rank" aria-hidden>{rank}</span>
       )}
-      <div className="premium-course-card" dir="rtl" onClick={handleCardClick}>
+      <div className="premium-course-card" dir="rtl" onClick={handleCardClick}
+        role={currentView === 'home' ? 'button' : undefined}
+        tabIndex={currentView === 'home' ? 0 : undefined}
+        onKeyDown={currentView === 'home' ? (event) => {
+          if (event.target === event.currentTarget && (event.key === 'Enter' || event.key === ' ')) {
+            event.preventDefault();
+            handleCardClick();
+          }
+        } : undefined}>
         <div className="premium-course-poster">
           <img
             {...responsiveImageAttrs(course.coverImage, {
@@ -140,8 +148,8 @@ export const CourseCard: React.FC<CourseCardProps> = ({
             {isSaved ? <Check aria-hidden /> : <Plus strokeWidth={1.8} aria-hidden />}
           </button>
           <button type="button" className="premium-course-play" aria-label={ariaTitle}>
-            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-              <path d="M7 4.8a1 1 0 0 1 1.5-.86l11 7.2a1 1 0 0 1 0 1.72l-11 7.2A1 1 0 0 1 7 19.2z" />
+            <svg viewBox={currentView === 'home' ? '0 0 14 14' : '0 0 24 24'} fill="currentColor" aria-hidden="true">
+              <path d={currentView === 'home' ? 'M3 1l10 6-10 6z' : 'M7 4.8a1 1 0 0 1 1.5-.86l11 7.2a1 1 0 0 1 0 1.72l-11 7.2A1 1 0 0 1 7 19.2z'} />
             </svg>
           </button>
           {showProgress > 0 && (
@@ -157,7 +165,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
           <div className="premium-course-signature" aria-hidden="true" />
           <div className="premium-course-details">
             <span className="premium-course-instructor">{instructorName || 'Infinite Masterpiece'}</span>
-            <span className="premium-course-access">{ACCESS_LABEL[access]}</span>
+            <span className="premium-course-access">{currentView === 'home' ? <ClockLabel seconds={totalSecs} /> : ACCESS_LABEL[access]}</span>
           </div>
           <div className="sr-only">{instructorName} {resumeLabel || durationLabel}, {ACCESS_LABEL[access]}</div>
         </div>

@@ -59,10 +59,11 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
     >
       <img
         className="charcoal-sky"
-        src="https://media.base44.com/images/public/6aa94dfb715e7d446231f544/364c01099_generated_b5fa72e8.jpg"
+        src="https://media.base44.com/images/public/6aa94dfb715e7d446231f544/3996d7937_generated_06560cca.jpg"
         alt=""
       />
       <div className="charcoal-shade" aria-hidden="true" />
+      <div className="weekly-hero-glow" aria-hidden="true" />
       <div className="charcoal-inner">
         <div className="charcoal-copy">
           <p className="charcoal-eyebrow">
@@ -71,7 +72,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           </p>
           <h1 className="charcoal-title">{course.title}</h1>
           <p className="charcoal-meta">
-            {instructor ? <>{instructor.name} <span aria-hidden="true">·</span> </> : null}
+            {instructor ? <b>{instructor.name}</b> : null}
             <ClockLabel seconds={totalSecs} />
           </p>
           <p className="charcoal-description">{course.subtitle || course.description}</p>

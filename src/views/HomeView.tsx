@@ -145,7 +145,7 @@ export const HomeView: React.FC = () => {
         />
       ) : (
         <section className="weekly-empty-hero" aria-busy={isLoading}>
-          <img className="weekly-hero-bg" src="https://media.base44.com/images/public/6aa94dfb715e7d446231f544/364c01099_generated_b5fa72e8.jpg" alt="" />
+          <img className="weekly-hero-bg" src="https://media.base44.com/images/public/6aa94dfb715e7d446231f544/3996d7937_generated_06560cca.jpg" alt="" />
           <div className="weekly-hero-scrim" aria-hidden="true" />
           <div className="weekly-empty-copy">
             <span className="weekly-curation-mark" aria-hidden="true">✦</span>
@@ -163,13 +163,7 @@ export const HomeView: React.FC = () => {
         </section>
       )}
 
-      <div className="relative z-10">
-        <div className="soundstage-console-dock max-w-[1400px] mx-auto px-4 sm:px-8 lg:px-10 mb-8">
-          <div className="soundstage-console">
-            <LibraryPlanBanner />
-            <LibraryQuickActions />
-          </div>
-        </div>
+      <div className="weekly-rails relative z-10">
 
         {isLoading ? <CatalogLoadingNotice /> : null}
 
@@ -193,6 +187,13 @@ export const HomeView: React.FC = () => {
         ) : courses.length > 0 ? (
           <SectionError message="לא הצלחנו לטעון את ההמלצות" onRetry={() => void reloadCatalog()} />
         ) : null}
+
+        <div className="soundstage-console-dock">
+          <div className="soundstage-console">
+            <LibraryPlanBanner />
+            <LibraryQuickActions />
+          </div>
+        </div>
 
         <div id="rail-continue" className="soundstage-split-stage max-w-[1400px] mx-auto">
           {continueList.length > 0 ? (
