@@ -21,6 +21,11 @@
   color: var(--tone-cream);
 }
 
+/* Matte black chapters; all other slides retain their midnight palette. */
+.webinar-stage-page .webinar-editorial-grid > :is(#hosts, #webinar-fit, #webinar-register-bottom) {
+  --tone-space: #080809;
+}
+
 .webinar-flow-page .webinar-neural-hero::after {
   background: linear-gradient(180deg, transparent, var(--tone-space));
 }
