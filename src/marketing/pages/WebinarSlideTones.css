@@ -1,7 +1,7 @@
 /* One space-and-gold palette for the webinar. Layout and interactions live
    in the existing slide styles; this final layer owns only their colors. */
 .webinar-stage-page {
-  --tone-space: #0b1026;
+  --tone-space: #090d18;
   --tone-cream: #f5f2e9;
   --tone-cream-soft: #c5c4c6;
   --tone-cream-mute: #aaaab5;
@@ -21,19 +21,6 @@
   color: var(--tone-cream);
 }
 
-/* Match neighboring navy edges while keeping each chapter's black center.
-   Paint on the section itself so the fade never covers text or controls. */
-.webinar-stage-page .webinar-editorial-grid > :is(#hosts, #webinar-fit, #webinar-register-bottom) {
-  --tone-space: #080809;
-  background: linear-gradient(
-    180deg,
-    #0b1026 0%,
-    var(--tone-space) min(160px, 24%),
-    var(--tone-space) max(calc(100% - 160px), 76%),
-    #0b1026 100%
-  );
-}
-
 .webinar-flow-page .webinar-neural-hero::after {
   background: linear-gradient(180deg, transparent, var(--tone-space));
 }
@@ -51,7 +38,7 @@
 
 .webinar-stage-page #problem.webinar-neural-afterglow .webinar-neural-plate,
 .webinar-stage-page .webinar-editorial-grid :is(#webinar-fit, #webinar-faq, #webinar-register-bottom) .glass-card {
-  background: linear-gradient(180deg, #141b34, #10162d);
+  background: linear-gradient(180deg, #111827, #0e1420);
   border-color: rgb(140 120 200 / 30%);
   color: var(--tone-cream);
   box-shadow: 0 18px 50px rgb(0 0 0 / 20%);
