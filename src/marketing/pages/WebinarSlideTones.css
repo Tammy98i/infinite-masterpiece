@@ -21,21 +21,27 @@
   color: var(--tone-cream);
 }
 
-/* Matte black chapters; all other slides retain their midnight palette. */
+/* Match neighboring navy edges while keeping each chapter's black center.
+   Paint on the section itself so the fade never covers text or controls. */
 .webinar-stage-page .webinar-editorial-grid > :is(#hosts, #webinar-fit, #webinar-register-bottom) {
   --tone-space: #080809;
+  background: linear-gradient(
+    180deg,
+    #0b1026 0%,
+    var(--tone-space) min(160px, 24%),
+    var(--tone-space) max(calc(100% - 160px), 76%),
+    #0b1026 100%
+  );
 }
 
 .webinar-flow-page .webinar-neural-hero::after {
   background: linear-gradient(180deg, transparent, var(--tone-space));
 }
 
-.webinar-flow-page .webinar-editorial-grid > :is(#hosts, .team-galaxy, #webinar-fit, #webinar-faq, #webinar-register-bottom)::before {
-  background: linear-gradient(90deg, transparent, rgb(140 120 200 / 24%), transparent);
-}
-
+/* No divider lines or foreground veils at the now-continuous seams. */
+.webinar-flow-page .webinar-editorial-grid > :is(#hosts, .team-galaxy, #webinar-fit, #webinar-faq, #webinar-register-bottom)::before,
 .webinar-flow-page .webinar-editorial-grid > :is(#hosts, .team-galaxy, #webinar-fit, #webinar-faq)::after {
-  background: linear-gradient(180deg, transparent, var(--tone-space));
+  background: none;
 }
 
 /* Remove the former amber registration wash, not the content above it. */
