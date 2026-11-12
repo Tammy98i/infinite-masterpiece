@@ -14,8 +14,8 @@
 
 .library-catalog .library-flow-page .library-hero {
   height: auto;
-  min-height: 660px;
-  padding-block: calc(var(--site-header-h, 80px) + 4rem) 6rem;
+  min-height: 540px;
+  padding-block: calc(var(--site-header-h, 80px) + 2rem) 4rem;
 }
 
 .library-flow-page .library-hero > div:last-child {
@@ -24,9 +24,9 @@
 }
 
 .library-flow-page .library-hero h1 {
-  font-size: clamp(2.5rem, 5vw, 4rem);
+  font-size: clamp(2.5rem, 4.2vw, 3.5rem);
   line-height: 1.16;
-  max-width: 12ch;
+  max-width: 16ch;
   margin-bottom: 1.25rem;
 }
 
@@ -96,8 +96,8 @@
   border-inline-start: 2px solid #b79043;
   border-radius: .85rem;
   background: linear-gradient(120deg, rgba(16, 33, 55, .96), rgba(8, 19, 37, .96));
-  padding: 1.25rem 1.5rem;
-  box-shadow: 0 12px 32px rgba(0, 0, 0, .22);
+  padding: .75rem 1.25rem;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
 }
 
 .library-flow-page .library-plan-strip p + p {
@@ -166,14 +166,14 @@
 .library-catalog .library-flow-page .library-poster-title-dock {
   position: relative;
   inset: auto;
-  padding: .85rem 1rem;
+  padding: 1rem 1.1rem;
   background: var(--library-surface);
 }
 
 .library-flow-page .library-poster-title-dock > div:first-child {
-  font-size: .95rem;
-  line-height: 1.5;
-  min-height: 3em;
+  font-size: 1rem;
+  line-height: 1.6;
+  min-height: 3.2em;
   -webkit-line-clamp: 2;
   color: var(--library-paper);
 }
@@ -255,6 +255,51 @@
 
 .library-flow-page #topics-heading {
   scroll-margin-top: calc(var(--site-header-h, 80px) + 1.5rem);
+}
+
+/* Quiet content backdrop; the hero image and site starfield stay intact. */
+.library-catalog .library-flow-page > .relative.z-10 {
+  background: linear-gradient(to bottom, transparent, rgba(5, 12, 27, .38) 10rem);
+}
+
+.library-catalog .library-flow-page .library-plan-strip .library-plan-cta {
+  color: var(--library-paper) !important;
+  background: transparent !important;
+  border-color: rgba(189, 200, 217, .4);
+  box-shadow: none;
+  min-height: 44px;
+}
+
+.library-catalog .library-flow-page .library-plan-strip .library-plan-cta:hover {
+  background: #192b44 !important;
+  border-color: #dfc47d;
+}
+
+.library-flow-page #rail-popular .library-course-card > span {
+  font-size: 2rem;
+  bottom: 1.25rem;
+  color: #bda66d;
+}
+
+.library-flow-page #rail-popular .library-course-card > div {
+  margin-inline-end: 2rem;
+}
+
+.library-flow-page section[aria-labelledby="topics-heading"] h3 {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.library-flow-page section[aria-labelledby="topics-heading"] .library-poster > .relative {
+  padding: .85rem;
+}
+
+.library-flow-page section[aria-labelledby="topics-heading"] .library-poster > .absolute {
+  background: linear-gradient(to top, rgba(5, 12, 27, .96), rgba(5, 12, 27, .65) 65%, rgba(5, 12, 27, .1));
+}
+
+.library-flow-page section[aria-labelledby="topics-heading"] .library-topic-count {
+  color: #dfc47d;
 }
 
 /* Palette overrides only while the library opening screen is mounted. */
