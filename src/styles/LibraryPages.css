@@ -1,0 +1,229 @@
+/* Library-wide layouts. Do not change player geometry, access states or marketing pages. */
+.vod-app.library-catalog .library-catalog-page {
+  color: var(--library-paper);
+}
+
+.vod-app.library-catalog .library-catalog-page h1 {
+  font-size: clamp(2rem, 4.2vw, 3.5rem);
+  line-height: 1.2;
+  overflow-wrap: anywhere;
+}
+
+.vod-app.library-catalog .library-catalog-page :is(p, li) {
+  line-height: 1.65;
+}
+
+.vod-app.library-catalog .library-catalog-page :is(.text-white\/35, .text-white\/40, .text-white\/45, .text-white\/50, .text-white\/55, .text-zinc-400) {
+  color: var(--library-muted);
+}
+
+.vod-app.library-catalog .library-catalog-page :is(.library-page-hero, .library-page-toolbar, .library-empty-panel, .library-instructor-card) {
+  border: 1px solid var(--library-line);
+  border-radius: .85rem;
+  background-color: var(--library-surface);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, .2);
+}
+
+.vod-app.library-catalog .library-page-hero {
+  padding: clamp(1.25rem, 3vw, 2rem);
+}
+
+.vod-app.library-catalog .library-page-toolbar {
+  padding: 1rem;
+  gap: 1rem;
+}
+
+.vod-app.library-catalog .library-catalog-page :is(.library-page-chip, select, .library-search-field) {
+  border-radius: .65rem;
+  min-height: 44px;
+}
+
+.vod-app.library-catalog .library-catalog-page :is(select, .library-search-field) {
+  background: var(--library-surface);
+  color: var(--library-paper);
+  border: 1px solid rgba(189, 200, 217, .4);
+  color-scheme: dark;
+  max-width: 100%;
+}
+
+.vod-app.library-catalog .library-search-field::placeholder {
+  color: var(--library-muted);
+}
+
+/* Override the legacy editorial rule that makes every bg-white surface translucent. */
+.vod-app.library-catalog .library-catalog-page .bg-white {
+  background-color: var(--library-paper) !important;
+  color: #091426 !important;
+}
+
+.vod-app.library-catalog .library-catalog-page .bg-white .text-black {
+  color: #091426 !important;
+}
+
+.vod-app.library-catalog[data-library-view="quiz"] .library-page-hero .border-white {
+  border-color: #dfc47d !important;
+}
+
+.vod-app.library-catalog .library-empty-panel {
+  padding: 1.75rem;
+}
+
+.vod-app.library-catalog .library-empty-cta {
+  border-radius: .65rem !important;
+  background: var(--library-paper) !important;
+  color: #091426 !important;
+  min-height: 44px;
+}
+
+/* Empty-list recommendation rails must shrink inside their parent grid. */
+.vod-app.library-catalog .library-catalog-page > .grid > .library-spacious-section {
+  min-width: 0;
+  max-width: 100%;
+}
+
+/* Rail cards keep their fixed width; grid cards fit their actual column. */
+.vod-app.library-catalog .library-page-grid {
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 220px), 1fr));
+  gap: 1.25rem;
+  align-items: start;
+}
+
+.vod-app.library-catalog .library-page-grid .library-course-card {
+  width: 100%;
+  min-width: 0;
+}
+
+.vod-app.library-catalog :is(.library-course-billboard, .library-instructor-billboard) {
+  min-height: 0;
+  padding-block: calc(var(--site-header-h, 80px) + 2rem) 4rem;
+}
+
+.vod-app.library-catalog .library-instructor-billboard > .absolute {
+  background: var(--library-surface);
+}
+
+.vod-app.library-catalog .library-instructor-billboard .library-instructor-frame {
+  max-width: 280px;
+}
+
+.vod-app.library-catalog .library-course-veil-b {
+  background: linear-gradient(to left, rgba(5, 12, 27, .92), rgba(5, 12, 27, .55) 60%, rgba(5, 12, 27, .16));
+}
+
+.vod-app.library-catalog .library-course-stage {
+  border: 1px solid var(--library-line);
+  border-radius: .85rem;
+}
+
+.vod-app.library-catalog .library-episode-row {
+  border: 1px solid var(--library-line);
+  border-radius: .65rem;
+  margin-bottom: .5rem;
+  background: rgba(12, 25, 45, .86);
+}
+
+.vod-app.library-catalog .library-episode-row:hover,
+.vod-app.library-catalog .library-episode-row.is-active {
+  background: #192b44;
+  border-color: #b79043;
+}
+
+.vod-app.library-catalog .library-instructor-index .library-instructor-frame > div:last-child {
+  inset-inline: 1rem;
+  bottom: 1rem;
+}
+
+.vod-app.library-catalog .library-instructor-index .library-instructor-frame > div:last-child > div:first-child {
+  font-size: 1rem;
+  line-height: 1.5;
+}
+
+.vod-app.library-catalog[data-library-view="history"] .divide-y > button {
+  padding: 1rem;
+  margin-bottom: .75rem;
+  border: 1px solid var(--library-line);
+  border-radius: .85rem;
+  background: rgba(12, 25, 45, .88);
+}
+
+.vod-app.library-catalog[data-library-view="quiz"] .library-page-hero button {
+  border-radius: .65rem;
+}
+
+.vod-app.library-catalog[data-library-view="quiz"] .library-page-hero button .flex.gap-1 {
+  flex-wrap: wrap;
+}
+
+/* Keep account controls consistent despite the legacy desk-wide square reset. */
+.vod-app.library-catalog[data-library-view="profile"] .editorial-library-header .rounded-full {
+  border-radius: 9999px !important;
+}
+
+.vod-app.library-catalog[data-library-view="profile"] .library-catalog-page :is(button, a)[class*="rounded-full"] {
+  border-radius: .65rem !important;
+}
+
+.vod-app.library-catalog[data-library-view="profile"] .library-catalog-page img.rounded-full {
+  border-radius: 9999px !important;
+}
+
+.vod-app.library-catalog .library-catalog-page .bg-\[\#b79043\] {
+  background: var(--library-paper) !important;
+  color: #091426 !important;
+}
+
+/* Account and staff surfaces share the palette, without changing desk layouts. */
+.vod-app.library-catalog.crm-desk :is(.crm-desk-panel, .crm-kpi, .crm-poster),
+.vod-app.library-catalog[data-library-view="profile"] section.border {
+  background: var(--library-surface);
+  border-color: var(--library-line);
+  border-radius: .85rem;
+}
+
+.vod-app.library-catalog.crm-desk :is(.crm-hero-play, .crm-hero-more) {
+  border-radius: .65rem;
+  min-height: 44px;
+}
+
+.vod-app.library-catalog.crm-desk .crm-hero-play {
+  background: var(--library-paper);
+  color: #091426;
+}
+
+.vod-app.library-catalog[data-library-view="watch"] .drawer-dock-start {
+  background: rgba(12, 25, 45, .98);
+  border-color: var(--library-line);
+  color: var(--library-paper);
+}
+
+.vod-app.library-catalog :is(.library-catalog-page, .crm-desk) :is(button, a, input, select):focus-visible {
+  outline: 2px solid #dfc47d;
+  outline-offset: 3px;
+}
+
+@media (max-width: 767px) {
+  .vod-app.library-catalog .library-page-grid {
+    grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr));
+    gap: 1rem;
+  }
+
+  .vod-app.library-catalog :is(.library-course-billboard, .library-instructor-billboard) {
+    padding-block: calc(var(--site-header-h, 72px) + 1.5rem) 4rem;
+  }
+
+  .vod-app.library-catalog .library-instructor-billboard .library-instructor-frame {
+    max-width: 220px;
+    margin-inline: auto;
+  }
+
+  .vod-app.library-catalog .library-page-toolbar > * {
+    min-width: 0;
+    max-width: 100%;
+  }
+
+  .vod-app.library-catalog[data-library-view="mylist"] .library-catalog-page > .flex,
+  .vod-app.library-catalog[data-library-view="history"] .library-catalog-page > .flex {
+    flex-wrap: wrap;
+    gap: 1rem;
+  }
+}

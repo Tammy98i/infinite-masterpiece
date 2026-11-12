@@ -1,5 +1,5 @@
-/* Home-only library refresh. Shared course/detail screens keep their styling. */
-.library-catalog .library-flow-page {
+/* Shared library palette and components; page-specific layouts live in LibraryPages.css. */
+.vod-app.library-catalog {
   --library-paper: #f5f1e9;
   --library-muted: #bdc8d9;
   --library-surface: #0c192d;
@@ -7,58 +7,58 @@
   color: var(--library-paper);
 }
 
-.vod-app.library-catalog .library-flow-page :is(h1, h2, h3) {
+.vod-app.library-catalog :is(.library-flow-page, .library-catalog-page) :is(h1, h2, h3) {
   color: var(--library-paper);
   text-wrap: balance;
 }
 
-.library-catalog .library-flow-page .library-hero {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-hero {
   height: auto;
   min-height: 540px;
   padding-block: calc(var(--site-header-h, 80px) + 2rem) 4rem;
 }
 
-.library-flow-page .library-hero > div:last-child {
+:is(.library-flow-page, .library-catalog-page) .library-hero > div:last-child {
   max-width: 42rem;
   margin-inline: 0 auto;
 }
 
-.library-flow-page .library-hero h1 {
+:is(.library-flow-page, .library-catalog-page) .library-hero h1 {
   font-size: clamp(2.5rem, 4.2vw, 3.5rem);
   line-height: 1.16;
   max-width: 16ch;
   margin-bottom: 1.25rem;
 }
 
-.library-flow-page .library-hero p {
+:is(.library-flow-page, .library-catalog-page) .library-hero p {
   line-height: 1.7;
 }
 
-.library-flow-page .library-hero p:first-child {
+:is(.library-flow-page, .library-catalog-page) .library-hero p:first-child {
   color: #dfc47d;
   font-size: .8rem;
   margin-bottom: 1rem;
 }
 
-.library-flow-page .library-hero p.line-clamp-2 {
+:is(.library-flow-page, .library-catalog-page) .library-hero p.line-clamp-2 {
   font-size: 1rem;
   color: #e1e5ed;
   max-width: 48ch;
   margin-bottom: 1.75rem;
 }
 
-.library-catalog .library-flow-page .library-hero-veil-side {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-hero-veil-side {
   width: 100%;
   margin-inline: 0;
   background: linear-gradient(to left, rgba(5, 12, 27, .94), rgba(5, 12, 27, .72) 55%, transparent);
 }
 
-.library-catalog .library-flow-page .library-hero-veil-bottom {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-hero-veil-bottom {
   background: linear-gradient(180deg, rgba(5, 12, 27, .12) 25%, rgba(5, 12, 27, .38) 65%, #050c1b 100%);
 }
 
-.library-catalog .library-flow-page .library-hero-play,
-.library-catalog .library-flow-page .library-plan-strip .library-plan-cta {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-hero-play,
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-plan-strip .library-plan-cta {
   color: #091426 !important;
   background: var(--library-paper) !important;
   border: 1px solid var(--library-paper);
@@ -68,12 +68,12 @@
   transition: background-color .2s ease, border-color .2s ease;
 }
 
-.library-catalog .library-flow-page .library-hero-play:hover,
-.library-catalog .library-flow-page .library-plan-strip .library-plan-cta:hover {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-hero-play:hover,
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-plan-strip .library-plan-cta:hover {
   background: #e6dfd2 !important;
 }
 
-.library-catalog .library-flow-page .library-hero-more {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-hero-more {
   color: var(--library-paper);
   background: rgba(12, 25, 45, .88);
   border: 1px solid rgba(245, 241, 233, .35);
@@ -81,17 +81,17 @@
   min-height: 48px;
 }
 
-.library-catalog .library-flow-page .library-hero-more:hover {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-hero-more:hover {
   background: #192b44;
   border-color: #dfc47d;
 }
 
-.library-catalog .library-flow-page .library-plan-banner {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-plan-banner {
   padding-block: 0 1rem;
   margin-bottom: .5rem;
 }
 
-.library-catalog .library-flow-page .library-plan-strip {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-plan-strip {
   border: 1px solid var(--library-line);
   border-inline-start: 2px solid #b79043;
   border-radius: .85rem;
@@ -100,43 +100,43 @@
   box-shadow: 0 4px 12px rgba(0, 0, 0, .12);
 }
 
-.library-flow-page .library-plan-strip p + p {
+:is(.library-flow-page, .library-catalog-page) .library-plan-strip p + p {
   color: #dfc47d;
 }
 
-.library-catalog .library-flow-page .library-spacious-section {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-spacious-section {
   padding-block: 1.75rem;
 }
 
-.library-flow-page .library-island::before {
+:is(.library-flow-page, .library-catalog-page) .library-island::before {
   inset-inline: 2rem;
   background: linear-gradient(90deg, transparent, var(--library-line), transparent);
 }
 
-.library-catalog .library-flow-page .library-rail-title {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-rail-title {
   font-size: clamp(1.2rem, 2vw, 1.5rem);
   font-weight: 600;
   line-height: 1.4;
   margin-bottom: .6rem;
 }
 
-.library-catalog .library-flow-page #rail-recommended {
+.library-catalog :is(.library-flow-page, .library-catalog-page) #rail-recommended {
   background: linear-gradient(110deg, rgba(26, 32, 61, .48), rgba(9, 25, 43, .76));
   border-block: 1px solid var(--library-line);
   margin-block: .5rem;
   padding-block: 2rem;
 }
 
-.library-catalog .library-flow-page .library-rail-scroller {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-rail-scroller {
   gap: 1rem;
   padding-block: .65rem 1rem;
 }
 
-.library-flow-page .library-course-card {
+:is(.library-flow-page, .library-catalog-page) .library-course-card {
   width: 248px;
 }
 
-.library-catalog .library-flow-page .library-poster {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-poster {
   border: 1px solid var(--library-line);
   border-radius: .8rem;
   background: var(--library-surface);
@@ -144,33 +144,33 @@
   transition: border-color .2s ease, box-shadow .2s ease;
 }
 
-.library-catalog .library-flow-page .library-poster:hover,
-.library-catalog .library-flow-page .library-poster:focus-within {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-poster:hover,
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-poster:focus-within {
   transform: none;
   border-color: rgba(223, 196, 125, .7);
   box-shadow: 0 10px 24px rgba(0, 0, 0, .38);
 }
 
 /* Keep the existing title visible below the image, with room for two lines. */
-.library-flow-page .library-course-card .library-poster > button:first-child > div {
+:is(.library-flow-page, .library-catalog-page) .library-course-card .library-poster > button:first-child > div {
   aspect-ratio: auto;
   background: var(--library-surface);
 }
 
-.library-flow-page .library-course-card .library-poster img {
+:is(.library-flow-page, .library-catalog-page) .library-course-card .library-poster img {
   aspect-ratio: 16 / 9;
   height: auto;
   object-fit: cover;
 }
 
-.library-catalog .library-flow-page .library-poster-title-dock {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-poster-title-dock {
   position: relative;
   inset: auto;
   padding: 1rem 1.1rem;
   background: var(--library-surface);
 }
 
-.library-flow-page .library-poster-title-dock > div:first-child {
+:is(.library-flow-page, .library-catalog-page) .library-poster-title-dock > div:first-child {
   font-size: 1rem;
   line-height: 1.6;
   min-height: 3.2em;
@@ -178,41 +178,41 @@
   color: var(--library-paper);
 }
 
-.library-catalog .library-flow-page .library-poster-meta {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-poster-meta {
   padding: 1rem;
   gap: .4rem;
   background: linear-gradient(transparent, rgba(5, 12, 27, .96) 65%);
 }
 
-.library-flow-page .library-poster-meta b {
+:is(.library-flow-page, .library-catalog-page) .library-poster-meta b {
   font-size: .95rem;
   line-height: 1.5;
   color: var(--library-paper);
 }
 
-.library-flow-page .library-poster-meta span {
+:is(.library-flow-page, .library-catalog-page) .library-poster-meta span {
   font-size: .8rem;
   color: var(--library-muted);
 }
 
-.library-catalog .library-flow-page .library-poster-list,
-.library-catalog .library-flow-page .rail-control {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-poster-list,
+.library-catalog :is(.library-flow-page, .library-catalog-page) .rail-control {
   border-radius: .6rem !important;
   background: rgba(8, 20, 38, .94);
   border-color: rgba(245, 241, 233, .32);
   color: var(--library-paper);
 }
 
-.library-catalog .library-flow-page .rail-control {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .rail-control {
   opacity: 1;
 }
 
-.library-flow-page .library-poster-play-inner {
+:is(.library-flow-page, .library-catalog-page) .library-poster-play-inner {
   border-radius: 50%;
   background: var(--library-paper);
 }
 
-.library-catalog .library-flow-page .library-quick-action {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-quick-action {
   border: 1px solid var(--library-line);
   border-radius: .8rem;
   padding: 1.25rem 1rem;
@@ -220,49 +220,49 @@
   box-shadow: 0 6px 18px rgba(0, 0, 0, .2);
 }
 
-.library-flow-page .library-quick-action > span:first-child {
+:is(.library-flow-page, .library-catalog-page) .library-quick-action > span:first-child {
   color: #91c5c5;
   background: rgba(90, 163, 164, .1);
 }
 
-.library-flow-page .library-quick-action:nth-child(3) > span:first-child,
-.library-flow-page .library-quick-action:nth-child(4) > span:first-child {
+:is(.library-flow-page, .library-catalog-page) .library-quick-action:nth-child(3) > span:first-child,
+:is(.library-flow-page, .library-catalog-page) .library-quick-action:nth-child(4) > span:first-child {
   color: #b8afd8;
   background: rgba(155, 136, 193, .1);
 }
 
-.library-flow-page .library-quick-action strong {
+:is(.library-flow-page, .library-catalog-page) .library-quick-action strong {
   color: var(--library-paper);
   font-size: .95rem;
 }
 
-.library-flow-page .library-quick-action strong + span {
+:is(.library-flow-page, .library-catalog-page) .library-quick-action strong + span {
   color: var(--library-muted);
   font-size: .8rem;
   line-height: 1.5;
 }
 
-.library-catalog .library-flow-page .library-quick-action:hover {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-quick-action:hover {
   background: #192b44;
   border-color: rgba(223, 196, 125, .6);
 }
 
-.library-flow-page .library-instructor-frame {
+:is(.library-flow-page, .library-catalog-page) .library-instructor-frame {
   border: 1px solid var(--library-line);
   border-radius: .8rem;
   box-shadow: 0 8px 20px rgba(0, 0, 0, .28);
 }
 
-.library-flow-page #topics-heading {
+:is(.library-flow-page, .library-catalog-page) #topics-heading {
   scroll-margin-top: calc(var(--site-header-h, 80px) + 1.5rem);
 }
 
 /* Quiet content backdrop; the hero image and site starfield stay intact. */
-.library-catalog .library-flow-page > .relative.z-10 {
+.library-catalog :is(.library-flow-page, .library-catalog-page) > .relative.z-10 {
   background: linear-gradient(to bottom, transparent, rgba(5, 12, 27, .38) 10rem);
 }
 
-.library-catalog .library-flow-page .library-plan-strip .library-plan-cta {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-plan-strip .library-plan-cta {
   color: var(--library-paper) !important;
   background: transparent !important;
   border-color: rgba(189, 200, 217, .4);
@@ -270,103 +270,103 @@
   min-height: 44px;
 }
 
-.library-catalog .library-flow-page .library-plan-strip .library-plan-cta:hover {
+.library-catalog :is(.library-flow-page, .library-catalog-page) .library-plan-strip .library-plan-cta:hover {
   background: #192b44 !important;
   border-color: #dfc47d;
 }
 
-.library-flow-page #rail-popular .library-course-card > span {
+:is(.library-flow-page, .library-catalog-page) #rail-popular .library-course-card > span {
   font-size: 2rem;
   bottom: 1.25rem;
   color: #bda66d;
 }
 
-.library-flow-page #rail-popular .library-course-card > div {
+:is(.library-flow-page, .library-catalog-page) #rail-popular .library-course-card > div {
   margin-inline-end: 2rem;
 }
 
-.library-flow-page section[aria-labelledby="topics-heading"] h3 {
+:is(.library-flow-page, .library-catalog-page) section[aria-labelledby="topics-heading"] h3 {
   font-size: 1rem;
   line-height: 1.5;
 }
 
-.library-flow-page section[aria-labelledby="topics-heading"] .library-poster > .relative {
+:is(.library-flow-page, .library-catalog-page) section[aria-labelledby="topics-heading"] .library-poster > .relative {
   padding: .85rem;
 }
 
-.library-flow-page section[aria-labelledby="topics-heading"] .library-poster > .absolute {
+:is(.library-flow-page, .library-catalog-page) section[aria-labelledby="topics-heading"] .library-poster > .absolute {
   background: linear-gradient(to top, rgba(5, 12, 27, .96), rgba(5, 12, 27, .65) 65%, rgba(5, 12, 27, .1));
 }
 
-.library-flow-page section[aria-labelledby="topics-heading"] .library-topic-count {
+:is(.library-flow-page, .library-catalog-page) section[aria-labelledby="topics-heading"] .library-topic-count {
   color: #dfc47d;
 }
 
-/* Palette overrides only while the library opening screen is mounted. */
-.vod-app.library-catalog:has(.library-flow-page) .editorial-library-header.is-solid,
-.vod-app.library-catalog:has(.library-flow-page) .editorial-library-bottom-nav {
+/* Shared navigation palette across catalog, detail and account screens. */
+.vod-app.library-catalog:has(:is(.library-flow-page, .library-catalog-page)) .editorial-library-header.is-solid,
+.vod-app.library-catalog:has(:is(.library-flow-page, .library-catalog-page)) .editorial-library-bottom-nav {
   background: rgba(7, 17, 34, .96) !important;
   border-color: rgba(189, 200, 217, .18) !important;
 }
 
-.vod-app:has(.library-flow-page) .editorial-library-header :is(input, [role="listbox"], nav[aria-label="ניווט נייד — ספרייה"]) {
+.vod-app:has(:is(.library-flow-page, .library-catalog-page)) .editorial-library-header :is(input, [role="listbox"], nav[aria-label="ניווט נייד — ספרייה"]) {
   background: #0c192d;
   color: #f5f1e9;
 }
 
-.vod-app:has(.library-flow-page) .editorial-library-header input::placeholder {
+.vod-app:has(:is(.library-flow-page, .library-catalog-page)) .editorial-library-header input::placeholder {
   color: #bdc8d9;
 }
 
 @media (min-width: 1024px) {
-  .library-flow-page .library-island :is(.px-4, .sm\:px-8),
-  .library-flow-page .library-plan-banner {
+  :is(.library-flow-page, .library-catalog-page) .library-island :is(.px-4, .sm\:px-8),
+  :is(.library-flow-page, .library-catalog-page) .library-plan-banner {
     padding-inline: 2.5rem;
   }
 }
 
 @media (max-width: 767px) {
-  .vod-app:has(.library-flow-page) .editorial-library-bottom-nav {
+  .vod-app:has(:is(.library-flow-page, .library-catalog-page)) .editorial-library-bottom-nav {
     inset-inline: 0;
   }
 
-  .library-catalog .library-flow-page .library-hero {
+  .library-catalog :is(.library-flow-page, .library-catalog-page) .library-hero {
     min-height: 580px;
     padding-block: calc(var(--site-header-h, 72px) + 3rem) 5rem;
   }
 
-  .library-catalog .library-flow-page .library-hero-veil-side {
+  .library-catalog :is(.library-flow-page, .library-catalog-page) .library-hero-veil-side {
     background: linear-gradient(to left, rgba(5, 12, 27, .88), rgba(5, 12, 27, .5));
   }
 
-  .library-flow-page .library-hero h1 {
+  :is(.library-flow-page, .library-catalog-page) .library-hero h1 {
     font-size: clamp(2rem, 8.5vw, 3rem);
   }
 
-  .library-catalog .library-flow-page .library-spacious-section {
+  .library-catalog :is(.library-flow-page, .library-catalog-page) .library-spacious-section {
     padding-block: 1.25rem;
   }
 
-  .library-catalog .library-flow-page .library-plan-strip {
+  .library-catalog :is(.library-flow-page, .library-catalog-page) .library-plan-strip {
     padding: 1rem;
   }
 
-  .library-catalog .library-flow-page .library-rail-scroller {
+  .library-catalog :is(.library-flow-page, .library-catalog-page) .library-rail-scroller {
     gap: .75rem;
   }
 
-  .library-flow-page .library-course-card {
+  :is(.library-flow-page, .library-catalog-page) .library-course-card {
     width: 228px;
   }
 
-  .library-catalog .library-flow-page .library-quick-action {
+  .library-catalog :is(.library-flow-page, .library-catalog-page) .library-quick-action {
     align-items: flex-start;
     flex-direction: column;
     gap: .75rem;
     padding: 1rem;
   }
 
-  .library-flow-page .library-island::before {
+  :is(.library-flow-page, .library-catalog-page) .library-island::before {
     inset-inline: 1rem;
   }
 }
