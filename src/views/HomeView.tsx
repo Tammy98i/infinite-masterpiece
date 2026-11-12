@@ -246,6 +246,18 @@ export const HomeView: React.FC = () => {
               sectionName="weekly"
             />
 
+            <figure className="mx-auto my-8 w-full max-w-xl px-4 sm:px-8">
+              <img
+                src="https://media.base44.com/images/public/6aa94dfb715e7d446231f544/e5578ad0d_generated_a97989bf.png"
+                alt="איור של חללית חוקרת בין כוכבים וכוכבי לכת"
+                width={1024}
+                height={768}
+                loading="lazy"
+                decoding="async"
+                className="block h-auto w-full"
+              />
+            </figure>
+
             <TopicsGrid />
             <LecturersRow />
           </>
