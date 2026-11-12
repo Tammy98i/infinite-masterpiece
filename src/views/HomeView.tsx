@@ -20,6 +20,7 @@ import { trackEvent } from '../utils/analytics';
 import { LibraryQuickActions } from '../components/LibraryQuickActions';
 import { CatalogLoadingNotice } from '../components/CatalogLoadingNotice';
 import '../styles/LibraryFlowPolish.css';
+import '../styles/LibraryVisualRefresh.css';
 
 export const HomeView: React.FC = () => {
   const {

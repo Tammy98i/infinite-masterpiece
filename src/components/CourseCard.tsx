@@ -119,7 +119,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
 
   return (
     <div
-      className={`relative shrink-0 text-start ${widthClass}`}
+      className={`library-course-card relative shrink-0 text-start ${widthClass}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
