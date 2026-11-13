@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Search } from 'lucide-react';
-import { searchCourses, searchRecoveryQueries } from '../utils/searchCatalog';
+import { normalizeSearch, searchCourses, searchRecoveryQueries } from '../utils/searchCatalog';
 import { SearchRecovery } from '../components/SearchRecovery';
 import { LIBRARY_TOPIC_IDS, getCardAccessState } from '../utils/libraryHome';
 import { formatClock } from '../utils/time';
@@ -20,11 +20,12 @@ export const SearchView: React.FC = () => {
   const { searchQuery, setSearchQuery, courses, instructors, categories, user, setView } = useApp();
   const [filters, setFilters] = useState<SearchFilterState>(EMPTY_FILTERS);
   const query = searchQuery.trim();
-  const queryLower = query.toLowerCase();
+  // Match against normalized text, but keep the user's punctuation/casing inside its bidi isolate.
+  const normalizedQuery = normalizeSearch(query);
 
   const baseResults = useMemo(
-    () => (queryLower.length >= 1 ? searchCourses(courses, instructors, categories, queryLower) : []),
-    [courses, instructors, categories, queryLower]
+    () => searchCourses(courses, instructors, categories, normalizedQuery),
+    [courses, instructors, categories, normalizedQuery]
   );
 
   const results = useMemo(() => {
@@ -40,9 +41,10 @@ export const SearchView: React.FC = () => {
   }, [baseResults, filters, user, courses]);
   const activeFilterCount = [filters.duration, filters.level, filters.access].filter(value => value !== 'all').length;
 
+  const filtersHideResults = baseResults.length > 0 && results.length === 0 && activeFilterCount > 0;
   const recoveryQueries = useMemo(
-    () => (query && baseResults.length === 0 ? searchRecoveryQueries(courses, instructors, categories, query) : []),
-    [courses, instructors, categories, query, baseResults.length]
+    () => (normalizedQuery && baseResults.length === 0 ? searchRecoveryQueries(courses, instructors, categories, normalizedQuery) : []),
+    [courses, instructors, categories, normalizedQuery, baseResults.length]
   );
 
   const popularTopics = categories.filter((c) =>
@@ -79,7 +81,7 @@ export const SearchView: React.FC = () => {
         <p id="library-search-help" className="mt-3 text-sm text-[#bdc8d9] text-start">החיפוש כולל גם מילים נרדפות ושגיאות כתיב קלות, ומציג התאמות מדויקות תחילה.</p>
       </div>
 
-      {query ? (
+      {normalizedQuery ? (
         <div>
           <h2 className="text-lg font-semibold mb-4 text-start border-b border-white/10 pb-3 flex items-center justify-between gap-3">
             <span className="min-w-0 break-words">תוצאות עבור <bdi dir="auto">{query}</bdi></span>
@@ -102,7 +104,7 @@ export const SearchView: React.FC = () => {
                       position={index}
                     />
                     <p className="sr-only">
-                      {instructor?.name || 'מרצה'} · {formatClock(duration)} · {ACCESS_LABEL[access]}
+                      <bdi dir="auto">{instructor?.name || 'מרצה'}</bdi> · <bdi dir="ltr">{formatClock(duration)}</bdi> · {ACCESS_LABEL[access]}
                     </p>
                   </li>
                 );
@@ -112,9 +114,9 @@ export const SearchView: React.FC = () => {
             <EmptyState
               eyebrow="חיפוש"
               title="לא מצאנו הרצאה שמתאימה לחיפוש"
-              body={activeFilterCount > 0 ? 'אין תוצאות שמתאימות למסננים שבחרתם. אפשר לנקות מסנן אחד או יותר.' : 'אפשר לנסות שם מרצה, נושא, או לבחור אחד מהנושאים הפופולריים.'}
-              actionLabel={activeFilterCount > 0 ? 'ניקוי מסננים' : 'ניקוי החיפוש'}
-              onAction={activeFilterCount > 0 ? () => setFilters(EMPTY_FILTERS) : () => { setSearchQuery(''); document.getElementById('library-page-search')?.focus(); }}
+              body={filtersHideResults ? 'אין תוצאות שמתאימות למסננים שבחרתם. אפשר לנקות מסנן אחד או יותר.' : 'אפשר לנסות שם מרצה, נושא, או לבחור אחד מהנושאים הפופולריים.'}
+              actionLabel={filtersHideResults ? 'ניקוי מסננים' : 'ניקוי החיפוש'}
+              onAction={filtersHideResults ? () => setFilters(EMPTY_FILTERS) : () => { setSearchQuery(''); document.getElementById('library-page-search')?.focus(); }}
             />
           )}
 
@@ -141,6 +143,7 @@ export const SearchView: React.FC = () => {
         </div>
       ) : (
         <div className="text-center">
+          {query && <p role="status" className="text-sm text-[#bdc8d9] mb-4">כדי לחפש, הזינו לפחות אות או ספרה.</p>}
           <p className="text-sm text-white/45 mb-4">נושאים פופולריים</p>
           <div className="flex flex-wrap justify-center gap-2">
             {popularTopics.map((topic) => (

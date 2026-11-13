@@ -17,7 +17,9 @@ const SYNONYMS = [
 export function normalizeSearch(text: string): string {
   return text.normalize('NFKD').toLowerCase()
     .replace(/[\u0591-\u05bd\u05bf\u05c1-\u05c2\u05c4-\u05c5\u05c7\u0300-\u036f]/g, '')
-    .replace(/["'׳״]/g, '')
+    // Direction controls are formatting, not word separators. Never use this value for display.
+    .replace(/[\u061c\u200e\u200f\u202a-\u202e\u2066-\u2069]/g, '')
+    .replace(/(?<=\p{L})["'׳״‘’“”](?=\p{L})/gu, '')
     .replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
 }
 
@@ -46,19 +48,57 @@ function queryUnits(query: string): string[][] {
   return units;
 }
 
+function containsPhrase(field: string, phrase: string, allowHebrewPrefix = false): boolean {
+  if ((` ${field} `).includes(` ${phrase} `)) return true;
+  if (!allowHebrewPrefix) return false;
+  const words = field.split(' ');
+  const terms = phrase.split(' ');
+  // Hebrew prepositions/articles attach to words (לחץ → ולחץ); never strip arbitrary substrings.
+  return words.some((_, start) => terms.every((term, offset) => {
+    const word = words[start + offset];
+    if (word === term) return true;
+    if (!word || !/^[א-ת]{3,}$/.test(term) || !word.endsWith(term)) return false;
+    return /^(?:ו?[בכלמהש]|ו)$/.test(word.slice(0, -term.length));
+  }));
+}
+
 function matchScore(fields: string[], units: string[][], query: string): number {
+  if (!query || !units.length) return Infinity;
   const normalized = fields.map(normalizeSearch);
-  const direct = normalized.findIndex(field => field.includes(query));
-  if (direct >= 0) return direct / normalized.length; // Exact phrases, especially titles, rank first.
+  const direct = normalized.findIndex(field => containsPhrase(field, query));
+  // All literal phrases beat expanded matches; field order favors the title.
+  if (direct >= 0) return direct / normalized.length;
   const words = normalized.join(' ').split(' ');
-  let score = 20;
+  let tier = 1;
+  let cost = 0;
   for (const alternatives of units) {
-    if (normalized.some(field => field.includes(alternatives[0]))) score += 1;
-    else if (alternatives.slice(1).some(term => normalized.some(field => field.includes(term)))) score += 3;
-    else if (alternatives.some(term => !term.includes(' ') && words.some(word => isTypo(term, word)))) score += 5;
-    else return Infinity;
+    if (normalized.some(field => containsPhrase(field, alternatives[0], true))) cost += 1;
+    else if (alternatives.slice(1).some(term => normalized.some(field => containsPhrase(field, term, true)))) {
+      tier = Math.max(tier, 2);
+      cost += 3;
+    } else if (alternatives.some(term => !term.includes(' ') && words.some(word => isTypo(term, word)))) {
+      tier = 3;
+      cost += 5;
+    } else return Infinity;
   }
-  return score;
+  // A long literal query must not rank below a short fuzzy query.
+  return tier * 10 + cost / units.length;
+}
+
+function rankCourses(courses: Course[], instructors: Instructor[], categories: Category[], query: string) {
+  const units = queryUnits(query);
+  const instructorById = new Map(instructors.map(item => [item.id, item]));
+  const categoryById = new Map(categories.map(item => [item.id, item]));
+  return courses.map(course => {
+    const instructor = instructorById.get(course.instructorId);
+    const category = categoryById.get(course.categoryId);
+    const score = matchScore([
+      course.title, course.subtitle, ...course.tags, instructor?.name || '',
+      category?.name || '', instructor?.title || '', course.description,
+      ...course.whatYouWillLearn,
+    ], units, query);
+    return { course, score };
+  }).filter(item => Number.isFinite(item.score)).sort((a, b) => a.score - b.score);
 }
 
 export function searchCourses(
@@ -69,32 +109,29 @@ export function searchCourses(
 ): Course[] {
   const q = normalizeSearch(query);
   if (!q) return [];
-  const units = queryUnits(q);
-  const instructorById = new Map(instructors.map(item => [item.id, item]));
-  const categoryById = new Map(categories.map(item => [item.id, item]));
-  return courses.map(course => {
-    const instructor = instructorById.get(course.instructorId);
-    const category = categoryById.get(course.categoryId);
-    const score = matchScore([
-      course.title, course.subtitle, ...course.tags, instructor?.name || '',
-      category?.name || '', instructor?.title || '', course.description,
-      ...course.whatYouWillLearn,
-    ], units, q);
-    return { course, score };
-  }).filter(item => Number.isFinite(item.score))
-    .sort((a, b) => a.score - b.score).map(item => item.course);
+  return rankCourses(courses, instructors, categories, q).map(item => item.course);
 }
 
 /** Useful alternate queries, never invented titles or dead-end suggestions. */
 export function searchRecoveryQueries(courses: Course[], instructors: Instructor[], categories: Category[], query: string): string[] {
-  const candidates = [...new Set([
+  const q = normalizeSearch(query);
+  if (!q) return [];
+  const candidates = new Map<string, string>();
+  for (const label of [
     ...categories.filter(category => courses.some(course => course.categoryId === category.id)).map(category => category.name),
     ...courses.flatMap(course => course.tags),
-  ])];
-  const units = queryUnits(query);
-  return candidates.map(label => ({ label, score: Math.min(...units.map(unit => matchScore([label], [unit], unit[0]))) }))
-    .sort((a, b) => a.score - b.score)
-    .filter(item => normalizeSearch(item.label) !== normalizeSearch(query) && searchCourses(courses, instructors, categories, item.label).length > 0)
+  ]) {
+    const key = normalizeSearch(label);
+    if (key && key !== q && !candidates.has(key)) candidates.set(key, label);
+  }
+  const units = queryUnits(q);
+  return [...candidates.values()].map(label => {
+    const scores = units.map(unit => matchScore([label], [unit], unit[0])).filter(Number.isFinite);
+    return { label, matches: scores.length, score: scores.length ? Math.min(...scores) : Infinity };
+  })
+    // Related labels first; unrelated catalog topics remain a useful fallback.
+    .sort((a, b) => b.matches - a.matches || a.score - b.score)
+    .filter(item => searchCourses(courses, instructors, categories, item.label).length > 0)
     .slice(0, 5).map(item => item.label);
 }
 
@@ -109,35 +146,34 @@ export function searchSuggestions(
   if (!q || limit <= 0) return [];
   const units = queryUnits(q);
 
-  const out: Array<{ type: 'course' | 'instructor' | 'topic'; id: string; label: string; meta?: string }> = [];
+  const out: Array<{ type: 'course' | 'instructor' | 'topic'; id: string; label: string; meta?: string; score: number }> = [];
 
   for (const cat of categories) {
     if (['cat-shorts', 'cat-paths'].includes(cat.id)) continue;
-    if (courses.some(course => course.categoryId === cat.id) && Number.isFinite(matchScore([cat.name], units, q))) {
-      out.push({ type: 'topic', id: cat.id, label: cat.name, meta: 'נושא' });
+    const score = matchScore([cat.name], units, q);
+    if (courses.some(course => course.categoryId === cat.id) && Number.isFinite(score)) {
+      out.push({ type: 'topic', id: cat.id, label: cat.name, meta: 'נושא', score });
     }
-    if (out.length >= limit) return out;
   }
 
   for (const inst of instructors) {
-    if (Number.isFinite(matchScore([inst.name, inst.title], units, q))) {
-      out.push({ type: 'instructor', id: inst.id, label: inst.name, meta: inst.title });
+    const score = matchScore([inst.name, inst.title], units, q);
+    if (courses.some(course => course.instructorId === inst.id) && Number.isFinite(score)) {
+      out.push({ type: 'instructor', id: inst.id, label: inst.name, meta: inst.title, score });
     }
-    if (out.length >= limit) return out;
   }
 
-  for (const c of searchCourses(courses, instructors, categories, q)) {
-    const instructor = instructors.find((i) => i.id === c.instructorId);
+  for (const { course, score } of rankCourses(courses, instructors, categories, q)) {
     out.push({
       type: 'course',
-      id: c.id,
-      label: c.title,
-      meta: instructor?.name,
+      id: course.id,
+      label: course.title,
+      meta: instructors.find(item => item.id === course.instructorId)?.name,
+      score,
     });
-    if (out.length >= limit) break;
   }
 
-  return out;
+  return out.sort((a, b) => a.score - b.score).slice(0, limit).map(({ score, ...item }) => item);
 }
 
 export type CatalogFilter = 'all' | 'open' | 'short' | 'new';

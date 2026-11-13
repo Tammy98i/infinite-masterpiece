@@ -61,6 +61,50 @@ test('empty-state suggestions come only from the supplied catalog and yield resu
   assert.deepEqual(searchRecoveryQueries([], [], [], 'משהו'), []);
 });
 
+// Small isolated fixtures exercise matching edge cases without changing the real catalog.
+const fixture = (id: string, title: string, description = '') => ({
+  ...crisis, id, title, description, subtitle: '', tags: [], whatYouWillLearn: [],
+  instructorId: '', categoryId: '',
+});
+
+test('normalizes punctuation and invisible direction controls only for matching', () => {
+  assert.equal(normalizeSearch('“AI” (קשיבות): café!'), 'ai קשיבות cafe');
+  assert.equal(normalizeSearch('מיינד\u200fפולנס'), 'מיינדפולנס');
+  assert.equal(normalizeSearch('don’t ד״ר'), 'dont דר');
+  assert.deepEqual(search('(משברים)!').map(c => c.id), search('משברים').map(c => c.id));
+  assert.deepEqual(searchRecoveryQueries(COURSES, INSTRUCTORS, CATEGORIES, '()?!'), []);
+});
+
+test('short words and synonym phrases require complete word boundaries', () => {
+  const courses = [fixture('noise', 'Training chair repair תקשורתית'), fixture('ai', 'בינה מלאכותית'), fixture('real', 'תקשורת')];
+  assert.deepEqual(searchCourses(courses, [], [], 'AI').map(c => c.id), ['ai']);
+  assert.deepEqual(searchCourses(courses, [], [], 'קומוניקציה').map(c => c.id), ['real']);
+  assert.deepEqual(searchCourses([fixture('noise', 'בינה מלאכותיתית')], [], [], 'AI'), []);
+});
+
+test('Hebrew attached prepositions still match without allowing arbitrary suffixes', () => {
+  const courses = [fixture('prefixed', 'התמודדות ולחץ'), fixture('suffix', 'לחצים')];
+  assert.deepEqual(searchCourses(courses, [], [], 'סטרס').map(c => c.id), ['prefixed']);
+});
+
+test('literal title and phrase matches rank ahead of synonyms and typos', () => {
+  const courses = [fixture('typo', 'mindfulnes'), fixture('synonym', 'קשיבות'), fixture('description', 'מבוא', 'mindfulness'), fixture('title', 'Mindfulness')];
+  assert.deepEqual(searchCourses(courses, [], [], 'mindfulness').map(c => c.id), ['title', 'description', 'synonym', 'typo']);
+});
+
+test('suggestions rank across types before limiting and omit instructors without courses', () => {
+  const instructor = { ...INSTRUCTORS[0], id: 'empty', name: 'mindfulness', title: '' };
+  const category = { ...CATEGORIES[0], id: 'topic', name: 'קשיבות' };
+  const courses = [{ ...fixture('exact', 'Mindfulness'), categoryId: category.id }];
+  assert.equal(searchSuggestions(courses, [instructor], [category], 'mindfulness', 1)[0]?.id, 'exact');
+  assert.ok(!searchSuggestions(courses, [instructor], [category], 'mindfulness').some(s => s.id === instructor.id));
+});
+
+test('recovery ranks related labels first and deduplicates normalized queries', () => {
+  const courses = [{ ...fixture('topics', 'מבוא'), tags: ['סתם', 'קשיבות', '“קשיבות”', '', '()'] }];
+  assert.deepEqual(searchRecoveryQueries(courses, [], [], 'mindfulness זזזזזזזז'), ['קשיבות', 'סתם']);
+});
+
 test('access filters still apply to expanded search results without modifying courses', () => {
   const user = { role: 'student' as const, subscriptionPlan: 'none' as const };
   const results = search('משברימ');
