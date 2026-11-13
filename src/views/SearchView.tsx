@@ -59,6 +59,7 @@ export const SearchView: React.FC = () => {
           <input
             id="library-page-search"
             type="search"
+            dir="auto"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => {
@@ -67,7 +68,7 @@ export const SearchView: React.FC = () => {
               }
             }}
             placeholder="שם הרצאה, מרצה או נושא"
-            className="library-search-field w-full border py-4 ps-12 pe-6 text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 min-h-11"
+            className="library-search-field w-full border py-4 px-12 text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 min-h-11"
             autoFocus
             aria-label="חיפוש בספרייה"
             enterKeyHint="search"
@@ -81,8 +82,8 @@ export const SearchView: React.FC = () => {
       {query ? (
         <div>
           <h2 className="text-lg font-semibold mb-4 text-start border-b border-white/10 pb-3 flex items-center justify-between gap-3">
-            <span>תוצאות עבור {query}</span>
-            <span className="text-sm font-medium text-[#dfc47d]" role="status" aria-live="polite" aria-atomic="true">{results.length === baseResults.length ? results.length : `${results.length} מתוך ${baseResults.length}`} תוצאות</span>
+            <span className="min-w-0 break-words">תוצאות עבור <bdi dir="auto">{query}</bdi></span>
+            <span className="shrink-0 text-sm font-medium text-[#dfc47d]" role="status" aria-live="polite" aria-atomic="true">{results.length === baseResults.length ? results.length : `${results.length} מתוך ${baseResults.length}`} תוצאות</span>
           </h2>
           <SearchFilters value={filters} onChange={setFilters} activeCount={activeFilterCount} />
 
@@ -132,7 +133,7 @@ export const SearchView: React.FC = () => {
                   onClick={() => setView('category', { categoryId: topic.id })}
                   className="px-4 py-2 rounded-full border border-white/15 text-sm text-white/70 hover:border-[#b79043] hover:text-[#dfc47d] min-h-11 cursor-pointer"
                 >
-                  {topic.name}
+                  <bdi dir="auto">{topic.name}</bdi>
                 </button>
               ))}
             </div>
@@ -149,7 +150,7 @@ export const SearchView: React.FC = () => {
                 onClick={() => setView('category', { categoryId: topic.id })}
                 className="px-4 py-2 rounded-full border border-white/15 text-sm text-white/70 hover:border-[#b79043] hover:text-[#dfc47d] min-h-11 cursor-pointer"
               >
-                {topic.name}
+                <bdi dir="auto">{topic.name}</bdi>
               </button>
             ))}
           </div>

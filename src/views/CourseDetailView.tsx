@@ -10,7 +10,9 @@ import {
   Check,
   Volume2,
   VolumeX,
+  ChevronLeft,
 } from 'lucide-react';
+import { Bidi } from '../components/Bidi';
 import { ClockLabel } from '../components/ClockLabel';
 import { canPreviewEpisode, canWatchEpisode, PREVIEW_SECONDS } from '../utils/access';
 import { playbackApi } from '../api/playback';
@@ -429,24 +431,22 @@ export const CourseDetailView: React.FC = () => {
             >
               ספרייה
             </button>
-            <span className="mx-2 text-white/35" aria-hidden>
-              ‹
-            </span>
-            <span className="text-white">{course.title}</span>
+            <ChevronLeft className="inline-block w-4 h-4 mx-2 text-white/35" aria-hidden />
+            <span className="text-white"><bdi dir="auto">{course.title}</bdi></span>
           </nav>
 
           <h1 className="text-4xl sm:text-6xl lg:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight mb-4 max-w-4xl">
-            {course.title}
+            <bdi dir="auto">{course.title}</bdi>
           </h1>
 
           {course.subtitle ? (
             <p className="text-sm sm:text-base text-white/80 font-light leading-relaxed max-w-2xl mb-4 line-clamp-3">
-              {course.subtitle}
+              <bdi dir="auto">{course.subtitle}</bdi>
             </p>
           ) : null}
 
           <p className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/80">
-            {instructor ? <span>{instructor.name}</span> : null}
+            {instructor ? <span><bdi dir="auto">{instructor.name}</bdi></span> : null}
             {instructor ? <span aria-hidden>·</span> : null}
             <ClockLabel seconds={totalDuration} />
             <span aria-hidden>·</span>
@@ -472,8 +472,8 @@ export const CourseDetailView: React.FC = () => {
                 loading="lazy"
               />
               <span className="text-start">
-                <span className="block text-sm font-medium text-white">{instructor.name}</span>
-                <span className="block text-[13px] text-white/60">{instructor.title}</span>
+                <span className="block text-sm font-medium text-white"><bdi dir="auto">{instructor.name}</bdi></span>
+                <span className="block text-[13px] text-white/60"><bdi dir="auto">{instructor.title}</bdi></span>
               </span>
             </button>
           ) : null}
@@ -622,7 +622,7 @@ export const CourseDetailView: React.FC = () => {
                         )}
                       </button>
                       <div className="flex-1">
-                        <div className="h-1 rounded-full bg-white/20 overflow-hidden mb-1.5">
+                        <div dir="ltr" className="h-1 rounded-full bg-white/20 overflow-hidden mb-1.5">
                           <div
                             className="h-full bg-[#b79043]"
                             style={{
@@ -637,7 +637,7 @@ export const CourseDetailView: React.FC = () => {
                           />
                         </div>
                         <div className="text-[12px] text-white/70 tabular-nums">
-                          <ClockLabel seconds={currentTime} /> / <ClockLabel seconds={duration || activeEpisode.duration} />
+                          <Bidi kind="clock"><ClockLabel seconds={currentTime} /> / <ClockLabel seconds={duration || activeEpisode.duration} /></Bidi>
                         </div>
                       </div>
                       {captionTracks.length > 0 ? (
@@ -702,7 +702,7 @@ export const CourseDetailView: React.FC = () => {
             </div>
             {activeEpisode && (
               <p className="mt-3 text-sm text-white/60">
-                פרק {activeEpisode.episodeNumber}: {episodeDisplayName(activeEpisode.title)}
+                פרק {activeEpisode.episodeNumber}: <bdi dir="auto">{episodeDisplayName(activeEpisode.title)}</bdi>
               </p>
             )}
           </section>
@@ -786,7 +786,7 @@ export const CourseDetailView: React.FC = () => {
                         </span>
                         <div className="flex-1 min-w-0">
                           <div className="text-[15px] font-medium text-white leading-snug line-clamp-2">
-                            {episodeDisplayName(ep.title)}
+                            <bdi dir="auto">{episodeDisplayName(ep.title)}</bdi>
                           </div>
                           <div className="mt-1.5 flex flex-wrap items-center gap-2 text-[13px] text-white/50">
                             <ClockLabel seconds={ep.duration} className="tabular-nums" />
@@ -874,14 +874,14 @@ export const CourseDetailView: React.FC = () => {
               על הקורס
             </h2>
             <p className="text-[15px] sm:text-base text-white/70 font-light leading-relaxed max-w-[65ch]">
-              {course.description}
+              <bdi dir="auto">{course.description}</bdi>
             </p>
             {course.whatYouWillLearn?.length > 0 && (
               <ul className="mt-5 space-y-2 text-[14px] text-white/60">
                 {course.whatYouWillLearn.map((item) => (
                   <li key={item} className="flex gap-2">
                     <Check className="w-4 h-4 text-[#b79043] shrink-0 mt-0.5" aria-hidden />
-                    <span>{item}</span>
+                    <span><bdi dir="auto">{item}</bdi></span>
                   </li>
                 ))}
               </ul>
@@ -911,11 +911,11 @@ export const CourseDetailView: React.FC = () => {
                   onClick={() => setView('instructor', { instructorId: instructor.id })}
                   className="text-base font-medium text-white hover:text-[#dfc47d] min-h-11"
                 >
-                  {instructor.name}
+                  <bdi dir="auto">{instructor.name}</bdi>
                 </button>
-                <p className="text-[13px] text-[#b79043]/90 mt-1">{instructor.title}</p>
+                <p className="text-[13px] text-[#b79043]/90 mt-1"><bdi dir="auto">{instructor.title}</bdi></p>
                 {instructor.bio && (
-                  <p className="text-[14px] text-white/55 font-light leading-relaxed mt-3">{instructor.bio}</p>
+                  <p className="text-[14px] text-white/55 font-light leading-relaxed mt-3"><bdi dir="auto">{instructor.bio}</bdi></p>
                 )}
               </div>
             ) : (

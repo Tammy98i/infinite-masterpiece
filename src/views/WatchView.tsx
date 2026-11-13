@@ -435,7 +435,7 @@ export const WatchView: React.FC = () => {
         >
           <DirBack className="w-5 h-5 text-white/80" />
           <span className="text-sm text-white">
-            פרק {episode.episodeNumber} · {episodeName(episode.title)}
+            פרק {episode.episodeNumber} · <bdi dir="auto">{episodeName(episode.title)}</bdi>
           </span>
           {previewing ? (
             <span className="text-[11px] text-[#b79043] border border-[#b79043]/40 rounded-full px-2 py-0.5">
@@ -468,7 +468,7 @@ export const WatchView: React.FC = () => {
             className="px-3 py-2 rounded-full text-[12px] min-h-11 border border-white/20 text-white/70 hover:border-[#b79043] cursor-pointer"
             aria-label={`מהירות ${playbackRate}`}
           >
-            {playbackRate}x
+            <bdi dir="ltr">{playbackRate}x</bdi>
           </button>
           <button
             type="button"
@@ -526,7 +526,7 @@ export const WatchView: React.FC = () => {
                   {ep.episodeNumber}
                 </span>
                 <span className={`flex-1 min-w-0 text-sm leading-snug ${isActive ? 'text-white' : 'text-white/70'}`}>
-                  {episodeName(ep.title)}
+                  <bdi dir="auto">{episodeName(ep.title)}</bdi>
                   {lockedEp && <Lock className="inline w-3 h-3 ms-1.5 text-white/35" />}
                 </span>
                 <ClockLabel seconds={ep.duration} className="text-[11px] text-white/35 tabular-nums" />
@@ -546,7 +546,7 @@ export const WatchView: React.FC = () => {
           <div className="text-center px-6">
             <p className="text-xs text-white/50 mb-2">הבא</p>
             <p id="next-chapter-title" className="text-xl text-white mb-6">
-              פרק {nextEpisode.episodeNumber} · {episodeName(nextEpisode.title)}
+              פרק {nextEpisode.episodeNumber} · <bdi dir="auto">{episodeName(nextEpisode.title)}</bdi>
             </p>
             <button
               type="button"

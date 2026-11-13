@@ -1,6 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LogOut, Mic } from 'lucide-react';
+import { Bidi } from '../components/Bidi';
 import { DirBack } from '../components/DirArrow';
 import { useApp } from '../context/AppContext';
 import { PlansGrid } from '../components/PlansGrid';
@@ -42,11 +43,11 @@ export const ProfileView: React.FC = () => {
               className="w-16 h-16 rounded-full object-cover border border-white/10"
             />
             <div>
-              <h1 className="text-3xl font-semibold">{isGuest ? 'אורח/ת' : user.name}</h1>
+              <h1 className="text-3xl font-semibold"><bdi dir="auto">{isGuest ? 'אורח/ת' : user.name}</bdi></h1>
               <p className="text-sm text-white/45 mt-1">
                 {planLabel(user.subscriptionPlan)}
                 {trialDays !== null && trialDays >= 0 ? ` · ${trialDays} ימי ניסיון נותרו` : ''}
-                {user.email ? ` · ${user.email}` : ''}
+                {user.email ? <>{' · '}<Bidi kind="email" className="break-all">{user.email}</Bidi></> : ''}
               </p>
             </div>
           </div>
@@ -109,7 +110,7 @@ export const ProfileView: React.FC = () => {
               <h2 className="text-sm text-white/40 mb-1">מנוי</h2>
               <p className="text-lg font-medium">{planLabel(user.subscriptionPlan)}</p>
               {user.trialEndsAt && user.subscriptionPlan === 'free_trial' ? (
-                <p className="text-sm text-white/45 mt-1">בתוקף עד {user.trialEndsAt}</p>
+                <p className="text-sm text-white/45 mt-1">בתוקף עד <Bidi>{user.trialEndsAt}</Bidi></p>
               ) : null}
             </div>
             <div className="flex flex-wrap gap-2">

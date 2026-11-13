@@ -52,14 +52,14 @@ export const CategoryView: React.FC = () => {
             <span>נושא</span>
           </div>
 
-          <h1 className="text-3xl sm:text-5xl font-semibold mb-3 text-white">{currentCategory.name}</h1>
+          <h1 className="text-3xl sm:text-5xl font-semibold mb-3 text-white"><bdi dir="auto">{currentCategory.name}</bdi></h1>
 
           <p className="text-white/70 text-base sm:text-lg max-w-2xl leading-relaxed font-light">
-            {currentCategory.description}
+            <bdi dir="auto">{currentCategory.description}</bdi>
           </p>
           {leads.length > 0 && (
             <p className="text-sm text-white/50 mt-4">
-              מרצים מובילים: {leads.map((i) => i.name).join(' · ')}
+              מרצים מובילים: {leads.map((i, index) => <React.Fragment key={i.id}>{index > 0 && ' · '}<bdi dir="auto">{i.name}</bdi></React.Fragment>)}
             </p>
           )}
         </div>
@@ -95,7 +95,7 @@ export const CategoryView: React.FC = () => {
           >
             <option value="all">לפי מרצה: הכול</option>
             {categoryInstructors.map((i) => (
-              <option key={i.id} value={i.id}>
+              <option key={i.id} value={i.id} dir="auto">
                 {i.name}
               </option>
             ))}

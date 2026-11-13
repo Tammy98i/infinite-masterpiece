@@ -230,10 +230,11 @@ export const Navbar: React.FC = () => {
                     <input
                       ref={searchInputRef}
                       type="search"
+                      dir="auto"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="חיפוש בספרייה..."
-                      className="w-56 sm:w-72 bg-zinc-900/90 border border-[#b79043]/50 rounded-full py-2 ps-9 pe-8 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 shadow-inner min-h-11"
+                      className="w-56 sm:w-72 bg-zinc-900/90 border border-[#b79043]/50 rounded-full py-2 px-11 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 shadow-inner min-h-11"
                       aria-label="חיפוש בספרייה"
                       aria-controls={suggestions.length ? "library-search-suggestions" : undefined}
                     />
@@ -272,13 +273,13 @@ export const Navbar: React.FC = () => {
                               else setView('category', { categoryId: item.id });
                             }}
                           >
-                            <div className="text-sm text-white truncate">{item.label}</div>
+                            <div className="text-sm text-white truncate"><bdi dir="auto">{item.label}</bdi></div>
                             <div className="text-xs text-white/45 mt-0.5 truncate">
-                              {item.type === 'course'
+                              <bdi dir="auto">{item.type === 'course'
                                 ? item.meta || 'הרצאה'
                                 : item.type === 'instructor'
                                   ? item.meta || 'מרצה'
-                                  : 'נושא'}
+                                  : 'נושא'}</bdi>
                               {item.type === 'course'
                                 ? (() => {
                                     const course = courses.find((c) => c.id === item.id);
@@ -405,7 +406,7 @@ export const Navbar: React.FC = () => {
                   currentView === item.view ? 'bg-primary/15 text-primary-light font-bold' : 'text-zinc-200 hover:bg-white/5'
                 }`}
               >
-                {item.label}
+                <bdi dir="auto">{item.label}</bdi>
               </button>
             ))}
             {isLecturer && (

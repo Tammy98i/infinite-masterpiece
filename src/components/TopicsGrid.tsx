@@ -56,7 +56,7 @@ export const TopicsGrid: React.FC = () => {
             <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
             <div className="relative z-10 h-full flex flex-col justify-end p-2 text-start">
               <h3 className="text-[13px] font-semibold text-white leading-snug line-clamp-2">
-                {category.name}
+                <bdi dir="auto">{category.name}</bdi>
               </h3>
               <p className="library-topic-count mt-0.5" aria-hidden>
                 {count === 0 ? 'בקרוב' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`}

@@ -39,13 +39,13 @@ export const LearningPathsView: React.FC = () => {
                   </div>
 
                   <h2 className="text-2xl sm:text-4xl font-black text-white mb-2">
-                    {path.title}
+                    <bdi dir="auto">{path.title}</bdi>
                   </h2>
                   <p className="text-base sm:text-lg text-primary-light/90 font-semibold mb-3">
-                    {path.subtitle}
+                    <bdi dir="auto">{path.subtitle}</bdi>
                   </p>
                   <p className="text-sm text-zinc-300 leading-relaxed max-w-2xl">
-                    {path.description}
+                    <bdi dir="auto">{path.description}</bdi>
                   </p>
                 </div>
 

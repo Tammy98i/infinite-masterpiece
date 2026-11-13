@@ -10,7 +10,7 @@ export function SearchRecovery({ queries, onSelect }: Props) {
         {queries.map(query => (
           <button key={query} type="button" onClick={() => onSelect(query)}
             className="px-4 py-2 rounded-full border border-white/25 text-base text-[#f5f1e9] hover:border-[#b79043] hover:text-[#dfc47d] min-h-11 cursor-pointer">
-            {query}
+            <bdi dir="auto">{query}</bdi>
           </button>
         ))}
       </div>

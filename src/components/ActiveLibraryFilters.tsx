@@ -9,7 +9,7 @@ export function ActiveLibraryFilters({ filters, onClear }: { filters: ActiveFilt
       <span>מסננים פעילים:</span>
       {filters.map(filter => (
         <button key={filter.id} type="button" onClick={filter.onRemove} aria-label={`הסרת מסנן: ${filter.label}`}>
-          {filter.label}<X size={14} aria-hidden="true" />
+          <bdi dir="auto">{filter.label}</bdi><X size={14} aria-hidden="true" />
         </button>
       ))}
       <button type="button" className="library-clear-filters" onClick={onClear}>ניקוי כל המסננים</button>
