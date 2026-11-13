@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import type { WebinarConfig } from '../../constants/webinar';
 import {
   WEBINAR_CTA_ENDED,
@@ -41,12 +42,14 @@ export function WebinarNeuralHero({
   headlineParts,
   eventNight,
   eventEnded,
+  registrationReady = true,
   onRegister,
 }: {
   config: WebinarConfig;
   headlineParts: { line1: string; line2: string };
   eventNight: boolean;
   eventEnded: boolean;
+  registrationReady?: boolean;
   onRegister: (section: string) => void;
 }) {
   const rootRef = useRef<HTMLElement>(null);
@@ -84,11 +87,15 @@ export function WebinarNeuralHero({
     };
   }, []);
 
-  const primary = eventEnded ? (
-    <button type="button" onClick={() => onRegister('hero')} className="webinar-neural-cta" data-neural-end>
+  const primary = !registrationReady ? (
+    <p className="webinar-neural-note" role="status">בודקים את מצב ההרשמה…</p>
+  ) : eventEnded ? (
+    <Link to="/#pricing" className="webinar-neural-cta" data-neural-end>
       <span>{WEBINAR_CTA_NEXT_CYCLE}</span>
       <CtaArrow />
-    </button>
+    </Link>
+  ) : !config.enabled ? (
+    <p className="webinar-neural-note" role="status">ההרשמה אינה פתוחה כרגע</p>
   ) : eventNight && liveEnter.href ? (
     <a href={liveEnter.href} target="_blank" rel="noreferrer" onClick={() => trackWebinarCta('hero_enter')} className="webinar-neural-cta" data-neural-end>
       <span>{liveEnter.label}</span>
