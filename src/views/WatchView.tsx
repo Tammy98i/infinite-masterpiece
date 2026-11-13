@@ -66,7 +66,6 @@ export const WatchView: React.FC = () => {
   const [captionsOn, setCaptionsOn] = useState(true);
 
   const savedProg = course && episode ? watchProgress[`${course.id}_${episode.id}`] : undefined;
-  const remaining = Math.max(0, duration - currentTime);
   const paid = canWatchEpisode(episode, user, course);
   const previewing = Boolean(episode) && !paid && canPreviewEpisode(episode, user, course);
   const locked = Boolean(episode) && !paid && !previewing;
@@ -418,12 +417,12 @@ export const WatchView: React.FC = () => {
           chromeOn ? 'opacity-100' : 'opacity-0'
         }`}
       >
-        <div className="absolute inset-inline-0 top-0 h-28 bg-gradient-to-b from-black/70 to-transparent" />
-        <div className="absolute inset-inline-0 bottom-0 h-32 bg-gradient-to-t from-black/80 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-28 bg-gradient-to-b from-black/70 to-transparent" />
+        <div className="absolute inset-x-0 bottom-0 h-64 bg-gradient-to-t from-black/90 to-transparent" />
       </div>
 
       <div
-        className={`absolute inset-inline-0 top-0 z-20 flex items-center justify-between gap-4 px-5 pt-4 transition-opacity duration-300 ${
+        className={`absolute inset-x-0 top-0 z-20 flex items-center justify-between gap-4 px-5 pt-4 transition-opacity duration-300 ${
           chromeOn ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={(e) => e.stopPropagation()}
@@ -431,11 +430,11 @@ export const WatchView: React.FC = () => {
         <button
           type="button"
           onClick={() => setView('course', { courseId: course.id })}
-          className="flex items-center gap-2 text-start min-h-11 focus-ring rounded-lg"
+          className="flex min-w-0 items-center gap-2 text-start min-h-11 focus-ring rounded-lg"
         >
-          <DirBack className="w-5 h-5 text-white/80" />
-          <span className="text-sm text-white">
-            פרק {episode.episodeNumber} · {episodeName(episode.title)}
+          <DirBack className="w-5 h-5 shrink-0 text-white/80" />
+          <span className="min-w-0 text-sm text-white line-clamp-2">
+            פרק {episode.episodeNumber} · <bdi dir="auto">{episodeName(episode.title)}</bdi>
           </span>
           {previewing ? (
             <span className="text-[11px] text-[#b79043] border border-[#b79043]/40 rounded-full px-2 py-0.5">
@@ -449,50 +448,11 @@ export const WatchView: React.FC = () => {
           ) : null}
         </button>
 
-        <div className="flex items-center gap-1">
-          {captionTracks.length > 0 ? (
-            <button
-              type="button"
-              onClick={() => setCaptionsOn((v) => !v)}
-              className={`px-3 py-2 rounded-full text-[12px] min-h-11 border cursor-pointer ${
-                captionsOn ? 'border-[#b79043] text-[#dfc47d]' : 'border-white/20 text-white/50'
-              }`}
-              aria-pressed={captionsOn}
-            >
-              כתוביות
-            </button>
-          ) : null}
-          <button
-            type="button"
-            onClick={() => cycleSpeed(playbackRate >= 2 ? -1 : 1)}
-            className="px-3 py-2 rounded-full text-[12px] min-h-11 border border-white/20 text-white/70 hover:border-[#b79043] cursor-pointer"
-            aria-label={`מהירות ${playbackRate}`}
-          >
-            {playbackRate}x
-          </button>
-          <button
-            type="button"
-            onClick={() => {
-              if (!muteMedia) setMuted((v) => !v);
-            }}
-            className="p-2.5 text-white/70 hover:text-white min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
-            aria-label={muted || muteMedia ? 'הפעלת שמע' : 'השתקה'}
-            disabled={muteMedia}
-          >
-            {muted || muteMedia ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
-          </button>
-          <button
-            type="button"
-            onClick={() => void toggleFullscreen()}
-            className="p-2.5 text-white/70 hover:text-white min-h-11 min-w-11 flex items-center justify-center"
-            aria-label={isFullscreen ? 'יציאה ממסך מלא' : 'מסך מלא'}
-          >
-            {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
-          </button>
-        </div>
+
       </div>
 
       <aside
+        id="watch-episodes"
         className={`drawer-dock-start absolute top-0 bottom-0 start-0 z-30 flex flex-col w-[min(100%,280px)] bg-black/90 border-e border-white/10 transition-transform duration-300 ${
           showEpisodes ? 'translate-x-0' : 'is-closed'
         }`}
@@ -526,7 +486,7 @@ export const WatchView: React.FC = () => {
                   {ep.episodeNumber}
                 </span>
                 <span className={`flex-1 min-w-0 text-sm leading-snug ${isActive ? 'text-white' : 'text-white/70'}`}>
-                  {episodeName(ep.title)}
+                  <bdi dir="auto">{episodeName(ep.title)}</bdi>
                   {lockedEp && <Lock className="inline w-3 h-3 ms-1.5 text-white/35" />}
                 </span>
                 <ClockLabel seconds={ep.duration} className="text-[11px] text-white/35 tabular-nums" />
@@ -546,7 +506,7 @@ export const WatchView: React.FC = () => {
           <div className="text-center px-6">
             <p className="text-xs text-white/50 mb-2">הבא</p>
             <p id="next-chapter-title" className="text-xl text-white mb-6">
-              פרק {nextEpisode.episodeNumber} · {episodeName(nextEpisode.title)}
+              פרק {nextEpisode.episodeNumber} · <bdi dir="auto">{episodeName(nextEpisode.title)}</bdi>
             </p>
             <button
               type="button"
@@ -560,13 +520,13 @@ export const WatchView: React.FC = () => {
       )}
 
       <div
-        className={`absolute inset-inline-0 bottom-0 z-20 px-5 pb-6 transition-opacity duration-300 ${
+        className={`absolute inset-x-0 bottom-0 z-20 px-4 sm:px-6 pb-[max(5rem,env(safe-area-inset-bottom))] transition-opacity duration-300 ${
           chromeOn && !showEndOverlay ? 'opacity-100' : 'opacity-0 pointer-events-none'
         }`}
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex items-center gap-3 mb-4">
-          <label className="flex-1 block" dir="ltr">
+        <div className="flex items-center gap-3 mb-3" dir="ltr">
+          <label className="flex-1 min-w-0 flex items-center min-h-11" dir="ltr">
             <span className="sr-only">התקדמות בפרק</span>
             <input
               type="range"
@@ -578,41 +538,83 @@ export const WatchView: React.FC = () => {
               className="w-full h-1 appearance-none bg-white/20 rounded-full accent-[#b79043] cursor-pointer"
             />
           </label>
-          <span className="text-[11px] text-white/45 tabular-nums shrink-0">
-            נותרו <ClockLabel seconds={remaining} />
+          <span className="text-xs text-white/80 tabular-nums shrink-0" dir="ltr" aria-label="זמן נוכחי ומשך הפרק">
+            <ClockLabel seconds={currentTime} /> / <ClockLabel seconds={duration} />
           </span>
         </div>
 
-        <div className="grid grid-cols-3 items-center">
-          <button
-            type="button"
-            onClick={() => setShowEpisodes((v) => !v)}
-            className="justify-self-start text-sm text-white/70 hover:text-white min-h-11"
-          >
-            פרקים
-          </button>
+        <div className="grid grid-cols-2 sm:grid-cols-[1fr_auto_1fr] items-center gap-x-4 gap-y-3">
+          <div className="justify-self-start flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => setShowEpisodes((v) => !v)}
+              className="text-sm text-white/80 hover:text-white min-h-11 min-w-11 focus-ring rounded-lg"
+              aria-expanded={showEpisodes}
+              aria-controls="watch-episodes"
+            >
+              פרקים
+            </button>
+            {nextEpisode ? (
+              <button
+                type="button"
+                onClick={() => playEpisode(nextEpisode.id)}
+                className="text-sm text-white/80 hover:text-white min-h-11 focus-ring rounded-lg"
+              >
+                {nextLocked ? 'פתיחת גישה' : 'הפרק הבא'}
+              </button>
+            ) : null}
+          </div>
 
           <button
             type="button"
             onClick={togglePlay}
-            className="justify-self-center w-12 h-12 rounded-full bg-white text-black flex items-center justify-center cursor-pointer"
+            className="justify-self-end sm:justify-self-center w-12 h-12 rounded-full bg-white text-black flex items-center justify-center cursor-pointer"
             aria-label={isPlaying ? 'השהיה' : 'הפעלה'}
           >
             {isPlaying ? <Pause className="w-4 h-4 fill-black" data-icon="play" /> : <Play className="w-4 h-4 fill-black ml-0.5" data-icon="play" />}
           </button>
 
-          <div className="justify-self-end flex items-center gap-3">
-            {nextEpisode ? (
-              <button
-                type="button"
-                onClick={() => playEpisode(nextEpisode.id)}
-                className="text-sm text-white/70 hover:text-white min-h-11 cursor-pointer"
-              >
-                {nextLocked ? 'פתיחת גישה' : 'הבא'}
-              </button>
-            ) : null}
-            <ClockLabel seconds={currentTime} className="text-sm text-white/40 tabular-nums" />
-          </div>
+        <div className="col-span-2 sm:col-span-1 sm:col-start-3 sm:row-start-1 justify-self-center sm:justify-self-end flex items-center gap-2">
+          {captionTracks.length > 0 ? (
+            <button
+              type="button"
+              onClick={() => setCaptionsOn((v) => !v)}
+              className={`px-3 py-2 rounded-full text-[12px] min-h-11 border cursor-pointer ${
+                captionsOn ? 'border-[#b79043] text-[#dfc47d]' : 'border-white/20 text-white/50'
+              }`}
+              aria-pressed={captionsOn}
+            >
+              כתוביות
+            </button>
+          ) : null}
+          <button
+            type="button"
+            onClick={() => cycleSpeed(playbackRate >= 2 ? -1 : 1)}
+            className="px-3 py-2 rounded-full text-[12px] min-h-11 border border-white/20 text-white/70 hover:border-[#b79043] cursor-pointer"
+            aria-label={`מהירות ${playbackRate}`}
+          >
+            <bdi dir="ltr">{playbackRate}x</bdi>
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              if (!muteMedia) setMuted((v) => !v);
+            }}
+            className="p-2.5 text-white/70 hover:text-white min-h-11 min-w-11 flex items-center justify-center cursor-pointer"
+            aria-label={muted || muteMedia ? 'הפעלת שמע' : 'השתקה'}
+            disabled={muteMedia}
+          >
+            {muted || muteMedia ? <VolumeX className="w-5 h-5" /> : <Volume2 className="w-5 h-5" />}
+          </button>
+          <button
+            type="button"
+            onClick={() => void toggleFullscreen()}
+            className="p-2.5 text-white/70 hover:text-white min-h-11 min-w-11 flex items-center justify-center"
+            aria-label={isFullscreen ? 'יציאה ממסך מלא' : 'מסך מלא'}
+          >
+            {isFullscreen ? <Minimize className="w-5 h-5" /> : <Maximize className="w-5 h-5" />}
+          </button>
+        </div>
         </div>
       </div>
 
@@ -622,7 +624,7 @@ export const WatchView: React.FC = () => {
           onClick={() => {
             if (!muteMedia) setMuted(false);
           }}
-          className="absolute bottom-28 inset-inline-0 mx-auto w-fit z-20 px-4 py-2 rounded-full border border-white/20 bg-black/70 text-xs text-white/80 min-h-11 cursor-pointer"
+          className="absolute bottom-64 sm:bottom-52 inset-x-0 mx-auto w-fit z-20 px-4 py-2 rounded-full border border-white/20 bg-black/70 text-xs text-white/80 min-h-11 cursor-pointer"
         >
           {muteMedia ? 'השמע מושתק בהגדרות הנגישות' : 'מושתק. לחצו להפעלת שמע'}
         </button>

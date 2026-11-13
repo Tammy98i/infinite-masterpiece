@@ -50,9 +50,9 @@ export const InstructorsView: React.FC = () => {
           </p>
           {featured ? (
             <p className="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/80">
-              <span>{featured.name}</span>
+              <span><bdi dir="auto">{featured.name}</bdi></span>
               <span aria-hidden>·</span>
-              <span>{featured.title}</span>
+              <span><bdi dir="auto">{featured.title}</bdi></span>
               {featured.isFounder ? (
                 <>
                   <span aria-hidden>·</span>
@@ -112,10 +112,10 @@ export const InstructorsView: React.FC = () => {
                   <div className="absolute inset-0 bg-black/30" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
                   <div className="absolute bottom-2 start-2 end-2">
-                    <div className="text-[13px] font-semibold text-white truncate">{inst.name}</div>
+                    <div className="text-[13px] font-semibold text-white truncate"><bdi dir="auto">{inst.name}</bdi></div>
                     <div className="text-[12px] text-white/70 truncate">
                       {inst.isFounder ? 'צוות המיזם · ' : ''}
-                      {inst.title}
+                      <bdi dir="auto">{inst.title}</bdi>
                     </div>
                     <div className="text-[11px] text-white/55 mt-0.5">{countLabel}</div>
                   </div>

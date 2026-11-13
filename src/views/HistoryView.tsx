@@ -67,8 +67,8 @@ export const HistoryView: React.FC = () => {
                   className="w-28 sm:w-36 aspect-video object-cover rounded-[4px] shrink-0"
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">{course.title}</div>
-                  <div className="text-xs text-white/40 mt-1 truncate">{episode.title}</div>
+                  <div className="text-sm font-medium truncate"><bdi dir="auto">{course.title}</bdi></div>
+                  <div className="text-xs text-white/40 mt-1 truncate"><bdi dir="auto">{episode.title}</bdi></div>
                   <div className="mt-2 h-1 rounded-[4px] bg-white/10 overflow-hidden">
                     <div className="h-full bg-[#b79043]" style={{ width: `${pct}%` }} />
                   </div>

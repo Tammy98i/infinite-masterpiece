@@ -21,7 +21,7 @@ export const Navbar: React.FC = () => {
     instructors,
     categories,
   } = useApp();
-  const { user, isGuest, setAuthModalOpen } = useUser();
+  const { user } = useUser();
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -134,9 +134,7 @@ export const Navbar: React.FC = () => {
               >
                 <InfinityIcon className="header-logo-mark text-[#dfc47d] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
                 <span className="header-wordmark font-light tracking-[0.22em] text-white/90 leading-tight uppercase">
-                  Infinite
-                  <br />
-                  <span className="font-medium">Masterpiece</span>
+                  IM
                 </span>
               </button>
             </div>
@@ -232,10 +230,11 @@ export const Navbar: React.FC = () => {
                     <input
                       ref={searchInputRef}
                       type="search"
+                      dir="auto"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="חיפוש בספרייה..."
-                      className="w-56 sm:w-72 bg-zinc-900/90 border border-[#b79043]/50 rounded-full py-2 ps-9 pe-8 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 shadow-inner min-h-11"
+                      className="w-56 sm:w-72 bg-zinc-900/90 border border-[#b79043]/50 rounded-full py-2 px-11 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 shadow-inner min-h-11"
                       aria-label="חיפוש בספרייה"
                       aria-controls={suggestions.length ? "library-search-suggestions" : undefined}
                     />
@@ -274,13 +273,13 @@ export const Navbar: React.FC = () => {
                               else setView('category', { categoryId: item.id });
                             }}
                           >
-                            <div className="text-sm text-white truncate">{item.label}</div>
+                            <div className="text-sm text-white truncate"><bdi dir="auto">{item.label}</bdi></div>
                             <div className="text-xs text-white/45 mt-0.5 truncate">
-                              {item.type === 'course'
+                              <bdi dir="auto">{item.type === 'course'
                                 ? item.meta || 'הרצאה'
                                 : item.type === 'instructor'
                                   ? item.meta || 'מרצה'
-                                  : 'נושא'}
+                                  : 'נושא'}</bdi>
                               {item.type === 'course'
                                 ? (() => {
                                     const course = courses.find((c) => c.id === item.id);
@@ -351,18 +350,9 @@ export const Navbar: React.FC = () => {
             )}
 
 
-            {isGuest && (
-              <button
-                type="button"
-                onClick={() => setAuthModalOpen(true)}
-                className="header-login hidden sm:inline-flex items-center px-4 rounded-full border border-white/25 text-white/85 font-medium hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
-              >
-                כניסה
-              </button>
-            )}
-
             <div className="header-account">
               <AccountMenu
+                guestLabel="כניסה"
                 onOpenProfile={() => setView('profile')}
                 onOpenAdmin={() => setView('admin')}
                 onOpenLecturer={() => setView('lecturer')}
@@ -416,7 +406,7 @@ export const Navbar: React.FC = () => {
                   currentView === item.view ? 'bg-primary/15 text-primary-light font-bold' : 'text-zinc-200 hover:bg-white/5'
                 }`}
               >
-                {item.label}
+                <bdi dir="auto">{item.label}</bdi>
               </button>
             ))}
             {isLecturer && (

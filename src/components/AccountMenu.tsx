@@ -9,12 +9,13 @@ import { libraryPath } from '../utils/libraryPath';
 import { Bidi } from './Bidi';
 
 interface AccountMenuProps {
+  guestLabel?: string;
   onOpenProfile?: () => void;
   onOpenAdmin?: () => void;
   onOpenLecturer?: () => void;
 }
 
-export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: AccountMenuProps) {
+export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer, guestLabel = 'הצטרפו' }: AccountMenuProps) {
   const {
     user,
     isGuest,
@@ -141,7 +142,7 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer }: Acco
           </>
         ) : (
           <>
-            <span className="text-xs font-bold text-white ps-1">הצטרפו</span>
+            <span className="text-xs font-bold text-white ps-1">{guestLabel}</span>
             <span className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-primary-light text-black flex items-center justify-center">
               <User className="w-4 h-4" />
             </span>
