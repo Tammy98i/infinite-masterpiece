@@ -21,7 +21,7 @@ export const Navbar: React.FC = () => {
     instructors,
     categories,
   } = useApp();
-  const { user, isGuest, setAuthModalOpen } = useUser();
+  const { user } = useUser();
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -351,18 +351,9 @@ export const Navbar: React.FC = () => {
             )}
 
 
-            {isGuest && (
-              <button
-                type="button"
-                onClick={() => setAuthModalOpen(true)}
-                className="header-login hidden sm:inline-flex items-center px-4 rounded-full border border-white/25 text-white/85 font-medium hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
-              >
-                כניסה
-              </button>
-            )}
-
             <div className="header-account">
               <AccountMenu
+                guestLabel="כניסה"
                 onOpenProfile={() => setView('profile')}
                 onOpenAdmin={() => setView('admin')}
                 onOpenLecturer={() => setView('lecturer')}
