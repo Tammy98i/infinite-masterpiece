@@ -199,8 +199,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                 <div className="text-[13px] font-semibold text-white leading-snug line-clamp-1">
                   {title}
                 </div>
-                <div className="sr-only">
-                  {instructorName} {resumeLabel || durationLabel}, {ACCESS_LABEL[access]}
+                <div className="library-card-details">
+                  {instructorName && <span className="library-card-instructor">{instructorName}</span>}
+                  <span>{resumeLabel || <ClockLabel seconds={progress ? Math.max(0, progress.duration - progress.currentTime) : totalSecs} />} · {access === 'locked' ? 'דורש מנוי' : ACCESS_LABEL[access]}</span>
                 </div>
               </div>
 

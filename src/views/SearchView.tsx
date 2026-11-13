@@ -1,4 +1,4 @@
-﻿import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Search } from 'lucide-react';
 import { searchCourses, searchSuggestions } from '../utils/searchCatalog';
@@ -60,8 +60,10 @@ export const SearchView: React.FC = () => {
       <div className="max-w-3xl mx-auto text-center mb-10">
         <h1 className="text-3xl sm:text-4xl font-heading font-semibold mb-6 text-white">חיפוש בספרייה</h1>
 
+        <label htmlFor="library-page-search" className="block text-start text-sm text-white/70 mb-2">מה מעניין אתכם ללמוד?</label>
         <div className="relative flex items-center justify-center">
           <input
+            id="library-page-search"
             type="search"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
@@ -84,7 +86,7 @@ export const SearchView: React.FC = () => {
         <div>
           <h2 className="text-lg font-semibold mb-4 text-start border-b border-white/10 pb-3 flex items-center justify-between gap-3">
             <span>תוצאות עבור {query}</span>
-            <span className="text-sm font-medium text-[#b79043]">{results.length === baseResults.length ? results.length : `${results.length} מתוך ${baseResults.length}`}</span>
+            <span className="text-sm font-medium text-[#dfc47d]" role="status" aria-live="polite" aria-atomic="true">{results.length === baseResults.length ? results.length : `${results.length} מתוך ${baseResults.length}`} תוצאות</span>
           </h2>
           <SearchFilters value={filters} onChange={setFilters} activeCount={activeFilterCount} />
 
@@ -114,8 +116,8 @@ export const SearchView: React.FC = () => {
               eyebrow="חיפוש"
               title="לא מצאנו הרצאה שמתאימה לחיפוש"
               body={activeFilterCount > 0 ? 'אין תוצאות שמתאימות למסננים שבחרתם. אפשר לנקות מסנן אחד או יותר.' : 'אפשר לנסות שם מרצה, נושא, או לבחור אחד מהנושאים הפופולריים.'}
-              actionLabel={activeFilterCount > 0 ? 'ניקוי מסננים' : undefined}
-              onAction={activeFilterCount > 0 ? () => setFilters(EMPTY_FILTERS) : undefined}
+              actionLabel={activeFilterCount > 0 ? 'ניקוי מסננים' : 'ניקוי החיפוש'}
+              onAction={activeFilterCount > 0 ? () => setFilters(EMPTY_FILTERS) : () => { setSearchQuery(''); document.getElementById('library-page-search')?.focus(); }}
             />
           )}
 

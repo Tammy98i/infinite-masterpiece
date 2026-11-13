@@ -1,17 +1,43 @@
-import { SlidersHorizontal, X } from 'lucide-react';
+import { SlidersHorizontal } from 'lucide-react';
+import { ActiveLibraryFilters } from './ActiveLibraryFilters';
+
 export type SearchFilterState = { duration: string; level: string; access: string; sort: string };
 export const EMPTY_FILTERS: SearchFilterState = { duration: 'all', level: 'all', access: 'all', sort: 'relevance' };
+const FIELDS = [
+  { key: 'duration', label: 'משך', options: [['all', 'כל המשכים'], ['short', 'עד 15 דקות'], ['medium', '15–45 דקות'], ['long', 'מעל 45 דקות']] },
+  { key: 'level', label: 'רמה', options: [['all', 'כל הרמות'], ['למתחילים', 'למתחילים'], ['מתקדם', 'מתקדם'], ['לכל הרמות', 'לכל הרמות']] },
+  { key: 'access', label: 'גישה', options: [['all', 'כל הגישות'], ['open', 'פתוח'], ['preview', 'טעימה'], ['locked', 'דורש מנוי']] },
+] as const;
+
 export function SearchFilters({ value, onChange, activeCount }: { value: SearchFilterState; onChange: (value: SearchFilterState) => void; activeCount: number }) {
   const field = (key: keyof SearchFilterState, next: string) => onChange({ ...value, [key]: next });
-  const control = 'min-h-11 min-w-0 w-full rounded-xl border border-white/10 bg-[#0a0a0a] px-2 sm:px-3 text-xs sm:text-sm text-white/70 outline-none focus:border-[#b79043] sm:w-auto';
-  return <div className="mb-6 rounded-2xl border border-white/10 bg-white/[0.025] p-3">
-    <div className="grid grid-cols-2 items-center gap-2 sm:flex sm:flex-wrap">
-      <span className="col-span-2 me-1 inline-flex items-center gap-2 text-sm text-white/50 sm:col-span-1"><SlidersHorizontal size={16} className="text-[#b79043]" />סינון</span>
-      <select value={value.duration} onChange={event => field('duration', event.target.value)} className={control} aria-label="סינון לפי משך"><option value="all">כל המשכים</option><option value="short">עד 15 דקות</option><option value="medium">15–45 דקות</option><option value="long">מעל 45 דקות</option></select>
-      <select value={value.level} onChange={event => field('level', event.target.value)} className={control} aria-label="סינון לפי רמה"><option value="all">כל הרמות</option><option value="למתחילים">למתחילים</option><option value="מתקדם">מתקדם</option><option value="לכל הרמות">לכל הרמות</option></select>
-      <select value={value.access} onChange={event => field('access', event.target.value)} className={control} aria-label="סינון לפי גישה"><option value="all">כל אפשרויות הגישה</option><option value="open">פתוח</option><option value="preview">טעימה</option><option value="locked">דורש מנוי</option></select>
-      <select value={value.sort} onChange={event => field('sort', event.target.value)} className={`${control} sm:ms-auto`} aria-label="מיון תוצאות"><option value="relevance">הכי רלוונטי</option><option value="newest">החדש ביותר</option><option value="shortest">הקצר ביותר</option></select>
-      {activeCount > 0 ? <button type="button" onClick={() => onChange(EMPTY_FILTERS)} className="col-span-2 inline-flex min-h-11 items-center justify-center gap-1.5 rounded-xl px-3 text-sm text-[#b79043] hover:bg-[#b79043]/10 sm:col-span-1" aria-label="ניקוי כל המסננים"><X size={15} />ניקוי ({activeCount})</button> : null}
+  return (
+    <div className="library-page-toolbar library-search-filters mb-6">
+      <p className="flex items-center gap-2 text-sm mb-3"><SlidersHorizontal size={16} aria-hidden="true" />סינון ומיון{activeCount > 0 ? ` · ${activeCount} מסננים פעילים` : ''}</p>
+      <div className="library-filter-fields">
+        {FIELDS.map(({ key, label, options }) => (
+          <label key={key}>
+            <span>{label}</span>
+            <select value={value[key]} onChange={event => field(key, event.target.value)} aria-label={`סינון לפי ${label}`}>
+              {options.map(([id, text]) => <option key={id} value={id}>{text}</option>)}
+            </select>
+          </label>
+        ))}
+        <label>
+          <span>מיון</span>
+          <select value={value.sort} onChange={event => field('sort', event.target.value)} aria-label="מיון תוצאות">
+            <option value="relevance">הכי רלוונטי</option><option value="newest">החדש ביותר</option><option value="shortest">הקצר ביותר</option>
+          </select>
+        </label>
+      </div>
+      <ActiveLibraryFilters
+        filters={FIELDS.filter(({ key }) => value[key] !== 'all').map(({ key, options }) => ({
+          id: key,
+          label: options.find(([id]) => id === value[key])?.[1] || value[key],
+          onRemove: () => field(key, 'all'),
+        }))}
+        onClear={() => onChange(EMPTY_FILTERS)}
+      />
     </div>
-  </div>;
+  );
 }

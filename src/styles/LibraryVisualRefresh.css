@@ -309,7 +309,7 @@
   border-color: rgba(189, 200, 217, .18) !important;
 }
 
-.vod-app:has(:is(.library-flow-page, .library-catalog-page)) .editorial-library-header :is(input, [role="listbox"], nav[aria-label="ניווט נייד — ספרייה"]) {
+.vod-app:has(:is(.library-flow-page, .library-catalog-page)) .editorial-library-header :is(input, #library-search-suggestions, nav[aria-label="ניווט נייד — ספרייה"]) {
   background: #0c192d;
   color: #f5f1e9;
 }

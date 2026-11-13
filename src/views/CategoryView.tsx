@@ -1,10 +1,11 @@
-﻿import React, { useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { CourseCard } from '../components/CourseCard';
 import { Layers } from 'lucide-react';
 import { coursesInCategory } from '../utils/recommendations';
 import { filterCatalogCourses, type CatalogFilter } from '../utils/searchCatalog';
 import { EmptyState } from '../components/LibraryStates';
+import { ActiveLibraryFilters } from '../components/ActiveLibraryFilters';
 
 const FILTERS: Array<{ id: CatalogFilter; label: string }> = [
   { id: 'all', label: 'הכול' },
@@ -71,6 +72,7 @@ export const CategoryView: React.FC = () => {
               key={filter.id}
               type="button"
               onClick={() => setActiveFilter(filter.id)}
+              aria-pressed={activeFilter === filter.id}
               className={`library-page-chip px-4 py-2 text-sm font-medium transition-all min-h-11 whitespace-nowrap ${
                 activeFilter === filter.id
                   ? 'bg-white text-[#141414]'
@@ -84,7 +86,7 @@ export const CategoryView: React.FC = () => {
         </div>
 
         <label className="flex items-center gap-2 text-sm text-white/55">
-          <span className="sr-only">לפי מרצה</span>
+          <span>מרצה</span>
           <select
             value={selectedInstructor}
             onChange={(e) => setSelectedInstructor(e.target.value)}
@@ -100,6 +102,17 @@ export const CategoryView: React.FC = () => {
           </select>
         </label>
       </div>
+
+      <ActiveLibraryFilters
+        filters={[
+          ...(activeFilter !== 'all' ? [{ id: 'type', label: FILTERS.find(filter => filter.id === activeFilter)!.label, onRemove: () => setActiveFilter('all') }] : []),
+          ...(selectedInstructor !== 'all' ? [{ id: 'instructor', label: categoryInstructors.find(instructor => instructor.id === selectedInstructor)?.name || 'מרצה', onRemove: () => setSelectedInstructor('all') }] : []),
+        ]}
+        onClear={() => { setActiveFilter('all'); setSelectedInstructor('all'); }}
+      />
+      <p className="library-result-count" role="status" aria-live="polite" aria-atomic="true">
+        {filteredCourses.length} מתוך {baseCourses.length} הרצאות
+      </p>
 
       {filteredCourses.length > 0 ? (
         <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 justify-items-stretch">
@@ -118,7 +131,9 @@ export const CategoryView: React.FC = () => {
         <EmptyState
           eyebrow="נושא"
           title="אין תכנים שמתאימים לסינון"
-          body="אפשר לבחור סינון אחר, או לחזור לנושא מלא."
+          body="אפשר להסיר מסנן או להציג את כל ההרצאות בנושא."
+          actionLabel={activeFilter !== 'all' || selectedInstructor !== 'all' ? 'ניקוי מסננים' : undefined}
+          onAction={() => { setActiveFilter('all'); setSelectedInstructor('all'); }}
         />
       )}
     </div>
