@@ -98,7 +98,7 @@ export const InstructorsView: React.FC = () => {
                 key={inst.id}
                 type="button"
                 onClick={() => setView('instructor', { instructorId: inst.id })}
-                aria-label={`${inst.name}, $<bdi dir="auto">{inst.title}</bdi>, ${countLabel}`}
+                aria-label={`${inst.name}, ${inst.title}, ${countLabel}`}
                 className="library-poster text-start min-h-11 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
               >
                 <div className="library-instructor-frame relative overflow-hidden rounded-[4px]">
