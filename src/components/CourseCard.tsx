@@ -1,8 +1,7 @@
-﻿import React, { useRef, useState } from 'react';
+﻿import React, { useState } from 'react';
 import { Course, WatchProgress } from '../types';
 import { useApp } from '../context/AppContext';
-import { Play, Plus, Check, Lock, Eye } from 'lucide-react';
-import { CoursePreview } from './CoursePreview';
+import { Play, Plus, Check, Lock } from 'lucide-react';
 import { formatClock, isolateClock } from '../utils/time';
 import { ClockLabel } from './ClockLabel';
 import { useWatchAccess } from '../utils/useWatchAccess';
@@ -48,8 +47,6 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   const { goWatch } = useWatchAccess();
   const toggleList = useMyListToggle();
   const [isHovered, setIsHovered] = useState(false);
-  const [isPreviewOpen, setIsPreviewOpen] = useState(false);
-  const previewTriggerRef = useRef<HTMLButtonElement>(null);
 
   const isSaved = isInMyList(course.id);
   const progPct =
@@ -233,16 +230,6 @@ export const CourseCard: React.FC<CourseCardProps> = ({
             {isSaved ? <Check className="w-4 h-4" aria-hidden /> : <Plus className="w-4 h-4" aria-hidden />}
           </button>
         </div>
-
-        <button ref={previewTriggerRef} type="button" className="library-preview-trigger"
-          aria-label={`תצוגה מקדימה: ${course.title}`} aria-haspopup="dialog"
-          onClick={() => setIsPreviewOpen(true)}>
-          <Eye size={16} aria-hidden="true" /> תצוגה מקדימה
-        </button>
-        {isPreviewOpen && <CoursePreview course={course} instructorName={instructorName} returnFocusTo={previewTriggerRef.current}
-          accessLabel={access === 'locked' ? 'דורש מנוי' : ACCESS_LABEL[access]}
-          onClose={() => setIsPreviewOpen(false)}
-          onOpenCourse={() => { setIsPreviewOpen(false); setView('course', { courseId: course.id }); }} />}
 
         {recommendationReason && (
           <p className="mt-2 text-[12px] text-white/70 font-light leading-snug line-clamp-2 px-0.5">
