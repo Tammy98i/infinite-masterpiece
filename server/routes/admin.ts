@@ -31,6 +31,8 @@ import { isS3Enabled } from '../services/s3Upload.js';
 import { listAdminEmails, saveExtraAdminEmails } from '../services/adminEmailsService.js';
 import { getSetting, setSetting } from '../services/settingsService.js';
 import { adminCreateUser } from '../services/authService.js';
+import { listPublicFaces, savePublicAppearance } from '../services/publicFaces.js';
+import { getDb } from '../db/connection.js';
 import { listAuditLogs, writeAudit } from '../services/auditService.js';
 import {
   listPremium88Applications,
@@ -262,6 +264,33 @@ router.patch('/courses/:id/status', (req, res) => {
   } catch (err) {
     const code = (err as { status?: number }).status || 500;
     res.status(code).json({ error: (err as Error).message });
+  }
+});
+
+router.get('/public-faces', (_req, res) => {
+  res.json({ faces: listPublicFaces(getDb()) });
+});
+
+router.put('/users/:id/appearance', (req, res) => {
+  try {
+    const body = req.body || {};
+    const face = savePublicAppearance(getDb(), req.params.id, {
+      faceId: String(body.faceId || ''),
+      showWebinar: Boolean(body.showWebinar),
+      showSite: Boolean(body.showSite),
+      showLibrary: Boolean(body.showLibrary),
+    });
+    writeAudit({
+      adminUserId: authUser(req).id,
+      actionType: 'user_appearance_updated',
+      entityType: 'user',
+      entityId: req.params.id,
+      after: face,
+    });
+    res.json({ face });
+  } catch (err) {
+    const status = (err as { status?: number }).status || 500;
+    res.status(status).json({ error: (err as Error).message });
   }
 });
 

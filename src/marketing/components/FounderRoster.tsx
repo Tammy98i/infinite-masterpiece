@@ -5,6 +5,11 @@ import { Link } from 'react-router-dom';
 import { featuredFounders, instructorToFounder, rosterFounders, type Founder } from '../data/founders';
 import { CATEGORIES } from '../../data/categories';
 import { catalogApi } from '../../api/catalog';
+import { teamMembersApi } from '../../api/teamMembers';
+
+function sameName(value: string) {
+  return value.trim().replace(/\s+/g, ' ');
+}
 
 function FounderCell({
   founder,
@@ -74,6 +79,8 @@ export function FounderRoster() {
   const [sortOrder, setSortOrder] = useState<Record<string, number>>({});
   const [photos, setPhotos] = useState<Record<string, string>>({});
   const [extras, setExtras] = useState<Founder[]>([]);
+  const [copied, setCopied] = useState<Founder[]>([]);
+  const [suppressed, setSuppressed] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     let cancelled = false;
@@ -100,13 +107,36 @@ export function FounderRoster() {
         setExtras(extraFounders);
       })
       .catch(() => undefined);
+    teamMembersApi
+      .list('site')
+      .then(({ members, suppressedNames }) => {
+        if (cancelled) return;
+        setSuppressed(new Set((suppressedNames || []).map(sameName)));
+        const knownNames = new Set(featuredFounders.concat(rosterFounders).map((item) => sameName(item.name)));
+        setCopied(
+          members
+            .filter((member) => !knownNames.has(sameName(member.name)))
+            .map((member) => ({
+              id: member.id,
+              name: member.name,
+              title: member.role,
+              blurb: member.bio.split(/\n\n+/)[0] || member.role,
+              description: member.bio,
+              image: member.photo,
+              expertise: member.expertise,
+              leadCategoryIds: [],
+              portfolio: [],
+            }))
+        );
+      })
+      .catch(() => undefined);
     return () => {
       cancelled = true;
     };
   }, []);
 
   const byOrder = (list: Founder[]) =>
-    [...list].sort((a, b) => (sortOrder[a.id] ?? 99) - (sortOrder[b.id] ?? 99));
+    [...list].filter((founder) => !suppressed.has(sameName(founder.name))).sort((a, b) => (sortOrder[a.id] ?? 99) - (sortOrder[b.id] ?? 99));
 
   return (
     <>
@@ -127,7 +157,7 @@ export function FounderRoster() {
 
       {(rosterFounders.length > 0 || extras.length > 0) && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12 md:gap-x-10 md:gap-y-16">
-          {byOrder([...rosterFounders, ...extras]).map((founder) => (
+          {byOrder([...rosterFounders, ...extras, ...copied]).map((founder) => (
             <Fragment key={founder.id}>
               <FounderCell
                 founder={founder}

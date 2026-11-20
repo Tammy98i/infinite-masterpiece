@@ -86,7 +86,7 @@ export function TeamGalaxy({
   }, [mobileMode, members.length]);
   useEffect(() => {
     let cancelled = false;
-    const load = () => teamMembersApi.list().then(res => {
+    const load = () => teamMembersApi.list('webinar').then(res => {
       if (!cancelled) { setMembers(sortTeam(res.members)); setError(''); setReady(true); }
     }).catch(() => { if (!cancelled) { setError('לא ניתן לטעון את הצוות כרגע.'); setReady(true); } });
     void load();

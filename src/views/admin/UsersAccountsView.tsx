@@ -13,6 +13,7 @@ import { AdminStatusBadge } from './AdminStatusBadge';
 import { Bidi } from '../../components/Bidi';
 import { DeskMonogram } from '../../components/DeskMonogram';
 import { emptyUserDraft, showBirthday, UserProfileFields, type UserDraft } from './UserProfileFields';
+import { WhereShownDialog } from './WhereShownDialog';
 
 function profileRowFromAppUser(user: ReturnType<typeof useApp>['user']): ProfileListRow {
   return {
@@ -38,6 +39,7 @@ export function UsersAccountsView() {
   const [profileDraft, setProfileDraft] = useState<UserDraft | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
+  const [whereUserId, setWhereUserId] = useState<string | null>(null);
   const [query, setQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [statusFilter, setStatusFilter] = useState('all');
@@ -321,6 +323,13 @@ export function UsersAccountsView() {
                       <button
                         type="button"
                         className="crm-desk-row-act"
+                        onClick={() => setWhereUserId(row.id)}
+                      >
+                        איפה מופיע
+                      </button>
+                      <button
+                        type="button"
+                        className="crm-desk-row-act"
                         onClick={() => setSelectedId(row.id === selectedId ? null : row.id)}
                       >
                         עריכה
@@ -341,6 +350,16 @@ export function UsersAccountsView() {
           </tbody>
         </table>
       </div>
+
+      {whereUserId ? (
+        <WhereShownDialog
+          userId={whereUserId}
+          name={users.find((row) => row.id === whereUserId)?.name || ''}
+          email={users.find((row) => row.id === whereUserId)?.email || ''}
+          onClose={() => setWhereUserId(null)}
+          onSaved={() => void load()}
+        />
+      ) : null}
 
       {selected ? (
         <div className="crm-desk-edit-drawer grid gap-3 text-sm">

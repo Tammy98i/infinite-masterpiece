@@ -33,6 +33,7 @@ export interface Instructor {
   founderId?: string;
   sortOrder?: number;
   externalLinks?: { label: string; url: string }[];
+  showInLibrary?: boolean;
 }
 
 export interface Course {

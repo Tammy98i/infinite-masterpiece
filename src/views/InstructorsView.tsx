@@ -90,7 +90,7 @@ export const InstructorsView: React.FC = () => {
       <div id="instructor-grid" className="relative z-10 -mt-8 max-w-[1360px] mx-auto px-4 sm:px-8 text-start scroll-mt-24">
         <h2 className="library-rail-title text-white mb-4">כל המרצים</h2>
         <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {instructors.map((inst) => {
+          {instructors.filter((inst) => inst.showInLibrary !== false).map((inst) => {
             const count = courses.filter((c) => c.instructorId === inst.id).length;
             const countLabel = count === 0 ? 'אין הרצאות עדיין' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`;
             return (

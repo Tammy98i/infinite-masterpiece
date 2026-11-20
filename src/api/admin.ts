@@ -208,6 +208,28 @@ export const adminApi = {
       method: 'PATCH',
       body: JSON.stringify(patch),
     }),
+  publicFaces: () =>
+    apiRequest<{
+      faces: Array<{
+        id: string;
+        name: string;
+        title: string;
+        photo: string;
+        bio: string;
+        webinar: boolean;
+        site: boolean;
+        library: boolean;
+        linkedUserId: string;
+      }>;
+    }>('/api/admin/public-faces'),
+  saveAppearance: (
+    id: string,
+    body: { faceId: string; showWebinar: boolean; showSite: boolean; showLibrary: boolean }
+  ) =>
+    apiRequest<{ face: { id: string; name: string } | null }>(`/api/admin/users/${id}/appearance`, {
+      method: 'PUT',
+      body: JSON.stringify(body),
+    }),
   deleteUser: (id: string) =>
     apiRequest<{ id: string }>(`/api/admin/users/${id}`, {
       method: 'DELETE',

@@ -3,6 +3,7 @@ import { getDb } from '../db/connection.js';
 import { captionTracksForEpisode, defaultCaptionTracks } from '../../src/constants/captions.ts';
 import type { AccessLevel, CaptionTrack, Category, Course, Episode, Instructor, PublishStatus } from '../../src/types.ts';
 import { profileFromStored } from './userProfile.js';
+import { hiddenLibraryKeys } from './publicFaces.js';
 
 type SqlRow = Record<string, unknown>;
 
@@ -112,9 +113,17 @@ export function getPublicCatalog() {
   const categories = (db.prepare(`SELECT * FROM categories ORDER BY sort_order, name`).all() as SqlRow[]).map(
     categoryFromRow
   );
+  const hiddenLibrary = hiddenLibraryKeys(db);
   const instructors = (db
     .prepare(`SELECT * FROM lecturers ORDER BY is_founder DESC, sort_order, name`)
-    .all() as SqlRow[]).map(lecturerFromRow);
+    .all() as SqlRow[])
+    .map((row) => ({
+      ...lecturerFromRow(row),
+      showInLibrary: !(
+        hiddenLibrary.userIds.has(String(row.user_id || '')) ||
+        hiddenLibrary.names.has(String(row.name || '').trim().replace(/\s+/g, ' '))
+      ),
+    }));
   const rows = db
     .prepare(`SELECT * FROM courses WHERE status = 'published' ORDER BY created_at DESC`)
     .all() as SqlRow[];
