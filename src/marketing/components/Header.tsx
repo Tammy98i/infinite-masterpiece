@@ -7,8 +7,6 @@ import { scrollToWebinarForm, trackWebinarCta } from '../../utils/analytics';
 import {
   WEBINAR_CTA_HEADER,
   WEBINAR_CTA_REGISTER,
-  WEBINAR_CTA_NEXT_CYCLE,
-  WEBINAR_CTA_NEXT_CYCLE_SHORT,
   WEBINAR_CTA_SHORT,
   WEBINAR_REGISTER_ID,
 } from '../../constants/webinarPage';
@@ -45,13 +43,7 @@ export function Header() {
 
   const headerCta = () => {
     if (onDecision) return decisionCta(headerCtaClass);
-    if (phase === 'ended') {
-      return (
-        <Link to="/#pricing" className={headerCtaClass}>
-          {WEBINAR_CTA_NEXT_CYCLE}
-        </Link>
-      );
-    }
+    if (phase === 'ended') return null;
     if (phase === 'live' && liveEnter.href) {
       return (
         <a
@@ -83,13 +75,7 @@ export function Header() {
 
   const compactBarCta = () => {
     if (onDecision) return decisionCta(compactBarCtaClass);
-    if (phase === 'ended') {
-      return (
-        <Link to="/#pricing" className={compactBarCtaClass}>
-          {WEBINAR_CTA_NEXT_CYCLE_SHORT}
-        </Link>
-      );
-    }
+    if (phase === 'ended') return null;
     if (phase === 'live' && liveEnter.href) {
       return (
         <a
@@ -121,13 +107,7 @@ export function Header() {
     const close = () => setMobileMenuOpen(false);
     const mobileClass = 'btn-gold text-black text-base block w-full text-center px-8 py-4';
     if (onDecision) return decisionCta(mobileClass, close);
-    if (phase === 'ended') {
-      return (
-        <Link to="/#pricing" onClick={close} className={mobileClass}>
-          {WEBINAR_CTA_NEXT_CYCLE}
-        </Link>
-      );
-    }
+    if (phase === 'ended') return null;
     if (phase === 'live' && liveEnter.href) {
       return (
         <a
