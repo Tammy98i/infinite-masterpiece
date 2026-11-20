@@ -86,6 +86,19 @@
   background-repeat: no-repeat;
 }
 
+/* Star points only, matching the team slide dust, on slides without a photo background. */
+.webinar-stage-page .webinar-star-field {
+  position: relative;
+  isolation: isolate;
+}
+.webinar-stage-page .webinar-star-field > .galaxy-dust { z-index: -1; }
+.webinar-stage-page .webinar-neural-hero.webinar-star-field > .galaxy-dust { z-index: 1; }
+.webinar-stage-page .webinar-neural-hero .webinar-stage-shell { z-index: 2; }
+@media (prefers-reduced-motion: reduce) {
+  .webinar-stage-page .webinar-star-field .galaxy-dust i { animation: none; }
+}
+.a11y-reduce-motion .webinar-stage-page .webinar-star-field .galaxy-dust i { animation: none !important; }
+
 /* The gold circle spine stays fixed: right edge on a wide screen, bottom on a short one. */
 .webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-map { height: 680px; max-width: 900px; margin-inline: auto; }
 .webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-map.has-selection { height: auto; min-height: 860px; }

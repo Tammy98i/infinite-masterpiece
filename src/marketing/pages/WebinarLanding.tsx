@@ -65,6 +65,16 @@ function FaqItem({ q, a, ...props }: { q: string; a: string } & HTMLAttributes<H
   );
 }
 
+function StarDust() {
+  return (
+    <div className="galaxy-dust" aria-hidden="true">
+      {Array.from({ length: 30 }, (_, i) => (
+        <i key={i} style={{ left: `${(i * 37 + 13) % 100}%`, top: `${(i * 23 + 7) % 100}%`, animationDelay: `${i * -0.7}s` }} />
+      ))}
+    </div>
+  );
+}
+
 function SectionLabel({ children }: { children: ReactNode }) {
   return <p className="webinar-section-label text-[11px] uppercase tracking-[0.25em] text-[#b79043] mb-4">{children}</p>;
 }
@@ -246,7 +256,8 @@ export function WebinarLanding() {
         onRegister={scrollToForm}
       />
 
-      <section id="problem" className="webinar-neural-afterglow webinar-island" data-tone="night">
+      <section id="problem" className="webinar-neural-afterglow webinar-island webinar-star-field" data-tone="night">
+        <StarDust />
         <div className="webinar-flow-stem" aria-hidden="true" />
         <div className="webinar-neural-plate">
           <SectionLabel>הבעיה</SectionLabel>
@@ -269,7 +280,8 @@ export function WebinarLanding() {
       </section>
 
       <div className="webinar-editorial-grid">
-      <section id="hosts" className="webinar-neural-slide webinar-island" data-tone="gilt">
+      <section id="hosts" className="webinar-neural-slide webinar-island webinar-star-field" data-tone="gilt">
+        <StarDust />
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>הערב החי</SectionLabel>
           <SectionTitle>לא באים רק ללמוד. באים לבצע.</SectionTitle>
@@ -317,7 +329,8 @@ export function WebinarLanding() {
         subtitle="כל אחד מביא כוח אחר. יחד הם יוצרים מערכת אחת."
       />
 
-      <section id="webinar-fit" className="webinar-neural-slide webinar-island" data-tone="gilt">
+      <section id="webinar-fit" className="webinar-neural-slide webinar-island webinar-star-field" data-tone="gilt">
+        <StarDust />
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <SectionLabel>התאמה</SectionLabel>
@@ -356,7 +369,8 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <section id="webinar-faq" className="webinar-neural-slide webinar-island" data-tone="night">
+      <section id="webinar-faq" className="webinar-neural-slide webinar-island webinar-star-field" data-tone="night">
+        <StarDust />
         <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <SectionLabel>שאלות</SectionLabel>
@@ -370,7 +384,8 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <section id="webinar-register-bottom" className="webinar-neural-slide webinar-island relative overflow-hidden" data-tone="gilt">
+      <section id="webinar-register-bottom" className="webinar-neural-slide webinar-island webinar-star-field relative overflow-hidden" data-tone="gilt">
+        <StarDust />
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0d0b08]/20 to-[#0d0b08]/50" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(183, 144, 67,0.16),transparent_70%)]" />
