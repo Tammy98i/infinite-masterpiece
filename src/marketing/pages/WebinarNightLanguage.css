@@ -303,16 +303,9 @@
     height: 36px;
     color: transparent;
   }
-  .webinar-spine a span {
-    top: auto;
-    right: 50%;
-    bottom: calc(100% + 8px);
-    transform: translateX(50%);
-  }
-  .webinar-spine a.is-on {
-    background: transparent;
-    color: transparent;
-    font-weight: 400;
+  .webinar-spine a span { display: none; }
+  .webinar-stage-page {
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
   }
 }
 
@@ -320,8 +313,8 @@
   .webinar-host-orbs { gap: 28px; }
   .webinar-host-orb { width: 104px; height: 104px; }
   .webinar-task-spine {
-    grid-template-columns: 1fr 1fr;
-    gap: 22px 12px;
+    grid-template-columns: 1fr;
+    gap: 18px;
   }
   .webinar-task-spine::before { display: none; }
   .webinar-flow-page #problem .webinar-neural-bottlenecks li {
