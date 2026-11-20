@@ -194,7 +194,19 @@ export const AuthModal: React.FC = () => {
     setError('');
     setErrorKind('error');
     if (!supabaseAuthEnabled) {
-      setError('התחברות עם Google ו-Apple נפתחת כשחיבור Supabase פעיל. בינתיים נכנסים עם אימייל וסיסמה.');
+      if (!import.meta.env.DEV) {
+        setError('התחברות עם Google ו-Apple נפתחת כשחיבור Supabase פעיל. בינתיים נכנסים עם אימייל וסיסמה.');
+        return;
+      }
+      await runExclusive(async () => {
+        try {
+          const next = await login('library@infinitemasterpiece.local', 'Masterpiece88');
+          resetForm();
+          goAfterAuth(next.role);
+        } catch (err) {
+          setError(err instanceof Error ? err.message : 'הכניסה המקומית נכשלה');
+        }
+      });
       return;
     }
     const enabled = provider === 'apple' ? appleAuthEnabled : googleAuthEnabled;
@@ -483,6 +495,11 @@ export const AuthModal: React.FC = () => {
                 <span>התחברות עם Apple</span>
               </button>
             </div>
+            {!supabaseAuthEnabled && import.meta.env.DEV ? (
+              <p className="mt-3 text-[11px] text-white/35">
+                במחשב המקומי הכפתורים נכנסים לחשבון הדמו של הספרייה.
+              </p>
+            ) : null}
           </>
         ) : null}
 
