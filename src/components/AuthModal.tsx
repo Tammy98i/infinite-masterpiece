@@ -272,7 +272,7 @@ export const AuthModal: React.FC = () => {
 
         {mode === 'forgot' ? (
           <form onSubmit={(e) => void handleForgotSubmit(e)} className="grid gap-4">
-            <label className="block text-center">
+            <label className="block text-right">
               <span className="block text-xs text-white/45 mb-1">אימייל</span>
               <input
                 type="email"
@@ -282,7 +282,7 @@ export const AuthModal: React.FC = () => {
                 dir="ltr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`${fieldClass} text-start`}
+                className={`${fieldClass} text-right`}
               />
             </label>
             <AuthAlert kind={errorKind} message={error} />
@@ -377,7 +377,7 @@ export const AuthModal: React.FC = () => {
                 />
               </label>
             )}
-            <label className="block text-center">
+            <label className="block text-right">
               <span className="block text-xs text-white/45 mb-1">אימייל</span>
               <input
                 type="email"
@@ -387,32 +387,34 @@ export const AuthModal: React.FC = () => {
                 dir="ltr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`${fieldClass} text-start`}
+                className={`${fieldClass} text-right`}
               />
             </label>
-            <label className="block text-center">
+            <label className="block text-right">
               <span className="block text-xs text-white/45 mb-1">סיסמה</span>
               <input
                 type="password"
                 required
                 minLength={8}
                 autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                dir="ltr"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={fieldClass}
+                className={`${fieldClass} text-right`}
               />
             </label>
             {mode === 'register' ? (
-              <label className="block text-center">
+              <label className="block text-right">
                 <span className="block text-xs text-white/45 mb-1">אימות סיסמה</span>
                 <input
                   type="password"
                   required
                   minLength={8}
                   autoComplete="new-password"
+                  dir="ltr"
                   value={passwordConfirm}
                   onChange={(e) => setPasswordConfirm(e.target.value)}
-                  className={fieldClass}
+                  className={`${fieldClass} text-right`}
                 />
               </label>
             ) : null}
