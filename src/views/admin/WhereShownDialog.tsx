@@ -27,35 +27,50 @@ function placeLabel(face: Face) {
   return where.length ? where.join(' · ') : 'עדיין לא מוצג';
 }
 
-function SwitchRow({
-  on,
+function PlaceRow({
+  shown,
+  canAdd,
   label,
   hint,
-  willCopy,
+  pending,
+  onAdd,
   onToggle,
 }: {
-  on: boolean;
+  shown: boolean;
+  canAdd: boolean;
   label: string;
   hint: string;
-  willCopy: boolean;
+  pending: boolean;
+  onAdd: () => void;
   onToggle: () => void;
 }) {
   return (
-    <button
-      type="button"
-      onClick={onToggle}
-      aria-pressed={on}
-      className="flex w-full items-center justify-between gap-4 rounded border border-white/10 px-3 py-2 text-start min-h-16 cursor-pointer hover:border-[#b79043]/40"
-    >
+    <div className="flex w-full items-center justify-between gap-4 rounded border border-white/10 px-3 py-2 text-start min-h-16">
       <span>
         <span className="block text-sm text-white">{label}</span>
         <span className="block text-xs text-white/45">{hint}</span>
-        {willCopy ? <span className="block text-xs text-[#dfc47d]">ייווצר שם עם אותם פרטים</span> : null}
       </span>
-      <span className={`shrink-0 rounded-full px-3 min-h-9 inline-flex items-center text-xs ${on ? 'bg-[#b79043] text-black' : 'bg-white/10 text-white/55'}`}>
-        {on ? 'מוצג' : 'מוסתר'}
-      </span>
-    </button>
+      {canAdd && !shown ? (
+        <button
+          type="button"
+          disabled={pending}
+          onClick={onAdd}
+          className="shrink-0 rounded-full bg-[#b79043] px-3 min-h-9 text-xs text-black cursor-pointer disabled:opacity-50"
+        >
+          הוסף עם אותם פרטים
+        </button>
+      ) : (
+        <button
+          type="button"
+          disabled={pending}
+          onClick={onToggle}
+          aria-pressed={shown}
+          className={`shrink-0 rounded-full px-3 min-h-9 text-xs cursor-pointer disabled:opacity-50 ${shown ? 'bg-[#b79043] text-black' : 'bg-white/10 text-white/55'}`}
+        >
+          {shown ? 'מוצג' : 'מוסתר'}
+        </button>
+      )}
+    </div>
   );
 }
 
@@ -114,7 +129,7 @@ export function WhereShownDialog({
     setOrigin(next);
   };
 
-  const save = async () => {
+  const persist = async (next: Places, closeAfter: boolean) => {
     if (!faceId) {
       setError('בחרי פרופיל ציבורי.');
       return;
@@ -122,14 +137,34 @@ export function WhereShownDialog({
     setPending(true);
     setError('');
     try {
-      await adminApi.saveAppearance(userId, { faceId, showWebinar: places.webinar, showSite: places.site, showLibrary: places.library });
+      const saved = await adminApi.saveAppearance(userId, {
+        faceId,
+        showWebinar: next.webinar,
+        showSite: next.site,
+        showLibrary: next.library,
+      });
+      const face = saved.face;
+      if (face) {
+        const shown = { webinar: face.webinar, site: face.site, library: face.library };
+        setFaceId(face.id);
+        setPlaces(shown);
+        setOrigin(shown);
+        setFaces((current) => [
+          { ...face, linkedUserId: userId },
+          ...current.filter((item) => item.id !== faceId && item.id !== face.id),
+        ]);
+      }
       onSaved();
-      onClose();
+      if (closeAfter) onClose();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'השמירה נכשלה');
     } finally {
       setPending(false);
     }
+  };
+
+  const addPlace = (key: keyof Places) => {
+    void persist({ ...places, [key]: true }, false);
   };
 
   return (
@@ -161,13 +196,13 @@ export function WhereShownDialog({
           <p className="mt-2 text-xs text-white/45">הפרופיל משויך לחשבון אחר. השמירה תעביר אותו לחשבון הזה.</p>
         ) : null}
         {selected ? <div className="mt-4 grid gap-2">
-          <SwitchRow on={places.webinar} label="וובינר" hint="הכוכבים בעמוד הוובינר" willCopy={places.webinar && !origin.webinar} onToggle={() => setPlaces((current) => ({ ...current, webinar: !current.webinar }))} />
-          <SwitchRow on={places.site} label="האתר" hint="הלשונית צוות המיזם" willCopy={places.site && !origin.site} onToggle={() => setPlaces((current) => ({ ...current, site: !current.site }))} />
-          <SwitchRow on={places.library} label="הספרייה" hint="רשימת המרצים" willCopy={places.library && !origin.library} onToggle={() => setPlaces((current) => ({ ...current, library: !current.library }))} />
-        </div> : <p className="mt-4 text-sm text-white/45">אחרי הבחירה אפשר להדליק מקום חסר, והפרטים יועתקו אליו.</p>}
+          <PlaceRow shown={places.webinar} canAdd={!origin.webinar} label="וובינר" hint="הכוכבים בעמוד הוובינר" pending={pending} onAdd={() => addPlace('webinar')} onToggle={() => setPlaces((current) => ({ ...current, webinar: !current.webinar }))} />
+          <PlaceRow shown={places.site} canAdd={!origin.site} label="האתר" hint="הלשונית צוות המיזם" pending={pending} onAdd={() => addPlace('site')} onToggle={() => setPlaces((current) => ({ ...current, site: !current.site }))} />
+          <PlaceRow shown={places.library} canAdd={!origin.library} label="הספרייה" hint="רשימת המרצים" pending={pending} onAdd={() => addPlace('library')} onToggle={() => setPlaces((current) => ({ ...current, library: !current.library }))} />
+        </div> : <p className="mt-4 text-sm text-white/45">בחרי אדם שכבר מופיע. במקום חסר יהיה כפתור שמוסיף אותו עם אותם פרטים.</p>}
         {error ? <p className="mt-3 text-sm text-rose-300">{error}</p> : null}
-        <button type="button" disabled={pending || !faceId} onClick={() => void save()} className="mt-6 w-full rounded-full bg-[#b79043] text-black min-h-11 text-sm font-medium cursor-pointer disabled:opacity-50">
-          {pending ? 'שומר…' : 'שמירה'}
+        <button type="button" disabled={pending || !faceId} onClick={() => void persist(places, true)} className="mt-6 w-full rounded-full border border-white/20 min-h-11 text-sm cursor-pointer disabled:opacity-50">
+          {pending ? 'שומר…' : 'סגירה'}
         </button>
       </div>
     </div>

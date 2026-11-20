@@ -55,3 +55,47 @@ test('linking a webinar profile copies it to the library and the site', () => {
   assert.equal(listTeamMembers(db, false, 'webinar').some((member) => member.name === 'דנה שמש'), false);
   assert.equal(listPublicFaces(db).find((face) => face.linkedUserId === 'user-1')?.library, false);
 });
+
+test('a lecturer missing from the site and webinar is copied there in one save', () => {
+  const db = new DatabaseSync(':memory:');
+  db.exec(`CREATE TABLE team_members (
+    id TEXT PRIMARY KEY, name TEXT NOT NULL, role TEXT NOT NULL, photo TEXT NOT NULL DEFAULT '',
+    bio TEXT NOT NULL DEFAULT '', vision TEXT NOT NULL DEFAULT '', contribution TEXT NOT NULL DEFAULT '',
+    responsibilities TEXT NOT NULL DEFAULT '[]', expertise TEXT NOT NULL DEFAULT '[]',
+    impact_score INTEGER NOT NULL, hierarchy_level TEXT NOT NULL, orbit INTEGER NOT NULL,
+    active INTEGER NOT NULL DEFAULT 1, display_order INTEGER NOT NULL DEFAULT 0
+  );
+  CREATE TABLE lecturers (
+    id TEXT PRIMARY KEY, name TEXT, title TEXT, avatar_url TEXT, bio TEXT, credentials TEXT,
+    user_id TEXT, is_founder INTEGER, founder_id TEXT, sort_order INTEGER
+  );`);
+  db.prepare(`INSERT INTO lecturers (id, name, title, avatar_url, bio, credentials, user_id, is_founder)
+    VALUES ('inst-noa', 'נועה ברק', 'מרצה אורחת', '/team/noa.jpg', 'טקסט מהספרייה', '[]', '', 0)`).run();
+
+  const face = listPublicFaces(db).find((item) => item.name === 'נועה ברק');
+  assert.equal(face?.library, true);
+  assert.equal(face?.webinar, false);
+  assert.equal(face?.site, false);
+
+  savePublicAppearance(db, 'user-2', {
+    faceId: face!.id,
+    showWebinar: true,
+    showSite: true,
+    showLibrary: true,
+  });
+
+  const member = db.prepare(`SELECT name, role, photo, bio, show_webinar, show_site FROM team_members WHERE user_id = 'user-2'`).get() as {
+    name: string;
+    role: string;
+    photo: string;
+    bio: string;
+    show_webinar: number;
+    show_site: number;
+  };
+  assert.equal(member.name, 'נועה ברק');
+  assert.equal(member.role, 'מרצה אורחת');
+  assert.equal(member.photo, '/team/noa.jpg');
+  assert.equal(member.bio, 'טקסט מהספרייה');
+  assert.equal(member.show_webinar, 1);
+  assert.equal(member.show_site, 1);
+});

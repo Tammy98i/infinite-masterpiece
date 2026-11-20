@@ -226,7 +226,19 @@ export const adminApi = {
     id: string,
     body: { faceId: string; showWebinar: boolean; showSite: boolean; showLibrary: boolean }
   ) =>
-    apiRequest<{ face: { id: string; name: string } | null }>(`/api/admin/users/${id}/appearance`, {
+    apiRequest<{
+      face: {
+        id: string;
+        name: string;
+        title: string;
+        photo: string;
+        bio: string;
+        webinar: boolean;
+        site: boolean;
+        library: boolean;
+        linkedUserId: string;
+      } | null;
+    }>(`/api/admin/users/${id}/appearance`, {
       method: 'PUT',
       body: JSON.stringify(body),
     }),
