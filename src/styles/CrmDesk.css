@@ -225,7 +225,15 @@
 .crm-desk-metric:focus-visible {
   border-color: rgba(183, 144, 67, .55);
   background: rgba(183, 144, 67, .08);
-  outline: none;
+}
+
+.crm-desk-metric:focus-visible {
+  outline: 2px solid #dfc47d;
+  outline-offset: 2px;
+}
+
+.crm-desk-metric.is-waiting {
+  border-color: rgba(183, 144, 67, .75);
 }
 
 .crm-desk-metric strong {

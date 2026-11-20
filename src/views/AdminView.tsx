@@ -1,10 +1,11 @@
 ﻿import { useEffect, useMemo, useRef, useState } from 'react';
 import { Search } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { OnboardingCenterView } from './admin/OnboardingCenterView';
 import { AdminMobileNav, AdminSidebar } from './admin/AdminSidebar';
 import { AdminPageShell } from './admin/AdminPageShell';
-import { NAV_GROUPS, TAB_META, type Tab } from './admin/adminNav';
+import { isAdminTab, NAV_GROUPS, TAB_META, type Tab } from './admin/adminNav';
 import { fieldClass, STAFF_DESK_LABEL, STAFF_DESK_TABS } from './admin/adminConstants';
 import { UsersRolesPermissionsView } from './admin/UsersRolesPermissionsView';
 import { UsersAccountsView } from './admin/UsersAccountsView';
@@ -74,7 +75,8 @@ function normalizeExternalUrl(raw: string) {
 
 export function AdminView() {
   const { user, isAdmin, setView, categories, instructors, reloadCatalog } = useApp();
-  const [tab, setTab] = useState<Tab>('overview');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tab: Tab = isAdminTab(searchParams.get('desk')) ? (searchParams.get('desk') as Tab) : 'overview';
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const [commandOpen, setCommandOpen] = useState(false);
   const [recentTabs, setRecentTabs] = useState<Tab[]>(['overview']);
@@ -97,7 +99,18 @@ export function AdminView() {
       if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === 'k') {
         event.preventDefault();
         setCommandOpen(true);
+        return;
       }
+      if (event.key !== '/' || event.metaKey || event.ctrlKey || event.altKey) return;
+      const target = event.target as HTMLElement | null;
+      if (target?.closest('input, textarea, select, [contenteditable="true"]')) return;
+      event.preventDefault();
+      if (window.matchMedia('(min-width: 1024px)').matches) {
+        document.getElementById('admin-nav-search')?.focus();
+        return;
+      }
+      setMobileNavOpen(true);
+      window.requestAnimationFrame(() => document.getElementById('admin-nav-search-mobile')?.focus());
     };
     window.addEventListener('keydown', openSearch);
     return () => window.removeEventListener('keydown', openSearch);
@@ -105,9 +118,13 @@ export function AdminView() {
 
   useEffect(() => {
     if (allowedTabs && !allowedTabs.includes(tab)) {
-      setTab(allowedTabs[0] || 'overview');
+      const next = new URLSearchParams(searchParams);
+      const fallback = allowedTabs[0] || 'overview';
+      if (fallback === 'overview') next.delete('desk');
+      else next.set('desk', fallback);
+      setSearchParams(next, { replace: true });
     }
-  }, [allowedTabs, tab]);
+  }, [allowedTabs, tab, searchParams, setSearchParams]);
 
   if (!isAdmin) {
     return (
@@ -130,7 +147,10 @@ export function AdminView() {
   }
 
   const goTab = (id: Tab) => {
-    setTab(id);
+    const next = new URLSearchParams(searchParams);
+    if (id === 'overview') next.delete('desk');
+    else next.set('desk', id);
+    setSearchParams(next, { replace: true });
     setRecentTabs((current) => [id, ...current.filter((item) => item !== id)].slice(0, 5));
     setMobileNavOpen(false);
   };
@@ -593,40 +613,38 @@ function OverviewPanel({ onNavigate }: { onNavigate: (tab: Tab) => void }) {
 
   return (
     <div className="grid gap-4">
-      <CrmCatalogStage
-        courses={courses}
-        instructors={instructors}
-        categories={categories}
-        eyebrow="קטלוג אקדמי"
-        kicker="אותה שפת ספרייה — לניהול הרצאות. בלי CTA של מנוי."
-        featuredActionLabel="ניהול ההרצאה"
-        secondaryActionLabel="לקטלוג התוכן"
-        onFeaturedAction={() => onNavigate('content')}
-        onSecondaryAction={() => onNavigate('content')}
-        onSelectCourse={() => onNavigate('content')}
-        compact
-      />
-
       <section aria-label="לטיפול עכשיו" className="grid gap-3">
         <div className="grid grid-cols-2 xl:grid-cols-4 gap-2">
           {metrics.map((metric) => (
             <button
               key={metric.label}
               type="button"
-              className="crm-desk-metric"
+              className={`crm-desk-metric${metric.value > 0 ? ' is-waiting' : ''}`}
               onClick={() => onNavigate(metric.tab)}
             >
               <strong>{metric.value}</strong>
               <b>{metric.label}</b>
-              <em>{metric.hint}</em>
+              <em>{metric.value > 0 ? metric.hint : 'אין כרגע'}</em>
             </button>
           ))}
         </div>
-        <p className="text-xs text-white/35 font-light">
-          שאר המספרים (משתמשים, צפיות, המרה…) נשארים ב«אנליטיקות» — לא נמחקו.
-          מוכנות מערכת ב«הגדרות · מוכנות».
-        </p>
       </section>
+
+      <div className="hidden md:block">
+        <CrmCatalogStage
+          courses={courses}
+          instructors={instructors}
+          categories={categories}
+          eyebrow="קטלוג אקדמי"
+          kicker="אותה שפת ספרייה, לניהול הרצאות. בלי CTA של מנוי."
+          featuredActionLabel="ניהול ההרצאה"
+          secondaryActionLabel="לקטלוג התוכן"
+          onFeaturedAction={() => onNavigate('content')}
+          onSecondaryAction={() => onNavigate('content')}
+          onSelectCourse={() => onNavigate('content')}
+          compact
+        />
+      </div>
     </div>
   );
 }
