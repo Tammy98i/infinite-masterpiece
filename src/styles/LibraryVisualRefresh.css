@@ -60,23 +60,23 @@
 .library-catalog :is(.library-flow-page, .library-catalog-page) .library-hero-play,
 .library-catalog :is(.library-flow-page, .library-catalog-page) .library-plan-strip .library-plan-cta {
   color: #091426 !important;
-  background: var(--library-paper) !important;
-  border: 1px solid var(--library-paper);
+  background: linear-gradient(180deg, #e4c98a 0%, #b79043 100%) !important;
+  border: 1px solid #dfc47d;
   border-radius: .65rem !important;
   box-shadow: 0 4px 16px rgba(0, 0, 0, .2);
   min-height: 48px;
-  transition: background-color .2s ease, border-color .2s ease;
+  transition: filter .2s ease, border-color .2s ease;
 }
 
 .library-catalog :is(.library-flow-page, .library-catalog-page) .library-hero-play:hover,
 .library-catalog :is(.library-flow-page, .library-catalog-page) .library-plan-strip .library-plan-cta:hover {
-  background: #e6dfd2 !important;
+  filter: brightness(1.06);
 }
 
 .library-catalog :is(.library-flow-page, .library-catalog-page) .library-hero-more {
-  color: var(--library-paper);
-  background: rgba(12, 25, 45, .88);
-  border: 1px solid rgba(245, 241, 233, .35);
+  color: #f3ede2;
+  background: rgba(12, 25, 45, .72);
+  border: 1px solid #b79043;
   border-radius: .65rem;
   min-height: 48px;
 }

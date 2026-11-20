@@ -116,6 +116,10 @@
   border-radius: 4px;
 }
 
+.library-catalog .library-course-card > span {
+  color: rgba(243, 237, 226, .72);
+}
+
 .library-catalog .library-poster {
   border: 0;
   border-radius: 4px;

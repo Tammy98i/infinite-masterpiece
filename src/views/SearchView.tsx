@@ -92,7 +92,6 @@ export const SearchView: React.FC = () => {
           {results.length > 0 ? (
             <ul className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5" role="list">
               {results.map((course, index) => {
-                const instructor = instructors.find((i) => i.id === course.instructorId);
                 const duration = course.episodes.reduce((s, ep) => s + ep.duration, 0);
                 const access = getCardAccessState(course, user);
                 return (
@@ -104,7 +103,7 @@ export const SearchView: React.FC = () => {
                       position={index}
                     />
                     <p className="sr-only">
-                      <bdi dir="auto">{instructor?.name || 'מרצה'}</bdi> · <bdi dir="ltr">{formatClock(duration)}</bdi> · {ACCESS_LABEL[access]}
+                      <bdi dir="ltr">{formatClock(duration)}</bdi> · {ACCESS_LABEL[access]}
                     </p>
                   </li>
                 );
