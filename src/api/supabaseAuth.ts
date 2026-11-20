@@ -84,12 +84,19 @@ export async function restoreSupabaseBrowserSession() {
 
 async function syncAccessToken(accessToken: string, fullName = '') {
   const fromSupabase = await sessionFromSupabaseUser(accessToken, fullName);
-  // Express / Vercel may mirror the user into a local DB. That row must never
-  // replace the Supabase identity (email, role, id) shown across the site.
-  void apiRequest<{ token: string; user: AuthUserPayload }>('/api/auth/supabase', {
-    method: 'POST',
-    body: JSON.stringify({ accessToken, fullName }),
-  }).catch(() => undefined);
+  // The local API keeps progress and lists on a SQLite session. Prefer that
+  // token when the server can mirror this identity; otherwise keep Supabase.
+  try {
+    const local = await apiRequest<{ token: string; user: AuthUserPayload }>('/api/auth/supabase', {
+      method: 'POST',
+      body: JSON.stringify({ accessToken, fullName }),
+    });
+    if (local.token && local.user?.id) {
+      return { token: local.token, user: { ...fromSupabase.user, ...local.user } };
+    }
+  } catch {
+    /* The browser session still works when the local mirror is down. */
+  }
   return fromSupabase;
 }
 

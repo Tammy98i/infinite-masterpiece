@@ -3,6 +3,7 @@ import { getDb } from '../db/connection.js';
 import { createSession, userFromId, userFromToken, type AuthUser } from './authService.js';
 import { phonePlaceholderEmail } from '../../src/utils/phone.ts';
 import { BUILT_IN_ADMIN_EMAILS } from '../../src/data/adminEmails.ts';
+import { OAUTH_SUPABASE_ANON_KEY, OAUTH_SUPABASE_URL } from '../../src/lib/oauthProject.ts';
 
 type SupabaseUserPayload = {
   id: string;
@@ -15,19 +16,37 @@ function supabaseConfigured() {
   return Boolean(process.env.SUPABASE_URL?.trim() && process.env.SUPABASE_ANON_KEY?.trim());
 }
 
+function supabaseAuthTarget() {
+  const base = (process.env.SUPABASE_URL || '').trim().replace(/\/$/, '');
+  const anon = (process.env.SUPABASE_ANON_KEY || '').trim();
+  if (base && anon) return { base, anon };
+  if (OAUTH_SUPABASE_URL && OAUTH_SUPABASE_ANON_KEY) {
+    return { base: OAUTH_SUPABASE_URL.replace(/\/$/, ''), anon: OAUTH_SUPABASE_ANON_KEY };
+  }
+  return null;
+}
+
 export function isSupabaseAuthConfigured() {
   return supabaseConfigured();
 }
 
 async function fetchSupabaseUser(accessToken: string): Promise<SupabaseUserPayload> {
-  const base = process.env.SUPABASE_URL!.replace(/\/$/, '');
-  const anon = process.env.SUPABASE_ANON_KEY!;
-  const res = await fetch(`${base}/auth/v1/user`, {
-    headers: {
-      Authorization: `Bearer ${accessToken}`,
-      apikey: anon,
-    },
-  });
+  const target = supabaseAuthTarget();
+  if (!target) {
+    throw Object.assign(new Error('התחברות חיצונית אינה מוגדרת בשרת'), { status: 503 });
+  }
+  const { base, anon } = target;
+  let res: Response;
+  try {
+    res = await fetch(`${base}/auth/v1/user`, {
+      headers: {
+        Authorization: `Bearer ${accessToken}`,
+        apikey: anon,
+      },
+    });
+  } catch {
+    throw Object.assign(new Error('לא ניתן לאמת את ההתחברות מול Supabase'), { status: 503 });
+  }
   if (!res.ok) {
     throw Object.assign(new Error('טוקן ההתחברות לא תקין. נסו להתחבר מחדש'), { status: 401 });
   }
@@ -114,7 +133,7 @@ async function localUserFromAccessToken(accessToken: string, fullNameHint = '') 
 }
 
 export async function syncSupabaseSession(accessToken: string, fullNameHint = '') {
-  if (!supabaseConfigured()) {
+  if (!supabaseAuthTarget()) {
     throw Object.assign(new Error('התחברות חיצונית אינה מוגדרת בשרת'), { status: 503 });
   }
   const { user, supabaseUserId } = await localUserFromAccessToken(accessToken, fullNameHint);
