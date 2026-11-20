@@ -69,7 +69,7 @@
 .webinar-stage-page .webinar-editorial-grid > :is(#hosts, #webinar-fit) {
   background-color: #090d18;
   background-image:
-    linear-gradient(rgb(6 10 18 / 48%), rgb(6 10 18 / 48%)),
+    linear-gradient(rgb(6 10 18 / 72%), rgb(6 10 18 / 72%)),
     url('/webinar/night-clouds.png');
   background-size: cover;
   background-position: center bottom;
