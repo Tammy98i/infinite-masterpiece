@@ -29,15 +29,17 @@ export const InstructorProfileView: React.FC = () => {
 
   if (!instructor) {
     return (
-      <div className="library-catalog-page min-h-screen text-white pt-28 px-4 text-start">
-        <button
-          type="button"
-          onClick={() => setView('instructors')}
-          className="inline-flex items-center gap-1.5 text-sm text-white/45 hover:text-white mb-10 min-h-11"
-        >
-          <DirBack />
-          מרצים
-        </button>
+      <div className="library-catalog-page min-h-screen text-white px-4 text-start">
+        <div className="library-back-bar px-0">
+          <button
+            type="button"
+            onClick={() => setView('instructors')}
+            className="library-page-back inline-flex items-center gap-1.5 text-sm min-h-11"
+          >
+            <DirBack />
+            חזור
+          </button>
+        </div>
         <p className="text-sm text-white/45">המרצה לא נמצא.</p>
       </div>
     );
@@ -49,7 +51,7 @@ export const InstructorProfileView: React.FC = () => {
 
   return (
     <div className="library-catalog-page library-instructor-page min-h-screen text-white pb-28">
-      <header className="library-instructor-billboard relative min-h-[58vh] md:min-h-[70vh] flex items-end overflow-hidden pt-24 pb-16 md:pb-20">
+      <header className="library-instructor-billboard relative min-h-[58vh] md:min-h-[70vh] flex flex-col overflow-hidden pb-16 md:pb-20">
         <div className="absolute inset-0 select-none overflow-hidden bg-[#141414]">
           <div className="library-course-veil-a absolute inset-0" />
           <div className="library-course-veil-b absolute inset-0" />
@@ -57,7 +59,17 @@ export const InstructorProfileView: React.FC = () => {
           <div className="library-course-veil-d absolute inset-0" />
         </div>
 
-        <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 w-full text-start grid gap-8 md:grid-cols-[minmax(220px,32%)_1fr] md:items-end">
+        <div className="library-back-bar px-4 sm:px-8">
+          <button
+            type="button"
+            onClick={() => setView('instructors')}
+            className="library-page-back inline-flex items-center gap-1.5 text-sm min-h-11"
+          >
+            <DirBack />
+            חזור
+          </button>
+        </div>
+        <div className="library-billboard-body max-w-[1360px] mx-auto px-4 sm:px-8 text-start grid gap-8 md:grid-cols-[minmax(220px,32%)_1fr] md:items-end">
           <div className="library-instructor-frame relative w-full max-w-[360px] ms-auto md:ms-0">
             {instructor.avatarUrl ? (
               <img
@@ -71,15 +83,6 @@ export const InstructorProfileView: React.FC = () => {
             )}
           </div>
           <div>
-          <button
-            type="button"
-            onClick={() => setView('instructors')}
-            className="inline-flex items-center gap-1.5 text-sm text-white/70 hover:text-white mb-6 min-h-11"
-          >
-            <DirBack />
-            מרצים
-          </button>
-
           <h1 className="text-4xl sm:text-6xl lg:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight mb-3 max-w-4xl">
             <bdi dir="auto">{instructor.name}</bdi>
           </h1>

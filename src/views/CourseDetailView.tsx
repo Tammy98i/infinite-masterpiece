@@ -10,9 +10,9 @@ import {
   Check,
   Volume2,
   VolumeX,
-  ChevronLeft,
 } from 'lucide-react';
 import { Bidi } from '../components/Bidi';
+import { DirBack } from '../components/DirArrow';
 import { ClockLabel } from '../components/ClockLabel';
 import { canPreviewEpisode, canWatchEpisode, PREVIEW_SECONDS } from '../utils/access';
 import { playbackApi } from '../api/playback';
@@ -408,7 +408,7 @@ export const CourseDetailView: React.FC = () => {
 
   return (
     <div className="library-catalog-page library-course-page min-h-screen text-white pb-16">
-      <header className="library-course-billboard relative min-h-[58vh] md:min-h-[70vh] flex items-end overflow-hidden pt-24 pb-16 md:pb-20">
+      <header className="library-course-billboard relative min-h-[58vh] md:min-h-[70vh] flex flex-col overflow-hidden pb-16 md:pb-20">
         <div className="absolute inset-0 select-none overflow-hidden">
           <img
             src={course.backdropImage || course.coverImage}
@@ -422,19 +422,17 @@ export const CourseDetailView: React.FC = () => {
           <div className="library-course-veil-d absolute inset-0" />
         </div>
 
-        <div className="relative z-10 max-w-[1360px] mx-auto px-4 sm:px-8 w-full text-start">
-          <nav className="mb-6 text-sm text-white/70" aria-label="ניווט משני">
-            <button
-              type="button"
-              onClick={() => setView('home')}
-              className="hover:text-white min-h-11 inline-flex items-center"
-            >
-              ספרייה
-            </button>
-            <ChevronLeft className="inline-block w-4 h-4 mx-2 text-white/35" aria-hidden />
-            <span className="text-white"><bdi dir="auto">{course.title}</bdi></span>
-          </nav>
-
+        <div className="library-back-bar px-4 sm:px-8">
+          <button
+            type="button"
+            onClick={() => setView('home')}
+            className="library-page-back inline-flex items-center gap-1.5 text-sm min-h-11"
+          >
+            <DirBack />
+            חזור
+          </button>
+        </div>
+        <div className="library-billboard-body max-w-[1360px] mx-auto px-4 sm:px-8 text-start">
           <h1 className="text-4xl sm:text-6xl lg:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight mb-4 max-w-4xl">
             <bdi dir="auto">{course.title}</bdi>
           </h1>

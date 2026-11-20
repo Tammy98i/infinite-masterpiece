@@ -14,30 +14,29 @@ export const MyListView: React.FC = () => {
   const isFreeList = user.role !== 'admin' && !hasFullLibraryAccess(user);
 
   return (
-    <div className="library-catalog-page min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto">
-      <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8">
-        <div>
-          <p className="library-page-eyebrow mb-1">הרשימה שלי</p>
-          <h1 className="text-3xl sm:text-4xl font-heading font-semibold text-white">
-            הרשימה שלי ({savedCourses.length})
-          </h1>
-          {isFreeList && (
-            <p className="text-xs text-white/70 mt-2">
-              {savedCourses.length >= FREE_LIST_LIMIT
-                ? 'הרשימה החינמית מלאה. מנוי פותח שמירה בלי הגבלה.'
-                : `שמירת עד ${FREE_LIST_LIMIT} הרצאות במסלול החינמי.`}
-            </p>
-          )}
-        </div>
-
+    <div className="library-catalog-page min-h-screen text-white pb-28 px-4 sm:px-8 max-w-7xl mx-auto">
+      <div className="library-back-bar px-0">
         <button
           type="button"
           onClick={() => setView('home')}
-          className="library-page-back flex items-center gap-1.5 text-xs font-medium transition-colors min-h-11 cursor-pointer px-2"
+          className="library-page-back inline-flex items-center gap-1.5 text-sm min-h-11"
         >
-          <span>לספרייה המלאה</span>
           <DirBack />
+          <span>חזור</span>
         </button>
+      </div>
+      <div className="border-b border-white/10 pb-6 mb-8">
+        <p className="library-page-eyebrow mb-1">הרשימה שלי</p>
+        <h1 className="text-3xl sm:text-4xl font-heading font-semibold text-white">
+          הרשימה שלי ({savedCourses.length})
+        </h1>
+        {isFreeList && (
+          <p className="text-xs text-white/70 mt-2">
+            {savedCourses.length >= FREE_LIST_LIMIT
+              ? 'הרשימה החינמית מלאה. מנוי פותח שמירה בלי הגבלה.'
+              : `שמירת עד ${FREE_LIST_LIMIT} הרצאות במסלול החינמי.`}
+          </p>
+        )}
       </div>
 
       {savedCourses.length > 0 ? (

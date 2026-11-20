@@ -271,9 +271,44 @@
   font-style: normal;
 }
 
+.library-catalog .library-course-billboard,
+.library-catalog .library-instructor-billboard {
+  padding-top: calc(var(--site-header-h) + 0.5rem);
+}
+
+.library-catalog .library-back-bar {
+  position: relative;
+  z-index: 20;
+  display: flex;
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto 1rem;
+  padding-top: calc(var(--site-header-h) + 0.5rem);
+  padding-inline: 0;
+}
+
+.library-catalog .library-course-billboard .library-back-bar,
+.library-catalog .library-instructor-billboard .library-back-bar {
+  padding-top: 0;
+}
+
+.library-catalog .library-billboard-body {
+  position: relative;
+  z-index: 10;
+  width: 100%;
+  margin-top: auto;
+}
+
 .library-catalog .library-page-back {
-  color: rgba(255, 255, 255, 0.7) !important;
-  border-radius: 4px;
+  position: static;
+  z-index: 1;
+  margin: 0;
+  color: #f3ede2 !important;
+  background: rgba(8, 14, 26, .72);
+  border: 1px solid rgba(183, 144, 67, .45);
+  border-radius: 999px;
+  padding: 0 0.9rem;
+  backdrop-filter: blur(10px);
 }
 
 .library-catalog .library-page-back:hover {

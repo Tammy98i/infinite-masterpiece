@@ -44,7 +44,7 @@ export function LibraryPlanBanner() {
           ) : (
             <>
               <p className="text-sm text-white/85 font-light leading-relaxed">
-                חלק מהספרייה פתוח לצפייה. גישה מלאה — במנוי לספרייה.
+                חלק מהספרייה פתוח לצפייה. גישה מלאה במנוי לספרייה.
               </p>
               {openCount > 0 && (
                 <p className="text-[13px] text-[#b79043]/90 mt-1">

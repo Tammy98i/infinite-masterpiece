@@ -24,16 +24,18 @@ export const ProfileView: React.FC = () => {
   };
 
   return (
-    <div className="crm-desk library-catalog-page min-h-screen text-white pt-24 pb-28">
+    <div className="crm-desk library-catalog-page min-h-screen text-white pb-28">
       <div className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-10 text-start">
-        <button
-          type="button"
-          onClick={() => setView('home')}
-          className="inline-flex items-center gap-1.5 text-sm text-white/45 hover:text-white mb-10 min-h-11"
-        >
-          <DirBack />
-          ספרייה
-        </button>
+        <div className="library-back-bar px-0">
+          <button
+            type="button"
+            onClick={() => setView('home')}
+            className="library-page-back inline-flex items-center gap-1.5 text-sm min-h-11"
+          >
+            <DirBack />
+            חזור
+          </button>
+        </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12">
           <div className="flex items-center gap-4">

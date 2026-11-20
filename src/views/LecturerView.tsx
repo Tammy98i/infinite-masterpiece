@@ -18,6 +18,7 @@ import { CrmCatalogStage } from '../components/CrmCatalogStage';
 import { AsideVeils } from './admin/AsideVeils';
 import { DeskMonogram } from '../components/DeskMonogram';
 import { Bidi } from '../components/Bidi';
+import { DirBack } from '../components/DirArrow';
 
 const fieldClass =
   'w-full bg-[rgba(5,10,20,.55)] border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#b79043] focus:outline-none min-h-11';
@@ -191,10 +192,13 @@ function ApplicationPanel({
   };
 
   return (
-    <div className="crm-desk min-h-screen bg-transparent text-white pt-28 pb-24 px-4 sm:px-8 max-w-3xl mx-auto text-start">
-      <button type="button" onClick={onBack} className="text-sm text-white/45 hover:text-white mb-8 min-h-11 cursor-pointer">
-        חזרה לפרופיל
-      </button>
+    <div className="crm-desk min-h-screen bg-transparent text-white pb-24 px-4 sm:px-8 max-w-3xl mx-auto text-start">
+      <div className="library-back-bar px-0">
+        <button type="button" onClick={onBack} className="library-page-back inline-flex items-center gap-1.5 text-sm min-h-11 cursor-pointer">
+          <DirBack />
+          חזור
+        </button>
+      </div>
       <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">מרצים</p>
       <h1 className="text-3xl font-light mb-4">בקשה להיות מרצה</h1>
       <p className="text-sm text-white/45 font-light mb-8">
