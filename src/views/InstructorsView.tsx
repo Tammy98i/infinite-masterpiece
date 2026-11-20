@@ -5,13 +5,23 @@ function portraitLetter(name: string) {
   return name.trim().charAt(0) || 'מ';
 }
 
+function samePerson(name: string) {
+  return name.trim().replace(/[׳'"״`´]/g, '').replace(/\s+/g, ' ').toLowerCase();
+}
+
 export const InstructorsView: React.FC = () => {
   const { instructors, courses, setView } = useApp();
 
-  const visible = useMemo(
-    () => instructors.filter((inst) => inst.showInLibrary !== false),
-    [instructors]
-  );
+  const visible = useMemo(() => {
+    const seen = new Set<string>();
+    return instructors.filter((inst) => {
+      if (inst.showInLibrary === false) return false;
+      const key = samePerson(inst.name);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [instructors]);
   const featured = useMemo(
     () => visible.find((inst) => inst.isFounder && inst.avatarUrl) || visible.find((inst) => inst.avatarUrl) || visible[0],
     [visible]

@@ -98,4 +98,16 @@ test('a lecturer missing from the site and webinar is copied there in one save',
   assert.equal(member.bio, 'טקסט מהספרייה');
   assert.equal(member.show_webinar, 1);
   assert.equal(member.show_site, 1);
+  const before = db.prepare(`SELECT COUNT(*) AS c FROM team_members`).get() as { c: number };
+  const lecturersBefore = db.prepare(`SELECT COUNT(*) AS c FROM lecturers`).get() as { c: number };
+  savePublicAppearance(db, 'user-2', {
+    faceId: 'lecturer:inst-noa',
+    showWebinar: true,
+    showSite: true,
+    showLibrary: true,
+  });
+  const after = db.prepare(`SELECT COUNT(*) AS c FROM team_members`).get() as { c: number };
+  const lecturersAfter = db.prepare(`SELECT COUNT(*) AS c FROM lecturers`).get() as { c: number };
+  assert.equal(after.c, before.c);
+  assert.equal(lecturersAfter.c, lecturersBefore.c);
 });

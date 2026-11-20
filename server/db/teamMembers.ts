@@ -98,7 +98,15 @@ export function listTeamMembers(db: DatabaseSync, includeHidden = false, surface
   if (surface === 'site') where.push('show_site = 1');
   if (surface === 'library') where.push('show_library = 1');
   const sql = `SELECT * FROM team_members ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY display_order, name`;
-  return (db.prepare(sql).all() as Record<string, unknown>[]).map(rowToMember);
+  const members = (db.prepare(sql).all() as Record<string, unknown>[]).map(rowToMember);
+  if (includeHidden) return members;
+  const seen = new Set<string>();
+  return members.filter((member) => {
+    const key = member.name.trim().replace(/[׳'"״`´]/g, '').replace(/\s+/g, ' ').toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
 }
 
 export function suppressedNames(db: DatabaseSync, surface: 'site' | 'library' | 'webinar'): string[] {

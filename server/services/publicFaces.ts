@@ -39,7 +39,11 @@ type LecturerRow = {
 };
 
 function norm(value: string) {
-  return value.trim().replace(/\s+/g, ' ');
+  return value
+    .trim()
+    .replace(/[׳'"״`´]/g, '')
+    .replace(/\s+/g, ' ')
+    .toLowerCase();
 }
 
 function shown(flag: number | null, inherited: boolean) {
@@ -59,6 +63,7 @@ export function listPublicFaces(db: DatabaseSync): PublicFace[] {
 
   for (const member of members) {
     const key = norm(member.name);
+    if (usedNames.has(key)) continue;
     usedNames.add(key);
     const lecturer = lecturerByName.get(key);
     const linked = member.user_id || lecturer?.user_id || '';
@@ -118,6 +123,20 @@ function sourceOf(db: DatabaseSync, faceId: string) {
 
 function ensureMember(db: DatabaseSync, source: { memberId: string; name: string; title: string; photo: string; bio: string }, userId: string) {
   if (source.memberId) return source.memberId;
+  const existing = (db.prepare(`SELECT id, name FROM team_members`).all() as Array<{ id: string; name: string }>).find(
+    (row) => norm(row.name) === norm(source.name)
+  );
+  if (existing) {
+    db.prepare(
+      `UPDATE team_members
+       SET user_id = ?,
+           role = CASE WHEN TRIM(COALESCE(role, '')) = '' THEN ? ELSE role END,
+           photo = CASE WHEN TRIM(COALESCE(photo, '')) = '' THEN ? ELSE photo END,
+           bio = CASE WHEN TRIM(COALESCE(bio, '')) = '' THEN ? ELSE bio END
+       WHERE id = ?`
+    ).run(userId, source.title || 'צוות', source.photo || '', source.bio || '', existing.id);
+    return existing.id;
+  }
   const id = `team-${randomUUID()}`;
   db.prepare(
     `INSERT INTO team_members (
@@ -129,11 +148,8 @@ function ensureMember(db: DatabaseSync, source: { memberId: string; name: string
 }
 
 function fillLecturer(db: DatabaseSync, userId: string, source: { name: string; title: string; photo: string; bio: string }) {
-  const byUser = db.prepare(`SELECT id FROM lecturers WHERE user_id = ?`).get(userId) as { id: string } | undefined;
-  const byName = db.prepare(`SELECT id, user_id FROM lecturers WHERE name = ?`).get(source.name) as
-    | { id: string; user_id: string | null }
-    | undefined;
-  const existing = byUser || byName;
+  const rows = db.prepare(`SELECT id, name, user_id FROM lecturers`).all() as Array<{ id: string; name: string; user_id: string | null }>;
+  const existing = rows.find((row) => row.user_id === userId) || rows.find((row) => norm(row.name) === norm(source.name));
   if (existing) {
     db.prepare(
       `UPDATE lecturers
@@ -169,7 +185,7 @@ export function savePublicAppearance(
      SET user_id = ?, show_webinar = ?, show_site = ?, show_library = ?, active = 1
      WHERE id = ?`
   ).run(userId, input.showWebinar ? 1 : 0, input.showSite ? 1 : 0, input.showLibrary ? 1 : 0, memberId);
-  if (input.showLibrary || input.showSite) fillLecturer(db, userId, source);
+  if (input.showLibrary) fillLecturer(db, userId, source);
   return listPublicFaces(db).find((face) => face.linkedUserId === userId) || null;
 }
 

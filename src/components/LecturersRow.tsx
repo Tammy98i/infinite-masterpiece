@@ -11,6 +11,10 @@ export const LecturersRow: React.FC = () => {
       count: courses.filter((c) => c.instructorId === inst.id).length,
     }))
     .filter((row) => row.inst.showInLibrary !== false && (row.count > 0 || row.inst.isFounder))
+    .filter((row, index, all) => {
+      const key = row.inst.name.trim().replace(/[׳'"״`´]/g, '').replace(/\s+/g, ' ').toLowerCase();
+      return all.findIndex((item) => item.inst.name.trim().replace(/[׳'"״`´]/g, '').replace(/\s+/g, ' ').toLowerCase() === key) === index;
+    })
     .sort((a, b) => {
       if (a.inst.isFounder && !b.inst.isFounder) return -1;
       if (!a.inst.isFounder && b.inst.isFounder) return 1;
