@@ -185,6 +185,50 @@ export function searchSuggestions(
   return out.sort((a, b) => a.score - b.score).slice(0, limit).map(({ score, ...item }) => item);
 }
 
+function nameMatchesQuery(name: string, query: string): boolean {
+  if (!query) return false;
+  if (name.startsWith(query)) return true;
+  const nameWords = name.split(' ').filter(Boolean);
+  const terms = query.split(' ').filter(Boolean);
+  if (terms.length > 1) {
+    return nameWords.some((_, start) => terms.every((term, index) => nameWords[start + index]?.startsWith(term)));
+  }
+  return nameWords.some((word) => word.startsWith(query));
+}
+
+/** Lessons for the navbar field: a lecturer's courses, then titles that start with the typed letters. */
+export function searchLessonMatches(
+  courses: Course[],
+  instructors: Instructor[],
+  query: string
+): Array<{ id: string; label: string; meta?: string }> {
+  const q = normalizeSearch(query);
+  if (!q) return [];
+  const instructorById = new Map(instructors.map((item) => [item.id, item]));
+  const matchedInstructors = instructors.filter((item) => nameMatchesQuery(normalizeSearch(item.name), q));
+  const instructorIds = new Set(matchedInstructors.map((item) => item.id));
+  const seen = new Set<string>();
+  const out: Array<{ id: string; label: string; meta?: string }> = [];
+  const push = (course: Course) => {
+    if (seen.has(course.id)) return;
+    seen.add(course.id);
+    out.push({
+      id: course.id,
+      label: course.title,
+      meta: instructorById.get(course.instructorId)?.name,
+    });
+  };
+  if (instructorIds.size) {
+    for (const course of courses) {
+      if (instructorIds.has(course.instructorId)) push(course);
+    }
+  }
+  for (const course of courses) {
+    if (normalizeSearch(course.title).startsWith(q)) push(course);
+  }
+  return out;
+}
+
 export type CatalogFilter = 'all' | 'open' | 'short' | 'new';
 
 export function filterCatalogCourses(

@@ -5,7 +5,7 @@ import { Search, Mic, Shield, Menu, X, Infinity as InfinityIcon, Compass, Bookma
 import { AccountMenu } from './AccountMenu';
 import { LibraryNavigationMenu } from './LibraryNavigationMenu';
 import { trackEvent } from '../utils/analytics';
-import { searchSuggestions } from '../utils/searchCatalog';
+import { searchLessonMatches } from '../utils/searchCatalog';
 import { isolateClock } from '../utils/time';
 import { getCardAccessState } from '../utils/libraryHome';
 
@@ -15,24 +15,23 @@ export const Navbar: React.FC = () => {
     setView,
     isAdmin,
     isLecturer,
-    searchQuery,
     setSearchQuery,
     courses,
     instructors,
-    categories,
   } = useApp();
   const { user } = useUser();
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
+  const [searchDraft, setSearchDraft] = useState('');
   const [topicsNavActive, setTopicsNavActive] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
   const searchButtonRef = useRef<HTMLButtonElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
-  const suggestions = useMemo(
-    () => (isSearchOpen ? searchSuggestions(courses, instructors, categories, searchQuery, 6) : []),
-    [isSearchOpen, courses, instructors, categories, searchQuery]
+  const lessonMatches = useMemo(
+    () => (isSearchOpen ? searchLessonMatches(courses, instructors, searchDraft) : []),
+    [isSearchOpen, courses, instructors, searchDraft]
   );
 
   useEffect(() => {
@@ -78,15 +77,16 @@ export const Navbar: React.FC = () => {
 
   const closeSearch = () => {
     setIsSearchOpen(false);
+    setSearchDraft('');
     requestAnimationFrame(() => searchButtonRef.current?.focus());
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (searchQuery.trim()) {
-      setView('search');
-      closeSearch();
-    }
+    const query = searchDraft.trim();
+    if (!query) return;
+    setSearchQuery(query);
+    setIsSearchOpen(false);
   };
 
   const moreLinks = [
@@ -220,7 +220,7 @@ export const Navbar: React.FC = () => {
                   <form
                     onSubmit={(e) => {
                       handleSearchSubmit(e);
-                      trackEvent('search_submit', { query: searchQuery.trim() });
+                      trackEvent('search_submit', { query: searchDraft.trim() });
                     }}
                     className="flex items-center search-slide-in"
                   >
@@ -228,12 +228,13 @@ export const Navbar: React.FC = () => {
                       ref={searchInputRef}
                       type="search"
                       dir="auto"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
+                      value={searchDraft}
+                      onChange={(e) => setSearchDraft(e.target.value)}
                       placeholder="חיפוש בספרייה..."
-                      className="bg-zinc-900/90 border border-[#b79043]/50 rounded-full py-2 px-11 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 shadow-inner min-h-11"
+                      className="bg-zinc-900/90 border border-[#b79043]/50 rounded-full py-2 ps-8 pe-11 text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 shadow-inner min-h-11"
                       aria-label="חיפוש בספרייה"
-                      aria-controls={suggestions.length ? "library-search-suggestions" : undefined}
+                      aria-expanded={lessonMatches.length > 0}
+                      aria-controls={lessonMatches.length ? 'library-search-suggestions' : undefined}
                     />
                     <Search className="w-4 h-4 text-[#b79043] absolute start-3 pointer-events-none" data-icon="search" />
                     <button
@@ -246,52 +247,37 @@ export const Navbar: React.FC = () => {
                     </button>
                   </form>
 
-                  {suggestions.length > 0 && (
+                  {lessonMatches.length > 0 && (
                     <ul
                       id="library-search-suggestions"
-                      aria-label="הצעות חיפוש"
-                      className="absolute top-full mt-2 end-0 w-72 sm:w-80 rounded-2xl border border-white/10 bg-[#0a0a0a] shadow-2xl overflow-hidden z-50"
+                      aria-label="הרצאות תואמות"
+                      className="library-search-panel rounded-2xl border border-white/10 bg-[#0a0a0a] shadow-2xl z-50"
                     >
-                      {suggestions.map((item) => (
-                        <li key={`${item.type}-${item.id}`}>
-                          <button
-                            type="button"
-                            className="w-full text-start px-4 py-3 hover:bg-white/5 min-h-11 border-b border-white/5 last:border-0"
-                            onClick={() => {
-                              trackEvent('search_result_click', {
-                                content_id: item.id,
-                                type: item.type,
-                              });
-                              setIsSearchOpen(false);
-                              if (item.type === 'course') {
+                      {lessonMatches.map((item) => {
+                        const course = courses.find((entry) => entry.id === item.id);
+                        const access = course ? getCardAccessState(course, user) : null;
+                        const duration = course ? course.episodes.reduce((sum, episode) => sum + episode.duration, 0) : 0;
+                        return (
+                          <li key={item.id}>
+                            <button
+                              type="button"
+                              className="w-full text-start px-4 py-3 hover:bg-white/5 min-h-11 border-b border-white/5 last:border-0"
+                              onClick={() => {
+                                trackEvent('search_result_click', { content_id: item.id, type: 'course' });
+                                setIsSearchOpen(false);
+                                setSearchDraft('');
                                 setView('course', { courseId: item.id });
-                              }
-                              else if (item.type === 'instructor') setView('instructor', { instructorId: item.id });
-                              else setView('category', { categoryId: item.id });
-                            }}
-                          >
-                            <div className="text-sm text-white truncate"><bdi dir="auto">{item.label}</bdi></div>
-                            <div className="text-xs text-white/45 mt-0.5 truncate">
-                              <bdi dir="auto">{item.type === 'course'
-                                ? item.meta || 'הרצאה'
-                                : item.type === 'instructor'
-                                  ? item.meta || 'מרצה'
-                                  : 'נושא'}</bdi>
-                              {item.type === 'course'
-                                ? (() => {
-                                    const course = courses.find((c) => c.id === item.id);
-                                    if (!course) return '';
-                                    const access = getCardAccessState(course, user);
-                                    const dur = course.episodes.reduce((s, ep) => s + ep.duration, 0);
-                                    return ` · ${isolateClock(dur)} · ${
-                                      access === 'open' ? 'פתוח' : access === 'preview' ? 'טעימה' : 'דורש מנוי'
-                                    }`;
-                                  })()
-                                : ''}
-                            </div>
-                          </button>
-                        </li>
-                      ))}
+                              }}
+                            >
+                              <div className="text-base text-white"><bdi dir="auto">{item.label}</bdi></div>
+                              <div className="text-xs text-white/45 mt-0.5">
+                                <bdi dir="auto">{item.meta || 'הרצאה'}</bdi>
+                                {course ? ` · ${isolateClock(duration)} · ${access === 'open' ? 'פתוח' : access === 'preview' ? 'טעימה' : 'דורש מנוי'}` : ''}
+                              </div>
+                            </button>
+                          </li>
+                        );
+                      })}
                     </ul>
                   )}
                 </div>

@@ -1,7 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { COURSES, INSTRUCTORS, CATEGORIES } from '../data/initialData.ts';
-import { normalizeSearch, searchCourses, searchSuggestions, searchRecoveryQueries, filterCatalogCourses } from './searchCatalog.ts';
+import { normalizeSearch, searchCourses, searchSuggestions, searchRecoveryQueries, searchLessonMatches, filterCatalogCourses } from './searchCatalog.ts';
 import { getCardAccessState } from './libraryHome.ts';
 
 const search = (query: string) => searchCourses(COURSES, INSTRUCTORS, CATEGORIES, query);
@@ -48,6 +48,17 @@ test('navbar suggestions keep literal prefixes while a word is still being typed
   assert.ok(searchSuggestions(COURSES, INSTRUCTORS, CATEGORIES, 'מיינ').some(item => item.label.includes('מיינדפולנס')));
   assert.ok(searchSuggestions(COURSES, INSTRUCTORS, CATEGORIES, 'מיכ').some(item => item.type === 'instructor' && item.label.includes('מיכל')));
   assert.deepEqual(searchCourses([fixture('noise', 'בינה מלאכותיתית')], [], [], 'AI'), []);
+});
+
+test('navbar lesson list follows a lecturer name and a title prefix', () => {
+  const michal = INSTRUCTORS.find((item) => item.name.includes('מיכל'))!;
+  const hers = COURSES.filter((course) => course.instructorId === michal.id).map((course) => course.id);
+  const byName = searchLessonMatches(COURSES, INSTRUCTORS, 'מיכל').map((item) => item.id);
+  for (const id of hers) assert.ok(byName.includes(id));
+  const byPrefix = searchLessonMatches(COURSES, INSTRUCTORS, crisis.title.slice(0, 3));
+  assert.equal(byPrefix[0]?.id, crisis.id);
+  assert.ok(byPrefix.every((item) => normalizeSearch(item.label).startsWith(normalizeSearch(crisis.title.slice(0, 3))) || hers.includes(item.id)));
+  assert.deepEqual(searchLessonMatches(COURSES, INSTRUCTORS, 'זזז'), []);
 });
 
 test('navbar suggestions tolerate typos and obey the limit', () => {
