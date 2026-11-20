@@ -48,32 +48,32 @@ export function isPhoneProviderEnabled() {
 }
 
 export async function refreshAuthProviderFlags() {
-  if (!isSupabaseAuthEnabled()) {
-    // Email stays on the local server. Google and Apple still start OAuth.
-    googleProviderEnabled = true;
-    appleProviderEnabled = true;
+  const base = (url() || OAUTH_SUPABASE_URL).replace(/\/$/, '');
+  const key = anon() || OAUTH_SUPABASE_ANON_KEY;
+  if (!base || !key) {
+    googleProviderEnabled = false;
+    appleProviderEnabled = false;
     emailProviderEnabled = false;
     phoneProviderEnabled = false;
     return;
   }
   try {
-    const res = await fetch(`${url()}/auth/v1/settings`, {
+    const res = await fetch(`${base}/auth/v1/settings`, {
       headers: {
-        apikey: anon(),
-        Authorization: `Bearer ${anon()}`,
+        apikey: key,
+        Authorization: `Bearer ${key}`,
       },
     });
     const data = (await res.json().catch(() => ({}))) as {
       external?: { google?: boolean; apple?: boolean; email?: boolean; phone?: boolean };
     };
-    googleProviderEnabled = data.external?.google !== false;
+    googleProviderEnabled = data.external?.google === true;
     appleProviderEnabled = data.external?.apple === true;
-    emailProviderEnabled = data.external?.email !== false;
-    phoneProviderEnabled = Boolean(data.external?.phone);
+    emailProviderEnabled = isSupabaseAuthEnabled() && data.external?.email !== false;
+    phoneProviderEnabled = isSupabaseAuthEnabled() && Boolean(data.external?.phone);
   } catch {
-    // Google is on in this project; keep the button if settings fail to load.
     googleProviderEnabled = true;
-    appleProviderEnabled = true;
+    appleProviderEnabled = false;
     emailProviderEnabled = isSupabaseAuthEnabled();
     phoneProviderEnabled = false;
   }

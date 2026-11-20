@@ -26,6 +26,8 @@ export const AuthModal: React.FC = () => {
     requestPasswordReset,
     loginWithGoogle,
     loginWithApple,
+    googleAuthEnabled,
+    appleAuthEnabled,
     phoneAuthEnabled,
     supabaseAuthEnabled,
   } = useUser();
@@ -206,6 +208,15 @@ export const AuthModal: React.FC = () => {
   const handleOAuth = async (provider: 'google' | 'apple') => {
     setError('');
     setErrorKind('error');
+    const enabled = provider === 'apple' ? appleAuthEnabled : googleAuthEnabled;
+    if (!enabled) {
+      setError(
+        provider === 'apple'
+          ? 'התחברות עם Apple עדיין לא הופעלה בפרויקט. Google זמין.'
+          : 'התחברות עם Google עדיין לא הופעלה בפרויקט.'
+      );
+      return;
+    }
     await runExclusive(async () => {
       try {
         const next =
