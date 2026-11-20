@@ -108,8 +108,8 @@
   content: '';
   position: absolute;
   top: 0;
-  left: 38%;
-  right: 38%;
+  left: 16%;
+  right: 16%;
   height: 1px;
   z-index: 4;
   pointer-events: none;
