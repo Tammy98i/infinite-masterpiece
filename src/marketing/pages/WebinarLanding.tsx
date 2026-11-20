@@ -13,14 +13,12 @@ import {
   WEBINAR_BOTTLENECKS,
   WEBINAR_CTA_ENDED,
   WEBINAR_CTA_REGISTER,
-  WEBINAR_DIFFERENCE_POINTS,
   WEBINAR_ENDED_NOTE,
   WEBINAR_FIT_NO,
   WEBINAR_FIT_YES,
   WEBINAR_GLEB,
   WEBINAR_HOLDING_LINE,
   WEBINAR_REGISTER_ID,
-  WEBINAR_TRACKS_FINE_PRINT,
 } from '../../constants/webinarPage';
 import { WebinarRegistrationForm } from '../components/WebinarRegistrationForm';
 import { WebinarRegistrationState } from '../components/WebinarRegistrationState';
@@ -228,8 +226,6 @@ export function WebinarLanding() {
     },
   ];
 
-  const eveningFeats = [...WEBINAR_DIFFERENCE_POINTS.map((item) => item.title), config.costLabel];
-
   return (
     <div className="webinar-stage-page webinar-night-page webinar-flow-page w-full">
       <nav className="webinar-spine" aria-label="מיקום בעמוד הוובינר">
@@ -287,9 +283,6 @@ export function WebinarLanding() {
           <p className="webinar-host-lead">
             גל, תמי וגלב בלייב. שיעור מכירות, משימת ביצוע, ואז פעולה שנשלחת לעולם.
           </p>
-          <ul className="webinar-host-feats">
-            {eveningFeats.filter(Boolean).map((item) => <li key={item}>{item}</li>)}
-          </ul>
           <ul className="webinar-host-orbs">
             {hosts.map((leader) => (
               <li key={leader.name}>
@@ -305,9 +298,8 @@ export function WebinarLanding() {
             ))}
           </ul>
           <p id="tracks" className="webinar-host-tracks">
-            שני מסלולי כניסה לפיילוט, אמיצים והססנים, יוצגו בסוף הערב. לא נדרש להחליט עכשיו.
+            שני המסלולים, אמיצים והססנים, יוצגו בסוף הערב. לא נדרש להחליט עכשיו. מסלול ההססנים הוא אותו יעד בפריסה, לא הנחה ולא מוצר חלקי.
           </p>
-          <p className="webinar-host-fine">{WEBINAR_TRACKS_FINE_PRINT}</p>
           <p className="webinar-host-meta">{config.location} · {config.durationMinutes} דקות · {WEBINAR_AUDIENCE_LABEL}</p>
         </div>
       </section>
