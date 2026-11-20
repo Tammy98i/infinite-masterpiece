@@ -65,30 +65,11 @@
   background: #202940; border-color: #f5f2e9;
 }
 
-/* Labelled navigation stays in document flow: no floating controls over content. */
-.webinar-stage-page .webinar-spine {
-  position: relative; inset: auto; transform: none;
-  flex-direction: row; justify-content: center; flex-wrap: wrap;
-  gap: 4px 12px; padding: 12px 16px; border-radius: 0;
-  background: var(--tone-space); border-bottom: 1px solid rgb(214 181 104 / 25%);
-}
-.webinar-stage-page .webinar-spine::before,
-.webinar-stage-page .webinar-spine a::before { content: none; }
-.webinar-stage-page .webinar-spine a {
-  width: auto; height: auto; min-height: 44px; padding: 8px 12px;
-  color: var(--tone-cream-soft); border-bottom: 2px solid transparent;
-}
-.webinar-stage-page .webinar-spine a.is-on { border-bottom-color: var(--tone-gold); }
-.webinar-stage-page .webinar-spine a span {
-  display: block; position: static; transform: none; opacity: 1;
-  color: inherit; font-size: 14px; letter-spacing: 0;
-}
+/* The gold circle spine stays fixed: right edge on a wide screen, bottom on a short one. */
 .webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-map { height: 680px; max-width: 900px; margin-inline: auto; }
 .webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-map.has-selection { height: auto; min-height: 860px; }
 
 @media (max-width: 767px) {
-  .webinar-stage-page .webinar-spine { gap: 0; padding: 8px 12px; }
-  .webinar-stage-page .webinar-spine a { padding-inline: 10px; }
   .webinar-stage-page .webinar-neural-hero { min-height: min(680px, 85svh); padding: 48px 20px; }
   .webinar-stage-page .webinar-neural-hero .webinar-stage-copy { gap: 20px; }
   .webinar-stage-page .webinar-neural-hero .webinar-stage-punchline { font-size: 16px; }
