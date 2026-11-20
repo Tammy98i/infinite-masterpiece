@@ -86,6 +86,36 @@
   background-repeat: no-repeat;
 }
 
+/* A thin gold seam where one slide meets the next. */
+.webinar-stage-page :is(
+  #problem,
+  .webinar-editorial-grid > #hosts,
+  .webinar-editorial-grid > .team-galaxy,
+  .webinar-editorial-grid > #webinar-fit,
+  .webinar-editorial-grid > #webinar-faq,
+  .webinar-editorial-grid > #webinar-register-bottom
+) {
+  position: relative;
+}
+.webinar-stage-page :is(
+  #problem,
+  .webinar-editorial-grid > #hosts,
+  .webinar-editorial-grid > .team-galaxy,
+  .webinar-editorial-grid > #webinar-fit,
+  .webinar-editorial-grid > #webinar-faq,
+  .webinar-editorial-grid > #webinar-register-bottom
+)::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 10%;
+  right: 10%;
+  height: 1px;
+  z-index: 4;
+  pointer-events: none;
+  background: linear-gradient(90deg, transparent, rgba(223, 196, 125, .72), transparent);
+}
+
 /* Star points only, matching the team slide dust, on slides without a photo background. */
 .webinar-stage-page .webinar-star-field {
   position: relative;
