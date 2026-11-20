@@ -51,8 +51,8 @@ export const MyListView: React.FC = () => {
           <EmptyState
             eyebrow="הרשימה שלי"
             title="עדיין אין הרצאות שמורות"
-            body="בחרו מהכרזה או מהפסים — הכל נשאר במקומו."
-            actionLabel="להמשיך לגלול"
+            body="לחצו על + בכרטיס הרצאה כדי לשמור אותה כאן לצפייה בהמשך."
+            actionLabel="לגלות הרצאות בספרייה"
             onAction={() => setView('home')}
           />
           <StartHereRail quiet {...pickStartHereCourses(courses, user)} />

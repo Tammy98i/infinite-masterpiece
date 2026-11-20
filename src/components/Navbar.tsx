@@ -1,8 +1,9 @@
-﻿import React, { useState, useRef, useEffect, useMemo } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { useUser } from '../context/UserContext';
 import { Search, Mic, Shield, Menu, X, Infinity as InfinityIcon, Compass, Bookmark, User, History } from 'lucide-react';
 import { AccountMenu } from './AccountMenu';
+import { LibraryNavigationMenu } from './LibraryNavigationMenu';
 import { trackEvent } from '../utils/analytics';
 import { searchSuggestions } from '../utils/searchCatalog';
 import { isolateClock } from '../utils/time';
@@ -20,13 +21,15 @@ export const Navbar: React.FC = () => {
     instructors,
     categories,
   } = useApp();
-  const { user, isGuest, setAuthModalOpen } = useUser();
+  const { user } = useUser();
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [topicsNavActive, setTopicsNavActive] = useState(false);
   const searchInputRef = useRef<HTMLInputElement>(null);
+  const searchButtonRef = useRef<HTMLButtonElement>(null);
+  const menuButtonRef = useRef<HTMLButtonElement>(null);
   const suggestions = useMemo(
     () => (isSearchOpen ? searchSuggestions(courses, instructors, categories, searchQuery, 6) : []),
     [isSearchOpen, courses, instructors, categories, searchQuery]
@@ -43,7 +46,7 @@ export const Navbar: React.FC = () => {
   useEffect(() => {
     const openSearch = (event: KeyboardEvent) => {
       const target = event.target as HTMLElement;
-      if (event.key === '/' && !['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
+      if (event.key === '/' && !event.ctrlKey && !event.metaKey && !event.altKey && !target.isContentEditable && !['INPUT', 'TEXTAREA', 'SELECT'].includes(target.tagName)) {
         event.preventDefault();
         setIsSearchOpen(true);
       }
@@ -73,10 +76,16 @@ export const Navbar: React.FC = () => {
     }
   }, [isSearchOpen]);
 
+  const closeSearch = () => {
+    setIsSearchOpen(false);
+    requestAnimationFrame(() => searchButtonRef.current?.focus());
+  };
+
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
       setView('search');
+      closeSearch();
     }
   };
 
@@ -91,6 +100,14 @@ export const Navbar: React.FC = () => {
   return (
     <>
       <header
+        onKeyDown={(event) => {
+          if (event.key !== 'Escape') return;
+          if (isSearchOpen) closeSearch();
+          if (isMobileMenuOpen) {
+            setIsMobileMenuOpen(false);
+            menuButtonRef.current?.focus();
+          }
+        }}
         role="banner"
         aria-label="כותרת הספרייה"
         className={`editorial-library-header fixed top-0 inset-inline-0 z-50 transition-all duration-300 ${
@@ -111,22 +128,22 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setView('home')}
+                aria-current={currentView === 'home' ? 'page' : undefined}
                 className="header-logo flex items-center gap-2.5 sm:gap-3 lg:gap-4 group focus-ring"
                 aria-label="Infinite Masterpiece"
               >
                 <InfinityIcon className="header-logo-mark text-[#dfc47d] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
                 <span className="header-wordmark font-light tracking-[0.22em] text-white/90 leading-tight uppercase">
-                  Infinite
-                  <br />
-                  <span className="font-medium">Masterpiece</span>
+                  IM
                 </span>
               </button>
             </div>
 
-            <nav className="header-nav hidden md:flex items-center font-light" aria-label="ניווט הספרייה">
+            <nav className="header-nav hidden lg:flex items-center font-light" aria-label="ניווט הספרייה">
               <button
                 type="button"
                 onClick={() => setView('home')}
+                aria-current={currentView === 'home' ? 'page' : undefined}
                 className={`transition-colors py-2 min-h-11 border-b-2 ${
                   currentView === 'home' && !topicsNavActive
                     ? 'text-white border-[#b79043]'
@@ -138,6 +155,7 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setView('mylist')}
+                aria-current={currentView === 'mylist' ? 'page' : undefined}
                 className={`transition-colors py-2 min-h-11 border-b-2 ${
                   currentView === 'mylist'
                     ? 'text-white border-[#b79043]'
@@ -149,6 +167,7 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setView('history')}
+                aria-current={currentView === 'history' ? 'page' : undefined}
                 className={`transition-colors py-2 min-h-11 border-b-2 ${
                   currentView === 'history'
                     ? 'text-white border-[#b79043]'
@@ -160,6 +179,7 @@ export const Navbar: React.FC = () => {
               <button
                 type="button"
                 onClick={() => setView('shorts')}
+                aria-current={currentView === 'shorts' ? 'page' : undefined}
                 className={`header-nav-wide transition-colors py-2 min-h-11 border-b-2 ${
                   currentView === 'shorts'
                     ? 'text-white border-[#b79043]'
@@ -180,6 +200,7 @@ export const Navbar: React.FC = () => {
                     });
                   });
                 }}
+                aria-current={currentView === 'category' ? 'page' : topicsNavActive ? 'location' : undefined}
                 className={`header-nav-wide transition-colors py-2 min-h-11 border-b-2 ${
                   topicsNavActive
                     ? 'text-white border-[#b79043]'
@@ -188,6 +209,7 @@ export const Navbar: React.FC = () => {
               >
                 נושאים
               </button>
+              <LibraryNavigationMenu />
             </nav>
           </div>
 
@@ -208,20 +230,18 @@ export const Navbar: React.FC = () => {
                     <input
                       ref={searchInputRef}
                       type="search"
+                      dir="auto"
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       placeholder="חיפוש בספרייה..."
-                      className="w-56 sm:w-72 bg-zinc-900/90 border border-[#b79043]/50 rounded-full py-2 ps-9 pe-8 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 shadow-inner min-h-11"
+                      className="w-56 sm:w-72 bg-zinc-900/90 border border-[#b79043]/50 rounded-full py-2 px-11 text-sm text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 shadow-inner min-h-11"
                       aria-label="חיפוש בספרייה"
-                      aria-autocomplete="list"
-                      aria-controls="library-search-suggestions"
+                      aria-controls={suggestions.length ? "library-search-suggestions" : undefined}
                     />
                     <Search className="w-4 h-4 text-[#b79043] absolute start-3 pointer-events-none" data-icon="search" />
                     <button
                       type="button"
-                      onClick={() => {
-                        setIsSearchOpen(false);
-                      }}
+                      onClick={closeSearch}
                       className="absolute end-2.5 text-zinc-400 hover:text-white p-1 min-h-11 min-w-11 flex items-center justify-center"
                       aria-label="סגירת חיפוש"
                     >
@@ -232,11 +252,11 @@ export const Navbar: React.FC = () => {
                   {suggestions.length > 0 && (
                     <ul
                       id="library-search-suggestions"
-                      role="listbox"
+                      aria-label="הצעות חיפוש"
                       className="absolute top-full mt-2 end-0 w-72 sm:w-80 rounded-2xl border border-white/10 bg-[#0a0a0a] shadow-2xl overflow-hidden z-50"
                     >
                       {suggestions.map((item) => (
-                        <li key={`${item.type}-${item.id}`} role="option">
+                        <li key={`${item.type}-${item.id}`}>
                           <button
                             type="button"
                             className="w-full text-start px-4 py-3 hover:bg-white/5 min-h-11 border-b border-white/5 last:border-0"
@@ -253,13 +273,13 @@ export const Navbar: React.FC = () => {
                               else setView('category', { categoryId: item.id });
                             }}
                           >
-                            <div className="text-sm text-white truncate">{item.label}</div>
+                            <div className="text-sm text-white truncate"><bdi dir="auto">{item.label}</bdi></div>
                             <div className="text-xs text-white/45 mt-0.5 truncate">
-                              {item.type === 'course'
+                              <bdi dir="auto">{item.type === 'course'
                                 ? item.meta || 'הרצאה'
                                 : item.type === 'instructor'
                                   ? item.meta || 'מרצה'
-                                  : 'נושא'}
+                                  : 'נושא'}</bdi>
                               {item.type === 'course'
                                 ? (() => {
                                     const course = courses.find((c) => c.id === item.id);
@@ -285,6 +305,7 @@ export const Navbar: React.FC = () => {
                     trackEvent('search_open');
                     setIsSearchOpen(true);
                   }}
+                  ref={searchButtonRef}
                   data-onboarding="search"
                   className="px-3 rounded-full border border-white/10 text-zinc-300 hover:text-white hover:border-[#b79043]/40 hover:bg-white/5 transition-colors min-h-11 min-w-11 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
                   title="חיפוש בספרייה"
@@ -329,18 +350,9 @@ export const Navbar: React.FC = () => {
             )}
 
 
-            {isGuest && (
-              <button
-                type="button"
-                onClick={() => setAuthModalOpen(true)}
-                className="header-login hidden sm:inline-flex items-center px-4 rounded-full border border-white/25 text-white/85 font-medium hover:border-white/50 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
-              >
-                כניסה
-              </button>
-            )}
-
             <div className="header-account">
               <AccountMenu
+                guestLabel="כניסה"
                 onOpenProfile={() => setView('profile')}
                 onOpenAdmin={() => setView('admin')}
                 onOpenLecturer={() => setView('lecturer')}
@@ -351,7 +363,9 @@ export const Navbar: React.FC = () => {
             <button
               type="button"
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-              className="header-burger md:hidden p-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/10 flex items-center justify-center"
+              className="header-burger lg:hidden p-2 rounded-xl text-zinc-300 hover:text-white hover:bg-white/10 flex items-center justify-center"
+              ref={menuButtonRef}
+              aria-controls="library-mobile-menu"
               aria-label="תפריט ניווט"
               aria-expanded={isMobileMenuOpen}
             >
@@ -363,13 +377,18 @@ export const Navbar: React.FC = () => {
 
         {/* Mobile Navigation Drawer */}
         {isMobileMenuOpen && (
-          <nav className="md:hidden bg-zinc-950 border-b border-white/10 px-6 py-5 grid gap-2" aria-label="ניווט נייד — ספרייה">
+          <nav id="library-mobile-menu" className="lg:hidden bg-zinc-950 border-b border-white/10 px-6 py-5 grid gap-2" aria-label="ניווט נייד — ספרייה">
+            <button type="button" aria-current={currentView === 'home' ? 'page' : undefined} onClick={() => {
+              setView('home');
+              setIsMobileMenuOpen(false);
+            }} className="text-start px-4 py-3 rounded-xl text-base min-h-11">ספרייה</button>
             <button
               type="button"
               onClick={() => {
                 setView('mylist');
                 setIsMobileMenuOpen(false);
               }}
+              aria-current={currentView === 'mylist' ? 'page' : undefined}
               className="text-start px-4 py-3 rounded-xl text-base text-zinc-200 hover:bg-white/5 min-h-11"
             >
               הרשימה
@@ -378,6 +397,7 @@ export const Navbar: React.FC = () => {
               <button
                 key={item.label}
                 type="button"
+                aria-current={currentView === item.view ? 'page' : undefined}
                 onClick={() => {
                   setView(item.view);
                   setIsMobileMenuOpen(false);
@@ -386,7 +406,7 @@ export const Navbar: React.FC = () => {
                   currentView === item.view ? 'bg-primary/15 text-primary-light font-bold' : 'text-zinc-200 hover:bg-white/5'
                 }`}
               >
-                {item.label}
+                <bdi dir="auto">{item.label}</bdi>
               </button>
             ))}
             {isLecturer && (
@@ -421,6 +441,7 @@ export const Navbar: React.FC = () => {
         <button
           type="button"
           onClick={() => setView('home')}
+          aria-current={currentView === 'home' ? 'page' : undefined}
           className={`flex flex-col items-center gap-1 min-h-11 min-w-11 ${
             currentView === 'home' ? 'text-primary-light font-bold' : 'text-zinc-400'
           }`}
@@ -431,6 +452,7 @@ export const Navbar: React.FC = () => {
         <button
           type="button"
           onClick={() => setView('search')}
+          aria-current={currentView === 'search' ? 'page' : undefined}
           className={`flex flex-col items-center gap-1 min-h-11 min-w-11 ${
             currentView === 'search' ? 'text-primary-light font-bold' : 'text-zinc-400'
           }`}
@@ -441,6 +463,7 @@ export const Navbar: React.FC = () => {
         <button
           type="button"
           onClick={() => setView('history')}
+          aria-current={currentView === 'history' ? 'page' : undefined}
           className={`flex flex-col items-center gap-1 min-h-11 min-w-11 ${
             currentView === 'history' ? 'text-primary-light font-bold' : 'text-zinc-400'
           }`}
@@ -451,6 +474,7 @@ export const Navbar: React.FC = () => {
         <button
           type="button"
           onClick={() => setView('mylist')}
+          aria-current={currentView === 'mylist' ? 'page' : undefined}
           data-onboarding="my-list"
           className={`flex flex-col items-center gap-1 min-h-11 min-w-11 ${
             currentView === 'mylist' ? 'text-primary-light font-bold' : 'text-zinc-400'
@@ -462,6 +486,7 @@ export const Navbar: React.FC = () => {
         <button
           type="button"
           onClick={() => setView('profile')}
+          aria-current={currentView === 'profile' ? 'page' : undefined}
           className={`flex flex-col items-center gap-1 min-h-11 min-w-11 ${
             currentView === 'profile' ? 'text-primary-light font-bold' : 'text-zinc-400'
           }`}

@@ -1,0 +1,135 @@
+/* Shared usability layer: stable card information, visible filters and navigation. */
+.vod-app.library-catalog :is(button, a, input, select, summary):focus-visible {
+  outline: 2px solid #dfc47d;
+  outline-offset: 3px;
+}
+
+.vod-app.library-catalog nav button[aria-current="page"],
+.vod-app.library-catalog .library-more-nav summary.is-active {
+  color: #dfc47d;
+  border-bottom: 2px solid #dfc47d;
+}
+
+.vod-app.library-catalog nav[aria-label="ניווט נייד — ספרייה"] { max-height: calc(100dvh - 160px); overflow-y: auto; }
+
+.library-more-nav { position: relative; }
+.library-more-nav summary {
+  display: flex;
+  align-items: center;
+  gap: .4rem;
+  min-height: 44px;
+  cursor: pointer;
+  list-style: none;
+  white-space: nowrap;
+}
+.library-more-nav summary::-webkit-details-marker { display: none; }
+.library-more-links {
+  position: absolute;
+  top: calc(100% + .6rem);
+  inset-inline-end: 0;
+  width: 220px;
+  padding: .5rem;
+  border: 1px solid var(--library-line);
+  border-radius: .8rem;
+  background: var(--library-surface);
+  box-shadow: 0 16px 40px #0008;
+}
+.library-more-links button {
+  display: block;
+  width: 100%;
+  min-height: 44px;
+  padding: .65rem .8rem;
+  text-align: start;
+  border-radius: .4rem;
+  color: var(--library-paper);
+}
+.library-more-links button:hover { background: #192b44; }
+
+/* Expanded search must not push account actions out of the header. */
+@media (min-width: 768px) {
+  .vod-app.library-catalog .header-search:has(input) {
+    position: absolute;
+    top: 100%;
+    inset-inline-end: 2rem;
+    width: min(28rem, calc(100vw - 4rem));
+    padding-block: .5rem;
+  }
+  .vod-app.library-catalog .header-search:has(input) > div,
+  .vod-app.library-catalog .header-search input,
+  .vod-app.library-catalog .header-search ul { width: 100%; }
+}
+
+.vod-app.library-catalog .library-filter-fields {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1rem;
+}
+.library-filter-fields label { display: grid; gap: .4rem; min-width: 0; }
+.library-filter-fields label > span { font-size: .8rem; color: var(--library-muted); }
+.library-filter-fields select { width: 100%; padding: .6rem .75rem; font-size: .9rem; }
+.library-active-filters {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+  margin-block: 1rem;
+  color: var(--library-muted);
+  font-size: .85rem;
+}
+.library-active-filters button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .65rem;
+  min-height: 44px;
+  padding: .5rem .8rem;
+  border: 1px solid rgba(223, 196, 125, .5);
+  border-radius: .65rem;
+  background: #192b44;
+  color: var(--library-paper);
+}
+.library-active-filters .library-clear-filters { border-color: transparent; background: transparent; text-decoration: underline; text-underline-offset: .25rem; }
+.library-result-count { color: var(--library-muted); font-size: .9rem; margin-block: 1rem; }
+
+/* Do not hide useful information on hover or require a touch user to reveal it. */
+.vod-app.library-catalog .library-course-card .library-poster-title-dock { opacity: 1; }
+.vod-app.library-catalog .library-course-card .library-poster-meta { display: none; }
+.vod-app.library-catalog .library-card-details {
+  display: grid;
+  gap: .35rem;
+  margin-top: .65rem;
+  font-size: .8rem;
+  font-weight: 400;
+  line-height: 1.6;
+  color: var(--library-muted);
+}
+.library-card-instructor { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vod-app.library-catalog .library-course-card .library-poster-play { inset: .75rem auto auto .75rem; }
+.vod-app.library-catalog .library-empty-panel { width: 100%; max-width: 42rem; }
+.vod-app.library-catalog .library-empty-panel p { max-width: 60ch; }
+.vod-app.library-catalog .library-empty-panel .library-empty-eye { color: #dfc47d; }
+.vod-app.library-catalog .editorial-library-footer { padding-bottom: 3rem; }
+.vod-app.library-catalog .editorial-library-footer .text-zinc-600 { color: var(--library-muted); }
+.vod-app.library-catalog .library-flow-page .library-hero { min-height: 480px; }
+
+@media (max-width: 767px) {
+  .vod-app.library-catalog .library-filter-fields { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: .75rem; }
+  .vod-app.library-catalog .library-page-toolbar [role="group"][aria-label="סינון תכנים"] { flex-wrap: wrap; overflow: visible; }
+  .vod-app.library-catalog .library-page-toolbar [aria-label="סינון תכנים"] button { flex: 1 0 auto; }
+  .vod-app.library-catalog .editorial-library-bottom-nav { padding-bottom: max(.5rem, env(safe-area-inset-bottom)); }
+  .vod-app.library-catalog .editorial-library-bottom-nav button { flex: 1; }
+  .vod-app.library-catalog .editorial-library-bottom-nav button span { font-size: .75rem; }
+  .vod-app.library-catalog .editorial-library-footer { padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
+  .vod-app.library-catalog .library-flow-page .library-hero { min-height: 0; padding-block: calc(var(--site-header-h, 72px) + 2rem) 4rem; }
+  .vod-app.library-catalog .header-search:has(input) { position: absolute; inset-inline: 1rem; top: 100%; padding-block: .5rem; }
+  .vod-app.library-catalog .header-search:has(input) > div,
+  .vod-app.library-catalog .header-search input,
+  .vod-app.library-catalog .header-search ul { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vod-app.library-catalog *, .vod-app.library-catalog *::before, .vod-app.library-catalog *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}
+.a11y-reduce-motion .vod-app.library-catalog *,
+.a11y-reduce-motion .vod-app.library-catalog *::before,
+.a11y-reduce-motion .vod-app.library-catalog *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
