@@ -24,6 +24,7 @@ import {
   WEBINAR_TRACKS_FINE_PRINT,
 } from '../../constants/webinarPage';
 import { WebinarRegistrationForm } from '../components/WebinarRegistrationForm';
+import { WebinarRegistrationState } from '../components/WebinarRegistrationState';
 import { WebinarSectionCta } from '../components/WebinarSocialProof';
 import { trackEvent, trackWebinarCta, scrollToWebinarForm } from '../../utils/analytics';
 import { captureUtmFromSearch } from '../../utils/utm';
@@ -38,6 +39,7 @@ import './WebinarNeuralSlides.css';
 import './WebinarNightLanguage.css';
 import './WebinarFlowPolish.css';
 import './WebinarSlideTones.css';
+import './WebinarReadability.css';
 
 const WEBINAR_ISLANDS = [
   { id: 'webinar-hero', title: 'פתיחה' },
@@ -62,11 +64,11 @@ function FaqItem({ q, a, ...props }: { q: string; a: string } & HTMLAttributes<H
 }
 
 function SectionLabel({ children }: { children: ReactNode }) {
-  return <p className="text-[11px] uppercase tracking-[0.25em] text-[#b79043] mb-4">{children}</p>;
+  return <p className="webinar-section-label text-[11px] uppercase tracking-[0.25em] text-[#b79043] mb-4">{children}</p>;
 }
 
 function SectionTitle({ children }: { children: ReactNode }) {
-  return <h2 className="text-3xl md:text-5xl font-heading text-white mb-6 leading-tight mx-auto max-w-3xl">{children}</h2>;
+  return <h2 className="webinar-section-title text-3xl md:text-5xl font-heading text-white mb-6 leading-tight mx-auto max-w-3xl">{children}</h2>;
 }
 
 const REGISTER_CARD_CLASS =
@@ -226,9 +228,9 @@ export function WebinarLanding() {
             href={`#${island.id}`}
             className={activeIsland === island.id ? 'is-on' : ''}
             aria-current={activeIsland === island.id ? 'true' : undefined}
-            aria-label={island.title}
+            aria-label={eventEnded && island.id === WEBINAR_REGISTER_ID ? 'המשך הדרך' : island.title}
           >
-            <span>{island.title}</span>
+            <span>{eventEnded && island.id === WEBINAR_REGISTER_ID ? 'המשך הדרך' : island.title}</span>
           </a>
         ))}
       </nav>
@@ -238,6 +240,7 @@ export function WebinarLanding() {
         headlineParts={headlineParts}
         eventNight={eventNight}
         eventEnded={eventEnded}
+        registrationReady={configReady}
         onRegister={scrollToForm}
       />
 
@@ -344,7 +347,7 @@ export function WebinarLanding() {
               </ul>
             </div>
           </div>
-          {eventEnded ? null : (
+          {eventEnded || !configReady || !config.enabled ? null : (
             <WebinarSectionCta label={WEBINAR_CTA_REGISTER} section="fit" onClick={() => scrollToForm('fit')} />
           )}
         </div>
@@ -378,14 +381,16 @@ export function WebinarLanding() {
           </p>
           <aside
             id={WEBINAR_REGISTER_ID}
-            aria-label={eventEnded ? 'הרשמה למחזור הבא' : 'הרשמה לוובינר'}
+            aria-label={eventEnded ? 'מסלולי המשך' : 'הרשמה לוובינר'}
             className={`${REGISTER_CARD_CLASS} webinar-stage-register-card mx-auto w-full max-w-xl md:max-w-2xl lg:max-w-3xl text-start scroll-mt-24`}
           >
-            <WebinarRegisterCard
-              payload={payload}
-              formId={`${WEBINAR_REGISTER_ID}-form`}
-              headlineParts={headlineParts}
-            />
+            <WebinarRegistrationState ready={configReady} ended={eventEnded} enabled={config.enabled}>
+              <WebinarRegisterCard
+                payload={payload}
+                formId={`${WEBINAR_REGISTER_ID}-form`}
+                headlineParts={headlineParts}
+              />
+            </WebinarRegistrationState>
           </aside>
           <p className="flex flex-wrap items-center justify-center gap-4 text-xs text-[#b79043]/80 font-light mt-8">
             <Link to="/terms" className="hover:text-[#dfc47d] min-h-11 inline-flex items-center">

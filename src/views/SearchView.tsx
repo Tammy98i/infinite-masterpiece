@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { Search } from 'lucide-react';
-import { searchCourses, searchSuggestions } from '../utils/searchCatalog';
+import { normalizeSearch, searchCourses, searchRecoveryQueries } from '../utils/searchCatalog';
+import { SearchRecovery } from '../components/SearchRecovery';
 import { LIBRARY_TOPIC_IDS, getCardAccessState } from '../utils/libraryHome';
 import { formatClock } from '../utils/time';
 import { trackEvent } from '../utils/analytics';
@@ -19,11 +20,12 @@ export const SearchView: React.FC = () => {
   const { searchQuery, setSearchQuery, courses, instructors, categories, user, setView } = useApp();
   const [filters, setFilters] = useState<SearchFilterState>(EMPTY_FILTERS);
   const query = searchQuery.trim();
-  const queryLower = query.toLowerCase();
+  // Match against normalized text, but keep the user's punctuation/casing inside its bidi isolate.
+  const normalizedQuery = normalizeSearch(query);
 
   const baseResults = useMemo(
-    () => (queryLower.length >= 1 ? searchCourses(courses, instructors, categories, queryLower) : []),
-    [courses, instructors, categories, queryLower]
+    () => searchCourses(courses, instructors, categories, normalizedQuery),
+    [courses, instructors, categories, normalizedQuery]
   );
 
   const results = useMemo(() => {
@@ -39,21 +41,15 @@ export const SearchView: React.FC = () => {
   }, [baseResults, filters, user, courses]);
   const activeFilterCount = [filters.duration, filters.level, filters.access].filter(value => value !== 'all').length;
 
-  const suggestions = useMemo(
-    () => (queryLower.length >= 1 ? searchSuggestions(courses, instructors, categories, query, 5) : []),
-    [courses, instructors, categories, query, queryLower]
+  const filtersHideResults = baseResults.length > 0 && results.length === 0 && activeFilterCount > 0;
+  const recoveryQueries = useMemo(
+    () => (normalizedQuery && baseResults.length === 0 ? searchRecoveryQueries(courses, instructors, categories, normalizedQuery) : []),
+    [courses, instructors, categories, normalizedQuery, baseResults.length]
   );
 
   const popularTopics = categories.filter((c) =>
     (LIBRARY_TOPIC_IDS as readonly string[]).includes(c.id)
   );
-
-  const openResult = (courseId: string) => {
-    const course = courses.find((c) => c.id === courseId);
-    if (!course) return;
-    trackEvent('search_result_click', { content_id: course.id });
-    setView('course', { courseId: course.id });
-  };
 
   return (
     <div className="library-catalog-page min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-7xl mx-auto">
@@ -65,6 +61,7 @@ export const SearchView: React.FC = () => {
           <input
             id="library-page-search"
             type="search"
+            dir="auto"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             onKeyDown={(e) => {
@@ -73,20 +70,22 @@ export const SearchView: React.FC = () => {
               }
             }}
             placeholder="שם הרצאה, מרצה או נושא"
-            className="library-search-field w-full border py-4 ps-12 pe-6 text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 min-h-11"
+            className="library-search-field w-full border py-4 px-12 text-base text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#b79043]/40 min-h-11"
             autoFocus
             aria-label="חיפוש בספרייה"
             enterKeyHint="search"
+            aria-describedby="library-search-help"
           />
           <Search className="w-5 h-5 text-[#b79043] absolute start-4 pointer-events-none" data-icon="search" />
         </div>
+        <p id="library-search-help" className="mt-3 text-sm text-[#bdc8d9] text-start">החיפוש כולל גם מילים נרדפות ושגיאות כתיב קלות, ומציג התאמות מדויקות תחילה.</p>
       </div>
 
-      {query ? (
+      {normalizedQuery ? (
         <div>
           <h2 className="text-lg font-semibold mb-4 text-start border-b border-white/10 pb-3 flex items-center justify-between gap-3">
-            <span>תוצאות עבור {query}</span>
-            <span className="text-sm font-medium text-[#dfc47d]" role="status" aria-live="polite" aria-atomic="true">{results.length === baseResults.length ? results.length : `${results.length} מתוך ${baseResults.length}`} תוצאות</span>
+            <span className="min-w-0 break-words">תוצאות עבור <bdi dir="auto">{query}</bdi></span>
+            <span className="shrink-0 text-sm font-medium text-[#dfc47d]" role="status" aria-live="polite" aria-atomic="true">{results.length === baseResults.length ? results.length : `${results.length} מתוך ${baseResults.length}`} תוצאות</span>
           </h2>
           <SearchFilters value={filters} onChange={setFilters} activeCount={activeFilterCount} />
 
@@ -105,7 +104,7 @@ export const SearchView: React.FC = () => {
                       position={index}
                     />
                     <p className="sr-only">
-                      {instructor?.name || 'מרצה'} · {formatClock(duration)} · {ACCESS_LABEL[access]}
+                      <bdi dir="auto">{instructor?.name || 'מרצה'}</bdi> · <bdi dir="ltr">{formatClock(duration)}</bdi> · {ACCESS_LABEL[access]}
                     </p>
                   </li>
                 );
@@ -115,33 +114,16 @@ export const SearchView: React.FC = () => {
             <EmptyState
               eyebrow="חיפוש"
               title="לא מצאנו הרצאה שמתאימה לחיפוש"
-              body={activeFilterCount > 0 ? 'אין תוצאות שמתאימות למסננים שבחרתם. אפשר לנקות מסנן אחד או יותר.' : 'אפשר לנסות שם מרצה, נושא, או לבחור אחד מהנושאים הפופולריים.'}
-              actionLabel={activeFilterCount > 0 ? 'ניקוי מסננים' : 'ניקוי החיפוש'}
-              onAction={activeFilterCount > 0 ? () => setFilters(EMPTY_FILTERS) : () => { setSearchQuery(''); document.getElementById('library-page-search')?.focus(); }}
+              body={filtersHideResults ? 'אין תוצאות שמתאימות למסננים שבחרתם. אפשר לנקות מסנן אחד או יותר.' : 'אפשר לנסות שם מרצה, נושא, או לבחור אחד מהנושאים הפופולריים.'}
+              actionLabel={filtersHideResults ? 'ניקוי מסננים' : 'ניקוי החיפוש'}
+              onAction={filtersHideResults ? () => setFilters(EMPTY_FILTERS) : () => { setSearchQuery(''); document.getElementById('library-page-search')?.focus(); }}
             />
           )}
 
-          {suggestions.length > 0 && baseResults.length === 0 ? (
-            <div className="mt-8 text-center">
-              <p className="text-sm text-white/45 mb-4">הצעות קרובות</p>
-              <div className="flex flex-wrap justify-center gap-2">
-                {suggestions.map((item) => (
-                  <button
-                    key={`${item.type}-${item.id}`}
-                    type="button"
-                    onClick={() => {
-                      if (item.type === 'course') openResult(item.id);
-                      else if (item.type === 'instructor') setView('instructor', { instructorId: item.id });
-                      else setView('category', { categoryId: item.id });
-                    }}
-                    className="px-4 py-2 rounded-full border border-white/15 text-sm text-white/70 hover:border-[#b79043] hover:text-[#dfc47d] min-h-11 cursor-pointer"
-                  >
-                    {item.label}
-                  </button>
-                ))}
-              </div>
-            </div>
-          ) : null}
+          {baseResults.length === 0 && <SearchRecovery queries={recoveryQueries} onSelect={value => {
+            setFilters(EMPTY_FILTERS);
+            setSearchQuery(value);
+          }} />}
 
           <div className="mt-10 text-center">
             <p className="text-sm text-white/45 mb-4">נושאים פופולריים</p>
@@ -153,7 +135,7 @@ export const SearchView: React.FC = () => {
                   onClick={() => setView('category', { categoryId: topic.id })}
                   className="px-4 py-2 rounded-full border border-white/15 text-sm text-white/70 hover:border-[#b79043] hover:text-[#dfc47d] min-h-11 cursor-pointer"
                 >
-                  {topic.name}
+                  <bdi dir="auto">{topic.name}</bdi>
                 </button>
               ))}
             </div>
@@ -161,6 +143,7 @@ export const SearchView: React.FC = () => {
         </div>
       ) : (
         <div className="text-center">
+          {query && <p role="status" className="text-sm text-[#bdc8d9] mb-4">כדי לחפש, הזינו לפחות אות או ספרה.</p>}
           <p className="text-sm text-white/45 mb-4">נושאים פופולריים</p>
           <div className="flex flex-wrap justify-center gap-2">
             {popularTopics.map((topic) => (
@@ -170,7 +153,7 @@ export const SearchView: React.FC = () => {
                 onClick={() => setView('category', { categoryId: topic.id })}
                 className="px-4 py-2 rounded-full border border-white/15 text-sm text-white/70 hover:border-[#b79043] hover:text-[#dfc47d] min-h-11 cursor-pointer"
               >
-                {topic.name}
+                <bdi dir="auto">{topic.name}</bdi>
               </button>
             ))}
           </div>

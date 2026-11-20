@@ -113,9 +113,13 @@ export const CourseCard: React.FC<CourseCardProps> = ({
 
   /* Hover meta: only טעימה / נעול — not «פתוח» (polish 04) */
   const accessMeta = access === 'open' ? null : ACCESS_LABEL[access];
-  const metaLine = [instructorName, resumeLabel || durationLabel, accessMeta]
-    .filter(Boolean)
-    .join(' · ');
+  const metaLine = (
+    <>
+      {instructorName && <><bdi dir="auto">{instructorName}</bdi>{' · '}</>}
+      {resumeLabel || <bdi dir="ltr">{durationLabel}</bdi>}
+      {accessMeta && <>{' · '}{accessMeta}</>}
+    </>
+  );
 
   return (
     <div
@@ -164,7 +168,7 @@ export const CourseCard: React.FC<CourseCardProps> = ({
               </span>
 
               <div className="library-poster-meta" aria-hidden>
-                <b className="line-clamp-2">{title}</b>
+                <b className="line-clamp-2"><bdi dir="auto">{title}</bdi></b>
                 <span className="line-clamp-1">{metaLine}</span>
               </div>
 
@@ -197,10 +201,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({
 
               <div className="library-poster-title-dock absolute bottom-2 start-2 end-2 z-[1] text-start pointer-events-none transition-opacity duration-200">
                 <div className="text-[13px] font-semibold text-white leading-snug line-clamp-1">
-                  {title}
+                  <bdi dir="auto">{title}</bdi>
                 </div>
                 <div className="library-card-details">
-                  {instructorName && <span className="library-card-instructor">{instructorName}</span>}
+                  {instructorName && <span className="library-card-instructor"><bdi dir="auto">{instructorName}</bdi></span>}
                   <span>{resumeLabel || <ClockLabel seconds={progress ? Math.max(0, progress.duration - progress.currentTime) : totalSecs} />} · {access === 'locked' ? 'דורש מנוי' : ACCESS_LABEL[access]}</span>
                 </div>
               </div>

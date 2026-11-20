@@ -81,18 +81,18 @@ export const InstructorProfileView: React.FC = () => {
           </button>
 
           <h1 className="text-4xl sm:text-6xl lg:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight mb-3 max-w-4xl">
-            {instructor.name}
+            <bdi dir="auto">{instructor.name}</bdi>
           </h1>
           <p className="mb-4 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/80">
             {instructor.isFounder ? <span>צוות המיזם</span> : null}
             {instructor.isFounder ? <span aria-hidden>·</span> : null}
-            <span>{instructor.title}</span>
+            <span><bdi dir="auto">{instructor.title}</bdi></span>
             <span aria-hidden>·</span>
             <span>{countLabel}</span>
           </p>
           {instructor.bio ? (
             <p className="text-sm sm:text-base text-white/80 font-light leading-relaxed max-w-2xl mb-6 line-clamp-3">
-              {instructor.bio}
+              <bdi dir="auto">{instructor.bio}</bdi>
             </p>
           ) : null}
 
@@ -130,7 +130,7 @@ export const InstructorProfileView: React.FC = () => {
         {instructor.bio ? (
           <section className="mb-8 max-w-3xl">
             <h2 className="library-rail-title text-white mb-3">על המרצה</h2>
-            <p className="text-white/70 font-light leading-relaxed">{instructor.bio}</p>
+            <p className="text-white/70 font-light leading-relaxed"><bdi dir="auto">{instructor.bio}</bdi></p>
           </section>
         ) : null}
 
@@ -140,7 +140,7 @@ export const InstructorProfileView: React.FC = () => {
             <ul className="space-y-2">
               {instructor.credentials.map((item) => (
                 <li key={item} className="text-sm text-white/55 font-light">
-                  {item}
+                  <bdi dir="auto">{item}</bdi>
                 </li>
               ))}
             </ul>
