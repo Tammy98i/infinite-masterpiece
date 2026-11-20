@@ -58,6 +58,21 @@ export const AuthModal: React.FC = () => {
   }, [isAuthModalOpen, mode]);
 
   useEffect(() => {
+    if (!isAuthModalOpen) return;
+    setMode('login');
+    setMethod('email');
+    setError('');
+    setErrorKind('error');
+    setName('');
+    setEmail('');
+    setPassword('');
+    setPasswordConfirm('');
+    setOtp('');
+    setOtpSent(false);
+    setResendIn(0);
+  }, [isAuthModalOpen]);
+
+  useEffect(() => {
     if (resendIn <= 0) return;
     const timer = window.setTimeout(() => setResendIn((value) => value - 1), 1000);
     return () => window.clearTimeout(timer);
@@ -321,7 +336,7 @@ export const AuthModal: React.FC = () => {
         ) : method === 'phone' && supabaseAuthEnabled ? (
           <form onSubmit={(e) => void (otpSent ? handleVerifyOtp(e) : handleSendOtp(e))} className="grid gap-4">
             {mode === 'register' && !otpSent ? (
-              <label className="block text-center">
+              <label className="block text-right">
                 <span className="block text-xs text-white/45 mb-1">שם מלא</span>
                 <input
                   type="text"
@@ -393,7 +408,7 @@ export const AuthModal: React.FC = () => {
         ) : (
           <form onSubmit={(e) => void handleEmailSubmit(e)} className="grid gap-4">
             {mode === 'register' && (
-              <label className="block text-center">
+              <label className="block text-right">
                 <span className="block text-xs text-white/45 mb-1">שם מלא</span>
                 <input
                   type="text"

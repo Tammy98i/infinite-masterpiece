@@ -4,6 +4,7 @@ import { useApp } from './context/AppContext';
 import { Navbar } from './components/Navbar';
 import { OnboardingUI } from './components/onboarding/OnboardingUI';
 import { OnboardingTriggers } from './components/onboarding/OnboardingTriggers';
+import { WelcomeModal } from './components/WelcomeModal';
 import { PaywallProvider } from './context/PaywallContext';
 import { PaywallTriggers } from './components/PaywallTriggers';
 import { SITE_TAGLINE } from './constants/brand';
@@ -138,6 +139,7 @@ export const VodApp: React.FC = () => {
         <>
           <OnboardingTriggers />
           <OnboardingUI />
+          <WelcomeModal />
         </>
       )}
     </div>
