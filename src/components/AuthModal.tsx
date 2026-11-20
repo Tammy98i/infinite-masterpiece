@@ -6,6 +6,7 @@ import { libraryPath } from '../utils/libraryPath';
 import { EmailConfirmationRequiredError } from '../api/supabaseAuth';
 import { takeAuthNext } from '../lib/authRedirect';
 import { formatPhoneDisplay } from '../utils/phone';
+import { isAppleProviderEnabled, isGoogleProviderEnabled, refreshAuthProviderFlags } from '../lib/supabase';
 
 type Mode = 'login' | 'register' | 'forgot';
 type Method = 'email' | 'phone';
@@ -26,8 +27,6 @@ export const AuthModal: React.FC = () => {
     requestPasswordReset,
     loginWithGoogle,
     loginWithApple,
-    googleAuthEnabled,
-    appleAuthEnabled,
     phoneAuthEnabled,
     supabaseAuthEnabled,
   } = useUser();
@@ -208,7 +207,8 @@ export const AuthModal: React.FC = () => {
   const handleOAuth = async (provider: 'google' | 'apple') => {
     setError('');
     setErrorKind('error');
-    const enabled = provider === 'apple' ? appleAuthEnabled : googleAuthEnabled;
+    await refreshAuthProviderFlags();
+    const enabled = provider === 'apple' ? isAppleProviderEnabled() : isGoogleProviderEnabled();
     if (!enabled) {
       setError(
         provider === 'apple'

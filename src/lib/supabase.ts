@@ -18,6 +18,7 @@ let googleProviderEnabled = Boolean(buildUrl && buildAnon);
 let appleProviderEnabled = false;
 let emailProviderEnabled = Boolean(buildUrl && buildAnon);
 let phoneProviderEnabled = false;
+let providerFlagsConfirmed = false;
 
 function url() {
   return buildUrl || runtimeUrl;
@@ -64,18 +65,25 @@ export async function refreshAuthProviderFlags() {
         Authorization: `Bearer ${key}`,
       },
     });
+    if (!res.ok) {
+      // A gateway error is not "Google is off". Leave a confirmed answer alone.
+      if (!providerFlagsConfirmed) googleProviderEnabled = true;
+      return;
+    }
     const data = (await res.json().catch(() => ({}))) as {
       external?: { google?: boolean; apple?: boolean; email?: boolean; phone?: boolean };
     };
-    googleProviderEnabled = data.external?.google === true;
-    appleProviderEnabled = data.external?.apple === true;
-    emailProviderEnabled = isSupabaseAuthEnabled() && data.external?.email !== false;
-    phoneProviderEnabled = isSupabaseAuthEnabled() && Boolean(data.external?.phone);
+    if (!data.external) {
+      if (!providerFlagsConfirmed) googleProviderEnabled = true;
+      return;
+    }
+    providerFlagsConfirmed = true;
+    googleProviderEnabled = data.external.google === true;
+    appleProviderEnabled = data.external.apple === true;
+    emailProviderEnabled = isSupabaseAuthEnabled() && data.external.email !== false;
+    phoneProviderEnabled = isSupabaseAuthEnabled() && Boolean(data.external.phone);
   } catch {
-    googleProviderEnabled = true;
-    appleProviderEnabled = false;
-    emailProviderEnabled = isSupabaseAuthEnabled();
-    phoneProviderEnabled = false;
+    if (!providerFlagsConfirmed) googleProviderEnabled = true;
   }
 }
 
