@@ -176,4 +176,8 @@
   .webinar-flow-page #team-universe .galaxy-inline-details {
     max-height: 240px;
   }
+
+  .webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel {
+    min-height: 100dvh;
+  }
 }

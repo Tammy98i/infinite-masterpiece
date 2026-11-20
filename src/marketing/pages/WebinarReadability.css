@@ -175,3 +175,31 @@
   }
   .webinar-stage-page .team-galaxy .galaxy-map-footer { justify-content: center; }
 }
+
+/* Every slide fills the phone, tablet, and desktop screen. Taller content can grow past it. */
+.webinar-stage-page :is(
+  #webinar-hero,
+  #problem,
+  .webinar-editorial-grid > #hosts,
+  .webinar-editorial-grid > .team-galaxy,
+  .webinar-editorial-grid > #webinar-fit,
+  .webinar-editorial-grid > #webinar-faq,
+  .webinar-editorial-grid > #webinar-register-bottom
+) {
+  min-height: 100dvh;
+  box-sizing: border-box;
+}
+.webinar-stage-page :is(
+  #problem,
+  .webinar-editorial-grid > #hosts,
+  .webinar-editorial-grid > #webinar-fit,
+  .webinar-editorial-grid > #webinar-faq,
+  .webinar-editorial-grid > #webinar-register-bottom
+) {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+@media (max-width: 767px) {
+  .webinar-stage-page .webinar-neural-hero { min-height: 100dvh; }
+}
