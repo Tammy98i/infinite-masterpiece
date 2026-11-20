@@ -88,6 +88,21 @@
   z-index: 1;
 }
 
+.crm-desk-pop {
+  animation: crm-desk-pop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes crm-desk-pop {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crm-desk-pop { animation: none; }
+}
+
+.a11y-reduce-motion .crm-desk-pop { animation: none; }
+
 .crm-desk-aside,
 .crm-desk .crm-desk-aside {
   position: relative;

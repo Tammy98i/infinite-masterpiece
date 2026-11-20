@@ -275,16 +275,26 @@ router.get('/users', (_req, res) => {
 
 router.post('/users', (req, res) => {
   try {
-    const id = adminCreateUser(
-      String(req.body?.fullName || req.body?.name || ''),
-      String(req.body?.email || ''),
-      String(req.body?.password || '')
-    );
     const body = req.body || {};
+    const id = adminCreateUser({
+      fullName: String(body.fullName || body.name || ''),
+      firstName: typeof body.firstName === 'string' ? body.firstName : undefined,
+      lastName: typeof body.lastName === 'string' ? body.lastName : undefined,
+      email: String(body.email || ''),
+      password: String(body.password || ''),
+      birthday: String(body.birthday || ''),
+      phone: String(body.phone || ''),
+      city: String(body.city || ''),
+    });
     let user = listUsers().find((u) => u.id === id);
     const patch: Record<string, unknown> = {};
     if (typeof body.role === 'string' && body.role) patch.role = body.role;
     if (typeof body.isFounder === 'boolean') patch.isFounder = body.isFounder;
+    if (typeof body.subscriptionPlan === 'string' && body.subscriptionPlan) {
+      patch.subscriptionPlan = body.subscriptionPlan;
+    }
+    if (typeof body.entryTrack === 'string' && body.entryTrack) patch.entryTrack = body.entryTrack;
+    if (typeof body.staffDesk === 'string') patch.staffDesk = body.staffDesk;
     if (Object.keys(patch).length) {
       user = updateUser(id, patch);
       if (user?.role === 'instructor') ensureLecturerForUser(user.id, user.name);

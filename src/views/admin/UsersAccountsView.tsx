@@ -12,6 +12,7 @@ import { AdminListControls } from './AdminListControls';
 import { AdminStatusBadge } from './AdminStatusBadge';
 import { Bidi } from '../../components/Bidi';
 import { DeskMonogram } from '../../components/DeskMonogram';
+import { emptyUserDraft, showBirthday, UserProfileFields, type UserDraft } from './UserProfileFields';
 
 function profileRowFromAppUser(user: ReturnType<typeof useApp>['user']): ProfileListRow {
   return {
@@ -33,11 +34,8 @@ export function UsersAccountsView() {
   const [error, setError] = useState('');
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
-  const [newName, setNewName] = useState('');
-  const [newEmail, setNewEmail] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [newRole, setNewRole] = useState<'student' | 'instructor' | 'admin'>('student');
-  const [newIsFounder, setNewIsFounder] = useState(false);
+  const [draft, setDraft] = useState<UserDraft>(emptyUserDraft());
+  const [profileDraft, setProfileDraft] = useState<UserDraft | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [createOpen, setCreateOpen] = useState(false);
   const [query, setQuery] = useState('');
@@ -73,6 +71,27 @@ export function UsersAccountsView() {
 
   const selected = users.find((row) => row.id === selectedId) || null;
 
+  useEffect(() => {
+    if (!selected) {
+      setProfileDraft(null);
+      return;
+    }
+    setProfileDraft({
+      ...emptyUserDraft(),
+      firstName: selected.firstName || '',
+      lastName: selected.lastName || '',
+      email: selected.email,
+      birthday: selected.birthday || '',
+      phone: selected.phone || '',
+      city: selected.city || '',
+      role: selected.role === 'admin' || selected.role === 'instructor' ? selected.role : 'student',
+      isFounder: selected.isFounder,
+      subscriptionPlan: selected.subscriptionPlan,
+      entryTrack: selected.entryTrack || 'none',
+      staffDesk: selected.staffDesk || '',
+    });
+  }, [selected]);
+
   const patch = async (id: string, next: Parameters<typeof adminApi.updateUser>[1]) => {
     const row = users.find((item) => item.id === id);
     if (next.blocked === true && row && !row.blocked && !window.confirm('לחסום את המשתמש?')) return;
@@ -94,34 +113,53 @@ export function UsersAccountsView() {
   };
 
   const createUser = async () => {
-    if (!newName.trim() || !newEmail.trim() || newPassword.length < 8) {
-      setError('יש להזין שם, אימייל וסיסמה בת 8 תווים לפחות.');
+    if (!draft.firstName.trim() || !draft.email.trim() || draft.password.length < 8) {
+      setError('יש להזין שם פרטי, אימייל וסיסמה בת 8 תווים לפחות.');
       return;
     }
     setCreating(true);
     setError('');
     try {
       const created = await adminApi.createUser({
-        fullName: newName,
-        email: newEmail,
-        password: newPassword,
-        role: newRole,
-        isFounder: newIsFounder,
+        firstName: draft.firstName,
+        lastName: draft.lastName,
+        email: draft.email,
+        password: draft.password,
+        birthday: draft.birthday,
+        phone: draft.phone,
+        city: draft.city,
+        role: draft.role,
+        isFounder: draft.isFounder,
+        subscriptionPlan: draft.subscriptionPlan,
+        entryTrack: draft.entryTrack,
+        staffDesk: draft.role === 'admin' ? draft.staffDesk : '',
       });
-      setNewName('');
-      setNewEmail('');
-      setNewPassword('');
-      setNewRole('student');
-      setNewIsFounder(false);
+      const openCatalog = draft.role === 'instructor' || draft.isFounder;
+      setDraft(emptyUserDraft());
       setCreateOpen(false);
       await load();
       setSelectedId(created.user.id);
-      if (newRole === 'instructor' || newIsFounder) await reloadCatalog();
+      if (openCatalog) await reloadCatalog();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'יצירה נכשלה');
     } finally {
       setCreating(false);
     }
+  };
+
+  const saveProfile = async () => {
+    if (!selected || !profileDraft) return;
+    if (!profileDraft.firstName.trim()) {
+      setError('יש להזין שם פרטי.');
+      return;
+    }
+    await patch(selected.id, {
+      firstName: profileDraft.firstName,
+      lastName: profileDraft.lastName,
+      birthday: profileDraft.birthday,
+      phone: profileDraft.phone,
+      city: profileDraft.city,
+    });
   };
 
   const exportCsv = () => {
@@ -198,37 +236,27 @@ export function UsersAccountsView() {
 
       <AdminEmailsCard onChanged={() => void load()} />
 
+      <AdminListControls query={query} onQueryChange={setQuery} placeholder="חיפוש משתמש לפי שם…" count={filteredUsers.length} total={users.length}>
+        <select value={roleFilter} onChange={event => setRoleFilter(event.target.value)} className="min-h-11 rounded border border-white/10 bg-[#0a0a0a] px-3 text-sm text-white/70" aria-label="סינון לפי תפקיד">
+          <option value="all">כל התפקידים</option><option value="student">משתמשים</option><option value="instructor">מרצים</option><option value="admin">אדמינים</option>
+        </select>
+        <select value={statusFilter} onChange={event => setStatusFilter(event.target.value)} className="min-h-11 rounded border border-white/10 bg-[#0a0a0a] px-3 text-sm text-white/70" aria-label="סינון לפי סטטוס">
+          <option value="all">כל הסטטוסים</option><option value="active">פעילים</option><option value="blocked">חסומים</option>
+        </select>
+        <button
+          type="button"
+          onClick={() => setCreateOpen((open) => !open)}
+          className="inline-flex items-center gap-1.5 px-3 min-h-11 rounded bg-white text-black text-sm font-medium cursor-pointer"
+        >
+          <Plus className="w-3.5 h-3.5" />
+          יוזר חדש
+        </button>
+      </AdminListControls>
+
       {createOpen ? (
         <div className="crm-desk-edit-drawer grid gap-3">
-          <p className="text-sm font-medium">חשבון חדש</p>
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-            <label className="block">
-              <span className="block text-xs text-white/45 mb-1">שם</span>
-              <input value={newName} onChange={(e) => setNewName(e.target.value)} className={fieldClass} />
-            </label>
-            <label className="block">
-              <span className="block text-xs text-white/45 mb-1">אימייל</span>
-              <input type="email" dir="ltr" value={newEmail} onChange={(e) => setNewEmail(e.target.value)} className={fieldClass} />
-            </label>
-            <label className="block">
-              <span className="block text-xs text-white/45 mb-1">סיסמה (8+)</span>
-              <input type="password" dir="ltr" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} className={fieldClass} />
-            </label>
-          </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-            <label className="grid gap-1 text-white/50 text-xs">
-              תפקיד
-              <select value={newRole} onChange={(e) => setNewRole(e.target.value as typeof newRole)} className={fieldClass}>
-                <option value="student">משתמש</option>
-                <option value="instructor">מרצה</option>
-                <option value="admin">אדמין</option>
-              </select>
-            </label>
-            <label className="flex items-center gap-3 text-sm text-white/70 min-h-11">
-              <input type="checkbox" checked={newIsFounder} onChange={(e) => setNewIsFounder(e.target.checked)} className="w-4 h-4 accent-[#b79043]" />
-              שיוך לצוות המיזם
-            </label>
-          </div>
+          <p className="text-sm font-medium">פרופיל חדש</p>
+          <UserProfileFields value={draft} onChange={setDraft} showPassword />
           <button
             type="button"
             disabled={creating}
@@ -240,15 +268,6 @@ export function UsersAccountsView() {
           </button>
         </div>
       ) : null}
-
-      <AdminListControls query={query} onQueryChange={setQuery} placeholder="חיפוש משתמש לפי שם…" count={filteredUsers.length} total={users.length}>
-        <select value={roleFilter} onChange={event => setRoleFilter(event.target.value)} className="min-h-11 rounded border border-white/10 bg-[#0a0a0a] px-3 text-sm text-white/70" aria-label="סינון לפי תפקיד">
-          <option value="all">כל התפקידים</option><option value="student">משתמשים</option><option value="instructor">מרצים</option><option value="admin">אדמינים</option>
-        </select>
-        <select value={statusFilter} onChange={event => setStatusFilter(event.target.value)} className="min-h-11 rounded border border-white/10 bg-[#0a0a0a] px-3 text-sm text-white/70" aria-label="סינון לפי סטטוס">
-          <option value="all">כל הסטטוסים</option><option value="active">פעילים</option><option value="blocked">חסומים</option>
-        </select>
-      </AdminListControls>
 
       <div className="crm-desk-table">
         <table className="w-full text-sm text-start">
@@ -283,6 +302,8 @@ export function UsersAccountsView() {
                         <span className="crm-desk-who-mail">
                           <Bidi kind="email">{row.email}</Bidi>
                         </span>
+                        {row.birthday ? <span className="text-[10px] text-white/40">יום הולדת {showBirthday(row.birthday)}</span> : null}
+                        {row.city ? <span className="text-[10px] text-white/40">{row.city}</span> : null}
                         {row.isFounder ? <span className="text-[10px] text-white/45">צוות</span> : null}
                       </span>
                     </span>
@@ -333,6 +354,19 @@ export function UsersAccountsView() {
             פעימה {selected.currentPaymentPhase || 0} · כרטיסים {selected.raffleTicketsCount || 0} · הצטרפות{' '}
             {selected.createdAt.replace('T', ' ').slice(0, 16)}
           </p>
+          {profileDraft ? (
+            <div className="grid gap-2">
+              <UserProfileFields value={profileDraft} onChange={setProfileDraft} showAccount={false} />
+              <button
+                type="button"
+                disabled={pendingId === selected.id}
+                onClick={() => void saveProfile()}
+                className="inline-flex w-fit items-center px-4 min-h-11 rounded bg-white text-black text-sm font-medium cursor-pointer disabled:opacity-60"
+              >
+                שמירת פרופיל
+              </button>
+            </div>
+          ) : null}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
             <label className="grid gap-1 text-white/50 text-xs">
               תפקיד

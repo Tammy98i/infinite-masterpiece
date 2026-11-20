@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto';
 import { getDb } from '../db/connection.js';
 import { captionTracksForEpisode, defaultCaptionTracks } from '../../src/constants/captions.ts';
 import type { AccessLevel, CaptionTrack, Category, Course, Episode, Instructor, PublishStatus } from '../../src/types.ts';
+import { profileFromStored } from './userProfile.js';
 
 type SqlRow = Record<string, unknown>;
 
@@ -454,15 +455,23 @@ function topNamed(db: ReturnType<typeof getDb>, sql: string) {
 export function listUsers() {
   const rows = getDb()
     .prepare(
-      `SELECT id, email, full_name, role, subscription_plan, trial_ends_at, blocked, is_founder, created_at, last_login_at,
-              entry_track, current_payment_phase, raffle_tickets_count, payment_plan_status, staff_desk, staff_status
+      `SELECT id, email, full_name, first_name, last_name, birthday, phone, city, role, subscription_plan, trial_ends_at,
+              blocked, is_founder, created_at, last_login_at, entry_track, current_payment_phase, raffle_tickets_count,
+              payment_plan_status, staff_desk, staff_status
        FROM users ORDER BY created_at DESC`
     )
     .all() as SqlRow[];
-  return rows.map((row) => ({
+  return rows.map((row) => {
+    const profile = profileFromStored(row);
+    return {
     id: String(row.id),
     email: String(row.email),
-    name: String(row.full_name),
+    name: profile.fullName || String(row.full_name),
+    firstName: profile.firstName,
+    lastName: profile.lastName,
+    birthday: profile.birthday,
+    phone: profile.phone,
+    city: profile.city,
     role: row.role === 'admin' ? 'admin' : row.role === 'lecturer' ? 'instructor' : 'student',
     subscriptionPlan: String(row.subscription_plan || 'none'),
     trialEndsAt: row.trial_ends_at ? String(row.trial_ends_at) : undefined,
@@ -483,7 +492,8 @@ export function listUsers() {
       | 'finance'
       | 'community',
     staffStatus: String(row.staff_status || 'active') as 'active' | 'suspended' | 'limited',
-  }));
+  };
+  });
 }
 
 function toDbRole(role: string) {
@@ -504,6 +514,11 @@ export function updateUser(
     currentPaymentPhase?: number;
     staffDesk?: string;
     staffStatus?: string;
+    firstName?: string;
+    lastName?: string;
+    birthday?: string;
+    phone?: string;
+    city?: string;
   }
 ) {
   const row = getDb().prepare(`SELECT * FROM users WHERE id = ?`).get(id) as SqlRow | undefined;
@@ -540,14 +555,38 @@ export function updateUser(
   const statusRaw =
     patch.staffStatus === undefined ? String(row.staff_status || 'active') : String(patch.staffStatus || 'active');
   const staffStatus = ['active', 'suspended', 'limited'].includes(statusRaw) ? statusRaw : 'active';
+  const profile = profileFromStored(row, patch);
+  if (!profile.fullName) {
+    throw Object.assign(new Error('נא להזין שם פרטי'), { status: 400 });
+  }
 
   getDb()
     .prepare(
       `UPDATE users SET role = ?, subscription_plan = ?, blocked = ?, is_founder = ?, trial_ends_at = ?,
         entry_track = ?, current_payment_phase = ?, raffle_tickets_count = ?, payment_plan_status = ?,
-        staff_desk = ?, staff_status = ? WHERE id = ?`
+        staff_desk = ?, staff_status = ?, full_name = ?, first_name = ?, last_name = ?, birthday = ?,
+        phone = ?, city = ? WHERE id = ?`
     )
-    .run(role, plan, blocked, founder, trial, entryTrack, phase, tickets, paymentStatus, staffDesk, staffStatus, id);
+    .run(
+      role,
+      plan,
+      blocked,
+      founder,
+      trial,
+      entryTrack,
+      phase,
+      tickets,
+      paymentStatus,
+      staffDesk,
+      staffStatus,
+      profile.fullName,
+      profile.firstName,
+      profile.lastName,
+      profile.birthday,
+      profile.phone,
+      profile.city,
+      id
+    );
 
   if (blocked === 1 || staffStatus === 'suspended') {
     getDb().prepare(`DELETE FROM sessions WHERE user_id = ?`).run(id);

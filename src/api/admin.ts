@@ -86,6 +86,11 @@ export interface AdminUserRow {
   raffleTicketsCount?: number;
   staffDesk?: '' | 'content' | 'support' | 'sales' | 'legal' | 'finance' | 'community';
   staffStatus?: 'active' | 'suspended' | 'limited';
+  firstName?: string;
+  lastName?: string;
+  birthday?: string;
+  phone?: string;
+  city?: string;
 }
 
 export interface AdminPaymentRow {
@@ -162,11 +167,19 @@ export const adminApi = {
       body: JSON.stringify({ emails }),
     }),
   createUser: (payload: {
-    fullName: string;
+    fullName?: string;
+    firstName?: string;
+    lastName?: string;
     email: string;
     password: string;
+    birthday?: string;
+    phone?: string;
+    city?: string;
     role?: string;
     isFounder?: boolean;
+    subscriptionPlan?: string;
+    entryTrack?: string;
+    staffDesk?: string;
   }) =>
     apiRequest<{ user: AdminUserRow }>('/api/admin/users', {
       method: 'POST',
@@ -184,6 +197,11 @@ export const adminApi = {
       currentPaymentPhase?: number;
       staffDesk?: string;
       staffStatus?: string;
+      firstName?: string;
+      lastName?: string;
+      birthday?: string;
+      phone?: string;
+      city?: string;
     }
   ) =>
     apiRequest<{ user: AdminUserRow }>(`/api/admin/users/${id}`, {

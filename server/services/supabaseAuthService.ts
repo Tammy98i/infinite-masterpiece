@@ -2,6 +2,7 @@ import { randomUUID } from 'crypto';
 import { getDb } from '../db/connection.js';
 import { createSession, userFromId, userFromToken, type AuthUser } from './authService.js';
 import { phonePlaceholderEmail } from '../../src/utils/phone.ts';
+import { splitFullName } from './userProfile.ts';
 import { BUILT_IN_ADMIN_EMAILS } from '../../src/data/adminEmails.ts';
 import { OAUTH_SUPABASE_ANON_KEY, OAUTH_SUPABASE_URL } from '../../src/lib/oauthProject.ts';
 
@@ -57,6 +58,7 @@ function upsertLocalUserFromSupabase(input: {
   supabaseUserId: string;
   email: string;
   fullName: string;
+  phone?: string;
 }) {
   const db = getDb();
   const email = input.email.trim().toLowerCase();
@@ -68,11 +70,16 @@ function upsertLocalUserFromSupabase(input: {
     .prepare(`SELECT * FROM users WHERE supabase_user_id = ?`)
     .get(input.supabaseUserId) as Record<string, unknown> | undefined;
   if (bySupabase) {
+    const named = splitFullName(input.fullName);
     db.prepare(
-      `UPDATE users SET email = ?, full_name = COALESCE(NULLIF(?, ''), full_name), last_login_at = datetime('now')
+      `UPDATE users SET email = ?, full_name = COALESCE(NULLIF(?, ''), full_name),
+         first_name = CASE WHEN TRIM(COALESCE(first_name, '')) = '' THEN ? ELSE first_name END,
+         last_name = CASE WHEN TRIM(COALESCE(first_name, '')) = '' AND TRIM(COALESCE(last_name, '')) = '' THEN ? ELSE last_name END,
+         phone = CASE WHEN TRIM(COALESCE(phone, '')) = '' THEN ? ELSE phone END,
+         last_login_at = datetime('now')
        ${BUILT_IN_ADMIN_EMAILS.includes(email) ? `, role = 'admin'` : ''}
        WHERE id = ?`
-    ).run(email, input.fullName, String(bySupabase.id));
+    ).run(email, input.fullName, named.firstName, named.lastName, String(input.phone || ''), String(bySupabase.id));
     return String(bySupabase.id);
   }
 
@@ -80,21 +87,38 @@ function upsertLocalUserFromSupabase(input: {
     | Record<string, unknown>
     | undefined;
   if (byEmail) {
+    const named = splitFullName(input.fullName);
     db.prepare(
-      `UPDATE users SET supabase_user_id = ?, full_name = COALESCE(NULLIF(?, ''), full_name), last_login_at = datetime('now')
+      `UPDATE users SET supabase_user_id = ?, full_name = COALESCE(NULLIF(?, ''), full_name),
+         first_name = CASE WHEN TRIM(COALESCE(first_name, '')) = '' THEN ? ELSE first_name END,
+         last_name = CASE WHEN TRIM(COALESCE(first_name, '')) = '' AND TRIM(COALESCE(last_name, '')) = '' THEN ? ELSE last_name END,
+         phone = CASE WHEN TRIM(COALESCE(phone, '')) = '' THEN ? ELSE phone END,
+         last_login_at = datetime('now')
        ${BUILT_IN_ADMIN_EMAILS.includes(email) ? `, role = 'admin'` : ''}
        WHERE id = ?`
-    ).run(input.supabaseUserId, input.fullName, String(byEmail.id));
+    ).run(input.supabaseUserId, input.fullName, named.firstName, named.lastName, String(input.phone || ''), String(byEmail.id));
     return String(byEmail.id);
   }
 
   const id = `user-${randomUUID()}`;
   const name = input.fullName.trim() || email.split('@')[0] || 'משתמש/ת';
+  const named = splitFullName(name);
   const role = BUILT_IN_ADMIN_EMAILS.includes(email) ? 'admin' : 'user';
   db.prepare(
-    `INSERT INTO users (id, email, password_hash, full_name, role, supabase_user_id, last_login_at)
-     VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`
-  ).run(id, email, `supabase:${input.supabaseUserId}`, name, role, input.supabaseUserId);
+    `INSERT INTO users (
+      id, email, password_hash, full_name, first_name, last_name, phone, role, supabase_user_id, last_login_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`
+  ).run(
+    id,
+    email,
+    `supabase:${input.supabaseUserId}`,
+    name,
+    named.firstName,
+    named.lastName,
+    String(input.phone || ''),
+    role,
+    input.supabaseUserId
+  );
 
   return id;
 }
@@ -114,6 +138,7 @@ async function localUserFromAccessToken(accessToken: string, fullNameHint = '') 
     supabaseUserId: remote.id,
     email: identityEmail,
     fullName,
+    phone,
   });
 
   const row = getDb().prepare(`SELECT * FROM users WHERE id = ?`).get(userId) as Record<

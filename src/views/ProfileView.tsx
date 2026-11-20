@@ -46,6 +46,13 @@ export const ProfileView: React.FC = () => {
             />
             <div>
               <h1 className="text-3xl font-semibold"><bdi dir="auto">{isGuest ? 'אורח/ת' : user.name}</bdi></h1>
+              {!isGuest && (user.birthday || user.phone || user.city) ? (
+                <p className="text-sm text-white/55 mt-1">
+                  {user.birthday ? <>יום הולדת <Bidi>{user.birthday.split('-').reverse().join('.')}</Bidi></> : null}
+                  {user.phone ? <>{user.birthday ? ' · ' : ''}<Bidi kind="phone">{user.phone}</Bidi></> : null}
+                  {user.city ? <>{(user.birthday || user.phone) ? ' · ' : ''}{user.city}</> : null}
+                </p>
+              ) : null}
               <p className="text-sm text-white/45 mt-1">
                 {planLabel(user.subscriptionPlan)}
                 {trialDays !== null && trialDays >= 0 ? ` · ${trialDays} ימי ניסיון נותרו` : ''}
