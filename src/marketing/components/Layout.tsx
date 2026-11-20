@@ -9,6 +9,7 @@ import { ConversionBand } from './ConversionBand';
 export function SiteBackdropLayout() {
   const { pathname } = useLocation();
   const isHome = pathname === '/';
+  const isLibrary = pathname.startsWith('/library');
   const shell = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -24,8 +25,8 @@ export function SiteBackdropLayout() {
   }, [isHome]);
 
   return (
-    <div ref={shell} className="site-backdrop-layout">
-      <SkyBackdrop />
+    <div ref={shell} className={`site-backdrop-layout${isLibrary ? ' is-library' : ''}`}>
+      <SkyBackdrop library={isLibrary} />
       <div className="site-backdrop-content"><Outlet /></div>
     </div>
   );
