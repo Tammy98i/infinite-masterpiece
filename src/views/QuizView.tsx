@@ -48,25 +48,25 @@ export const QuizView: React.FC = () => {
               <button
                 key={item.mood}
                 onClick={() => setSelectedMood(item.mood)}
-                className={`p-6 rounded-[4px] text-start transition-all flex items-center justify-between border ${
+                className={`p-6 rounded-[8px] text-start transition-all flex items-center justify-between border cursor-pointer ${
                   isSelected
-                    ? 'bg-white/10 border-white text-white'
-                    : 'bg-white/5 border-white/10 text-zinc-300 hover:border-white/25'
+                    ? 'bg-[#D99B43]/15 border-[#D99B43] text-[#F2EFEB]'
+                    : 'bg-[#0B0D11] border-[#D99B43]/25 text-[#F2EFEB]/85 hover:border-[#D99B43]/60'
                 }`}
               >
                 <div>
-                  <div className="font-extrabold text-lg sm:text-xl text-white mb-1">
+                  <div className="font-extrabold text-lg sm:text-xl text-[#F2EFEB] mb-1">
                     {item.label}
                   </div>
-                  <div className="text-xs text-zinc-400 flex gap-1">
+                  <div className="text-xs text-[#D99B43] flex gap-1">
                     {item.recommendedTags.map((t) => (
                       <span key={t}>#{t} </span>
                     ))}
                   </div>
                 </div>
 
-                <div className={`w-10 h-10 rounded-[4px] flex items-center justify-center ${
-                  isSelected ? 'bg-white text-[#141414]' : 'bg-black/40 text-white/70'
+                <div className={`w-10 h-10 rounded-[6px] flex items-center justify-center ${
+                  isSelected ? 'bg-[#D99B43] text-[#0B0D11]' : 'bg-[#17140f] text-[#D99B43]'
                 }`}>
                   <Sparkles className="w-5 h-5" />
                 </div>
@@ -86,8 +86,8 @@ export const QuizView: React.FC = () => {
           <div className="flex flex-wrap gap-4">
             <button
               onClick={() => setSelectedTime('short')}
-              className={`px-6 py-4 rounded-[4px] font-semibold text-sm transition-all flex items-center gap-2 border ${
-                selectedTime === 'short' ? 'bg-white text-[#141414] border-white' : 'bg-white/5 text-zinc-300 border-white/10 hover:bg-white/10'
+              className={`px-6 py-4 rounded-full font-bold text-sm transition-all flex items-center gap-2 border cursor-pointer ${
+                selectedTime === 'short' ? 'bg-[#D99B43] text-[#0B0D11] border-[#D99B43]' : 'bg-[#0B0D11] text-[#F2EFEB]/85 border-[#D99B43]/30 hover:border-[#D99B43]'
               }`}
             >
               <Zap className="w-4 h-4" />
@@ -96,8 +96,8 @@ export const QuizView: React.FC = () => {
 
             <button
               onClick={() => setSelectedTime('any')}
-              className={`px-6 py-4 rounded-[4px] font-semibold text-sm transition-all flex items-center gap-2 border ${
-                selectedTime === 'any' ? 'bg-white text-[#141414] border-white' : 'bg-white/5 text-zinc-300 border-white/10 hover:bg-white/10'
+              className={`px-6 py-4 rounded-full font-bold text-sm transition-all flex items-center gap-2 border cursor-pointer ${
+                selectedTime === 'any' ? 'bg-[#D99B43] text-[#0B0D11] border-[#D99B43]' : 'bg-[#0B0D11] text-[#F2EFEB]/85 border-[#D99B43]/30 hover:border-[#D99B43]'
               }`}
             >
               <Compass className="w-4 h-4" />

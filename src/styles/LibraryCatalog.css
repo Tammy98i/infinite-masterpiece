@@ -1,19 +1,19 @@
-/* Library browse over the shared space plate.
-   Keep the starfield visible, then stack dark navy layers on top. */
+/* Library browse over the shared space plate — Cinematic Soundstage (Warm Tungsten & Gold).
+   Replaces blue/navy tints with warm basalt, dark bronze, and rich gold tones. */
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-image {
-  opacity: .78;
-  filter: saturate(.95) contrast(1.1) brightness(.68);
+  opacity: .52;
+  filter: sepia(.72) hue-rotate(-12deg) saturate(1.15) contrast(1.12) brightness(.46);
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-blackout {
-  background: rgba(5, 10, 20, .28);
+  background: rgba(11, 10, 8, .58);
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-shade {
   background:
-    radial-gradient(circle at 50% 16%, transparent 14%, rgba(5, 10, 20, .2) 58%, rgba(5, 10, 20, .48) 100%),
-    linear-gradient(180deg, rgba(5, 10, 20, .14), rgba(5, 10, 20, .4));
+    radial-gradient(circle at 50% 16%, rgba(217, 155, 67, .09) 0%, rgba(16, 13, 9, .46) 58%, rgba(11, 10, 8, .82) 100%),
+    linear-gradient(180deg, rgba(16, 13, 9, .32), rgba(11, 10, 8, .76));
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-library-veil {
@@ -21,36 +21,69 @@
 }
 
 .editorial-sky-library-veil-a {
-  background: linear-gradient(180deg, rgba(5, 10, 20, .48) 0%, rgba(5, 10, 20, .08) 28%, transparent 50%, rgba(5, 10, 20, .55) 100%);
+  background: linear-gradient(180deg, rgba(11, 10, 8, .68) 0%, rgba(217, 155, 67, .05) 28%, transparent 50%, rgba(11, 10, 8, .75) 100%);
 }
 
 .editorial-sky-library-veil-b {
-  background: rgba(3, 8, 18, .16);
+  background: rgba(14, 12, 9, .34);
 }
 
 .editorial-sky-library-veil-c {
-  background: linear-gradient(90deg, rgba(5, 10, 20, .36), transparent 42%, rgba(5, 10, 20, .36));
+  background: linear-gradient(90deg, rgba(11, 10, 8, .52), transparent 42%, rgba(11, 10, 8, .52));
 }
 
 .editorial-sky-library-veil-d {
-  background: radial-gradient(ellipse at 50% 0%, rgba(5, 10, 20, .04), rgba(5, 10, 20, .32) 78%);
+  background: radial-gradient(ellipse at 50% 0%, rgba(217, 155, 67, .08), rgba(11, 10, 8, .54) 78%);
 }
 
 .editorial-sky-library-veil-e {
-  background: linear-gradient(180deg, transparent 12%, rgba(3, 8, 18, .22) 100%);
+  background: linear-gradient(180deg, transparent 12%, rgba(11, 10, 8, .42) 100%);
 }
 
-/* Calibrated library veils — bottom / side / soft radial (stars stay readable) */
+/* Calibrated library veils — warm tungsten studio ambiance */
 .editorial-sky-library-veil-f {
-  background: linear-gradient(180deg, transparent 40%, rgba(2, 6, 14, .62) 100%);
+  background: linear-gradient(180deg, transparent 40%, rgba(11, 10, 8, .78) 100%);
 }
 
 .editorial-sky-library-veil-g {
-  background: linear-gradient(to inline-end, rgba(5, 10, 20, .38), transparent 45%);
+  background: linear-gradient(to inline-end, rgba(16, 13, 9, .52), transparent 45%);
 }
 
 .editorial-sky-library-veil-h {
-  background: radial-gradient(ellipse at 50% 35%, transparent 18%, rgba(3, 8, 18, .4) 88%);
+  background: radial-gradient(ellipse at 50% 35%, rgba(217, 155, 67, .05) 18%, rgba(11, 10, 8, .6) 88%);
+}
+
+/* Override any blue/cool cream tokens inside .vod-app with warm studio off-white & gold */
+.vod-app {
+  --editorial-ink: #0B0D11;
+  --editorial-ink-soft: #17140f;
+  --editorial-cream: #F2EFEB;
+  --editorial-paper: #dfd6c7;
+  --editorial-gold: #D99B43;
+  --editorial-gold-light: #e8c47c;
+  --editorial-rule: rgba(217, 155, 67, 0.24);
+  --editorial-muted: rgba(242, 239, 235, 0.68);
+  color: #F2EFEB;
+}
+
+.vod-app.sky-readable h1,
+.vod-app.sky-readable h2,
+.vod-app.sky-readable h3,
+.vod-app.sky-readable h4 {
+  color: #F2EFEB;
+  text-shadow:
+    0 1px 2px rgba(11, 10, 8, 0.92),
+    0 4px 22px rgba(11, 10, 8, 0.75);
+}
+
+.vod-app.sky-readable p,
+.vod-app.sky-readable li,
+.vod-app.sky-readable label,
+.vod-app.sky-readable dd,
+.vod-app.sky-readable figcaption,
+.vod-app.sky-readable summary,
+.vod-app.sky-readable dt {
+  text-shadow: 0 1px 12px rgba(11, 10, 8, 0.72);
 }
 
 .vod-app.library-catalog,
@@ -60,16 +93,17 @@
   background: transparent !important;
 }
 
+/* Header in Soundstage style */
 .vod-app.library-catalog .editorial-library-header.is-over-hero {
-  background: linear-gradient(180deg, rgba(5, 10, 20, .72), transparent) !important;
-  border-bottom-color: transparent !important;
+  background: linear-gradient(180deg, rgba(11, 10, 8, .9), rgba(11, 10, 8, .42) 70%, transparent) !important;
+  border-bottom-color: rgba(217, 155, 67, .14) !important;
   box-shadow: none !important;
-  backdrop-filter: none !important;
+  backdrop-filter: blur(10px) !important;
 }
 
 .vod-app.library-catalog .editorial-library-header.is-solid {
-  background: rgba(5, 10, 20, .78) !important;
-  border-bottom-color: var(--editorial-rule) !important;
+  background: rgba(11, 10, 8, .92) !important;
+  border-bottom-color: rgba(217, 155, 67, .24) !important;
   backdrop-filter: blur(18px) !important;
 }
 
@@ -82,55 +116,260 @@
   background: none;
 }
 
-.library-catalog .library-hero {
-  min-height: 78vh;
+/* ---- Cinematic Soundstage Hero (Floating Viewfinder + Headline Block) ---- */
+.library-catalog .soundstage-hero {
+  min-height: auto;
+  position: relative;
+}
+
+.library-catalog .soundstage-hero::after {
+  display: none;
+}
+
+.soundstage-viewfinder {
+  background: #070605;
+  border: 2px solid rgba(217, 155, 67, 0.34);
+  border-radius: 8px;
+  padding: 26px 0;
+  box-shadow:
+    0 30px 60px rgba(0, 0, 0, 0.68),
+    0 0 28px rgba(217, 155, 67, 0.08),
+    inset 0 0 0 1px #000;
+  position: relative;
 }
 
 @media (min-width: 768px) {
-  .library-catalog .library-hero {
-    height: 88vh;
+  .soundstage-viewfinder {
+    padding: 36px 0;
   }
 }
 
-.library-catalog .library-hero-veil-bottom {
-  background: linear-gradient(180deg, transparent 40%, rgba(5, 10, 20, .45) 72%, rgba(5, 10, 20, .82) 100%);
+.soundstage-scope {
+  aspect-ratio: 2.39 / 1;
+  background: #000;
+  position: relative;
 }
 
-.library-catalog .library-hero-veil-side {
-  background: linear-gradient(270deg, transparent 8%, rgba(5, 10, 20, .32) 48%, rgba(5, 10, 20, .78) 100%);
+.soundstage-scope-vignette {
+  background:
+    radial-gradient(ellipse at center, transparent 48%, rgba(11, 10, 8, 0.55) 100%),
+    linear-gradient(180deg, rgba(11, 10, 8, 0.25) 0%, transparent 30%, transparent 70%, rgba(11, 10, 8, 0.45) 100%);
 }
 
-.library-catalog .library-hero::after {
-  height: 28%;
-  background: linear-gradient(180deg, transparent, rgba(5, 10, 20, .86));
+.soundstage-timecode {
+  position: absolute;
+  top: 10px;
+  inset-inline-end: 14px;
+  z-index: 3;
+  font-size: 12px;
+  letter-spacing: 0.14em;
+  color: #D99B43;
+  background: rgba(11, 10, 8, 0.84);
+  border: 1px solid rgba(217, 155, 67, 0.42);
+  padding: 2px 9px;
+  border-radius: 3px;
 }
 
-.library-catalog .library-hero-play {
-  background: #fff;
-  color: #141414;
+.soundstage-scope-play {
+  background: rgba(217, 155, 67, 0.92);
+  color: #0B0D11 !important;
+  box-shadow: 0 0 24px rgba(217, 155, 67, 0.45);
+}
+
+.soundstage-eyebrow {
+  font-size: 13px;
+  letter-spacing: 0.26em;
+  color: #D99B43;
+  text-transform: uppercase;
+  font-weight: 600;
+}
+
+.soundstage-badge {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid #D99B43;
+  color: #D99B43;
+  background: #14110c;
+  padding: 3px 11px;
   border-radius: 4px;
+  font-size: 13px;
 }
 
-.library-catalog .library-hero-more {
-  background: rgba(109, 109, 110, .7);
-  color: #fff;
-  border: 0;
-  border-radius: 4px;
+.soundstage-progress {
+  background: rgba(217, 155, 67, 0.18);
 }
 
-.library-catalog .library-poster {
-  border: 0;
-  border-radius: 4px;
+.soundstage-progress-bar {
+  background: linear-gradient(90deg, #b79043, #D99B43, #f0c978);
+  box-shadow: 0 0 10px rgba(217, 155, 67, 0.55);
+}
+
+/* Primary & Secondary Pill Buttons in Gold/Tungsten */
+.library-catalog .library-hero-play,
+.library-catalog .soundstage-btn-primary {
+  background: linear-gradient(180deg, #e7b560 0%, #D99B43 55%, #b78532 100%) !important;
+  color: #0B0D11 !important;
+  border: 1px solid #e8c47c !important;
+  border-radius: 9999px !important;
+  box-shadow: 0 6px 22px rgba(217, 155, 67, 0.26);
+  text-shadow: none !important;
+}
+
+.library-catalog .library-hero-play:hover,
+.library-catalog .soundstage-btn-primary:hover {
+  filter: brightness(1.08);
+  box-shadow: 0 8px 26px rgba(217, 155, 67, 0.38);
+}
+
+.library-catalog .library-hero-more,
+.library-catalog .soundstage-btn-secondary {
+  background: rgba(23, 19, 14, 0.78) !important;
+  color: #F2EFEB !important;
+  border: 1px solid rgba(217, 155, 67, 0.42) !important;
+  border-radius: 9999px !important;
+}
+
+.library-catalog .library-hero-more:hover,
+.library-catalog .soundstage-btn-secondary:hover {
+  border-color: #D99B43 !important;
+  color: #e8c47c !important;
+  background: rgba(217, 155, 67, 0.12) !important;
+}
+
+/* ---- Horizontally Split Studio Console (Access Strip + 4 Illuminated Faders) ---- */
+.soundstage-console {
+  display: flex;
+  flex-direction: column;
+  background: linear-gradient(180deg, #1b1711 0%, #13100c 100%);
+  border: 1px solid rgba(217, 155, 67, 0.32);
+  border-radius: 10px;
+  box-shadow:
+    inset 0 1px 0 rgba(232, 196, 124, 0.12),
+    0 16px 36px rgba(0, 0, 0, 0.52);
+  overflow: hidden;
+}
+
+@media (min-width: 1024px) {
+  .soundstage-console {
+    flex-direction: row;
+    align-items: stretch;
+  }
+}
+
+.soundstage-console .soundstage-console-strip {
+  padding: 0 !important;
+  margin: 0 !important;
+  flex: 0 0 390px;
+  display: flex;
+}
+
+.soundstage-console .soundstage-plan-strip {
+  width: 100%;
+  border: 0 !important;
+  border-bottom: 1px solid rgba(217, 155, 67, 0.22) !important;
+  border-radius: 0 !important;
+  background: rgba(15, 12, 9, 0.55) !important;
+  padding: 22px 26px !important;
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  justify-content: center !important;
+  gap: 12px !important;
+}
+
+@media (min-width: 1024px) {
+  .soundstage-console .soundstage-plan-strip {
+    border-bottom: 0 !important;
+    border-inline-end: 1px solid rgba(217, 155, 67, 0.24) !important;
+  }
+}
+
+.soundstage-console .soundstage-faders-section {
+  flex: 1;
+  padding: 18px 20px !important;
+  margin: 0 !important;
+}
+
+.soundstage-fader {
+  background: #0B0D11 !important;
+  border: 1px solid rgba(217, 155, 67, 0.26) !important;
+  border-radius: 8px !important;
+  box-shadow: inset 0 0 0 1px #000;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.soundstage-fader:hover,
+.soundstage-fader:focus-visible {
+  border-color: #D99B43 !important;
+  box-shadow:
+    inset 0 0 0 1px #000,
+    0 0 20px rgba(217, 155, 67, 0.24);
+}
+
+.soundstage-fader-led {
+  display: inline-block;
+  width: 34px;
+  height: 4px;
+  border-radius: 2px;
+  background: #D99B43;
+  box-shadow: 0 0 10px #D99B43;
+}
+
+/* ---- Asymmetrical 60/40 Split Stage & Filmstrip Indicators ---- */
+.soundstage-split-stage {
+  padding-block: 8px;
+}
+
+.soundstage-filmstrip-cell {
+  flex: 1;
+  height: 7px;
+  background: #0B0D11;
+  border: 1px solid rgba(217, 155, 67, 0.25);
+  border-radius: 2px;
+  display: block;
+}
+
+.soundstage-filmstrip-cell.is-active {
+  background: #D99B43;
+  border-color: #e8c47c;
+  box-shadow: 0 0 8px rgba(217, 155, 67, 0.45);
+}
+
+/* ---- Recessed Dark Matte Beveled Course Cards & 1px Amber Cue Line ---- */
+.library-catalog .library-poster.soundstage-card {
+  background: #17140f;
+  border: 1px solid rgba(217, 155, 67, 0.25);
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: inset 0 0 0 3px #0e0c09;
   cursor: pointer;
-  transition: transform .2s ease, filter .2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.library-catalog .library-poster:hover,
-.library-catalog .library-poster:focus-within {
-  transform: scale(1.06);
-  box-shadow: none;
-  border-color: transparent;
+.library-catalog .library-poster.soundstage-card:hover,
+.library-catalog .library-poster.soundstage-card:focus-within {
+  transform: translateY(-2px);
+  border-color: #D99B43;
+  box-shadow:
+    inset 0 0 0 3px #0e0c09,
+    0 10px 26px rgba(0, 0, 0, 0.55),
+    0 0 20px rgba(217, 155, 67, 0.22);
   z-index: 2;
+}
+
+.soundstage-cue-line {
+  position: absolute;
+  bottom: 0;
+  inset-inline-start: 0;
+  height: 1px;
+  background: #D99B43;
+  box-shadow: 0 0 6px #D99B43;
+  z-index: 3;
+}
+
+.soundstage-card-dur {
+  background: rgba(11, 13, 17, 0.86);
+  border: 1px solid rgba(217, 155, 67, 0.35);
+  color: #F2EFEB;
 }
 
 .library-catalog .library-poster-play {
@@ -147,11 +386,12 @@
 .library-catalog .library-poster-play-inner {
   display: grid;
   place-items: center;
-  width: 2.25rem;
-  height: 2.25rem;
-  border-radius: 4px;
-  background: #fff;
-  color: #141414;
+  width: 2.35rem;
+  height: 2.35rem;
+  border-radius: 9999px;
+  background: #D99B43;
+  color: #0B0D11 !important;
+  box-shadow: 0 0 16px rgba(217, 155, 67, 0.5);
 }
 
 .library-catalog .library-poster-meta {
@@ -160,7 +400,7 @@
   inset: 0;
   z-index: 2;
   padding: .65rem .7rem;
-  background: linear-gradient(transparent 22%, rgba(2, 6, 14, .92));
+  background: linear-gradient(transparent 18%, rgba(11, 10, 8, .92));
   align-content: end;
   gap: .2rem;
   pointer-events: none;
@@ -171,31 +411,60 @@
   display: grid;
 }
 
-.library-catalog .library-poster:hover .library-poster-title-dock,
-.library-catalog .library-poster:focus-within .library-poster-title-dock {
-  opacity: 0;
-}
-
 .library-catalog .library-poster-meta b {
   font-size: .8rem;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.25;
-  color: #fff;
+  color: #F2EFEB;
 }
 
 .library-catalog .library-poster-meta span {
   font-size: .7rem;
-  color: rgba(255, 255, 255, .72);
+  color: #dfc47d;
 }
 
-.library-catalog .library-poster-list {
-  border-radius: 4px !important;
+/* ---- Topics Cinematic 2.39:1 Matte Stills ---- */
+.library-catalog .soundstage-topic-tile {
+  border: 1px solid rgba(217, 155, 67, 0.28);
+  border-radius: 6px;
+  background: #0B0D11;
+  box-shadow: inset 0 0 0 2px #090806;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
 }
 
+.library-catalog .soundstage-topic-tile:hover,
+.library-catalog .soundstage-topic-tile:focus-visible {
+  transform: translateY(-2px);
+  border-color: #D99B43;
+  box-shadow: 0 0 20px rgba(217, 155, 67, 0.22);
+}
+
+.library-catalog .library-topic-count {
+  color: #D99B43;
+  font-size: 0.75rem;
+  font-style: normal;
+  font-weight: 600;
+}
+
+/* ---- Lecturers Illuminated Circular Gold Badges ---- */
+.soundstage-lecturer-ring {
+  border: 3px solid #D99B43;
+  box-shadow: 0 0 22px rgba(217, 155, 67, 0.35);
+  background: #14110c;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+.soundstage-lecturer-badge:hover .soundstage-lecturer-ring,
+.soundstage-lecturer-badge:focus-visible .soundstage-lecturer-ring {
+  border-color: #f0c978;
+  box-shadow: 0 0 28px rgba(217, 155, 67, 0.55);
+}
+
+/* ---- Empty States, Rails, & Inner Library Views ---- */
 .library-catalog .library-empty-panel {
-  border-radius: 4px;
-  border: 1px solid rgba(255, 255, 255, .12);
-  background: rgba(5, 10, 20, .55);
+  border-radius: 8px;
+  border: 1px solid rgba(217, 155, 67, .26);
+  background: rgba(19, 16, 12, .78);
   text-align: start;
   max-width: 36rem;
   margin-inline: 0;
@@ -203,31 +472,31 @@
 }
 
 .library-catalog .library-empty-panel .library-empty-eye {
-  color: #b79043;
+  color: #D99B43;
   font-size: .7rem;
   letter-spacing: .14em;
   margin-bottom: .4rem;
 }
 
 .library-catalog .library-empty-panel h3 {
-  font-weight: 500;
+  font-weight: 600;
   margin-bottom: .4rem;
 }
 
 .library-catalog .library-empty-cta {
-  border-radius: 4px !important;
-  background: #fff !important;
-  color: #141414 !important;
+  border-radius: 9999px !important;
+  background: linear-gradient(180deg, #e7b560 0%, #D99B43 100%) !important;
+  color: #0B0D11 !important;
+  font-weight: 700 !important;
 }
 
 .library-catalog .library-empty-cta:hover {
-  background: #f3f3f3 !important;
+  filter: brightness(1.08);
 }
 
 .library-catalog .library-rail-scroller {
-  gap: 8px;
-  /* Vertical padding so poster hover scale is not clipped by overflow-x */
-  padding-block: 14px 18px;
+  gap: 14px;
+  padding-block: 10px 16px;
   mask-image: none;
   -webkit-mask-image: none;
 }
@@ -242,72 +511,72 @@
 }
 
 .library-catalog .rail-control {
-  border-radius: 4px !important;
+  border-radius: 9999px !important;
+  background: rgba(15, 12, 9, 0.9) !important;
+  border-color: rgba(217, 155, 67, 0.4) !important;
+  color: #dfc47d !important;
+}
+
+.library-catalog .rail-control:hover {
+  border-color: #D99B43 !important;
+  color: #F2EFEB !important;
 }
 
 .library-catalog .library-plan-strip .library-plan-cta {
-  border-radius: 4px !important;
-  background: #fff !important;
-  color: #141414 !important;
-}
-
-.library-catalog .library-plan-strip .library-plan-cta:hover {
-  background: #f3f3f3 !important;
-}
-
-.library-catalog .library-topic-count {
-  color: #dfc47d;
-  font-size: 0.7rem;
-  font-style: normal;
+  border-radius: 9999px !important;
+  background: linear-gradient(180deg, #e7b560 0%, #D99B43 100%) !important;
+  color: #0B0D11 !important;
 }
 
 .library-catalog .library-page-back {
-  color: rgba(255, 255, 255, 0.7) !important;
+  color: rgba(242, 239, 235, 0.75) !important;
   border-radius: 4px;
 }
 
 .library-catalog .library-page-back:hover {
-  color: #fff !important;
+  color: #D99B43 !important;
 }
 
 .library-catalog .library-start-here-quiet {
-  opacity: 0.85;
-  border: 1px dashed rgba(255, 255, 255, 0.18);
-  border-radius: 4px;
-  padding-block: 10px;
-  background: rgba(5, 10, 20, 0.35);
+  opacity: 0.92;
+  border: 1px dashed rgba(217, 155, 67, 0.28);
+  border-radius: 8px;
+  padding-block: 12px;
+  background: rgba(17, 14, 10, 0.55);
 }
 
 .library-catalog .library-page-eyebrow {
-  color: #b79043;
-  font-size: 0.7rem;
-  letter-spacing: 0.14em;
-  font-weight: 500;
+  color: #D99B43;
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  font-weight: 600;
 }
 
 .library-catalog .library-spacious-section,
 .library-catalog .library-island {
-  padding-block: 10px;
+  padding-block: 14px;
 }
 
 @media (min-width: 768px) {
   .vod-app.library-catalog .library-spacious-section,
   .vod-app.library-catalog main > section:not([class*="h-[78vh]"]):not([class*="h-[88vh]"]) {
-    padding-block: 10px;
+    padding-block: 16px;
   }
 }
 
 .library-catalog .library-rail-title {
-  font-size: 1.1rem;
-  font-weight: 600;
-  margin-bottom: 4px;
+  font-size: 1.35rem;
+  font-weight: 800;
+  letter-spacing: 0.01em;
+  color: #F2EFEB;
+  margin-bottom: 0;
 }
 
 .library-catalog .library-plan-strip,
 .library-catalog .library-quick-action {
-  border-radius: 4px;
-  border-color: rgba(255, 255, 255, .12);
-  background: rgba(5, 10, 20, .62);
+  border-radius: 8px;
+  border-color: rgba(217, 155, 67, .26);
+  background: rgba(19, 16, 12, .78);
   backdrop-filter: none;
 }
 
@@ -317,7 +586,13 @@
 }
 
 .vod-app.library-catalog .editorial-library-footer {
-  background: rgba(5, 10, 20, .72) !important;
+  background: rgba(11, 10, 8, .88) !important;
+  border-top-color: rgba(217, 155, 67, .24) !important;
+}
+
+.vod-app .editorial-library-bottom-nav {
+  background: rgba(11, 10, 8, 0.96) !important;
+  border-top-color: rgba(217, 155, 67, 0.28) !important;
 }
 
 .library-catalog-page .library-poster {
@@ -335,7 +610,8 @@
   width: 100%;
   aspect-ratio: 11 / 11;
   overflow: hidden;
-  background: #141414;
+  background: #14110c;
+  border: 1px solid rgba(217, 155, 67, 0.28);
 }
 
 .library-instructor-frame img {
@@ -355,64 +631,67 @@
 }
 
 .library-course-veil-a {
-  background: linear-gradient(180deg, rgba(5, 10, 20, .55) 0%, transparent 34%, rgba(5, 10, 20, .45) 72%, rgba(5, 10, 20, .86) 100%);
+  background: linear-gradient(180deg, rgba(11, 10, 8, .62) 0%, transparent 34%, rgba(15, 12, 9, .55) 72%, rgba(11, 10, 8, .92) 100%);
 }
 
 .library-course-veil-b {
-  background: linear-gradient(270deg, transparent 12%, rgba(5, 10, 20, .32) 52%, rgba(5, 10, 20, .72) 100%);
+  background: linear-gradient(270deg, transparent 12%, rgba(16, 13, 9, .42) 52%, rgba(11, 10, 8, .82) 100%);
 }
 
 .library-course-veil-c {
-  background: rgba(5, 10, 20, .22);
+  background: rgba(16, 13, 9, .26);
 }
 
 .library-course-veil-d {
-  background: radial-gradient(ellipse at 70% 20%, transparent 0%, rgba(5, 10, 20, .4) 70%, rgba(5, 10, 20, .82) 100%);
+  background: radial-gradient(ellipse at 70% 20%, rgba(217, 155, 67, .08) 0%, rgba(15, 12, 9, .48) 70%, rgba(11, 10, 8, .88) 100%);
 }
 
 .library-course-stage {
-  border-radius: 4px;
+  border-radius: 8px;
+  border: 2px solid rgba(217, 155, 67, 0.32);
+  box-shadow: 0 24px 50px rgba(0, 0, 0, 0.65);
 }
 
 .library-episode-row {
-  border-bottom: 1px solid rgba(255, 255, 255, .08);
+  border-bottom: 1px solid rgba(217, 155, 67, .14);
   background: transparent;
 }
 
 .library-episode-row:hover,
 .library-episode-row:focus-visible {
-  background: rgba(255, 255, 255, .06);
+  background: rgba(217, 155, 67, .08);
 }
 
 .library-episode-row.is-active {
-  background: rgba(255, 255, 255, .08);
+  background: rgba(217, 155, 67, .14);
+  border-inline-start: 2px solid #D99B43;
 }
 
 .library-instructor-card {
-  border: 0;
-  border-radius: 4px;
-  background: rgba(255, 255, 255, .04);
+  border: 1px solid rgba(217, 155, 67, .24);
+  border-radius: 8px;
+  background: rgba(23, 19, 14, .75);
 }
 
 .library-catalog-page .library-page-hero,
 .library-catalog-page .library-page-toolbar {
-  border-radius: 4px;
-  border-color: rgba(255, 255, 255, .1);
-  background: rgba(5, 10, 20, .55);
+  border-radius: 8px;
+  border-color: rgba(217, 155, 67, .26);
+  background: rgba(19, 16, 12, .78);
 }
 
 .library-catalog-page .library-page-chip {
-  border-radius: 4px;
+  border-radius: 9999px;
 }
 
 .library-catalog-page .library-page-grid {
-  gap: 8px;
+  gap: 14px;
 }
 
 .library-catalog-page .library-search-field {
-  border-radius: 4px;
-  background: rgba(5, 10, 20, .72);
-  border-color: rgba(255, 255, 255, .18);
+  border-radius: 9999px;
+  background: rgba(19, 16, 12, .88);
+  border-color: rgba(217, 155, 67, .38);
 }
 
 @media (prefers-reduced-motion: reduce) {

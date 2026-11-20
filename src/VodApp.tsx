@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { Suspense, lazy, useEffect } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { useApp } from './context/AppContext';
 import { Navbar } from './components/Navbar';
@@ -22,11 +22,20 @@ import { ShortsView } from './views/ShortsView';
 import { LearningPathsView } from './views/LearningPathsView';
 import { InstructorsView } from './views/InstructorsView';
 import { InstructorProfileView } from './views/InstructorProfileView';
-import { AdminView } from './views/AdminView';
-import { LecturerView } from './views/LecturerView';
+// Role-gated desks are the heaviest views; keep them out of the library bundle
+// so the catalog loads without them, and fetch them only when actually opened.
+const AdminView = lazy(() => import('./views/AdminView').then((m) => ({ default: m.AdminView })));
+const LecturerView = lazy(() => import('./views/LecturerView').then((m) => ({ default: m.LecturerView })));
 import { libraryPath } from './utils/libraryPath';
 import './styles/LibraryCatalog.css';
 import './styles/CrmDesk.css';
+import './styles/LibraryCharcoalTheme.css';
+import './styles/LibraryWeekly.css';
+import './styles/LibraryBrowseRefined.css';
+import './styles/LibraryNetflix.css';
+import './styles/LibraryPagePolish.css';
+import './styles/LibraryCourseDetail.css';
+import './styles/LibraryNavbar.css';
 
 export const VodApp: React.FC = () => {
   const { currentView, setView } = useApp();
@@ -100,7 +109,7 @@ export const VodApp: React.FC = () => {
   return (
     <PaywallProvider>
     <PaywallTriggers />
-    <div className={`vod-app library-catalog sky-readable flex flex-col min-h-screen relative text-white bg-transparent${currentView === 'admin' || currentView === 'lecturer' || currentView === 'profile' ? ' crm-desk' : ''}`}>
+    <div className={`vod-app library-catalog sky-readable${currentView === 'home' ? ' library-weekly' : ' library-netflix'}${currentView === 'course' ? ' library-premiere' : ''}${['mylist', 'history', 'shorts', 'category', 'instructors', 'instructor'].includes(currentView) ? ' library-stage' : ''} flex flex-col min-h-screen relative text-white bg-transparent${currentView === 'admin' || currentView === 'lecturer' || currentView === 'profile' ? ' crm-desk' : ''}`}>
       {currentView !== 'watch' && (
         <a href="#library-main" className="skip-link">
           דילוג לתוכן הראשי
@@ -109,7 +118,9 @@ export const VodApp: React.FC = () => {
       {currentView !== 'watch' && currentView !== 'admin' && currentView !== 'lecturer' && <Navbar />}
 
       <main id="library-main" key={currentView} className="relative z-10 flex-grow page-fade" tabIndex={-1}>
-        {renderView()}
+        <Suspense fallback={<div className="py-24 text-center text-white/50 font-light">טוען…</div>}>
+          {renderView()}
+        </Suspense>
       </main>
 
       {currentView !== 'watch' && (
@@ -127,7 +138,7 @@ export const VodApp: React.FC = () => {
               <Link to="/accessibility" className="hover:text-zinc-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043] rounded min-h-11 inline-flex items-center">הצהרת נגישות</Link>
             </div>
           </div>
-          <p className="max-w-7xl mx-auto mt-4 text-sm text-zinc-600">Infinite Masterpiece © כל הזכויות שמורות.</p>
+          <p className="max-w-7xl mx-auto mt-4 text-sm text-zinc-600">© {new Date().getFullYear()} כל הזכויות שמורות ל <bdi dir="ltr">TAMMY ELIAN</bdi></p>
         </footer>
       )}
 

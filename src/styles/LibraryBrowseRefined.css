@@ -1,0 +1,91 @@
+/* Visual refinement of existing list, history, shorts and topic elements only. */
+.vod-app.library-catalog .library-browse-refined {
+  width: 100%;
+  min-width: 0;
+  padding-top: 124px;
+  padding-bottom: 96px;
+  color: #F6F1E7;
+}
+.library-browse-refined > .flex:first-child {
+  align-items: flex-start;
+  gap: 24px;
+  padding-bottom: 24px;
+  margin-bottom: 28px;
+}
+.library-browse-refined h1 { letter-spacing: -.025em; line-height: 1.2; }
+.library-browse-refined .library-page-eyebrow { margin-bottom: 10px; letter-spacing: .06em; }
+.library-browse-refined .library-page-back { flex-shrink: 0; gap: 10px; }
+.vod-app.library-catalog .library-browse-refined .library-page-hero {
+  padding: 30px 32px;
+  margin-bottom: 26px;
+  border-radius: 12px;
+  border-inline-start: 2px solid rgba(198,164,108,.7) !important;
+}
+.library-browse-refined .library-page-hero h1 { font-size: clamp(28px,3.2vw,42px); margin-bottom: 12px; }
+.library-browse-refined .library-page-hero p { max-width: 44rem; line-height: 1.8; }
+.library-browse-refined .library-page-toolbar { padding: 12px 16px; gap: 12px; margin-bottom: 26px; }
+.library-browse-refined .library-page-chip { font-weight: 500; }
+.library-browse-refined .library-page-grid { grid-template-columns: repeat(4,minmax(0,1fr)); gap: 26px 20px; align-items: stretch; }
+.library-browse-refined .library-page-grid .library-course-card { width: 100%; min-width: 0; }
+.library-browse-refined .library-page-grid .soundstage-card { height: 100%; padding: 8px; border-radius: 10px; }
+.library-browse-refined .library-page-grid .soundstage-card-body { padding: 12px 4px 8px; }
+.library-browse-refined .library-page-grid .soundstage-card-body > div:first-child {
+  -webkit-line-clamp: 2;
+  min-height: 2.8em;
+  line-height: 1.4;
+  font-size: 15px;
+  font-weight: 600;
+}
+.library-browse-refined .library-page-grid .library-poster-meta { display: none; }
+.library-browse-refined .library-page-grid .library-poster-list { opacity: 1; }
+/* Allow the existing recommendation rail to scroll inside its column rather than widen the page. */
+.library-browse-refined > .grid, .library-browse-refined > .grid > *,
+.library-browse-refined .library-start-here-quiet { min-width: 0; max-width: 100%; }
+.library-browse-refined .library-start-here-quiet .library-rail-scroller { max-width: 100%; }
+.vod-app.library-catalog .library-browse-refined .library-empty-panel {
+  width: 100%;
+  max-width: none;
+  padding: 30px 32px;
+  border-radius: 12px;
+}
+.library-browse-refined .library-empty-panel h3 { margin-bottom: 10px; }
+.library-browse-refined .library-empty-panel p { max-width: 38rem; }
+.library-browse-refined .library-empty-panel .library-empty-cta { margin-top: 4px; }
+/* Existing history rows keep their original action and content. */
+.library-browse-refined > .divide-y { border-top: 1px solid rgba(246,241,231,.12); }
+.library-browse-refined > .divide-y > button { gap: 24px; padding: 24px 12px; border-radius: 8px; }
+.library-browse-refined > .divide-y > button:hover { background: rgba(198,164,108,.07); }
+.library-browse-refined > .divide-y > button > img { width: 160px; border-radius: 8px; }
+.library-browse-refined > .divide-y > button > div > div:first-child {
+  font-size: 16px;
+  line-height: 1.5;
+  white-space: normal;
+}
+.library-browse-refined > .divide-y > button > div > div:nth-child(2) { color: #c8c4bc; margin-top: 5px; white-space: normal; line-height: 1.5; }
+.library-browse-refined > .divide-y > button > div > div:last-child { color: #bab5ac; font-size: 12px; margin-top: 8px; line-height: 1.6; }
+.library-browse-refined > .divide-y > button > svg { color: #C6A46C; width: 20px; height: 20px; }
+.vod-app.library-catalog .library-browse-refined :is(.text-white\/55,.text-white\/50) { color: #c8c4bc; }
+.library-browse-refined :is(button,select):focus-visible { outline: 2px solid #C6A46C; outline-offset: 4px; }
+@media (max-width: 1023px) {
+  .library-browse-refined .library-page-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+}
+@media (max-width: 639px) {
+  .vod-app.library-catalog .library-browse-refined { padding-top: 100px; }
+  .library-browse-refined > .flex:first-child { flex-wrap: wrap; gap: 8px; margin-bottom: 24px; padding-bottom: 18px; }
+  .library-browse-refined > .flex:first-child > div { flex: 1 1 180px; min-width: 0; }
+  .library-browse-refined h1 { font-size: 28px; }
+  .vod-app.library-catalog .library-browse-refined .library-page-hero { padding: 24px 20px; }
+  .library-browse-refined .library-page-hero p { font-size: 15px; }
+  .library-browse-refined .library-page-toolbar { padding: 10px; }
+  .library-browse-refined .library-page-toolbar > div { flex-wrap: wrap; overflow: visible; }
+  .library-browse-refined .library-page-toolbar > label, .library-browse-refined .library-page-toolbar select { width: 100%; }
+  .library-browse-refined .library-page-chip { padding-inline: 12px; }
+  .library-browse-refined .library-page-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 20px 12px; }
+  .library-browse-refined .library-page-grid .soundstage-card { padding: 6px; }
+  .library-browse-refined .library-page-grid .soundstage-card-body { padding: 10px 2px 6px; }
+  .library-browse-refined .library-page-grid .soundstage-card-body > div:first-child { font-size: 14px; }
+  .vod-app.library-catalog .library-browse-refined .library-empty-panel { padding: 24px 20px; }
+  .library-browse-refined > .divide-y > button { gap: 12px; padding: 18px 0; }
+  .library-browse-refined > .divide-y > button > img { width: 100px; }
+  .library-browse-refined > .divide-y > button > div > div:first-child { font-size: 14px; }
+}

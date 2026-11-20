@@ -1,13 +1,12 @@
-﻿import React from 'react';
+import React from 'react';
 import { Course } from '../types';
 import { useApp } from '../context/AppContext';
-import { Play } from 'lucide-react';
 import { ClockLabel } from './ClockLabel';
 import { useWatchAccess } from '../utils/useWatchAccess';
 import { canPreviewEpisode, canWatchEpisode } from '../utils/access';
 import { getCardAccessState } from '../utils/libraryHome';
 import { trackEvent } from '../utils/analytics';
-import { responsiveImageAttrs } from '../utils/responsiveImage';
+import '../styles/LibraryCharcoalHero.css';
 
 interface HeroBannerProps {
   course: Course;
@@ -39,13 +38,6 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
         ? 'צפו בטעימה'
         : 'פתיחת גישה';
 
-  const continuePct = continueWatching
-    ? Math.min(
-        100,
-        Math.max(4, Math.round((continueWatching.currentTime / (continueWatching.duration || 1)) * 100))
-      )
-    : 0;
-
   const handlePlayClick = () => {
     trackEvent('hero_play_click', {
       content_id: course.id,
@@ -61,90 +53,39 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
 
   return (
     <section
-      className="library-hero relative w-full min-h-[78vh] md:h-[88vh] flex items-end overflow-hidden pt-24 pb-40 md:pb-52"
+      className="library-charcoal-hero"
+      dir="rtl"
       aria-label={continueWatching ? `המשך צפייה: ${course.title}` : `מומלץ: ${course.title}`}
     >
-      <div className="absolute inset-0 select-none overflow-hidden">
-        <img
-          {...responsiveImageAttrs(course.backdropImage || course.coverImage, {
-            widths: [768, 1200, 1600, 2000],
-            sizes: '100vw',
-            defaultWidth: 1600,
-          })}
-          alt=""
-          aria-hidden
-          fetchPriority="high"
-          decoding="async"
-          className="w-full h-full object-cover object-center scale-105"
-        />
-        <div className="library-hero-veil-bottom absolute inset-0" />
-        <div className="library-hero-veil-side absolute inset-0 w-full md:w-[70%] ms-auto" />
-        <div className="absolute inset-0 bg-black/15" />
-      </div>
-
-      <div className="relative max-w-7xl mx-auto px-4 sm:px-8 w-full z-10 text-start md:max-w-2xl md:ms-0 md:me-auto">
-        <p className="mb-2 text-[11px] font-medium tracking-[0.18em] text-[#b79043]">
-          {continueWatching ? 'המשיכו מכאן' : 'הרצאה נבחרת'}
-        </p>
-        <h1 className="text-4xl sm:text-5xl lg:text-[4.25rem] font-semibold text-white leading-[1.08] tracking-tight mb-4">
-          {course.title}
-        </h1>
-
-        <p className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/80">
-          {instructor ? <span>{instructor.name}</span> : null}
-          {instructor ? <span aria-hidden>·</span> : null}
-          <ClockLabel seconds={totalSecs} />
-          {continueWatching?.episodeTitle ? (
-            <>
-              <span aria-hidden>·</span>
-              <span>{continueWatching.episodeTitle}</span>
-            </>
-          ) : null}
-        </p>
-
-        <p className="text-sm sm:text-base text-white/80 font-light leading-relaxed max-w-xl mb-6 line-clamp-2">
-          {course.subtitle || course.description}
-        </p>
-
-        {continueWatching && (
-          <div className="max-w-sm mb-7">
-            <div className="flex items-center justify-between text-[11px] text-white/70 mb-2" id="hero-progress-label">
-              <span>
-                <ClockLabel seconds={continueWatching.currentTime} /> / <ClockLabel seconds={continueWatching.duration} />
-              </span>
-              <span>המשך צפייה</span>
-            </div>
-            <div
-              className="h-1 rounded-[4px] bg-white/15 overflow-hidden"
-              role="progressbar"
-              aria-labelledby="hero-progress-label"
-              aria-valuemin={0}
-              aria-valuemax={100}
-              aria-valuenow={continuePct}
-            >
-              <div className="h-full bg-[#b79043]" style={{ width: `${continuePct}%` }} />
-            </div>
+      <img
+        className="charcoal-sky"
+        src="https://media.base44.com/images/public/6aa94dfb715e7d446231f544/3996d7937_generated_06560cca.jpg"
+        alt=""
+      />
+      <div className="charcoal-shade" aria-hidden="true" />
+      <div className="weekly-hero-glow" aria-hidden="true" />
+      <div className="charcoal-inner">
+        <div className="charcoal-copy">
+          <p className="charcoal-eyebrow">
+            <svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 1l2.6 7.4L22 12l-7.4 3.6L12 23l-2.6-7.4L2 12l7.4-3.6z" /></svg>
+            {continueWatching ? 'המשיכו מכאן' : 'בחירת השבוע'}
+          </p>
+          <h1 className="charcoal-title">{course.title}</h1>
+          <p className="charcoal-meta">
+            {instructor ? <b>{instructor.name}</b> : null}
+            <ClockLabel seconds={totalSecs} />
+          </p>
+          <p className="charcoal-description">{course.subtitle || course.description}</p>
+          <div className="charcoal-actions">
+            <button className="charcoal-button primary" type="button" onClick={handlePlayClick}>
+              {primaryLabel}
+            </button>
+            <button className="charcoal-button" type="button" onClick={handleDetails}>
+              לפרטים נוספים
+            </button>
           </div>
-        )}
-
-        <div className="flex items-center gap-3 flex-wrap">
-          <button
-            type="button"
-            onClick={handlePlayClick}
-            className="library-hero-play inline-flex items-center gap-2.5 px-7 py-2.5 text-sm font-semibold min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
-          >
-            <Play className="w-5 h-5 fill-current" />
-            <span>{primaryLabel}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handleDetails}
-            className="library-hero-more inline-flex items-center px-6 py-2.5 text-sm font-medium min-h-11 hover:bg-white/20 transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
-          >
-            פרטים
-          </button>
         </div>
+        <div className="charcoal-balance" aria-hidden="true" />
       </div>
     </section>
   );

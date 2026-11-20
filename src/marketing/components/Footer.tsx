@@ -45,7 +45,7 @@ export function Footer() {
           </nav>
           <div className="flex items-center justify-center gap-3 text-white/40">
             <InfinityIcon className="w-6 h-6" strokeWidth={1} />
-            <span className="text-[11px] uppercase tracking-widest">© {new Date().getFullYear()} Infinite Masterpiece</span>
+            <span className="text-[11px] uppercase tracking-widest">© {new Date().getFullYear()} כל הזכויות שמורות ל <bdi dir="ltr">TAMMY ELIAN</bdi></span>
           </div>
         </div>
       </footer>
@@ -100,7 +100,7 @@ export function Footer() {
         <div className="flex flex-col md:flex-row items-center justify-between gap-4 pt-8 border-t border-white/[0.05]">
           <div className="flex items-center gap-3 text-white/40">
             <InfinityIcon className="w-6 h-6" strokeWidth={1} />
-            <span className="text-[11px] uppercase tracking-widest">© {new Date().getFullYear()} Infinite Masterpiece</span>
+            <span className="text-[11px] uppercase tracking-widest">© {new Date().getFullYear()} כל הזכויות שמורות ל <bdi dir="ltr">TAMMY ELIAN</bdi></span>
           </div>
           <Link
             to="/#pricing"

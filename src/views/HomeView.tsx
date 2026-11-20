@@ -127,24 +127,6 @@ export const HomeView: React.FC = () => {
   const recommendedTitle = isPersonal ? 'מומלץ עבורך' : 'בחירת המערכת';
   const isLoading = catalogStatus === 'loading' && courses.length === 0;
 
-  if (catalogStatus === 'error' && courses.length === 0) {
-    return (
-      <div className="min-h-screen text-white pt-32 px-4 text-center">
-        <h1 className="text-2xl font-semibold mb-3">לא הצלחנו לטעון את הספרייה</h1>
-        <p className="text-white/50 mb-8">נסו שוב בעוד רגע.</p>
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-          <button
-            type="button"
-            onClick={() => void reloadCatalog()}
-            className="px-6 py-3 rounded-full bg-[#b79043] text-black font-semibold min-h-11"
-          >
-            טעינה מחדש
-          </button>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="library-flow-page min-h-screen text-white overflow-x-hidden pb-28">
       {heroCourse ? (
@@ -162,29 +144,71 @@ export const HomeView: React.FC = () => {
           }
         />
       ) : (
-        <div className="min-h-[480px] md:h-[78vh] bg-zinc-900 animate-pulse" aria-busy="true" />
+        <section className="weekly-empty-hero" aria-busy={isLoading}>
+          <img className="weekly-hero-bg" src="https://media.base44.com/images/public/6aa94dfb715e7d446231f544/3996d7937_generated_06560cca.jpg" alt="" />
+          <div className="weekly-hero-scrim" aria-hidden="true" />
+          <div className="weekly-empty-copy">
+            <span className="weekly-curation-mark" aria-hidden="true">✦</span>
+            <h1>Infinite Masterpiece</h1>
+            {catalogStatus === 'error' ? (
+              <>
+                <p>לא הצלחנו לטעון את הספרייה. נסו שוב בעוד רגע.</p>
+                <div className="weekly-empty-actions">
+                  <button type="button" className="weekly-button primary" onClick={() => void reloadCatalog()}>טעינה מחדש</button>
+                  <button type="button" className="weekly-button" onClick={() => setView('profile')}>חשבון</button>
+                </div>
+              </>
+            ) : <p>{isLoading ? 'טוען את הספרייה…' : 'הספרייה מתעדכנת — תכנים נוספים בקרוב.'}</p>}
+          </div>
+        </section>
       )}
 
-      <div className="relative z-10 -mt-6 md:-mt-10">
-        <LibraryPlanBanner />
+      <div className="weekly-rails relative z-10">
+
         {isLoading ? <CatalogLoadingNotice /> : null}
 
-        {catalogStatus === 'error' && (
+        {catalogStatus === 'error' && courses.length > 0 && (
           <SectionError
             message="לא הצלחנו לרענן את הקטלוג. מוצג תוכן שמור."
             onRetry={() => void reloadCatalog()}
           />
         )}
 
-        <div id="rail-continue">
+        {isLoading ? (
+          <RailSkeleton title="מומלץ עבורך" />
+        ) : recommendedDeduped.length > 0 ? (
+          <CategoryRow
+            id="rail-recommended"
+            title={recommendedTitle}
+            courses={recommendedDeduped}
+            sectionName="recommended"
+            reasons={reasons}
+          />
+        ) : courses.length > 0 ? (
+          <SectionError message="לא הצלחנו לטעון את ההמלצות" onRetry={() => void reloadCatalog()} />
+        ) : null}
+
+        <div className="soundstage-console-dock">
+          <div className="soundstage-console">
+            <LibraryPlanBanner />
+            <LibraryQuickActions />
+          </div>
+        </div>
+
+        <div id="rail-continue" className="soundstage-split-stage max-w-[1400px] mx-auto">
           {continueList.length > 0 ? (
-            <ContinueWatchingRow />
+            <div className="soundstage-split-rails grid grid-cols-1 xl:grid-cols-[1.5fr_1fr] gap-6 items-start">
+              <div className="min-w-0">
+                <ContinueWatchingRow />
+              </div>
+              <div className="min-w-0">
+                <StartHereRail {...pickStartHereCourses(courses, user)} />
+              </div>
+            </div>
           ) : (
             <StartHereRail {...pickStartHereCourses(courses, user)} />
           )}
         </div>
-
-        <LibraryQuickActions />
 
         {savedCourses.length > 0 ? (
           <CategoryRow
@@ -199,24 +223,11 @@ export const HomeView: React.FC = () => {
 
         {isLoading ? (
           <>
-            <RailSkeleton title="מומלץ עבורך" />
             <RailSkeleton title="10 דקות" />
             <RailSkeleton title="חדש בספרייה" />
           </>
         ) : (
           <>
-            {recommendedDeduped.length === 0 ? (
-              <SectionError message="לא הצלחנו לטעון את ההמלצות" onRetry={() => void reloadCatalog()} />
-            ) : (
-              <CategoryRow
-                id="rail-recommended"
-                title={recommendedTitle}
-                courses={recommendedDeduped}
-                sectionName="recommended"
-                reasons={reasons}
-              />
-            )}
-
             {showShortsRail ? (
               <CategoryRow
                 id="rail-shorts"

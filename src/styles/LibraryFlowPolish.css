@@ -1,18 +1,18 @@
-/* ui-ux-pro-max: Liquid Glass on the existing night/gold library.
-   200–400ms ease-out. Rails stay horizontal. No light field, no iOS blue. */
+/* Cinematic Soundstage — Warm Tungsten & Gold Library Polish.
+   200–400ms ease-out. Warm basalt & gold atmosphere, zero blue tint. */
 
 .library-flow-page {
-  --flow-night: #02060f;
-  --flow-navy: #071322;
+  --flow-night: #0B0D11;
+  --flow-navy: #17140f;
   --flow-ink: #0d0b08;
-  --flow-gold: #dfc47d;
+  --flow-gold: #D99B43;
   --flow-ease: cubic-bezier(.16, 1, .3, 1);
   overflow-x: clip;
   background: transparent;
 }
 
 .vod-app:has(.library-flow-page) {
-  background: rgba(5, 10, 20, .16);
+  background: rgba(11, 10, 8, .28);
 }
 
 .vod-app:has(.library-flow-page) main {
@@ -23,21 +23,10 @@
   position: relative;
 }
 
-.library-hero::after {
-  content: '';
-  position: absolute;
-  inset-inline: 0;
-  bottom: 0;
-  height: 42%;
-  z-index: 2;
-  pointer-events: none;
-  background: linear-gradient(180deg, rgba(2, 6, 15, 0) 0%, rgba(5, 10, 20, .22) 58%, rgba(5, 10, 20, .08) 100%);
-}
-
 .library-island {
   position: relative;
-  opacity: 0;
-  translate: 0 8px;
+  opacity: 1;
+  translate: 0 0;
   transition: opacity .2s var(--flow-ease, cubic-bezier(.16, 1, .3, 1)), translate .4s var(--flow-ease, cubic-bezier(.16, 1, .3, 1));
 }
 
@@ -53,15 +42,15 @@
   inset-inline: 12%;
   height: 1px;
   pointer-events: none;
-  background: linear-gradient(90deg, transparent, rgba(223, 196, 125, .26), transparent);
+  background: linear-gradient(90deg, transparent, rgba(217, 155, 67, .28), transparent);
 }
 
 .library-island.library-island-flush::before,
-.library-plan-banner.library-island::before {
+.library-plan-banner.library-island::before,
+.soundstage-faders-section.library-island::before {
   display: none;
 }
 
-/* Rails stay clear over the sky — no radial glass washes */
 .library-flow-page #rail-continue,
 .library-flow-page #rail-recommended,
 .library-flow-page #rail-new,
@@ -71,25 +60,25 @@
 }
 
 .library-flow-page .library-plan-strip {
-  border-color: rgba(255, 255, 255, .12);
-  border-radius: 4px;
-  background: rgba(5, 10, 20, .62);
+  border-color: rgba(217, 155, 67, .25);
+  border-radius: 8px;
+  background: rgba(19, 16, 12, .76);
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
 }
 
 .library-flow-page .library-quick-action {
-  border-color: rgba(255, 255, 255, .12);
-  border-radius: 4px;
-  background: rgba(5, 10, 20, .55);
+  border-color: rgba(217, 155, 67, .26);
+  border-radius: 8px;
+  background: #0B0D11;
   backdrop-filter: none;
   -webkit-backdrop-filter: none;
-  transition: border-color .2s ease, background-color .2s ease;
+  transition: border-color .2s ease, background-color .2s ease, box-shadow .2s ease;
 }
 
 .library-flow-page .library-quick-action:hover {
-  border-color: rgba(183, 144, 67, .45);
-  background: rgba(183, 144, 67, .1);
+  border-color: #D99B43;
+  background: rgba(217, 155, 67, .08);
 }
 
 .library-flow-page .library-island.is-in .library-quick-action {
@@ -105,7 +94,6 @@
 }
 
 @media (max-width: 767px) {
-  .library-hero::after { height: 28%; }
   .library-island::before { inset-inline: 8%; }
 }
 
