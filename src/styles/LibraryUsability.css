@@ -45,19 +45,17 @@
 }
 .library-more-links button:hover { background: #192b44; }
 
-/* Expanded search must not push account actions out of the header. */
-@media (min-width: 768px) {
-  .vod-app.library-catalog .header-search:has(input) {
-    position: absolute;
-    top: 100%;
-    inset-inline-end: 2rem;
-    width: min(28rem, calc(100vw - 4rem));
-    padding-block: .5rem;
-  }
-  .vod-app.library-catalog .header-search:has(input) > div,
-  .vod-app.library-catalog .header-search input,
-  .vod-app.library-catalog .header-search ul { width: 100%; }
+/* Open search stays in the header row, beside the account action. */
+.vod-app.library-catalog .header-search:has(input) {
+  position: relative;
+  top: auto;
+  inset-inline: auto;
+  width: auto;
+  padding-block: 0;
 }
+.vod-app.library-catalog .header-search:has(input) > div { width: auto; }
+.vod-app.library-catalog .header-search:has(input) input { width: min(18rem, 36vw); }
+.vod-app.library-catalog .header-search:has(input) ul { width: min(20rem, calc(100vw - 2rem)); }
 
 .vod-app.library-catalog .library-filter-fields {
   display: grid;
@@ -121,10 +119,7 @@
   .vod-app.library-catalog .editorial-library-bottom-nav button span { font-size: .75rem; }
   .vod-app.library-catalog .editorial-library-footer { padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
   .vod-app.library-catalog .library-flow-page .library-hero { min-height: 0; padding-block: calc(var(--site-header-h, 72px) + 2rem) 4rem; }
-  .vod-app.library-catalog .header-search:has(input) { position: absolute; inset-inline: 1rem; top: 100%; padding-block: .5rem; }
-  .vod-app.library-catalog .header-search:has(input) > div,
-  .vod-app.library-catalog .header-search input,
-  .vod-app.library-catalog .header-search ul { width: 100%; }
+  .vod-app.library-catalog .header-search:has(input) input { width: min(11rem, 42vw); }
 }
 
 @media (prefers-reduced-motion: reduce) {
