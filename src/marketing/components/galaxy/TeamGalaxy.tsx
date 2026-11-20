@@ -57,13 +57,32 @@ export function TeamGalaxy({
   }, [mobileCarousel, paused, members.length]);
   useEffect(() => {
     const map = mapRef.current;
-    if (!mobileMode || !map || !activeId) return;
-    const button = Array.from<HTMLButtonElement>(map.querySelectorAll('.galaxy-star')).find(item => item.dataset.memberId === activeId);
-    const card = button?.parentElement;
-    if (!card) return;
-    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('a11y-reduce-motion');
-    map.scrollTo({ left: card.offsetLeft - (map.clientWidth - card.offsetWidth) / 2, behavior: reduced ? 'instant' : 'smooth' });
-  }, [mobileMode, activeId]);
+    if (!mobileMode || !map) return;
+    let startX = 0;
+    let startY = 0;
+    const start = (event: TouchEvent) => {
+      startX = event.changedTouches[0]?.clientX ?? 0;
+      startY = event.changedTouches[0]?.clientY ?? 0;
+    };
+    const end = (event: TouchEvent) => {
+      const dx = (event.changedTouches[0]?.clientX ?? 0) - startX;
+      const dy = (event.changedTouches[0]?.clientY ?? 0) - startY;
+      if (Math.abs(dx) < 48 || Math.abs(dx) < Math.abs(dy)) return;
+      const ids = Array.from<HTMLButtonElement>(map.querySelectorAll('.galaxy-star')).map(button => button.dataset.memberId!).filter(Boolean);
+      if (ids.length < 2) return;
+      setActiveId(current => {
+        const index = ids.indexOf(current ?? '');
+        const step = dx < 0 ? 1 : -1;
+        return ids[(index + step + ids.length) % ids.length];
+      });
+    };
+    map.addEventListener('touchstart', start, { passive: true });
+    map.addEventListener('touchend', end, { passive: true });
+    return () => {
+      map.removeEventListener('touchstart', start);
+      map.removeEventListener('touchend', end);
+    };
+  }, [mobileMode, members.length]);
   useEffect(() => {
     let cancelled = false;
     const load = () => teamMembersApi.list().then(res => {
@@ -139,6 +158,7 @@ export function TeamGalaxy({
         <div className="galaxy-map-wrap">
           <div ref={mapRef} className={`galaxy-map ${profile ? 'has-selection' : ''}`}
             onClick={event => {
+              if (mobileMode) return;
               if (event.target instanceof Element && !event.target.closest('.galaxy-star') && profile) close(false);
             }}>
             <div className="galaxy-orbits" aria-hidden="true">
@@ -153,6 +173,11 @@ export function TeamGalaxy({
           </div>
         </div>
 
+      </div>
+      <div className="galaxy-mobile-dots">
+        {(founder ? [founder, ...satellites] : satellites).map(member => (
+          <button key={member.id} type="button" aria-current={profile?.id === member.id ? 'true' : undefined} aria-label={member.name} onClick={() => setActiveId(member.id)} />
+        ))}
       </div>
       <p className="galaxy-bottom-note">מערכת אחת. כוחות שונים. השפעה אינסופית.</p>
     </>}
