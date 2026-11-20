@@ -43,6 +43,13 @@ test('existing instructor, category, tag and learning-outcome search remains sup
   assert.ok(search(category.name).some(course => course.id === crisis.id));
 });
 
+test('navbar suggestions keep literal prefixes while a word is still being typed', () => {
+  assert.ok(searchSuggestions(COURSES, INSTRUCTORS, CATEGORIES, 'מיי').some(item => item.label.includes('מיינדפולנס')));
+  assert.ok(searchSuggestions(COURSES, INSTRUCTORS, CATEGORIES, 'מיינ').some(item => item.label.includes('מיינדפולנס')));
+  assert.ok(searchSuggestions(COURSES, INSTRUCTORS, CATEGORIES, 'מיכ').some(item => item.type === 'instructor' && item.label.includes('מיכל')));
+  assert.deepEqual(searchCourses([fixture('noise', 'בינה מלאכותיתית')], [], [], 'AI'), []);
+});
+
 test('navbar suggestions tolerate typos and obey the limit', () => {
   const suggestions = searchSuggestions(COURSES, INSTRUCTORS, CATEGORIES, 'משברימ', 3);
   assert.ok(suggestions.some(item => item.id === crisis.id));

@@ -48,6 +48,15 @@ function queryUnits(query: string): string[][] {
   return units;
 }
 
+// Autocomplete may stop mid-word. Only the typed token may be a word prefix;
+// synonym expansion stays on whole words so "AI" does not swallow a longer phrase.
+function hasLiteralPrefix(field: string, phrase: string): boolean {
+  const terms = phrase.split(' ').filter(Boolean);
+  if (!terms.length || terms.some(term => term.length < 2)) return false;
+  const words = field.split(' ');
+  return words.some((_, start) => terms.every((term, offset) => words[start + offset]?.startsWith(term)));
+}
+
 function containsPhrase(field: string, phrase: string, allowHebrewPrefix = false): boolean {
   if ((` ${field} `).includes(` ${phrase} `)) return true;
   if (!allowHebrewPrefix) return false;
@@ -72,7 +81,7 @@ function matchScore(fields: string[], units: string[][], query: string): number 
   let tier = 1;
   let cost = 0;
   for (const alternatives of units) {
-    if (normalized.some(field => containsPhrase(field, alternatives[0], true))) cost += 1;
+    if (normalized.some(field => containsPhrase(field, alternatives[0], true) || hasLiteralPrefix(field, alternatives[0]))) cost += 1;
     else if (alternatives.slice(1).some(term => normalized.some(field => containsPhrase(field, term, true)))) {
       tier = Math.max(tier, 2);
       cost += 3;
