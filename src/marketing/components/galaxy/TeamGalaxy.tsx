@@ -43,9 +43,10 @@ export function TeamGalaxy({
   }, [mobileCarousel, members, paused]);
   useEffect(() => {
     if (!mobileCarousel || paused || members.length < 2) return;
+    const phone = window.matchMedia('(max-width: 767px)');
     const timer = window.setInterval(() => {
       const map = mapRef.current;
-      if (!map || window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
+      if (!map || phone.matches || window.matchMedia('(prefers-reduced-motion: reduce)').matches ||
         document.documentElement.classList.contains('a11y-reduce-motion') ||
         document.hidden || map.querySelector(':focus-visible')) return;
       const bounds = map.getBoundingClientRect();
