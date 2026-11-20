@@ -26,8 +26,6 @@ export const AuthModal: React.FC = () => {
     requestPasswordReset,
     loginWithGoogle,
     loginWithApple,
-    googleAuthEnabled,
-    appleAuthEnabled,
     phoneAuthEnabled,
     supabaseAuthEnabled,
   } = useUser();
@@ -208,31 +206,6 @@ export const AuthModal: React.FC = () => {
   const handleOAuth = async (provider: 'google' | 'apple') => {
     setError('');
     setErrorKind('error');
-    if (!supabaseAuthEnabled) {
-      if (!import.meta.env.DEV) {
-        setError('התחברות עם Google ו-Apple נפתחת כשחיבור Supabase פעיל. בינתיים נכנסים עם אימייל וסיסמה.');
-        return;
-      }
-      await runExclusive(async () => {
-        try {
-          const next = await login('library@infinitemasterpiece.local', 'Masterpiece88');
-          resetForm();
-          goAfterAuth(next.role);
-        } catch (err) {
-          setError(err instanceof Error ? err.message : 'הכניסה המקומית נכשלה');
-        }
-      });
-      return;
-    }
-    const enabled = provider === 'apple' ? appleAuthEnabled : googleAuthEnabled;
-    if (!enabled) {
-      setError(
-        provider === 'apple'
-          ? 'התחברות עם Apple עדיין לא הופעלה ב-Supabase'
-          : 'התחברות עם Google עדיין לא הופעלה ב-Supabase'
-      );
-      return;
-    }
     await runExclusive(async () => {
       try {
         const next =
@@ -510,11 +483,6 @@ export const AuthModal: React.FC = () => {
                 <span>התחברות עם Apple</span>
               </button>
             </div>
-            {!supabaseAuthEnabled && import.meta.env.DEV ? (
-              <p className="mt-3 text-[11px] text-white/35">
-                במחשב המקומי הכפתורים נכנסים לחשבון הדמו של הספרייה.
-              </p>
-            ) : null}
           </>
         ) : null}
 

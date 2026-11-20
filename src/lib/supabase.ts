@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { apiUrl } from './apiBase';
+import { OAUTH_SUPABASE_ANON_KEY, OAUTH_SUPABASE_URL } from './oauthProject';
 import { SUPABASE_ANON_KEY, SUPABASE_PROJECT_URL } from './supabasePublic';
 import { setRuntimeAdminEmails } from '../data/adminEmails';
 
@@ -12,6 +13,7 @@ let runtimeUrl = '';
 let runtimeAnon = '';
 let configPromise: Promise<boolean> | null = null;
 let client: SupabaseClient | null = null;
+let oauthClient: SupabaseClient | null = null;
 let googleProviderEnabled = Boolean(buildUrl && buildAnon);
 let appleProviderEnabled = false;
 let emailProviderEnabled = Boolean(buildUrl && buildAnon);
@@ -47,8 +49,9 @@ export function isPhoneProviderEnabled() {
 
 export async function refreshAuthProviderFlags() {
   if (!isSupabaseAuthEnabled()) {
-    googleProviderEnabled = false;
-    appleProviderEnabled = false;
+    // Email stays on the local server. Google and Apple still start OAuth.
+    googleProviderEnabled = true;
+    appleProviderEnabled = true;
     emailProviderEnabled = false;
     phoneProviderEnabled = false;
     return;
@@ -69,8 +72,8 @@ export async function refreshAuthProviderFlags() {
     phoneProviderEnabled = Boolean(data.external?.phone);
   } catch {
     // Google is on in this project; keep the button if settings fail to load.
-    googleProviderEnabled = isSupabaseAuthEnabled();
-    appleProviderEnabled = false;
+    googleProviderEnabled = true;
+    appleProviderEnabled = true;
     emailProviderEnabled = isSupabaseAuthEnabled();
     phoneProviderEnabled = false;
   }
@@ -115,17 +118,27 @@ export async function loadSupabaseConfig() {
   return configPromise;
 }
 
+function authOptions() {
+  return {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce' as const,
+    },
+  };
+}
+
 export function getSupabase() {
   if (!isSupabaseAuthEnabled()) return null;
-  if (!client) {
-    client = createClient(url(), anon(), {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        flowType: 'pkce',
-      },
-    });
-  }
+  if (!client) client = createClient(url(), anon(), authOptions());
   return client;
+}
+
+/** Google and Apple use the publishable project even when email login stays local. */
+export function getOAuthSupabase() {
+  if (isSupabaseAuthEnabled()) return getSupabase();
+  if (!OAUTH_SUPABASE_URL || !OAUTH_SUPABASE_ANON_KEY) return null;
+  if (!oauthClient) oauthClient = createClient(OAUTH_SUPABASE_URL, OAUTH_SUPABASE_ANON_KEY, authOptions());
+  return oauthClient;
 }

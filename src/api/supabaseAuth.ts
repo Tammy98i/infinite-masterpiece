@@ -1,7 +1,6 @@
 import {
+  getOAuthSupabase,
   getSupabase,
-  isAppleProviderEnabled,
-  isGoogleProviderEnabled,
   isPhoneProviderEnabled,
   isSupabaseAuthEnabled,
   oauthRedirectTo,
@@ -34,7 +33,7 @@ function requireE164(phone: string) {
 }
 
 async function profileForUser(userId: string): Promise<ProfileRow | null> {
-  const supabase = getSupabase();
+  const supabase = getOAuthSupabase();
   if (!supabase) return null;
   const { data } = await supabase
     .from('profiles')
@@ -45,7 +44,7 @@ async function profileForUser(userId: string): Promise<ProfileRow | null> {
 }
 
 export async function sessionFromSupabaseUser(accessToken: string, fullName = '') {
-  const supabase = getSupabase();
+  const supabase = getOAuthSupabase();
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
 
   const { data, error } = await supabase.auth.getUser(accessToken);
@@ -72,7 +71,7 @@ export async function sessionFromSupabaseUser(accessToken: string, fullName = ''
 }
 
 export async function restoreSupabaseBrowserSession() {
-  const supabase = getSupabase();
+  const supabase = getOAuthSupabase();
   if (!supabase) return null;
   const { data } = await supabase.auth.getSession();
   if (!data.session?.access_token) return null;
@@ -194,18 +193,10 @@ export async function supabaseVerifyPhoneOtp(phone: string, code: string, fullNa
 }
 
 export async function supabaseStartOAuth(provider: 'google' | 'apple', nextPath?: string) {
-  const supabase = getSupabase();
+  const supabase = getOAuthSupabase();
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
   await loadSupabaseConfig();
   await refreshAuthProviderFlags();
-  const enabled = provider === 'apple' ? isAppleProviderEnabled() : isGoogleProviderEnabled();
-  if (!enabled) {
-    throw new Error(
-      provider === 'apple'
-        ? 'התחברות עם Apple עדיין לא הופעלה ב-Supabase'
-        : 'התחברות עם Google עדיין לא הופעלה ב-Supabase'
-    );
-  }
 
   const redirectTo = nextPath
     ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`
@@ -238,7 +229,7 @@ export async function supabaseStartAppleOAuth(nextPath?: string) {
 }
 
 export async function supabaseCompleteOAuthFromUrl() {
-  const supabase = getSupabase();
+  const supabase = getOAuthSupabase();
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
 
   // Subscribe before exchanging so a PKCE recovery link (often `?code=` without
@@ -312,7 +303,7 @@ export function isPasswordRecoveryRedirect() {
 export function subscribeSupabaseAuth(
   handler: (event: string, accessToken: string | null) => void
 ) {
-  const supabase = getSupabase();
+  const supabase = getOAuthSupabase();
   if (!supabase) return () => undefined;
   const { data } = supabase.auth.onAuthStateChange((event, session) => {
     handler(event, session?.access_token || null);
@@ -321,7 +312,7 @@ export function subscribeSupabaseAuth(
 }
 
 export async function supabaseSignOut() {
-  const supabase = getSupabase();
+  const supabase = getOAuthSupabase();
   if (!supabase) return;
   await supabase.auth.signOut();
 }
