@@ -76,6 +76,16 @@
   background-repeat: no-repeat;
 }
 
+.webinar-stage-page .webinar-editorial-grid > #webinar-register-bottom {
+  background-color: #090d18;
+  background-image:
+    linear-gradient(rgb(6 10 18 / 72%), rgb(6 10 18 / 72%)),
+    url('/webinar/closing-clouds.png');
+  background-size: cover;
+  background-position: center bottom;
+  background-repeat: no-repeat;
+}
+
 /* The gold circle spine stays fixed: right edge on a wide screen, bottom on a short one. */
 .webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-map { height: 680px; max-width: 900px; margin-inline: auto; }
 .webinar-stage-page .webinar-editorial-grid .team-galaxy .galaxy-map.has-selection { height: auto; min-height: 860px; }
