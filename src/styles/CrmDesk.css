@@ -114,13 +114,13 @@
 /* Desktop desks: the rail stays full height on the right.
    The nav list scrolls inside it. The stage scrolls on its own. */
 @media (min-width: 1024px) {
-  .vod-app.crm-desk {
+  .vod-app.crm-desk:has(.crm-desk-frame) {
     height: 100dvh;
     max-height: 100dvh;
     overflow: hidden;
   }
 
-  .vod-app.crm-desk > #library-main {
+  .vod-app.crm-desk:has(.crm-desk-frame) > #library-main {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
@@ -128,11 +128,11 @@
     overflow: hidden;
   }
 
-  .vod-app.crm-desk > footer {
+  .vod-app.crm-desk:has(.crm-desk-frame) > footer {
     display: none;
   }
 
-  .vod-app.crm-desk #library-main > .crm-desk {
+  .vod-app.crm-desk:has(.crm-desk-frame) #library-main > .crm-desk {
     display: flex;
     flex: 1 1 auto;
     flex-direction: column;
