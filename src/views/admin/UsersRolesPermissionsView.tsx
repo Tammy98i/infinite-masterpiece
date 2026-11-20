@@ -18,11 +18,12 @@ import {
 import { Bidi } from '../../components/Bidi';
 import { DeskMonogram } from '../../components/DeskMonogram';
 import { emptyUserDraft, UserProfileFields, type UserDraft } from './UserProfileFields';
+import { WhereShownDialog } from './WhereShownDialog';
 
 export type AccessSection = 'accounts' | 'roles' | 'desks' | 'admins';
 
 const SECTIONS: Array<{ id: AccessSection; label: string; hint: string }> = [
-  { id: 'accounts', label: 'חשבונות', hint: 'יצירה, עריכה, מנוי' },
+  { id: 'accounts', label: 'חשבונות', hint: 'יצירה, שיוך לתצוגה, מנוי' },
   { id: 'roles', label: 'תפקידים', hint: 'מה כל role רואה' },
   { id: 'desks', label: 'דסקים', hint: 'גישה מוגבלת לצוות' },
   { id: 'admins', label: 'אדמינים', hint: 'מיילי כניסה' },
@@ -81,6 +82,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [whereUserId, setWhereUserId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [search, setSearch] = useState('');
   const [draft, setDraft] = useState<UserDraft>(emptyUserDraft());
@@ -181,6 +183,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
       setDraft(emptyUserDraft());
       await load();
       setSelectedId(created.user.id);
+      setWhereUserId(created.user.id);
       if (openCatalog) await reloadCatalog();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'יצירה נכשלה');
@@ -312,6 +315,9 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
                     <td>{row.blocked ? 'חסום' : 'פעיל'}</td>
                     <td>
                       <span className="inline-flex gap-1">
+                        <button type="button" className="crm-desk-row-act" onClick={() => setWhereUserId(row.id)}>
+                          איפה מופיע
+                        </button>
                         <button type="button" className="crm-desk-row-act" onClick={() => setSelectedId(row.id === selectedId ? null : row.id)}>
                           עריכה
                         </button>
@@ -510,6 +516,16 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
       ) : null}
 
       {section === 'admins' ? <AdminEmailsCard onChanged={() => void load()} /> : null}
+
+      {whereUserId ? (
+        <WhereShownDialog
+          userId={whereUserId}
+          name={users.find((row) => row.id === whereUserId)?.name || ''}
+          email={users.find((row) => row.id === whereUserId)?.email || ''}
+          onClose={() => setWhereUserId(null)}
+          onSaved={() => void load()}
+        />
+      ) : null}
 
       {drawerOpen ? (
         <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
