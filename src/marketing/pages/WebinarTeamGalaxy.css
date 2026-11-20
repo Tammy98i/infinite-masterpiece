@@ -256,10 +256,11 @@
 
   .webinar-flow-page #team-universe .galaxy-mobile-dots {
     display: flex;
-    flex-wrap: wrap;
+    flex-wrap: nowrap;
     justify-content: center;
-    gap: 2px;
-    max-width: 280px;
+    gap: 0;
+    width: 100%;
+    max-width: none;
     margin: 12px auto 0;
   }
 
@@ -267,7 +268,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 28px;
+    flex: 1 1 0;
+    width: auto;
+    max-width: 28px;
     height: 28px;
     padding: 0;
     border: 0;
