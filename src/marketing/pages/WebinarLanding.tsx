@@ -20,7 +20,6 @@ import {
   WEBINAR_GLEB,
   WEBINAR_HOLDING_LINE,
   WEBINAR_REGISTER_ID,
-  WEBINAR_TASK_STEPS,
   WEBINAR_TRACKS_FINE_PRINT,
 } from '../../constants/webinarPage';
 import { WebinarRegistrationForm } from '../components/WebinarRegistrationForm';
@@ -301,20 +300,10 @@ export function WebinarLanding() {
                   className="webinar-host-orb"
                 />
                 <h3>{leader.name}</h3>
-                <p className="webinar-host-role">{leader.title.replace(/\s*\/\s*/g, ' · ')}</p>
                 <p className="webinar-host-bio">{leader.bio}</p>
               </li>
             ))}
           </ul>
-          <ol className="webinar-task-spine">
-            {WEBINAR_TASK_STEPS.map((item, index) => (
-              <li key={item.title}>
-                <i>{String(index + 1).padStart(2, '0')}</i>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </li>
-            ))}
-          </ol>
           <p id="tracks" className="webinar-host-tracks">
             שני מסלולי כניסה לפיילוט, אמיצים והססנים, יוצגו בסוף הערב. לא נדרש להחליט עכשיו.
           </p>
