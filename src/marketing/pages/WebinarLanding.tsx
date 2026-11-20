@@ -52,7 +52,7 @@ const WEBINAR_ISLANDS = [
 
 function FaqItem({ q, a, ...props }: { q: string; a: string } & HTMLAttributes<HTMLDetailsElement>) {
   return (
-    <details {...props} className="group glass-card p-5">
+    <details {...props} name="webinar-faq" className="group glass-card p-5">
       <summary className="flex items-center justify-between gap-4 cursor-pointer list-none text-white font-light min-h-11">
         <span>{q}</span>
         <ChevronDown className="w-4 h-4 text-[#b79043] group-open:rotate-180 transition-transform duration-200 shrink-0" />
