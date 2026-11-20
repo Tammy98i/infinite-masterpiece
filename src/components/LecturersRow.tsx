@@ -10,7 +10,7 @@ export const LecturersRow: React.FC = () => {
       inst,
       count: courses.filter((c) => c.instructorId === inst.id).length,
     }))
-    .filter((row) => row.count > 0 || row.inst.isFounder)
+    .filter((row) => row.inst.showInLibrary !== false && (row.count > 0 || row.inst.isFounder))
     .sort((a, b) => {
       if (a.inst.isFounder && !b.inst.isFounder) return -1;
       if (!a.inst.isFounder && b.inst.isFounder) return 1;

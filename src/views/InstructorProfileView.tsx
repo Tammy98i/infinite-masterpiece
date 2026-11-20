@@ -13,7 +13,7 @@ function portraitLetter(name: string) {
 export const InstructorProfileView: React.FC = () => {
   const { instructors, courses, selectedInstructorId, setView, user } = useApp();
   const { openPaywall } = usePaywall();
-  const instructor = instructors.find((i) => i.id === selectedInstructorId);
+  const instructor = instructors.find((i) => i.id === selectedInstructorId && i.showInLibrary !== false);
   const lectures = courses.filter((c) => c.instructorId === selectedInstructorId);
   const firstLecture = lectures[0];
   const countLabel =

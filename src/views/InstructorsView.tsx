@@ -8,9 +8,13 @@ function portraitLetter(name: string) {
 export const InstructorsView: React.FC = () => {
   const { instructors, courses, setView } = useApp();
 
-  const featured = useMemo(
-    () => instructors.find((inst) => inst.isFounder && inst.avatarUrl) || instructors.find((inst) => inst.avatarUrl) || instructors[0],
+  const visible = useMemo(
+    () => instructors.filter((inst) => inst.showInLibrary !== false),
     [instructors]
+  );
+  const featured = useMemo(
+    () => visible.find((inst) => inst.isFounder && inst.avatarUrl) || visible.find((inst) => inst.avatarUrl) || visible[0],
+    [visible]
   );
   const featuredCount = featured
     ? courses.filter((course) => course.instructorId === featured.id).length
@@ -90,7 +94,7 @@ export const InstructorsView: React.FC = () => {
       <div id="instructor-grid" className="relative z-10 -mt-8 max-w-[1360px] mx-auto px-4 sm:px-8 text-start scroll-mt-24">
         <h2 className="library-rail-title text-white mb-4">כל המרצים</h2>
         <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {instructors.filter((inst) => inst.showInLibrary !== false).map((inst) => {
+          {visible.map((inst) => {
             const count = courses.filter((c) => c.instructorId === inst.id).length;
             const countLabel = count === 0 ? 'אין הרצאות עדיין' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`;
             return (
