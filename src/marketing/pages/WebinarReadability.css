@@ -108,12 +108,12 @@
   content: '';
   position: absolute;
   top: 0;
-  left: 10%;
-  right: 10%;
+  left: 38%;
+  right: 38%;
   height: 1px;
   z-index: 4;
   pointer-events: none;
-  background: linear-gradient(90deg, transparent, rgba(223, 196, 125, .72), transparent);
+  background: linear-gradient(90deg, transparent, rgba(223, 196, 125, .38), transparent);
 }
 
 /* Star points only, matching the team slide dust, on slides without a photo background. */
