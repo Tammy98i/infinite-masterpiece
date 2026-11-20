@@ -285,10 +285,12 @@ export function WebinarLanding() {
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>הערב החי</SectionLabel>
           <SectionTitle>לא באים רק ללמוד. באים לבצע.</SectionTitle>
-          <p className="text-white/50 font-light leading-relaxed max-w-3xl mx-auto mb-4">
+          <p className="webinar-host-lead">
             גל, תמי וגלב בלייב. שיעור מכירות, משימת ביצוע, ואז פעולה שנשלחת לעולם.
           </p>
-          <p className="webinar-host-feats">{eveningFeats.join(' · ')}</p>
+          <ul className="webinar-host-feats">
+            {eveningFeats.filter(Boolean).map((item) => <li key={item}>{item}</li>)}
+          </ul>
           <ul className="webinar-host-orbs">
             {hosts.map((leader) => (
               <li key={leader.name}>
@@ -299,7 +301,7 @@ export function WebinarLanding() {
                   className="webinar-host-orb"
                 />
                 <h3>{leader.name}</h3>
-                <p className="webinar-host-role">{leader.title}</p>
+                <p className="webinar-host-role">{leader.title.replace(/\s*\/\s*/g, ' · ')}</p>
                 <p className="webinar-host-bio">{leader.bio}</p>
               </li>
             ))}
@@ -313,10 +315,10 @@ export function WebinarLanding() {
               </li>
             ))}
           </ol>
-          <p id="tracks" className="text-sm text-[#dfc47d]/80 font-light leading-relaxed max-w-2xl mx-auto">
+          <p id="tracks" className="webinar-host-tracks">
             שני מסלולי כניסה לפיילוט, אמיצים והססנים, יוצגו בסוף הערב. לא נדרש להחליט עכשיו.
           </p>
-          <p className="mt-3 text-[11px] text-white/35 font-light leading-relaxed">{WEBINAR_TRACKS_FINE_PRINT}</p>
+          <p className="webinar-host-fine">{WEBINAR_TRACKS_FINE_PRINT}</p>
           <p className="webinar-host-meta">{config.location} · {config.durationMinutes} דקות · {WEBINAR_AUDIENCE_LABEL}</p>
         </div>
       </section>

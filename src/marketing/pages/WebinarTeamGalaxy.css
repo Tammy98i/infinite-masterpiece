@@ -192,8 +192,9 @@
 
   .webinar-flow-page #hosts ol.webinar-task-spine {
     grid-template-columns: minmax(0, 1fr);
-    gap: 22px;
-    max-width: 280px;
+    gap: 10px;
+    max-width: none;
+    width: 100%;
   }
 
   .webinar-flow-page #hosts ol.webinar-task-spine p {
@@ -308,36 +309,6 @@
     grid-column: 1 / -1;
     max-width: 220px;
     justify-self: center;
-  }
-
-  .webinar-flow-page #hosts .webinar-host-orbs {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
-    margin: 12px 0 28px;
-  }
-
-  .webinar-flow-page #hosts .webinar-host-orbs li {
-    display: grid;
-    grid-template-columns: 88px minmax(0, 1fr);
-    column-gap: 14px;
-    row-gap: 2px;
-    align-items: center;
-    width: 100%;
-    text-align: start;
-  }
-
-  .webinar-flow-page #hosts .webinar-host-orbs .webinar-host-orb {
-    width: 88px;
-    height: 88px;
-    grid-row: 1 / span 3;
-  }
-
-  .webinar-flow-page #hosts .webinar-host-orbs h3,
-  .webinar-flow-page #hosts .webinar-host-role,
-  .webinar-flow-page #hosts .webinar-host-bio {
-    margin: 0;
-    text-align: start;
   }
 
   .webinar-flow-page #webinar-fit .grid,
