@@ -141,17 +141,24 @@ html.a11y-contrast-mono #a11y-widget-trigger {
   }
 }
 
-/* Widget UI */
+/* Widget UI. The panel shares the trigger's corner so it opens beside the icon. */
+:root {
+  --a11y-edge: 1.25rem;
+  --a11y-bottom: 5.5rem;
+  --a11y-size: 3rem;
+  --a11y-gap: 0.5rem;
+}
+
 #a11y-widget-trigger {
   position: fixed;
-  bottom: 5.5rem;
-  inset-inline-start: 1.25rem;
+  bottom: var(--a11y-bottom);
+  inset-inline-start: var(--a11y-edge);
   z-index: 9990;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 3rem;
-  height: 3rem;
+  width: var(--a11y-size);
+  height: var(--a11y-size);
   border: 1px solid rgba(183, 144, 67, 0.4);
   border-radius: 9999px;
   background: #0a0a0a;
@@ -162,9 +169,9 @@ html.a11y-contrast-mono #a11y-widget-trigger {
 }
 
 @media (min-width: 768px) {
-  #a11y-widget-trigger {
-    bottom: 1.5rem;
-    inset-inline-start: 1.5rem;
+  :root {
+    --a11y-edge: 1.5rem;
+    --a11y-bottom: 1.5rem;
   }
 }
 
@@ -190,17 +197,19 @@ html.a11y-contrast-mono #a11y-widget-trigger {
 
 #a11y-widget-panel {
   position: fixed;
-  top: 0;
-  inset-inline-end: 0;
   z-index: 9992;
+  bottom: calc(var(--a11y-bottom) + var(--a11y-size) + var(--a11y-gap));
+  inset-inline-start: var(--a11y-edge);
   display: flex;
   flex-direction: column;
-  width: min(100%, 22rem);
-  max-height: 100dvh;
+  width: min(22rem, calc(100vw - (var(--a11y-edge) * 2)));
+  max-height: calc(100dvh - var(--a11y-bottom) - var(--a11y-size) - var(--a11y-gap) - 1rem);
   background: #0a0a0a;
   color: #fff;
-  border-inline-start: 1px solid rgba(255, 255, 255, 0.08);
-  box-shadow: -8px 0 32px rgba(0, 0, 0, 0.45);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 1rem;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  overflow: hidden;
 }
 
 .a11y-panel-header {
