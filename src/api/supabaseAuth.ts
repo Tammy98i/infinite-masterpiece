@@ -1,5 +1,6 @@
 import {
   getSupabase,
+  isAppleProviderEnabled,
   isGoogleProviderEnabled,
   isPhoneProviderEnabled,
   isSupabaseAuthEnabled,
@@ -192,42 +193,48 @@ export async function supabaseVerifyPhoneOtp(phone: string, code: string, fullNa
   return syncAccessToken(data.session.access_token, fullName);
 }
 
-export async function supabaseStartGoogleOAuth(nextPath?: string) {
+export async function supabaseStartOAuth(provider: 'google' | 'apple', nextPath?: string) {
   const supabase = getSupabase();
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
   await loadSupabaseConfig();
   await refreshAuthProviderFlags();
-  if (!isGoogleProviderEnabled()) {
-    throw new Error('התחברות עם Google עדיין לא הופעלה ב-Supabase');
+  const enabled = provider === 'apple' ? isAppleProviderEnabled() : isGoogleProviderEnabled();
+  if (!enabled) {
+    throw new Error(
+      provider === 'apple'
+        ? 'התחברות עם Apple עדיין לא הופעלה ב-Supabase'
+        : 'התחברות עם Google עדיין לא הופעלה ב-Supabase'
+    );
   }
 
   const redirectTo = nextPath
     ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`
     : oauthRedirectTo();
-  const oauthOptions = {
-    redirectTo,
-    scopes: 'email profile',
-    queryParams: { access_type: 'offline' },
-  };
+  const oauthOptions =
+    provider === 'apple'
+      ? { redirectTo, scopes: 'name email' }
+      : { redirectTo, scopes: 'email profile', queryParams: { access_type: 'offline' } };
 
   const { data: current } = await supabase.auth.getSession();
   if (current.session?.access_token) {
     const identities = current.session.user.identities || [];
-    const alreadyGoogle = identities.some((item) => item.provider === 'google');
-    if (!alreadyGoogle) {
-      const linked = await supabase.auth.linkIdentity({
-        provider: 'google',
-        options: oauthOptions,
-      });
+    const alreadyLinked = identities.some((item) => item.provider === provider);
+    if (!alreadyLinked) {
+      const linked = await supabase.auth.linkIdentity({ provider, options: oauthOptions });
       if (!linked.error) return;
     }
   }
 
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: oauthOptions,
-  });
+  const { error } = await supabase.auth.signInWithOAuth({ provider, options: oauthOptions });
   if (error) throw new Error(hebrewAuthError(error.message));
+}
+
+export async function supabaseStartGoogleOAuth(nextPath?: string) {
+  return supabaseStartOAuth('google', nextPath);
+}
+
+export async function supabaseStartAppleOAuth(nextPath?: string) {
+  return supabaseStartOAuth('apple', nextPath);
 }
 
 export async function supabaseCompleteOAuthFromUrl() {

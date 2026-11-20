@@ -14,13 +14,14 @@ import {
   supabaseRegister,
   supabaseRequestPasswordReset,
   supabaseSignOut,
+  supabaseStartAppleOAuth,
   supabaseStartGoogleOAuth,
   supabaseStartPhoneOtp,
   supabaseUpdatePassword,
   supabaseVerifyPhoneOtp,
   subscribeSupabaseAuth,
 } from '../api/supabaseAuth';
-import { isGoogleProviderEnabled, isPhoneProviderEnabled, loadSupabaseConfig } from '../lib/supabase';
+import { isAppleProviderEnabled, isGoogleProviderEnabled, isPhoneProviderEnabled, loadSupabaseConfig } from '../lib/supabase';
 import { previewLogin, previewRegister, previewSessionFromToken, isPreviewToken, isDemoEmail } from '../lib/previewAuth';
 import { isApiUnavailableMessage, overlayApiUser } from '../lib/supabaseUser';
 import { markPasswordRecovery, clearPasswordRecovery } from '../lib/passwordRecovery';
@@ -60,9 +61,11 @@ interface UserContextType {
   requestPasswordReset: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
   loginWithGoogle: (nextPath?: string) => Promise<void>;
+  loginWithApple: (nextPath?: string) => Promise<void>;
   completeOAuthLogin: () => Promise<AuthUserPayload>;
   supabaseAuthEnabled: boolean;
   googleAuthEnabled: boolean;
+  appleAuthEnabled: boolean;
   phoneAuthEnabled: boolean;
   logout: () => void;
   startTrialOrSubscribe: (plan: PlanId) => void;
@@ -85,6 +88,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [ready, setReady] = useState(false);
   const [supabaseAuthEnabled, setSupabaseAuthEnabled] = useState(isSupabaseAuthEnabled());
   const [googleAuthEnabled, setGoogleAuthEnabled] = useState(() => isSupabaseAuthEnabled());
+  const [appleAuthEnabled, setAppleAuthEnabled] = useState(false);
   const [phoneAuthEnabled, setPhoneAuthEnabled] = useState(false);
   const pendingPlanRef = useRef<PlanId | null>(null);
 
@@ -127,6 +131,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (cancelled) return;
       setSupabaseAuthEnabled(isSupabaseAuthEnabled());
       setGoogleAuthEnabled(isGoogleProviderEnabled());
+      setAppleAuthEnabled(isAppleProviderEnabled());
       setPhoneAuthEnabled(isPhoneProviderEnabled());
       // Subscribe after runtime config so recovery events are not missed when
       // the anon key is loaded from /api/auth/providers.
@@ -262,6 +267,10 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     await supabaseStartGoogleOAuth(nextPath);
   };
 
+  const loginWithApple = async (nextPath?: string) => {
+    await supabaseStartAppleOAuth(nextPath);
+  };
+
   const completeOAuthLogin = async () => {
     const result = await supabaseCompleteOAuthFromUrl();
     applySession(result.token, result.user);
@@ -374,9 +383,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         requestPasswordReset,
         updatePassword,
         loginWithGoogle,
+        loginWithApple,
         completeOAuthLogin,
         supabaseAuthEnabled,
         googleAuthEnabled,
+        appleAuthEnabled,
         phoneAuthEnabled,
         logout,
         startTrialOrSubscribe,

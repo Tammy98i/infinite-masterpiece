@@ -13,6 +13,7 @@ let runtimeAnon = '';
 let configPromise: Promise<boolean> | null = null;
 let client: SupabaseClient | null = null;
 let googleProviderEnabled = Boolean(buildUrl && buildAnon);
+let appleProviderEnabled = false;
 let emailProviderEnabled = Boolean(buildUrl && buildAnon);
 let phoneProviderEnabled = false;
 
@@ -32,6 +33,10 @@ export function isGoogleProviderEnabled() {
   return googleProviderEnabled;
 }
 
+export function isAppleProviderEnabled() {
+  return appleProviderEnabled;
+}
+
 export function isEmailProviderEnabled() {
   return emailProviderEnabled;
 }
@@ -43,6 +48,7 @@ export function isPhoneProviderEnabled() {
 export async function refreshAuthProviderFlags() {
   if (!isSupabaseAuthEnabled()) {
     googleProviderEnabled = false;
+    appleProviderEnabled = false;
     emailProviderEnabled = false;
     phoneProviderEnabled = false;
     return;
@@ -55,14 +61,16 @@ export async function refreshAuthProviderFlags() {
       },
     });
     const data = (await res.json().catch(() => ({}))) as {
-      external?: { google?: boolean; email?: boolean; phone?: boolean };
+      external?: { google?: boolean; apple?: boolean; email?: boolean; phone?: boolean };
     };
     googleProviderEnabled = data.external?.google !== false;
+    appleProviderEnabled = data.external?.apple === true;
     emailProviderEnabled = data.external?.email !== false;
     phoneProviderEnabled = Boolean(data.external?.phone);
   } catch {
     // Google is on in this project; keep the button if settings fail to load.
     googleProviderEnabled = isSupabaseAuthEnabled();
+    appleProviderEnabled = false;
     emailProviderEnabled = isSupabaseAuthEnabled();
     phoneProviderEnabled = false;
   }
