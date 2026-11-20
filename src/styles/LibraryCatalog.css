@@ -2,22 +2,20 @@
    Keep the starfield visible, then stack dark navy layers on top. */
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-image {
-  opacity: .78;
-  filter: saturate(.95) contrast(1.1) brightness(.68);
+  opacity: 1;
+  filter: none;
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-blackout {
-  background: rgba(5, 10, 20, .28);
+  background: rgba(6, 10, 18, .18);
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-shade {
-  background:
-    radial-gradient(circle at 50% 16%, transparent 14%, rgba(5, 10, 20, .2) 58%, rgba(5, 10, 20, .48) 100%),
-    linear-gradient(180deg, rgba(5, 10, 20, .14), rgba(5, 10, 20, .4));
+  background: linear-gradient(180deg, rgba(6, 10, 18, .22), transparent 36%, rgba(6, 10, 18, .16));
 }
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-library-veil {
-  display: block;
+  display: none;
 }
 
 .editorial-sky-library-veil-a {
@@ -93,7 +91,7 @@
 }
 
 .library-catalog .library-hero-veil-bottom {
-  background: linear-gradient(180deg, transparent 40%, rgba(5, 10, 20, .45) 72%, rgba(5, 10, 20, .82) 100%);
+  background: linear-gradient(180deg, transparent 46%, rgba(5, 10, 18, .28) 100%);
 }
 
 .library-catalog .library-hero-veil-side {
@@ -102,7 +100,7 @@
 
 .library-catalog .library-hero::after {
   height: 28%;
-  background: linear-gradient(180deg, transparent, rgba(5, 10, 20, .86));
+  background: linear-gradient(180deg, transparent, rgba(5, 10, 18, .2));
 }
 
 .library-catalog .library-hero-play {
