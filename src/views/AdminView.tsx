@@ -158,9 +158,9 @@ export function AdminView() {
   const tabMeta = TAB_META[tab];
 
   return (
-    <div className="crm-desk min-h-screen bg-transparent text-white text-start">
-      <div className="flex min-h-screen">
-        <aside className="crm-desk-aside hidden lg:flex w-64 shrink-0 flex-col border-e border-white/10 sticky top-0 h-screen overflow-y-auto">
+    <div className="crm-desk min-h-screen bg-transparent text-white text-start" dir="rtl">
+      <div className="crm-desk-frame flex min-h-screen lg:min-h-0">
+        <aside className="crm-desk-aside crm-desk-rail hidden lg:flex w-64 shrink-0 flex-col border-e border-white/10">
           <AdminSidebar
             groups={visibleGroups}
             tab={tab}
@@ -171,7 +171,7 @@ export function AdminView() {
           />
         </aside>
 
-        <div className="flex-1 min-w-0">
+        <div className="crm-desk-pane flex-1 min-w-0 min-h-0">
           <header className="crm-desk-topbar sticky top-0 z-20 border-b border-white/10 bg-[#050505]/90 backdrop-blur-xl px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
               <button

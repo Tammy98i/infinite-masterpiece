@@ -46,7 +46,7 @@ export function AdminSidebar({ groups, tab, onNavigate, userName, userEmail, onE
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
-    for (const group of groups) initial[group.id] = group.id === activeGroupId;
+    for (const group of groups) initial[group.id] = true;
     return initial;
   });
 
