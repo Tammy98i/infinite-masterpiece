@@ -1,0 +1,116 @@
+/* Shared library header: keep controls and branding consistent across view themes. */
+.vod-app.library-catalog .editorial-library-header.library-compact-header {
+  --header-cta-h: 44px;
+  --header-action-fs: 14px;
+  --header-cta-fs: 14px;
+  height: 64px !important;
+  min-height: 64px !important;
+  padding: 0 40px;
+  background: rgba(16, 17, 19, .96) !important;
+  border-bottom: 1px solid rgba(198, 164, 108, .16) !important;
+  backdrop-filter: blur(16px) !important;
+}
+.vod-app.library-catalog .library-compact-header .header-row {
+  height: 64px !important;
+  min-height: 64px !important;
+  max-width: none;
+  padding: 0;
+  gap: 16px;
+}
+.vod-app.library-catalog .library-compact-header .header-start { gap: 24px; min-width: 0; }
+.vod-app.library-catalog .library-compact-header .header-logo {
+  gap: 10px;
+  min-height: 44px;
+  flex-shrink: 0;
+}
+.vod-app.library-catalog .library-compact-header .header-logo-mark {
+  width: 34px;
+  height: 18px;
+  color: #C6A46C;
+  opacity: 1;
+  stroke-width: 2.2;
+  flex-shrink: 0;
+}
+.vod-app.library-catalog .library-compact-header .header-wordmark {
+  display: block;
+  font-size: 20px;
+  font-weight: 800;
+  letter-spacing: .04em;
+  color: #C6A46C;
+  line-height: 1;
+}
+.vod-app.library-catalog .library-compact-header .header-nav { gap: 4px; }
+.vod-app.library-catalog .library-compact-header .header-actions { gap: 6px; flex-shrink: 0; }
+.vod-app.library-catalog .library-compact-header :is(.header-nav > button, .header-login, .header-search > button, .header-chip) {
+  min-height: 44px;
+  padding: 8px 10px;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: #F6F1E7;
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  opacity: 1;
+}
+.vod-app.library-catalog .library-compact-header .header-nav > button.border-\[\#b79043\] {
+  color: #C6A46C;
+  box-shadow: inset 0 -2px 0 #C6A46C;
+  border-radius: 0;
+}
+.vod-app.library-catalog .library-compact-header :is(.header-nav > button, .header-login, .header-search > button):hover {
+  color: #C6A46C;
+  background: rgba(198, 164, 108, .1);
+}
+.vod-app.library-catalog .library-compact-header .header-account button[aria-label='פתיחת החשבון'] {
+  padding: 8px 12px;
+  background: #C6A46C;
+  color: #101113;
+  border: 0;
+  border-radius: 6px;
+  opacity: 1;
+}
+.vod-app.library-catalog .library-compact-header .header-account button[aria-label='פתיחת החשבון'] > span:first-child {
+  color: inherit;
+  font-size: 14px;
+  padding: 0;
+}
+.vod-app.library-catalog .library-compact-header .header-account button[aria-label='פתיחת החשבון'] > span:last-child { display: none; }
+.vod-app.library-catalog .library-compact-header .header-search > button > svg { display: block; }
+.vod-app.library-catalog .library-compact-header .header-search > button > kbd { display: none; }
+.vod-app.library-catalog .library-compact-header .header-search > button > span { display: inline; }
+.vod-app.library-catalog .library-compact-header .header-search input { min-height: 44px; }
+.vod-app.library-catalog .library-compact-header .header-account > div > button { min-height: 44px; }
+
+@media (max-width: 1023px) {
+  .vod-app.library-catalog .editorial-library-header.library-compact-header { padding-inline: 24px; }
+  .vod-app.library-catalog .library-compact-header .header-start { gap: 16px; }
+  .vod-app.library-catalog .library-compact-header .header-nav-wide { display: none; }
+  .vod-app.library-catalog .library-compact-header .header-search > button > span { display: none; }
+}
+@media (max-width: 767px) {
+  .vod-app.library-catalog .editorial-library-header.library-compact-header {
+    height: 60px !important;
+    min-height: 60px !important;
+    padding-inline: 16px;
+  }
+  .vod-app.library-catalog .library-compact-header .header-row {
+    height: 60px !important;
+    min-height: 60px !important;
+    gap: 8px;
+  }
+  .vod-app.library-catalog .library-compact-header .header-nav { display: none; }
+  .vod-app.library-catalog .library-compact-header .header-actions { gap: 4px; }
+  .vod-app.library-catalog .library-compact-header .header-logo { gap: 6px; }
+  .vod-app.library-catalog .library-compact-header .header-search:has(input) { position: static; }
+  .vod-app.library-catalog .library-compact-header .header-search > div:has(input) {
+    position: absolute;
+    inset: 8px 16px auto;
+    z-index: 1;
+    background: #101113;
+    border-radius: 6px;
+  }
+  .vod-app.library-catalog .library-compact-header .header-search input { width: calc(100vw - 32px); }
+  .vod-app.library-catalog .library-compact-header #library-search-suggestions { width: 100%; }
+  .vod-app.library-catalog .library-compact-header .header-login { display: none; }
+}

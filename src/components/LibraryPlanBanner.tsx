@@ -28,26 +28,26 @@ export function LibraryPlanBanner() {
   };
 
   return (
-    <div className="library-island library-plan-banner px-4 sm:px-8 mb-2" role="region" aria-label="סטטוס גישה לספרייה">
-      <div className="library-plan-strip max-w-[1400px] mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 border border-white/10 px-4 py-2.5 text-start">
+    <div className="soundstage-console-strip library-island library-plan-banner px-4 sm:px-8 mb-2" role="region" aria-label="סטטוס גישה לספרייה">
+      <div className="library-plan-strip soundstage-plan-strip max-w-[1400px] mx-auto flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4 border border-[#D99B43]/25 px-5 py-4 text-start">
         <div className="min-w-0">
           {isTrial ? (
             <>
-              <p className="text-sm text-white/85 font-medium">
+              <p className="text-base text-[#F2EFEB] font-medium">
                 {trialDaysLeft ?? 0} ימי ניסיון נותרו
                 {user.trialEndsAt ? ` · בתוקף עד ${user.trialEndsAt}` : ''}
               </p>
-              <p className="text-[13px] text-white/50 font-light mt-1">
+              <p className="text-[13px] text-[#c8ba9f] font-light mt-1">
                 גישה לכל ההרצאות — במנוי לספרייה (נפרד ממסלול המיזם).
               </p>
             </>
           ) : (
             <>
-              <p className="text-sm text-white/85 font-light leading-relaxed">
+              <p className="text-base text-[#F2EFEB] leading-relaxed">
                 חלק מהספרייה פתוח לצפייה. גישה מלאה — במנוי לספרייה.
               </p>
               {openCount > 0 && (
-                <p className="text-[13px] text-[#b79043]/90 mt-1">
+                <p className="text-sm font-medium text-[#D99B43] mt-1">
                   {openCount === 1 ? 'הרצאה מלאה אחת פתוחה כרגע' : `${openCount} הרצאות מלאות פתוחות כרגע`}
                 </p>
               )}
@@ -57,7 +57,7 @@ export function LibraryPlanBanner() {
         <button
           type="button"
           onClick={goLibraryAccess}
-          className="library-plan-cta shrink-0 px-5 py-2.5 rounded-[4px] bg-white text-[#141414] text-sm font-semibold hover:bg-[#f3f3f3] min-h-11 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
+          className="library-plan-cta soundstage-btn-primary shrink-0 px-6 py-2.5 rounded-full text-sm font-bold min-h-11 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D99B43]"
         >
           פתיחת גישה
         </button>

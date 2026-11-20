@@ -110,7 +110,7 @@ export const Navbar: React.FC = () => {
         }}
         role="banner"
         aria-label="כותרת הספרייה"
-        className={`editorial-library-header fixed top-0 inset-inline-0 z-50 transition-all duration-300 ${
+        className={`editorial-library-header library-compact-header fixed top-0 inset-inline-0 z-50 transition-all duration-300 ${
           isScrolled ||
           (currentView !== 'home' &&
             currentView !== 'course' &&
@@ -307,7 +307,7 @@ export const Navbar: React.FC = () => {
                   }}
                   ref={searchButtonRef}
                   data-onboarding="search"
-                  className="px-3 rounded-full border border-white/10 text-zinc-300 hover:text-white hover:border-[#b79043]/40 hover:bg-white/5 transition-colors min-h-11 min-w-11 flex items-center justify-center gap-2 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b79043]"
+                  className="px-4 rounded-full border border-[#D99B43]/35 bg-[#17140f]/90 text-[#F2EFEB] hover:border-[#D99B43] hover:bg-[#D99B43]/15 transition-colors min-h-11 min-w-11 flex items-center justify-center gap-2 cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#D99B43]"
                   title="חיפוש בספרייה"
                   aria-label="חיפוש בספרייה"
                 >

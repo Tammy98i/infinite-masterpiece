@@ -24,12 +24,12 @@ export const ContinueWatchingRow: React.FC = () => {
       data-onboarding="continue-watching"
       aria-label="המשך צפייה — רשימת הרצאות"
     >
-      <div className="flex items-center gap-3 px-4 sm:px-8 mb-1">
-        <h2 className="library-rail-title font-heading text-white">המשך צפייה</h2>
+      <div className="soundstage-section-header mx-auto flex max-w-[1400px] items-baseline justify-between gap-3 px-4 sm:px-8 mb-3 pb-3 border-b border-[#D99B43]/20">
+        <h2 className="library-rail-title font-heading text-[#F2EFEB]">המשך צפייה</h2>
         <button
           type="button"
           onClick={() => setView('history')}
-          className="text-sm text-white/55 hover:text-white transition-colors min-h-11 px-1"
+          className="text-sm text-[#D99B43] hover:text-[#f0b45f] font-medium transition-colors min-h-11 px-1 cursor-pointer"
         >
           לכל היסטוריית הצפייה
         </button>
@@ -90,6 +90,15 @@ export const ContinueWatchingRow: React.FC = () => {
         >
           <ChevronLeft className="w-5 h-5" aria-hidden />
         </button>
+      </div>
+
+      <div className="soundstage-filmstrip mx-auto max-w-[1400px] px-4 sm:px-8 mt-3 flex gap-1.5" aria-hidden="true">
+        {Array.from({ length: 6 }).map((_, idx) => (
+          <i
+            key={idx}
+            className={`soundstage-filmstrip-cell ${idx < Math.min(continueList.length, 3) ? 'is-active' : ''}`}
+          />
+        ))}
       </div>
     </section>
   );

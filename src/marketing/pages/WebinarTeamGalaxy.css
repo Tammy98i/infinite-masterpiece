@@ -1,0 +1,179 @@
+/* Keep the webinar's galaxy stage stable in both overview and profile states.
+   Scope these rules here: other TeamGalaxy placements keep their own layout. */
+.webinar-flow-page .webinar-editorial-grid #team-universe .galaxy-map {
+  height: 560px;
+  min-height: 560px;
+  padding-bottom: 0;
+}
+
+/* This section has its own profile transitions. Do not combine the island's
+   CSS reveal with Motion's section fade: that dims all text and portraits. */
+.webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel {
+  opacity: 1;
+  translate: none;
+  transition: none;
+  padding-block: 48px 28px;
+}
+
+.webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel .galaxy-map {
+  height: 520px;
+  min-height: 520px;
+}
+
+.webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-bottom-note {
+  color: #d3dbe5;
+  margin-top: 8px;
+}
+
+.webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-inline-bio { color: #f7f4eb; }
+.webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-inline-role { color: #dfc47d; }
+.webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-map.has-selection .galaxy-star-anchor:not(.is-selected) {
+  opacity: .6 !important;
+}
+
+/* Reserve separate vertical bands for the founder's name, role and motto. */
+.webinar-flow-page #team-universe .galaxy-sun:not(.is-selected) .galaxy-star-name {
+  width: 240px;
+}
+
+.webinar-flow-page #team-universe .galaxy-sun:not(.is-selected) .galaxy-star-role {
+  top: calc(100% + 68px);
+}
+
+.webinar-flow-page #team-universe .galaxy-manifesto {
+  bottom: 12px;
+}
+
+/* Center every selected profile in the same reserved space. Keep lengthy
+   biographies readable by scrolling inside the details, not growing the banner. */
+.webinar-flow-page #team-universe .galaxy-star-anchor.is-selected {
+  top: 22% !important;
+}
+
+.webinar-flow-page #team-universe .galaxy-inline-details {
+  max-height: 180px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #b79043 transparent;
+  pointer-events: auto;
+}
+
+.webinar-flow-page #team-universe .galaxy-map.has-selection .galaxy-manifesto {
+  opacity: 0;
+}
+
+/* On desktop, featured members keep their larger portrait only in the
+   overview or center spotlight; side stars use the regular team sizing. */
+@media (min-width: 768px) {
+  .webinar-flow-page #team-universe .galaxy-map.has-selection .galaxy-featured:not(.is-selected) .galaxy-stellar-body {
+    width: calc(var(--satellite-size) * var(--star-scale));
+    height: calc(var(--satellite-size) * var(--star-scale));
+  }
+}
+
+/* Profiles advance on every screen; only mobile uses the horizontal strip.
+   The existing motion control pauses playback on both layouts. */
+@media (max-width: 767px) {
+  .webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel {
+    min-height: 0;
+    padding: 32px 16px 24px;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-heading { margin-bottom: 16px; }
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-bottom-note { margin-top: 8px; }
+
+  .webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel .galaxy-map {
+    display: flex;
+    align-items: flex-start;
+    gap: 32px;
+    height: 440px;
+    min-height: 440px;
+    padding: 28px calc(50% - 100px) 0;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    touch-action: pan-x pan-y;
+  }
+
+  #team-universe.galaxy-mobile-carousel .galaxy-map::-webkit-scrollbar { display: none; }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star-anchor {
+    position: relative;
+    flex: 0 0 200px;
+    width: 200px;
+    height: auto;
+    left: auto !important;
+    top: auto !important;
+    scroll-snap-align: center;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star {
+    width: 100%;
+    transform: none;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-stellar-body {
+    width: calc(96px * var(--portrait-boost, 1));
+    height: calc(96px * var(--portrait-boost, 1));
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star-name,
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star-anchor:not(.galaxy-sun):not(.is-selected) .galaxy-star-name {
+    width: 200px;
+    font-size: 18px;
+    line-height: 1.5;
+    overflow-wrap: normal;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-inline-details {
+    width: min(280px, 78vw);
+    max-height: 132px;
+    top: calc(100% + 52px);
+  }
+
+  #team-universe.galaxy-mobile-carousel .galaxy-orbits,
+  #team-universe.galaxy-mobile-carousel .galaxy-manifesto { display: none; }
+}
+
+@media (max-width: 767px) {
+  .webinar-flow-page .webinar-editorial-grid #team-universe .galaxy-map {
+    height: 760px;
+    min-height: 760px;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-sun:not(.is-selected) .galaxy-star-name {
+    width: 160px;
+  }
+
+  .webinar-flow-page #team-universe:not(.galaxy-mobile-carousel) .galaxy-star-anchor:not(.is-selected) {
+    left: clamp(36px, var(--star-x), calc(100% - 36px)) !important;
+  }
+
+  .webinar-flow-page #team-universe:not(.galaxy-mobile-carousel) .galaxy-featured:not(.galaxy-sun):not(.is-selected) {
+    left: clamp(40%, var(--star-x), 60%) !important;
+    top: 25% !important;
+  }
+
+  .webinar-flow-page #team-universe:not(.galaxy-mobile-carousel) .galaxy-star-anchor:not(.galaxy-sun):not(.is-selected) .galaxy-star-name {
+    width: 60px;
+    overflow-wrap: anywhere;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-sun:not(.is-selected) .galaxy-star-role {
+    top: calc(100% + 46px);
+    width: 160px;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-star-name,
+  .webinar-flow-page #team-universe .galaxy-inline-details {
+    background: transparent;
+    box-shadow: none;
+    text-shadow: none;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-inline-details {
+    max-height: 240px;
+  }
+}
