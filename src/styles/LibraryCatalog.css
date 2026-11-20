@@ -120,6 +120,14 @@
   color: rgba(243, 237, 226, .72);
 }
 
+.library-catalog .library-course-card .library-card-veil {
+  background: linear-gradient(to top, rgba(5, 12, 27, .96) 0%, rgba(5, 12, 27, .72) 42%, rgba(5, 12, 27, .18) 100%);
+}
+
+.library-catalog .library-course-card .library-card-title {
+  min-height: 2.6em;
+}
+
 .library-catalog .library-poster {
   border: 0;
   border-radius: 4px;

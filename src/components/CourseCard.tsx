@@ -138,9 +138,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                   isHovered ? 'brightness-110' : ''
                 }`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              <div className="library-card-veil absolute inset-0" />
               <div className="absolute inset-0 z-10 flex flex-col justify-end p-2 text-start pointer-events-none">
-                <div className="text-[13px] font-semibold leading-snug text-white line-clamp-2">
+                <div className="library-card-title text-[13px] font-semibold leading-snug text-white line-clamp-2">
                   <bdi dir="auto">{title}</bdi>
                 </div>
                 <p className="library-topic-count mt-0.5">
