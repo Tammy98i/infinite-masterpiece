@@ -38,7 +38,7 @@ type LecturerRow = {
   is_founder: number | null;
 };
 
-function norm(value: string) {
+export function personKey(value: string) {
   return value
     .trim()
     .replace(/[׳'"״`´]/g, '')
@@ -56,13 +56,13 @@ export function listPublicFaces(db: DatabaseSync): PublicFace[] {
   ensurePlacementColumns(db);
   const members = db.prepare(`SELECT * FROM team_members ORDER BY display_order, name`).all() as MemberRow[];
   const lecturers = db.prepare(`SELECT * FROM lecturers ORDER BY name`).all() as LecturerRow[];
-  const founderNames = new Set(FOUNDERS.map((founder) => norm(founder.name)));
-  const lecturerByName = new Map(lecturers.map((row) => [norm(row.name), row]));
+  const founderNames = new Set(FOUNDERS.map((founder) => personKey(founder.name)));
+  const lecturerByName = new Map(lecturers.map((row) => [personKey(row.name), row]));
   const usedNames = new Set<string>();
   const faces: PublicFace[] = [];
 
   for (const member of members) {
-    const key = norm(member.name);
+    const key = personKey(member.name);
     if (usedNames.has(key)) continue;
     usedNames.add(key);
     const lecturer = lecturerByName.get(key);
@@ -81,7 +81,7 @@ export function listPublicFaces(db: DatabaseSync): PublicFace[] {
   }
 
   for (const lecturer of lecturers) {
-    const key = norm(lecturer.name);
+    const key = personKey(lecturer.name);
     if (usedNames.has(key)) continue;
     faces.push({
       id: `lecturer:${lecturer.id}`,
@@ -124,7 +124,7 @@ function sourceOf(db: DatabaseSync, faceId: string) {
 function ensureMember(db: DatabaseSync, source: { memberId: string; name: string; title: string; photo: string; bio: string }, userId: string) {
   if (source.memberId) return source.memberId;
   const existing = (db.prepare(`SELECT id, name FROM team_members`).all() as Array<{ id: string; name: string }>).find(
-    (row) => norm(row.name) === norm(source.name)
+    (row) => personKey(row.name) === personKey(source.name)
   );
   if (existing) {
     db.prepare(
@@ -149,7 +149,7 @@ function ensureMember(db: DatabaseSync, source: { memberId: string; name: string
 
 function fillLecturer(db: DatabaseSync, userId: string, source: { name: string; title: string; photo: string; bio: string }) {
   const rows = db.prepare(`SELECT id, name, user_id FROM lecturers`).all() as Array<{ id: string; name: string; user_id: string | null }>;
-  const existing = rows.find((row) => row.user_id === userId) || rows.find((row) => norm(row.name) === norm(source.name));
+  const existing = rows.find((row) => row.user_id === userId) || rows.find((row) => personKey(row.name) === personKey(source.name));
   if (existing) {
     db.prepare(
       `UPDATE lecturers
@@ -192,10 +192,20 @@ export function savePublicAppearance(
 export function hiddenLibraryKeys(db: DatabaseSync) {
   ensurePlacementColumns(db);
   const rows = db.prepare(
-    `SELECT user_id, name FROM team_members WHERE show_library = 0 AND user_id != ''`
+    `SELECT user_id, name FROM team_members WHERE show_library = 0`
   ).all() as Array<{ user_id: string; name: string }>;
   return {
-    userIds: new Set(rows.map((row) => row.user_id)),
-    names: new Set(rows.map((row) => norm(row.name))),
+    userIds: new Set(rows.map((row) => row.user_id).filter(Boolean)),
+    names: new Set(rows.map((row) => personKey(row.name))),
   };
+}
+
+export function isLecturerHiddenFromLibrary(
+  db: DatabaseSync,
+  row: { user_id?: unknown; name?: unknown }
+) {
+  const hidden = hiddenLibraryKeys(db);
+  const userId = String(row.user_id || '');
+  if (userId && hidden.userIds.has(userId)) return true;
+  return hidden.names.has(personKey(String(row.name || '')));
 }

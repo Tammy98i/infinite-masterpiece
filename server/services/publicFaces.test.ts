@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { DatabaseSync } from 'node:sqlite';
 import { listTeamMembers } from '../db/teamMembers.ts';
-import { listPublicFaces, savePublicAppearance } from './publicFaces.ts';
+import { isLecturerHiddenFromLibrary, listPublicFaces, savePublicAppearance } from './publicFaces.ts';
 
 test('linking a webinar profile copies it to the library and the site', () => {
   const db = new DatabaseSync(':memory:');
@@ -110,4 +110,25 @@ test('a lecturer missing from the site and webinar is copied there in one save',
   const lecturersAfter = db.prepare(`SELECT COUNT(*) AS c FROM lecturers`).get() as { c: number };
   assert.equal(after.c, before.c);
   assert.equal(lecturersAfter.c, lecturersBefore.c);
+});
+
+test('library hide matches a geresh or capital letters without a linked account', () => {
+  const db = new DatabaseSync(':memory:');
+  db.exec(`CREATE TABLE team_members (
+    id TEXT PRIMARY KEY, name TEXT NOT NULL, role TEXT NOT NULL, photo TEXT NOT NULL DEFAULT '',
+    bio TEXT NOT NULL DEFAULT '', vision TEXT NOT NULL DEFAULT '', contribution TEXT NOT NULL DEFAULT '',
+    responsibilities TEXT NOT NULL DEFAULT '[]', expertise TEXT NOT NULL DEFAULT '[]',
+    impact_score INTEGER NOT NULL, hierarchy_level TEXT NOT NULL, orbit INTEGER NOT NULL,
+    active INTEGER NOT NULL DEFAULT 1, display_order INTEGER NOT NULL DEFAULT 0,
+    user_id TEXT NOT NULL DEFAULT '', show_library INTEGER
+  );
+  CREATE TABLE lecturers (
+    id TEXT PRIMARY KEY, name TEXT, title TEXT, avatar_url TEXT, bio TEXT, credentials TEXT,
+    user_id TEXT, is_founder INTEGER
+  );`);
+  db.prepare(`INSERT INTO team_members (
+    id, name, role, photo, bio, impact_score, hierarchy_level, orbit, user_id, show_library
+  ) VALUES ('team-dana', 'Dana׳', 'מרצה', '', '', 50, 'contributor', 2, '', 0)`).run();
+  assert.equal(isLecturerHiddenFromLibrary(db, { user_id: '', name: 'DANA' }), true);
+  assert.equal(isLecturerHiddenFromLibrary(db, { user_id: '', name: 'תמי׳' }), false);
 });
