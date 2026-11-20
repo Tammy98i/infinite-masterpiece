@@ -135,8 +135,22 @@ export function FounderRoster() {
     };
   }, []);
 
-  const byOrder = (list: Founder[]) =>
-    [...list].filter((founder) => !suppressed.has(sameName(founder.name))).sort((a, b) => (sortOrder[a.id] ?? 99) - (sortOrder[b.id] ?? 99));
+  const byOrder = (list: Founder[]) => {
+    const seen = new Set<string>();
+    return [...list]
+      .filter((founder) => !suppressed.has(sameName(founder.name)))
+      .sort((a, b) => (sortOrder[a.id] ?? 99) - (sortOrder[b.id] ?? 99))
+      .filter((founder) => {
+        const key = sameName(founder.name);
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+      });
+  };
+  const featuredNames = new Set(featuredFounders.map((founder) => sameName(founder.name)));
+  const roster = byOrder([...rosterFounders, ...extras, ...copied]).filter(
+    (founder) => !featuredNames.has(sameName(founder.name))
+  );
 
   return (
     <>
@@ -155,9 +169,9 @@ export function FounderRoster() {
         </div>
       )}
 
-      {(rosterFounders.length > 0 || extras.length > 0) && (
+      {roster.length > 0 && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12 md:gap-x-10 md:gap-y-16">
-          {byOrder([...rosterFounders, ...extras, ...copied]).map((founder) => (
+          {roster.map((founder) => (
             <Fragment key={founder.id}>
               <FounderCell
                 founder={founder}
