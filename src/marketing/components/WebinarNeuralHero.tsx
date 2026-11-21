@@ -58,23 +58,20 @@ export function WebinarNeuralHero({
   const when = eventNight ? 'הערב החי עכשיו' : eventEnded ? WEBINAR_CTA_ENDED : 'ערב חי';
 
   useEffect(() => {
+    const video = videoRef.current;
     const root = rootRef.current;
-    if (!root) return;
-    const videos = [...root.querySelectorAll<HTMLVideoElement>('.webinar-neural-art')];
-    if (!videos.length) return;
+    if (!video || !root) return;
     const query = matchMedia('(prefers-reduced-motion: reduce)');
     const sync = () => {
       // React does not reliably apply the `muted` prop to <video>; enforce it so the hero clip never plays sound.
-      for (const video of videos) {
-        video.muted = true;
-        if (prefersReducedMotion()) {
-          video.pause();
-          continue;
-        }
-        const play = video.play();
-        if (play) play.catch(() => undefined);
+      video.muted = true;
+      if (prefersReducedMotion()) {
+        video.pause();
+        root.classList.add('is-entered');
+        return;
       }
-      if (prefersReducedMotion()) root.classList.add('is-entered');
+      const play = video.play();
+      if (play) play.catch(() => undefined);
     };
     sync();
     query.addEventListener?.('change', sync);
@@ -122,33 +119,18 @@ export function WebinarNeuralHero({
           <i key={i} style={{ left: `${(i * 37 + 13) % 100}%`, top: `${(i * 23 + 7) % 100}%`, animationDelay: `${i * -0.7}s` }} />
         ))}
       </div>
-      <div className="webinar-neural-bows" aria-hidden="true">
-        <div className="webinar-neural-bow is-upper">
-          <video
-            ref={videoRef}
-            className="webinar-neural-art"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            poster={WEBINAR_NEURAL_POSTER}
-            src={WEBINAR_NEURAL_VIDEO}
-          />
-        </div>
-        <div className="webinar-neural-bow is-lower">
-          <video
-            className="webinar-neural-art"
-            autoPlay
-            muted
-            loop
-            playsInline
-            preload="auto"
-            poster={WEBINAR_NEURAL_POSTER}
-            src={WEBINAR_NEURAL_VIDEO}
-          />
-        </div>
-      </div>
+      <video
+        ref={videoRef}
+        className="webinar-neural-art"
+        autoPlay
+        muted
+        loop
+        playsInline
+        preload="auto"
+        aria-hidden="true"
+        poster={WEBINAR_NEURAL_POSTER}
+        src={WEBINAR_NEURAL_VIDEO}
+      />
       <div className="webinar-neural-veil" aria-hidden="true" />
       <div className="webinar-stage-shell">
         <div className="webinar-stage-copy">
