@@ -5,9 +5,11 @@ import { Header } from './Header';
 import { Footer } from './Footer';
 import { ConversionBand } from './ConversionBand';
 
-/** One static starfield persists behind both public and library routes. */
+/** Persistent backdrop with a dedicated, unfiltered starfield for library routes. */
 export function SiteBackdropLayout() {
-  const isHome = useLocation().pathname === '/';
+  const { pathname } = useLocation();
+  const isHome = pathname === '/';
+  const isLibrary = pathname.startsWith('/library');
   const shell = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -23,8 +25,8 @@ export function SiteBackdropLayout() {
   }, [isHome]);
 
   return (
-    <div ref={shell} className="site-backdrop-layout">
-      <SkyBackdrop />
+    <div ref={shell} className={`site-backdrop-layout${isLibrary ? ' is-library' : ''}`}>
+      <SkyBackdrop library={isLibrary} />
       <div className="site-backdrop-content"><Outlet /></div>
     </div>
   );

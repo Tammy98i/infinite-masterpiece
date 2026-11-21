@@ -31,6 +31,8 @@ import { isS3Enabled } from '../services/s3Upload.js';
 import { listAdminEmails, saveExtraAdminEmails } from '../services/adminEmailsService.js';
 import { getSetting, setSetting } from '../services/settingsService.js';
 import { adminCreateUser } from '../services/authService.js';
+import { listPublicFaces, savePublicAppearance } from '../services/publicFaces.js';
+import { getDb } from '../db/connection.js';
 import { listAuditLogs, writeAudit } from '../services/auditService.js';
 import {
   listPremium88Applications,
@@ -265,6 +267,33 @@ router.patch('/courses/:id/status', (req, res) => {
   }
 });
 
+router.get('/public-faces', (_req, res) => {
+  res.json({ faces: listPublicFaces(getDb()) });
+});
+
+router.put('/users/:id/appearance', (req, res) => {
+  try {
+    const body = req.body || {};
+    const face = savePublicAppearance(getDb(), req.params.id, {
+      faceId: String(body.faceId || ''),
+      showWebinar: Boolean(body.showWebinar),
+      showSite: Boolean(body.showSite),
+      showLibrary: Boolean(body.showLibrary),
+    });
+    writeAudit({
+      adminUserId: authUser(req).id,
+      actionType: 'user_appearance_updated',
+      entityType: 'user',
+      entityId: req.params.id,
+      after: face,
+    });
+    res.json({ face });
+  } catch (err) {
+    const status = (err as { status?: number }).status || 500;
+    res.status(status).json({ error: (err as Error).message });
+  }
+});
+
 router.get('/users', (_req, res) => {
   try {
     res.json({ users: listUsers() });
@@ -275,16 +304,26 @@ router.get('/users', (_req, res) => {
 
 router.post('/users', (req, res) => {
   try {
-    const id = adminCreateUser(
-      String(req.body?.fullName || req.body?.name || ''),
-      String(req.body?.email || ''),
-      String(req.body?.password || '')
-    );
     const body = req.body || {};
+    const id = adminCreateUser({
+      fullName: String(body.fullName || body.name || ''),
+      firstName: typeof body.firstName === 'string' ? body.firstName : undefined,
+      lastName: typeof body.lastName === 'string' ? body.lastName : undefined,
+      email: String(body.email || ''),
+      password: String(body.password || ''),
+      birthday: String(body.birthday || ''),
+      phone: String(body.phone || ''),
+      city: String(body.city || ''),
+    });
     let user = listUsers().find((u) => u.id === id);
     const patch: Record<string, unknown> = {};
     if (typeof body.role === 'string' && body.role) patch.role = body.role;
     if (typeof body.isFounder === 'boolean') patch.isFounder = body.isFounder;
+    if (typeof body.subscriptionPlan === 'string' && body.subscriptionPlan) {
+      patch.subscriptionPlan = body.subscriptionPlan;
+    }
+    if (typeof body.entryTrack === 'string' && body.entryTrack) patch.entryTrack = body.entryTrack;
+    if (typeof body.staffDesk === 'string') patch.staffDesk = body.staffDesk;
     if (Object.keys(patch).length) {
       user = updateUser(id, patch);
       if (user?.role === 'instructor') ensureLecturerForUser(user.id, user.name);

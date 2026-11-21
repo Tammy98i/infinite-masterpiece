@@ -1,6 +1,6 @@
 import {
+  getOAuthSupabase,
   getSupabase,
-  isGoogleProviderEnabled,
   isPhoneProviderEnabled,
   isSupabaseAuthEnabled,
   oauthRedirectTo,
@@ -33,7 +33,7 @@ function requireE164(phone: string) {
 }
 
 async function profileForUser(userId: string): Promise<ProfileRow | null> {
-  const supabase = getSupabase();
+  const supabase = getOAuthSupabase();
   if (!supabase) return null;
   const { data } = await supabase
     .from('profiles')
@@ -44,7 +44,7 @@ async function profileForUser(userId: string): Promise<ProfileRow | null> {
 }
 
 export async function sessionFromSupabaseUser(accessToken: string, fullName = '') {
-  const supabase = getSupabase();
+  const supabase = getOAuthSupabase();
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
 
   const { data, error } = await supabase.auth.getUser(accessToken);
@@ -71,7 +71,7 @@ export async function sessionFromSupabaseUser(accessToken: string, fullName = ''
 }
 
 export async function restoreSupabaseBrowserSession() {
-  const supabase = getSupabase();
+  const supabase = getOAuthSupabase();
   if (!supabase) return null;
   const { data } = await supabase.auth.getSession();
   if (!data.session?.access_token) return null;
@@ -84,12 +84,19 @@ export async function restoreSupabaseBrowserSession() {
 
 async function syncAccessToken(accessToken: string, fullName = '') {
   const fromSupabase = await sessionFromSupabaseUser(accessToken, fullName);
-  // Express / Vercel may mirror the user into a local DB. That row must never
-  // replace the Supabase identity (email, role, id) shown across the site.
-  void apiRequest<{ token: string; user: AuthUserPayload }>('/api/auth/supabase', {
-    method: 'POST',
-    body: JSON.stringify({ accessToken, fullName }),
-  }).catch(() => undefined);
+  // The local API keeps progress and lists on a SQLite session. Prefer that
+  // token when the server can mirror this identity; otherwise keep Supabase.
+  try {
+    const local = await apiRequest<{ token: string; user: AuthUserPayload }>('/api/auth/supabase', {
+      method: 'POST',
+      body: JSON.stringify({ accessToken, fullName }),
+    });
+    if (local.token && local.user?.id) {
+      return { token: local.token, user: { ...fromSupabase.user, ...local.user } };
+    }
+  } catch {
+    /* The browser session still works when the local mirror is down. */
+  }
   return fromSupabase;
 }
 
@@ -192,46 +199,44 @@ export async function supabaseVerifyPhoneOtp(phone: string, code: string, fullNa
   return syncAccessToken(data.session.access_token, fullName);
 }
 
-export async function supabaseStartGoogleOAuth(nextPath?: string) {
-  const supabase = getSupabase();
+export async function supabaseStartOAuth(provider: 'google' | 'apple', nextPath?: string) {
+  const supabase = getOAuthSupabase();
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
   await loadSupabaseConfig();
   await refreshAuthProviderFlags();
-  if (!isGoogleProviderEnabled()) {
-    throw new Error('התחברות עם Google עדיין לא הופעלה ב-Supabase');
-  }
 
   const redirectTo = nextPath
     ? `${window.location.origin}/auth/callback?next=${encodeURIComponent(nextPath)}`
     : oauthRedirectTo();
-  const oauthOptions = {
-    redirectTo,
-    scopes: 'email profile',
-    queryParams: { access_type: 'offline' },
-  };
+  const oauthOptions =
+    provider === 'apple'
+      ? { redirectTo, scopes: 'name email' }
+      : { redirectTo, scopes: 'email profile', queryParams: { access_type: 'offline' } };
 
   const { data: current } = await supabase.auth.getSession();
   if (current.session?.access_token) {
     const identities = current.session.user.identities || [];
-    const alreadyGoogle = identities.some((item) => item.provider === 'google');
-    if (!alreadyGoogle) {
-      const linked = await supabase.auth.linkIdentity({
-        provider: 'google',
-        options: oauthOptions,
-      });
+    const alreadyLinked = identities.some((item) => item.provider === provider);
+    if (!alreadyLinked) {
+      const linked = await supabase.auth.linkIdentity({ provider, options: oauthOptions });
       if (!linked.error) return;
     }
   }
 
-  const { error } = await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: oauthOptions,
-  });
+  const { error } = await supabase.auth.signInWithOAuth({ provider, options: oauthOptions });
   if (error) throw new Error(hebrewAuthError(error.message));
 }
 
+export async function supabaseStartGoogleOAuth(nextPath?: string) {
+  return supabaseStartOAuth('google', nextPath);
+}
+
+export async function supabaseStartAppleOAuth(nextPath?: string) {
+  return supabaseStartOAuth('apple', nextPath);
+}
+
 export async function supabaseCompleteOAuthFromUrl() {
-  const supabase = getSupabase();
+  const supabase = getOAuthSupabase();
   if (!supabase) throw new Error('התחברות חיצונית אינה מוגדרת');
 
   // Subscribe before exchanging so a PKCE recovery link (often `?code=` without
@@ -305,7 +310,7 @@ export function isPasswordRecoveryRedirect() {
 export function subscribeSupabaseAuth(
   handler: (event: string, accessToken: string | null) => void
 ) {
-  const supabase = getSupabase();
+  const supabase = getOAuthSupabase();
   if (!supabase) return () => undefined;
   const { data } = supabase.auth.onAuthStateChange((event, session) => {
     handler(event, session?.access_token || null);
@@ -314,7 +319,7 @@ export function subscribeSupabaseAuth(
 }
 
 export async function supabaseSignOut() {
-  const supabase = getSupabase();
+  const supabase = getOAuthSupabase();
   if (!supabase) return;
   await supabase.auth.signOut();
 }

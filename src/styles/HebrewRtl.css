@@ -43,6 +43,12 @@ time {
   display: inline-block;
 }
 
+/* Login fields stay readable as Latin text, packed against the right edge. */
+[role='dialog'][aria-labelledby='auth-title'] input[type='email'],
+[role='dialog'][aria-labelledby='auth-title'] input[type='password'] {
+  text-align: right;
+}
+
 /* Tabular numbers / clocks / prices stay visually stable in mixed Hebrew copy. */
 .tabular-nums,
 .price,

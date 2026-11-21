@@ -1,4 +1,5 @@
 import type { DatabaseSync } from 'node:sqlite';
+import { splitFullName } from '../services/userProfile.ts';
 import { captionTracksForEpisode } from '../../src/constants/captions.ts';
 import { CATEGORIES, COURSE_CATEGORY_OVERRIDES, LEGACY_CATEGORY_MAP } from '../../src/data/categories.ts';
 
@@ -74,6 +75,33 @@ export function migrateSchema(db: DatabaseSync) {
   }
   if (!users.has('supabase_user_id')) {
     db.exec(`ALTER TABLE users ADD COLUMN supabase_user_id TEXT`);
+  }
+  if (!users.has('first_name')) {
+    db.exec(`ALTER TABLE users ADD COLUMN first_name TEXT NOT NULL DEFAULT ''`);
+  }
+  if (!users.has('last_name')) {
+    db.exec(`ALTER TABLE users ADD COLUMN last_name TEXT NOT NULL DEFAULT ''`);
+  }
+  if (!users.has('birthday')) {
+    db.exec(`ALTER TABLE users ADD COLUMN birthday TEXT NOT NULL DEFAULT ''`);
+  }
+  if (!users.has('phone')) {
+    db.exec(`ALTER TABLE users ADD COLUMN phone TEXT NOT NULL DEFAULT ''`);
+  }
+  if (!users.has('city')) {
+    db.exec(`ALTER TABLE users ADD COLUMN city TEXT NOT NULL DEFAULT ''`);
+  }
+  const unnamed = db
+    .prepare(
+      `SELECT id, full_name FROM users
+       WHERE TRIM(COALESCE(first_name, '')) = '' AND TRIM(COALESCE(last_name, '')) = ''
+         AND TRIM(COALESCE(full_name, '')) != ''`
+    )
+    .all() as Array<{ id: string; full_name: string }>;
+  const fillName = db.prepare(`UPDATE users SET first_name = ?, last_name = ? WHERE id = ?`);
+  for (const row of unnamed) {
+    const split = splitFullName(row.full_name);
+    if (split.firstName || split.lastName) fillName.run(split.firstName, split.lastName, row.id);
   }
   db.exec(
     `CREATE UNIQUE INDEX IF NOT EXISTS idx_users_supabase_user_id ON users(supabase_user_id) WHERE supabase_user_id IS NOT NULL`

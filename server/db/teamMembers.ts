@@ -5,6 +5,17 @@ import { SUPPORTING_TEAM } from '../../src/marketing/data/supportingTeam.ts';
 import { WEBINAR_GLEB, WEBINAR_GLEB_PREVIOUS_BIO } from '../../src/constants/webinarPage.ts';
 import { validateTeamMember, type TeamMember, type TeamMemberInput } from '../../src/lib/teamMembers.ts';
 
+export type TeamSurface = 'webinar' | 'site' | 'library';
+
+export function ensurePlacementColumns(db: DatabaseSync) {
+  const names = new Set((db.prepare(`PRAGMA table_info(team_members)`).all() as Array<{ name: string }>).map((row) => row.name));
+  if (!names.has('user_id')) db.exec(`ALTER TABLE team_members ADD COLUMN user_id TEXT NOT NULL DEFAULT ''`);
+  if (!names.has('show_webinar')) db.exec(`ALTER TABLE team_members ADD COLUMN show_webinar INTEGER`);
+  if (!names.has('show_site')) db.exec(`ALTER TABLE team_members ADD COLUMN show_site INTEGER`);
+  if (!names.has('show_library')) db.exec(`ALTER TABLE team_members ADD COLUMN show_library INTEGER`);
+  db.exec(`CREATE UNIQUE INDEX IF NOT EXISTS team_member_user ON team_members(user_id) WHERE user_id != ''`);
+}
+
 export function initializeTeamMembers(db: DatabaseSync) {
   db.exec(`CREATE TABLE IF NOT EXISTS team_members (
     id TEXT PRIMARY KEY, name TEXT NOT NULL, role TEXT NOT NULL, photo TEXT NOT NULL DEFAULT '',
@@ -14,7 +25,9 @@ export function initializeTeamMembers(db: DatabaseSync) {
     hierarchy_level TEXT NOT NULL CHECK(hierarchy_level IN ('founder','leadership','core','contributor')),
     orbit INTEGER NOT NULL CHECK(orbit BETWEEN 0 AND 4), active INTEGER NOT NULL DEFAULT 1 CHECK(active IN (0,1)),
     display_order INTEGER NOT NULL DEFAULT 0
-  );
+  );`);
+  ensurePlacementColumns(db);
+  db.exec(`
   CREATE UNIQUE INDEX IF NOT EXISTS team_one_active_sun ON team_members(hierarchy_level)
     WHERE hierarchy_level = 'founder' AND active = 1;`);
   // One-time import, never overwrite CMS edits or re-enable hidden people on restart.
@@ -77,8 +90,29 @@ function syncPublishedProfiles(db: DatabaseSync) {
 function rowToMember(row: Record<string, unknown>): TeamMember {
   return { ...row, active: Boolean(row.active), responsibilities: JSON.parse(String(row.responsibilities)), expertise: JSON.parse(String(row.expertise)) } as TeamMember;
 }
-export function listTeamMembers(db: DatabaseSync, includeHidden = false): TeamMember[] {
-  return db.prepare(`SELECT * FROM team_members ${includeHidden ? '' : 'WHERE active = 1'} ORDER BY display_order, name`).all().map(rowToMember);
+export function listTeamMembers(db: DatabaseSync, includeHidden = false, surface?: TeamSurface): TeamMember[] {
+  ensurePlacementColumns(db);
+  const where: string[] = [];
+  if (!includeHidden) where.push('active = 1');
+  if (surface === 'webinar') where.push('COALESCE(show_webinar, 1) = 1');
+  if (surface === 'site') where.push('show_site = 1');
+  if (surface === 'library') where.push('show_library = 1');
+  const sql = `SELECT * FROM team_members ${where.length ? `WHERE ${where.join(' AND ')}` : ''} ORDER BY display_order, name`;
+  const members = (db.prepare(sql).all() as Record<string, unknown>[]).map(rowToMember);
+  if (includeHidden) return members;
+  const seen = new Set<string>();
+  return members.filter((member) => {
+    const key = member.name.trim().replace(/[׳'"״`´]/g, '').replace(/\s+/g, ' ').toLowerCase();
+    if (seen.has(key)) return false;
+    seen.add(key);
+    return true;
+  });
+}
+
+export function suppressedNames(db: DatabaseSync, surface: 'site' | 'library' | 'webinar'): string[] {
+  ensurePlacementColumns(db);
+  const column = surface === 'site' ? 'show_site' : surface === 'library' ? 'show_library' : 'show_webinar';
+  return (db.prepare(`SELECT name FROM team_members WHERE active = 1 AND ${column} = 0`).all() as Array<{ name: string }>).map((row) => row.name);
 }
 function values(input: TeamMemberInput) {
   return [input.name, input.role, input.photo, input.bio, input.vision, input.contribution,

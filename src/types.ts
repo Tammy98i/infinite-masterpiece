@@ -33,6 +33,7 @@ export interface Instructor {
   founderId?: string;
   sortOrder?: number;
   externalLinks?: { label: string; url: string }[];
+  showInLibrary?: boolean;
 }
 
 export interface Course {
@@ -118,6 +119,10 @@ export interface UserProfile {
   paymentPlanStatus?: string;
   trialEndsAt?: string;
   interests: string[];
+  firstName?: string;
+  lastName?: string;
+  birthday?: string;
+  city?: string;
   onboardingLevel?: OnboardingLevel;
     isFounder?: boolean;
     staffDesk?: '' | 'content' | 'support' | 'sales' | 'legal' | 'finance' | 'community';

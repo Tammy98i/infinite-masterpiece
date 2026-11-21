@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import { Link } from 'react-router-dom';
 import type { WebinarConfig } from '../../constants/webinar';
 import {
   WEBINAR_CTA_ENDED,
@@ -41,12 +42,14 @@ export function WebinarNeuralHero({
   headlineParts,
   eventNight,
   eventEnded,
+  registrationReady = true,
   onRegister,
 }: {
   config: WebinarConfig;
   headlineParts: { line1: string; line2: string };
   eventNight: boolean;
   eventEnded: boolean;
+  registrationReady?: boolean;
   onRegister: (section: string) => void;
 }) {
   const rootRef = useRef<HTMLElement>(null);
@@ -60,6 +63,8 @@ export function WebinarNeuralHero({
     if (!video || !root) return;
     const query = matchMedia('(prefers-reduced-motion: reduce)');
     const sync = () => {
+      // React does not reliably apply the `muted` prop to <video>; enforce it so the hero clip never plays sound.
+      video.muted = true;
       if (prefersReducedMotion()) {
         video.pause();
         root.classList.add('is-entered');
@@ -84,11 +89,15 @@ export function WebinarNeuralHero({
     };
   }, []);
 
-  const primary = eventEnded ? (
-    <button type="button" onClick={() => onRegister('hero')} className="webinar-neural-cta" data-neural-end>
+  const primary = !registrationReady ? (
+    <p className="webinar-neural-note" role="status">בודקים את מצב ההרשמה…</p>
+  ) : eventEnded ? (
+    <Link to="/#pricing" className="webinar-neural-cta" data-neural-end>
       <span>{WEBINAR_CTA_NEXT_CYCLE}</span>
       <CtaArrow />
-    </button>
+    </Link>
+  ) : !config.enabled ? (
+    <p className="webinar-neural-note" role="status">ההרשמה אינה פתוחה כרגע</p>
   ) : eventNight && liveEnter.href ? (
     <a href={liveEnter.href} target="_blank" rel="noreferrer" onClick={() => trackWebinarCta('hero_enter')} className="webinar-neural-cta" data-neural-end>
       <span>{liveEnter.label}</span>
@@ -104,7 +113,12 @@ export function WebinarNeuralHero({
   );
 
   return (
-    <section ref={rootRef} id="webinar-hero" className="webinar-stage-hero webinar-neural-hero is-slim webinar-island" data-tone="night" dir="rtl">
+    <section ref={rootRef} id="webinar-hero" className="webinar-stage-hero webinar-neural-hero is-slim webinar-island webinar-star-field" data-tone="night" dir="rtl">
+      <div className="galaxy-dust" aria-hidden="true">
+        {Array.from({ length: 30 }, (_, i) => (
+          <i key={i} style={{ left: `${(i * 37 + 13) % 100}%`, top: `${(i * 23 + 7) % 100}%`, animationDelay: `${i * -0.7}s` }} />
+        ))}
+      </div>
       <video
         ref={videoRef}
         className="webinar-neural-art"

@@ -1,0 +1,332 @@
+/* Keep the webinar's galaxy stage stable in both overview and profile states.
+   Scope these rules here: other TeamGalaxy placements keep their own layout. */
+.webinar-flow-page .webinar-editorial-grid #team-universe .galaxy-map {
+  height: 560px;
+  min-height: 560px;
+  padding-bottom: 0;
+}
+
+/* This section has its own profile transitions. Do not combine the island's
+   CSS reveal with Motion's section fade: that dims all text and portraits. */
+.webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel {
+  opacity: 1;
+  translate: none;
+  transition: none;
+  padding-block: 48px 28px;
+}
+
+.webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel .galaxy-map {
+  height: 520px;
+  min-height: 520px;
+}
+
+.webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-bottom-note {
+  color: #d3dbe5;
+  margin-top: 8px;
+}
+
+.webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-inline-bio { color: #f7f4eb; }
+.webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-inline-role { color: #dfc47d; }
+.webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-map.has-selection .galaxy-star-anchor:not(.is-selected) {
+  opacity: .6 !important;
+}
+
+/* Reserve separate vertical bands for the founder's name, role and motto. */
+.webinar-flow-page #team-universe .galaxy-sun:not(.is-selected) .galaxy-star-name {
+  width: 240px;
+}
+
+.webinar-flow-page #team-universe .galaxy-sun:not(.is-selected) .galaxy-star-role {
+  top: calc(100% + 68px);
+}
+
+.webinar-flow-page #team-universe .galaxy-manifesto {
+  bottom: 12px;
+}
+
+/* Center every selected profile in the same reserved space. Keep lengthy
+   biographies readable by scrolling inside the details, not growing the banner. */
+.webinar-flow-page #team-universe .galaxy-star-anchor.is-selected {
+  top: 22% !important;
+}
+
+.webinar-flow-page #team-universe .galaxy-inline-details {
+  max-height: 180px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  scrollbar-color: #b79043 transparent;
+  pointer-events: auto;
+}
+
+.webinar-flow-page #team-universe .galaxy-map.has-selection .galaxy-manifesto {
+  opacity: 0;
+}
+
+/* On desktop, featured members keep their larger portrait only in the
+   overview or center spotlight; side stars use the regular team sizing. */
+@media (min-width: 768px) {
+  .webinar-flow-page #team-universe .galaxy-map.has-selection .galaxy-featured:not(.is-selected) .galaxy-stellar-body {
+    width: calc(var(--satellite-size) * var(--star-scale));
+    height: calc(var(--satellite-size) * var(--star-scale));
+  }
+}
+
+/* Profiles advance on every screen; only mobile uses the horizontal strip.
+   The existing motion control pauses playback on both layouts. */
+@media (max-width: 767px) {
+  .webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel {
+    min-height: 0;
+    padding: 32px 16px 24px;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-heading { margin-bottom: 16px; }
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-bottom-note { margin-top: 8px; }
+
+  .webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel .galaxy-map {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: 0;
+    height: auto;
+    min-height: 0;
+    padding: 0;
+    overflow: visible;
+  }
+
+  #team-universe.galaxy-mobile-carousel .galaxy-map::-webkit-scrollbar { display: none; }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star-anchor {
+    position: relative;
+    flex: 0 0 200px;
+    width: 200px;
+    height: auto;
+    left: auto !important;
+    top: auto !important;
+    scroll-snap-align: center;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star {
+    width: 100%;
+    transform: none;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-stellar-body {
+    width: calc(96px * var(--portrait-boost, 1));
+    height: calc(96px * var(--portrait-boost, 1));
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star-name,
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star-anchor:not(.galaxy-sun):not(.is-selected) .galaxy-star-name {
+    width: 200px;
+    font-size: 18px;
+    line-height: 1.5;
+    overflow-wrap: normal;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-inline-details {
+    position: static;
+    top: auto;
+    width: 100%;
+    max-height: none;
+    overflow: visible;
+    background: transparent;
+    padding: 4px 12px 0;
+  }
+
+  #team-universe.galaxy-mobile-carousel .galaxy-orbits,
+  #team-universe.galaxy-mobile-carousel .galaxy-manifesto { display: none; }
+}
+
+@media (max-width: 767px) {
+  .webinar-flow-page .webinar-editorial-grid #team-universe:not(.galaxy-mobile-carousel) .galaxy-map {
+    height: 760px;
+    min-height: 760px;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-sun:not(.is-selected) .galaxy-star-name {
+    width: 160px;
+  }
+
+  .webinar-flow-page #team-universe:not(.galaxy-mobile-carousel) .galaxy-star-anchor:not(.is-selected) {
+    left: clamp(36px, var(--star-x), calc(100% - 36px)) !important;
+  }
+
+  .webinar-flow-page #team-universe:not(.galaxy-mobile-carousel) .galaxy-featured:not(.galaxy-sun):not(.is-selected) {
+    left: clamp(40%, var(--star-x), 60%) !important;
+    top: 25% !important;
+  }
+
+  .webinar-flow-page #team-universe:not(.galaxy-mobile-carousel) .galaxy-star-anchor:not(.galaxy-sun):not(.is-selected) .galaxy-star-name {
+    width: 60px;
+    overflow-wrap: anywhere;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-sun:not(.is-selected) .galaxy-star-role {
+    top: calc(100% + 46px);
+    width: 160px;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-star-name,
+  .webinar-flow-page #team-universe .galaxy-inline-details {
+    background: transparent;
+    box-shadow: none;
+    text-shadow: none;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-inline-details {
+    max-height: 240px;
+  }
+
+  .webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel {
+    min-height: 100dvh;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-map-footer {
+    display: none;
+  }
+
+  .webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel {
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+
+  .webinar-flow-page #hosts ol.webinar-task-spine {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 10px;
+    max-width: none;
+    width: 100%;
+  }
+
+  .webinar-flow-page #hosts ol.webinar-task-spine p {
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  .webinar-stage-page :is(
+    #webinar-hero,
+    #problem,
+    .webinar-editorial-grid > #hosts,
+    .webinar-editorial-grid > #webinar-fit,
+    .webinar-editorial-grid > #webinar-faq,
+    .webinar-editorial-grid > #webinar-register-bottom
+  ) {
+    padding-bottom: calc(88px + env(safe-area-inset-bottom));
+  }
+
+  .webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel {
+    display: flex;
+    flex-direction: column;
+    justify-content: safe center;
+    gap: 4px;
+  }
+
+  .webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel .galaxy-map {
+    display: flex !important;
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star-anchor:not(.is-selected) {
+    display: none;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star-anchor.is-selected {
+    position: relative;
+    flex: none;
+    width: min(100%, 360px);
+    left: auto !important;
+    top: auto !important;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star-anchor.is-selected .galaxy-stellar-body {
+    width: 132px;
+    height: 132px;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-inline-details {
+    max-height: none;
+    overflow: visible;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-inline-bio {
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-mobile-dots {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: center;
+    gap: 0;
+    width: 100%;
+    max-width: none;
+    margin: 12px auto 0;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-mobile-dots button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1 1 0;
+    width: auto;
+    max-width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+  }
+
+  .webinar-flow-page #team-universe .galaxy-mobile-dots button::before {
+    content: '';
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: rgba(223, 196, 125, .38);
+  }
+
+  .webinar-flow-page #team-universe .galaxy-mobile-dots button[aria-current='true']::before {
+    width: 16px;
+    border-radius: 999px;
+    background: #dfc47d;
+  }
+
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-bottom-note {
+    margin-top: 4px;
+  }
+
+  .webinar-flow-page #problem .webinar-neural-bottlenecks {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px 12px;
+    width: 100%;
+  }
+
+  .webinar-flow-page #problem .webinar-neural-bottlenecks li {
+    width: auto;
+    min-width: 0;
+  }
+
+  .webinar-flow-page #problem .webinar-neural-bottlenecks li:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    max-width: 220px;
+    justify-self: center;
+  }
+
+  .webinar-flow-page #webinar-fit .grid,
+  .webinar-flow-page #webinar-fit .webinar-fit-grid {
+    grid-template-columns: 1fr;
+    gap: 14px;
+  }
+
+  .webinar-flow-page #webinar-fit li {
+    font-size: 15px;
+    line-height: 1.55;
+  }
+
+  .webinar-flow-page #webinar-faq summary {
+    font-size: 16px;
+    line-height: 1.45;
+  }
+}

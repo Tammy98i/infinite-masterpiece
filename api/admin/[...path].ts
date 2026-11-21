@@ -166,7 +166,9 @@ export default async function handler(req: VercelReq, res: VercelRes) {
     if (method === 'POST' && route === 'users') {
       const body = bodyOf(req);
       const profile = await createAdminUser({
-        fullName: String(body.fullName || body.name || ''),
+        fullName: String(
+          body.fullName || body.name || [body.firstName, body.lastName].filter(Boolean).join(' ')
+        ),
         email: String(body.email || ''),
         password: String(body.password || ''),
         role: typeof body.role === 'string' ? body.role : undefined,

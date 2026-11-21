@@ -17,11 +17,13 @@ import {
 } from './adminConstants';
 import { Bidi } from '../../components/Bidi';
 import { DeskMonogram } from '../../components/DeskMonogram';
+import { emptyUserDraft, UserProfileFields, type UserDraft } from './UserProfileFields';
+import { WhereShownDialog } from './WhereShownDialog';
 
 export type AccessSection = 'accounts' | 'roles' | 'desks' | 'admins';
 
 const SECTIONS: Array<{ id: AccessSection; label: string; hint: string }> = [
-  { id: 'accounts', label: 'חשבונות', hint: 'יצירה, עריכה, מנוי' },
+  { id: 'accounts', label: 'חשבונות', hint: 'יצירה, שיוך לתצוגה, מנוי' },
   { id: 'roles', label: 'תפקידים', hint: 'מה כל role רואה' },
   { id: 'desks', label: 'דסקים', hint: 'גישה מוגבלת לצוות' },
   { id: 'admins', label: 'אדמינים', hint: 'מיילי כניסה' },
@@ -80,13 +82,10 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
   const [pendingId, setPendingId] = useState<string | null>(null);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [whereUserId, setWhereUserId] = useState<string | null>(null);
   const [creating, setCreating] = useState(false);
   const [search, setSearch] = useState('');
-  const [newName, setNewName] = useState('');
-  const [newEmail, setNewEmail] = useState('');
-  const [newPassword, setNewPassword] = useState('');
-  const [newRole, setNewRole] = useState<'student' | 'instructor' | 'admin'>('student');
-  const [newIsFounder, setNewIsFounder] = useState(false);
+  const [draft, setDraft] = useState<UserDraft>(emptyUserDraft());
 
   const load = () =>
     adminApi
@@ -108,6 +107,15 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
   useEffect(() => {
     setSection(initialSection);
   }, [initialSection]);
+
+  useEffect(() => {
+    if (!drawerOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') setDrawerOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [drawerOpen]);
 
   const filteredUsers = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -157,21 +165,26 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
     setError('');
     try {
       const created = await adminApi.createUser({
-        fullName: newName,
-        email: newEmail,
-        password: newPassword,
-        role: newRole,
-        isFounder: newIsFounder,
+        firstName: draft.firstName,
+        lastName: draft.lastName,
+        email: draft.email,
+        password: draft.password,
+        birthday: draft.birthday,
+        phone: draft.phone,
+        city: draft.city,
+        role: draft.role,
+        isFounder: draft.isFounder,
+        subscriptionPlan: draft.subscriptionPlan,
+        entryTrack: draft.entryTrack,
+        staffDesk: draft.role === 'admin' ? draft.staffDesk : '',
       });
+      const openCatalog = draft.role === 'instructor' || draft.isFounder;
       setDrawerOpen(false);
-      setNewName('');
-      setNewEmail('');
-      setNewPassword('');
-      setNewRole('student');
-      setNewIsFounder(false);
+      setDraft(emptyUserDraft());
       await load();
       setSelectedId(created.user.id);
-      if (newRole === 'instructor' || newIsFounder) await reloadCatalog();
+      setWhereUserId(created.user.id);
+      if (openCatalog) await reloadCatalog();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'יצירה נכשלה');
     } finally {
@@ -302,6 +315,9 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
                     <td>{row.blocked ? 'חסום' : 'פעיל'}</td>
                     <td>
                       <span className="inline-flex gap-1">
+                        <button type="button" className="crm-desk-row-act" onClick={() => setWhereUserId(row.id)}>
+                          איפה מופיע
+                        </button>
                         <button type="button" className="crm-desk-row-act" onClick={() => setSelectedId(row.id === selectedId ? null : row.id)}>
                           עריכה
                         </button>
@@ -501,18 +517,33 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
 
       {section === 'admins' ? <AdminEmailsCard onChanged={() => void load()} /> : null}
 
+      {whereUserId ? (
+        <WhereShownDialog
+          userId={whereUserId}
+          name={users.find((row) => row.id === whereUserId)?.name || ''}
+          email={users.find((row) => row.id === whereUserId)?.email || ''}
+          onClose={() => setWhereUserId(null)}
+          onSaved={() => void load()}
+        />
+      ) : null}
+
       {drawerOpen ? (
-        <div className="fixed inset-0 z-50 flex justify-start">
+        <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
           <button
             type="button"
-            className="absolute inset-0 bg-black/60 cursor-pointer"
+            className="absolute inset-0 bg-black/75 cursor-pointer"
             aria-label="סגירה"
             onClick={() => setDrawerOpen(false)}
           />
-          <div className="relative w-full max-w-md h-full crm-desk-panel border-e border-white/10 p-6 overflow-y-auto shadow-2xl rounded-none">
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="new-user-title"
+            className="crm-desk-pop relative w-full max-w-2xl max-h-[min(90dvh,44rem)] overflow-y-auto crm-desk-panel border border-white/15 p-6 shadow-2xl"
+          >
             <div className="flex items-start justify-between gap-3 mb-6">
               <div>
-                <h2 className="text-lg font-light">משתמש חדש</h2>
+                <h2 id="new-user-title" className="text-lg font-light">משתמש חדש</h2>
                 <p className="text-sm text-white/45 mt-1">יצירת חשבון כניסה + הרשאות ראשוניות</p>
               </div>
               <button
@@ -525,51 +556,7 @@ export function UsersRolesPermissionsView({ initialSection = 'accounts' }: { ini
               </button>
             </div>
             <div className="grid gap-4">
-              <label className="block">
-                <span className="block text-xs text-white/45 mb-1">שם</span>
-                <input value={newName} onChange={(e) => setNewName(e.target.value)} className={fieldClass} />
-              </label>
-              <label className="block">
-                <span className="block text-xs text-white/45 mb-1">אימייל</span>
-                <input
-                  type="email"
-                  dir="ltr"
-                  value={newEmail}
-                  onChange={(e) => setNewEmail(e.target.value)}
-                  className={fieldClass}
-                />
-              </label>
-              <label className="block">
-                <span className="block text-xs text-white/45 mb-1">סיסמה (8+)</span>
-                <input
-                  type="password"
-                  dir="ltr"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className={fieldClass}
-                />
-              </label>
-              <label className="grid gap-1 text-white/50">
-                תפקיד
-                <select
-                  value={newRole}
-                  onChange={(e) => setNewRole(e.target.value as typeof newRole)}
-                  className={fieldClass}
-                >
-                  <option value="student">משתמש</option>
-                  <option value="instructor">מרצה</option>
-                  <option value="admin">אדמין</option>
-                </select>
-              </label>
-              <label className="flex items-center gap-2 text-sm text-white/70">
-                <input
-                  type="checkbox"
-                  checked={newIsFounder}
-                  onChange={(e) => setNewIsFounder(e.target.checked)}
-                  className="w-4 h-4 accent-[#b79043]"
-                />
-                שיוך לצוות המיזם
-              </label>
+              <UserProfileFields value={draft} onChange={setDraft} showPassword />
               <button
                 type="button"
                 disabled={creating}

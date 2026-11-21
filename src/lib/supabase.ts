@@ -1,5 +1,6 @@
 import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 import { apiUrl } from './apiBase';
+import { OAUTH_SUPABASE_ANON_KEY, OAUTH_SUPABASE_URL } from './oauthProject';
 import { SUPABASE_ANON_KEY, SUPABASE_PROJECT_URL } from './supabasePublic';
 import { setRuntimeAdminEmails } from '../data/adminEmails';
 
@@ -12,9 +13,12 @@ let runtimeUrl = '';
 let runtimeAnon = '';
 let configPromise: Promise<boolean> | null = null;
 let client: SupabaseClient | null = null;
+let oauthClient: SupabaseClient | null = null;
 let googleProviderEnabled = Boolean(buildUrl && buildAnon);
+let appleProviderEnabled = false;
 let emailProviderEnabled = Boolean(buildUrl && buildAnon);
 let phoneProviderEnabled = false;
+let providerFlagsConfirmed = false;
 
 function url() {
   return buildUrl || runtimeUrl;
@@ -32,6 +36,10 @@ export function isGoogleProviderEnabled() {
   return googleProviderEnabled;
 }
 
+export function isAppleProviderEnabled() {
+  return appleProviderEnabled;
+}
+
 export function isEmailProviderEnabled() {
   return emailProviderEnabled;
 }
@@ -41,30 +49,41 @@ export function isPhoneProviderEnabled() {
 }
 
 export async function refreshAuthProviderFlags() {
-  if (!isSupabaseAuthEnabled()) {
+  const base = (url() || OAUTH_SUPABASE_URL).replace(/\/$/, '');
+  const key = anon() || OAUTH_SUPABASE_ANON_KEY;
+  if (!base || !key) {
     googleProviderEnabled = false;
+    appleProviderEnabled = false;
     emailProviderEnabled = false;
     phoneProviderEnabled = false;
     return;
   }
   try {
-    const res = await fetch(`${url()}/auth/v1/settings`, {
+    const res = await fetch(`${base}/auth/v1/settings`, {
       headers: {
-        apikey: anon(),
-        Authorization: `Bearer ${anon()}`,
+        apikey: key,
+        Authorization: `Bearer ${key}`,
       },
     });
+    if (!res.ok) {
+      // A gateway error is not "Google is off". Leave a confirmed answer alone.
+      if (!providerFlagsConfirmed) googleProviderEnabled = true;
+      return;
+    }
     const data = (await res.json().catch(() => ({}))) as {
-      external?: { google?: boolean; email?: boolean; phone?: boolean };
+      external?: { google?: boolean; apple?: boolean; email?: boolean; phone?: boolean };
     };
-    googleProviderEnabled = data.external?.google !== false;
-    emailProviderEnabled = data.external?.email !== false;
-    phoneProviderEnabled = Boolean(data.external?.phone);
+    if (!data.external) {
+      if (!providerFlagsConfirmed) googleProviderEnabled = true;
+      return;
+    }
+    providerFlagsConfirmed = true;
+    googleProviderEnabled = data.external.google === true;
+    appleProviderEnabled = data.external.apple === true;
+    emailProviderEnabled = isSupabaseAuthEnabled() && data.external.email !== false;
+    phoneProviderEnabled = isSupabaseAuthEnabled() && Boolean(data.external.phone);
   } catch {
-    // Google is on in this project; keep the button if settings fail to load.
-    googleProviderEnabled = isSupabaseAuthEnabled();
-    emailProviderEnabled = isSupabaseAuthEnabled();
-    phoneProviderEnabled = false;
+    if (!providerFlagsConfirmed) googleProviderEnabled = true;
   }
 }
 
@@ -107,17 +126,27 @@ export async function loadSupabaseConfig() {
   return configPromise;
 }
 
+function authOptions() {
+  return {
+    auth: {
+      persistSession: true,
+      autoRefreshToken: true,
+      detectSessionInUrl: true,
+      flowType: 'pkce' as const,
+    },
+  };
+}
+
 export function getSupabase() {
   if (!isSupabaseAuthEnabled()) return null;
-  if (!client) {
-    client = createClient(url(), anon(), {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true,
-        flowType: 'pkce',
-      },
-    });
-  }
+  if (!client) client = createClient(url(), anon(), authOptions());
   return client;
+}
+
+/** Google and Apple use the publishable project even when email login stays local. */
+export function getOAuthSupabase() {
+  if (isSupabaseAuthEnabled()) return getSupabase();
+  if (!OAUTH_SUPABASE_URL || !OAUTH_SUPABASE_ANON_KEY) return null;
+  if (!oauthClient) oauthClient = createClient(OAUTH_SUPABASE_URL, OAUTH_SUPABASE_ANON_KEY, authOptions());
+  return oauthClient;
 }

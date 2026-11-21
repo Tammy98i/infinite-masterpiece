@@ -192,13 +192,34 @@ export const NAV_GROUPS: NavGroup[] = [
 
 export const NAV_ITEMS: NavItem[] = NAV_GROUPS.flatMap((group) => group.items);
 
+export function filterNavGroups(groups: NavGroup[], query: string): NavGroup[] {
+  const q = query.trim().toLowerCase();
+  if (!q) return groups;
+  return groups
+    .map((group) => ({
+      ...group,
+      items: group.items.filter(
+        (item) =>
+          item.label.toLowerCase().includes(q) ||
+          item.id.includes(q) ||
+          (item.why || '').toLowerCase().includes(q) ||
+          (item.keywords || '').toLowerCase().includes(q)
+      ),
+    }))
+    .filter((group) => group.items.length > 0);
+}
+
+export function isAdminTab(value: string | null): value is Tab {
+  return NAV_ITEMS.some((item) => item.id === value);
+}
+
 export const TAB_META: Record<
   Tab,
   { title: string; description: string; group: string }
 > = {
   overview: {
     title: 'לטיפול עכשיו',
-    description: 'ארבעה מדדים לחיצים. שאר המספרים באנליטיקות — לא נמחקו.',
+    description: 'ארבעה מדדים לחיצים. שאר המספרים באנליטיקות.',
     group: 'מבט על',
   },
   access: {

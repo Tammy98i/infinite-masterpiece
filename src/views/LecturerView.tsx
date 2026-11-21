@@ -18,6 +18,7 @@ import { CrmCatalogStage } from '../components/CrmCatalogStage';
 import { AsideVeils } from './admin/AsideVeils';
 import { DeskMonogram } from '../components/DeskMonogram';
 import { Bidi } from '../components/Bidi';
+import { DirBack } from '../components/DirArrow';
 
 const fieldClass =
   'w-full bg-[rgba(5,10,20,.55)] border border-white/10 rounded-xl p-3 text-sm text-white focus:border-[#b79043] focus:outline-none min-h-11';
@@ -191,10 +192,13 @@ function ApplicationPanel({
   };
 
   return (
-    <div className="crm-desk min-h-screen bg-transparent text-white pt-28 pb-24 px-4 sm:px-8 max-w-3xl mx-auto text-start">
-      <button type="button" onClick={onBack} className="text-sm text-white/45 hover:text-white mb-8 min-h-11 cursor-pointer">
-        חזרה לפרופיל
-      </button>
+    <div className="crm-desk min-h-screen bg-transparent text-white pb-24 px-4 sm:px-8 max-w-3xl mx-auto text-start">
+      <div className="library-back-bar px-0">
+        <button type="button" onClick={onBack} className="library-page-back inline-flex items-center gap-1.5 text-sm min-h-11 cursor-pointer">
+          <DirBack />
+          חזור
+        </button>
+      </div>
       <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-2">מרצים</p>
       <h1 className="text-3xl font-light mb-4">בקשה להיות מרצה</h1>
       <p className="text-sm text-white/45 font-light mb-8">
@@ -389,8 +393,8 @@ function LecturerDashboard({
 
   return (
     <div className="crm-desk min-h-screen bg-transparent text-white text-start" dir="rtl">
-      <div className="flex min-h-screen">
-        <aside className="crm-desk-aside hidden lg:flex w-64 shrink-0 flex-col border-e border-white/10 sticky top-0 h-screen overflow-y-auto">
+      <div className="crm-desk-frame flex min-h-screen lg:min-h-0">
+        <aside className="crm-desk-aside crm-desk-rail hidden lg:flex w-64 shrink-0 flex-col border-e border-white/10">
           <AsideVeils />
           <div className="p-5 border-b border-white/10">
             <p className="text-[11px] uppercase tracking-[0.28em] text-[#b79043] mb-2">מרצה</p>
@@ -407,7 +411,7 @@ function LecturerDashboard({
               <p className="text-[11px] text-white/35 mt-1">מרצה</p>
             )}
           </div>
-          <nav className="flex-1 p-3 grid gap-1 content-start">{navItems.map(navButton)}</nav>
+          <nav className="crm-desk-nav flex-1 min-h-0 p-3 grid gap-1 content-start overflow-y-auto">{navItems.map(navButton)}</nav>
           <div className="p-4 border-t border-white/10 grid gap-2">
             <div className="border border-[#b79043]/30 rounded-2xl p-4 text-center">
               <p className="text-xs text-white/45 mb-3">צריכים עזרה?</p>
@@ -428,7 +432,7 @@ function LecturerDashboard({
           </div>
         </aside>
 
-        <div className="flex-1 min-w-0">
+        <div className="crm-desk-pane flex-1 min-w-0 min-h-0">
           <header className="crm-desk-topbar sticky top-0 z-20 border-b border-white/10 bg-[#050505]/90 backdrop-blur-xl px-4 sm:px-6 py-4 flex items-center justify-between gap-3">
             <div className="flex items-center gap-3 min-w-0">
               <button

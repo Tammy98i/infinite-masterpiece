@@ -4,7 +4,7 @@ import { useApp } from '../context/AppContext';
 export const FoundersRow: React.FC = () => {
   const { instructors, courses, setView } = useApp();
   const founders = [...instructors]
-    .filter((inst) => inst.isFounder)
+    .filter((inst) => inst.isFounder && inst.showInLibrary !== false)
     .sort((a, b) => (a.sortOrder || 0) - (b.sortOrder || 0));
 
   if (founders.length === 0) return null;

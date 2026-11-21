@@ -1,6 +1,6 @@
 import { Fragment, useMemo, useState } from 'react';
 import { ChevronDown, Search } from 'lucide-react';
-import type { NavGroup, NavItem, Tab } from './adminNav';
+import { filterNavGroups, type NavGroup, type NavItem, type Tab } from './adminNav';
 import { Bidi } from '../../components/Bidi';
 import { AsideVeils } from './AsideVeils';
 
@@ -46,26 +46,11 @@ export function AdminSidebar({ groups, tab, onNavigate, userName, userEmail, onE
 
   const [openGroups, setOpenGroups] = useState<Record<string, boolean>>(() => {
     const initial: Record<string, boolean> = {};
-    for (const group of groups) initial[group.id] = group.id === activeGroupId;
+    for (const group of groups) initial[group.id] = true;
     return initial;
   });
 
-  const filteredGroups = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (!q) return groups;
-    return groups
-      .map((group) => ({
-        ...group,
-        items: group.items.filter(
-          (item) =>
-            item.label.toLowerCase().includes(q) ||
-            item.id.includes(q) ||
-            (item.why || '').toLowerCase().includes(q) ||
-            (item.keywords || '').toLowerCase().includes(q)
-        ),
-      }))
-      .filter((group) => group.items.length > 0);
-  }, [groups, query]);
+  const filteredGroups = useMemo(() => filterNavGroups(groups, query), [groups, query]);
 
   const toggleGroup = (id: string) => {
     setOpenGroups((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -90,9 +75,10 @@ export function AdminSidebar({ groups, tab, onNavigate, userName, userEmail, onE
           <span className="sr-only">חיפוש בתפריט</span>
           <Search className="absolute top-1/2 -translate-y-1/2 start-3 w-4 h-4 text-white/35 pointer-events-none" />
           <input
+            id="admin-nav-search"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="חיפוש..."
+            placeholder="חיפוש בתפריט"
             className="crm-desk-nav-search"
           />
         </label>
@@ -147,10 +133,22 @@ export function AdminMobileNav({
   tab: Tab;
   onNavigate: (id: Tab) => void;
 }) {
-  const items = groups.flatMap((g) => g.items);
+  const [query, setQuery] = useState('');
+  const items = filterNavGroups(groups, query).flatMap((group) => group.items);
   return (
     <div className="crm-desk-aside lg:hidden relative border-b border-white/10 p-3 max-h-[50vh] overflow-y-auto">
       <AsideVeils />
+      <label className="relative mb-3 block">
+        <span className="sr-only">חיפוש בתפריט</span>
+        <Search className="absolute top-1/2 -translate-y-1/2 start-3 w-4 h-4 text-white/35 pointer-events-none" />
+        <input
+          id="admin-nav-search-mobile"
+          value={query}
+          onChange={(event) => setQuery(event.target.value)}
+          placeholder="חיפוש בתפריט"
+          className="crm-desk-nav-search"
+        />
+      </label>
       <nav className="crm-desk-nav">
         {items.map((item) => (
           <Fragment key={item.id}>
