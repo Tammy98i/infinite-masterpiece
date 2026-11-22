@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { ReactElement } from 'react';
 import { Fragment } from 'react';
 import { Link } from 'react-router-dom';
-import { featuredFounders, rosterFounders, type Founder } from '../data/founders';
+import { featuredFounders, instructorToFounder, rosterFounders, type Founder } from '../data/founders';
 import { CATEGORIES } from '../../data/categories';
 import { catalogApi } from '../../api/catalog';
 import { teamMembersApi } from '../../api/teamMembers';
@@ -99,6 +99,7 @@ export function FounderRoster() {
   const [counts, setCounts] = useState<Record<string, number>>({});
   const [photos, setPhotos] = useState<Record<string, string>>({});
   const [copied, setCopied] = useState<Founder[]>([]);
+  const [extras, setExtras] = useState<Founder[]>([]);
   const [suppressed, setSuppressed] = useState<string[]>([]);
 
   useEffect(() => {
@@ -109,14 +110,18 @@ export function FounderRoster() {
         if (cancelled) return;
         const next: Record<string, number> = {};
         const nextPhotos: Record<string, string> = {};
+        const known = new Set(featuredFounders.concat(rosterFounders).map((item) => item.id));
+        const extraFounders: Founder[] = [];
         for (const inst of instructors) {
           if (!inst.isFounder) continue;
           const key = inst.founderId || inst.id;
           next[key] = courses.filter((c) => c.instructorId === inst.id).length;
           if (inst.avatarUrl) nextPhotos[key] = inst.avatarUrl;
+          if (!known.has(key)) extraFounders.push(instructorToFounder(inst));
         }
         setCounts(next);
         setPhotos(nextPhotos);
+        setExtras(extraFounders);
       })
       .catch(() => undefined);
     teamMembersApi
@@ -150,7 +155,7 @@ export function FounderRoster() {
   const hidden = (name: string) => suppressed.some((item) => samePerson(item, name));
   const leaders = featuredFounders.filter((founder) => !hidden(founder.name));
   const seen = leaders.map((founder) => founder.name);
-  const teammates = [...rosterFounders, ...copied].filter((founder) => {
+  const teammates = [...rosterFounders, ...copied, ...extras].filter((founder) => {
     if (hidden(founder.name) || seen.some((name) => samePerson(name, founder.name))) return false;
     seen.push(founder.name);
     return true;

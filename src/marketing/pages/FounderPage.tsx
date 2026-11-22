@@ -1,40 +1,75 @@
 import { useEffect, useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import { DirBack } from '../../components/DirArrow';
-import { getFounderById, instructorToFounder } from '../data/founders';
+import { getFounderById, instructorToFounder, type Founder } from '../data/founders';
 import { CATEGORIES } from '../../data/categories';
 import { catalogApi } from '../../api/catalog';
+import { teamMembersApi } from '../../api/teamMembers';
 import type { Course, Instructor } from '../../types';
+
+function personKey(value: string) {
+  return value.trim().replace(/[׳'\"״`´]/g, '').replace(/\s+/g, ' ').toLowerCase();
+}
 
 export function FounderPage() {
   const { founderId } = useParams();
   const staticFounder = founderId ? getFounderById(founderId) : undefined;
   const [courses, setCourses] = useState<Course[]>([]);
   const [instructor, setInstructor] = useState<Instructor | null>(null);
+  const [memberFounder, setMemberFounder] = useState<Founder | undefined>();
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
     if (!founderId) return;
     let cancelled = false;
-    catalogApi
-      .founder(founderId)
-      .then((res) => {
-        if (cancelled) return;
-        setCourses(res.courses);
-        setInstructor(res.instructor);
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setCourses([]);
-        setInstructor(null);
-      })
-      .finally(() => {
-        if (!cancelled) setLoaded(true);
-      });
+    setLoaded(false);
+    setMemberFounder(undefined);
+    setInstructor(null);
+    setCourses([]);
+
+    const catalogPromise = catalogApi.founder(founderId).catch(() => ({ instructor: null, courses: [] as Course[] }));
+    const memberPromise = staticFounder
+      ? Promise.resolve(undefined)
+      : teamMembersApi.list().then(({ members }) => members.find((member) => member.id === founderId)).catch(() => undefined);
+
+    Promise.all([catalogPromise, memberPromise]).then(async ([catalog, member]) => {
+      if (cancelled) return;
+      let nextCourses = catalog.courses;
+      let nextInstructor = catalog.instructor;
+      if (member) {
+        const bio = [member.bio, member.vision, member.contribution].filter(Boolean).join('\n\n');
+        setMemberFounder({
+          id: member.id,
+          name: member.name,
+          title: member.role,
+          blurb: member.bio.split(/\n\n+/)[0] || member.role,
+          description: bio || member.role,
+          image: member.photo,
+          expertise: member.expertise,
+          leadCategoryIds: [],
+          portfolio: [],
+        });
+        if (nextCourses.length === 0) {
+          const all = await catalogApi.get().catch(() => null);
+          const match = all?.instructors.find((item) => personKey(item.name) === personKey(member.name));
+          if (match) {
+            nextInstructor = nextInstructor || match;
+            nextCourses = (all?.courses || []).filter((course) => course.instructorId === match.id);
+          }
+        }
+      }
+      if (cancelled) return;
+      setCourses(nextCourses);
+      setInstructor(nextInstructor);
+      setLoaded(true);
+    }).catch(() => {
+      if (!cancelled) setLoaded(true);
+    });
+
     return () => {
       cancelled = true;
     };
-  }, [founderId]);
+  }, [founderId, staticFounder]);
 
   useEffect(() => {
     if (!loaded) return;
@@ -43,9 +78,9 @@ export function FounderPage() {
     }
   }, [loaded]);
 
-  const founder = staticFounder || (instructor ? instructorToFounder(instructor) : undefined);
+  const founder = staticFounder || memberFounder || (instructor ? instructorToFounder(instructor) : undefined);
 
-  if (!staticFounder && !loaded) {
+  if (!founder && !loaded) {
     return <div className="min-h-screen" />;
   }
 
@@ -72,6 +107,9 @@ export function FounderPage() {
               <h1 className="text-4xl md:text-5xl font-heading text-white tracking-tight mb-4">
                 {founder.name}
               </h1>
+              {founder.role ? (
+                <p className="text-[#dfc47d] text-sm tracking-[0.22em] font-semibold mb-2">{founder.role}</p>
+              ) : null}
               <p className="text-[#b79043] text-sm tracking-widest mb-8 font-medium">
                 {founder.title}
               </p>
@@ -138,11 +176,13 @@ export function FounderPage() {
             </div>
 
             <div className="lg:col-span-6">
-              <img
-                src={instructor?.avatarUrl || founder.image}
-                alt={founder.name}
-                className="w-full aspect-[4/5] max-h-[640px] object-cover"
-              />
+              {(instructor?.avatarUrl || founder.image) ? (
+                <img
+                  src={instructor?.avatarUrl || founder.image}
+                  alt={founder.name}
+                  className="w-full aspect-[4/5] max-h-[640px] object-cover"
+                />
+              ) : null}
             </div>
           </div>
         </div>
