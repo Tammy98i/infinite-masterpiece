@@ -3,6 +3,14 @@
   background: transparent;
 }
 
+.site-backdrop-layout.is-library:has(.team-profile) .editorial-sky-blackout {
+  background: rgba(6, 10, 18, .08);
+}
+
+.site-backdrop-layout.is-library:has(.team-profile) .editorial-sky-shade {
+  background: linear-gradient(180deg, rgba(6, 10, 18, .22) 0%, rgba(6, 10, 18, .02) 46%, rgba(6, 10, 18, .14) 100%);
+}
+
 .team-profile {
   position: relative;
   min-height: 100%;
@@ -29,7 +37,7 @@
 .team-profile-hero {
   display: grid;
   grid-template-columns: 220px minmax(0, 1fr);
-  gap: 2.5rem 3rem;
+  gap: 1.25rem 2rem;
   align-items: center;
   text-align: start;
 }
@@ -66,7 +74,7 @@
 }
 
 .team-profile-role {
-  margin: .7rem 0 0;
+  margin: .3rem 0 0;
   color: #dfc47d;
   font-size: .95rem;
   font-weight: 650;
@@ -80,7 +88,7 @@
 }
 
 .team-profile-copy {
-  margin-top: 1.25rem;
+  margin-top: .8rem;
   max-width: 62ch;
 }
 
@@ -140,7 +148,7 @@
   padding: 1rem 1.15rem;
   border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, .14);
-  background: rgba(6, 12, 24, .28);
+  background: rgba(6, 12, 24, .16);
 }
 
 .team-profile-lecture h3,

@@ -54,7 +54,7 @@
 }
 
 .library-catalog :is(.library-flow-page, .library-catalog-page) .library-hero-veil-bottom {
-  background: linear-gradient(180deg, rgba(5, 12, 27, .12) 25%, rgba(5, 12, 27, .38) 65%, #050c1b 100%);
+  background: linear-gradient(180deg, transparent 40%, transparent 100%);
 }
 
 .library-catalog :is(.library-flow-page, .library-catalog-page) .library-hero-play,

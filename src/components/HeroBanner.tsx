@@ -40,6 +40,8 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
         ? 'צפו בטעימה'
         : 'פתיחת גישה';
 
+  const art = course.backdropImage || course.coverImage;
+  const studioPortrait = /\/team\//.test(art);
   const continuePct = continueWatching
     ? Math.min(
         100,
@@ -62,12 +64,12 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
 
   return (
     <section
-      className="library-hero relative w-full min-h-[78vh] md:h-[88vh] flex items-end overflow-hidden pt-24 pb-40 md:pb-52"
+      className="library-hero relative w-full flex items-end pt-24 pb-28 md:pb-36"
       aria-label={continueWatching ? `המשך צפייה: ${course.title}` : `מומלץ: ${course.title}`}
     >
-      <div className="absolute inset-0 select-none overflow-hidden">
+      <div className="library-hero-stage absolute inset-0 select-none">
         <img
-          {...responsiveImageAttrs(course.backdropImage || course.coverImage, {
+          {...responsiveImageAttrs(art, {
             widths: [768, 1200, 1600, 2000],
             sizes: '100vw',
             defaultWidth: 1600,
@@ -76,11 +78,10 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           aria-hidden
           fetchPriority="high"
           decoding="async"
-          className="w-full h-full object-cover object-center scale-105"
+          className={`library-hero-art w-full h-full object-cover object-center${studioPortrait ? ' is-studio' : ''}`}
         />
         <div className="library-hero-veil-bottom absolute inset-0" />
         <div className="library-hero-veil-side absolute inset-0 w-full md:w-[70%] ms-auto" />
-        <div className="absolute inset-0 bg-black/15" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-8 w-full z-10 text-start md:max-w-2xl md:ms-0 md:me-auto">
