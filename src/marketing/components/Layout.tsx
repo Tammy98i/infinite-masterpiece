@@ -9,7 +9,7 @@ import { ConversionBand } from './ConversionBand';
 export function SiteBackdropLayout() {
   const { pathname } = useLocation();
   const isHome = pathname === '/';
-  const isLibrary = pathname.startsWith('/library');
+  const isLibrary = pathname.startsWith('/library') || pathname.startsWith('/premium-88/');
   const shell = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
