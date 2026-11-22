@@ -64,7 +64,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
 
   return (
     <section
-      className="library-hero relative w-full flex items-end pt-24 pb-28 md:pb-36"
+      className="library-hero relative w-full flex items-end pt-[calc(var(--site-header-h,80px)+1rem)] pb-28 md:pb-36"
       aria-label={continueWatching ? `המשך צפייה: ${course.title}` : `מומלץ: ${course.title}`}
     >
       <div className="library-hero-stage absolute inset-0 select-none">

@@ -136,7 +136,7 @@
   .vod-app.library-catalog .editorial-library-bottom-nav button { flex: 1; }
   .vod-app.library-catalog .editorial-library-bottom-nav button span { font-size: .75rem; }
   .vod-app.library-catalog .editorial-library-footer { padding-bottom: calc(6rem + env(safe-area-inset-bottom)); }
-  .vod-app.library-catalog .library-flow-page .library-hero { min-height: 0; padding-block: calc(var(--site-header-h, 72px) + 2rem) 4rem; }
+  .vod-app.library-catalog .library-flow-page .library-hero { min-height: 0; padding-block: calc(var(--site-header-h, 72px) + 240px) 4rem; }
   .vod-app.library-catalog .header-search:has(input) { max-width: none; }
   .vod-app.library-catalog .editorial-library-header .header-actions:has(input[type="search"]) span.text-xs {
     position: absolute;

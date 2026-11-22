@@ -39,6 +39,11 @@
   height: auto;
   overflow: visible;
   background: transparent;
+  padding-top: calc(var(--site-header-h, 80px) + 1rem);
+}
+
+.vod-app.library-catalog .library-flow-page .library-hero-stage {
+  top: var(--site-header-h, 80px);
 }
 
 .vod-app.library-catalog .library-flow-page .library-hero-art {
@@ -150,11 +155,21 @@
 @media (max-width: 767px) {
   .library-hero::after { height: 28%; }
   .library-island::before { inset-inline: 8%; }
+  .vod-app.library-catalog .library-flow-page .library-hero {
+    padding-top: calc(var(--site-header-h, 72px) + 210px);
+  }
+
   .vod-app.library-catalog .library-flow-page .library-hero-art.is-studio {
-    inset-inline: 12%;
-    width: auto;
-    height: 58%;
-    top: 14%;
+    top: .75rem;
+    inset-inline: 0;
+    width: 168px;
+    height: 188px;
+    margin-inline: auto;
+    object-position: center 12%;
+  }
+
+  .vod-app.library-catalog .library-flow-page .library-hero-veil-side {
+    background: linear-gradient(to top, rgba(5, 12, 27, .45), transparent 62%);
   }
   .vod-app.library-catalog .library-flow-page .library-home-follow {
     margin-top: -3rem;
