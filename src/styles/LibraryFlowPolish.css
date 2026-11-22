@@ -73,6 +73,10 @@
   margin-top: -7rem;
 }
 
+.vod-app.library-catalog .library-flow-page .library-home-follow:has(.library-plan-banner) {
+  margin-top: 0;
+}
+
 .library-island {
   position: relative;
   opacity: 0;
@@ -154,6 +158,10 @@
   }
   .vod-app.library-catalog .library-flow-page .library-home-follow {
     margin-top: -3rem;
+  }
+
+  .vod-app.library-catalog .library-flow-page .library-home-follow:has(.library-plan-banner) {
+    margin-top: 0;
   }
 }
 
