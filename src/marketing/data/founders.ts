@@ -6,6 +6,7 @@ export interface FounderPortfolioItem {
 export interface Founder {
   id: string;
   name: string;
+  role?: string;
   title: string;
   blurb: string;
   description: string;
@@ -20,6 +21,7 @@ export const FOUNDERS: Founder[] = [
   {
     id: 'gal',
     name: 'גל אברמוביץ׳',
+    role: 'CEO',
     title: 'חזון ומבנה עסקי',
     blurb: 'מוביל את החזון, השפה והמבנה העסקי של Infinite Masterpiece.',
     description:
@@ -42,6 +44,7 @@ export const FOUNDERS: Founder[] = [
   {
     id: 'tami',
     name: 'תמי אליאן',
+    role: 'CTO',
     title: 'מוצר וטכנולוגיה',
     blurb: 'מובילה את המוצר, הטכנולוגיה וה־UX. הופכת חזון למערכת שעובדת.',
     description:
@@ -58,6 +61,25 @@ export const FOUNDERS: Founder[] = [
       {
         title: 'האתר והמערכת',
         summary: 'מדידה, CRM ואוטומציה שמחזיקים את התנועה.',
+      },
+    ],
+  },
+  {
+    id: 'gleb',
+    name: 'גלב סמירנוב',
+    role: 'CCO',
+    title: 'קריאייטיב ותוכן',
+    blurb: 'מוביל את שכבת הקריאייטיב, השפה הוויזואלית, התוכן והמותג.',
+    description:
+      'יוצר חזותי עם מעל 13 שנות ניסיון בצילום סטילס, וידאו ותוכן.\n\nמוביל את שכבת הקריאייטיב, השפה הוויזואלית, התוכן והמותג, ומספר את הסיפור בשפה מדויקת שמוכרת.',
+    image: '/team/gleb.jpg',
+    featured: true,
+    expertise: ['קריאייטיב', 'תוכן', 'צילום', 'מותג'],
+    leadCategoryIds: ['cat-story', 'cat-marketing', 'cat-founders'],
+    portfolio: [
+      {
+        title: 'שפה ויזואלית',
+        summary: 'צילום, וידאו ותוכן שמספרים את המותג.',
       },
     ],
   },

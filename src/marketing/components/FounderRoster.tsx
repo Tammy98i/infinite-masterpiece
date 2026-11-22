@@ -39,6 +39,11 @@ function FounderCell({
           className={`${photo} rounded-full object-cover mx-auto mb-4`}
         />
         <h2 className="text-base md:text-lg font-medium text-white mb-1">{founder.name}</h2>
+        {founder.role ? (
+          <p className="text-[#dfc47d] text-xs md:text-sm tracking-[0.22em] font-semibold mb-1">
+            {founder.role}
+          </p>
+        ) : null}
         <p className="text-[#b79043] text-[11px] md:text-xs tracking-widest mb-2 font-medium">
           {founder.title}
         </p>
@@ -155,7 +160,7 @@ export function FounderRoster() {
   return (
     <>
       {featuredFounders.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 md:gap-16 mb-20 md:mb-28">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16 mb-20 md:mb-28">
           {byOrder(featuredFounders).map((founder) => (
             <Fragment key={founder.id}>
               <FounderCell
