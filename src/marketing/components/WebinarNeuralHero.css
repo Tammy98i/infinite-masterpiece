@@ -25,6 +25,23 @@
   background: #02060f;
   color: var(--ink);
 }
+.webinar-neural-bows {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+.webinar-neural-bow {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+}
+/* The source leaves a dark slit between the gold arc and the blue arc.
+   Each half slides toward that slit until the tips meet. */
+.webinar-neural-bow.is-upper { clip-path: inset(0 0 40% 0); }
+.webinar-neural-bow.is-lower { clip-path: inset(40% 0 0 0); }
+.webinar-neural-bow.is-upper .webinar-neural-art { transform: translateY(5.2%); }
+.webinar-neural-bow.is-lower .webinar-neural-art { transform: translateY(-5.2%); }
 .webinar-neural-art {
   position: absolute;
   inset: 0;
