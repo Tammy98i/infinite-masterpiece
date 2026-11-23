@@ -161,9 +161,18 @@
 
 @keyframes tabbed-panel-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
+@media (max-width: 1180px) {
+  .tabbed-number-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tabbed-number-grid article:last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+    width: 50%;
+    justify-self: center;
+    border: 1px solid rgba(183, 144, 67, .22);
+  }
+}
+
 @media (max-width: 900px) {
   .tabbed-tabs { justify-content: stretch; }
-  .tabbed-number-grid { grid-template-columns: repeat(2, 1fr); }
   .tabbed-number-grid article { border-bottom: 1px solid rgba(183, 144, 67, .22); }
   .tabbed-team-grid { grid-template-columns: repeat(2, 1fr); }
   .tabbed-platform-grid { grid-template-columns: repeat(2, 1fr); }
