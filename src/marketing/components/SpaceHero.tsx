@@ -121,7 +121,7 @@ export function SpaceHero() {
   }, [featured, loaded]);
 
   return (
-    <section ref={rootRef} className={`space-hero${current.id === 'sun' ? ' is-sun-view' : ''}`} aria-labelledby="space-hero-title" dir="ltr">
+    <section ref={rootRef} className="space-hero" aria-labelledby="space-hero-title" dir="ltr">
       <div className="space-sky" style={current.video ? { backgroundImage: `url(${current.poster})` } : undefined}>
         {current.stars ? <div className="space-stars" style={{ backgroundImage: `url(${current.stars})` }} /> : null}
         {current.id === 'moon' ? (
