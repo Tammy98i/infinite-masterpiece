@@ -94,8 +94,8 @@
   margin: 3.2rem auto 2rem;
 }
 
-.tabbed-number-grid article { position: relative; min-height: 210px; padding: 2.3rem 1rem 1.5rem; border-inline-start: 1px solid rgba(183, 144, 67, .22); background: rgba(224, 237, 255, .025); }
-.tabbed-number-grid article:last-child { border-inline-start: 0; }
+.tabbed-number-grid article { position: relative; min-height: 210px; padding: 2.3rem 1rem 1.5rem; border: 1px solid rgba(183, 144, 67, .55); background: rgba(224, 237, 255, .025); }
+.tabbed-number-grid article:last-child { border: 1px solid rgba(183, 144, 67, .55); }
 .tabbed-number { position: absolute; inset: .8rem .8rem auto auto; color: #b79043; font: 700 2.4rem/1 var(--font-heading); opacity: .72; }
 .tabbed-number-grid svg { width: 30px; height: 30px; margin: 1.8rem auto 1rem; color: #b79043; stroke-width: 1.35; }
 .tabbed-number-grid h3,
@@ -162,12 +162,15 @@
 
 @media (max-width: 1180px) {
   .tabbed-number-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
-  .tabbed-number-grid article { border: 1px solid rgba(183, 144, 67, .22); }
+  .tabbed-number-grid article,
+  .tabbed-number-grid article:last-child,
+  .tabbed-number-grid article:last-child:nth-child(odd) {
+    border: 1px solid rgba(183, 144, 67, .55);
+  }
   .tabbed-number-grid article:last-child:nth-child(odd) {
     grid-column: 1 / -1;
     width: calc((100% - 16px) / 2);
     justify-self: center;
-    border: 1px solid rgba(183, 144, 67, .22);
   }
 }
 
