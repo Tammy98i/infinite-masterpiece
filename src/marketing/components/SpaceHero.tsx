@@ -43,14 +43,14 @@ const PLANETS: Planet[] = [
     name: 'MOON',
     poster: '/hero/moon-poster.jpg',
     cutout: '/hero/moon-cutout.png',
-    stars: '/hero/moon-stars.jpg',
+    stars: 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202133_508c64b8-a31e-4290-bdfc-1187df70e0a6.png',
   },
   {
     id: 'sun',
     name: 'SUN',
     poster: '/hero/sun-poster.jpg',
     cutout: '/hero/sun-cutout.png',
-    stars: '/hero/sun-stars.jpg',
+    stars: 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202133_508c64b8-a31e-4290-bdfc-1187df70e0a6.png',
   },
 ];
 
@@ -146,7 +146,7 @@ export function SpaceHero() {
         ) : null)}
       </div>
       {current.id === 'sun' ? (
-        <div className="space-sun">
+        <div className="space-orb is-sun">
           <img src="/hero/sun-cutout.png" alt="" />
         </div>
       ) : null}
