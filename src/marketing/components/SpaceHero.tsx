@@ -13,6 +13,7 @@ type Planet = {
   video?: string;
   poster: string;
   cutout: string;
+  stars?: string;
 };
 
 const PLANETS: Planet[] = [
@@ -42,12 +43,14 @@ const PLANETS: Planet[] = [
     name: 'MOON',
     poster: '/hero/moon-poster.jpg',
     cutout: '/hero/moon-cutout.png',
+    stars: '/hero/moon-stars.jpg',
   },
   {
     id: 'sun',
     name: 'SUN',
     poster: '/hero/sun-poster.jpg',
     cutout: '/hero/sun-cutout.png',
+    stars: '/hero/sun-stars.jpg',
   },
 ];
 
@@ -119,7 +122,16 @@ export function SpaceHero() {
 
   return (
     <section ref={rootRef} className="space-hero" aria-labelledby="space-hero-title" dir="ltr">
-      <div className={`space-sky${current.video ? '' : ' is-plate'}`} style={{ backgroundImage: `url(${current.poster})` }}>
+      <div className="space-sky" style={current.video ? { backgroundImage: `url(${current.poster})` } : undefined}>
+        {current.id === 'moon' ? (
+          <>
+            <div className="space-stars" style={{ backgroundImage: `url(${current.stars})` }} />
+            <div className="space-orb">
+              <img src={current.cutout} alt="" />
+            </div>
+          </>
+        ) : null}
+        {current.id === 'sun' ? <div className="space-sun-plate" style={{ backgroundImage: `url(${current.poster})` }} /> : null}
         {PLANETS.map((planet) => planet.video ? (
           <video
             key={planet.id}

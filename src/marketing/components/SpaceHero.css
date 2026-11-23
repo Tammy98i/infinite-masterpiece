@@ -41,8 +41,13 @@
 .space-sky::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(5, 10, 20, .64), rgba(5, 10, 20, .58) 54%, rgba(5, 10, 20, .78)); pointer-events: none; }
 .space-sky video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; opacity: 0; transition: opacity .22s linear; }
 .space-sky video.is-active { opacity: 1; }
-.space-sky.is-plate { background-size: 112%; animation: space-plate 32s ease-in-out infinite alternate; }
-@keyframes space-plate { from { background-position: 46% 62%; } to { background-position: 54% 42%; } }
+.space-stars { position: absolute; inset: -16%; background-size: cover; background-position: center; background-repeat: no-repeat; animation: space-stars 14s ease-in-out infinite alternate; pointer-events: none; }
+.space-orb { position: absolute; z-index: 1; left: 50%; width: 240vw; height: 240vw; bottom: calc(46vh - 240vw); margin-left: -120vw; border-radius: 50%; overflow: hidden; pointer-events: none; }
+.space-orb img { width: 100%; height: 100%; object-fit: cover; animation: space-orb-spin 26s linear infinite; }
+.space-sun-plate { position: absolute; inset: -18%; background-size: cover; background-position: center 78%; background-repeat: no-repeat; animation: space-stars 12s ease-in-out infinite alternate; pointer-events: none; }
+.space-planet img[data-planet="sun"].is-shown { transform: scale(1.14); transform-origin: center; }
+@keyframes space-stars { from { transform: translate3d(-5%, -3%, 0); } to { transform: translate3d(5%, 4%, 0); } }
+@keyframes space-orb-spin { to { transform: rotate(360deg); } }
 .space-ui { position: absolute; inset: 0; z-index: 3; }
 .space-copy { position: absolute; inset: 0; transform: translateY(var(--vshift)); pointer-events: none; }
 .space-copy a, .space-planet { pointer-events: auto; }
@@ -146,7 +151,8 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .space-sky video { display: none; }
-  .space-sky.is-plate { animation: none; background-size: cover; background-position: center; }
+  .space-stars, .space-orb img, .space-sun-plate { animation: none; }
+  .space-stars, .space-sun-plate { inset: 0; }
   .space-planet { transition: none; }
   .space-planet:hover, .space-planet:active { transform: none; }
 }
