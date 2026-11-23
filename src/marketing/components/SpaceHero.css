@@ -44,7 +44,8 @@
 .space-stars { position: absolute; inset: -10%; background-size: cover; background-position: center; background-repeat: no-repeat; animation: space-stars 26s ease-in-out infinite alternate; pointer-events: none; }
 .space-orb { position: absolute; z-index: 1; left: 50%; top: 56%; width: 220vw; height: 220vw; margin-left: -110vw; border-radius: 50%; overflow: hidden; pointer-events: none; }
 .space-orb img { position: absolute; top: 0; left: 0; width: 128%; height: 100%; max-width: none; object-fit: cover; animation: space-surface 16s ease-in-out infinite alternate; }
-.space-sun { position: absolute; z-index: 1; left: 50%; top: calc(56vh - 15.3vw); width: 180vw; transform: translateX(-50%); pointer-events: none; }
+.space-sun { position: absolute; z-index: 1; left: 50%; top: calc(56vh - 21.8vw); width: 180vw; transform: translateX(-50%); pointer-events: none; }
+.space-planet img[data-planet="sun"].is-shown { transform: scale(1.2); transform-origin: center; }
 .space-sun img { display: block; width: 100%; height: auto; }
 @keyframes space-stars { from { transform: translate3d(-2.5%, -1.2%, 0); } to { transform: translate3d(2.5%, 1.6%, 0); } }
 @keyframes space-surface { from { transform: translateX(0); } to { transform: translateX(-21.5%); } }
