@@ -44,8 +44,8 @@
   bottom: 12px;
 }
 
-/* Center every selected profile in the same reserved space. The card grows
-   with its summary; the full profile stays on the member page. */
+/* Center every selected profile in the same reserved space. The card may
+   grow a little with the summary; anything longer stays on the member page. */
 .webinar-flow-page #team-universe .galaxy-star-anchor.is-selected {
   top: 22% !important;
 }
@@ -54,6 +54,11 @@
   max-height: none;
   overflow: visible;
   pointer-events: auto;
+}
+
+.webinar-flow-page #team-universe .galaxy-inline-bio {
+  max-height: 7.75rem;
+  overflow: hidden;
 }
 
 .webinar-flow-page #team-universe .galaxy-map.has-selection .galaxy-manifesto {
