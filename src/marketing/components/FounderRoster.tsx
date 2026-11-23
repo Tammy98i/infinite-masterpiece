@@ -5,6 +5,27 @@ import { Link } from 'react-router-dom';
 import { featuredFounders, instructorToFounder, rosterFounders, type Founder } from '../data/founders';
 import { CATEGORIES } from '../../data/categories';
 import { catalogApi } from '../../api/catalog';
+import { teamMembersApi } from '../../api/teamMembers';
+
+function personKey(value: string) {
+  return value.trim().replace(/[׳'\"״`´]/g, '').replace(/\s+/g, ' ').toLowerCase();
+}
+
+function samePerson(a: string, b: string) {
+  const left = personKey(a).split(' ').filter(Boolean);
+  const right = personKey(b).split(' ').filter(Boolean);
+  if (left.join(' ') === right.join(' ')) return true;
+  const fold = (token: string) => token.replace(/י/g, '');
+  if (left.map(fold).join(' ') === right.map(fold).join(' ')) return true;
+  const lastLeft = fold(left[left.length - 1] || '');
+  const lastRight = fold(right[right.length - 1] || '');
+  return Boolean(
+    left[0] && left[0] === right[0]
+    && lastLeft.length >= 4
+    && lastRight.length >= 4
+    && (lastLeft.startsWith(lastRight) || lastRight.startsWith(lastLeft))
+  );
+}
 
 function FounderCell({
   founder,
@@ -34,6 +55,11 @@ function FounderCell({
           className={`${photo} rounded-full object-cover mx-auto mb-4`}
         />
         <h2 className="text-base md:text-lg font-medium text-white mb-1">{founder.name}</h2>
+        {founder.role ? (
+          <p className="text-[#dfc47d] text-xs md:text-sm tracking-[0.22em] font-semibold mb-1">
+            {founder.role}
+          </p>
+        ) : null}
         <p className="text-[#b79043] text-[11px] md:text-xs tracking-widest mb-2 font-medium">
           {founder.title}
         </p>
@@ -71,9 +97,10 @@ function FounderCell({
 
 export function FounderRoster() {
   const [counts, setCounts] = useState<Record<string, number>>({});
-  const [sortOrder, setSortOrder] = useState<Record<string, number>>({});
   const [photos, setPhotos] = useState<Record<string, string>>({});
+  const [copied, setCopied] = useState<Founder[]>([]);
   const [extras, setExtras] = useState<Founder[]>([]);
+  const [suppressed, setSuppressed] = useState<string[]>([]);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,7 +109,6 @@ export function FounderRoster() {
       .then(({ courses, instructors }) => {
         if (cancelled) return;
         const next: Record<string, number> = {};
-        const order: Record<string, number> = {};
         const nextPhotos: Record<string, string> = {};
         const known = new Set(featuredFounders.concat(rosterFounders).map((item) => item.id));
         const extraFounders: Founder[] = [];
@@ -90,14 +116,35 @@ export function FounderRoster() {
           if (!inst.isFounder) continue;
           const key = inst.founderId || inst.id;
           next[key] = courses.filter((c) => c.instructorId === inst.id).length;
-          order[key] = inst.sortOrder ?? 0;
           if (inst.avatarUrl) nextPhotos[key] = inst.avatarUrl;
           if (!known.has(key)) extraFounders.push(instructorToFounder(inst));
         }
         setCounts(next);
-        setSortOrder(order);
         setPhotos(nextPhotos);
         setExtras(extraFounders);
+      })
+      .catch(() => undefined);
+    teamMembersApi
+      .list('site')
+      .then(({ members, suppressedNames }) => {
+        if (cancelled) return;
+        setSuppressed(suppressedNames || []);
+        const known = featuredFounders.concat(rosterFounders);
+        setCopied(
+          members
+            .filter((member) => !known.some((founder) => samePerson(founder.name, member.name)))
+            .map((member) => ({
+              id: member.id,
+              name: member.name,
+              title: member.role,
+              blurb: member.bio.split(/\n\n+/)[0] || member.role,
+              description: member.bio,
+              image: member.photo,
+              expertise: member.expertise,
+              leadCategoryIds: [],
+              portfolio: [],
+            }))
+        );
       })
       .catch(() => undefined);
     return () => {
@@ -105,40 +152,28 @@ export function FounderRoster() {
     };
   }, []);
 
-  const byOrder = (list: Founder[]) =>
-    [...list].sort((a, b) => (sortOrder[a.id] ?? 99) - (sortOrder[b.id] ?? 99));
+  const hidden = (name: string) => suppressed.some((item) => samePerson(item, name));
+  const leaders = featuredFounders.filter((founder) => !hidden(founder.name));
+  const seen = leaders.map((founder) => founder.name);
+  const teammates = [...rosterFounders, ...copied, ...extras].filter((founder) => {
+    if (hidden(founder.name) || seen.some((name) => samePerson(name, founder.name))) return false;
+    seen.push(founder.name);
+    return true;
+  });
+  const team = [...leaders, ...teammates];
 
   return (
-    <>
-      {featuredFounders.length > 0 && (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-12 md:gap-16 mb-20 md:mb-28">
-          {byOrder(featuredFounders).map((founder) => (
-            <Fragment key={founder.id}>
-              <FounderCell
-                founder={founder}
-                size="featured"
-                lectureCount={counts[founder.id] || 0}
-                photoUrl={photos[founder.id]}
-              />
-            </Fragment>
-          ))}
-        </div>
-      )}
-
-      {(rosterFounders.length > 0 || extras.length > 0) && (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-12 md:gap-x-10 md:gap-y-16">
-          {byOrder([...rosterFounders, ...extras]).map((founder) => (
-            <Fragment key={founder.id}>
-              <FounderCell
-                founder={founder}
-                size="roster"
-                lectureCount={counts[founder.id] || 0}
-                photoUrl={photos[founder.id]}
-              />
-            </Fragment>
-          ))}
-        </div>
-      )}
-    </>
+    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-12 md:gap-16">
+      {team.map((founder) => (
+        <Fragment key={founder.id}>
+          <FounderCell
+            founder={founder}
+            size="featured"
+            lectureCount={counts[founder.id] || 0}
+            photoUrl={photos[founder.id]}
+          />
+        </Fragment>
+      ))}
+    </div>
   );
 }

@@ -4,6 +4,7 @@ import { useApp } from './context/AppContext';
 import { Navbar } from './components/Navbar';
 import { OnboardingUI } from './components/onboarding/OnboardingUI';
 import { OnboardingTriggers } from './components/onboarding/OnboardingTriggers';
+import { WelcomeModal } from './components/WelcomeModal';
 import { PaywallProvider } from './context/PaywallContext';
 import { PaywallTriggers } from './components/PaywallTriggers';
 import { SITE_TAGLINE } from './constants/brand';
@@ -27,6 +28,9 @@ import { LecturerView } from './views/LecturerView';
 import { libraryPath } from './utils/libraryPath';
 import './styles/LibraryCatalog.css';
 import './styles/CrmDesk.css';
+import './styles/LibraryVisualRefresh.css';
+import './styles/LibraryPages.css';
+import './styles/LibraryUsability.css';
 
 export const VodApp: React.FC = () => {
   const { currentView, setView } = useApp();
@@ -100,7 +104,7 @@ export const VodApp: React.FC = () => {
   return (
     <PaywallProvider>
     <PaywallTriggers />
-    <div className={`vod-app library-catalog sky-readable flex flex-col min-h-screen relative text-white bg-transparent${currentView === 'admin' || currentView === 'lecturer' || currentView === 'profile' ? ' crm-desk' : ''}`}>
+    <div data-library-view={currentView} className={`vod-app library-catalog sky-readable flex flex-col min-h-screen relative text-white bg-transparent${currentView === 'admin' || currentView === 'lecturer' || currentView === 'profile' ? ' crm-desk' : ''}`}>
       {currentView !== 'watch' && (
         <a href="#library-main" className="skip-link">
           דילוג לתוכן הראשי
@@ -135,6 +139,7 @@ export const VodApp: React.FC = () => {
         <>
           <OnboardingTriggers />
           <OnboardingUI />
+          <WelcomeModal />
         </>
       )}
     </div>

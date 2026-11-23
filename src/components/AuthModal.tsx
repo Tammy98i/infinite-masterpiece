@@ -6,6 +6,7 @@ import { libraryPath } from '../utils/libraryPath';
 import { EmailConfirmationRequiredError } from '../api/supabaseAuth';
 import { takeAuthNext } from '../lib/authRedirect';
 import { formatPhoneDisplay } from '../utils/phone';
+import { isAppleProviderEnabled, isGoogleProviderEnabled, refreshAuthProviderFlags } from '../lib/supabase';
 
 type Mode = 'login' | 'register' | 'forgot';
 type Method = 'email' | 'phone';
@@ -25,7 +26,7 @@ export const AuthModal: React.FC = () => {
     verifyPhoneOtp,
     requestPasswordReset,
     loginWithGoogle,
-    googleAuthEnabled,
+    loginWithApple,
     phoneAuthEnabled,
     supabaseAuthEnabled,
   } = useUser();
@@ -54,6 +55,21 @@ export const AuthModal: React.FC = () => {
     setErrorKind('error');
     setResendIn(0);
   }, [isAuthModalOpen, mode]);
+
+  useEffect(() => {
+    if (!isAuthModalOpen) return;
+    setMode('login');
+    setMethod('email');
+    setError('');
+    setErrorKind('error');
+    setName('');
+    setEmail('');
+    setPassword('');
+    setPasswordConfirm('');
+    setOtp('');
+    setOtpSent(false);
+    setResendIn(0);
+  }, [isAuthModalOpen]);
 
   useEffect(() => {
     if (resendIn <= 0) return;
@@ -188,18 +204,29 @@ export const AuthModal: React.FC = () => {
     });
   };
 
-  const handleGoogle = async () => {
+  const handleOAuth = async (provider: 'google' | 'apple') => {
     setError('');
     setErrorKind('error');
+    await refreshAuthProviderFlags();
+    const enabled = provider === 'apple' ? isAppleProviderEnabled() : isGoogleProviderEnabled();
+    if (!enabled) {
+      setError(
+        provider === 'apple'
+          ? 'התחברות עם Apple עדיין לא הופעלה בפרויקט. Google זמין.'
+          : 'התחברות עם Google עדיין לא הופעלה בפרויקט.'
+      );
+      return;
+    }
     await runExclusive(async () => {
       try {
         const next =
           window.location.pathname === '/oauth/consent'
             ? `${window.location.pathname}${window.location.search}`
             : undefined;
-        await loginWithGoogle(next);
+        if (provider === 'apple') await loginWithApple(next);
+        else await loginWithGoogle(next);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'כשל התחברות עם Google');
+        setError(err instanceof Error ? err.message : provider === 'apple' ? 'כשל התחברות עם Apple' : 'כשל התחברות עם Google');
       }
     });
   };
@@ -211,11 +238,11 @@ export const AuthModal: React.FC = () => {
       ? 'נשלח קישור לאימייל לאיפוס הסיסמה.'
       : mode === 'login'
         ? phoneAuthEnabled
-          ? 'התחברו עם אימייל וסיסמה, או עם קוד לטלפון.'
-          : 'התחברו עם האימייל והסיסמה שלכם.'
+          ? 'התחברו עם אימייל וסיסמה, עם Google או Apple, או עם קוד לטלפון.'
+          : 'התחברו עם אימייל וסיסמה, או עם Google או Apple.'
         : phoneAuthEnabled
-          ? 'חשבון חינמי עם אימייל וסיסמה, או עם מספר טלפון.'
-          : 'חשבון חינמי עם אימייל וסיסמה.';
+          ? 'חשבון חינמי עם אימייל וסיסמה, עם Google או Apple, או עם מספר טלפון.'
+          : 'חשבון חינמי עם אימייל וסיסמה, או עם Google או Apple.';
 
   return (
     <div className="fixed inset-0 z-[90] flex items-center justify-center p-4">
@@ -272,7 +299,7 @@ export const AuthModal: React.FC = () => {
 
         {mode === 'forgot' ? (
           <form onSubmit={(e) => void handleForgotSubmit(e)} className="grid gap-4">
-            <label className="block text-center">
+            <label className="block text-right">
               <span className="block text-xs text-white/45 mb-1">אימייל</span>
               <input
                 type="email"
@@ -282,7 +309,7 @@ export const AuthModal: React.FC = () => {
                 dir="ltr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`${fieldClass} text-start`}
+                className={`${fieldClass} text-right`}
               />
             </label>
             <AuthAlert kind={errorKind} message={error} />
@@ -293,7 +320,7 @@ export const AuthModal: React.FC = () => {
         ) : method === 'phone' && supabaseAuthEnabled ? (
           <form onSubmit={(e) => void (otpSent ? handleVerifyOtp(e) : handleSendOtp(e))} className="grid gap-4">
             {mode === 'register' && !otpSent ? (
-              <label className="block text-center">
+              <label className="block text-right">
                 <span className="block text-xs text-white/45 mb-1">שם מלא</span>
                 <input
                   type="text"
@@ -365,7 +392,7 @@ export const AuthModal: React.FC = () => {
         ) : (
           <form onSubmit={(e) => void handleEmailSubmit(e)} className="grid gap-4">
             {mode === 'register' && (
-              <label className="block text-center">
+              <label className="block text-right">
                 <span className="block text-xs text-white/45 mb-1">שם מלא</span>
                 <input
                   type="text"
@@ -377,7 +404,7 @@ export const AuthModal: React.FC = () => {
                 />
               </label>
             )}
-            <label className="block text-center">
+            <label className="block text-right">
               <span className="block text-xs text-white/45 mb-1">אימייל</span>
               <input
                 type="email"
@@ -387,32 +414,34 @@ export const AuthModal: React.FC = () => {
                 dir="ltr"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className={`${fieldClass} text-start`}
+                className={`${fieldClass} text-right`}
               />
             </label>
-            <label className="block text-center">
+            <label className="block text-right">
               <span className="block text-xs text-white/45 mb-1">סיסמה</span>
               <input
                 type="password"
                 required
                 minLength={8}
                 autoComplete={mode === 'login' ? 'current-password' : 'new-password'}
+                dir="ltr"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className={fieldClass}
+                className={`${fieldClass} text-right`}
               />
             </label>
             {mode === 'register' ? (
-              <label className="block text-center">
+              <label className="block text-right">
                 <span className="block text-xs text-white/45 mb-1">אימות סיסמה</span>
                 <input
                   type="password"
                   required
                   minLength={8}
                   autoComplete="new-password"
+                  dir="ltr"
                   value={passwordConfirm}
                   onChange={(e) => setPasswordConfirm(e.target.value)}
-                  className={fieldClass}
+                  className={`${fieldClass} text-right`}
                 />
               </label>
             ) : null}
@@ -438,22 +467,33 @@ export const AuthModal: React.FC = () => {
           </form>
         )}
 
-        {mode !== 'forgot' && (googleAuthEnabled || supabaseAuthEnabled) ? (
+        {mode !== 'forgot' ? (
           <>
             <div className="my-5 flex items-center gap-3" role="separator" aria-label="או">
               <span className="h-px flex-1 bg-white/10" />
               <span className="text-[11px] text-white/35">או</span>
               <span className="h-px flex-1 bg-white/10" />
             </div>
-            <button
-              type="button"
-              onClick={() => void handleGoogle()}
-              disabled={pending}
-              className="w-full min-h-11 rounded-full border border-white/15 text-white/70 text-sm hover:text-white hover:border-white/40 cursor-pointer disabled:opacity-60 inline-flex items-center justify-center gap-2"
-            >
-              <GoogleMark />
-              <span>התחברות עם Google</span>
-            </button>
+            <div className="grid gap-3">
+              <button
+                type="button"
+                onClick={() => void handleOAuth('google')}
+                disabled={pending}
+                className="w-full min-h-11 rounded-full border border-white/15 text-white/70 text-sm hover:text-white hover:border-white/40 cursor-pointer disabled:opacity-60 inline-flex items-center justify-center gap-2"
+              >
+                <GoogleMark />
+                <span>התחברות עם Google</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => void handleOAuth('apple')}
+                disabled={pending}
+                className="w-full min-h-11 rounded-full border border-white/15 text-white/70 text-sm hover:text-white hover:border-white/40 cursor-pointer disabled:opacity-60 inline-flex items-center justify-center gap-2"
+              >
+                <AppleMark />
+                <span>התחברות עם Apple</span>
+              </button>
+            </div>
           </>
         ) : null}
 
@@ -525,6 +565,17 @@ function AuthAlert({ kind, message }: { kind: 'error' | 'info'; message: string 
     <p className={`text-sm ${kind === 'info' ? 'text-[#dfc47d]' : 'text-rose-300'}`} role="alert">
       {message}
     </p>
+  );
+}
+
+function AppleMark() {
+  return (
+    <svg width="16" height="18" viewBox="0 0 16 18" aria-hidden>
+      <path
+        fill="currentColor"
+        d="M13.2 9.5c0-2.1 1.7-3.1 1.8-3.2-1-.1-1.9.6-2.4.6-.5 0-1.3-.6-2.1-.5-1.1 0-2.1.6-2.7 1.6-1.1 2-.3 4.9.8 6.5.5.8 1.2 1.7 2 1.6.8 0 1.1-.5 2.1-.5s1.3.5 2.1.5 1.4-.8 1.9-1.6c.6-.9.9-1.8.9-1.8s-1.7-.7-1.7-2.6c0-1.6 1.3-2.4 1.4-2.5-.8-1.1-2-1.3-2.4-1.3-.9-.1-1.7.5-2.1.5zM11.2 3.4c.4-.5.7-1.2.6-1.9-.6 0-1.3.4-1.7.9-.4.4-.7 1.1-.6 1.8.7.1 1.3-.3 1.7-.8z"
+      />
+    </svg>
   );
 }
 

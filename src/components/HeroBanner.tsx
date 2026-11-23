@@ -2,6 +2,7 @@
 import { Course } from '../types';
 import { useApp } from '../context/AppContext';
 import { Play } from 'lucide-react';
+import { Bidi } from './Bidi';
 import { ClockLabel } from './ClockLabel';
 import { useWatchAccess } from '../utils/useWatchAccess';
 import { canPreviewEpisode, canWatchEpisode } from '../utils/access';
@@ -39,6 +40,8 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
         ? 'צפו בטעימה'
         : 'פתיחת גישה';
 
+  const art = course.backdropImage || course.coverImage;
+  const studioPortrait = /\/team\//.test(art);
   const continuePct = continueWatching
     ? Math.min(
         100,
@@ -61,12 +64,12 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
 
   return (
     <section
-      className="library-hero relative w-full min-h-[78vh] md:h-[88vh] flex items-end overflow-hidden pt-24 pb-40 md:pb-52"
+      className="library-hero relative w-full flex items-end pt-[calc(var(--site-header-h,80px)+1rem)] pb-28 md:pb-36"
       aria-label={continueWatching ? `המשך צפייה: ${course.title}` : `מומלץ: ${course.title}`}
     >
-      <div className="absolute inset-0 select-none overflow-hidden">
+      <div className="library-hero-stage absolute inset-0 select-none">
         <img
-          {...responsiveImageAttrs(course.backdropImage || course.coverImage, {
+          {...responsiveImageAttrs(art, {
             widths: [768, 1200, 1600, 2000],
             sizes: '100vw',
             defaultWidth: 1600,
@@ -75,11 +78,10 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           aria-hidden
           fetchPriority="high"
           decoding="async"
-          className="w-full h-full object-cover object-center scale-105"
+          className={`library-hero-art w-full h-full object-cover object-center${studioPortrait ? ' is-studio' : ''}`}
         />
         <div className="library-hero-veil-bottom absolute inset-0" />
         <div className="library-hero-veil-side absolute inset-0 w-full md:w-[70%] ms-auto" />
-        <div className="absolute inset-0 bg-black/15" />
       </div>
 
       <div className="relative max-w-7xl mx-auto px-4 sm:px-8 w-full z-10 text-start md:max-w-2xl md:ms-0 md:me-auto">
@@ -87,30 +89,30 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           {continueWatching ? 'המשיכו מכאן' : 'הרצאה נבחרת'}
         </p>
         <h1 className="text-4xl sm:text-5xl lg:text-[4.25rem] font-semibold text-white leading-[1.08] tracking-tight mb-4">
-          {course.title}
+          <bdi dir="auto">{course.title}</bdi>
         </h1>
 
         <p className="mb-3 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/80">
-          {instructor ? <span>{instructor.name}</span> : null}
+          {instructor ? <span><bdi dir="auto">{instructor.name}</bdi></span> : null}
           {instructor ? <span aria-hidden>·</span> : null}
           <ClockLabel seconds={totalSecs} />
           {continueWatching?.episodeTitle ? (
             <>
               <span aria-hidden>·</span>
-              <span>{continueWatching.episodeTitle}</span>
+              <span><bdi dir="auto">{continueWatching.episodeTitle}</bdi></span>
             </>
           ) : null}
         </p>
 
         <p className="text-sm sm:text-base text-white/80 font-light leading-relaxed max-w-xl mb-6 line-clamp-2">
-          {course.subtitle || course.description}
+          <bdi dir="auto">{course.subtitle || course.description}</bdi>
         </p>
 
         {continueWatching && (
           <div className="max-w-sm mb-7">
             <div className="flex items-center justify-between text-[11px] text-white/70 mb-2" id="hero-progress-label">
               <span>
-                <ClockLabel seconds={continueWatching.currentTime} /> / <ClockLabel seconds={continueWatching.duration} />
+                <Bidi kind="clock"><ClockLabel seconds={continueWatching.currentTime} /> / <ClockLabel seconds={continueWatching.duration} /></Bidi>
               </span>
               <span>המשך צפייה</span>
             </div>

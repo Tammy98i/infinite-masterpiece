@@ -5,12 +5,26 @@ function portraitLetter(name: string) {
   return name.trim().charAt(0) || 'מ';
 }
 
+function samePerson(name: string) {
+  return name.trim().replace(/[׳'"״`´]/g, '').replace(/\s+/g, ' ').toLowerCase();
+}
+
 export const InstructorsView: React.FC = () => {
   const { instructors, courses, setView } = useApp();
 
+  const visible = useMemo(() => {
+    const seen = new Set<string>();
+    return instructors.filter((inst) => {
+      if (inst.showInLibrary === false) return false;
+      const key = samePerson(inst.name);
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    });
+  }, [instructors]);
   const featured = useMemo(
-    () => instructors.find((inst) => inst.isFounder && inst.avatarUrl) || instructors.find((inst) => inst.avatarUrl) || instructors[0],
-    [instructors]
+    () => visible.find((inst) => inst.isFounder && inst.avatarUrl) || visible.find((inst) => inst.avatarUrl) || visible[0],
+    [visible]
   );
   const featuredCount = featured
     ? courses.filter((course) => course.instructorId === featured.id).length
@@ -50,9 +64,9 @@ export const InstructorsView: React.FC = () => {
           </p>
           {featured ? (
             <p className="mb-6 flex flex-wrap items-center gap-x-2 gap-y-1 text-[13px] text-white/80">
-              <span>{featured.name}</span>
+              <span><bdi dir="auto">{featured.name}</bdi></span>
               <span aria-hidden>·</span>
-              <span>{featured.title}</span>
+              <span><bdi dir="auto">{featured.title}</bdi></span>
               {featured.isFounder ? (
                 <>
                   <span aria-hidden>·</span>
@@ -90,7 +104,7 @@ export const InstructorsView: React.FC = () => {
       <div id="instructor-grid" className="relative z-10 -mt-8 max-w-[1360px] mx-auto px-4 sm:px-8 text-start scroll-mt-24">
         <h2 className="library-rail-title text-white mb-4">כל המרצים</h2>
         <div className="library-page-grid grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
-          {instructors.map((inst) => {
+          {visible.map((inst) => {
             const count = courses.filter((c) => c.instructorId === inst.id).length;
             const countLabel = count === 0 ? 'אין הרצאות עדיין' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`;
             return (
@@ -112,10 +126,10 @@ export const InstructorsView: React.FC = () => {
                   <div className="absolute inset-0 bg-black/30" />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/20 to-transparent" />
                   <div className="absolute bottom-2 start-2 end-2">
-                    <div className="text-[13px] font-semibold text-white truncate">{inst.name}</div>
+                    <div className="text-[13px] font-semibold text-white truncate"><bdi dir="auto">{inst.name}</bdi></div>
                     <div className="text-[12px] text-white/70 truncate">
                       {inst.isFounder ? 'צוות המיזם · ' : ''}
-                      {inst.title}
+                      <bdi dir="auto">{inst.title}</bdi>
                     </div>
                     <div className="text-[11px] text-white/55 mt-0.5">{countLabel}</div>
                   </div>

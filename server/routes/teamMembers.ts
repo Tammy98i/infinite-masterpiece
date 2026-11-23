@@ -1,13 +1,18 @@
 import { Router } from 'express';
 import { getDb } from '../db/connection.js';
 import { authUser, requireAdmin } from '../middleware/auth.js';
-import { listTeamMembers, saveTeamMember } from '../db/teamMembers.js';
+import { listTeamMembers, saveTeamMember, suppressedNames, type TeamSurface } from '../db/teamMembers.js';
 import { writeAudit } from '../services/auditService.js';
 
 export const publicTeamMembers = Router();
 export const adminTeamMembers = Router();
-publicTeamMembers.get('/', (_req, res) => {
-  res.set('Cache-Control', 'no-store').json({ members: listTeamMembers(getDb()) });
+publicTeamMembers.get('/', (req, res) => {
+  const surface = String(req.query.surface || '') as TeamSurface | '';
+  const selected = surface === 'webinar' || surface === 'site' || surface === 'library' ? surface : undefined;
+  res.set('Cache-Control', 'no-store').json({
+    members: listTeamMembers(getDb(), false, selected),
+    suppressedNames: selected ? suppressedNames(getDb(), selected) : [],
+  });
 });
 adminTeamMembers.use(requireAdmin);
 adminTeamMembers.get('/', (_req, res) => res.json({ members: listTeamMembers(getDb(), true) }));

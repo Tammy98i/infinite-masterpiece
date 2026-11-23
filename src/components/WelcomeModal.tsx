@@ -27,17 +27,20 @@ export const WelcomeModal: React.FC = () => {
   ];
 
   return (
-    <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/85 backdrop-blur-md">
-      <div className="glass bg-zinc-950/95 border border-primary/40 rounded-3xl max-w-lg w-full p-8 relative shadow-2xl text-start">
+    <div className="fixed inset-0 z-[60] overflow-y-auto bg-black/85 backdrop-blur-md">
+      <div className="flex min-h-full items-start justify-center p-3 sm:p-4">
+      <div className="glass bg-zinc-950/95 border border-primary/40 rounded-3xl max-w-lg w-full my-auto p-4 sm:p-8 relative shadow-2xl text-start">
+        <div className="sticky top-0 z-10 flex justify-end bg-zinc-950/95 pb-2">
         <button
           onClick={() => setWelcomeOpen(false)}
-          className="absolute top-6 end-6 text-zinc-400 hover:text-white p-1 rounded-full bg-white/5 focus-ring"
+          className="text-zinc-400 hover:text-white p-1 rounded-full bg-white/5 focus-ring min-h-11 min-w-11 inline-flex items-center justify-center"
           aria-label="סגירה"
         >
           <X className="w-5 h-5" />
         </button>
+        </div>
 
-        <h2 className="text-2xl font-heading text-white mb-6">שלושה צעדים להתחלה מושלמת</h2>
+        <h2 className="text-2xl font-heading text-white mb-4 sm:mb-6">שלושה צעדים להתחלה מושלמת</h2>
 
         <div className="grid gap-4 mb-8">
           {steps.map((step, i) => {
@@ -57,23 +60,24 @@ export const WelcomeModal: React.FC = () => {
           })}
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3">
+        <div className="sticky bottom-0 z-10 flex flex-col sm:flex-row gap-3 bg-zinc-950/95 pt-3 pb-1">
           <button
             onClick={() => {
               setWelcomeOpen(false);
               setView('quiz');
             }}
-            className="flex-1 py-3 rounded-xl bg-primary text-black font-black hover:brightness-110 transition-all focus-ring"
+            className="flex-1 py-2.5 rounded-xl bg-primary text-black font-black hover:brightness-110 transition-all focus-ring min-h-11"
           >
             מה מתאים לי עכשיו?
           </button>
           <button
             onClick={() => setWelcomeOpen(false)}
-            className="flex-1 py-3 rounded-xl bg-white/10 text-white font-bold hover:bg-white/15 transition-all focus-ring"
+            className="flex-1 py-2.5 rounded-xl bg-white/10 text-white font-bold hover:bg-white/15 transition-all focus-ring min-h-11"
           >
             לדף הבית
           </button>
         </div>
+      </div>
       </div>
     </div>
   );

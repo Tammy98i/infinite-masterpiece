@@ -22,7 +22,8 @@
 
 .video-home .space-copy { isolation: isolate; }
 .video-home .space-sky::after {
-  background: linear-gradient(180deg, rgba(5, 10, 20, .64), rgba(5, 10, 20, .58) 54%, rgba(5, 10, 20, .78));
+  z-index: 1;
+  background: rgb(6 10 18 / 62%);
 }
 
 /* Match the mockup's curved closing statement while retaining existing links. */

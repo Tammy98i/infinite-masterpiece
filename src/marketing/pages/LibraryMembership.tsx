@@ -25,7 +25,7 @@ export function LibraryMembership() {
       <p className="text-[11px] uppercase tracking-[0.2em] text-[#b79043] mb-4">מנוי ספרייה</p>
       <h1 className="text-3xl md:text-4xl font-heading text-white mb-4">גישה לספריית Infinite Masterpiece</h1>
       <p className="text-sm md:text-base text-white/50 font-light leading-relaxed max-w-2xl mb-4">
-        הספרייה נמכרת במנוי לצפייה — לא ברכישת קורס בודד. מנוי פותח הרצאות, הדרכות, מסלולים ועדכונים חדשים.
+        הספרייה נמכרת במנוי לצפייה לא ברכישת קורס בודד. מנוי פותח הרצאות, הדרכות, מסלולים ועדכונים חדשים.
       </p>
       <p className="text-xs text-white/35 font-light mb-10 max-w-2xl">
         מסלול האמיצים / ההססנים ({formatIls(8888)}) הוא כניסה למיזם — נפרד ממנוי הספרייה.{' '}
@@ -46,34 +46,36 @@ export function LibraryMembership() {
         </div>
       ) : null}
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10 items-stretch">
         {(['trial', 'monthly', 'annual'] as const).map((key) => {
           const plan = LIBRARY_PLANS[key];
           const trialUsed = !isGuest && user.subscriptionPlan !== 'none' && key === 'trial';
           return (
             <div
               key={key}
-              className="glass-card p-6 flex flex-col"
+              className="glass-card p-6 flex flex-col h-full"
             >
               <h2 className="text-lg font-medium text-white mb-1">{plan.title}</h2>
-              <p className="text-xs text-white/45 mb-4 flex-1">{plan.subtitle}</p>
-              <p className="text-2xl text-[#dfc47d] mb-4">{plan.priceLabel}</p>
-              <button
-                type="button"
-                disabled={hasAccess || trialUsed}
-                onClick={() => {
-                  choose(plan.id);
-                  if (!isGuest) navigate('/library');
-                }}
-                className="btn-gold text-black w-full py-3 text-sm"
-              >
-                {plan.cta}
-              </button>
-              {key !== 'trial' ? (
-                <p className="text-[11px] text-white/30 mt-3 leading-relaxed">
-                  סליקה ב-Stripe תופעל בשלב ההשקה. בפיילוט — אדמין יכול לפתוח גישה ידנית.
+              <p className="text-xs text-white/45 min-h-[2.5rem]">{plan.subtitle}</p>
+              <div className="mt-auto pt-4">
+                <p className="text-2xl text-[#dfc47d] mb-4 min-h-[2rem]">{plan.priceLabel}</p>
+                <button
+                  type="button"
+                  disabled={hasAccess || trialUsed}
+                  onClick={() => {
+                    choose(plan.id);
+                    if (!isGuest) navigate('/library');
+                  }}
+                  className="btn-gold text-black flex w-full min-h-[46px] py-3 px-4 text-sm"
+                >
+                  {plan.cta}
+                </button>
+                <p className="text-[11px] text-white/30 mt-3 leading-relaxed min-h-[2.75rem]">
+                  {key === 'trial'
+                    ? ''
+                    : 'סליקה ב-Stripe תופעל בשלב ההשקה. בפיילוט — אדמין יכול לפתוח גישה ידנית.'}
                 </p>
-              ) : null}
+              </div>
             </div>
           );
         })}

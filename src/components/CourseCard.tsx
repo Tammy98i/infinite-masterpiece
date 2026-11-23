@@ -2,11 +2,10 @@
 import { Course, WatchProgress } from '../types';
 import { useApp } from '../context/AppContext';
 import { Play, Plus, Check, Lock } from 'lucide-react';
-import { formatClock, isolateClock } from '../utils/time';
 import { ClockLabel } from './ClockLabel';
 import { useWatchAccess } from '../utils/useWatchAccess';
 import { useMyListToggle } from '../utils/useMyListToggle';
-import { cardBadgeLabel, getCardAccessState, isCourseNew, type CardAccessState } from '../utils/libraryHome';
+import { cardBadgeLabel, getCardAccessState, isCourseNew } from '../utils/libraryHome';
 import { trackEvent } from '../utils/analytics';
 import { responsiveImageAttrs } from '../utils/responsiveImage';
 
@@ -24,12 +23,6 @@ interface CourseCardProps {
   showNewBadge?: boolean;
 }
 
-const ACCESS_LABEL: Record<CardAccessState, string> = {
-  open: 'פתוח',
-  preview: 'טעימה',
-  locked: 'נעול',
-};
-
 export const CourseCard: React.FC<CourseCardProps> = ({
   course,
   progress,
@@ -40,10 +33,9 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   sectionName = 'rail',
   position = 0,
   recommendationReason,
-  showDurationBadge = false,
   showNewBadge = false,
 }) => {
-  const { setView, isInMyList, getCourseProgress, user, instructors } = useApp();
+  const { setView, isInMyList, getCourseProgress, user } = useApp();
   const { goWatch } = useWatchAccess();
   const toggleList = useMyListToggle();
   const [isHovered, setIsHovered] = useState(false);
@@ -52,18 +44,10 @@ export const CourseCard: React.FC<CourseCardProps> = ({
   const progPct =
     customProgressPercentage !== undefined ? customProgressPercentage : getCourseProgress(course.id);
   const totalSecs = course.episodes.reduce((s, ep) => s + ep.duration, 0);
-  const durationLabel = progress
-    ? formatClock(Math.max(0, progress.duration - progress.currentTime))
-    : formatClock(totalSecs);
-  const resumeLabel =
-    progress && layout === 'continue'
-      ? `המשך מדקה ${isolateClock(progress.currentTime)}`
-      : undefined;
   const episodeTitle = progress
     ? course.episodes.find((e) => e.id === progress.episodeId)?.title
     : undefined;
   const title = layout === 'continue' && episodeTitle ? episodeTitle : course.title;
-  const instructorName = instructors.find((i) => i.id === course.instructorId)?.name;
   const access = getCardAccessState(course, user);
   const badge = cardBadgeLabel(access, layout === 'continue' ? 'continue' : 'card');
   const showNew = showNewBadge && isCourseNew(course);
@@ -111,21 +95,19 @@ export const CourseCard: React.FC<CourseCardProps> = ({
         ? 'w-[180px] sm:w-[210px]'
         : 'w-[168px] sm:w-[210px]';
 
-  /* Hover meta: only טעימה / נעול — not «פתוח» (polish 04) */
-  const accessMeta = access === 'open' ? null : ACCESS_LABEL[access];
-  const metaLine = [instructorName, resumeLabel || durationLabel, accessMeta]
-    .filter(Boolean)
-    .join(' · ');
+  const durationSeconds = progress
+    ? Math.max(0, progress.duration - progress.currentTime)
+    : totalSecs;
 
   return (
     <div
-      className={`relative shrink-0 text-start ${widthClass}`}
+      className={`library-course-card relative shrink-0 text-start ${widthClass}`}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
     >
       {rank != null && (
         <span
-          className="absolute end-0 bottom-6 z-0 text-6xl sm:text-7xl font-accent font-bold leading-none text-[#b79043]/45 pointer-events-none select-none"
+          className="absolute end-0 bottom-6 z-0 text-6xl sm:text-7xl font-accent font-bold leading-none text-[#f3ede2]/55 pointer-events-none select-none"
           aria-hidden
         >
           {rank}
@@ -156,23 +138,20 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                   isHovered ? 'brightness-110' : ''
                 }`}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+              <div className="library-card-veil absolute inset-0" />
+              <div className="absolute inset-0 z-10 flex flex-col justify-end p-2 text-start pointer-events-none">
+                <div className="library-card-title text-[13px] font-semibold leading-snug text-white line-clamp-2">
+                  <bdi dir="auto">{title}</bdi>
+                </div>
+                <p className="library-topic-count mt-0.5">
+                  <ClockLabel seconds={durationSeconds} />
+                </p>
+              </div>
               <span className="library-poster-play absolute inset-0 z-[3] flex items-center justify-center">
                 <span className="library-poster-play-inner">
                   <Play className="ml-0.5 h-4 w-4 fill-black" data-icon="play" aria-hidden />
                 </span>
               </span>
-
-              <div className="library-poster-meta" aria-hidden>
-                <b className="line-clamp-2">{title}</b>
-                <span className="line-clamp-1">{metaLine}</span>
-              </div>
-
-              {showDurationBadge && !badge && (
-                <span className="absolute top-2 start-2 z-10 rounded-[4px] bg-black/75 px-2 py-0.5 text-[12px] font-medium text-white">
-                  <ClockLabel seconds={totalSecs} />
-                </span>
-              )}
 
               {showNew && (
                 <span className="absolute top-2 end-14 z-10 rounded-[4px] bg-white/90 px-2 py-0.5 text-[11px] font-semibold text-black">
@@ -194,15 +173,6 @@ export const CourseCard: React.FC<CourseCardProps> = ({
                   {badgeDisplay}
                 </span>
               ) : null}
-
-              <div className="library-poster-title-dock absolute bottom-2 start-2 end-2 z-[1] text-start pointer-events-none transition-opacity duration-200">
-                <div className="text-[13px] font-semibold text-white leading-snug line-clamp-1">
-                  {title}
-                </div>
-                <div className="sr-only">
-                  {instructorName} {resumeLabel || durationLabel}, {ACCESS_LABEL[access]}
-                </div>
-              </div>
 
               {showProgress > 0 && (
                 <div

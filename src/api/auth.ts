@@ -20,6 +20,10 @@ export type AuthUserPayload = Pick<
   | 'isFounder'
   | 'staffDesk'
   | 'staffStatus'
+  | 'firstName'
+  | 'lastName'
+  | 'birthday'
+  | 'city'
 > & { phone?: string };
 
 function token() {

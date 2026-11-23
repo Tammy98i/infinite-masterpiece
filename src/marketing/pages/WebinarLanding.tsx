@@ -13,17 +13,15 @@ import {
   WEBINAR_BOTTLENECKS,
   WEBINAR_CTA_ENDED,
   WEBINAR_CTA_REGISTER,
-  WEBINAR_DIFFERENCE_POINTS,
   WEBINAR_ENDED_NOTE,
   WEBINAR_FIT_NO,
   WEBINAR_FIT_YES,
   WEBINAR_GLEB,
   WEBINAR_HOLDING_LINE,
   WEBINAR_REGISTER_ID,
-  WEBINAR_TASK_STEPS,
-  WEBINAR_TRACKS_FINE_PRINT,
 } from '../../constants/webinarPage';
 import { WebinarRegistrationForm } from '../components/WebinarRegistrationForm';
+import { WebinarRegistrationState } from '../components/WebinarRegistrationState';
 import { WebinarSectionCta } from '../components/WebinarSocialProof';
 import { trackEvent, trackWebinarCta, scrollToWebinarForm } from '../../utils/analytics';
 import { captureUtmFromSearch } from '../../utils/utm';
@@ -38,6 +36,9 @@ import './WebinarNeuralSlides.css';
 import './WebinarNightLanguage.css';
 import './WebinarFlowPolish.css';
 import './WebinarSlideTones.css';
+import './WebinarReadability.css';
+import './WebinarTextAlignment.css';
+import './WebinarTeamGalaxy.css';
 
 const WEBINAR_ISLANDS = [
   { id: 'webinar-hero', title: 'פתיחה' },
@@ -51,7 +52,7 @@ const WEBINAR_ISLANDS = [
 
 function FaqItem({ q, a, ...props }: { q: string; a: string } & HTMLAttributes<HTMLDetailsElement>) {
   return (
-    <details {...props} className="group glass-card p-5">
+    <details {...props} name="webinar-faq" className="group glass-card p-5">
       <summary className="flex items-center justify-between gap-4 cursor-pointer list-none text-white font-light min-h-11">
         <span>{q}</span>
         <ChevronDown className="w-4 h-4 text-[#b79043] group-open:rotate-180 transition-transform duration-200 shrink-0" />
@@ -61,12 +62,22 @@ function FaqItem({ q, a, ...props }: { q: string; a: string } & HTMLAttributes<H
   );
 }
 
+function StarDust() {
+  return (
+    <div className="galaxy-dust" aria-hidden="true">
+      {Array.from({ length: 30 }, (_, i) => (
+        <i key={i} style={{ left: `${(i * 37 + 13) % 100}%`, top: `${(i * 23 + 7) % 100}%`, animationDelay: `${i * -0.7}s` }} />
+      ))}
+    </div>
+  );
+}
+
 function SectionLabel({ children }: { children: ReactNode }) {
-  return <p className="text-[11px] uppercase tracking-[0.25em] text-[#b79043] mb-4">{children}</p>;
+  return <p className="webinar-section-label text-[11px] uppercase tracking-[0.25em] text-[#b79043] mb-4">{children}</p>;
 }
 
 function SectionTitle({ children }: { children: ReactNode }) {
-  return <h2 className="text-3xl md:text-5xl font-heading text-white mb-6 leading-tight mx-auto max-w-3xl">{children}</h2>;
+  return <h2 className="webinar-section-title text-3xl md:text-5xl font-heading text-white mb-6 leading-tight mx-auto max-w-3xl">{children}</h2>;
 }
 
 const REGISTER_CARD_CLASS =
@@ -215,8 +226,6 @@ export function WebinarLanding() {
     },
   ];
 
-  const eveningFeats = [...WEBINAR_DIFFERENCE_POINTS.map((item) => item.title), config.costLabel];
-
   return (
     <div className="webinar-stage-page webinar-night-page webinar-flow-page w-full">
       <nav className="webinar-spine" aria-label="מיקום בעמוד הוובינר">
@@ -226,9 +235,9 @@ export function WebinarLanding() {
             href={`#${island.id}`}
             className={activeIsland === island.id ? 'is-on' : ''}
             aria-current={activeIsland === island.id ? 'true' : undefined}
-            aria-label={island.title}
+            aria-label={eventEnded && island.id === WEBINAR_REGISTER_ID ? 'המשך הדרך' : island.title}
           >
-            <span>{island.title}</span>
+            <span>{eventEnded && island.id === WEBINAR_REGISTER_ID ? 'המשך הדרך' : island.title}</span>
           </a>
         ))}
       </nav>
@@ -238,10 +247,12 @@ export function WebinarLanding() {
         headlineParts={headlineParts}
         eventNight={eventNight}
         eventEnded={eventEnded}
+        registrationReady={configReady}
         onRegister={scrollToForm}
       />
 
-      <section id="problem" className="webinar-neural-afterglow webinar-island" data-tone="night">
+      <section id="problem" className="webinar-neural-afterglow webinar-island webinar-star-field" data-tone="night">
+        <StarDust />
         <div className="webinar-flow-stem" aria-hidden="true" />
         <div className="webinar-neural-plate">
           <SectionLabel>הבעיה</SectionLabel>
@@ -264,14 +275,14 @@ export function WebinarLanding() {
       </section>
 
       <div className="webinar-editorial-grid">
-      <section id="hosts" className="webinar-neural-slide webinar-island" data-tone="gilt">
+      <section id="hosts" className="webinar-neural-slide webinar-island webinar-star-field" data-tone="gilt">
+        <StarDust />
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <SectionLabel>הערב החי</SectionLabel>
           <SectionTitle>לא באים רק ללמוד. באים לבצע.</SectionTitle>
-          <p className="text-white/50 font-light leading-relaxed max-w-3xl mx-auto mb-4">
+          <p className="webinar-host-lead">
             גל, תמי וגלב בלייב. שיעור מכירות, משימת ביצוע, ואז פעולה שנשלחת לעולם.
           </p>
-          <p className="webinar-host-feats">{eveningFeats.join(' · ')}</p>
           <ul className="webinar-host-orbs">
             {hosts.map((leader) => (
               <li key={leader.name}>
@@ -282,36 +293,27 @@ export function WebinarLanding() {
                   className="webinar-host-orb"
                 />
                 <h3>{leader.name}</h3>
-                <p className="webinar-host-role">{leader.title}</p>
                 <p className="webinar-host-bio">{leader.bio}</p>
               </li>
             ))}
           </ul>
-          <ol className="webinar-task-spine">
-            {WEBINAR_TASK_STEPS.map((item, index) => (
-              <li key={item.title}>
-                <i>{String(index + 1).padStart(2, '0')}</i>
-                <h3>{item.title}</h3>
-                <p>{item.text}</p>
-              </li>
-            ))}
-          </ol>
-          <p id="tracks" className="text-sm text-[#dfc47d]/80 font-light leading-relaxed max-w-2xl mx-auto">
-            שני מסלולי כניסה לפיילוט, אמיצים והססנים, יוצגו בסוף הערב. לא נדרש להחליט עכשיו.
+          <p id="tracks" className="webinar-host-tracks">
+            שני המסלולים, אמיצים והססנים, יוצגו בסוף הערב. לא נדרש להחליט עכשיו. מסלול ההססנים הוא אותו יעד בפריסה, לא הנחה ולא מוצר חלקי.
           </p>
-          <p className="mt-3 text-[11px] text-white/35 font-light leading-relaxed">{WEBINAR_TRACKS_FINE_PRINT}</p>
           <p className="webinar-host-meta">{config.location} · {config.durationMinutes} דקות · {WEBINAR_AUDIENCE_LABEL}</p>
         </div>
       </section>
 
       <TeamGalaxy
+        mobileCarousel
         className="webinar-island webinar-tone-night"
         eyebrow="האנשים מאחורי החזון"
         title="הצוות שמחזיק את המערכת"
         subtitle="כל אחד מביא כוח אחר. יחד הם יוצרים מערכת אחת."
       />
 
-      <section id="webinar-fit" className="webinar-neural-slide webinar-island" data-tone="gilt">
+      <section id="webinar-fit" className="webinar-neural-slide webinar-island webinar-star-field" data-tone="gilt">
+        <StarDust />
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-10">
             <SectionLabel>התאמה</SectionLabel>
@@ -344,13 +346,14 @@ export function WebinarLanding() {
               </ul>
             </div>
           </div>
-          {eventEnded ? null : (
+          {eventEnded || !configReady || !config.enabled ? null : (
             <WebinarSectionCta label={WEBINAR_CTA_REGISTER} section="fit" onClick={() => scrollToForm('fit')} />
           )}
         </div>
       </section>
 
-      <section id="webinar-faq" className="webinar-neural-slide webinar-island" data-tone="night">
+      <section id="webinar-faq" className="webinar-neural-slide webinar-island webinar-star-field" data-tone="night">
+        <StarDust />
         <div className="max-w-[800px] mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-8">
             <SectionLabel>שאלות</SectionLabel>
@@ -364,7 +367,8 @@ export function WebinarLanding() {
         </div>
       </section>
 
-      <section id="webinar-register-bottom" className="webinar-neural-slide webinar-island relative overflow-hidden" data-tone="gilt">
+      <section id="webinar-register-bottom" className="webinar-neural-slide webinar-island webinar-star-field relative overflow-hidden" data-tone="gilt">
+        <StarDust />
         <div className="absolute inset-0 pointer-events-none" aria-hidden>
           <div className="absolute inset-0 bg-gradient-to-b from-transparent via-[#0d0b08]/20 to-[#0d0b08]/50" />
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[min(700px,90vw)] h-[240px] bg-[radial-gradient(ellipse_at_center,rgba(183, 144, 67,0.16),transparent_70%)]" />
@@ -378,14 +382,16 @@ export function WebinarLanding() {
           </p>
           <aside
             id={WEBINAR_REGISTER_ID}
-            aria-label={eventEnded ? 'הרשמה למחזור הבא' : 'הרשמה לוובינר'}
+            aria-label={eventEnded ? 'מסלולי המשך' : 'הרשמה לוובינר'}
             className={`${REGISTER_CARD_CLASS} webinar-stage-register-card mx-auto w-full max-w-xl md:max-w-2xl lg:max-w-3xl text-start scroll-mt-24`}
           >
-            <WebinarRegisterCard
-              payload={payload}
-              formId={`${WEBINAR_REGISTER_ID}-form`}
-              headlineParts={headlineParts}
-            />
+            <WebinarRegistrationState ready={configReady} ended={eventEnded} enabled={config.enabled}>
+              <WebinarRegisterCard
+                payload={payload}
+                formId={`${WEBINAR_REGISTER_ID}-form`}
+                headlineParts={headlineParts}
+              />
+            </WebinarRegistrationState>
           </aside>
           <p className="flex flex-wrap items-center justify-center gap-4 text-xs text-[#b79043]/80 font-light mt-8">
             <Link to="/terms" className="hover:text-[#dfc47d] min-h-11 inline-flex items-center">

@@ -18,20 +18,20 @@ export const HistoryView: React.FC = () => {
   const items = getWatchHistory();
 
   return (
-    <div className="library-catalog-page min-h-screen text-white pt-28 pb-28 px-4 sm:px-8 max-w-4xl mx-auto">
-      <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-8">
-        <div>
-          <p className="library-page-eyebrow mb-1">היסטוריה</p>
-          <h1 className="text-3xl sm:text-4xl font-heading font-semibold">היסטוריה</h1>
-        </div>
+    <div className="library-catalog-page min-h-screen text-white pb-28 px-4 sm:px-8 max-w-4xl mx-auto">
+      <div className="library-back-bar px-0">
         <button
           type="button"
           onClick={() => setView('home')}
-          className="library-page-back flex items-center gap-1.5 text-xs font-medium min-h-11 px-2"
+          className="library-page-back inline-flex items-center gap-1.5 text-sm min-h-11"
         >
-          <span>לספרייה</span>
           <DirBack />
+          <span>חזור</span>
         </button>
+      </div>
+      <div className="border-b border-white/10 pb-6 mb-8">
+        <p className="library-page-eyebrow mb-1">היסטוריה</p>
+        <h1 className="text-3xl sm:text-4xl font-heading font-semibold">היסטוריה</h1>
       </div>
 
       {items.length === 0 ? (
@@ -67,8 +67,8 @@ export const HistoryView: React.FC = () => {
                   className="w-28 sm:w-36 aspect-video object-cover rounded-[4px] shrink-0"
                 />
                 <div className="flex-1 min-w-0">
-                  <div className="text-sm font-medium truncate">{course.title}</div>
-                  <div className="text-xs text-white/40 mt-1 truncate">{episode.title}</div>
+                  <div className="text-sm font-medium truncate"><bdi dir="auto">{course.title}</bdi></div>
+                  <div className="text-xs text-white/40 mt-1 truncate"><bdi dir="auto">{episode.title}</bdi></div>
                   <div className="mt-2 h-1 rounded-[4px] bg-white/10 overflow-hidden">
                     <div className="h-full bg-[#b79043]" style={{ width: `${pct}%` }} />
                   </div>

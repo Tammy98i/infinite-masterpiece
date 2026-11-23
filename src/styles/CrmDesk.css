@@ -11,8 +11,8 @@
 }
 
 .site-backdrop-layout:has(.crm-desk) .editorial-sky-image {
-  opacity: .68;
-  filter: saturate(.9) contrast(1.12) brightness(.55);
+  opacity: 1;
+  filter: none;
 }
 
 .site-backdrop-layout:has(.crm-desk) .editorial-sky-blackout {
@@ -26,7 +26,7 @@
 }
 
 .site-backdrop-layout:has(.crm-desk) .editorial-sky-crm-veil {
-  display: block;
+  display: none;
 }
 
 .editorial-sky-crm-veil-a {
@@ -88,12 +88,89 @@
   z-index: 1;
 }
 
+.crm-desk-pop {
+  animation: crm-desk-pop 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes crm-desk-pop {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crm-desk-pop { animation: none; }
+}
+
+.a11y-reduce-motion .crm-desk-pop { animation: none; }
+
 .crm-desk-aside,
 .crm-desk .crm-desk-aside {
   position: relative;
   isolation: isolate;
   background: transparent !important;
   border-color: rgba(255, 255, 255, .08) !important;
+}
+
+/* Desktop desks: the rail stays full height on the right.
+   The nav list scrolls inside it. The stage scrolls on its own. */
+@media (min-width: 1024px) {
+  .vod-app.crm-desk:has(.crm-desk-frame) {
+    height: 100dvh;
+    max-height: 100dvh;
+    overflow: hidden;
+  }
+
+  .vod-app.crm-desk:has(.crm-desk-frame) > #library-main {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .vod-app.crm-desk:has(.crm-desk-frame) > footer {
+    display: none;
+  }
+
+  .vod-app.crm-desk:has(.crm-desk-frame) #library-main > .crm-desk {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .crm-desk-frame {
+    flex: 1 1 auto;
+    height: 100%;
+    min-height: 0;
+    overflow: hidden;
+  }
+
+  .crm-desk-rail {
+    height: 100%;
+    max-height: 100%;
+    overflow: hidden;
+    position: relative;
+    top: auto;
+  }
+
+  .crm-desk-rail > .crm-desk-nav {
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-color: rgba(183, 144, 67, .45) transparent;
+    scrollbar-width: thin;
+  }
+
+  .crm-desk-pane {
+    height: 100%;
+    max-height: 100%;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
 }
 
 .crm-desk-aside-veil {
@@ -225,7 +302,15 @@
 .crm-desk-metric:focus-visible {
   border-color: rgba(183, 144, 67, .55);
   background: rgba(183, 144, 67, .08);
-  outline: none;
+}
+
+.crm-desk-metric:focus-visible {
+  outline: 2px solid #dfc47d;
+  outline-offset: 2px;
+}
+
+.crm-desk-metric.is-waiting {
+  border-color: rgba(183, 144, 67, .75);
 }
 
 .crm-desk-metric strong {

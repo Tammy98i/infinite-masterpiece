@@ -10,7 +10,11 @@ export const LecturersRow: React.FC = () => {
       inst,
       count: courses.filter((c) => c.instructorId === inst.id).length,
     }))
-    .filter((row) => row.count > 0 || row.inst.isFounder)
+    .filter((row) => row.inst.showInLibrary !== false && (row.count > 0 || row.inst.isFounder))
+    .filter((row, index, all) => {
+      const key = row.inst.name.trim().replace(/[׳'"״`´]/g, '').replace(/\s+/g, ' ').toLowerCase();
+      return all.findIndex((item) => item.inst.name.trim().replace(/[׳'"״`´]/g, '').replace(/\s+/g, ' ').toLowerCase() === key) === index;
+    })
     .sort((a, b) => {
       if (a.inst.isFounder && !b.inst.isFounder) return -1;
       if (!a.inst.isFounder && b.inst.isFounder) return 1;
@@ -65,8 +69,8 @@ export const LecturersRow: React.FC = () => {
               <div className="absolute inset-0 bg-black/25 pointer-events-none" />
               <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent pointer-events-none" />
             </div>
-            <div className="text-[13px] font-medium text-white truncate">{inst.name}</div>
-            <div className="text-[12px] text-white/55 mt-0.5 truncate">{inst.title}</div>
+            <div className="text-[13px] font-medium text-white truncate"><bdi dir="auto">{inst.name}</bdi></div>
+            <div className="text-[12px] text-white/55 mt-0.5 truncate"><bdi dir="auto">{inst.title}</bdi></div>
             <div className="sr-only">
               {count === 0 ? 'אין הרצאות עדיין' : count === 1 ? 'הרצאה אחת' : `${count} הרצאות`}
             </div>

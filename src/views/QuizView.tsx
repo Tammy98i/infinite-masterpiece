@@ -134,8 +134,8 @@ export const QuizView: React.FC = () => {
                   <div className="flex flex-col sm:flex-row gap-6 items-center">
                     <img src={featured.coverImage} alt={featured.title} className="w-full sm:w-48 aspect-video object-cover rounded-[4px]" />
                     <div className="flex-1 text-start">
-                      <h3 className="text-xl font-semibold text-white mb-2">{featured.title}</h3>
-                      <p className="text-sm text-zinc-400 mb-4 line-clamp-2">{featured.subtitle}</p>
+                      <h3 className="text-xl font-semibold text-white mb-2"><bdi dir="auto">{featured.title}</bdi></h3>
+                      <p className="text-sm text-zinc-400 mb-4 line-clamp-2"><bdi dir="auto">{featured.subtitle}</bdi></p>
                       <button
                         onClick={() => setView('watch', { courseId: featured.id, episodeId: featured.episodes[0]?.id })}
                         className="library-hero-play px-6 py-3 font-semibold flex items-center gap-2 focus-ring"

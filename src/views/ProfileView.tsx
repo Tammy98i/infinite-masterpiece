@@ -1,6 +1,7 @@
 ﻿import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { LogOut, Mic } from 'lucide-react';
+import { Bidi } from '../components/Bidi';
 import { DirBack } from '../components/DirArrow';
 import { useApp } from '../context/AppContext';
 import { PlansGrid } from '../components/PlansGrid';
@@ -23,16 +24,18 @@ export const ProfileView: React.FC = () => {
   };
 
   return (
-    <div className="crm-desk library-catalog-page min-h-screen text-white pt-24 pb-28">
+    <div className="crm-desk library-catalog-page min-h-screen text-white pb-28">
       <div className="max-w-6xl mx-auto px-4 sm:px-8 lg:px-10 text-start">
-        <button
-          type="button"
-          onClick={() => setView('home')}
-          className="inline-flex items-center gap-1.5 text-sm text-white/45 hover:text-white mb-10 min-h-11"
-        >
-          <DirBack />
-          ספרייה
-        </button>
+        <div className="library-back-bar px-0">
+          <button
+            type="button"
+            onClick={() => setView('home')}
+            className="library-page-back inline-flex items-center gap-1.5 text-sm min-h-11"
+          >
+            <DirBack />
+            חזור
+          </button>
+        </div>
 
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-6 mb-12">
           <div className="flex items-center gap-4">
@@ -42,11 +45,18 @@ export const ProfileView: React.FC = () => {
               className="w-16 h-16 rounded-full object-cover border border-white/10"
             />
             <div>
-              <h1 className="text-3xl font-semibold">{isGuest ? 'אורח/ת' : user.name}</h1>
+              <h1 className="text-3xl font-semibold"><bdi dir="auto">{isGuest ? 'אורח/ת' : user.name}</bdi></h1>
+              {!isGuest && (user.birthday || user.phone || user.city) ? (
+                <p className="text-sm text-white/55 mt-1">
+                  {user.birthday ? <>יום הולדת <Bidi>{user.birthday.split('-').reverse().join('.')}</Bidi></> : null}
+                  {user.phone ? <>{user.birthday ? ' · ' : ''}<Bidi kind="phone">{user.phone}</Bidi></> : null}
+                  {user.city ? <>{(user.birthday || user.phone) ? ' · ' : ''}{user.city}</> : null}
+                </p>
+              ) : null}
               <p className="text-sm text-white/45 mt-1">
                 {planLabel(user.subscriptionPlan)}
                 {trialDays !== null && trialDays >= 0 ? ` · ${trialDays} ימי ניסיון נותרו` : ''}
-                {user.email ? ` · ${user.email}` : ''}
+                {user.email ? <>{' · '}<Bidi kind="email" className="break-all">{user.email}</Bidi></> : ''}
               </p>
             </div>
           </div>
@@ -109,7 +119,7 @@ export const ProfileView: React.FC = () => {
               <h2 className="text-sm text-white/40 mb-1">מנוי</h2>
               <p className="text-lg font-medium">{planLabel(user.subscriptionPlan)}</p>
               {user.trialEndsAt && user.subscriptionPlan === 'free_trial' ? (
-                <p className="text-sm text-white/45 mt-1">בתוקף עד {user.trialEndsAt}</p>
+                <p className="text-sm text-white/45 mt-1">בתוקף עד <Bidi>{user.trialEndsAt}</Bidi></p>
               ) : null}
             </div>
             <div className="flex flex-wrap gap-2">

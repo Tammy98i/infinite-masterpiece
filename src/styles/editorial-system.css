@@ -76,6 +76,12 @@ body { background: var(--editorial-ink); }
   backdrop-filter: none;
 }
 .editorial-sky-library-veil { display: none; }
+.editorial-sky-backdrop.is-library-sky .editorial-sky-blackout {
+  background: rgba(6, 10, 18, .16);
+}
+.editorial-sky-backdrop.is-library-sky .editorial-sky-shade {
+  background: linear-gradient(180deg, rgba(6, 10, 18, .42) 0%, rgba(6, 10, 18, .08) 48%, rgba(6, 10, 18, .22) 100%);
+}
 
 .editorial-marketing-shell,
 .vod-app {
@@ -101,6 +107,10 @@ body { background: var(--editorial-ink); }
 :is(.editorial-marketing-shell, .vod-app) .text-black { color: var(--editorial-cream) !important; }
 :is(.editorial-marketing-shell, .vod-app) :is(.btn-gold, .tabbed-button, .skip-link),
 .video-home .space-cta > a { color: var(--editorial-ink) !important; }
+/* Webinar actions are navy, so the ink color above disappears. Cream stays readable. */
+.editorial-marketing-shell .webinar-stage-page :is(.btn-gold, .webinar-neural-cta) {
+  color: #f5f2e9 !important;
+}
 :is(.editorial-marketing-shell, .vod-app) :is([class*='border-white'], [class*='divide-white']) {
   border-color: var(--editorial-rule) !important;
 }

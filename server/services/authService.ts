@@ -1,6 +1,7 @@
 import { randomBytes, randomUUID, scryptSync, timingSafeEqual } from 'crypto';
 import { getDb } from '../db/connection.js';
 import { resolveLecturerReferralId } from './lecturerService.js';
+import { normalizeUserProfile, profileFromStored } from './userProfile.js';
 
 const SESSION_DAYS = 30;
 
@@ -22,6 +23,11 @@ export interface AuthUser {
   currentPaymentPhase?: number;
   staffDesk?: '' | 'content' | 'support' | 'sales' | 'legal' | 'finance' | 'community';
   staffStatus?: 'active' | 'suspended' | 'limited';
+  firstName?: string;
+  lastName?: string;
+  birthday?: string;
+  phone?: string;
+  city?: string;
 }
 
 function hashPassword(password: string) {
@@ -52,10 +58,16 @@ function rowToUser(row: Record<string, unknown>): AuthUser {
   } catch {
     interests = [];
   }
+  const profile = profileFromStored(row);
   return {
     id: String(row.id),
     email: String(row.email),
-    name: String(row.full_name),
+    name: profile.fullName || String(row.full_name),
+    firstName: profile.firstName,
+    lastName: profile.lastName,
+    birthday: profile.birthday,
+    phone: profile.phone,
+    city: profile.city,
     role: toClientRole(String(row.role)),
     subscriptionPlan: (row.subscription_plan as DbPlan) || 'none',
     trialEndsAt: row.trial_ends_at ? String(row.trial_ends_at) : undefined,
@@ -126,24 +138,44 @@ export function registerUser(fullName: string, email: string, password: string, 
   }
 
   const id = `user-${randomUUID()}`;
+  const profile = normalizeUserProfile({ fullName: name });
   db.prepare(
-    `INSERT INTO users (id, email, password_hash, full_name, role, last_login_at, referred_by_lecturer_id)
-     VALUES (?, ?, ?, ?, 'user', datetime('now'), ?)`
-  ).run(id, normalized, hashPassword(password), name, referralId);
+    `INSERT INTO users (
+      id, email, password_hash, full_name, first_name, last_name, role, last_login_at, referred_by_lecturer_id
+    ) VALUES (?, ?, ?, ?, ?, ?, 'user', datetime('now'), ?)`
+  ).run(id, normalized, hashPassword(password), profile.fullName, profile.firstName, profile.lastName, referralId);
 
   const row = db.prepare(`SELECT * FROM users WHERE id = ?`).get(id) as Record<string, unknown>;
   return { token: createSession(id), user: rowToUser(row) };
 }
 
 /** Admin creates an account without logging the new user in. */
-export function adminCreateUser(fullName: string, email: string, password: string) {
-  const name = fullName.trim();
-  const normalized = email.trim().toLowerCase();
-  if (!name) throw Object.assign(new Error('נא להזין שם'), { status: 400 });
+export function adminCreateUser(input: {
+  fullName?: string;
+  firstName?: string;
+  lastName?: string;
+  email: string;
+  password: string;
+  birthday?: string;
+  phone?: string;
+  city?: string;
+}) {
+  const profile = normalizeUserProfile(
+    {
+      fullName: input.fullName,
+      firstName: input.firstName,
+      lastName: input.lastName,
+      birthday: input.birthday,
+      phone: input.phone,
+      city: input.city,
+    },
+    { requireFirstName: true }
+  );
+  const normalized = input.email.trim().toLowerCase();
   if (!normalized || !normalized.includes('@')) {
     throw Object.assign(new Error('נא להזין אימייל תקין'), { status: 400 });
   }
-  if (password.length < 8) {
+  if (input.password.length < 8) {
     throw Object.assign(new Error('הסיסמה חייבת להיות לפחות 8 תווים'), { status: 400 });
   }
 
@@ -155,9 +187,20 @@ export function adminCreateUser(fullName: string, email: string, password: strin
 
   const id = `user-${randomUUID()}`;
   db.prepare(
-    `INSERT INTO users (id, email, password_hash, full_name, role, created_at)
-     VALUES (?, ?, ?, ?, 'user', datetime('now'))`
-  ).run(id, normalized, hashPassword(password), name);
+    `INSERT INTO users (
+      id, email, password_hash, full_name, first_name, last_name, birthday, phone, city, role, created_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, 'user', datetime('now'))`
+  ).run(
+    id,
+    normalized,
+    hashPassword(input.password),
+    profile.fullName,
+    profile.firstName,
+    profile.lastName,
+    profile.birthday,
+    profile.phone,
+    profile.city
+  );
 
   return id;
 }

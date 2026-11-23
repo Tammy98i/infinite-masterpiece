@@ -5,6 +5,8 @@ import { Trophy, Megaphone, ScrollText, Infinity, Check } from 'lucide-react';
 import { DirNext } from '../../components/DirArrow';
 import { PROGRAM_INCLUDED } from '../data/programIncluded';
 
+import { HomeJourney } from '../components/HomeJourney';
+
 const STEPS = [
   {
     num: '01',
@@ -43,6 +45,8 @@ export function Journey({ embedded = false }: { embedded?: boolean }) {
   useEffect(() => {
     if (!embedded) window.scrollTo(0, 0);
   }, [embedded]);
+
+  if (embedded) return <HomeJourney steps={STEPS} />;
 
   return (
     <div className="w-full">

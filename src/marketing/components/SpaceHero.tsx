@@ -94,6 +94,8 @@ export function SpaceHero() {
     if (!videos) return;
     const reduced = matchMedia('(prefers-reduced-motion: reduce)').matches || document.documentElement.classList.contains('a11y-reduce-motion');
     videos.forEach((video) => {
+      // React does not reliably apply the `muted` prop to <video>; enforce it so hero clips never play sound.
+      video.muted = true;
       if (reduced || video.dataset.planet !== featured) {
         video.pause();
         return;
@@ -126,7 +128,7 @@ export function SpaceHero() {
       <div className="space-ui">
         <div className="space-copy" dir="rtl">
           <h1 className="space-col space-title" id="space-hero-title">
-            <span className="space-ent-mask"><span className="space-ent-line">The Masterpiece</span></span>
+            <span className="space-ent-mask"><span className="space-ent-line">Infinite Masterpiece</span></span>
             <span className="space-ent-mask space-title-wide"><span className="space-ent-line">Framework</span></span>
           </h1>
           <div className="space-col space-rule"><span /></div>
