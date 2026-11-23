@@ -44,17 +44,15 @@
   bottom: 12px;
 }
 
-/* Center every selected profile in the same reserved space. Keep lengthy
-   biographies readable by scrolling inside the details, not growing the banner. */
+/* Center every selected profile in the same reserved space. The card grows
+   with its summary; the full profile stays on the member page. */
 .webinar-flow-page #team-universe .galaxy-star-anchor.is-selected {
   top: 22% !important;
 }
 
 .webinar-flow-page #team-universe .galaxy-inline-details {
-  max-height: 180px;
-  overflow-y: auto;
-  overscroll-behavior: contain;
-  scrollbar-width: none;
+  max-height: none;
+  overflow: visible;
   pointer-events: auto;
 }
 
@@ -181,10 +179,6 @@
     background: transparent;
     box-shadow: none;
     text-shadow: none;
-  }
-
-  .webinar-flow-page #team-universe .galaxy-inline-details {
-    max-height: 240px;
   }
 
   .webinar-flow-page .webinar-editorial-grid #team-universe.galaxy-mobile-carousel {
