@@ -114,7 +114,7 @@ export function FounderPage() {
           ) : (
             <div className="team-profile-portrait team-profile-letter" aria-hidden="true">{founder.name.trim().charAt(0)}</div>
           )}
-          <div>
+          <div className="team-profile-identity">
             <p className="team-profile-kicker">צוות המיזם</p>
             <h1>{founder.name}</h1>
             {founder.role ? <p className="team-profile-role">{founder.role}</p> : null}
@@ -171,7 +171,7 @@ export function FounderPage() {
         </section>
         <div className="team-profile-return">
           <Link to="/#team">חזרה לצוות המיזם</Link>
-          <Link to="/application?type=88">הגשת מועמדות לנבחרת 88</Link>
+          <Link to="/application?type=88" className="team-profile-apply">הגשת מועמדות לנבחרת 88</Link>
         </div>
       </div>
     </article>
