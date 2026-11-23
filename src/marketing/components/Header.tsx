@@ -186,11 +186,6 @@ export function Header() {
       <div className="header-row mx-auto grid h-full w-full max-w-[1400px] grid-cols-[auto_minmax(0,1fr)_auto] items-center">
           <Link to="/" aria-label="Infinite Masterpiece, דף הבית" className="header-logo flex items-center gap-2.5 sm:gap-3 lg:gap-4 group shrink-0">
             <InfinityIcon className="header-logo-mark text-[#dfc47d] opacity-80 group-hover:opacity-100 transition-opacity duration-300" strokeWidth={1} />
-            <div className="header-wordmark flex flex-col">
-              <span className="font-light tracking-[0.22em] text-white/90 leading-tight uppercase">
-                IM
-              </span>
-            </div>
           </Link>
 
           <div className="header-links min-w-0" aria-hidden="true" />
