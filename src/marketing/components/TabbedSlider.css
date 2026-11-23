@@ -92,7 +92,6 @@
   grid-template-columns: repeat(5, 1fr);
   gap: 0;
   margin: 3.2rem auto 2rem;
-  border-block: 1px solid rgba(183, 144, 67, .22);
 }
 
 .tabbed-number-grid article { position: relative; min-height: 210px; padding: 2.3rem 1rem 1.5rem; border-inline-start: 1px solid rgba(183, 144, 67, .22); background: rgba(224, 237, 255, .025); }
@@ -163,6 +162,7 @@
 
 @media (max-width: 1180px) {
   .tabbed-number-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .tabbed-number-grid article { border-bottom: 0; }
   .tabbed-number-grid article:last-child:nth-child(odd) {
     grid-column: 1 / -1;
     width: 50%;
@@ -173,7 +173,6 @@
 
 @media (max-width: 900px) {
   .tabbed-tabs { justify-content: stretch; }
-  .tabbed-number-grid article { border-bottom: 1px solid rgba(183, 144, 67, .22); }
   .tabbed-team-grid { grid-template-columns: repeat(2, 1fr); }
   .tabbed-platform-grid { grid-template-columns: repeat(2, 1fr); }
 }
