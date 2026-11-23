@@ -123,13 +123,11 @@ export function SpaceHero() {
   return (
     <section ref={rootRef} className="space-hero" aria-labelledby="space-hero-title" dir="ltr">
       <div className="space-sky" style={current.video ? { backgroundImage: `url(${current.poster})` } : undefined}>
-        {current.stars ? (
-          <>
-            <div className="space-stars" style={{ backgroundImage: `url(${current.stars})` }} />
-            <div className={`space-orb${current.id === 'sun' ? ' is-sun' : ''}`}>
-              <img src={current.cutout} alt="" />
-            </div>
-          </>
+        {current.stars ? <div className="space-stars" style={{ backgroundImage: `url(${current.stars})` }} /> : null}
+        {current.id === 'moon' ? (
+          <div className="space-orb">
+            <img src={current.cutout} alt="" />
+          </div>
         ) : null}
         {PLANETS.map((planet) => planet.video ? (
           <video
@@ -147,6 +145,11 @@ export function SpaceHero() {
           />
         ) : null)}
       </div>
+      {current.id === 'sun' ? (
+        <div className="space-orb is-sun">
+          <img src="/hero/sun-surface.jpg" alt="" />
+        </div>
+      ) : null}
 
       <div className="space-ui">
         <div className="space-copy" dir="rtl">
