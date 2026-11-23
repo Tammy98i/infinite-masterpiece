@@ -11,11 +11,18 @@ export function SkyBackdrop({ className = '', library = false }: Props) {
   return (
     <div className={`editorial-sky-backdrop fixed inset-0 z-0 pointer-events-none overflow-hidden ${library ? 'is-library-sky' : ''} ${className}`} aria-hidden="true">
       <img
-        src={library ? LIBRARY_CLOUDS : SITE_SKY}
+        src={SITE_SKY}
         alt=""
         width={1023}
         height={438}
-        className={`editorial-sky-image absolute inset-0 h-full w-full object-cover ${library ? 'object-bottom' : 'object-center'}`}
+        className={`editorial-sky-image is-site absolute inset-0 h-full w-full object-cover object-center${library ? ' is-inactive' : ''}`}
+      />
+      <img
+        src={LIBRARY_CLOUDS}
+        alt=""
+        width={1672}
+        height={941}
+        className={`editorial-sky-image is-library absolute inset-0 h-full w-full object-cover object-bottom${library ? '' : ' is-inactive'}`}
       />
       <div className="editorial-sky-blackout absolute inset-0" />
       <div className="editorial-sky-shade absolute inset-0" />

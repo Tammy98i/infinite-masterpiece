@@ -82,7 +82,13 @@ export function FounderPage() {
   const founder = staticFounder || memberFounder || (instructor ? instructorToFounder(instructor) : undefined);
 
   if (!founder && !loaded) {
-    return <div className="min-h-screen" />;
+    return (
+      <article className="team-profile" aria-busy="true">
+        <div className="team-profile-wrap">
+          <p className="team-profile-empty">טוענים את הפרופיל…</p>
+        </div>
+      </article>
+    );
   }
 
   if (!founder) {
@@ -104,7 +110,7 @@ export function FounderPage() {
         </Link>
         <header className="team-profile-hero">
           {portrait ? (
-            <img className="team-profile-portrait" src={portrait} alt="" />
+            <img className="team-profile-portrait" src={portrait} alt={founder.name} />
           ) : (
             <div className="team-profile-portrait team-profile-letter" aria-hidden="true">{founder.name.trim().charAt(0)}</div>
           )}

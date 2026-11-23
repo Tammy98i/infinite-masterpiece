@@ -5,6 +5,10 @@
   opacity: 1;
   filter: none;
 }
+.site-backdrop-layout:has(.vod-app) .editorial-sky-image.is-inactive {
+  opacity: 0;
+  visibility: hidden;
+}
 
 .site-backdrop-layout:has(.vod-app) .editorial-sky-blackout {
   background: rgba(6, 10, 18, .18);

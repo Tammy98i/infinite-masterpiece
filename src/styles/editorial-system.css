@@ -68,6 +68,7 @@ body { background: var(--editorial-ink); }
 
 .editorial-sky-backdrop { background: var(--editorial-ink); }
 .editorial-sky-image { opacity: .9; filter: saturate(1.08) contrast(1.04); }
+.editorial-sky-backdrop .editorial-sky-image.is-inactive { opacity: 0; visibility: hidden; }
 .editorial-sky-blackout { background: rgba(3, 8, 18, .3); }
 .editorial-sky-shade {
   background:

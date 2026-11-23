@@ -30,9 +30,15 @@
   margin-bottom: 1.75rem;
   color: rgba(245, 241, 233, .72);
   font-size: .92rem;
+  cursor: pointer;
 }
 
 .team-profile-back:hover { color: #dfc47d; }
+.team-profile a:focus-visible {
+  outline: 2px solid #dfc47d;
+  outline-offset: 3px;
+  border-radius: 6px;
+}
 
 .team-profile-hero {
   display: grid;
@@ -78,7 +84,7 @@
   color: #dfc47d;
   font-size: .95rem;
   font-weight: 650;
-  letter-spacing: .22em;
+  letter-spacing: .08em;
 }
 
 .team-profile-title {
@@ -112,12 +118,16 @@
 .team-profile-links a {
   display: inline-flex;
   align-items: center;
-  min-height: 36px;
+  min-height: 44px;
   padding: .2rem .8rem;
   border-radius: 999px;
   border: 1px solid rgba(223, 196, 125, .35);
   color: #f3ede2;
   font-size: .82rem;
+}
+.team-profile-links a {
+  cursor: pointer;
+  transition: border-color .2s ease, color .2s ease;
 }
 
 .team-profile-links a:hover {
@@ -149,7 +159,10 @@
   border-radius: 1rem;
   border: 1px solid rgba(255, 255, 255, .14);
   background: rgba(6, 12, 24, .16);
+  transition: border-color .2s ease;
 }
+.team-profile-lecture { cursor: pointer; }
+.team-profile-lecture:hover { border-color: rgba(223, 196, 125, .55); }
 
 .team-profile-lecture h3,
 .team-profile-portfolio h3 {
@@ -176,8 +189,19 @@
   margin-top: 2.5rem;
 }
 
-.team-profile-return a { color: rgba(245, 241, 233, .75); }
+.team-profile-return a { color: rgba(245, 241, 233, .75); cursor: pointer; }
 .team-profile-return a:hover { color: #dfc47d; }
+
+@media (min-width: 761px) and (max-width: 1024px) {
+  .team-profile { padding-inline: 1.75rem; }
+  .team-profile-hero { grid-template-columns: 180px minmax(0, 1fr); gap: 1.25rem 1.5rem; }
+  .team-profile-portrait { width: 180px; height: 180px; }
+  .team-profile h1 { font-size: 2.5rem; }
+}
+
+@media (min-width: 900px) {
+  .team-profile-lectures { grid-template-columns: 1fr 1fr; }
+}
 
 @media (max-width: 760px) {
   .team-profile-hero {
