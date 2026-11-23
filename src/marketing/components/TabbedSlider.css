@@ -87,12 +87,17 @@
 .tabbed-lede { max-width: 720px; margin: 0 auto 2.6rem; color: rgba(224, 237, 255, .66); font-size: clamp(1rem, 1.6vw, 1.2rem); line-height: 1.8; }
 .tabbed-fine { margin: 1.8rem 0 1rem; color: rgba(224, 237, 255, .5); font-size: .82rem; }
 
-.team-title-outline {
+.editorial-marketing-shell.sky-readable h1.team-title-outline {
   display: inline-block;
   width: fit-content;
   margin-inline: auto;
-  border: 1px solid rgba(228, 201, 138, .85);
-  padding: .35rem 1rem;
+  border: 0;
+  padding: 0;
+  text-shadow:
+    0 0 6px rgba(255, 244, 214, .95),
+    0 0 14px rgba(228, 201, 138, .9),
+    0 0 28px rgba(223, 196, 125, .7),
+    0 0 52px rgba(183, 144, 67, .55);
 }
 
 .tabbed-number-grid {
