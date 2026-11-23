@@ -123,15 +123,14 @@ export function SpaceHero() {
   return (
     <section ref={rootRef} className="space-hero" aria-labelledby="space-hero-title" dir="ltr">
       <div className="space-sky" style={current.video ? { backgroundImage: `url(${current.poster})` } : undefined}>
-        {current.id === 'moon' ? (
+        {current.stars ? (
           <>
             <div className="space-stars" style={{ backgroundImage: `url(${current.stars})` }} />
-            <div className="space-orb">
+            <div className={`space-orb${current.id === 'sun' ? ' is-sun' : ''}`}>
               <img src={current.cutout} alt="" />
             </div>
           </>
         ) : null}
-        {current.id === 'sun' ? <div className="space-sun-plate" style={{ backgroundImage: `url(${current.poster})` }} /> : null}
         {PLANETS.map((planet) => planet.video ? (
           <video
             key={planet.id}
