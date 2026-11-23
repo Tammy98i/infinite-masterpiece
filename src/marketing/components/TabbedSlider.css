@@ -94,10 +94,8 @@
   border: 0;
   padding: 0;
   text-shadow:
-    0 0 6px rgba(255, 244, 214, .95),
-    0 0 14px rgba(228, 201, 138, .9),
-    0 0 28px rgba(223, 196, 125, .7),
-    0 0 52px rgba(183, 144, 67, .55);
+    0 0 4px rgba(228, 201, 138, .45),
+    0 0 12px rgba(183, 144, 67, .28);
 }
 
 .tabbed-number-grid {
