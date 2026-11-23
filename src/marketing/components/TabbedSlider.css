@@ -11,7 +11,7 @@
   position: sticky;
   top: var(--site-header-h, 72px);
   z-index: 35;
-  padding: 0 4vw;
+  padding: 0;
   border-bottom: 1px solid rgba(183, 144, 67, .28);
   background: rgba(5, 10, 20, .97);
   backdrop-filter: blur(16px);
@@ -19,29 +19,33 @@
 
 .tabbed-tabs {
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: clamp(.3rem, 1.1vw, 1.4rem);
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: .9rem 0;
-  overflow-x: auto;
-  scrollbar-width: none;
+  align-items: stretch;
+  justify-content: stretch;
+  gap: 0;
+  width: 100%;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  overflow: visible;
 }
-
-.tabbed-tabs::-webkit-scrollbar { display: none; }
 
 .tabbed-tabs button {
   position: relative;
-  min-height: 44px;
-  padding: .65rem .45rem;
-  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1 1 0;
+  min-width: 0;
+  min-height: 52px;
+  padding: .7rem .4rem;
   border: 0;
   border-radius: 0;
   color: rgba(224, 237, 255, .55);
   background: transparent;
   box-shadow: none;
-  font: 600 .88rem/1 var(--font-body);
+  font: 600 .88rem/1.25 var(--font-body);
+  text-align: center;
+  white-space: normal;
   cursor: pointer;
   transition: color .2s ease;
 }
@@ -158,7 +162,7 @@
 @keyframes tabbed-panel-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
 
 @media (max-width: 900px) {
-  .tabbed-tabs { justify-content: flex-start; }
+  .tabbed-tabs { justify-content: stretch; }
   .tabbed-number-grid { grid-template-columns: repeat(2, 1fr); }
   .tabbed-number-grid article { border-bottom: 1px solid rgba(183, 144, 67, .22); }
   .tabbed-team-grid { grid-template-columns: repeat(2, 1fr); }
@@ -166,9 +170,7 @@
 }
 
 @media (max-width: 560px) {
-  .tabbed-tabs-wrap { padding-inline: .75rem; }
-  .tabbed-tabs { padding-block: .55rem; }
-  .tabbed-tabs button { font-size: .8rem; }
+  .tabbed-tabs button { min-height: 48px; padding: .55rem .2rem; font-size: .72rem; }
   .tabbed-panel { min-height: 610px; padding: 3.5rem 1rem 4.5rem; }
   .tabbed-number-grid { grid-template-columns: 1fr 1fr; }
   .tabbed-number-grid article { min-height: 175px; padding-inline: .65rem; }
