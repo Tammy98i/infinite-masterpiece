@@ -45,10 +45,11 @@
 .space-orb { position: absolute; z-index: 1; left: 50%; top: 56%; width: 220vw; height: 220vw; margin-left: -110vw; border-radius: 50%; overflow: hidden; pointer-events: none; }
 .space-orb img { position: absolute; top: 0; left: 0; width: 128%; height: 100%; max-width: none; object-fit: cover; animation: space-surface 16s ease-in-out infinite alternate; }
 .space-orb.is-sun { z-index: 1; box-shadow: 0 -18px 48px rgba(255, 196, 90, .35); }
-.space-orb.is-sun img { width: 142%; height: 142%; left: 50%; top: 50%; transform: translate(-50%, -50%); animation: none; mix-blend-mode: normal; object-fit: cover; }
+.space-orb.is-sun img { width: 142%; height: 142%; left: 50%; top: 50%; transform-origin: center; mix-blend-mode: normal; object-fit: cover; animation: space-sun-turn 22s linear infinite; }
 .space-planet img[data-planet="sun"].is-shown { transform: scale(1.2); transform-origin: center; }
 @keyframes space-stars { from { transform: translate3d(-2.5%, -1.2%, 0); } to { transform: translate3d(2.5%, 1.6%, 0); } }
 @keyframes space-surface { from { transform: translateX(0); } to { transform: translateX(-21.5%); } }
+@keyframes space-sun-turn { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 .space-ui { position: absolute; inset: 0; z-index: 3; }
 .space-copy { position: absolute; inset: 0; transform: translateY(var(--vshift)); pointer-events: none; }
 .space-copy a, .space-planet { pointer-events: auto; }
