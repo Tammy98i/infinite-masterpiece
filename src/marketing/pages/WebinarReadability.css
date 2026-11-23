@@ -154,6 +154,7 @@
     width: 100%; height: auto; min-width: 0; opacity: 1 !important;
   }
   .webinar-stage-page .team-galaxy .galaxy-sun { grid-column: 1 / -1; }
+  .webinar-stage-page .team-galaxy .galaxy-star-stack { display: flex; flex-direction: column; align-items: stretch; width: 100%; transform: none; }
   .webinar-stage-page .team-galaxy .galaxy-star { transform: none; width: 100%; min-width: 0; gap: 12px; }
   .webinar-stage-page .team-galaxy .galaxy-stellar-body { width: 64px; height: 64px; flex-shrink: 0; transform: none !important; filter: none !important; }
   .webinar-stage-page .team-galaxy .galaxy-featured .galaxy-stellar-body { width: 88px; height: 88px; }
