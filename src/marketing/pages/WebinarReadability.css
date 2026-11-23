@@ -168,7 +168,7 @@
   .webinar-stage-page .team-galaxy .galaxy-star-role { font-size: 11px !important; letter-spacing: .08em; }
   .webinar-stage-page .team-galaxy .galaxy-star-anchor.is-selected { grid-column: 1 / -1; }
   .webinar-stage-page .team-galaxy .galaxy-inline-details {
-    position: static; transform: none; width: 100%; max-width: 100%; padding: 16px;
+    position: relative; top: auto; left: auto; transform: none; width: 100%; max-width: 100%; padding: 16px;
   }
   .webinar-stage-page .team-galaxy .galaxy-inline-bio { font-size: 16px; line-height: 1.75; }
   .webinar-stage-page .team-galaxy .galaxy-manifesto {
