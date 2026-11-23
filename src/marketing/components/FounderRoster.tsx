@@ -52,7 +52,7 @@ function FounderCell({
         <img
           src={photoUrl || founder.image}
           alt={founder.name}
-          className={`${photo} rounded-full object-cover mx-auto mb-4 border-2 border-[#e4c98a] shadow-[0_0_0_6px_rgba(183,144,67,0.22)]`}
+          className={`${photo} team-portrait rounded-full object-cover mx-auto mb-4 border-2 border-[#e4c98a] shadow-[0_0_0_5px_rgba(183,144,67,0.4)]`}
         />
         <h2 className="text-base md:text-lg font-medium text-white mb-1">{founder.name}</h2>
         {founder.role ? (
