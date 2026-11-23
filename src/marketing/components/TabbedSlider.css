@@ -88,9 +88,11 @@
 .tabbed-fine { margin: 1.8rem 0 1rem; color: rgba(224, 237, 255, .5); font-size: .82rem; }
 
 .team-title-outline {
-  display: block;
+  display: inline-block;
+  width: fit-content;
+  margin-inline: auto;
   border: 1px solid rgba(228, 201, 138, .85);
-  padding: .9rem 1.5rem;
+  padding: .35rem 1rem;
 }
 
 .tabbed-number-grid {
