@@ -126,6 +126,7 @@ export function TeamGalaxy({
       style={{ left: `${position.x}%`, top: `${position.y}%`, '--star-x': `${position.x}%`, '--star-size': `${diameter}px`, '--satellite-size': `${starDiameter({ ...member, hierarchy_level: 'core' })}px`, '--portrait-boost': ['גלב סמירנוב', 'תמי אליאן'].includes(member.name.trim()) ? 1.15 : 1, '--star-glow': `${10 + member.impact_score * 0.28}px` } as CSSProperties}
       initial={{ opacity: 0 }} animate={{ left: `${position.x}%`, top: `${position.y}%`, opacity: profile && !isSelected ? 0.32 : 1 }}
       transition={{ duration: 0.65, ease: [0.22, 1, 0.36, 1], delay: isSelected ? 0 : sun ? 0 : Math.min(slot * 0.04, 0.28) }}>
+      <div className="galaxy-star-stack">
       <button type="button" className="galaxy-star" data-member-id={member.id} data-impact={member.impact_score}
         aria-label={isSelected && !mobileMode ? `סגירת פרטי ${member.name}` : `הצגת פרטי ${member.name}`} aria-expanded={isSelected}
         aria-controls={isSelected ? `team-inline-details-${member.id}` : undefined}
@@ -138,10 +139,10 @@ export function TeamGalaxy({
         }}>
         <span className="galaxy-stellar-body"><StarPortrait member={member} /></span>
         <span className="galaxy-star-name" dir="auto">{member.name}</span>
-        {isSelected
-          ? <InlineStarDetails member={member} />
-          : sun ? <span className="galaxy-star-role" dir="auto">FOUNDER / VISIONARY</span> : null}
+        {sun && !isSelected ? <span className="galaxy-star-role" dir="auto">FOUNDER / VISIONARY</span> : null}
       </button>
+      {isSelected ? <InlineStarDetails member={member} /> : null}
+      </div>
     </motion.div>;
   };
   return <motion.section id="team-universe" className={`team-galaxy ${mobileCarousel ? 'galaxy-mobile-carousel' : ''} ${paused ? 'galaxy-paused' : ''} ${className}`.trim()}
@@ -160,7 +161,7 @@ export function TeamGalaxy({
           <div ref={mapRef} className={`galaxy-map ${profile ? 'has-selection' : ''}`}
             onClick={event => {
               if (mobileMode) return;
-              if (event.target instanceof Element && !event.target.closest('.galaxy-star') && profile) close(false);
+              if (event.target instanceof Element && !event.target.closest('.galaxy-star, .galaxy-inline-details') && profile) close(false);
             }}>
             <div className="galaxy-orbits" aria-hidden="true">
               {[0, 1, 2, 3].map((ring) => <motion.div key={ring} className={`galaxy-orbit galaxy-orbit-${ring}`} initial={{ opacity: 0, scale: 0.85 }} whileInView={{ opacity: 1, scale: 1 }} viewport={{ once: true }} transition={{ delay: 0.25 + ring * 0.12, duration: 1.5 }}><span /></motion.div>)}
