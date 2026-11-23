@@ -54,8 +54,7 @@
   max-height: 180px;
   overflow-y: auto;
   overscroll-behavior: contain;
-  scrollbar-width: thin;
-  scrollbar-color: #b79043 transparent;
+  scrollbar-width: none;
   pointer-events: auto;
 }
 
@@ -106,6 +105,14 @@
     scroll-snap-align: center;
   }
 
+  .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star-stack {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    transform: none;
+  }
+
   .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-star {
     width: 100%;
     transform: none;
@@ -125,8 +132,10 @@
   }
 
   .webinar-flow-page #team-universe.galaxy-mobile-carousel .galaxy-inline-details {
-    position: static;
+    position: relative;
     top: auto;
+    left: auto;
+    transform: none;
     width: 100%;
     max-height: none;
     overflow: visible;
