@@ -16,7 +16,7 @@ export function Premium88({ embedded = false }: { embedded?: boolean }) {
           <p className="text-[13px] uppercase tracking-[0.3em] text-[#b79043] mb-6 font-semibold">
             האנשים שמאחורי שכבת העומק
           </p>
-          <h1 className="text-4xl md:text-6xl font-heading text-white tracking-tight mb-6">
+          <h1 className="team-title-outline text-4xl md:text-6xl font-heading text-white tracking-tight mb-6">
             צוות המיזם
           </h1>
           <p className="text-lg text-white/50 font-light leading-relaxed">

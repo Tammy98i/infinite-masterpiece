@@ -87,6 +87,11 @@
 .tabbed-lede { max-width: 720px; margin: 0 auto 2.6rem; color: rgba(224, 237, 255, .66); font-size: clamp(1rem, 1.6vw, 1.2rem); line-height: 1.8; }
 .tabbed-fine { margin: 1.8rem 0 1rem; color: rgba(224, 237, 255, .5); font-size: .82rem; }
 
+.team-title-outline {
+  outline: 1px solid rgba(228, 201, 138, .85);
+  outline-offset: 14px;
+}
+
 .tabbed-number-grid {
   display: grid;
   grid-template-columns: repeat(5, 1fr);
