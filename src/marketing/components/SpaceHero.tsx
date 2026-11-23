@@ -5,12 +5,12 @@ import { WEBINAR_CTA_ENDED, WEBINAR_CTA_HEADER, WEBINAR_CTA_NEXT_CYCLE } from '.
 import { useWebinarPhase } from '../hooks/useWebinarPhase';
 import './SpaceHero.css';
 
-type PlanetId = 'earth' | 'venus' | 'mars';
+type PlanetId = 'earth' | 'venus' | 'mars' | 'moon' | 'sun';
 
 type Planet = {
   id: PlanetId;
   name: string;
-  video: string;
+  video?: string;
   poster: string;
   cutout: string;
 };
@@ -36,6 +36,18 @@ const PLANETS: Planet[] = [
     video: 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202422_51eae59a-2459-4c84-907c-cc5edfe5fea7.mp4',
     poster: 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202133_0ba6de7c-285d-43dc-b7ab-8c54c73707cb.png',
     cutout: 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/hf_20260827_202018_3d559490-f613-4ed7-a3bb-3b7e9fc90fb8.png',
+  },
+  {
+    id: 'moon',
+    name: 'MOON',
+    poster: '/hero/moon-poster.jpg',
+    cutout: '/hero/moon-cutout.png',
+  },
+  {
+    id: 'sun',
+    name: 'SUN',
+    poster: '/hero/sun-poster.jpg',
+    cutout: '/hero/sun-cutout.png',
   },
 ];
 
@@ -107,8 +119,8 @@ export function SpaceHero() {
 
   return (
     <section ref={rootRef} className="space-hero" aria-labelledby="space-hero-title" dir="ltr">
-      <div className="space-sky" style={{ backgroundImage: `url(${current.poster})` }}>
-        {PLANETS.map((planet) => (
+      <div className={`space-sky${current.video ? '' : ' is-plate'}`} style={{ backgroundImage: `url(${current.poster})` }}>
+        {PLANETS.map((planet) => planet.video ? (
           <video
             key={planet.id}
             className={planet.id === featured ? 'is-active' : ''}
@@ -122,7 +134,7 @@ export function SpaceHero() {
             preload={planet.id === 'earth' ? 'auto' : 'none'}
             aria-hidden="true"
           />
-        ))}
+        ) : null)}
       </div>
 
       <div className="space-ui">
