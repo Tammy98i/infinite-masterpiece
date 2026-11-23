@@ -14,6 +14,10 @@
   opacity: 1;
   filter: none;
 }
+.site-backdrop-layout:has(.crm-desk) .editorial-sky-image.is-inactive {
+  opacity: 0;
+  visibility: hidden;
+}
 
 .site-backdrop-layout:has(.crm-desk) .editorial-sky-blackout {
   background: rgba(3, 8, 18, .32);

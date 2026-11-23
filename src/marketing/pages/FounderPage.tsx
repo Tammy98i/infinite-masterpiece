@@ -82,7 +82,13 @@ export function FounderPage() {
   const founder = staticFounder || memberFounder || (instructor ? instructorToFounder(instructor) : undefined);
 
   if (!founder && !loaded) {
-    return <div className="min-h-screen" />;
+    return (
+      <article className="team-profile" aria-busy="true">
+        <div className="team-profile-wrap">
+          <p className="team-profile-empty">טוענים את הפרופיל…</p>
+        </div>
+      </article>
+    );
   }
 
   if (!founder) {
@@ -104,11 +110,11 @@ export function FounderPage() {
         </Link>
         <header className="team-profile-hero">
           {portrait ? (
-            <img className="team-profile-portrait" src={portrait} alt="" />
+            <img className="team-profile-portrait" src={portrait} alt={founder.name} />
           ) : (
             <div className="team-profile-portrait team-profile-letter" aria-hidden="true">{founder.name.trim().charAt(0)}</div>
           )}
-          <div>
+          <div className="team-profile-identity">
             <p className="team-profile-kicker">צוות המיזם</p>
             <h1>{founder.name}</h1>
             {founder.role ? <p className="team-profile-role">{founder.role}</p> : null}
@@ -165,7 +171,7 @@ export function FounderPage() {
         </section>
         <div className="team-profile-return">
           <Link to="/#team">חזרה לצוות המיזם</Link>
-          <Link to="/application?type=88">הגשת מועמדות לנבחרת 88</Link>
+          <Link to="/application?type=88" className="team-profile-apply">הגשת מועמדות לנבחרת 88</Link>
         </div>
       </div>
     </article>
