@@ -3,7 +3,19 @@ import { Link } from 'react-router-dom';
 import { communityApi, type CommunityHome, type CommunityPost } from '../api/community';
 import { uploadFile } from '../api/upload';
 import { useApp } from '../context/AppContext';
-import type { Course } from '../types';
+import {
+  AREAS,
+  AgentGrid,
+  ClubCard,
+  ContactDesk,
+  CourseShelf,
+  EventList,
+  HallOfFame,
+  HomeDesk,
+  MonthBoard,
+  Partners,
+  type AreaId,
+} from './personal/PersonalSections';
 import '../styles/Community.css';
 
 function relativeTime(value: string) {
@@ -16,17 +28,6 @@ function relativeTime(value: string) {
   if (hours < 24) return `לפני ${hours} שע׳`;
   return `לפני ${Math.round(hours / 24)} ימים`;
 }
-
-type AreaId = 'home' | 'feed' | 'calendar' | 'library' | 'shorts' | 'contact';
-
-const AREAS: Array<{ id: AreaId; label: string }> = [
-  { id: 'home', label: 'הבית' },
-  { id: 'feed', label: 'הקהילה' },
-  { id: 'calendar', label: 'לוח חודשי' },
-  { id: 'library', label: 'הספרייה' },
-  { id: 'shorts', label: 'הדרכות קצרות' },
-  { id: 'contact', label: 'צור קשר' },
-];
 
 function Badge({ value }: { value: string }) {
   return <span className="community-tag" data-badge={value}>{value}</span>;
@@ -45,6 +46,8 @@ export function CommunityView() {
   const [pending, setPending] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [area, setArea] = useState<AreaId>('home');
+  const shorts = courses.filter((course) => course.isShort);
+  const lessons = courses.filter((course) => !course.isShort);
   const [openReplies, setOpenReplies] = useState<Record<string, boolean>>({});
   const [replyDraft, setReplyDraft] = useState<Record<string, string>>({});
   const [loadingMore, setLoadingMore] = useState(false);
@@ -189,27 +192,18 @@ export function CommunityView() {
           </section>
         ) : null}
 
-        {area === 'home' && open ? (
-          <HomeArea
-            name={home?.me?.firstName || user.name.split(' ')[0] || ''}
-            posts={home?.posts || []}
-            courses={courses.filter((course) => course.isShort).slice(0, 6)}
-            onOpenFeed={() => setArea('feed')}
-            onOpenCourse={(courseId) => setView('course', { courseId })}
-          />
+        {area === 'home' && open && home ? (
+          <HomeDesk user={user} posts={home.posts} shorts={shorts.slice(0, 8)} onOpenFeed={() => setArea('feed')} onOpenCourse={(courseId) => courseId && setView('course', { courseId })} />
         ) : null}
-
         {area === 'calendar' ? <MonthBoard /> : null}
-
-        {area === 'library' ? (
-          <CourseShelf title="הספרייה" courses={courses.filter((course) => !course.isShort).slice(0, 8)} onOpen={(courseId) => setView('course', { courseId })} />
-        ) : null}
-
-        {area === 'shorts' ? (
-          <CourseShelf title="הדרכות קצרות" courses={courses.filter((course) => course.isShort)} onOpen={(courseId) => setView('course', { courseId })} />
-        ) : null}
-
-        {area === 'contact' ? <ContactArea /> : null}
+        {area === 'recordings' ? <EventList courses={lessons} onOpen={(courseId) => setView('course', { courseId })} /> : null}
+        {area === 'courses' ? <CourseShelf title="קורסים ושיעורים" courses={lessons} onOpen={(courseId) => setView('course', { courseId })} /> : null}
+        {area === 'shorts' ? <CourseShelf title="הדרכות קצרות" courses={shorts} onOpen={(courseId) => setView('course', { courseId })} /> : null}
+        {area === 'club' ? <ClubCard plan={user.subscriptionPlan} /> : null}
+        {area === 'agents' ? <AgentGrid /> : null}
+        {area === 'hall' && home ? <HallOfFame user={user} posts={home.posts} /> : null}
+        {area === 'partners' ? <Partners userId={user.id} /> : null}
+        {area === 'contact' ? <ContactDesk /> : null}
 
         {area === 'feed' && home && open ? (
           <div className="community-layout">
@@ -294,109 +288,6 @@ export function CommunityView() {
   );
 }
 
-function HomeArea({
-  name,
-  posts,
-  courses,
-  onOpenFeed,
-  onOpenCourse,
-}: {
-  name: string;
-  posts: CommunityPost[];
-  courses: Course[];
-  onOpenFeed: () => void;
-  onOpenCourse: (courseId: string) => void;
-}) {
-  const featured = posts[0];
-  return (
-    <div className="community-home">
-      <section className="community-card community-hello">
-        <p className="community-kicker">שלום{name ? ` ${name}` : ''}</p>
-        <h2>הבית של חברי הספרייה</h2>
-        <p>שיחה, לוח חודשי, והדרכות קצרות. הפוד נשאר במסך שלו.</p>
-        <button type="button" className="community-publish" onClick={onOpenFeed}>לכתיבה בקהילה</button>
-      </section>
-      {featured ? (
-        <article className="community-card community-feature">
-          <p className="community-kicker">{featured.author.firstName}</p>
-          <h2>{featured.body}</h2>
-          <button type="button" onClick={onOpenFeed}>לדיון</button>
-        </article>
-      ) : null}
-      <CourseShelf title="הדרכות קצרות" courses={courses} onOpen={onOpenCourse} />
-      <section className="community-card">
-        <h2>מהחדש בקהילה</h2>
-        {posts.slice(0, 3).map((post) => (
-          <button key={post.id} type="button" className="community-news" onClick={onOpenFeed}>
-            <span>{post.author.firstName}</span>
-            <span>{post.body}</span>
-          </button>
-        ))}
-      </section>
-    </div>
-  );
-}
-
-function CourseShelf({ title, courses, onOpen }: { title: string; courses: Course[]; onOpen: (courseId: string) => void }) {
-  return (
-    <section className="community-shelf">
-      <h2>{title}</h2>
-      {courses.length === 0 ? <p className="community-note">התכנים יופיעו כאן כשיפורסמו.</p> : null}
-      <div className="community-course-grid">
-        {courses.map((course) => (
-          <button key={course.id} type="button" className="community-course" onClick={() => onOpen(course.id)}>
-            {course.coverImage ? <img src={course.coverImage} alt="" /> : <span className="community-course-fallback" aria-hidden="true" />}
-            <span>{course.title}</span>
-          </button>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function MonthBoard() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = now.getMonth();
-  const first = new Date(year, month, 1).getDay();
-  const count = new Date(year, month + 1, 0).getDate();
-  const label = now.toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
-  const cells = [...Array(first).fill(null), ...Array.from({ length: count }, (_, index) => index + 1)];
-  return (
-    <section className="community-card community-month" aria-label="לוח חודשי">
-      <h2>{label}</h2>
-      <div className="community-weekdays" aria-hidden="true">
-        {['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'].map((day) => <span key={day}>{day}</span>)}
-      </div>
-      <div className="community-days">
-        {cells.map((day, index) => (
-          <span key={index} className={day === now.getDate() ? 'is-today' : undefined}>{day || ''}</span>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function ContactArea() {
-  const [sent, setSent] = useState(false);
-  const [note, setNote] = useState('');
-  return (
-    <form className="community-card community-contact" onSubmit={(event) => {
-      event.preventDefault();
-      const text = note.trim();
-      if (text.length < 2) return;
-      window.location.href = `mailto:support@infinitemasterpiece.local?subject=${encodeURIComponent('פנייה מהאזור האישי')}&body=${encodeURIComponent(text)}`;
-      setSent(true);
-    }}>
-      <h2>צור קשר</h2>
-      <p>הפנייה נפתחת במייל אל הצוות.</p>
-      <label htmlFor="community-contact">ההודעה</label>
-      <textarea id="community-contact" value={note} onChange={(event) => setNote(event.target.value)} placeholder="איך אפשר לעזור?" />
-      <button type="submit" className="community-publish">שליחה</button>
-      {sent ? <p>חלון המייל נפתח עם ההודעה.</p> : null}
-    </form>
-  );
-}
 
 const PostCard: FC<{
   post: CommunityPost;
