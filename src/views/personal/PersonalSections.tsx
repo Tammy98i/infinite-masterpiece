@@ -377,9 +377,9 @@ export function MonthBoard({ sessions }: { sessions: ClubSession[] }) {
   return (
     <section className="pa-card pa-month" aria-label="לוח חודשי">
       <div className="pa-rowhead">
-        <button type="button" onClick={() => setCursor(new Date(year, month - 1, 1))} aria-label="חודש קודם">‹</button>
+        <button type="button" onClick={() => setCursor(new Date(year, month - 1, 1))}>החודש הקודם</button>
         <h2>{label}</h2>
-        <button type="button" onClick={() => setCursor(new Date(year, month + 1, 1))} aria-label="חודש הבא">›</button>
+        <button type="button" onClick={() => setCursor(new Date(year, month + 1, 1))}>החודש הבא</button>
       </div>
       <div className="pa-weekdays">{['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'].map((day) => <span key={day}>{day}</span>)}</div>
       <div className="pa-days">
@@ -436,9 +436,15 @@ export function EventList({
       </section>
       <section className="pa-card">
         <h2>מפגשים שהתקיימו</h2>
-        {past.length === 0 ? <p className="pa-note">הקלטות המפגשים יופיעו כאן אחרי שיתקיימו.</p> : past.map((session) => {
+        {past.length === 0 ? <p className="pa-note">אחרי שמפגש מתקיים, הוא מופיע כאן. ההקלטה עצמה תתווסף כשהיא מוכנה.</p> : past.map((session) => {
           const parts = jerusalemParts(session.startsAt);
-          return <p key={session.startsAt}>{session.title}{parts ? ` · ${parts.day}.${parts.month + 1}` : ''}</p>;
+          return (
+            <article key={session.startsAt} className="pa-event">
+              <span className="pa-avatar">{session.title.trim().charAt(0)}</span>
+              <span><strong>{session.title}</strong><em>ההקלטה תתווסף כשהיא מוכנה</em></span>
+              <b>{parts ? `${parts.day}.${parts.month + 1}` : ''}</b>
+            </article>
+          );
         })}
       </section>
       <section>
@@ -466,8 +472,7 @@ export function EventList({
 export function AgentGrid({ onContact }: { onContact: () => void }) {
   return (
     <section className="pa-agents">
-      <div className="pa-rowhead"><h2>סוכני AI</h2><span>ייפתחו בהמשך</span></div>
-      <p className="pa-note">הסוכנים עדיין לא מפיקים תשובה. בינתיים אפשר לפנות לצוות, והבקשה מגיעה לאדם.</p>
+      <p className="pa-note">אלה רעיונות לעזרה. הם עדיין לא עונים לבד. הלחיצה שולחת אתכם לצוות, והתשובה מגיעה מאדם.</p>
       <div className="pa-grid">
         {AGENTS.map((item) => (
           <article key={item.name} className="pa-agent">
@@ -502,20 +507,20 @@ export function HallOfFame({ user, posts, watches }: { user: UserProfile; posts:
     const mine = user.name.split(' ')[0] || 'אתם';
     if (!counts.has(mine)) counts.set(mine, 0);
     return [...counts.entries()]
-      .map(([name, count]) => ({ name, points: count * 20 }))
-      .sort((a, b) => b.points - a.points || a.name.localeCompare(b.name, 'he'));
+      .map(([name, count]) => ({ name, count }))
+      .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'he'));
   }, [posts, range, user.name]);
-  const top = rows[0]?.points || 1;
+  const top = rows[0]?.count || 1;
   const place = rows.findIndex((row) => row.name === (user.name.split(' ')[0] || 'אתם')) + 1;
   return (
     <div className="pa-hall">
       <section className="pa-card pa-profile">
         <div className="pa-avatar lg">{(user.name || 'ח').trim().charAt(0)}</div>
         <h2>{user.name}</h2>
-        <p>{place ? `מקום ${place} לפי פוסטים שפורסמו` : 'עוד אין דירוג'}</p>
+        <p>{place ? `המקום שלכם ברשימה: ${place}` : 'עוד אין רשימה'}</p>
         <div className="pa-stats">
-          <div><b>{levelFor(activity.points).name}</b><span>דרגה</span></div>
-          <div><b>{activity.points}</b><span>מצפייה ומפוסטים</span></div>
+          <div><b>{activity.watches}</b><span>צפיות</span></div>
+          <div><b>{activity.posts}</b><span>הודעות שכתבתם</span></div>
         </div>
       </section>
       <section className="pa-card">
@@ -529,8 +534,8 @@ export function HallOfFame({ user, posts, watches }: { user: UserProfile; posts:
             <li key={row.name}>
               <b>{index + 1}</b>
               <span>{row.name}</span>
-              <i style={{ width: `${Math.max(8, (row.points / top) * 100)}%` }} />
-              <em>{row.points}</em>
+              <i style={{ width: `${Math.max(8, (row.count / top) * 100)}%` }} />
+              <em>{row.count === 1 ? 'הודעה אחת' : `${row.count} הודעות`}</em>
             </li>
           ))}
         </ol>
@@ -546,13 +551,13 @@ export function Partners({ userId }: { userId: string }) {
     <div className="pa-partners">
       <section className="pa-card pa-partner-hero">
         <h2>תוכנית שותפים</h2>
-        <p>אפשר להעתיק קישור אישי. ספירת הנרשמים והקרדיט ייפתחו בהמשך, ולכן אין כאן מספרים.</p>
+        <p>העתיקו את הקישור ושלחו לחבר. כשהספירה תיפתח, תראו כאן כמה אנשים נרשמו דרככם.</p>
       </section>
       <section className="pa-card">
         <h2>הקישור שלי</h2>
         <p className="pa-link">{link}</p>
         <button type="button" onClick={() => { void navigator.clipboard.writeText(link).then(() => setCopied(true)); }}>
-          {copied ? 'הועתק' : 'העתקת קישור'}
+          {copied ? 'הקישור הועתק' : 'העתיקו את הקישור'}
         </button>
       </section>
       <div className="pa-steps">
@@ -583,13 +588,13 @@ export function ContactDesk() {
         setSent(true);
       }}>
         <h2>שלחו לנו משוב</h2>
-        <p>איך הייתם מדרגים את החוויה?</p>
-        <div className="pa-stars">
+        <p>בחרו כוכבים, מ־1 עד 5, וכתבו מה לשפר.</p>
+        <div className="pa-stars" role="group" aria-label="דירוג מ־1 עד 5">
           {[1, 2, 3, 4, 5].map((value) => (
-            <button key={value} type="button" aria-pressed={stars >= value} onClick={() => setStars(value)}>★</button>
+            <button key={value} type="button" aria-pressed={stars >= value} aria-label={`${value} כוכבים`} onClick={() => setStars(value)}>★</button>
           ))}
         </div>
-        <label htmlFor="pa-note">כתבו אימייל</label>
+        <label htmlFor="pa-note">מה תרצו לספר לנו</label>
         <textarea id="pa-note" value={note} onChange={(event) => setNote(event.target.value)} placeholder="ספרו מה עבד ומה לשפר" />
         <button type="submit">שליחת משוב</button>
         {sent ? <p>חלון המייל נפתח עם המשוב.</p> : null}

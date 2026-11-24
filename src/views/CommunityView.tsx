@@ -438,9 +438,9 @@ export function CommunityView() {
             <aside className="community-card community-side">
               <div>
                 <h2>כללי הקהילה</h2>
-                <p className="community-rule">מדברים בכבוד, גם כשחולקים.</p>
-                <p className="community-rule">בלי פרסום ובלי מכירה בפיד.</p>
-                <p className="community-rule">דיווח מגיע לצוות. פוסט מוסתר נשאר ביומן.</p>
+                <p className="community-rule">מדברים בכבוד, גם כשלא מסכימים.</p>
+                <p className="community-rule">לא מפרסמים כאן מוצר ולא מוכרים.</p>
+                <p className="community-rule">אם משהו לא מתאים, לוחצים «דיווח לצוות».</p>
               </div>
               <div>
                 <h2>כאן עכשיו</h2>
