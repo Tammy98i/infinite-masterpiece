@@ -116,10 +116,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ) {
         if (isPreviewToken(getAuthToken())) return;
         void sessionFromSupabaseUser(accessToken)
-          .then((result) => {
+          .then(async (result) => {
             if (cancelled) return;
             setAuthToken(result.token);
-            setUser(fromPayload(result.user));
+            try {
+              const { user: next } = await authApi.me();
+              if (!cancelled) setUser(fromPayload(overlayApiUser(result.user, next)));
+            } catch {
+              if (!cancelled) setUser(fromPayload(result.user));
+            }
           })
           .catch(() => undefined);
       }
