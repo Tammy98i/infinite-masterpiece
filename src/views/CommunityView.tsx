@@ -1,5 +1,6 @@
 import { useEffect, useId, useState, type FC } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { podsApi } from '../api/pods';
 import { communityApi, type CommunityHome, type CommunityPost } from '../api/community';
 import { uploadFile } from '../api/upload';
 import { useApp } from '../context/AppContext';
@@ -34,7 +35,8 @@ function Badge({ value }: { value: string }) {
 }
 
 export function CommunityView() {
-  const { setView, user, courses } = useApp();
+  const { setView, user, courses, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory } = useApp();
+  const navigate = useNavigate();
   const composerId = useId();
   const [channel, setChannel] = useState('talk');
   const [home, setHome] = useState<CommunityHome | null>(null);
@@ -46,6 +48,7 @@ export function CommunityView() {
   const [pending, setPending] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [area, setArea] = useState<AreaId>('home');
+  const [showPod, setShowPod] = useState(false);
   const shorts = courses.filter((course) => course.isShort);
   const lessons = courses.filter((course) => !course.isShort);
   const [openReplies, setOpenReplies] = useState<Record<string, boolean>>({});
@@ -86,6 +89,18 @@ export function CommunityView() {
   useEffect(() => {
     if (home?.access === 'locked') setView('profile');
   }, [home, setView]);
+
+  useEffect(() => {
+    let cancelled = false;
+    podsApi.me().then((state) => {
+      if (!cancelled) setShowPod(state.showNav);
+    }).catch(() => {
+      if (!cancelled) setShowPod(false);
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [user.id]);
 
   useEffect(() => {
     let cancelled = false;
@@ -148,9 +163,14 @@ export function CommunityView() {
         </button>
         <nav className="community-nav" aria-label="האזור האישי">
           {AREAS.map((item) => (
-            <button key={item.id} type="button" aria-current={area === item.id ? 'page' : undefined} onClick={() => { setArea(item.id); closeRail(); }}>
-              {item.label}
-            </button>
+            <span key={item.id} className="community-nav-slot">
+              <button type="button" aria-current={area === item.id ? 'page' : undefined} onClick={() => { setArea(item.id); closeRail(); }}>
+                {item.label}
+              </button>
+              {item.id === 'calendar' && showPod ? (
+                <button type="button" onClick={() => { closeRail(); navigate('/pod'); }}>הפוד שלי</button>
+              ) : null}
+            </span>
           ))}
           <button type="button" onClick={() => { closeRail(); setView('profile'); }}>חשבון</button>
         </nav>
@@ -193,7 +213,21 @@ export function CommunityView() {
         ) : null}
 
         {area === 'home' && open && home ? (
-          <HomeDesk user={user} posts={home.posts} shorts={shorts.slice(0, 8)} onOpenFeed={() => setArea('feed')} onOpenCourse={(courseId) => courseId && setView('course', { courseId })} />
+          <HomeDesk
+            user={user}
+            posts={home.posts}
+            shorts={shorts.slice(0, 8)}
+            saved={courses.filter((course) => myList.includes(course.id))}
+            history={getWatchHistory()}
+            paths={learningPaths}
+            instructors={instructors.filter((instructor) => instructor.showInLibrary !== false).slice(0, 8)}
+            continueItem={getContinueWatchingList()[0] || null}
+            onOpenFeed={() => setArea('feed')}
+            onOpenCourse={(courseId) => courseId && setView('course', { courseId })}
+            onOpenView={(view) => setView(view)}
+            onOpenInstructor={(instructorId) => setView('instructor', { instructorId })}
+            onWatch={(courseId, episodeId) => setView('watch', { courseId, episodeId })}
+          />
         ) : null}
         {area === 'calendar' ? <MonthBoard /> : null}
         {area === 'recordings' ? <EventList courses={lessons} onOpen={(courseId) => setView('course', { courseId })} /> : null}

@@ -60,7 +60,12 @@
 }
 
 .community-nav,
-.community-channels { display: grid; gap: 4px; }
+.community-channels,
+.community-nav-slot { display: grid; gap: 4px; }
+.pa-continue, .pa-quiz { display: grid; gap: 4px; width: 100%; text-align: start; }
+.pa-continue i { display: block; height: 8px; border-radius: 99px; background: #2f89fc; margin-top: 8px; }
+.pa-person { display: grid; justify-items: center; gap: 6px; width: 96px; padding: 8px; background: #fff; border: 1px solid #e6ebf2; border-radius: 16px; }
+.pa-person img, .pa-person b { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; display: grid; place-items: center; background: #e7f2ff; }
 
 .community-channels {
   padding-top: 8px;

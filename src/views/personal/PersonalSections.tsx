@@ -1,6 +1,6 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type ReactNode } from 'react';
 import type { CommunityPost } from '../../api/community';
-import type { Course, UserProfile } from '../../types';
+import type { Course, Instructor, LearningPath, UserProfile, WatchProgress } from '../../types';
 
 export type AreaId =
   | 'home'
@@ -69,14 +69,30 @@ export function HomeDesk({
   user,
   posts,
   shorts,
+  saved,
+  history,
+  paths,
+  instructors,
+  continueItem,
   onOpenFeed,
   onOpenCourse,
+  onOpenView,
+  onOpenInstructor,
+  onWatch,
 }: {
   user: UserProfile;
   posts: CommunityPost[];
   shorts: Course[];
+  saved: Course[];
+  history: Array<{ course: Course; episode: { id: string; title: string } }>;
+  paths: LearningPath[];
+  instructors: Instructor[];
+  continueItem: { course: Course; episode: { id: string; title: string }; progress: WatchProgress } | null;
   onOpenFeed: () => void;
   onOpenCourse: (id: string) => void;
+  onOpenView: (view: 'mylist' | 'history' | 'paths' | 'quiz' | 'instructors') => void;
+  onOpenInstructor: (id: string) => void;
+  onWatch: (courseId: string, episodeId: string) => void;
 }) {
   const checks = [
     { label: 'שם מלא', done: Boolean(user.name && user.name !== 'אורח/ת') },
@@ -90,6 +106,19 @@ export function HomeDesk({
   return (
     <div className="pa-home">
       <div className="pa-stream">
+        {continueItem ? (
+          <button type="button" className="pa-card pa-continue" onClick={() => onWatch(continueItem.course.id, continueItem.episode.id)}>
+            <span>המשך צפייה</span>
+            <strong>{continueItem.course.title}</strong>
+            <em>{continueItem.episode.title}</em>
+            <i style={{ width: `${Math.max(4, Math.round((continueItem.progress.currentTime / Math.max(1, continueItem.progress.duration)) * 100))}%` }} />
+          </button>
+        ) : (
+          <button type="button" className="pa-card pa-quiz" onClick={() => onOpenView('quiz')}>
+            <strong>מה מתאים לי</strong>
+            <span>עוד אין הרצאה פעילה. השאלון הקצר מכוון להרצאה הראשונה.</span>
+          </button>
+        )}
         {featured ? (
           <article className="pa-hero">
             <div>
@@ -111,6 +140,38 @@ export function HomeDesk({
             ))}
           </div>
         </section>
+        <ShelfRow title="הרשימה שלי" action="לרשימה" onAction={() => onOpenView('mylist')} empty="עוד לא שמרתם הרצאות.">
+          {saved.slice(0, 4).map((course) => (
+            <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
+              {course.coverImage ? <img src={course.coverImage} alt="" /> : null}
+              <span>{course.title}</span>
+            </button>
+          ))}
+        </ShelfRow>
+        <ShelfRow title="היסטוריה" action="להיסטוריה" onAction={() => onOpenView('history')} empty="הצפיות יופיעו כאן.">
+          {history.slice(0, 4).map((item) => (
+            <button key={`${item.course.id}-${item.episode.id}`} type="button" className="pa-thumb" onClick={() => onWatch(item.course.id, item.episode.id)}>
+              {item.course.coverImage ? <img src={item.course.coverImage} alt="" /> : null}
+              <span>{item.course.title}</span>
+            </button>
+          ))}
+        </ShelfRow>
+        <ShelfRow title="מסלולי למידה" action="למסלולים" onAction={() => onOpenView('paths')} empty="המסלולים יופיעו כאן.">
+          {paths.slice(0, 3).map((path) => (
+            <button key={path.id} type="button" className="pa-thumb pa-path" onClick={() => onOpenView('paths')}>
+              <span>{path.title}</span>
+              <em>{path.courseIds.length} קורסים</em>
+            </button>
+          ))}
+        </ShelfRow>
+        <ShelfRow title="מומחים ומרצים" action="לכל המרצים" onAction={() => onOpenView('instructors')} empty="">
+          {instructors.slice(0, 8).map((instructor) => (
+            <button key={instructor.id} type="button" className="pa-person" onClick={() => onOpenInstructor(instructor.id)}>
+              {instructor.avatarUrl ? <img src={instructor.avatarUrl} alt="" /> : <b>{instructor.name.trim().charAt(0)}</b>}
+              <span>{instructor.name}</span>
+            </button>
+          ))}
+        </ShelfRow>
         <button type="button" className="pa-card pa-composer" onClick={onOpenFeed}>שתף שאלה, רעיון, או תובנה מהקהילה…</button>
         {posts.slice(0, 2).map((post) => (
           <article key={post.id} className="pa-card pa-post">
@@ -143,6 +204,16 @@ export function HomeDesk({
         </section>
       </aside>
     </div>
+  );
+}
+
+function ShelfRow({ title, action, onAction, empty, children }: { title: string; action: string; onAction: () => void; empty: string; children: ReactNode }) {
+  const list = Array.isArray(children) ? children.filter(Boolean) : children ? [children] : [];
+  return (
+    <section>
+      <div className="pa-rowhead"><h2>{title}</h2><button type="button" onClick={onAction}>{action}</button></div>
+      {list.length === 0 ? <p className="pa-note">{empty}</p> : <div className="pa-rail">{children}</div>}
+    </section>
   );
 }
 
