@@ -80,6 +80,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           decoding="async"
           className="library-hero-art absolute inset-0 w-full h-full object-cover object-[28%_62%]"
         />
+        <div className="library-hero-dim absolute inset-0" />
         <div className="library-hero-veil-bottom absolute inset-0" />
         <div className="library-hero-veil-side absolute inset-0 w-full md:w-[70%] ms-auto" />
       </div>

@@ -51,6 +51,11 @@
   mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
 }
 
+.vod-app.library-catalog .library-flow-page .library-hero-dim {
+  background: rgba(5, 10, 20, .42);
+  pointer-events: none;
+}
+
 .vod-app.library-catalog .library-flow-page .library-hero-veil-bottom {
   background: none;
 }
