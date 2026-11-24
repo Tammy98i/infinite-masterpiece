@@ -61,7 +61,25 @@
 
 .community-nav,
 .community-channels,
-.community-nav-slot { display: grid; gap: 4px; }
+.community-nav-slot { display: grid; gap: 8px; }
+.community-nav button,
+.community-channel,
+.pa-thumb,
+.pa-course,
+.pa-agent,
+.pa-person,
+.pa-linkrow,
+.pa-event {
+  transition: background-color .2s ease, border-color .2s ease;
+}
+.community-nav button:hover,
+.community-channel:hover,
+.pa-thumb:hover,
+.pa-course:hover,
+.pa-agent:hover,
+.pa-person:hover,
+.pa-linkrow:hover,
+.pa-event:hover { background: #f6efe0; }
 .pa-continue, .pa-quiz { display: grid; gap: 4px; width: 100%; text-align: start; }
 .pa-continue i { display: block; height: 8px; border-radius: 99px; background: #b79043; margin-top: 8px; }
 .pa-person { display: grid; justify-items: center; gap: 6px; width: 96px; padding: 8px; background: #fff; border: 1px solid #e6ebf2; border-radius: 16px; }
@@ -217,7 +235,10 @@
   .pa-event { grid-template-columns: auto 1fr; }
   .pa-days span, .pa-weekdays span { min-height: 44px; font-size: .8rem; }
   .pa-days .has-event small { display: none; }
-  .community-nav button, .community-channel, .community-account { min-height: 44px; }
+  .community-nav button, .community-channel, .community-account, .pa-linkrow, .pa-event { min-height: 44px; }
+  .pa-rail { grid-auto-columns: min(78vw, 220px); }
+  .pa-hero { flex-direction: column; }
+  .community-layout { gap: 12px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -244,7 +265,10 @@
 .pa-card { background: #fff; border: 1px solid #e6ebf2; border-radius: 18px; padding: 16px; box-shadow: 0 8px 24px rgba(20, 40, 70, .04); }
 .pa-card h2, .pa-rowhead h2, .pa-agent h3 { margin: 0 0 8px; font-size: 1.05rem; }
 .pa-card ul { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
-.pa-card li.is-done { color: #1a7f37; }
+.pa-card li { display: flex; align-items: center; gap: 8px; min-height: 44px; }
+.pa-check { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #b79043; flex: none; }
+.pa-card li.is-done { color: #5c4514; font-weight: 700; }
+.pa-card li.is-done .pa-check { background: #f0d48a; box-shadow: inset 0 0 0 4px #fff; }
 .pa-progress-label, .pa-points { font-size: 1.4rem; font-weight: 700; margin: 0; }
 .pa-bar { height: 8px; border-radius: 99px; background: #e8eef6; overflow: hidden; }
 .pa-bar span { display: block; height: 100%; background: #b79043; }
@@ -261,7 +285,7 @@
 .pa-thumb img, .pa-course img, .pa-fallback, .pa-agent-art { width: 100%; height: 110px; object-fit: cover; background: #102033; }
 .pa-agent-art { display: grid; place-items: center; color: #fff; font-weight: 700; }
 .pa-thumb span, .pa-course strong, .pa-course em { padding: 0 10px; }
-.pa-course em { color: #5c6b7c; font-style: normal; }
+.pa-course em, .pa-composer, .pa-note { color: #3d4b5c; font-style: normal; }
 .pa-agent { padding: 0 0 14px; }
 .pa-agent h3, .pa-agent p { padding: 0 12px; margin: 0; }
 .pa-agent button, .pa-partners button, .pa-contact form button, .pa-month .pa-rowhead button {

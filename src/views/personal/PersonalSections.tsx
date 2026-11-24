@@ -187,7 +187,10 @@ export function HomeDesk({
           <div className="pa-bar"><span style={{ width: `${(done / checks.length) * 100}%` }} /></div>
           <ul>
             {checks.map((item) => (
-              <li key={item.label} className={item.done ? 'is-done' : ''}>{item.done ? '✓' : '○'} {item.label}</li>
+              <li key={item.label} className={item.done ? 'is-done' : ''}>
+                <span className="pa-check" aria-hidden="true" />
+                {item.label}
+              </li>
             ))}
           </ul>
         </section>
