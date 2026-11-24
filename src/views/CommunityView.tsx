@@ -16,6 +16,8 @@ import {
   HallOfFame,
   HomeDesk,
   MonthBoard,
+  PodEntry,
+  type AssignedPod,
   Partners,
   type AreaId,
 } from './personal/PersonalSections';
@@ -50,7 +52,7 @@ export function CommunityView() {
   const [pending, setPending] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [area, setArea] = useState<AreaId>('home');
-  const [showPod, setShowPod] = useState(false);
+  const [assignedPod, setAssignedPod] = useState<AssignedPod | null>(null);
   const [podSession, setPodSession] = useState<ClubSession | null>(null);
   const shorts = courses.filter((course) => course.isShort);
   const lessons = courses.filter((course) => !course.isShort);
@@ -97,12 +99,12 @@ export function CommunityView() {
     let cancelled = false;
     podsApi.me().then((state) => {
       if (cancelled) return;
-      setShowPod(state.showNav);
-      const pod = state.pods.find((item) => item.session?.startsAt);
+      const pod = state.pods[0];
+      setAssignedPod(pod ? { name: pod.name, week: pod.currentWeek, role: pod.myRole === 'captain' ? 'captain' : 'member' } : null);
       setPodSession(pod?.session?.startsAt ? { startsAt: pod.session.startsAt, title: pod.name, notes: pod.session.notes || '' } : null);
     }).catch(() => {
       if (!cancelled) {
-        setShowPod(false);
+        setAssignedPod(null);
         setPodSession(null);
       }
     });
@@ -182,7 +184,7 @@ export function CommunityView() {
                     <button type="button" aria-current={area === item.id ? 'page' : undefined} onClick={() => { setArea(item.id); closeRail(); }}>
                       {item.label}
                     </button>
-                    {item.id === 'calendar' && showPod ? (
+                    {item.id === 'calendar' && assignedPod ? (
                       <button type="button" onClick={() => { closeRail(); navigate('/pod'); }}>הפוד שלי</button>
                     ) : null}
                   </span>
@@ -246,6 +248,7 @@ export function CommunityView() {
             instructors={instructors.filter((instructor) => instructor.showInLibrary !== false).slice(0, 8)}
             continueItem={getContinueWatchingList()[0] || null}
             session={podSession}
+            pod={assignedPod}
             watches={getWatchHistory().length}
             onOpenFeed={() => setArea('feed')}
             onOpenCourse={(courseId) => courseId && setView('course', { courseId })}
@@ -259,7 +262,12 @@ export function CommunityView() {
             onWatch={(courseId, episodeId) => setView('watch', { courseId, episodeId })}
           />
         ) : null}
-        {area === 'calendar' ? <MonthBoard sessions={podSession ? [podSession] : []} /> : null}
+        {area === 'calendar' ? (
+          <div className="pa-calendar-layout">
+            <MonthBoard sessions={podSession ? [podSession] : []} />
+            {assignedPod ? <PodEntry pod={assignedPod} onOpen={() => navigate('/pod')} /> : null}
+          </div>
+        ) : null}
         {area === 'recordings' ? (
           <EventList
             sessions={podSession ? [podSession] : []}

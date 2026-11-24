@@ -36,6 +36,7 @@ export const NAV_GROUPS: Array<{ label: string; ids: AreaId[] }> = [
 ];
 
 export type ClubSession = { startsAt: string; title: string; notes: string };
+export type AssignedPod = { name: string; week: number; role: 'captain' | 'member' };
 
 const AGENTS = [
   { name: 'סיכום הרצאה', text: 'מסכם הרצאה לנקודות שאפשר ליישם השבוע.', tone: 'סיכום' },
@@ -81,6 +82,7 @@ export function HomeDesk({
   instructors,
   continueItem,
   session,
+  pod,
   watches,
   onOpenFeed,
   onOpenCourse,
@@ -102,6 +104,7 @@ export function HomeDesk({
   instructors: Instructor[];
   continueItem: { course: Course; episode: { id: string; title: string }; progress: WatchProgress } | null;
   session: ClubSession | null;
+  pod: AssignedPod | null;
   watches: number;
   onOpenFeed: () => void;
   onOpenCourse: (id: string) => void;
@@ -142,6 +145,7 @@ export function HomeDesk({
               <span>עוד אין הרצאה פעילה. השאלון הקצר מכוון להרצאה הראשונה.</span>
             </button>
           )}
+          {pod ? <PodEntry pod={pod} onOpen={onOpenSession} /> : null}
           {upcoming && session && when ? (
             <button type="button" className="pa-card" onClick={onOpenSession}>
               <span>המפגש הקרוב</span>
@@ -267,6 +271,16 @@ export function CourseShelf({ title, courses, onOpen }: { title: string; courses
         ))}
       </div>
     </section>
+  );
+}
+
+export function PodEntry({ pod, onOpen }: { pod: AssignedPod; onOpen: () => void }) {
+  return (
+    <button type="button" className="pa-card pa-pod" onClick={onOpen}>
+      <span>הפוד שלי</span>
+      <strong>{pod.name}</strong>
+      <em>שבוע {pod.week} מתוך 33 · {pod.role === 'captain' ? 'קפטן' : 'חבר'}</em>
+    </button>
   );
 }
 

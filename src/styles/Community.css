@@ -217,7 +217,7 @@
 .community-page :focus-visible { outline: 2px solid var(--gold-ink); outline-offset: 2px; }
 
 @media (max-width: 1100px) {
-  .community-layout, .pa-home { grid-template-columns: 1fr; }
+  .community-layout, .pa-home, .pa-calendar-layout { grid-template-columns: 1fr; }
   .community-side { position: static; }
   .pa-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .pa-days span, .pa-weekdays span { min-height: 56px; }
@@ -283,7 +283,10 @@
 .pa-card li.is-done, .pa-checks button.is-done { color: #f0d48a; font-weight: 700; }
 .pa-checks { display: grid; gap: 4px; }
 .pa-checks button { display: flex; align-items: center; gap: 8px; width: 100%; }
-.pa-now { display: grid; gap: 12px; }
+.pa-now, .pa-calendar-layout { display: grid; gap: 12px; }
+.pa-calendar-layout { grid-template-columns: minmax(0, 1fr) 280px; align-items: start; }
+.pa-pod { display: grid; gap: 4px; text-align: start; border-color: rgba(240, 212, 138, .45); }
+.pa-pod strong { font-size: 1.2rem; }
 .pa-empty { display: grid; justify-items: start; gap: 8px; }
 .pa-empty button { min-height: 44px; border: 0; border-radius: 12px; background: #f0d48a; color: #1a1204; font-weight: 700; }
 .pa-pulse h2 { margin: 0 0 8px; font-size: 1.15rem; }
