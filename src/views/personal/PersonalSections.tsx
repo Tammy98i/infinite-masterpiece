@@ -30,6 +30,20 @@ export const AREAS: Array<{ id: AreaId; label: string }> = [
   { id: 'contact', label: 'צור קשר' },
 ];
 
+export const AREA_NOTES: Record<AreaId, string> = {
+  home: 'ממשיכים מההרצאה האחרונה, רואים את המפגש הקרוב, ונכנסים לשיחה.',
+  feed: 'השיחה של החברים. אפשר לפרסם, להגיב ולשמור.',
+  calendar: 'המפגשים שנקבעו לפוד מופיעים על היום עצמו.',
+  recordings: 'מפגשים שהתקיימו, והצפייה האחרונה בספרייה.',
+  courses: 'ההרצאות הפתוחות לפי המסלול.',
+  shorts: 'הדרכות קצרות, עד עשר דקות.',
+  club: 'המסלול הפעיל והמה שנכלל בו.',
+  agents: 'הסוכנים ייפתחו בהמשך. בינתיים פונים לצוות.',
+  hall: 'הדירוג לפי פוסטים שפורסמו וצפייה אמיתית.',
+  partners: 'קישור אישי לשיתוף. ספירת הקרדיט תיפתח בהמשך.',
+  contact: 'וואטסאפ, שאלות נפוצות, ומייל לצוות.',
+};
+
 export const NAV_GROUPS: Array<{ label: string; ids: AreaId[] }> = [
   { label: 'צפייה', ids: ['home', 'courses', 'shorts', 'recordings'] },
   { label: 'קהילה', ids: ['feed', 'calendar'] },

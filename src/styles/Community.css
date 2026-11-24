@@ -4,7 +4,7 @@
   --line: rgba(223, 196, 125, .28);
   --gold: #b79043;
   --gold-ink: #f0d48a;
-  --panel: rgba(8, 14, 26, .62);
+  --panel: rgba(8, 14, 26, .92);
   min-height: 100vh;
   width: 100%;
   max-width: 100%;
@@ -35,7 +35,7 @@
   flex-direction: column;
   gap: 14px;
   padding: 20px 14px 16px;
-  background: rgba(5, 10, 20, .55);
+  background: rgba(5, 10, 20, .9);
   border-inline-end: 1px solid var(--line);
   z-index: 6;
 }
@@ -88,7 +88,8 @@
 .pa-person:hover,
 .pa-linkrow:hover,
 .pa-event:hover { background: rgba(240, 212, 138, .14); }
-.pa-continue, .pa-quiz { display: grid; gap: 4px; width: 100%; text-align: start; }
+.pa-continue, .pa-quiz { display: grid; gap: 4px; width: 100%; text-align: start; border-color: rgba(240, 212, 138, .45); }
+.pa-continue span, .pa-quiz strong { color: #f0d48a; font-weight: 700; }
 .pa-continue i { display: block; height: 8px; border-radius: 99px; background: #b79043; margin-top: 8px; }
 .pa-person { display: grid; justify-items: center; gap: 6px; width: 96px; padding: 8px; background: var(--panel); border: 1px solid rgba(255,255,255,.12); border-radius: 16px; }
 .pa-person img, .pa-person b { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; display: grid; place-items: center; background: rgba(240, 212, 138, .2); color: #f0d48a; }
@@ -117,10 +118,12 @@
 }
 
 .community-nav button[aria-current='page'],
-.community-channel[aria-current='page'] {
+.community-channel[aria-current='page'],
+.community-dock button[aria-current='page'] {
   background: rgba(240, 212, 138, .16);
   color: #f0d48a;
   font-weight: 700;
+  border-inline-start: 3px solid #f0d48a;
 }
 
 .community-account {
@@ -139,7 +142,8 @@
 .community-search-results { display: grid; gap: 12px; margin-bottom: 16px; }
 .community-search-results h2 { margin: 0; font-size: 1rem; }
 .pa-contact-cards a { display: grid; gap: 4px; color: inherit; text-decoration: none; min-height: 72px; align-content: center; }
-.community-main > h1 { margin: 0 0 16px; font-size: clamp(1.8rem, 3vw, 2.4rem); }
+.community-main > h1 { margin: 0; font-size: clamp(1.8rem, 3vw, 2.4rem); letter-spacing: 0; }
+.community-main > .community-lede { max-width: 42rem; margin: 6px 0 18px; }
 .community-lede, .community-note, .community-empty, .community-rule, .community-meta, .community-door p, .community-hello p, .community-contact p {
   color: var(--muted);
   line-height: 1.7;
@@ -300,7 +304,8 @@
 .pa-pod strong { font-size: 1.2rem; }
 .pa-empty { display: grid; justify-items: start; gap: 8px; }
 .pa-empty button { min-height: 44px; border: 0; border-radius: 12px; background: #f0d48a; color: #1a1204; font-weight: 700; }
-.pa-pulse h2 { margin: 0 0 8px; font-size: 1.15rem; }
+.pa-pulse h2 { margin: 0 0 8px; font-size: 1.15rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.pa-pulse button { width: fit-content; margin-top: 8px; border: 0; border-radius: 999px; background: #f0d48a; color: #1a1204; font-weight: 700; }
 .pa-days .has-event small { color: #f0d48a; font-size: .7rem; }
 .pa-card li.is-done .pa-check { background: #f0d48a; box-shadow: inset 0 0 0 4px #fff; }
 .pa-progress-label, .pa-points { font-size: 1.4rem; font-weight: 700; margin: 0; }
@@ -311,7 +316,10 @@
 .pa-hero button { border: 1px solid #1a1204; border-radius: 999px; background: transparent; min-height: 44px; padding: 0 14px; }
 .pa-hero-avatar, .pa-avatar { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.25); font-weight: 700; }
 .pa-avatar.lg { width: 84px; height: 84px; margin: 0 auto 8px; background: #f6efe0; color: #5c4514; font-size: 2rem; }
-.pa-rowhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.pa-rowhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; }
+.pa-rowhead h2 { position: relative; padding-inline-start: 12px; }
+.pa-rowhead h2::before { content: ''; position: absolute; inset-inline-start: 0; top: .2em; bottom: .2em; width: 3px; border-radius: 99px; background: #f0d48a; }
+.pa-rowhead button { color: #f0d48a; font-weight: 700; }
 .pa-rail, .pa-grid { display: grid; gap: 12px; }
 .pa-rail { grid-auto-flow: column; grid-auto-columns: 180px; width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; }
 .pa-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
@@ -331,7 +339,8 @@
 .pa-event { width: 100%; display: grid; grid-template-columns: auto 1fr auto auto; gap: 10px; align-items: center; border-bottom: 1px solid rgba(255,255,255,.1); }
 .pa-month .pa-rowhead { justify-content: center; }
 .pa-weekdays, .pa-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-.pa-days span, .pa-weekdays span { min-height: 72px; border-radius: 12px; background: rgba(255,255,255,.06); display: grid; align-content: start; justify-items: center; padding-top: 8px; }
+.pa-days span, .pa-weekdays span { min-height: 76px; border-radius: 12px; background: rgba(255,255,255,.06); display: grid; align-content: start; justify-items: center; gap: 4px; padding: 8px 4px 6px; text-align: center; }
+.pa-days .has-event small { max-width: 100%; line-height: 1.25; }
 .pa-days .is-today { outline: 2px solid #b79043; }
 .pa-days .has-event { background: rgba(240, 212, 138, .16); }
 .pa-profile { text-align: center; }
@@ -358,10 +367,11 @@
   color: #1a1204;
   background-color: transparent;
 }
-.vod-app.sky-readable .community-page :is(.pa-agent button, .pa-partners button, .pa-contact form button, .pa-tabs button[aria-pressed='true'], .pa-month .pa-rowhead button, .pa-empty button) {
+.vod-app.sky-readable .community-page :is(.pa-agent button, .pa-partners button, .pa-contact form button, .pa-tabs button[aria-pressed='true'], .pa-month .pa-rowhead button, .pa-empty button, .pa-pulse button) {
   background: #f0d48a;
   color: #1a1204;
 }
+.vod-app.sky-readable .community-page .pa-rowhead button { background: transparent; color: #f0d48a; }
 
 .vod-app.sky-readable .community-page .community-publish,
 .vod-app.sky-readable .community-page .community-days .is-today,

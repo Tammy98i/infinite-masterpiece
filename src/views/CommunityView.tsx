@@ -7,6 +7,7 @@ import { useApp } from '../context/AppContext';
 import type { Course, Instructor } from '../types';
 import {
   AREAS,
+  AREA_NOTES,
   NAV_GROUPS,
   AgentGrid,
   type ClubSession,
@@ -286,6 +287,7 @@ export function CommunityView() {
       <main className="community-main" id="community-main">
         <p className="community-kicker">האזור האישי</p>
         <h1>{AREAS.find((item) => item.id === area)?.label || 'הבית'}</h1>
+        <p className="community-lede">{AREA_NOTES[area]}</p>
         <form className="community-search" role="search" onSubmit={(event) => {
           event.preventDefault();
           const term = areaQuery.trim();
