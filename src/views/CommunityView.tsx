@@ -377,7 +377,6 @@ export function CommunityView() {
         {area === 'contact' ? <ContactDesk /> : null}
 
         {area === 'feed' && home && open ? (
-          <div className="community-layout">
             <section className="community-feed" aria-label="פיד">
               {current?.canPost ? (
                 <form className="community-card community-composer" onSubmit={(event) => { event.preventDefault(); void publish(); }}>
@@ -393,6 +392,7 @@ export function CommunityView() {
                     </label>
                   ) : null}
                   {imageUrl ? <img className="community-photo" src={imageUrl} alt="" /> : null}
+                  <p className="community-note">בכבוד, בלי פרסום. אם משהו לא מתאים, לוחצים דיווח.</p>
                   <div className="community-actions">
                     <div className="community-tools">
                       <label className="community-file">
@@ -433,26 +433,6 @@ export function CommunityView() {
                 </button>
               ) : null}
             </section>
-
-            <aside className="community-card community-side">
-              <div>
-                <h2>כללי הקהילה</h2>
-                <p className="community-rule">מדברים בכבוד, גם כשלא מסכימים.</p>
-                <p className="community-rule">לא מפרסמים כאן מוצר ולא מוכרים.</p>
-                <p className="community-rule">אם משהו לא מתאים, לוחצים «דיווח לצוות».</p>
-              </div>
-              <div>
-                <h2>מי כתב לאחרונה</h2>
-                {home.people.map((person) => (
-                  <div className="community-person" key={`${person.firstName}-${person.badge}`}>
-                    <div className="community-initial" aria-hidden="true">{person.initial}</div>
-                    <span>{person.firstName}</span>
-                    <Badge value={person.badge} />
-                  </div>
-                ))}
-              </div>
-            </aside>
-          </div>
         ) : null}
       </main>
     </div>
@@ -515,10 +495,10 @@ const PostCard: FC<{
       {post.lectureTitle ? <div className="community-lecture-chip">הרצאה · {post.lectureTitle}</div> : null}
       <div className="community-tools">
         {post.canEdit ? <button type="button" onClick={() => { setEditBody(post.body); setEditing(true); }}>עריכה</button> : null}
-        <button type="button" aria-pressed={post.hearted} onClick={() => void onAct(() => communityApi.react(post.id))}>{post.hearted ? 'אהבתי' : 'לסמן אהבתי'} {post.hearts}</button>
-        <button type="button" aria-expanded={open} onClick={onToggle}>{open ? 'סגירת תגובות' : 'פתיחת תגובות'} {post.replies.length}</button>
-        <button type="button" aria-pressed={post.saved} onClick={() => void onAct(() => communityApi.bookmark(post.id))}>{post.saved ? 'נשמר אצלי' : 'לשמור אצלי'}</button>
-        <button type="button" aria-pressed={post.reported} onClick={() => !post.reported && void onAct(() => communityApi.report(post.id))}>{post.reported ? 'הדיווח נשלח לצוות' : 'דיווח לצוות'}</button>
+        <button type="button" aria-pressed={post.hearted} onClick={() => void onAct(() => communityApi.react(post.id))}>אהבתי {post.hearts}</button>
+        <button type="button" aria-expanded={open} onClick={onToggle}>תגובות {post.replies.length}</button>
+        <button type="button" aria-pressed={post.saved} onClick={() => void onAct(() => communityApi.bookmark(post.id))}>{post.saved ? 'נשמר' : 'שמירה'}</button>
+        <button type="button" aria-pressed={post.reported} onClick={() => !post.reported && void onAct(() => communityApi.report(post.id))}>{post.reported ? 'דווח' : 'דיווח'}</button>
         {isAdmin ? (
           <>
             <button type="button" onClick={() => void onAct(() => communityApi.pin(post.id, !post.pinned))}>{post.pinned ? 'שחרור' : 'נעיצה'}</button>

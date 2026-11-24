@@ -395,36 +395,23 @@ export function EventList({
   return (
     <div className="pa-events">
       <section className="pa-card">
-        <div className="pa-rowhead"><h2>מפגשים קרובים</h2></div>
-        {upcoming.length === 0 ? (
-          <div className="pa-empty">
-            <p className="pa-note">אין מפגש קרוב בלוח.</p>
-            <button type="button" onClick={onOpenCalendar}>ללוח החודשי</button>
-          </div>
-        ) : upcoming.map((session) => {
+        <h2>המפגשים</h2>
+        {upcoming.length === 0 && past.length === 0 ? <p className="pa-note">עדיין אין מפגש בלוח.</p> : null}
+        {upcoming.map((session) => {
           const parts = jerusalemParts(session.startsAt);
           return (
             <button key={session.startsAt} type="button" className="pa-event" onClick={onOpenSession}>
-              <span className="pa-avatar">{session.title.trim().charAt(0)}</span>
-              <span><strong>{session.title}</strong><em>{session.notes || 'מפגש הפוד'}</em></span>
-              <time>{parts?.time}</time>
-              <b>{parts ? `${parts.day}.${parts.month + 1}` : ''}</b>
+              <span><strong>{session.title}</strong><em>{parts ? `${parts.day}.${parts.month + 1} · ${parts.time}` : 'מפגש קרוב'}</em></span>
             </button>
           );
         })}
-      </section>
-      <section className="pa-card">
-        <div className="pa-rowhead"><h2>מפגשים שהתקיימו</h2></div>
-        {past.length === 0 ? <p className="pa-note">אחרי שמפגש מתקיים, הוא מופיע כאן. ההקלטה עצמה תתווסף כשהיא מוכנה.</p> : past.map((session) => {
+        {past.map((session) => {
           const parts = jerusalemParts(session.startsAt);
           return (
-            <article key={session.startsAt} className="pa-event">
-              <span className="pa-avatar">{session.title.trim().charAt(0)}</span>
-              <span><strong>{session.title}</strong><em>ההקלטה תתווסף כשהיא מוכנה</em></span>
-              <b>{parts ? `${parts.day}.${parts.month + 1}` : ''}</b>
-            </article>
+            <p key={session.startsAt} className="pa-note">{session.title}{parts ? ` · ${parts.day}.${parts.month + 1}` : ''} · ההקלטה תתווסף כשהיא מוכנה</p>
           );
         })}
+        <button type="button" className="community-publish" onClick={onOpenCalendar}>ללוח</button>
       </section>
       <section>
         <div className="pa-rowhead"><h2>מה ראיתם לאחרונה</h2></div>
