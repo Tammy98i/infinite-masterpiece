@@ -100,7 +100,7 @@ function Badge({ value }: { value: string }) {
 }
 
 export function CommunityView() {
-  const { setView, setSearchQuery, user, courses, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory } = useApp();
+  const { setView, setSearchQuery, user, courses, categories, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory, getMyLectures, getRecommendedForUser } = useApp();
   const navigate = useNavigate();
   const composerId = useId();
   const [channel, setChannel] = useState('talk');
@@ -331,6 +331,11 @@ export function CommunityView() {
             history={getWatchHistory()}
             paths={learningPaths}
             instructors={instructors.filter((instructor) => instructor.showInLibrary !== false).slice(0, 8)}
+            mine={getMyLectures()}
+            recommended={getRecommendedForUser().slice(0, 8)}
+            newest={[...lessons].filter((course) => !course.status || course.status === 'published').sort((a, b) => Date.parse(b.createdAt) - Date.parse(a.createdAt)).slice(0, 8)}
+            categories={categories}
+            founders={instructors.filter((instructor) => instructor.isFounder && instructor.showInLibrary !== false)}
             continueItem={getContinueWatchingList()[0] || null}
             session={podSession}
             pod={assignedPod}
@@ -338,6 +343,7 @@ export function CommunityView() {
             onOpenFeed={() => setArea('feed')}
             onOpenCourse={(courseId) => courseId && setView('course', { courseId })}
             onOpenCourses={() => setArea('courses')}
+            onOpenCategory={(categoryId) => setView('category', { categoryId })}
             onOpenShorts={() => setArea('shorts')}
             onOpenView={(view) => setView(view)}
             onOpenInstructor={(instructorId) => setView('instructor', { instructorId })}
@@ -365,7 +371,7 @@ export function CommunityView() {
         ) : null}
         {area === 'courses' ? <CourseShelf title="קורסים ושיעורים" courses={lessons} onOpen={(courseId) => setView('course', { courseId })} /> : null}
         {area === 'shorts' ? <CourseShelf title="הדרכות קצרות" courses={shorts} onOpen={(courseId) => setView('course', { courseId })} /> : null}
-        {area === 'club' ? <ClubCard plan={user.subscriptionPlan} /> : null}
+        {area === 'club' ? <ClubCard plan={user.subscriptionPlan} trialEndsAt={user.trialEndsAt} /> : null}
         {area === 'agents' ? <AgentGrid onContact={() => setArea('contact')} /> : null}
         {area === 'hall' && home ? <HallOfFame user={user} posts={home.posts} watches={getWatchHistory().length} /> : null}
         {area === 'partners' ? <Partners userId={user.id} /> : null}

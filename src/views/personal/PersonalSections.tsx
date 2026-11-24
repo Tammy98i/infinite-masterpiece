@@ -1,7 +1,8 @@
 import { useMemo, useState, type ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import { DEFAULT_WEBINAR_CONFIG } from '../../constants/webinar';
 import type { CommunityPost } from '../../api/community';
-import type { Course, Instructor, LearningPath, UserProfile, WatchProgress } from '../../types';
+import type { Category, Course, Instructor, LearningPath, UserProfile, WatchProgress } from '../../types';
 
 export type AreaId =
   | 'home'
@@ -95,6 +96,11 @@ export function HomeDesk({
   history,
   paths,
   instructors,
+  mine,
+  recommended,
+  newest,
+  categories,
+  founders,
   continueItem,
   session,
   pod,
@@ -102,6 +108,7 @@ export function HomeDesk({
   onOpenFeed,
   onOpenCourse,
   onOpenCourses,
+  onOpenCategory,
   onOpenShorts,
   onOpenView,
   onOpenInstructor,
@@ -117,6 +124,11 @@ export function HomeDesk({
   history: Array<{ course: Course; episode: { id: string; title: string } }>;
   paths: LearningPath[];
   instructors: Instructor[];
+  mine: Course[];
+  recommended: Course[];
+  newest: Course[];
+  categories: Category[];
+  founders: Instructor[];
   continueItem: { course: Course; episode: { id: string; title: string }; progress: WatchProgress } | null;
   session: ClubSession | null;
   pod: AssignedPod | null;
@@ -124,6 +136,7 @@ export function HomeDesk({
   onOpenFeed: () => void;
   onOpenCourse: (id: string) => void;
   onOpenCourses: () => void;
+  onOpenCategory: (id: string) => void;
   onOpenShorts: () => void;
   onOpenView: (view: 'mylist' | 'history' | 'paths' | 'quiz' | 'instructors') => void;
   onOpenInstructor: (id: string) => void;
@@ -183,6 +196,53 @@ export function HomeDesk({
             <button type="button" className="pa-card" onClick={onOpenFeed}>שתפו את הפוסט הראשון בקהילה</button>
           )}
         </div>
+        <ShelfRow title="ההרצאות שלי" action="להיסטוריה" onAction={() => onOpenView('history')} empty="ההרצאות שצפיתם יופיעו כאן." emptyAction="מצאו הרצאה" onEmpty={onOpenCourses}>
+          {mine.slice(0, 8).map((course) => (
+            <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
+              {course.coverImage ? <img src={course.coverImage} alt="" /> : null}
+              <span>{course.title}</span>
+            </button>
+          ))}
+        </ShelfRow>
+        <ShelfRow title="מומלץ" action="מה מתאים לי" onAction={() => onOpenView('quiz')} empty="סמנו תחומי עניין כדי לקבל המלצה." emptyAction="לתחומי עניין" onEmpty={() => onOpenProfile('profile-interests')}>
+          {recommended.slice(0, 8).map((course) => (
+            <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
+              {course.coverImage ? <img src={course.coverImage} alt="" /> : null}
+              <span>{course.title}</span>
+            </button>
+          ))}
+        </ShelfRow>
+        <ShelfRow title="חדשים" action="לקורסים" onAction={onOpenCourses} empty="הרצאות חדשות יופיעו כאן." emptyAction="לקורסים" onEmpty={onOpenCourses}>
+          {newest.slice(0, 8).map((course) => (
+            <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
+              {course.coverImage ? <img src={course.coverImage} alt="" /> : null}
+              <span>{course.title}</span>
+            </button>
+          ))}
+        </ShelfRow>
+        <section>
+          <div className="pa-rowhead"><h2>קטגוריות</h2></div>
+          {categories.length === 0 ? (
+            <div className="pa-empty">
+              <p className="pa-note">הקטגוריות יופיעו כאן.</p>
+              <button type="button" onClick={onOpenCourses}>לקורסים</button>
+            </div>
+          ) : (
+            <div className="pa-chips">
+              {categories.slice(0, 12).map((category) => (
+                <button key={category.id} type="button" onClick={() => onOpenCategory(category.id)}>{category.name}</button>
+              ))}
+            </div>
+          )}
+        </section>
+        <ShelfRow title="נבחרת המייסדים" action="לכל המרצים" onAction={() => onOpenView('instructors')} empty="פרופילי המייסדים יופיעו כאן." emptyAction="לכל המרצים" onEmpty={() => onOpenView('instructors')}>
+          {founders.slice(0, 8).map((instructor) => (
+            <button key={instructor.id} type="button" className="pa-person" onClick={() => onOpenInstructor(instructor.id)}>
+              {instructor.avatarUrl ? <img src={instructor.avatarUrl} alt="" /> : <b>{instructor.name.trim().charAt(0)}</b>}
+              <span>{instructor.name}</span>
+            </button>
+          ))}
+        </ShelfRow>
         <ShelfRow title="הדרכות קצרות" action="לכל ההדרכות" onAction={onOpenShorts} empty="עוד אין הדרכות קצרות." emptyAction="לקורסים" onEmpty={onOpenCourses}>
           {shorts.slice(0, 8).map((course) => (
             <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
@@ -537,7 +597,7 @@ export function ContactDesk() {
   );
 }
 
-export function ClubCard({ plan }: { plan: string }) {
+export function ClubCard({ plan, trialEndsAt }: { plan: string; trialEndsAt?: string }) {
   const labels: Record<string, string> = {
     none: 'ללא מנוי',
     free_trial: 'ניסיון',
@@ -545,15 +605,19 @@ export function ClubCard({ plan }: { plan: string }) {
     annual: 'מנוי שנתי',
     premium_88: 'נבחרת 88',
   };
+  const active = plan === 'monthly' || plan === 'annual' || plan === 'premium_88';
   return (
     <section className="pa-card pa-club">
-      <h2>המועדון</h2>
+      <h2>ניהול מנוי</h2>
       <p>המסלול הפעיל: {labels[plan] || plan}</p>
+      {plan === 'free_trial' && trialEndsAt ? <p>בתוקף עד {trialEndsAt}</p> : null}
+      {active ? <p>המנוי פעיל. שינוי התוכנית נפתח בעמוד המסלולים.</p> : <p>בחירת מסלול פותחת את הספרייה ואת הקהילה.</p>}
+      <Link to="/pricing" className="community-publish">שינוי תוכנית</Link>
       <ul>
         <li>שיחה בקהילה וכתיבה</li>
         <li>לוח מפגשים והקלטות</li>
         <li>הדרכות קצרות וקורסים</li>
-        <li>נקודות ודירוג בהיכל התהילה</li>
+        <li>ההרצאות שלי, מומלץ וחדשים</li>
       </ul>
     </section>
   );

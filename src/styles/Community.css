@@ -302,7 +302,10 @@
 .pa-calendar-layout { grid-template-columns: minmax(0, 1fr) 280px; align-items: start; }
 .pa-pod { display: grid; gap: 4px; text-align: start; border-color: rgba(240, 212, 138, .45); }
 .pa-pod strong { font-size: 1.2rem; }
+.pa-chips { display: flex; flex-wrap: wrap; gap: 8px; }
+.pa-chips button { width: auto; border: 1px solid rgba(240, 212, 138, .4); border-radius: 999px; }
 .pa-empty { display: grid; justify-items: start; gap: 8px; }
+.pa-club .community-publish { margin-top: 8px; }
 .pa-empty button { min-height: 44px; border: 0; border-radius: 12px; background: #f0d48a; color: #1a1204; font-weight: 700; }
 .pa-pulse h2 { margin: 0 0 8px; font-size: 1.15rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .pa-pulse button { width: fit-content; margin-top: 8px; border: 0; border-radius: 999px; background: #f0d48a; color: #1a1204; font-weight: 700; }
