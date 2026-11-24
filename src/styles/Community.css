@@ -300,6 +300,8 @@
 .pa-checks button { display: flex; align-items: center; gap: 8px; width: 100%; }
 .pa-now, .pa-calendar-layout { display: grid; gap: 12px; }
 .pa-now > h2 { margin: 0 0 8px; font-size: 1rem; }
+.pa-plain { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; }
+.pa-plain li { display: grid; gap: 2px; }
 .pa-actions { display: grid; gap: 8px; }
 .pa-actions button { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: var(--panel); }
 .pa-actions span { color: #f0d48a; flex: none; font-weight: 700; }

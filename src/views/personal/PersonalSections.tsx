@@ -450,17 +450,13 @@ export function EventList({
 
 export function AgentGrid({ onContact }: { onContact: () => void }) {
   return (
-    <section className="pa-agents">
-      <p className="pa-note">אלה רעיונות לעזרה. הם עדיין לא עונים לבד. הלחיצה שולחת אתכם לצוות, והתשובה מגיעה מאדם.</p>
-      <div className="pa-grid">
+    <section className="pa-card">
+      <ul className="pa-plain">
         {AGENTS.map((item) => (
-          <article key={item.name} className="pa-agent">
-            <h3>{item.name}</h3>
-            <p>{item.text}</p>
-            <button type="button" onClick={onContact}>פנייה לצוות</button>
-          </article>
+          <li key={item.name}><strong>{item.name}</strong><span>{item.text}</span></li>
         ))}
-      </div>
+      </ul>
+      <button type="button" className="community-publish" onClick={onContact}>פנייה לצוות</button>
     </section>
   );
 }
@@ -488,20 +484,11 @@ export function HallOfFame({ user, posts, watches }: { user: UserProfile; posts:
       .map(([name, count]) => ({ name, count }))
       .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'he'));
   }, [posts, range, user.name]);
-  const top = rows[0]?.count || 1;
   const place = rows.findIndex((row) => row.name === (user.name.split(' ')[0] || 'אתם')) + 1;
   return (
-    <div className="pa-hall">
-      <section className="pa-card pa-profile">
-        <h2>{user.name}</h2>
-        <p>{place ? `המקום שלכם ברשימה: ${place}` : 'עוד אין רשימה'}</p>
-        <div className="pa-stats">
-          <div><b>{activity.watches}</b><span>צפיות</span></div>
-          <div><b>{activity.posts}</b><span>הודעות שכתבתם</span></div>
-        </div>
-      </section>
-      <section className="pa-card">
-        <div className="pa-tabs">
+    <section className="pa-card">
+      <p>{place ? `המקום שלכם: ${place}. ${activity.watches} צפיות, ${activity.posts} הודעות.` : 'עוד אין רשימה.'}</p>
+      <div className="pa-tabs">
           {([['all', 'כל הזמנים'], ['month', 'חודשי'], ['week', 'שבועי']] as const).map(([id, label]) => (
             <button key={id} type="button" aria-pressed={range === id} onClick={() => setRange(id)}>{label}</button>
           ))}
@@ -511,13 +498,11 @@ export function HallOfFame({ user, posts, watches }: { user: UserProfile; posts:
             <li key={row.name}>
               <b>{index + 1}</b>
               <span>{row.name}</span>
-              <i style={{ width: `${Math.max(8, (row.count / top) * 100)}%` }} />
               <em>{row.count === 1 ? 'הודעה אחת' : `${row.count} הודעות`}</em>
             </li>
           ))}
         </ol>
-      </section>
-    </div>
+    </section>
   );
 }
 
@@ -525,24 +510,13 @@ export function Partners({ userId }: { userId: string }) {
   const link = `${window.location.origin}/library?ref=${userId.slice(0, 8)}`;
   const [copied, setCopied] = useState(false);
   return (
-    <div className="pa-partners">
-      <section className="pa-card pa-partner-hero">
-        <h2>תוכנית שותפים</h2>
-        <p>העתיקו את הקישור ושלחו לחבר. כשהספירה תיפתח, תראו כאן כמה אנשים נרשמו דרככם.</p>
-      </section>
-      <section className="pa-card">
-        <h2>הקישור שלי</h2>
-        <p className="pa-link">{link}</p>
-        <button type="button" onClick={() => { void navigator.clipboard.writeText(link).then(() => setCopied(true)); }}>
-          {copied ? 'הקישור הועתק' : 'העתיקו את הקישור'}
-        </button>
-      </section>
-      <div className="pa-steps">
-        <article><b>1</b><p>שתפו את הקישור</p></article>
-        <article><b>2</b><p>חבר חדש נרשם</p></article>
-        <article><b>3</b><p>הקרדיט ייספר כשהמעקב ייפתח</p></article>
-      </div>
-    </div>
+    <section className="pa-card">
+      <p>העתיקו את הקישור ושלחו לחבר. כשהספירה תיפתח, תראו כאן כמה אנשים נרשמו דרככם.</p>
+      <p className="pa-link">{link}</p>
+      <button type="button" className="community-publish" onClick={() => { void navigator.clipboard.writeText(link).then(() => setCopied(true)); }}>
+        {copied ? 'הקישור הועתק' : 'העתיקו את הקישור'}
+      </button>
+    </section>
   );
 }
 
@@ -552,7 +526,6 @@ export function ContactDesk() {
   const [sent, setSent] = useState(false);
   return (
     <div className="pa-contact">
-      <section className="pa-contact-hero"><h2>צור קשר ותמיכה</h2><p>אנחנו כאן לעזור לך לאורך כל הדרך</p></section>
       <div className="pa-contact-cards">
         <a href={DEFAULT_WEBINAR_CONFIG.whatsappGroupUrl} target="_blank" rel="noreferrer"><b>קהילת הוואטסאפ</b><span>הצטרפות לקבוצה הרשמית</span></a>
         <a href="/#faq"><b>מרכז הידע</b><span>שאלות נפוצות</span></a>
