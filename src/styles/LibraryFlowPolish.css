@@ -35,7 +35,7 @@
 }
 
 .vod-app.library-catalog .library-flow-page .library-hero {
-  min-height: 68vh;
+  min-height: 72vh;
   height: auto;
   overflow: visible;
   background: transparent;
@@ -47,21 +47,8 @@
 }
 
 .vod-app.library-catalog .library-flow-page .library-hero-art {
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 46%, transparent 84%);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 46%, transparent 84%);
-}
-
-.vod-app.library-catalog .library-flow-page .library-hero-art.is-studio {
-  position: absolute;
-  inset-inline-end: 10%;
-  top: 7%;
-  width: min(46%, 640px);
-  height: 82%;
-  object-fit: cover;
-  object-position: center 16%;
-  mix-blend-mode: screen;
-  -webkit-mask-image: radial-gradient(ellipse 72% 70% at 50% 32%, #000 22%, transparent 72%);
-  mask-image: radial-gradient(ellipse 72% 70% at 50% 32%, #000 22%, transparent 72%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 72%, transparent 100%);
 }
 
 .vod-app.library-catalog .library-flow-page .library-hero-veil-bottom {
@@ -69,13 +56,15 @@
 }
 
 .vod-app.library-catalog .library-flow-page .library-hero-veil-side {
-  background: linear-gradient(to left, rgba(5, 12, 27, .5), transparent 70%);
-  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 52%, transparent 86%);
-  mask-image: linear-gradient(to bottom, #000 0%, #000 52%, transparent 86%);
+  width: 100%;
+  margin-inline: 0;
+  background: linear-gradient(to left, rgba(5, 12, 27, .94) 0%, rgba(5, 12, 27, .9) 34%, rgba(5, 12, 27, .42) 52%, transparent 70%);
+  -webkit-mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
+  mask-image: linear-gradient(to bottom, #000 0%, #000 78%, transparent 100%);
 }
 
 .vod-app.library-catalog .library-flow-page .library-home-follow {
-  margin-top: -7rem;
+  margin-top: -2.5rem;
 }
 
 .vod-app.library-catalog .library-flow-page .library-home-follow:has(.library-plan-banner) {
@@ -156,20 +145,11 @@
   .library-hero::after { height: 28%; }
   .library-island::before { inset-inline: 8%; }
   .vod-app.library-catalog .library-flow-page .library-hero {
-    padding-top: calc(var(--site-header-h, 72px) + 210px);
-  }
-
-  .vod-app.library-catalog .library-flow-page .library-hero-art.is-studio {
-    top: .75rem;
-    inset-inline: 0;
-    width: 168px;
-    height: 188px;
-    margin-inline: auto;
-    object-position: center 12%;
+    padding-top: calc(var(--site-header-h, 72px) + 1rem);
   }
 
   .vod-app.library-catalog .library-flow-page .library-hero-veil-side {
-    background: linear-gradient(to top, rgba(5, 12, 27, .45), transparent 62%);
+    background: linear-gradient(to top, rgba(5, 12, 27, .94) 0%, rgba(5, 12, 27, .72) 46%, transparent 78%);
   }
   .vod-app.library-catalog .library-flow-page .library-home-follow {
     margin-top: -3rem;
