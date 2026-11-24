@@ -6,6 +6,7 @@ import {
   ClipboardList,
   Crown,
   FileText,
+  Flag,
   Film,
   FolderTree,
   Gift,
@@ -41,6 +42,7 @@ export type Tab =
   | 'raffles'
   | 'leads'
   | 'webinar'
+  | 'moderation'
   | 'notifications'
   | 'settings'
   | 'legal'
@@ -119,6 +121,7 @@ export const NAV_GROUPS: NavGroup[] = [
         keywords: 'galaxy team members impact השפעה team-universe',
       },
       { id: 'lecturers', label: 'בקשות מרצים', ready: true, icon: GraduationCap, keywords: 'lecturer בקשות' },
+      { id: 'moderation', label: 'מודרציה', why: 'דיווחי קהילה', ready: true, icon: Flag, keywords: 'community דיווח השתקה' },
     ],
   },
   {
@@ -244,6 +247,7 @@ export const TAB_META: Record<
     group: 'אנשים והרשאות',
   },
   lecturers: { title: 'בקשות מרצים', description: 'אישור והפעלת מרצים חדשים', group: 'אנשים והרשאות' },
+  moderation: { title: 'מודרציה', description: 'דיווחים מהקהילה, הסתרה והשתקה', group: 'אנשים והרשאות' },
   payments: { title: 'מנויים ותשלומים', description: 'חיובים, מנויים ותשלומי מסלול', group: 'מסחר והכנסות' },
   tracks: {
     title: 'מסלולים + לידים',

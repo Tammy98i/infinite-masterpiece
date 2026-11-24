@@ -12,6 +12,7 @@ import { UsersAccountsView } from './admin/UsersAccountsView';
 import { TeamStaffView } from './admin/TeamStaffView';
 import { TeamMembersPanel } from './admin/TeamMembersPanel';
 import { PodsPanel } from './admin/PodsPanel';
+import { CommunityModerationPanel } from './admin/CommunityModerationPanel';
 import { AdminCommandPalette } from './admin/AdminCommandPalette';
 import { AdminListControls } from './admin/AdminListControls';
 import { useUnsavedChanges } from '../hooks/useUnsavedChanges';
@@ -264,6 +265,7 @@ export function AdminView() {
             {tab === 'categories' && <CategoriesPanel />}
             {tab === 'premium88' && <Premium88Panel />}
             {tab === 'pods' && <PodsPanel />}
+            {tab === 'moderation' && <CommunityModerationPanel />}
             {tab === 'audit' && <AuditLogsPanel />}
             {tab === 'raffles' && <RafflesPanel />}
             {tab === 'leads' && <LeadsPanel />}

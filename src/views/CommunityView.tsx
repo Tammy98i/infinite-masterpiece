@@ -34,6 +34,7 @@ export function CommunityView() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [openReplies, setOpenReplies] = useState<Record<string, boolean>>({});
   const [replyDraft, setReplyDraft] = useState<Record<string, string>>({});
+  const [loadingMore, setLoadingMore] = useState(false);
 
   const load = (next = channel) => {
     setError('');
@@ -44,6 +45,26 @@ export function CommunityView() {
     }).catch((err: unknown) => {
       setError(err instanceof Error ? err.message : 'לא הצלחנו לטעון את הקהילה');
     });
+  };
+
+  const loadMore = async () => {
+    if (!home?.nextCursor) return;
+    setLoadingMore(true);
+    setError('');
+    try {
+      const data = await communityApi.home(channel, home.nextCursor);
+      setHome((current) => current && current.access === 'open' && data.access === 'open'
+        ? {
+            ...current,
+            nextCursor: data.nextCursor,
+            posts: [...current.posts, ...data.posts.filter((post) => !current.posts.some((item) => item.id === post.id))],
+          }
+        : data);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'לא הצלחנו לטעון עוד');
+    } finally {
+      setLoadingMore(false);
+    }
   };
 
   useEffect(() => {
@@ -193,6 +214,7 @@ export function CommunityView() {
               ) : null}
 
               {home.posts.length === 0 ? <p className="community-empty">עדיין אין כאן פוסטים. הראשון פותח את השיחה.</p> : null}
+              {home.me?.muted ? <p className="community-note">הפרסום הושתק על ידי הצוות.</p> : null}
               {home.posts.map((post) => (
                 <PostCard
                   key={post.id}
@@ -205,6 +227,11 @@ export function CommunityView() {
                   onAct={act}
                 />
               ))}
+              {home.nextCursor ? (
+                <button type="button" className="community-publish" disabled={loadingMore} onClick={() => void loadMore()}>
+                  {loadingMore ? 'טוען…' : 'עוד פוסטים'}
+                </button>
+              ) : null}
             </section>
 
             <aside className="community-card community-side">
@@ -250,6 +277,9 @@ const PostCard: FC<{
   onAct,
 }) => {
   const replyId = useId();
+  const editId = useId();
+  const [editing, setEditing] = useState(false);
+  const [editBody, setEditBody] = useState(post.body);
   return (
     <article className="community-card community-post">
       <div className="community-post-head">
@@ -264,10 +294,26 @@ const PostCard: FC<{
         </div>
       </div>
       {post.hidden ? <p className="community-hidden">הוסתר על ידי הצוות</p> : null}
-      <p>{post.body}</p>
+      {editing ? (
+        <form onSubmit={(event) => {
+          event.preventDefault();
+          void onAct(async () => {
+            await communityApi.edit(post.id, editBody);
+            setEditing(false);
+          });
+        }}>
+          <label className="community-sr" htmlFor={editId}>עריכת הפוסט</label>
+          <textarea id={editId} value={editBody} onChange={(event) => setEditBody(event.target.value)} />
+          <div className="community-tools">
+            <button type="submit" className="community-publish">שמירה</button>
+            <button type="button" onClick={() => setEditing(false)}>ביטול</button>
+          </div>
+        </form>
+      ) : <p>{post.body}</p>}
       {post.imageUrl ? <img className="community-photo" src={post.imageUrl} alt="" /> : null}
       {post.lectureTitle ? <div className="community-lecture-chip">הרצאה · {post.lectureTitle}</div> : null}
       <div className="community-tools">
+        {post.canEdit ? <button type="button" onClick={() => { setEditBody(post.body); setEditing(true); }}>עריכה</button> : null}
         <button type="button" aria-pressed={post.hearted} onClick={() => void onAct(() => communityApi.react(post.id))}>♡ {post.hearts}</button>
         <button type="button" aria-expanded={open} onClick={onToggle}>תגובות {post.replies.length}</button>
         <button type="button" aria-pressed={post.saved} onClick={() => void onAct(() => communityApi.bookmark(post.id))}>{post.saved ? 'שמור' : 'שמירה'}</button>

@@ -6,10 +6,14 @@ import {
   canEnterCommunity,
   createCommunityPost,
   createCommunityReply,
+  dismissCommunityReport,
+  editCommunityPost,
   getCommunityHome,
   initializeCommunitySchema,
+  listCommunityReports,
   reportCommunityPost,
   setCommunityHidden,
+  setCommunityMuted,
   toggleCommunityHeart,
 } from './community.ts';
 
@@ -96,4 +100,37 @@ test('members post, reply, and heart inside an open channel', () => {
   setCommunityHidden(db, admin, id, true);
   assert.equal(getCommunityHome(db, paid, 'talk').posts[0].hidden, true);
   assert.equal(getCommunityHome(db, user({ id: 'other', role: 'student', subscriptionPlan: 'annual', name: 'גל' }), 'talk').posts.length, 0);
+});
+
+test('edit stays open for fifteen minutes, then a mute and the report queue take over', () => {
+  const db = openDb();
+  add(db, { id: 'paid', name: 'נועה כהן', role: 'user', plan: 'monthly' });
+  add(db, { id: 'admin', name: 'תמי אלון', role: 'admin', plan: 'annual' });
+  const paid = user({ id: 'paid', role: 'student', subscriptionPlan: 'monthly', name: 'נועה כהן' });
+  const admin = user({ id: 'admin', role: 'admin', subscriptionPlan: 'annual', name: 'תמי אלון' });
+  const id = createCommunityPost(db, paid, { channel: 'talk', body: 'טיוטה ראשונה' });
+  assert.equal(getCommunityHome(db, paid, 'talk').posts[0].canEdit, true);
+  editCommunityPost(db, paid, id, 'טקסט אחרי עריכה');
+  assert.equal(getCommunityHome(db, paid, 'talk').posts[0].body, 'טקסט אחרי עריכה');
+  db.prepare(`UPDATE community_posts SET created_at = datetime('now', '-20 minutes') WHERE id = ?`).run(id);
+  assert.equal(getCommunityHome(db, paid, 'talk').posts[0].canEdit, false);
+  assert.throws(() => editCommunityPost(db, paid, id, 'מאוחר מדי'), /חלון העריכה/);
+
+  const insert = db.prepare(
+    `INSERT INTO community_posts (id, channel, author_id, body, created_at) VALUES (?, 'talk', ?, ?, datetime('now', ?))`
+  );
+  for (let index = 0; index < 13; index += 1) insert.run(`extra-${index}`, paid.id, `פוסט נוסף ${index}`, `-${index + 1} minutes`);
+  const first = getCommunityHome(db, paid, 'talk');
+  assert.equal(first.posts.length, 12);
+  assert.ok(first.nextCursor);
+  const second = getCommunityHome(db, paid, 'talk', first.nextCursor || undefined);
+  assert.ok(second.posts.length > 0);
+
+  reportCommunityPost(db, admin, id);
+  const reports = listCommunityReports(db, admin);
+  assert.equal(reports.length, 1);
+  setCommunityMuted(db, admin, paid.id, true);
+  assert.throws(() => createCommunityPost(db, paid, { channel: 'talk', body: 'אחרי השתקה' }), /הושתק/);
+  dismissCommunityReport(db, admin, reports[0].id);
+  assert.equal(listCommunityReports(db, admin).length, 0);
 });

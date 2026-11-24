@@ -3,9 +3,13 @@ import { getDb } from '../db/connection.js';
 import {
   createCommunityPost,
   createCommunityReply,
+  dismissCommunityReport,
+  editCommunityPost,
   getCommunityHome,
+  listCommunityReports,
   reportCommunityPost,
   setCommunityHidden,
+  setCommunityMuted,
   setCommunityPinned,
   toggleCommunityBookmark,
   toggleCommunityHeart,
@@ -26,7 +30,53 @@ communityRoutes.get('/', (req, res) => {
   try {
     const user = (req as { authUser?: ReturnType<typeof authUser> }).authUser ?? null;
     const channel = typeof req.query.channel === 'string' ? req.query.channel : undefined;
-    res.set('Cache-Control', 'no-store').json(getCommunityHome(getDb(), user, channel));
+    const cursor = typeof req.query.cursor === 'string' ? req.query.cursor : undefined;
+    res.set('Cache-Control', 'no-store').json(getCommunityHome(getDb(), user, channel, cursor));
+  } catch (err) {
+    sendError(res, err);
+  }
+});
+
+communityRoutes.get('/moderation', requireAuth, (req, res) => {
+  try {
+    res.set('Cache-Control', 'no-store').json({ reports: listCommunityReports(getDb(), authUser(req)) });
+  } catch (err) {
+    sendError(res, err);
+  }
+});
+
+communityRoutes.post('/moderation/reports/:id/dismiss', requireAuth, (req, res) => {
+  try {
+    const user = authUser(req);
+    dismissCommunityReport(getDb(), user, req.params.id);
+    writeAudit({ adminUserId: user.id, actionType: 'community_report_dismiss', entityType: 'community_report', entityId: req.params.id });
+    res.json({ ok: true });
+  } catch (err) {
+    sendError(res, err);
+  }
+});
+
+communityRoutes.post('/moderation/mute', requireAuth, (req, res) => {
+  try {
+    const user = authUser(req);
+    setCommunityMuted(getDb(), user, String(req.body?.userId || ''), Boolean(req.body?.muted));
+    writeAudit({
+      adminUserId: user.id,
+      actionType: 'community_mute',
+      entityType: 'user',
+      entityId: String(req.body?.userId || ''),
+      after: { muted: Boolean(req.body?.muted) },
+    });
+    res.json({ ok: true });
+  } catch (err) {
+    sendError(res, err);
+  }
+});
+
+communityRoutes.patch('/posts/:id', requireAuth, (req, res) => {
+  try {
+    editCommunityPost(getDb(), authUser(req), req.params.id, req.body?.body);
+    res.json({ ok: true });
   } catch (err) {
     sendError(res, err);
   }

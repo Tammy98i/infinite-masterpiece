@@ -145,7 +145,19 @@ export function initializeCommunitySchema(db: DatabaseSync) {
     );
     CREATE UNIQUE INDEX IF NOT EXISTS idx_community_reports_once
       ON community_reports(post_id, user_id);
+
+    CREATE TABLE IF NOT EXISTS community_mutes (
+      user_id TEXT PRIMARY KEY,
+      muted_by TEXT NOT NULL,
+      created_at TEXT NOT NULL DEFAULT (datetime('now'))
+    );
   `);
+  const reportColumns = new Set(
+    (db.prepare(`PRAGMA table_info(community_reports)`).all() as Array<{ name: string }>).map((column) => column.name)
+  );
+  if (!reportColumns.has('status')) {
+    db.exec(`ALTER TABLE community_reports ADD COLUMN status TEXT NOT NULL DEFAULT 'open'`);
+  }
 }
 
 type AuthorRow = {
@@ -166,19 +178,40 @@ function authorFrom(row: AuthorRow) {
   };
 }
 
-export function getCommunityHome(db: DatabaseSync, user: AuthUser | null, requested?: string) {
+const PAGE_SIZE = 12;
+
+function isMuted(db: DatabaseSync, userId: string) {
+  return Boolean(db.prepare(`SELECT user_id FROM community_mutes WHERE user_id = ?`).get(userId));
+}
+
+function withinEditWindow(createdAt: string) {
+  const then = Date.parse(`${createdAt.replace(' ', 'T')}Z`);
+  return Number.isFinite(then) && Date.now() - then <= 15 * 60 * 1000;
+}
+
+export function getCommunityHome(db: DatabaseSync, user: AuthUser | null, requested?: string, cursor?: string) {
   if (!user || !canEnterCommunity(user)) {
-    return { access: 'locked' as const, channel: 'talk', channels: [], posts: [], people: [] };
+    return { access: 'locked' as const, channel: 'talk', channels: [], posts: [], people: [], nextCursor: null };
   }
 
+  const muted = isMuted(db, user.id);
   const channels = CHANNELS.filter((channel) => canSeeChannel(user, channel.id)).map((channel) => ({
     id: channel.id,
     label: channel.label,
-    canPost: canPostInChannel(user, channel.id),
+    canPost: !muted && canPostInChannel(user, channel.id),
   }));
   const channel: CommunityChannelId =
     requested && isChannel(requested) && canSeeChannel(user, requested) ? requested : 'talk';
 
+  const params: Array<string | number> = [channel, user.id, user.role === 'admin' ? 1 : 0];
+  let older = '';
+  if (cursor) {
+    const [createdAt, id] = cursor.split('|');
+    if (createdAt && id) {
+      older = ` AND p.pinned = 0 AND (p.created_at < ? OR (p.created_at = ? AND p.id < ?))`;
+      params.push(createdAt, createdAt, id);
+    }
+  }
   const rows = db
     .prepare(
       `SELECT p.id, p.channel, p.body, p.lecture_title, p.image_url, p.status, p.pinned, p.created_at,
@@ -187,10 +220,11 @@ export function getCommunityHome(db: DatabaseSync, user: AuthUser | null, reques
        JOIN users u ON u.id = p.author_id
        WHERE p.channel = ?
          AND (p.status = 'visible' OR p.author_id = ? OR ? = 1)
-       ORDER BY p.pinned DESC, p.created_at DESC
-       LIMIT 40`
+         ${older}
+       ORDER BY p.pinned DESC, p.created_at DESC, p.id DESC
+       LIMIT ?`
     )
-    .all(channel, user.id, user.role === 'admin' ? 1 : 0) as Array<
+    .all(...params, PAGE_SIZE + 1) as Array<
     AuthorRow & {
       author_id: string;
       body: string;
@@ -202,8 +236,12 @@ export function getCommunityHome(db: DatabaseSync, user: AuthUser | null, reques
       channel: string;
     }
   >;
+  const hasMore = rows.length > PAGE_SIZE;
+  const page = hasMore ? rows.slice(0, PAGE_SIZE) : rows;
+  const last = page[page.length - 1];
+  const nextCursor = hasMore && last ? `${last.created_at}|${last.id}` : null;
 
-  const ids = rows.map((row) => row.id);
+  const ids = page.map((row) => row.id);
   const hearts = new Map<string, number>();
   const mineHearts = new Set<string>();
   const saved = new Set<string>();
@@ -264,7 +302,8 @@ export function getCommunityHome(db: DatabaseSync, user: AuthUser | null, reques
     access: 'open' as const,
     channel,
     channels,
-    posts: rows.map((row) => ({
+    nextCursor,
+    posts: page.map((row) => ({
       id: row.id,
       channel: row.channel,
       body: row.body,
@@ -273,6 +312,7 @@ export function getCommunityHome(db: DatabaseSync, user: AuthUser | null, reques
       pinned: Boolean(row.pinned),
       hidden: row.status === 'hidden',
       createdAt: row.created_at,
+      canEdit: row.author_id === user.id && withinEditWindow(row.created_at),
       author: authorFrom(row),
       hearts: hearts.get(row.id) || 0,
       hearted: mineHearts.has(row.id),
@@ -290,6 +330,7 @@ export function getCommunityHome(db: DatabaseSync, user: AuthUser | null, reques
       initial: initial(user.name),
       badge: badgeFor(user.role, user.subscriptionPlan, Boolean(user.isFounder)),
       isAdmin: user.role === 'admin',
+      muted,
     },
   };
 }
@@ -307,6 +348,7 @@ export function createCommunityPost(
   input: { channel?: string; body?: unknown; lectureTitle?: unknown; imageUrl?: unknown }
 ) {
   if (!canEnterCommunity(user)) fail('הקהילה נפתחת עם מנוי הספרייה', 403);
+  if (isMuted(db, user.id)) fail('הפרסום הושתק על ידי הצוות', 403);
   const channel = String(input.channel || 'talk');
   if (!isChannel(channel) || !canPostInChannel(user, channel)) fail('אין הרשאה לפרסם בערוץ הזה', 403);
   assertRate(db, 'community_posts', user.id, 8);
@@ -320,6 +362,7 @@ export function createCommunityPost(
 
 export function createCommunityReply(db: DatabaseSync, user: AuthUser, postId: string, body: unknown) {
   if (!canEnterCommunity(user)) fail('הקהילה נפתחת עם מנוי הספרייה', 403);
+  if (isMuted(db, user.id)) fail('הפרסום הושתק על ידי הצוות', 403);
   const post = db.prepare(`SELECT id, channel, status FROM community_posts WHERE id = ?`).get(postId) as
     | { id: string; channel: CommunityChannelId; status: string }
     | undefined;
@@ -384,6 +427,83 @@ export function setCommunityHidden(db: DatabaseSync, user: AuthUser, postId: str
   const post = db.prepare(`SELECT id FROM community_posts WHERE id = ?`).get(postId);
   if (!post) fail('הפוסט לא נמצא', 404);
   db.prepare(`UPDATE community_posts SET status = ? WHERE id = ?`).run(hidden ? 'hidden' : 'visible', postId);
+}
+
+export function editCommunityPost(db: DatabaseSync, user: AuthUser, postId: string, body: unknown) {
+  if (!canEnterCommunity(user)) fail('הקהילה נפתחת עם מנוי הספרייה', 403);
+  const post = db.prepare(`SELECT id, author_id, created_at FROM community_posts WHERE id = ?`).get(postId) as
+    | { id: string; author_id: string; created_at: string }
+    | undefined;
+  if (!post || post.author_id !== user.id) fail('אפשר לערוך רק פוסט שלך', 403);
+  if (!withinEditWindow(post.created_at)) fail('חלון העריכה נסגר', 403);
+  db.prepare(`UPDATE community_posts SET body = ? WHERE id = ?`).run(cleanBody(body), postId);
+}
+
+function assertModerator(user: AuthUser) {
+  if (user.role !== 'admin') fail('אין הרשאת ניהול', 403);
+}
+
+export function listCommunityReports(db: DatabaseSync, user: AuthUser) {
+  assertModerator(user);
+  return (
+    db
+      .prepare(
+        `SELECT r.id, r.created_at, r.post_id, p.body, p.status as post_status, p.author_id,
+                author.full_name as author_name, reporter.full_name as reporter_name,
+                CASE WHEN m.user_id IS NULL THEN 0 ELSE 1 END as muted
+         FROM community_reports r
+         JOIN community_posts p ON p.id = r.post_id
+         JOIN users author ON author.id = p.author_id
+         JOIN users reporter ON reporter.id = r.user_id
+         LEFT JOIN community_mutes m ON m.user_id = p.author_id
+         WHERE r.status = 'open'
+         ORDER BY r.created_at DESC
+         LIMIT 50`
+      )
+      .all() as Array<{
+      id: string;
+      created_at: string;
+      post_id: string;
+      body: string;
+      post_status: string;
+      author_id: string;
+      author_name: string;
+      reporter_name: string;
+      muted: number;
+    }>
+  ).map((row) => ({
+    id: row.id,
+    postId: row.post_id,
+    body: row.body,
+    hidden: row.post_status === 'hidden',
+    authorId: row.author_id,
+    authorName: firstName(row.author_name),
+    reporterName: firstName(row.reporter_name),
+    muted: Boolean(row.muted),
+    createdAt: row.created_at,
+  }));
+}
+
+export function dismissCommunityReport(db: DatabaseSync, user: AuthUser, reportId: string) {
+  assertModerator(user);
+  const report = db.prepare(`SELECT id FROM community_reports WHERE id = ?`).get(reportId);
+  if (!report) fail('הדיווח לא נמצא', 404);
+  db.prepare(`UPDATE community_reports SET status = 'dismissed' WHERE id = ?`).run(reportId);
+}
+
+export function setCommunityMuted(db: DatabaseSync, user: AuthUser, userId: string, muted: boolean) {
+  assertModerator(user);
+  if (userId === user.id) fail('אי אפשר להשתיק את עצמך', 400);
+  const target = db.prepare(`SELECT id FROM users WHERE id = ?`).get(userId);
+  if (!target) fail('המשתמש לא נמצא', 404);
+  if (muted) {
+    db.prepare(
+      `INSERT INTO community_mutes (user_id, muted_by, created_at) VALUES (?, ?, datetime('now'))
+       ON CONFLICT(user_id) DO NOTHING`
+    ).run(userId, user.id);
+    return;
+  }
+  db.prepare(`DELETE FROM community_mutes WHERE user_id = ?`).run(userId);
 }
 
 function userIdByEmail(db: DatabaseSync, email: string) {
