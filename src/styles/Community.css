@@ -62,7 +62,10 @@
 
 .community-nav,
 .community-channels,
-.community-nav-slot { display: grid; gap: 8px; }
+.community-nav-slot,
+.community-nav-group { display: grid; gap: 8px; }
+.community-nav-label { margin: 8px 0 0; color: #f0d48a; font-size: .78rem; font-weight: 700; }
+.community-dock { display: none; }
 .community-nav button,
 .community-channel,
 .pa-thumb,
@@ -221,17 +224,26 @@
 }
 
 @media (max-width: 760px) {
-  .community-rail-toggle {
-    display: inline-flex; align-items: center; position: fixed; z-index: 8; top: 12px; inset-inline-start: 12px;
-    background: #f0d48a; border: 0; color: #1a1204; font-weight: 700; min-height: 44px;
+  .community-rail-toggle { display: none; }
+  .community-dock {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    position: fixed;
+    inset-inline: 0;
+    bottom: 0;
+    z-index: 8;
+    background: rgba(5, 10, 20, .94);
+    border-top: 1px solid rgba(223, 196, 125, .28);
   }
+  .community-dock button { justify-content: center; text-align: center; min-height: 56px; }
   .community-rail {
     position: fixed; inset-block: 0; inset-inline-start: 0; width: min(280px, 86vw); transform: translateX(110%);
     box-shadow: -8px 0 24px rgba(0,0,0,.12);
   }
   .community-page.is-rail-open .community-rail { transform: none; }
+  .community-page.is-rail-open .community-dock { display: none; }
   .community-scrim { display: block; position: fixed; inset: 0; z-index: 5; border: 0; background: rgba(16, 22, 32, .4); min-height: 100vh; }
-  .community-main { padding: 72px 14px 36px; }
+  .community-main { padding: 28px 14px 96px; }
   .pa-grid, .pa-contact-cards, .pa-metrics, .pa-steps, .pa-stats { grid-template-columns: 1fr; }
   .pa-event { grid-template-columns: auto 1fr; }
   .pa-days span, .pa-weekdays span { min-height: 44px; font-size: .8rem; }
@@ -251,15 +263,15 @@
   text-shadow: none;
 }
 
-.vod-app.sky-readable .community-page :is(.community-kicker, .community-nav button[aria-current='page'], .community-channel[aria-current='page'], .community-tag) {
-  color: #5c4514;
+.vod-app.sky-readable .community-page :is(.community-kicker, .community-nav button[aria-current='page'], .community-channel[aria-current='page'], .community-dock button[aria-current='page'], .community-tag) {
+  color: #f0d48a;
 }
 
 .vod-app.sky-readable .community-page :is(.community-lede, .community-note, .community-empty, .community-rule, .community-meta, .community-hello p, .community-contact p, .community-news span:last-child, .pa-note, .pa-composer, .pa-course em) {
   color: rgba(224, 237, 255, .78);
 }
 
-.vod-app.sky-readable .community-page .community-tag[data-badge='חבר ספרייה'] { color: #3d4b5c; }
+.vod-app.sky-readable .community-page .community-tag[data-badge='חבר ספרייה'] { color: rgba(224, 237, 255, .78); }
 
 .pa-home { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; }
 .pa-stream, .pa-widgets, .pa-events, .pa-agents, .pa-partners, .pa-contact { display: grid; gap: 14px; }
@@ -268,7 +280,14 @@
 .pa-card ul { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
 .pa-card li { display: flex; align-items: center; gap: 8px; min-height: 44px; }
 .pa-check { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #b79043; flex: none; }
-.pa-card li.is-done { color: #5c4514; font-weight: 700; }
+.pa-card li.is-done, .pa-checks button.is-done { color: #f0d48a; font-weight: 700; }
+.pa-checks { display: grid; gap: 4px; }
+.pa-checks button { display: flex; align-items: center; gap: 8px; width: 100%; }
+.pa-now { display: grid; gap: 12px; }
+.pa-empty { display: grid; justify-items: start; gap: 8px; }
+.pa-empty button { min-height: 44px; border: 0; border-radius: 12px; background: #f0d48a; color: #1a1204; font-weight: 700; }
+.pa-pulse h2 { margin: 0 0 8px; font-size: 1.15rem; }
+.pa-days .has-event small { color: #f0d48a; font-size: .7rem; }
 .pa-card li.is-done .pa-check { background: #f0d48a; box-shadow: inset 0 0 0 4px #fff; }
 .pa-progress-label, .pa-points { font-size: 1.4rem; font-weight: 700; margin: 0; }
 .pa-bar { height: 8px; border-radius: 99px; background: rgba(255,255,255,.12); overflow: hidden; }
@@ -300,7 +319,7 @@
 .pa-weekdays, .pa-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
 .pa-days span, .pa-weekdays span { min-height: 72px; border-radius: 12px; background: rgba(255,255,255,.06); display: grid; align-content: start; justify-items: center; padding-top: 8px; }
 .pa-days .is-today { outline: 2px solid #b79043; }
-.pa-days .has-event small { color: #5c4514; font-size: .7rem; }
+.pa-days .has-event { background: rgba(240, 212, 138, .16); }
 .pa-profile { text-align: center; }
 .pa-stats, .pa-steps, .pa-metrics, .pa-contact-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
 .pa-stats div, .pa-steps article, .pa-metrics article, .pa-contact-cards article { background: rgba(255,255,255,.06); border-radius: 14px; padding: 12px; }
@@ -325,8 +344,9 @@
   color: #1a1204;
   background-color: transparent;
 }
-.vod-app.sky-readable .community-page :is(.pa-agent button, .pa-partners button, .pa-contact form button, .pa-tabs button[aria-pressed='true'], .pa-month .pa-rowhead button) {
+.vod-app.sky-readable .community-page :is(.pa-agent button, .pa-partners button, .pa-contact form button, .pa-tabs button[aria-pressed='true'], .pa-month .pa-rowhead button, .pa-empty button) {
   background: #f0d48a;
+  color: #1a1204;
 }
 
 .vod-app.sky-readable .community-page .community-publish,

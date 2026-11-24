@@ -6,7 +6,9 @@ import { uploadFile } from '../api/upload';
 import { useApp } from '../context/AppContext';
 import {
   AREAS,
+  NAV_GROUPS,
   AgentGrid,
+  type ClubSession,
   ClubCard,
   ContactDesk,
   CourseShelf,
@@ -49,6 +51,7 @@ export function CommunityView() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [area, setArea] = useState<AreaId>('home');
   const [showPod, setShowPod] = useState(false);
+  const [podSession, setPodSession] = useState<ClubSession | null>(null);
   const shorts = courses.filter((course) => course.isShort);
   const lessons = courses.filter((course) => !course.isShort);
   const [openReplies, setOpenReplies] = useState<Record<string, boolean>>({});
@@ -93,9 +96,15 @@ export function CommunityView() {
   useEffect(() => {
     let cancelled = false;
     podsApi.me().then((state) => {
-      if (!cancelled) setShowPod(state.showNav);
+      if (cancelled) return;
+      setShowPod(state.showNav);
+      const pod = state.pods.find((item) => item.session?.startsAt);
+      setPodSession(pod?.session?.startsAt ? { startsAt: pod.session.startsAt, title: pod.name, notes: pod.session.notes || '' } : null);
     }).catch(() => {
-      if (!cancelled) setShowPod(false);
+      if (!cancelled) {
+        setShowPod(false);
+        setPodSession(null);
+      }
     });
     return () => {
       cancelled = true;
@@ -162,17 +171,25 @@ export function CommunityView() {
           <span>Infinite Masterpiece</span>
         </button>
         <nav className="community-nav" aria-label="האזור האישי">
-          {AREAS.map((item) => (
-            <span key={item.id} className="community-nav-slot">
-              <button type="button" aria-current={area === item.id ? 'page' : undefined} onClick={() => { setArea(item.id); closeRail(); }}>
-                {item.label}
-              </button>
-              {item.id === 'calendar' && showPod ? (
-                <button type="button" onClick={() => { closeRail(); navigate('/pod'); }}>הפוד שלי</button>
-              ) : null}
-            </span>
+          {NAV_GROUPS.map((group) => (
+            <div key={group.label} className="community-nav-group">
+              <p className="community-nav-label">{group.label}</p>
+              {group.ids.map((id) => {
+                const item = AREAS.find((entry) => entry.id === id);
+                if (!item) return null;
+                return (
+                  <span key={item.id} className="community-nav-slot">
+                    <button type="button" aria-current={area === item.id ? 'page' : undefined} onClick={() => { setArea(item.id); closeRail(); }}>
+                      {item.label}
+                    </button>
+                    {item.id === 'calendar' && showPod ? (
+                      <button type="button" onClick={() => { closeRail(); navigate('/pod'); }}>הפוד שלי</button>
+                    ) : null}
+                  </span>
+                );
+              })}
+            </div>
           ))}
-          <button type="button" onClick={() => { closeRail(); setView('profile'); }}>חשבון</button>
         </nav>
         {area === 'feed' && home && open ? (
           <div className="community-channels" aria-label="ערוצים">
@@ -196,6 +213,12 @@ export function CommunityView() {
         </button>
       </aside>
       {menuOpen ? <button type="button" className="community-scrim" aria-label="סגירת התפריט" onClick={closeRail} /> : null}
+      <nav className="community-dock" aria-label="ניווט מהיר">
+        <button type="button" aria-current={area === 'home' ? 'page' : undefined} onClick={() => setArea('home')}>ראשי</button>
+        <button type="button" aria-current={area === 'courses' ? 'page' : undefined} onClick={() => setArea('courses')}>קורסים</button>
+        <button type="button" aria-current={area === 'feed' ? 'page' : undefined} onClick={() => setArea('feed')}>קהילה</button>
+        <button type="button" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>עוד</button>
+      </nav>
 
       <main className="community-main" id="community-main">
         <p className="community-kicker">האזור האישי</p>
@@ -222,20 +245,36 @@ export function CommunityView() {
             paths={learningPaths}
             instructors={instructors.filter((instructor) => instructor.showInLibrary !== false).slice(0, 8)}
             continueItem={getContinueWatchingList()[0] || null}
+            session={podSession}
+            watches={getWatchHistory().length}
             onOpenFeed={() => setArea('feed')}
             onOpenCourse={(courseId) => courseId && setView('course', { courseId })}
+            onOpenCourses={() => setArea('courses')}
+            onOpenShorts={() => setArea('shorts')}
             onOpenView={(view) => setView(view)}
             onOpenInstructor={(instructorId) => setView('instructor', { instructorId })}
+            onOpenProfile={() => setView('profile')}
+            onOpenCalendar={() => setArea('calendar')}
+            onOpenSession={() => navigate('/pod')}
             onWatch={(courseId, episodeId) => setView('watch', { courseId, episodeId })}
           />
         ) : null}
-        {area === 'calendar' ? <MonthBoard /> : null}
-        {area === 'recordings' ? <EventList courses={lessons} onOpen={(courseId) => setView('course', { courseId })} /> : null}
+        {area === 'calendar' ? <MonthBoard sessions={podSession ? [podSession] : []} /> : null}
+        {area === 'recordings' ? (
+          <EventList
+            sessions={podSession ? [podSession] : []}
+            watched={getWatchHistory()}
+            onOpenSession={() => navigate('/pod')}
+            onOpenCalendar={() => setArea('calendar')}
+            onOpenCourse={(courseId) => setView('course', { courseId })}
+            onFind={() => setArea('courses')}
+          />
+        ) : null}
         {area === 'courses' ? <CourseShelf title="קורסים ושיעורים" courses={lessons} onOpen={(courseId) => setView('course', { courseId })} /> : null}
         {area === 'shorts' ? <CourseShelf title="הדרכות קצרות" courses={shorts} onOpen={(courseId) => setView('course', { courseId })} /> : null}
         {area === 'club' ? <ClubCard plan={user.subscriptionPlan} /> : null}
-        {area === 'agents' ? <AgentGrid /> : null}
-        {area === 'hall' && home ? <HallOfFame user={user} posts={home.posts} /> : null}
+        {area === 'agents' ? <AgentGrid onContact={() => setArea('contact')} /> : null}
+        {area === 'hall' && home ? <HallOfFame user={user} posts={home.posts} watches={getWatchHistory().length} /> : null}
         {area === 'partners' ? <Partners userId={user.id} /> : null}
         {area === 'contact' ? <ContactDesk /> : null}
 
@@ -380,8 +419,8 @@ const PostCard: FC<{
         {post.canEdit ? <button type="button" onClick={() => { setEditBody(post.body); setEditing(true); }}>עריכה</button> : null}
         <button type="button" aria-pressed={post.hearted} onClick={() => void onAct(() => communityApi.react(post.id))}>♡ {post.hearts}</button>
         <button type="button" aria-expanded={open} onClick={onToggle}>תגובות {post.replies.length}</button>
-        <button type="button" aria-pressed={post.saved} onClick={() => void onAct(() => communityApi.bookmark(post.id))}>{post.saved ? 'שמור' : 'שמירה'}</button>
-        <button type="button" aria-pressed={post.reported} onClick={() => void onAct(() => communityApi.report(post.id))}>{post.reported ? 'דווח' : 'דיווח'}</button>
+        <button type="button" aria-pressed={post.saved} onClick={() => void onAct(() => communityApi.bookmark(post.id))}>{post.saved ? 'שמור אצלי' : 'שמירה'}</button>
+        <button type="button" aria-pressed={post.reported} onClick={() => !post.reported && void onAct(() => communityApi.report(post.id))}>{post.reported ? 'הדיווח נשלח' : 'דיווח'}</button>
         {isAdmin ? (
           <>
             <button type="button" onClick={() => void onAct(() => communityApi.pin(post.id, !post.pinned))}>{post.pinned ? 'שחרור' : 'נעיצה'}</button>

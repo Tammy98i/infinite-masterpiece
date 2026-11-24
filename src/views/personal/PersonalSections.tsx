@@ -29,6 +29,14 @@ export const AREAS: Array<{ id: AreaId; label: string }> = [
   { id: 'contact', label: 'צור קשר' },
 ];
 
+export const NAV_GROUPS: Array<{ label: string; ids: AreaId[] }> = [
+  { label: 'צפייה', ids: ['home', 'courses', 'shorts', 'recordings'] },
+  { label: 'קהילה', ids: ['feed', 'calendar'] },
+  { label: 'מועדון', ids: ['club', 'hall', 'partners', 'agents', 'contact'] },
+];
+
+export type ClubSession = { startsAt: string; title: string; notes: string };
+
 const AGENTS = [
   { name: 'סיכום הרצאה', text: 'מסכם הרצאה לנקודות שאפשר ליישם השבוע.', tone: 'סיכום' },
   { name: 'עוזר המסע', text: 'מפרק את משימת השבוע בפוד לצעדים קטנים.', tone: 'מסע' },
@@ -36,17 +44,6 @@ const AGENTS = [
   { name: 'שאלות לצוות', text: 'מנסח פנייה ברורה לפני שהיא נשלחת לצוות.', tone: 'שירות' },
   { name: 'תכנון שבוע', text: 'מסדר צפייה, תרגול ושיחה בקהילה ללוח השבוע.', tone: 'לוח' },
   { name: 'משוב אישי', text: 'הופך צפייה להרצאה להערה אחת שאפשר לפרסם.', tone: 'קהילה' },
-];
-
-const BOARD = [
-  { name: 'גל אברמוביץ׳', points: 1860 },
-  { name: 'תמי אליאן', points: 1640 },
-  { name: 'נועה כהן', points: 1420 },
-  { name: 'עידו ברק', points: 1210 },
-  { name: 'מיכל רז', points: 980 },
-  { name: 'דנה שמש', points: 860 },
-  { name: 'יואב לוי', points: 640 },
-  { name: 'אורי לוי', points: 510 },
 ];
 
 const LEVELS = [
@@ -60,9 +57,18 @@ function levelFor(points: number) {
   return [...LEVELS].reverse().find((level) => points >= level.min) || LEVELS[0];
 }
 
-export function memberPoints(user: UserProfile, posts: CommunityPost[]) {
+export function jerusalemParts(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return null;
+  const text = date.toLocaleString('sv-SE', { timeZone: 'Asia/Jerusalem' });
+  const [dayText, timeText = '00:00:00'] = text.split(' ');
+  const [year, month, day] = dayText.split('-').map(Number);
+  return { year, month: month - 1, day, time: timeText.slice(0, 5) };
+}
+
+export function memberActivity(user: UserProfile, posts: CommunityPost[], watches: number) {
   const mine = posts.filter((post) => post.author.firstName && user.name.startsWith(post.author.firstName)).length;
-  return 120 + user.interests.length * 15 + mine * 20;
+  return { posts: mine, watches, points: watches * 10 + mine * 20 };
 }
 
 export function HomeDesk({
@@ -74,10 +80,17 @@ export function HomeDesk({
   paths,
   instructors,
   continueItem,
+  session,
+  watches,
   onOpenFeed,
   onOpenCourse,
+  onOpenCourses,
+  onOpenShorts,
   onOpenView,
   onOpenInstructor,
+  onOpenProfile,
+  onOpenCalendar,
+  onOpenSession,
   onWatch,
 }: {
   user: UserProfile;
@@ -88,10 +101,17 @@ export function HomeDesk({
   paths: LearningPath[];
   instructors: Instructor[];
   continueItem: { course: Course; episode: { id: string; title: string }; progress: WatchProgress } | null;
+  session: ClubSession | null;
+  watches: number;
   onOpenFeed: () => void;
   onOpenCourse: (id: string) => void;
+  onOpenCourses: () => void;
+  onOpenShorts: () => void;
   onOpenView: (view: 'mylist' | 'history' | 'paths' | 'quiz' | 'instructors') => void;
   onOpenInstructor: (id: string) => void;
+  onOpenProfile: () => void;
+  onOpenCalendar: () => void;
+  onOpenSession: () => void;
   onWatch: (courseId: string, episodeId: string) => void;
 }) {
   const checks = [
@@ -102,45 +122,57 @@ export function HomeDesk({
   ];
   const done = checks.filter((item) => item.done).length;
   const featured = posts[0];
-  const points = memberPoints(user, posts);
+  const activity = memberActivity(user, posts, watches);
+  const when = session ? jerusalemParts(session.startsAt) : null;
+  const upcoming = Boolean(session && when && new Date(session.startsAt).getTime() >= Date.now());
   return (
     <div className="pa-home">
       <div className="pa-stream">
-        {continueItem ? (
-          <button type="button" className="pa-card pa-continue" onClick={() => onWatch(continueItem.course.id, continueItem.episode.id)}>
-            <span>המשך צפייה</span>
-            <strong>{continueItem.course.title}</strong>
-            <em>{continueItem.episode.title}</em>
-            <i style={{ width: `${Math.max(4, Math.round((continueItem.progress.currentTime / Math.max(1, continueItem.progress.duration)) * 100))}%` }} />
-          </button>
-        ) : (
-          <button type="button" className="pa-card pa-quiz" onClick={() => onOpenView('quiz')}>
-            <strong>מה מתאים לי</strong>
-            <span>עוד אין הרצאה פעילה. השאלון הקצר מכוון להרצאה הראשונה.</span>
-          </button>
-        )}
-        {featured ? (
-          <article className="pa-hero">
-            <div>
+        <div className="pa-now">
+          {continueItem ? (
+            <button type="button" className="pa-card pa-continue" onClick={() => onWatch(continueItem.course.id, continueItem.episode.id)}>
+              <span>המשך צפייה</span>
+              <strong>{continueItem.course.title}</strong>
+              <em>{continueItem.episode.title}</em>
+              <i style={{ width: `${Math.max(4, Math.round((continueItem.progress.currentTime / Math.max(1, continueItem.progress.duration)) * 100))}%` }} />
+            </button>
+          ) : (
+            <button type="button" className="pa-card pa-quiz" onClick={() => onOpenView('quiz')}>
+              <strong>מה מתאים לי</strong>
+              <span>עוד אין הרצאה פעילה. השאלון הקצר מכוון להרצאה הראשונה.</span>
+            </button>
+          )}
+          {upcoming && session && when ? (
+            <button type="button" className="pa-card" onClick={onOpenSession}>
+              <span>המפגש הקרוב</span>
+              <strong>{session.title}</strong>
+              <em>{when.day}.{when.month + 1} · {when.time}</em>
+            </button>
+          ) : (
+            <button type="button" className="pa-card" onClick={onOpenCalendar}>
+              <strong>המפגש הבא</strong>
+              <span>עוד אין מפגש בלוח. הוא יופיע כאן ברגע שייקבע.</span>
+            </button>
+          )}
+          {featured ? (
+            <article className="pa-card pa-pulse">
               <p>{featured.author.firstName}</p>
               <h2>{featured.body}</h2>
               <button type="button" onClick={onOpenFeed}>לדיון</button>
-            </div>
-            <div className="pa-hero-avatar" aria-hidden="true">{featured.author.initial}</div>
-          </article>
-        ) : null}
-        <section>
-          <div className="pa-rowhead"><h2>הדרכות קצרות</h2></div>
-          <div className="pa-rail">
-            {shorts.map((course) => (
-              <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
-                {course.coverImage ? <img src={course.coverImage} alt="" /> : null}
-                <span>{course.title}</span>
-              </button>
-            ))}
-          </div>
-        </section>
-        <ShelfRow title="הרשימה שלי" action="לרשימה" onAction={() => onOpenView('mylist')} empty="עוד לא שמרתם הרצאות.">
+            </article>
+          ) : (
+            <button type="button" className="pa-card" onClick={onOpenFeed}>שתפו את הפוסט הראשון בקהילה</button>
+          )}
+        </div>
+        <ShelfRow title="הדרכות קצרות" action="לכל ההדרכות" onAction={onOpenShorts} empty="עוד אין הדרכות קצרות." emptyAction="לקורסים" onEmpty={onOpenCourses}>
+          {shorts.slice(0, 8).map((course) => (
+            <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
+              {course.coverImage ? <img src={course.coverImage} alt="" /> : null}
+              <span>{course.title}</span>
+            </button>
+          ))}
+        </ShelfRow>
+        <ShelfRow title="הרשימה שלי" action="לרשימה" onAction={() => onOpenView('mylist')} empty="עוד לא שמרתם הרצאות." emptyAction="מצאו הרצאה" onEmpty={onOpenCourses}>
           {saved.slice(0, 4).map((course) => (
             <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
               {course.coverImage ? <img src={course.coverImage} alt="" /> : null}
@@ -148,7 +180,7 @@ export function HomeDesk({
             </button>
           ))}
         </ShelfRow>
-        <ShelfRow title="היסטוריה" action="להיסטוריה" onAction={() => onOpenView('history')} empty="הצפיות יופיעו כאן.">
+        <ShelfRow title="היסטוריה" action="להיסטוריה" onAction={() => onOpenView('history')} empty="הצפיות יופיעו כאן אחרי ההרצאה הראשונה." emptyAction="מצאו הרצאה" onEmpty={onOpenCourses}>
           {history.slice(0, 4).map((item) => (
             <button key={`${item.course.id}-${item.episode.id}`} type="button" className="pa-thumb" onClick={() => onWatch(item.course.id, item.episode.id)}>
               {item.course.coverImage ? <img src={item.course.coverImage} alt="" /> : null}
@@ -156,7 +188,7 @@ export function HomeDesk({
             </button>
           ))}
         </ShelfRow>
-        <ShelfRow title="מסלולי למידה" action="למסלולים" onAction={() => onOpenView('paths')} empty="המסלולים יופיעו כאן.">
+        <ShelfRow title="מסלולי למידה" action="למסלולים" onAction={() => onOpenView('paths')} empty="המסלולים יופיעו כאן." emptyAction="למסלולים" onEmpty={() => onOpenView('paths')}>
           {paths.slice(0, 3).map((path) => (
             <button key={path.id} type="button" className="pa-thumb pa-path" onClick={() => onOpenView('paths')}>
               <span>{path.title}</span>
@@ -164,7 +196,7 @@ export function HomeDesk({
             </button>
           ))}
         </ShelfRow>
-        <ShelfRow title="מומחים ומרצים" action="לכל המרצים" onAction={() => onOpenView('instructors')} empty="">
+        <ShelfRow title="מומחים ומרצים" action="לכל המרצים" onAction={() => onOpenView('instructors')} empty="רשימת המרצים תתעדכן כאן." emptyAction="לכל המרצים" onEmpty={() => onOpenView('instructors')}>
           {instructors.slice(0, 8).map((instructor) => (
             <button key={instructor.id} type="button" className="pa-person" onClick={() => onOpenInstructor(instructor.id)}>
               {instructor.avatarUrl ? <img src={instructor.avatarUrl} alt="" /> : <b>{instructor.name.trim().charAt(0)}</b>}
@@ -172,50 +204,42 @@ export function HomeDesk({
             </button>
           ))}
         </ShelfRow>
-        <button type="button" className="pa-card pa-composer" onClick={onOpenFeed}>שתף שאלה, רעיון, או תובנה מהקהילה…</button>
-        {posts.slice(0, 2).map((post) => (
-          <article key={post.id} className="pa-card pa-post">
-            <header><strong>{post.author.firstName}</strong><span>{post.author.badge}</span></header>
-            <p>{post.body}</p>
-          </article>
-        ))}
       </div>
       <aside className="pa-widgets">
         <section className="pa-card">
           <h2>השלמת הפרופיל שלך</h2>
           <p className="pa-progress-label">{done}/{checks.length}</p>
           <div className="pa-bar"><span style={{ width: `${(done / checks.length) * 100}%` }} /></div>
-          <ul>
+          <div className="pa-checks">
             {checks.map((item) => (
-              <li key={item.label} className={item.done ? 'is-done' : ''}>
+              <button key={item.label} type="button" className={item.done ? 'is-done' : ''} onClick={onOpenProfile}>
                 <span className="pa-check" aria-hidden="true" />
                 {item.label}
-              </li>
+              </button>
             ))}
-          </ul>
+          </div>
         </section>
         <section className="pa-card">
-          <h2>הנקודות שלך</h2>
-          <p className="pa-points">{points}</p>
-          <p>{levelFor(points).name}</p>
-        </section>
-        <section className="pa-card">
-          <h2>מה חדש במועדון</h2>
-          {posts.slice(0, 3).map((post) => (
-            <button key={post.id} type="button" className="pa-linkrow" onClick={onOpenFeed}>{post.body}</button>
-          ))}
+          <h2>הפעילות שלך</h2>
+          <p className="pa-points">{activity.points}</p>
+          <p>{levelFor(activity.points).name} · {activity.watches} צפיות · {activity.posts} פוסטים</p>
         </section>
       </aside>
     </div>
   );
 }
 
-function ShelfRow({ title, action, onAction, empty, children }: { title: string; action: string; onAction: () => void; empty: string; children: ReactNode }) {
+function ShelfRow({ title, action, onAction, empty, emptyAction, onEmpty, children }: { title: string; action: string; onAction: () => void; empty: string; emptyAction: string; onEmpty: () => void; children: ReactNode }) {
   const list = Array.isArray(children) ? children.filter(Boolean) : children ? [children] : [];
   return (
     <section>
-      <div className="pa-rowhead"><h2>{title}</h2><button type="button" onClick={onAction}>{action}</button></div>
-      {list.length === 0 ? <p className="pa-note">{empty}</p> : <div className="pa-rail">{children}</div>}
+      <div className="pa-rowhead"><h2>{title}</h2>{list.length > 0 ? <button type="button" onClick={onAction}>{action}</button> : null}</div>
+      {list.length === 0 ? (
+        <div className="pa-empty">
+          <p className="pa-note">{empty}</p>
+          <button type="button" onClick={onEmpty}>{emptyAction}</button>
+        </div>
+      ) : <div className="pa-rail">{children}</div>}
     </section>
   );
 }
@@ -227,6 +251,12 @@ export function CourseShelf({ title, courses, onOpen }: { title: string; courses
     <section className="pa-shelf">
       <div className="pa-rowhead"><h2>{title}</h2><span>{shown.length} פריטים</span></div>
       <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="חיפוש לפי שם" aria-label="חיפוש" />
+      {query.trim() && shown.length === 0 ? (
+        <div className="pa-empty">
+          <p className="pa-note">אין תוצאות עבור «{query.trim()}».</p>
+          <button type="button" onClick={() => setQuery('')}>נקו את החיפוש</button>
+        </div>
+      ) : null}
       <div className="pa-grid">
         {shown.map((course) => (
           <button key={course.id} type="button" className="pa-course" onClick={() => onOpen(course.id)}>
@@ -240,16 +270,20 @@ export function CourseShelf({ title, courses, onOpen }: { title: string; courses
   );
 }
 
-export function MonthBoard() {
-  const now = new Date();
-  const [cursor, setCursor] = useState(new Date(now.getFullYear(), now.getMonth(), 1));
+export function MonthBoard({ sessions }: { sessions: ClubSession[] }) {
+  const today = jerusalemParts(new Date().toISOString()) || { year: 2026, month: 10, day: 1, time: '00:00' };
+  const [cursor, setCursor] = useState(new Date(today.year, today.month, 1));
   const year = cursor.getFullYear();
   const month = cursor.getMonth();
   const first = new Date(year, month, 1).getDay();
   const count = new Date(year, month + 1, 0).getDate();
-  const label = cursor.toLocaleDateString('he-IL', { month: 'long', year: 'numeric' });
+  const label = cursor.toLocaleDateString('he-IL', { month: 'long', year: 'numeric', timeZone: 'Asia/Jerusalem' });
   const cells = [...Array(first).fill(null), ...Array.from({ length: count }, (_, index) => index + 1)];
-  const marked = new Set([4, 11, 18, 25]);
+  const marked = new Map<number, string>();
+  sessions.forEach((session) => {
+    const parts = jerusalemParts(session.startsAt);
+    if (parts && parts.year === year && parts.month === month) marked.set(parts.day, `${parts.time} ${session.title}`);
+  });
   return (
     <section className="pa-card pa-month" aria-label="לוח חודשי">
       <div className="pa-rowhead">
@@ -260,97 +294,138 @@ export function MonthBoard() {
       <div className="pa-weekdays">{['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'].map((day) => <span key={day}>{day}</span>)}</div>
       <div className="pa-days">
         {cells.map((day, index) => (
-          <span key={index} className={`${day === now.getDate() && month === now.getMonth() ? 'is-today' : ''} ${day && marked.has(day) ? 'has-event' : ''}`}>
+          <span key={index} className={`${day === today.day && month === today.month && year === today.year ? 'is-today' : ''} ${day && marked.has(day) ? 'has-event' : ''}`}>
             {day || ''}
-            {day && marked.has(day) ? <small>20:30 מפגש</small> : null}
+            {day && marked.has(day) ? <small>{marked.get(day)}</small> : null}
           </span>
         ))}
       </div>
+      {marked.size === 0 ? <p className="pa-note">אין מפגש מתוזמן בחודש הזה.</p> : null}
     </section>
   );
 }
 
-export function EventList({ courses, onOpen }: { courses: Course[]; onOpen: (id: string) => void }) {
-  const events = courses.slice(0, 4);
+export function EventList({
+  sessions,
+  watched,
+  onOpenSession,
+  onOpenCalendar,
+  onOpenCourse,
+  onFind,
+}: {
+  sessions: ClubSession[];
+  watched: Array<{ course: Course; episode: { id: string; title: string } }>;
+  onOpenSession: () => void;
+  onOpenCalendar: () => void;
+  onOpenCourse: (id: string) => void;
+  onFind: () => void;
+}) {
+  const now = Date.now();
+  const upcoming = sessions.filter((session) => new Date(session.startsAt).getTime() >= now);
+  const past = sessions.filter((session) => new Date(session.startsAt).getTime() < now);
   return (
     <div className="pa-events">
       <section className="pa-card">
-        <h2>לוח המועדון החודשי</h2>
-        <p>1 אירועים קרובים · שידורים חיים, סדנאות ומפגשים</p>
-        {events.map((course, index) => (
-          <button key={course.id} type="button" className="pa-event" onClick={() => onOpen(course.id)}>
-            <span className="pa-avatar">{course.title.trim().charAt(0)}</span>
-            <span>
-              <strong>{course.title}</strong>
-              <em>{course.subtitle || course.level}</em>
-            </span>
-            <time>20:30</time>
-            <b>{index + 7}.11</b>
-          </button>
-        ))}
+        <h2>מפגשים קרובים</h2>
+        {upcoming.length === 0 ? (
+          <div className="pa-empty">
+            <p className="pa-note">אין מפגש קרוב בלוח.</p>
+            <button type="button" onClick={onOpenCalendar}>ללוח החודשי</button>
+          </div>
+        ) : upcoming.map((session) => {
+          const parts = jerusalemParts(session.startsAt);
+          return (
+            <button key={session.startsAt} type="button" className="pa-event" onClick={onOpenSession}>
+              <span className="pa-avatar">{session.title.trim().charAt(0)}</span>
+              <span><strong>{session.title}</strong><em>{session.notes || 'מפגש הפוד'}</em></span>
+              <time>{parts?.time}</time>
+              <b>{parts ? `${parts.day}.${parts.month + 1}` : ''}</b>
+            </button>
+          );
+        })}
+      </section>
+      <section className="pa-card">
+        <h2>מפגשים שהתקיימו</h2>
+        {past.length === 0 ? <p className="pa-note">הקלטות המפגשים יופיעו כאן אחרי שיתקיימו.</p> : past.map((session) => {
+          const parts = jerusalemParts(session.startsAt);
+          return <p key={session.startsAt}>{session.title}{parts ? ` · ${parts.day}.${parts.month + 1}` : ''}</p>;
+        })}
       </section>
       <section>
-        <h2>הקלטות אחרונות</h2>
-        <div className="pa-rail">
-          {courses.slice(0, 4).map((course) => (
-            <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpen(course.id)}>
-              {course.coverImage ? <img src={course.coverImage} alt="" /> : null}
-              <span>{course.title}</span>
-            </button>
-          ))}
-        </div>
+        <h2>צפייה אחרונה בספרייה</h2>
+        {watched.length === 0 ? (
+          <div className="pa-empty">
+            <p className="pa-note">עוד אין צפייה שמורה.</p>
+            <button type="button" onClick={onFind}>מצאו הרצאה</button>
+          </div>
+        ) : (
+          <div className="pa-rail">
+            {watched.slice(0, 6).map((item) => (
+              <button key={`${item.course.id}-${item.episode.id}`} type="button" className="pa-thumb" onClick={() => onOpenCourse(item.course.id)}>
+                {item.course.coverImage ? <img src={item.course.coverImage} alt="" /> : null}
+                <span>{item.episode.title}</span>
+              </button>
+            ))}
+          </div>
+        )}
       </section>
     </div>
   );
 }
 
-export function AgentGrid() {
-  const [active, setActive] = useState<string | null>(null);
-  const agent = AGENTS.find((item) => item.name === active);
+export function AgentGrid({ onContact }: { onContact: () => void }) {
   return (
     <section className="pa-agents">
-      <div className="pa-rowhead"><h2>סוכני AI</h2><span>{AGENTS.length} סוכנים זמינים לשימוש</span></div>
+      <div className="pa-rowhead"><h2>סוכני AI</h2><span>ייפתחו בהמשך</span></div>
+      <p className="pa-note">הסוכנים עדיין לא מפיקים תשובה. בינתיים אפשר לפנות לצוות, והבקשה מגיעה לאדם.</p>
       <div className="pa-grid">
         {AGENTS.map((item) => (
           <article key={item.name} className="pa-agent">
             <div className="pa-agent-art">{item.tone}</div>
             <h3>{item.name}</h3>
             <p>{item.text}</p>
-            <button type="button" onClick={() => setActive(item.name)}>הפעל סוכן</button>
+            <button type="button" onClick={onContact}>פנייה לצוות</button>
           </article>
         ))}
       </div>
-      {agent ? (
-        <form className="pa-card pa-agent-run" onSubmit={(event) => { event.preventDefault(); setActive(null); }}>
-          <h2>{agent.name}</h2>
-          <p>{agent.text}</p>
-          <label htmlFor="agent-brief">מה תרצו שיכין</label>
-          <textarea id="agent-brief" placeholder="כתבו בקצרה את המשימה" />
-          <button type="submit">סגירה</button>
-        </form>
-      ) : null}
     </section>
   );
 }
 
-export function HallOfFame({ user, posts }: { user: UserProfile; posts: CommunityPost[] }) {
+function postTime(value: string) {
+  const then = new Date(`${value.replace(' ', 'T')}Z`).getTime();
+  return Number.isNaN(then) ? 0 : then;
+}
+
+export function HallOfFame({ user, posts, watches }: { user: UserProfile; posts: CommunityPost[]; watches: number }) {
   const [range, setRange] = useState<'all' | 'month' | 'week'>('all');
-  const mine = memberPoints(user, posts);
+  const activity = memberActivity(user, posts, watches);
   const rows = useMemo(() => {
-    const list = [...BOARD, { name: user.name.split(' ')[0] || 'אתם', points: mine }];
-    const factor = range === 'week' ? 0.35 : range === 'month' ? 0.7 : 1;
-    return list.map((row) => ({ ...row, points: Math.round(row.points * factor) })).sort((a, b) => b.points - a.points);
-  }, [mine, range, user.name]);
+    const limit = range === 'week' ? 7 : range === 'month' ? 31 : 0;
+    const cutoff = limit ? Date.now() - limit * 86400000 : 0;
+    const counts = new Map<string, number>();
+    posts.forEach((post) => {
+      if (cutoff && postTime(post.createdAt) < cutoff) return;
+      const name = post.author.firstName || 'חבר';
+      counts.set(name, (counts.get(name) || 0) + 1);
+    });
+    const mine = user.name.split(' ')[0] || 'אתם';
+    if (!counts.has(mine)) counts.set(mine, 0);
+    return [...counts.entries()]
+      .map(([name, count]) => ({ name, points: count * 20 }))
+      .sort((a, b) => b.points - a.points || a.name.localeCompare(b.name, 'he'));
+  }, [posts, range, user.name]);
   const top = rows[0]?.points || 1;
+  const place = rows.findIndex((row) => row.name === (user.name.split(' ')[0] || 'אתם')) + 1;
   return (
     <div className="pa-hall">
       <section className="pa-card pa-profile">
         <div className="pa-avatar lg">{(user.name || 'ח').trim().charAt(0)}</div>
         <h2>{user.name}</h2>
-        <p>מקום {rows.findIndex((row) => row.name === (user.name.split(' ')[0] || 'אתם')) + 1} בטבלה</p>
+        <p>{place ? `מקום ${place} לפי פוסטים שפורסמו` : 'עוד אין דירוג'}</p>
         <div className="pa-stats">
-          <div><b>{levelFor(mine).name}</b><span>דרגה</span></div>
-          <div><b>{mine}</b><span>נקודות</span></div>
+          <div><b>{levelFor(activity.points).name}</b><span>דרגה</span></div>
+          <div><b>{activity.points}</b><span>מצפייה ומפוסטים</span></div>
         </div>
       </section>
       <section className="pa-card">
@@ -381,7 +456,7 @@ export function Partners({ userId }: { userId: string }) {
     <div className="pa-partners">
       <section className="pa-card pa-partner-hero">
         <h2>תוכנית שותפים</h2>
-        <p>שיתפו קישור. כשמישהו נרשם דרככם, הקרדיט נספר כאן.</p>
+        <p>אפשר להעתיק קישור אישי. ספירת הנרשמים והקרדיט ייפתחו בהמשך, ולכן אין כאן מספרים.</p>
       </section>
       <section className="pa-card">
         <h2>הקישור שלי</h2>
@@ -393,12 +468,7 @@ export function Partners({ userId }: { userId: string }) {
       <div className="pa-steps">
         <article><b>1</b><p>שתפו את הקישור</p></article>
         <article><b>2</b><p>חבר חדש נרשם</p></article>
-        <article><b>3</b><p>הקרדיט מופיע בטבלה</p></article>
-      </div>
-      <div className="pa-metrics">
-        <article><b>0</b><span>חברים שהגיעו</span></article>
-        <article><b>0</b><span>נרשמו</span></article>
-        <article><b>0</b><span>קרדיט</span></article>
+        <article><b>3</b><p>הקרדיט ייספר כשהמעקב ייפתח</p></article>
       </div>
     </div>
   );
