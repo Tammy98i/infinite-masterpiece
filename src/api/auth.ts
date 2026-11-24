@@ -104,6 +104,12 @@ export const authApi = {
 
   me: () => request<{ user: AuthUserPayload }>('/api/auth/me'),
 
+  updateProfile: (input: { fullName?: string; city?: string; avatar?: string }) =>
+    request<{ user: AuthUserPayload }>('/api/auth/profile', {
+      method: 'PATCH',
+      body: JSON.stringify(input),
+    }),
+
   logout: async () => {
     try {
       await request('/api/auth/logout', { method: 'POST' });

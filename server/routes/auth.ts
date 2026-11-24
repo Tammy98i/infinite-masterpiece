@@ -4,6 +4,7 @@ import {
   logoutToken,
   registerUser,
   updateInterests,
+  updateOwnProfile,
   updateSubscription,
   type DbPlan,
 } from '../services/authService.js';
@@ -133,6 +134,26 @@ router.patch('/subscription', async (req, res) => {
     trackEvent('subscription_started', { userId: user.id, properties: { plan } });
   }
   res.json({ user: next });
+});
+
+router.patch('/profile', async (req, res) => {
+  const user = await userFromBearer(bearer(req));
+  if (!user) {
+    res.status(401).json({ error: 'יש להתחבר מחדש' });
+    return;
+  }
+  try {
+    const body = req.body ?? {};
+    const next = updateOwnProfile(user.id, {
+      fullName: body.fullName === undefined ? undefined : String(body.fullName),
+      city: body.city === undefined ? undefined : String(body.city),
+      avatar: body.avatar === undefined ? undefined : String(body.avatar),
+    });
+    res.json({ user: next });
+  } catch (err) {
+    const status = (err as { status?: number }).status || 500;
+    res.status(status).json({ error: (err as Error).message });
+  }
 });
 
 router.patch('/interests', async (req, res) => {

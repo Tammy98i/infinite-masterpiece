@@ -280,3 +280,29 @@ export function updateInterests(userId: string, interests: string[]) {
   const db = getDb();
   db.prepare(`UPDATE users SET interests = ? WHERE id = ?`).run(JSON.stringify(interests), userId);
 }
+
+export function updateOwnProfile(
+  userId: string,
+  input: { fullName?: string; city?: string; avatar?: string }
+) {
+  const db = getDb();
+  const row = db.prepare(`SELECT * FROM users WHERE id = ?`).get(userId) as Record<string, unknown> | undefined;
+  if (!row) throw Object.assign(new Error('המשתמש לא נמצא'), { status: 404 });
+  const profile = normalizeUserProfile({
+    fullName: input.fullName === undefined ? String(row.full_name || '') : input.fullName,
+    birthday: String(row.birthday || ''),
+    phone: String(row.phone || ''),
+    city: input.city === undefined ? String(row.city || '') : input.city,
+  }, { requireFirstName: true });
+  const avatar = input.avatar === undefined ? String(row.avatar || '') : input.avatar.trim();
+  const allowedAvatar = avatar === '' || avatar.startsWith('/uploads/') || avatar.startsWith('https://');
+  if (!allowedAvatar || avatar.length > 500) {
+    throw Object.assign(new Error('כתובת התמונה אינה תקינה'), { status: 400 });
+  }
+  db.prepare(
+    `UPDATE users SET full_name = ?, first_name = ?, last_name = ?, city = ?, avatar = ? WHERE id = ?`
+  ).run(profile.fullName, profile.firstName, profile.lastName, profile.city, avatar, userId);
+  const user = userFromId(userId);
+  if (!user) throw Object.assign(new Error('לא ניתן לעדכן את הפרופיל'), { status: 404 });
+  return user;
+}

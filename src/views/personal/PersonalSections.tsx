@@ -1,4 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react';
+import { DEFAULT_WEBINAR_CONFIG } from '../../constants/webinar';
 import type { CommunityPost } from '../../api/community';
 import type { Course, Instructor, LearningPath, UserProfile, WatchProgress } from '../../types';
 
@@ -112,16 +113,16 @@ export function HomeDesk({
   onOpenShorts: () => void;
   onOpenView: (view: 'mylist' | 'history' | 'paths' | 'quiz' | 'instructors') => void;
   onOpenInstructor: (id: string) => void;
-  onOpenProfile: () => void;
+  onOpenProfile: (field: string) => void;
   onOpenCalendar: () => void;
   onOpenSession: () => void;
   onWatch: (courseId: string, episodeId: string) => void;
 }) {
   const checks = [
-    { label: 'שם מלא', done: Boolean(user.name && user.name !== 'אורח/ת') },
-    { label: 'תמונת פרופיל', done: Boolean(user.avatar) },
-    { label: 'עיר', done: Boolean(user.city) },
-    { label: 'תחומי עניין', done: user.interests.length > 0 },
+    { field: 'profile-name', label: 'שם מלא', done: Boolean(user.name && user.name !== 'אורח/ת') },
+    { field: 'profile-avatar', label: 'תמונת פרופיל', done: Boolean(user.avatar) && !user.avatar.includes('images.unsplash.com') },
+    { field: 'profile-city', label: 'עיר', done: Boolean(user.city) },
+    { field: 'profile-interests', label: 'תחומי עניין', done: user.interests.length > 0 },
   ];
   const done = checks.filter((item) => item.done).length;
   const featured = posts[0];
@@ -216,7 +217,7 @@ export function HomeDesk({
           <div className="pa-bar"><span style={{ width: `${(done / checks.length) * 100}%` }} /></div>
           <div className="pa-checks">
             {checks.map((item) => (
-              <button key={item.label} type="button" className={item.done ? 'is-done' : ''} onClick={onOpenProfile}>
+              <button key={item.label} type="button" className={item.done ? 'is-done' : ''} onClick={() => onOpenProfile(item.field)}>
                 <span className="pa-check" aria-hidden="true" />
                 {item.label}
               </button>
@@ -496,9 +497,9 @@ export function ContactDesk() {
     <div className="pa-contact">
       <section className="pa-contact-hero"><h2>צור קשר ותמיכה</h2><p>אנחנו כאן לעזור לך לאורך כל הדרך</p></section>
       <div className="pa-contact-cards">
-        <article><b>קהילת הוואטסאפ</b><span>הצטרפות לקבוצה הרשמית</span></article>
-        <article><b>מרכז הידע</b><span>שאלות נפוצות על הספרייה</span></article>
-        <article><b>תמיכה במייל</b><span>support@infinitemasterpiece.local</span></article>
+        <a href={DEFAULT_WEBINAR_CONFIG.whatsappGroupUrl} target="_blank" rel="noreferrer"><b>קהילת הוואטסאפ</b><span>הצטרפות לקבוצה הרשמית</span></a>
+        <a href="/#faq"><b>מרכז הידע</b><span>שאלות נפוצות</span></a>
+        <a href="mailto:support@infinitemasterpiece.local"><b>תמיכה במייל</b><span>support@infinitemasterpiece.local</span></a>
       </div>
       <form className="pa-card" onSubmit={(event) => {
         event.preventDefault();

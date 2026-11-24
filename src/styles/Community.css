@@ -130,6 +130,11 @@
 
 .community-main { flex: 1; min-width: 0; padding: 28px 28px 48px; }
 .community-kicker { margin: 0 0 6px; color: var(--gold-ink); font-weight: 700; }
+.community-search input, .community-search-results { width: min(100%, 720px); }
+.community-search input { margin: 0 0 16px; }
+.community-search-results { display: grid; gap: 12px; margin-bottom: 16px; }
+.community-search-results h2 { margin: 0; font-size: 1rem; }
+.pa-contact-cards a { display: grid; gap: 4px; color: inherit; text-decoration: none; min-height: 72px; align-content: center; }
 .community-main > h1 { margin: 0 0 16px; font-size: clamp(1.8rem, 3vw, 2.4rem); }
 .community-lede, .community-note, .community-empty, .community-rule, .community-meta, .community-door p, .community-hello p, .community-contact p {
   color: var(--muted);
@@ -325,7 +330,7 @@
 .pa-days .has-event { background: rgba(240, 212, 138, .16); }
 .pa-profile { text-align: center; }
 .pa-stats, .pa-steps, .pa-metrics, .pa-contact-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
-.pa-stats div, .pa-steps article, .pa-metrics article, .pa-contact-cards article { background: rgba(255,255,255,.06); border-radius: 14px; padding: 12px; }
+.pa-stats div, .pa-steps article, .pa-metrics article, .pa-contact-cards a { background: rgba(255,255,255,.06); border-radius: 14px; padding: 12px; }
 .pa-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
 .pa-tabs button[aria-pressed='true'] { background: #f0d48a; color: #1a1204; }
 .pa-board { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }

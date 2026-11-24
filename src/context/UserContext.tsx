@@ -73,6 +73,7 @@ interface UserContextType {
   setAuthModalOpen: (open: boolean) => void;
   setWelcomeOpen: (open: boolean) => void;
   updateUserInterests: (interests: string[]) => void;
+  updateOwnProfile: (input: { fullName?: string; city?: string; avatar?: string }) => Promise<void>;
   updateOnboardingLevel: (level: OnboardingLevel) => void;
   hasActiveSubscription: () => boolean;
   isPaying: boolean;
@@ -315,6 +316,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (user.id !== 'guest') void authApi.setInterests(interests);
   };
 
+  const updateOwnProfile = async (input: { fullName?: string; city?: string; avatar?: string }) => {
+    const { user: next } = await authApi.updateProfile(input);
+    setUser(fromPayload(next));
+  };
+
   const updateOnboardingLevel = (level: OnboardingLevel) => {
     setUser((prev) => ({ ...prev, onboardingLevel: level }));
   };
@@ -400,6 +406,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setAuthModalOpen,
         setWelcomeOpen,
         updateUserInterests,
+        updateOwnProfile,
         updateOnboardingLevel,
         hasActiveSubscription,
         isPaying,

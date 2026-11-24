@@ -4,6 +4,7 @@ import { podsApi } from '../api/pods';
 import { communityApi, type CommunityHome, type CommunityPost } from '../api/community';
 import { uploadFile } from '../api/upload';
 import { useApp } from '../context/AppContext';
+import type { Course, Instructor } from '../types';
 import {
   AREAS,
   NAV_GROUPS,
@@ -34,12 +35,71 @@ function relativeTime(value: string) {
   return `לפני ${Math.round(hours / 24)} ימים`;
 }
 
+function AreaSearch({
+  term,
+  courses,
+  instructors,
+  posts,
+  onOpenCourse,
+  onOpenInstructor,
+  onOpenFeed,
+  onLibrary,
+}: {
+  term: string;
+  courses: Course[];
+  instructors: Instructor[];
+  posts: CommunityPost[];
+  onOpenCourse: (id: string) => void;
+  onOpenInstructor: (id: string) => void;
+  onOpenFeed: () => void;
+  onLibrary: () => void;
+}) {
+  const lessons = courses.filter((course) => `${course.title} ${course.subtitle || ''}`.includes(term)).slice(0, 5);
+  const people = instructors.filter((person) => person.name.includes(term) && person.showInLibrary !== false).slice(0, 4);
+  const notes = posts.filter((post) => `${post.body} ${post.author.firstName}`.includes(term)).slice(0, 4);
+  const empty = lessons.length + people.length + notes.length === 0;
+  return (
+    <div className="community-card community-search-results">
+      {empty ? (
+        <div className="pa-empty">
+          <p className="pa-note">אין תוצאות עבור «{term}».</p>
+          <button type="button" onClick={onLibrary}>חיפוש בכל הספרייה</button>
+        </div>
+      ) : null}
+      {lessons.length > 0 ? (
+        <section>
+          <h2>הרצאות</h2>
+          {lessons.map((course) => (
+            <button key={course.id} type="button" className="pa-linkrow" onClick={() => onOpenCourse(course.id)}>{course.title}</button>
+          ))}
+        </section>
+      ) : null}
+      {people.length > 0 ? (
+        <section>
+          <h2>מרצים</h2>
+          {people.map((person) => (
+            <button key={person.id} type="button" className="pa-linkrow" onClick={() => onOpenInstructor(person.id)}>{person.name}</button>
+          ))}
+        </section>
+      ) : null}
+      {notes.length > 0 ? (
+        <section>
+          <h2>קהילה</h2>
+          {notes.map((post) => (
+            <button key={post.id} type="button" className="pa-linkrow" onClick={onOpenFeed}>{post.author.firstName}: {post.body}</button>
+          ))}
+        </section>
+      ) : null}
+    </div>
+  );
+}
+
 function Badge({ value }: { value: string }) {
   return <span className="community-tag" data-badge={value}>{value}</span>;
 }
 
 export function CommunityView() {
-  const { setView, user, courses, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory } = useApp();
+  const { setView, setSearchQuery, user, courses, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory } = useApp();
   const navigate = useNavigate();
   const composerId = useId();
   const [channel, setChannel] = useState('talk');
@@ -52,6 +112,7 @@ export function CommunityView() {
   const [pending, setPending] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [area, setArea] = useState<AreaId>('home');
+  const [areaQuery, setAreaQuery] = useState('');
   const [assignedPod, setAssignedPod] = useState<AssignedPod | null>(null);
   const [podSession, setPodSession] = useState<ClubSession | null>(null);
   const shorts = courses.filter((course) => course.isShort);
@@ -225,6 +286,28 @@ export function CommunityView() {
       <main className="community-main" id="community-main">
         <p className="community-kicker">האזור האישי</p>
         <h1>{AREAS.find((item) => item.id === area)?.label || 'הבית'}</h1>
+        <form className="community-search" role="search" onSubmit={(event) => {
+          event.preventDefault();
+          const term = areaQuery.trim();
+          if (!term) return;
+          setSearchQuery(term);
+          setView('search');
+        }}>
+          <label className="community-sr" htmlFor="area-search">חיפוש באזור האישי</label>
+          <input id="area-search" type="search" value={areaQuery} onChange={(event) => setAreaQuery(event.target.value)} placeholder="הרצאה, מרצה או פוסט" />
+        </form>
+        {areaQuery.trim() ? (
+          <AreaSearch
+            term={areaQuery.trim()}
+            courses={courses}
+            instructors={instructors}
+            posts={home?.access === 'open' ? home.posts : []}
+            onOpenCourse={(courseId) => setView('course', { courseId })}
+            onOpenInstructor={(instructorId) => setView('instructor', { instructorId })}
+            onOpenFeed={() => setArea('feed')}
+            onLibrary={() => { setSearchQuery(areaQuery.trim()); setView('search'); }}
+          />
+        ) : null}
         {error ? <p className="community-error" role="alert">{error}</p> : null}
 
         {!home ? <p className="community-note">טוענים את הקהילה…</p> : null}
@@ -256,7 +339,7 @@ export function CommunityView() {
             onOpenShorts={() => setArea('shorts')}
             onOpenView={(view) => setView(view)}
             onOpenInstructor={(instructorId) => setView('instructor', { instructorId })}
-            onOpenProfile={() => setView('profile')}
+            onOpenProfile={(field) => navigate(`/library/profile#${field}`)}
             onOpenCalendar={() => setArea('calendar')}
             onOpenSession={() => navigate('/pod')}
             onWatch={(courseId, episodeId) => setView('watch', { courseId, episodeId })}
