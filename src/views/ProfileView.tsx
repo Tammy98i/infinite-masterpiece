@@ -14,7 +14,7 @@ export const ProfileView: React.FC = () => {
   const [selectedInterests, setSelectedInterests] = useState<string[]>(user.interests);
   const [saved, setSaved] = useState(false);
 
-  const isUnpaid = user.subscriptionPlan === 'none';
+  const isPaying = user.subscriptionPlan === 'monthly' || user.subscriptionPlan === 'annual' || user.subscriptionPlan === 'premium_88';
   const trialDays = user.subscriptionPlan === 'free_trial' ? getTrialDaysRemaining(user.trialEndsAt) : null;
 
   const saveInterests = () => {
@@ -105,11 +105,13 @@ export const ProfileView: React.FC = () => {
           </div>
         </div>
 
-        {isUnpaid ? (
+        {!isPaying ? (
           <section className="mb-14">
-            <h2 className="text-sm text-white/40 mb-4">גישה</h2>
+            <h2 className="text-sm text-white/40 mb-4">{isGuest ? 'בחירת מסלול' : 'גישה'}</h2>
             <p className="text-sm text-white/55 font-light mb-6">
-              פתיחת גישה לכל ההרצאות, ההדרכות והמסלולים במסלול האמיצים או במסלול ההססנים.
+              {isGuest
+                ? 'כדי להיכנס לקהילה ולספרייה, בוחרים אחד מהמסלולים הקיימים.'
+                : 'הקהילה נפתחת למנויים משלמים. בחרו מסלול כדי להמשיך.'}
             </p>
             <PlansGrid />
           </section>

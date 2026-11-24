@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import { useApp } from '../context/AppContext';
 import { useUser } from '../context/UserContext';
-import { Search, Mic, Shield, Menu, X, Infinity as InfinityIcon, Compass, Bookmark, User, History } from 'lucide-react';
+import { Search, Mic, Shield, Menu, X, Infinity as InfinityIcon, Compass, Bookmark, User, Users, History } from 'lucide-react';
 import { AccountMenu } from './AccountMenu';
 import { LibraryNavigationMenu } from './LibraryNavigationMenu';
 import { trackEvent } from '../utils/analytics';
@@ -19,7 +19,8 @@ export const Navbar: React.FC = () => {
     courses,
     instructors,
   } = useApp();
-  const { user } = useUser();
+  const { user, isPaying } = useUser();
+  const openPersonal = () => setView(isPaying ? 'community' : 'profile');
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -149,6 +150,20 @@ export const Navbar: React.FC = () => {
               >
                 ספרייה
               </button>
+              {isPaying ? (
+                <button
+                  type="button"
+                  onClick={openPersonal}
+                  aria-current={currentView === 'community' ? 'page' : undefined}
+                  className={`transition-colors py-2 min-h-11 border-b-2 ${
+                    currentView === 'community'
+                      ? 'text-white border-[#b79043]'
+                      : 'text-white/85 hover:text-white border-transparent'
+                  }`}
+                >
+                  הקהילה
+                </button>
+              ) : null}
               <button
                 type="button"
                 onClick={() => setView('mylist')}
@@ -337,6 +352,7 @@ export const Navbar: React.FC = () => {
               <AccountMenu
                 guestLabel="כניסה"
                 onOpenProfile={() => setView('profile')}
+                onOpenCommunity={() => setView('community')}
                 onOpenAdmin={() => setView('admin')}
                 onOpenLecturer={() => setView('lecturer')}
               />
@@ -365,6 +381,12 @@ export const Navbar: React.FC = () => {
               setView('home');
               setIsMobileMenuOpen(false);
             }} className="text-start px-4 py-3 rounded-xl text-base min-h-11">ספרייה</button>
+            {isPaying ? (
+              <button type="button" aria-current={currentView === 'community' ? 'page' : undefined} onClick={() => {
+                openPersonal();
+                setIsMobileMenuOpen(false);
+              }} className="text-start px-4 py-3 rounded-xl text-base min-h-11 text-[#dfc47d]">הקהילה</button>
+            ) : null}
             <button
               type="button"
               onClick={() => {
@@ -443,17 +465,31 @@ export const Navbar: React.FC = () => {
           <Search className="w-5 h-5" />
           <span className="text-[10px]">חיפוש</span>
         </button>
-        <button
-          type="button"
-          onClick={() => setView('history')}
-          aria-current={currentView === 'history' ? 'page' : undefined}
-          className={`flex flex-col items-center gap-1 min-h-11 min-w-11 ${
-            currentView === 'history' ? 'text-primary-light font-bold' : 'text-zinc-400'
-          }`}
-        >
-          <History className="w-5 h-5" />
-          <span className="text-[10px]">היסטוריה</span>
-        </button>
+        {isPaying ? (
+          <button
+            type="button"
+            onClick={openPersonal}
+            aria-current={currentView === 'community' ? 'page' : undefined}
+            className={`flex flex-col items-center gap-1 min-h-11 min-w-11 ${
+              currentView === 'community' ? 'text-primary-light font-bold' : 'text-zinc-400'
+            }`}
+          >
+            <Users className="w-5 h-5" />
+            <span className="text-[10px]">הקהילה</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            onClick={() => setView('history')}
+            aria-current={currentView === 'history' ? 'page' : undefined}
+            className={`flex flex-col items-center gap-1 min-h-11 min-w-11 ${
+              currentView === 'history' ? 'text-primary-light font-bold' : 'text-zinc-400'
+            }`}
+          >
+            <History className="w-5 h-5" />
+            <span className="text-[10px]">היסטוריה</span>
+          </button>
+        )}
         <button
           type="button"
           onClick={() => setView('mylist')}

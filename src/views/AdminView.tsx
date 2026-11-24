@@ -201,6 +201,13 @@ export function AdminView() {
               </button>
               <button
                 type="button"
+                onClick={() => setView('community')}
+                className="px-3 py-2 rounded-full border border-white/15 text-sm min-h-11"
+              >
+                לקהילה
+              </button>
+              <button
+                type="button"
                 onClick={() => setView('home')}
                 className="lg:hidden px-3 py-2 rounded-full border border-white/15 text-sm min-h-11"
               >

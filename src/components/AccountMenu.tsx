@@ -11,11 +11,12 @@ import { Bidi } from './Bidi';
 interface AccountMenuProps {
   guestLabel?: string;
   onOpenProfile?: () => void;
+  onOpenCommunity?: () => void;
   onOpenAdmin?: () => void;
   onOpenLecturer?: () => void;
 }
 
-export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer, guestLabel = 'הצטרפו' }: AccountMenuProps) {
+export function AccountMenu({ onOpenProfile, onOpenCommunity, onOpenAdmin, onOpenLecturer, guestLabel = 'הצטרפו' }: AccountMenuProps) {
   const {
     user,
     isGuest,
@@ -90,6 +91,21 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer, guestL
   };
 
   const goLecturer = () => goLibrary('lecturer');
+
+  const isPaying = ['monthly', 'annual', 'premium_88'].includes(user.subscriptionPlan);
+
+  const goPersonal = () => {
+    setOpen(false);
+    if (isGuest || !isPaying) {
+      goLibrary('profile');
+      return;
+    }
+    if (onOpenCommunity) {
+      onOpenCommunity();
+      return;
+    }
+    navigate(libraryPath('community'));
+  };
 
   const goLibraryAccess = () => {
     setOpen(false);
@@ -188,17 +204,26 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer, guestL
           )}
 
           {isGuest && (
-            <button
-              type="button"
-              onClick={() => {
-                setOpen(false);
-                setAuthModalOpen(true);
-              }}
-              className="w-full mb-4 flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border border-white/15 text-xs font-bold text-white hover:bg-white/5 min-h-11"
-            >
-              <LogIn className="w-3.5 h-3.5" />
-              התחברות
-            </button>
+            <div className="grid gap-1.5 mb-4">
+              <button
+                type="button"
+                onClick={goPersonal}
+                className="w-full text-start px-3 py-2.5 rounded-xl text-sm text-zinc-200 hover:bg-white/5 hover:text-primary-light min-h-11"
+              >
+                האזור האישי
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setOpen(false);
+                  setAuthModalOpen(true);
+                }}
+                className="w-full flex items-center justify-center gap-2 px-4 py-2.5 rounded-full border border-white/15 text-xs font-bold text-white hover:bg-white/5 min-h-11"
+              >
+                <LogIn className="w-3.5 h-3.5" />
+                התחברות
+              </button>
+            </div>
           )}
 
           {(isGuest || ((isUnpaid || isTrial) && user.role !== 'admin')) && (
@@ -271,7 +296,7 @@ export function AccountMenu({ onOpenProfile, onOpenAdmin, onOpenLecturer, guestL
               )}
               <button
                 type="button"
-                onClick={() => goLibrary('profile')}
+                onClick={goPersonal}
                 className="w-full text-start px-3 py-2.5 rounded-xl text-sm text-zinc-200 hover:bg-white/5 hover:text-primary-light min-h-11"
               >
                 האזור האישי
