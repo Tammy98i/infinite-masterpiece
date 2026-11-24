@@ -63,17 +63,6 @@ const AGENTS = [
   { name: 'משוב אישי', text: 'הופך צפייה להרצאה להערה אחת שאפשר לפרסם.', tone: 'קהילה' },
 ];
 
-const LEVELS = [
-  { name: 'מתחיל', min: 0 },
-  { name: 'פעיל', min: 200 },
-  { name: 'מוביל', min: 800 },
-  { name: 'מנטור', min: 1500 },
-];
-
-function levelFor(points: number) {
-  return [...LEVELS].reverse().find((level) => points >= level.min) || LEVELS[0];
-}
-
 export function jerusalemParts(value: string) {
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return null;
@@ -85,7 +74,7 @@ export function jerusalemParts(value: string) {
 
 export function memberActivity(user: UserProfile, posts: CommunityPost[], watches: number) {
   const mine = posts.filter((post) => post.author.firstName && user.name.startsWith(post.author.firstName)).length;
-  return { posts: mine, watches, points: watches * 10 + mine * 20 };
+  return { posts: mine, watches };
 }
 
 export function HomeDesk({
@@ -161,44 +150,36 @@ export function HomeDesk({
       <div className="pa-stream">
         <section className="pa-now" aria-label="מה עושים עכשיו">
           <h2>מה עושים עכשיו</h2>
-          {continueItem ? (
-            <button type="button" className="pa-card pa-continue" onClick={() => onWatch(continueItem.course.id, continueItem.episode.id)}>
-              <span>המשך צפייה</span>
-              <strong>{continueItem.course.title}</strong>
-              <em>{continueItem.episode.title}</em>
-              <i style={{ width: `${Math.max(4, Math.round((continueItem.progress.currentTime / Math.max(1, continueItem.progress.duration)) * 100))}%` }} />
+          <div className="pa-actions">
+            {continueItem ? (
+              <button type="button" onClick={() => onWatch(continueItem.course.id, continueItem.episode.id)}>
+                <span>המשך צפייה</span>
+                <strong>{continueItem.course.title}</strong>
+              </button>
+            ) : (
+              <button type="button" onClick={() => onOpenView('quiz')}>
+                <span>מה מתאים לי</span>
+                <strong>שאלון קצר להרצאה הראשונה</strong>
+              </button>
+            )}
+            {pod ? (
+              <button type="button" onClick={onOpenSession}>
+                <span>הפוד שלי</span>
+                <strong>{pod.name} · שבוע {pod.week} מתוך 33</strong>
+              </button>
+            ) : null}
+            <button type="button" onClick={upcoming && session ? onOpenSession : onOpenCalendar}>
+              <span>המפגש הבא</span>
+              <strong>{upcoming && session && when ? `${session.title} · ${when.day}.${when.month + 1} ${when.time}` : 'עדיין לא נקבע'}</strong>
             </button>
-          ) : (
-            <button type="button" className="pa-card pa-quiz" onClick={() => onOpenView('quiz')}>
-              <strong>מה מתאים לי</strong>
-              <span>עוד אין הרצאה פעילה. השאלון הקצר מכוון להרצאה הראשונה.</span>
+            <button type="button" onClick={onOpenFeed}>
+              <span>הקהילה</span>
+              <strong>{featured ? featured.body : 'כתבו את ההודעה הראשונה'}</strong>
             </button>
-          )}
-          {pod ? <PodEntry pod={pod} onOpen={onOpenSession} /> : null}
-          {upcoming && session && when ? (
-            <button type="button" className="pa-card" onClick={onOpenSession}>
-              <span>המפגש הקרוב</span>
-              <strong>{session.title}</strong>
-              <em>{when.day}.{when.month + 1} · {when.time}</em>
-            </button>
-          ) : (
-            <button type="button" className="pa-card" onClick={onOpenCalendar}>
-              <strong>המפגש הבא</strong>
-              <span>עוד אין מפגש בלוח. הוא יופיע כאן ברגע שייקבע.</span>
-            </button>
-          )}
-          {featured ? (
-            <article className="pa-card pa-pulse">
-              <p>{featured.author.firstName}</p>
-              <h2>{featured.body}</h2>
-              <button type="button" onClick={onOpenFeed}>לדיון</button>
-            </article>
-          ) : (
-            <button type="button" className="pa-card" onClick={onOpenFeed}>כתבו את ההודעה הראשונה בקהילה</button>
-          )}
+          </div>
         </section>
         <ShelfRow title="ההרצאות שלי" action="להיסטוריה" onAction={() => onOpenView('history')} empty="ההרצאות שצפיתם יופיעו כאן." emptyAction="מצאו הרצאה" onEmpty={onOpenCourses}>
-          {mine.slice(0, 8).map((course) => (
+          {mine.slice(0, 4).map((course) => (
             <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
               {course.coverImage ? <img src={course.coverImage} alt="" /> : null}
               <span>{course.title}</span>
@@ -206,7 +187,7 @@ export function HomeDesk({
           ))}
         </ShelfRow>
         <ShelfRow title="מומלץ" action="מה מתאים לי" onAction={() => onOpenView('quiz')} empty="סמנו תחומי עניין כדי לקבל המלצה." emptyAction="לתחומי עניין" onEmpty={() => onOpenProfile('profile-interests')}>
-          {recommended.slice(0, 8).map((course) => (
+          {recommended.slice(0, 4).map((course) => (
             <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
               {course.coverImage ? <img src={course.coverImage} alt="" /> : null}
               <span>{course.title}</span>
@@ -214,7 +195,7 @@ export function HomeDesk({
           ))}
         </ShelfRow>
         <ShelfRow title="חדשים" action="לקורסים" onAction={onOpenCourses} empty="הרצאות חדשות יופיעו כאן." emptyAction="לקורסים" onEmpty={onOpenCourses}>
-          {newest.slice(0, 8).map((course) => (
+          {newest.slice(0, 4).map((course) => (
             <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
               {course.coverImage ? <img src={course.coverImage} alt="" /> : null}
               <span>{course.title}</span>
@@ -287,9 +268,7 @@ export function HomeDesk({
       </div>
       <aside className="pa-widgets">
         <section className="pa-card">
-          <h2>השלמת הפרופיל שלך</h2>
-          <p className="pa-progress-label">{done}/{checks.length}</p>
-          <div className="pa-bar"><span style={{ width: `${(done / checks.length) * 100}%` }} /></div>
+          <h2>השלמת הפרופיל {done}/{checks.length}</h2>
           <div className="pa-checks">
             {checks.map((item) => (
               <button key={item.label} type="button" className={item.done ? 'is-done' : ''} onClick={() => onOpenProfile(item.field)}>
@@ -301,8 +280,7 @@ export function HomeDesk({
         </section>
         <section className="pa-card">
           <h2>הפעילות שלך</h2>
-          <p className="pa-points">{activity.watches}</p>
-          <p>{activity.watches === 0 && activity.posts === 0 ? 'עוד אין צפייה. הרצאה אחת מתחילה את הספירה.' : `צפיתם ${activity.watches} פעמים וכתבתם ${activity.posts} הודעות. הדרגה: ${levelFor(activity.points).name}.`}</p>
+          <p>{activity.watches === 0 && activity.posts === 0 ? 'עוד אין צפייה. הרצאה אחת מתחילה את הספירה.' : `${activity.watches} צפיות · ${activity.posts} הודעות`}</p>
         </section>
       </aside>
     </div>
@@ -618,12 +596,6 @@ export function ClubCard({ plan, trialEndsAt }: { plan: string; trialEndsAt?: st
       {plan === 'free_trial' && trialEndsAt ? <p>בתוקף עד {trialEndsAt}</p> : null}
       {active ? <p>המנוי פעיל. שינוי התוכנית נפתח בעמוד המסלולים.</p> : <p>בחירת מסלול פותחת את הספרייה ואת הקהילה.</p>}
       <Link to="/pricing" className="community-publish">שינוי תוכנית</Link>
-      <ul>
-        <li>שיחה בקהילה וכתיבה</li>
-        <li>לוח מפגשים והקלטות</li>
-        <li>הדרכות קצרות וקורסים</li>
-        <li>ההרצאות שלי, מומלץ וחדשים</li>
-      </ul>
     </section>
   );
 }

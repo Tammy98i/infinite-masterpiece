@@ -299,7 +299,11 @@
 .pa-checks { display: grid; gap: 4px; }
 .pa-checks button { display: flex; align-items: center; gap: 8px; width: 100%; }
 .pa-now, .pa-calendar-layout { display: grid; gap: 12px; }
-.pa-now > h2 { margin: 0; font-size: 1rem; }
+.pa-now > h2 { margin: 0 0 8px; font-size: 1rem; }
+.pa-actions { display: grid; gap: 8px; }
+.pa-actions button { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: var(--panel); }
+.pa-actions span { color: #f0d48a; flex: none; font-weight: 700; }
+.pa-actions strong { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .community-tools button { border: 1px solid rgba(255,255,255,.16); }
 .community-main > .community-lede { font-size: 1.05rem; }
 .pa-calendar-layout { grid-template-columns: minmax(0, 1fr) 280px; align-items: start; }
@@ -391,7 +395,7 @@
 .pa-steps article b, .pa-stats b { color: #f0d48a; font-size: 1.3rem; }
 .community-nav button { border-radius: 12px; }
 
-.vod-app.sky-readable .community-page :is(.pa-stats b, .pa-steps b, .pa-board b, .pa-points, .pa-progress-label) { color: #f0d48a; }
+.vod-app.sky-readable .community-page :is(.pa-stats b, .pa-steps b, .pa-board b, .pa-points, .pa-progress-label, .pa-actions span) { color: #f0d48a; }
 
 .vod-app.sky-readable .community-page .community-publish,
 .vod-app.sky-readable .community-page .community-days .is-today,
