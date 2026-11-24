@@ -40,8 +40,8 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
         ? 'צפו בטעימה'
         : 'פתיחת גישה';
 
-  const art = course.backdropImage || course.coverImage;
-  const studioPortrait = /\/team\//.test(art);
+  const rawArt = course.backdropImage || course.coverImage;
+  const art = /\/team\//.test(rawArt) ? '/library/hero-stage.jpg' : rawArt;
   const continuePct = continueWatching
     ? Math.min(
         100,
@@ -78,7 +78,7 @@ export const HeroBanner: React.FC<HeroBannerProps> = ({ course, continueWatching
           aria-hidden
           fetchPriority="high"
           decoding="async"
-          className={`library-hero-art w-full h-full object-cover object-center${studioPortrait ? ' is-studio' : ''}`}
+          className="library-hero-art absolute inset-0 w-full h-full object-cover object-[28%_62%]"
         />
         <div className="library-hero-veil-bottom absolute inset-0" />
         <div className="library-hero-veil-side absolute inset-0 w-full md:w-[70%] ms-auto" />
