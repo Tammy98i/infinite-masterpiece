@@ -30,11 +30,14 @@ function isChannel(value: string): value is CommunityChannelId {
   return CHANNELS.some((channel) => channel.id === value);
 }
 
-const PAYING_PLANS = new Set(['monthly', 'annual', 'premium_88']);
+const MEMBER_PLANS = new Set(['free_trial', 'monthly', 'annual', 'premium_88']);
 
-export function canEnterCommunity(user: Pick<AuthUser, 'subscriptionPlan' | 'blocked'> | null) {
+export function canEnterCommunity(
+  user: Pick<AuthUser, 'role' | 'subscriptionPlan' | 'isFounder' | 'blocked'> | null
+) {
   if (!user || user.blocked) return false;
-  return PAYING_PLANS.has(user.subscriptionPlan);
+  if (user.role === 'admin' || user.role === 'instructor' || user.isFounder) return true;
+  return MEMBER_PLANS.has(user.subscriptionPlan);
 }
 
 export function canSeeChannel(
@@ -50,11 +53,11 @@ export function canSeeChannel(
 }
 
 export function canPostInChannel(
-  user: Pick<AuthUser, 'role' | 'subscriptionPlan' | 'isFounder' | 'blocked'>,
+  user: Pick<AuthUser, 'role' | 'subscriptionPlan' | 'isFounder' | 'blocked' | 'staffDesk'>,
   channel: CommunityChannelId
 ) {
   if (!canSeeChannel(user, channel)) return false;
-  if (channel === 'board') return user.role === 'admin';
+  if (channel === 'board') return user.role === 'admin' || user.staffDesk === 'community';
   return true;
 }
 

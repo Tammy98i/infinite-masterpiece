@@ -61,7 +61,8 @@ test('only paying members enter, and channels follow the plan', () => {
   const lecturer = user({ id: 'teacher', role: 'instructor', subscriptionPlan: 'monthly', name: 'מיכל רז' });
 
   assert.equal(canEnterCommunity(free), false);
-  assert.equal(canEnterCommunity(trial), false);
+  assert.equal(canEnterCommunity(trial), true);
+  assert.equal(canEnterCommunity(user({ id: 'teacher', role: 'instructor', subscriptionPlan: 'none', name: 'מיכל רז' })), true);
   assert.equal(getCommunityHome(db, free).access, 'locked');
   const home = getCommunityHome(db, paid);
   assert.deepEqual(home.channels.map((channel) => channel.id), ['board', 'talk', 'library']);

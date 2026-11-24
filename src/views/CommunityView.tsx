@@ -97,35 +97,49 @@ export function CommunityView() {
   const current = home?.channels.find((item) => item.id === channel);
   const initial = home?.me?.initial || user.name.trim().charAt(0) || 'ח';
 
+  const closeRail = () => setMenuOpen(false);
+
   return (
-    <div className="community-page">
-      <header className="community-header">
+    <div className={`community-page${menuOpen ? ' is-rail-open' : ''}`}>
+      <button type="button" className="community-rail-toggle" aria-expanded={menuOpen} aria-controls="community-rail" onClick={() => setMenuOpen((value) => !value)}>
+        תפריט
+      </button>
+      <aside id="community-rail" className="community-rail" aria-label="ניווט האזור האישי">
         <button type="button" className="community-brand" onClick={() => setView('home')}>
           <span className="community-mark" aria-hidden="true">∞</span>
           <span>Infinite Masterpiece</span>
         </button>
         <nav className="community-nav" aria-label="האזור האישי">
-          <button type="button" onClick={() => setView('home')}>ספרייה</button>
+          <button type="button" onClick={() => { closeRail(); setView('home'); }}>ספרייה</button>
           <button type="button" aria-current="page">הקהילה</button>
-          <button type="button" onClick={() => setView('mylist')}>הרשימה</button>
-          <button type="button" onClick={() => setView('search')}>חיפוש</button>
+          <button type="button" onClick={() => { closeRail(); setView('mylist'); }}>הרשימה</button>
+          <button type="button" onClick={() => { closeRail(); setView('search'); }}>חיפוש</button>
+          <button type="button" onClick={() => { closeRail(); setView('profile'); }}>חשבון</button>
         </nav>
-        <div className="community-header-end">
-          <button type="button" className="community-menu" aria-expanded={menuOpen} aria-label="תפריט" onClick={() => setMenuOpen((value) => !value)}>☰</button>
-          <button type="button" className="community-avatar" aria-label="חשבון" onClick={() => setView('profile')}>{initial}</button>
-        </div>
-      </header>
-      {menuOpen ? (
-        <div className="community-menu-panel">
-          <button type="button" onClick={() => { setMenuOpen(false); setView('home'); }}>ספרייה</button>
-          <button type="button" aria-current="page">הקהילה</button>
-          <button type="button" onClick={() => { setMenuOpen(false); setView('mylist'); }}>הרשימה</button>
-          <button type="button" onClick={() => { setMenuOpen(false); setView('search'); }}>חיפוש</button>
-          <button type="button" onClick={() => { setMenuOpen(false); setView('profile'); }}>חשבון</button>
-        </div>
-      ) : null}
+        {home && open ? (
+          <div className="community-channels" aria-label="ערוצים">
+            <h2>ערוצים</h2>
+            {home.channels.map((item) => (
+              <button
+                key={item.id}
+                type="button"
+                className="community-channel"
+                aria-current={item.id === channel ? 'page' : undefined}
+                onClick={() => { setChannel(item.id); closeRail(); }}
+              >
+                {item.label}
+              </button>
+            ))}
+          </div>
+        ) : null}
+        <button type="button" className="community-account" onClick={() => { closeRail(); setView('profile'); }}>
+          <span className="community-initial" aria-hidden="true">{initial}</span>
+          <span>{home?.me?.firstName || user.name.split(' ')[0] || 'חשבון'}</span>
+        </button>
+      </aside>
+      {menuOpen ? <button type="button" className="community-scrim" aria-label="סגירת התפריט" onClick={closeRail} /> : null}
 
-      <main className="community-main">
+      <main className="community-main" id="community-main">
         <p className="community-kicker">האזור האישי</p>
         <h1>הקהילה</h1>
         <p className="community-lede">שיחה חיה של חברי הספרייה. שאלה, שיתוף, וקישור להרצאה. הפוד נשאר במסך שלו.</p>
@@ -135,30 +149,14 @@ export function CommunityView() {
 
         {home && !open ? (
           <section className="community-card community-door">
-            <h2>הקהילה נפתחת עם מנוי הספרייה</h2>
-            <p>מרצים ואדמינים נכנסים מכאן גם בלי מנוי. חבר ספרייה כותב, מגיב ושומר.</p>
+            <h2>הקהילה נפתחת למנוי משלם</h2>
+            <p>בחירת מסלול פותחת את השיחה, התגובות והשמירה.</p>
             <Link to="/library-membership" className="community-publish" style={{ display: 'inline-flex', alignItems: 'center', textDecoration: 'none' }}>פתיחת גישה</Link>
           </section>
         ) : null}
 
         {home && open ? (
           <div className="community-layout">
-            <aside className="community-card community-channels" aria-label="ערוצים">
-              <h2>ערוצים</h2>
-              {home.channels.map((item) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  className="community-channel"
-                  data-tone={item.id}
-                  aria-current={item.id === channel ? 'page' : undefined}
-                  onClick={() => setChannel(item.id)}
-                >
-                  {item.label}
-                </button>
-              ))}
-            </aside>
-
             <section className="community-feed" aria-label="פיד">
               {current?.canPost ? (
                 <form className="community-card community-composer" onSubmit={(event) => { event.preventDefault(); void publish(); }}>
@@ -230,13 +228,6 @@ export function CommunityView() {
           </div>
         ) : null}
       </main>
-
-      <nav className="community-bottom" aria-label="ניווט תחתון">
-        <button type="button" onClick={() => setView('home')}>ספרייה</button>
-        <button type="button" onClick={() => setView('search')}>חיפוש</button>
-        <button type="button" aria-current="page">הקהילה</button>
-        <button type="button" onClick={() => setView('profile')}>חשבון</button>
-      </nav>
     </div>
   );
 }

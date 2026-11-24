@@ -196,7 +196,9 @@ Pods (בבנייה): ראו [`SPEC-PODS.md`](./SPEC-PODS.md) §7 (`pods` · `pod
 
 ## שלב 2 (לא עכשיו)
 
-תגובות · שאלות למרצה · תשלומים למרצים · Revenue Share · AI recommendation · אפליקציה · Push · Community · Gamification · Certificates · מייל/וואטסאפ · מנוע הגרלות מלא
+תגובות על תכנים · שאלות למרצה · תשלומים למרצים · Revenue Share · AI recommendation · אפליקציה · Push · Gamification · Certificates · מייל/וואטסאפ · מנוע הגרלות מלא
+
+הקהילה הוצאה משלב 2, כמו הפודים. היא אזור שיחה ב־`/library/community` על רקע הספרייה. הפוד נשאר מסגרת הליווי של 33 הימים. תגובות על הרצאה, ומייל או וואטסאפ, נשארים כאן.
 
 Pods הוצאו משלב 2 לבנייה לפי [`SPEC-PODS.md`](./SPEC-PODS.md). מייל/וואטסאפ של הפוד נשארים כאן. סקיצה: [`SPEC-PODS-SKETCH.md`](./SPEC-PODS-SKETCH.md).
 

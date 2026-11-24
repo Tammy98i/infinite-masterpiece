@@ -8,6 +8,7 @@ import { trackEvent } from '../utils/analytics';
 import { searchLessonMatches } from '../utils/searchCatalog';
 import { isolateClock } from '../utils/time';
 import { getCardAccessState } from '../utils/libraryHome';
+import { canOpenCommunity } from '../lib/communityAccess';
 
 export const Navbar: React.FC = () => {
   const {
@@ -19,8 +20,9 @@ export const Navbar: React.FC = () => {
     courses,
     instructors,
   } = useApp();
-  const { user, isPaying } = useUser();
-  const openPersonal = () => setView(isPaying ? 'community' : 'profile');
+  const { user } = useUser();
+  const opensCommunity = canOpenCommunity(user);
+  const openPersonal = () => setView(opensCommunity ? 'community' : 'profile');
 
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
@@ -150,7 +152,7 @@ export const Navbar: React.FC = () => {
               >
                 ספרייה
               </button>
-              {isPaying ? (
+              {opensCommunity ? (
                 <button
                   type="button"
                   onClick={openPersonal}
@@ -381,7 +383,7 @@ export const Navbar: React.FC = () => {
               setView('home');
               setIsMobileMenuOpen(false);
             }} className="text-start px-4 py-3 rounded-xl text-base min-h-11">ספרייה</button>
-            {isPaying ? (
+            {opensCommunity ? (
               <button type="button" aria-current={currentView === 'community' ? 'page' : undefined} onClick={() => {
                 openPersonal();
                 setIsMobileMenuOpen(false);
@@ -465,7 +467,7 @@ export const Navbar: React.FC = () => {
           <Search className="w-5 h-5" />
           <span className="text-[10px]">חיפוש</span>
         </button>
-        {isPaying ? (
+        {opensCommunity ? (
           <button
             type="button"
             onClick={openPersonal}

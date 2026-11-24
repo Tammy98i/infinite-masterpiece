@@ -5,6 +5,7 @@ import { podsApi } from '../api/pods';
 import { useUser } from '../context/UserContext';
 import { planLabel } from '../data/plans';
 import { getTrialDaysRemaining } from '../utils/recommendations';
+import { canOpenCommunity } from '../lib/communityAccess';
 import { libraryPath } from '../utils/libraryPath';
 import { Bidi } from './Bidi';
 
@@ -92,11 +93,11 @@ export function AccountMenu({ onOpenProfile, onOpenCommunity, onOpenAdmin, onOpe
 
   const goLecturer = () => goLibrary('lecturer');
 
-  const isPaying = ['monthly', 'annual', 'premium_88'].includes(user.subscriptionPlan);
+  const opensCommunity = canOpenCommunity(user);
 
   const goPersonal = () => {
     setOpen(false);
-    if (isGuest || !isPaying) {
+    if (!opensCommunity) {
       goLibrary('profile');
       return;
     }
