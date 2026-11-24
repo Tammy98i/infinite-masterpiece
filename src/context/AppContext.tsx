@@ -59,6 +59,7 @@ interface AppContextType {
   setAuthModalOpen: (open: boolean) => void;
   setWelcomeOpen: (open: boolean) => void;
   updateUserInterests: (interests: string[]) => void;
+  updateOwnProfile: (input: { fullName?: string; city?: string; avatar?: string }) => Promise<void>;
   updateOnboardingLevel: (level: OnboardingLevel) => void;
 }
 
@@ -78,6 +79,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     setAuthModalOpen,
     setWelcomeOpen,
     updateUserInterests,
+    updateOwnProfile,
     updateOnboardingLevel,
     hasActiveSubscription,
   } = useUser();
@@ -421,6 +423,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         setAuthModalOpen,
         setWelcomeOpen,
         updateUserInterests,
+        updateOwnProfile,
         updateOnboardingLevel,
       }}
     >

@@ -12,6 +12,7 @@ import { UsersAccountsView } from './admin/UsersAccountsView';
 import { TeamStaffView } from './admin/TeamStaffView';
 import { TeamMembersPanel } from './admin/TeamMembersPanel';
 import { PodsPanel } from './admin/PodsPanel';
+import { CommunityModerationPanel } from './admin/CommunityModerationPanel';
 import { AdminCommandPalette } from './admin/AdminCommandPalette';
 import { AdminListControls } from './admin/AdminListControls';
 import { useUnsavedChanges } from '../hooks/useUnsavedChanges';
@@ -201,6 +202,13 @@ export function AdminView() {
               </button>
               <button
                 type="button"
+                onClick={() => setView('community')}
+                className="px-3 py-2 rounded-full border border-white/15 text-sm min-h-11"
+              >
+                לקהילה
+              </button>
+              <button
+                type="button"
                 onClick={() => setView('home')}
                 className="lg:hidden px-3 py-2 rounded-full border border-white/15 text-sm min-h-11"
               >
@@ -257,6 +265,7 @@ export function AdminView() {
             {tab === 'categories' && <CategoriesPanel />}
             {tab === 'premium88' && <Premium88Panel />}
             {tab === 'pods' && <PodsPanel />}
+            {tab === 'moderation' && <CommunityModerationPanel />}
             {tab === 'audit' && <AuditLogsPanel />}
             {tab === 'raffles' && <RafflesPanel />}
             {tab === 'leads' && <LeadsPanel />}

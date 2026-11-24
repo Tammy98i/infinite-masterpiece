@@ -146,7 +146,8 @@ export type ViewType =
   | 'instructor'
   | 'subscription'
   | 'admin'
-  | 'lecturer';
+  | 'lecturer'
+  | 'community';
 
 export interface MoodRecommendation {
   mood: string;

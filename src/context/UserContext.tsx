@@ -73,6 +73,7 @@ interface UserContextType {
   setAuthModalOpen: (open: boolean) => void;
   setWelcomeOpen: (open: boolean) => void;
   updateUserInterests: (interests: string[]) => void;
+  updateOwnProfile: (input: { fullName?: string; city?: string; avatar?: string }) => Promise<void>;
   updateOnboardingLevel: (level: OnboardingLevel) => void;
   hasActiveSubscription: () => boolean;
   isPaying: boolean;
@@ -116,10 +117,15 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
       ) {
         if (isPreviewToken(getAuthToken())) return;
         void sessionFromSupabaseUser(accessToken)
-          .then((result) => {
+          .then(async (result) => {
             if (cancelled) return;
             setAuthToken(result.token);
-            setUser(fromPayload(result.user));
+            try {
+              const { user: next } = await authApi.me();
+              if (!cancelled) setUser(fromPayload(overlayApiUser(result.user, next)));
+            } catch {
+              if (!cancelled) setUser(fromPayload(result.user));
+            }
           })
           .catch(() => undefined);
       }
@@ -310,6 +316,11 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
     if (user.id !== 'guest') void authApi.setInterests(interests);
   };
 
+  const updateOwnProfile = async (input: { fullName?: string; city?: string; avatar?: string }) => {
+    const { user: next } = await authApi.updateProfile(input);
+    setUser(fromPayload(next));
+  };
+
   const updateOnboardingLevel = (level: OnboardingLevel) => {
     setUser((prev) => ({ ...prev, onboardingLevel: level }));
   };
@@ -395,6 +406,7 @@ export const UserProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setAuthModalOpen,
         setWelcomeOpen,
         updateUserInterests,
+        updateOwnProfile,
         updateOnboardingLevel,
         hasActiveSubscription,
         isPaying,

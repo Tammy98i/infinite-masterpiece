@@ -1,5 +1,5 @@
-﻿import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+﻿import React, { useEffect, useState } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { LogOut, Mic } from 'lucide-react';
 import { Bidi } from '../components/Bidi';
 import { DirBack } from '../components/DirArrow';
@@ -8,13 +8,31 @@ import { PlansGrid } from '../components/PlansGrid';
 import { planLabel } from '../data/plans';
 import { getTrialDaysRemaining } from '../utils/recommendations';
 import { INTEREST_OPTIONS } from '../data/categories';
+import { uploadFile } from '../api/upload';
 
 export const ProfileView: React.FC = () => {
-  const { user, isGuest, logout, setView, setAuthModalOpen, updateUserInterests, cancelSubscription } = useApp();
+  const { user, isGuest, logout, setView, setAuthModalOpen, updateUserInterests, updateOwnProfile, cancelSubscription } = useApp();
+  const location = useLocation();
   const [selectedInterests, setSelectedInterests] = useState<string[]>(user.interests);
   const [saved, setSaved] = useState(false);
+  const [fullName, setFullName] = useState(user.name === 'אורח/ת' ? '' : user.name);
+  const [city, setCity] = useState(user.city || '');
+  const [profileNote, setProfileNote] = useState('');
+  const [profileError, setProfileError] = useState('');
 
-  const isUnpaid = user.subscriptionPlan === 'none';
+  useEffect(() => {
+    const id = location.hash.replace('#', '');
+    if (!id) return;
+    const timer = window.setTimeout(() => {
+      const node = document.getElementById(id);
+      node?.scrollIntoView({ block: 'center' });
+      const field = node?.querySelector('input');
+      if (field instanceof HTMLElement) field.focus();
+    }, 0);
+    return () => window.clearTimeout(timer);
+  }, [location.hash]);
+
+  const isPaying = user.subscriptionPlan === 'monthly' || user.subscriptionPlan === 'annual' || user.subscriptionPlan === 'premium_88';
   const trialDays = user.subscriptionPlan === 'free_trial' ? getTrialDaysRemaining(user.trialEndsAt) : null;
 
   const saveInterests = () => {
@@ -105,11 +123,13 @@ export const ProfileView: React.FC = () => {
           </div>
         </div>
 
-        {isUnpaid ? (
+        {!isPaying ? (
           <section className="mb-14">
-            <h2 className="text-sm text-white/40 mb-4">גישה</h2>
+            <h2 className="text-sm text-white/40 mb-4">{isGuest ? 'בחירת מסלול' : 'גישה'}</h2>
             <p className="text-sm text-white/55 font-light mb-6">
-              פתיחת גישה לכל ההרצאות, ההדרכות והמסלולים במסלול האמיצים או במסלול ההססנים.
+              {isGuest
+                ? 'כדי להיכנס לקהילה ולספרייה, בוחרים אחד מהמסלולים הקיימים.'
+                : 'הקהילה נפתחת למנויים משלמים. בחרו מסלול כדי להמשיך.'}
             </p>
             <PlansGrid />
           </section>
@@ -143,7 +163,44 @@ export const ProfileView: React.FC = () => {
         )}
 
         {!isGuest && (
-          <section>
+          <section id="profile-details" className="mb-16 grid gap-6">
+            <h2 className="text-sm text-white/40">פרטי החשבון</h2>
+            <form className="grid gap-4 max-w-xl" onSubmit={(event) => {
+              event.preventDefault();
+              setProfileError('');
+              void updateOwnProfile({ fullName, city }).then(() => setProfileNote('הפרטים נשמרו')).catch((err: unknown) => {
+                setProfileNote('');
+                setProfileError(err instanceof Error ? err.message : 'השמירה נכשלה');
+              });
+            }}>
+              <label id="profile-name" className="grid gap-2">
+                שם מלא
+                <input value={fullName} onChange={(event) => setFullName(event.target.value)} className="min-h-11 rounded-xl border border-white/15 bg-transparent px-3 text-white" />
+              </label>
+              <label id="profile-city" className="grid gap-2">
+                עיר
+                <input value={city} onChange={(event) => setCity(event.target.value)} className="min-h-11 rounded-xl border border-white/15 bg-transparent px-3 text-white" />
+              </label>
+              <label id="profile-avatar" className="grid gap-2">
+                תמונת פרופיל
+                <input type="file" accept="image/*" className="min-h-11" onChange={(event) => {
+                  const file = event.target.files?.[0];
+                  if (!file) return;
+                  setProfileError('');
+                  void uploadFile(file, 'image').then((url) => updateOwnProfile({ avatar: url })).then(() => setProfileNote('התמונה נשמרה')).catch((err: unknown) => {
+                    setProfileError(err instanceof Error ? err.message : 'העלאת התמונה נכשלה');
+                  });
+                }} />
+              </label>
+              <button type="submit" className="w-fit px-5 py-2.5 rounded-full bg-[#b79043] text-black text-sm min-h-11 cursor-pointer">שמירת פרטים</button>
+              {profileNote ? <p>{profileNote}</p> : null}
+              {profileError ? <p role="alert">{profileError}</p> : null}
+            </form>
+          </section>
+        )}
+
+        {!isGuest && (
+          <section id="profile-interests">
             <h2 className="text-sm text-white/40 mb-4">נושאים שמעניינים אתכם</h2>
             <div className="flex flex-wrap gap-2 mb-4">
               {INTEREST_OPTIONS.map((tag) => {

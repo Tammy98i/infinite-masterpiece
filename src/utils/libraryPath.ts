@@ -23,6 +23,7 @@ export function parseLibraryPath(pathname: string): {
   if (section === 'profile') return { view: 'profile' };
   if (section === 'admin') return { view: 'admin' };
   if (section === 'lecturer') return { view: 'lecturer' };
+  if (section === 'community') return { view: 'community' };
   if (section === 'shorts') return { view: 'shorts' };
   if (section === 'paths') return { view: 'paths' };
   if (section === 'instructors') return { view: 'instructors' };
@@ -62,6 +63,7 @@ export function libraryPath(
     profile: '/library/profile',
     admin: '/library/admin',
     lecturer: '/library/lecturer',
+    community: '/library/community',
     shorts: '/library/shorts',
     paths: '/library/paths',
     instructors: '/library/instructors',

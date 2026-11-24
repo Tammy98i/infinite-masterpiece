@@ -49,6 +49,22 @@ export function listAdminNotifications(): AdminNotification[] {
     });
   }
 
+  const reportsTable = db.prepare(`SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'community_reports'`).get();
+  if (reportsTable) {
+    const communityReports = count(`SELECT COUNT(*) as c FROM community_reports WHERE status = 'open'`);
+    if (communityReports > 0) {
+      items.push({
+        id: 'community-reports',
+        severity: 'medium',
+        title: 'דיווחים בקהילה',
+        detail: `${communityReports} דיווחים ממתינים במודרציה`,
+        tab: 'moderation',
+        count: communityReports,
+        createdAt: now,
+      });
+    }
+  }
+
   const lecturerPending = count(`SELECT COUNT(*) as c FROM lecturer_applications WHERE status = 'pending'`);
   if (lecturerPending > 0) {
     items.push({

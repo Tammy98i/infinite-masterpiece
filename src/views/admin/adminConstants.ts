@@ -9,7 +9,7 @@ export const STAFF_DESK_TABS: Record<string, Tab[]> = {
   sales: ['overview', 'leads', 'webinar', 'tracks', 'payments', 'funnel', 'premium88', 'pods', 'analytics', 'notifications', 'team', 'access'],
   legal: ['overview', 'legal', 'settings', 'audit', 'notifications', 'team', 'access'],
   finance: ['overview', 'payments', 'tracks', 'analytics', 'notifications', 'audit', 'team', 'access'],
-  community: ['overview', 'users', 'access', 'leads', 'premium88', 'pods', 'funnel', 'notifications', 'team'],
+  community: ['overview', 'users', 'access', 'leads', 'premium88', 'pods', 'funnel', 'notifications', 'moderation', 'team'],
 };
 
 export const STAFF_DESK_LABEL: Record<string, string> = {

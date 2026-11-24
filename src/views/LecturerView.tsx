@@ -299,7 +299,7 @@ function LecturerDashboard({
   categories: { id: string; name: string }[];
   onBack: () => void;
 }) {
-  const { user } = useApp();
+  const { user, setView } = useApp();
   type Tab =
     | 'overview'
     | 'videos'
@@ -424,6 +424,13 @@ function LecturerDashboard({
             </div>
             <button
               type="button"
+              onClick={() => setView('community')}
+              className="w-full px-4 py-2.5 rounded-full border border-[#b79043]/50 text-sm min-h-11 cursor-pointer text-[#dfc47d]"
+            >
+              לקהילה
+            </button>
+            <button
+              type="button"
               onClick={onBack}
               className="w-full px-4 py-2.5 rounded-full border border-white/15 text-sm min-h-11 cursor-pointer hover:border-white/40"
             >
@@ -452,6 +459,13 @@ function LecturerDashboard({
                 ) : null}
               </div>
             </div>
+            <button
+              type="button"
+              onClick={() => setView('community')}
+              className="px-3 py-2 rounded-full border border-white/15 text-sm min-h-11"
+            >
+              קהילה
+            </button>
             <button
               type="button"
               onClick={onBack}

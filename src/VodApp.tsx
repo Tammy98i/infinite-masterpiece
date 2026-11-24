@@ -25,12 +25,14 @@ import { InstructorsView } from './views/InstructorsView';
 import { InstructorProfileView } from './views/InstructorProfileView';
 import { AdminView } from './views/AdminView';
 import { LecturerView } from './views/LecturerView';
+import { CommunityView } from './views/CommunityView';
 import { libraryPath } from './utils/libraryPath';
 import './styles/LibraryCatalog.css';
 import './styles/CrmDesk.css';
 import './styles/LibraryVisualRefresh.css';
 import './styles/LibraryPages.css';
 import './styles/LibraryUsability.css';
+import './styles/Community.css';
 
 export const VodApp: React.FC = () => {
   const { currentView, setView } = useApp();
@@ -96,6 +98,8 @@ export const VodApp: React.FC = () => {
         return <AdminView />;
       case 'lecturer':
         return <LecturerView />;
+      case 'community':
+        return <CommunityView />;
       default:
         return <HomeView />;
     }
@@ -110,13 +114,13 @@ export const VodApp: React.FC = () => {
           דילוג לתוכן הראשי
         </a>
       )}
-      {currentView !== 'watch' && currentView !== 'admin' && currentView !== 'lecturer' && <Navbar />}
+      {currentView !== 'watch' && currentView !== 'admin' && currentView !== 'lecturer' && currentView !== 'community' && <Navbar />}
 
       <main id="library-main" key={currentView} className="relative z-10 flex-grow page-fade" tabIndex={-1}>
         {renderView()}
       </main>
 
-      {currentView !== 'watch' && (
+      {currentView !== 'watch' && currentView !== 'community' && (
         <footer className="editorial-library-footer relative z-10 border-t border-white/10 py-10 px-4 sm:px-8 lg:px-10 text-start select-none" role="contentinfo" aria-label="תחתית הספרייה">
           <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-start sm:items-center justify-between gap-8 text-sm text-zinc-400">
             <div>
