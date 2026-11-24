@@ -6,7 +6,11 @@
   --gold-ink: #f0d48a;
   --panel: rgba(8, 14, 26, .62);
   min-height: 100vh;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   display: flex;
+  overflow-x: clip;
   color: var(--ink);
   background: transparent;
   font-family: var(--font-body);
@@ -278,8 +282,10 @@
 
 .vod-app.sky-readable .community-page .community-tag[data-badge='חבר ספרייה'] { color: rgba(224, 237, 255, .78); }
 
-.pa-home { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 16px; align-items: start; }
-.pa-stream, .pa-widgets, .pa-events, .pa-agents, .pa-partners, .pa-contact { display: grid; gap: 14px; }
+.pa-home { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 280px); gap: 16px; align-items: start; width: 100%; min-width: 0; }
+.pa-stream, .pa-widgets, .pa-events, .pa-agents, .pa-partners, .pa-contact { display: grid; gap: 14px; min-width: 0; }
+.pa-stream { overflow: hidden; }
+.pa-stream > *, .pa-now, .pa-now > * { min-width: 0; max-width: 100%; }
 .pa-card { background: var(--panel); border: 1px solid rgba(255,255,255,.12); border-radius: 18px; padding: 16px; box-shadow: none; }
 .pa-card h2, .pa-rowhead h2, .pa-agent h3 { margin: 0 0 8px; font-size: 1.05rem; }
 .pa-card ul { margin: 8px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
@@ -307,7 +313,7 @@
 .pa-avatar.lg { width: 84px; height: 84px; margin: 0 auto 8px; background: #f6efe0; color: #5c4514; font-size: 2rem; }
 .pa-rowhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .pa-rail, .pa-grid { display: grid; gap: 12px; }
-.pa-rail { grid-auto-flow: column; grid-auto-columns: 180px; overflow: auto; }
+.pa-rail { grid-auto-flow: column; grid-auto-columns: 180px; width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; }
 .pa-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 .pa-thumb, .pa-course, .pa-agent { display: grid; gap: 8px; text-align: start; background: var(--panel); border: 1px solid rgba(255,255,255,.12); border-radius: 16px; overflow: hidden; padding: 0 0 12px; }
 .pa-thumb img, .pa-course img, .pa-fallback, .pa-agent-art { width: 100%; height: 110px; object-fit: cover; background: #102033; }
