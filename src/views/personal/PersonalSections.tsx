@@ -477,7 +477,6 @@ export function AgentGrid({ onContact }: { onContact: () => void }) {
       <div className="pa-grid">
         {AGENTS.map((item) => (
           <article key={item.name} className="pa-agent">
-            <div className="pa-agent-art">{item.tone}</div>
             <h3>{item.name}</h3>
             <p>{item.text}</p>
             <button type="button" onClick={onContact}>פנייה לצוות</button>
@@ -516,7 +515,6 @@ export function HallOfFame({ user, posts, watches }: { user: UserProfile; posts:
   return (
     <div className="pa-hall">
       <section className="pa-card pa-profile">
-        <div className="pa-avatar lg">{(user.name || 'ח').trim().charAt(0)}</div>
         <h2>{user.name}</h2>
         <p>{place ? `המקום שלכם ברשימה: ${place}` : 'עוד אין רשימה'}</p>
         <div className="pa-stats">

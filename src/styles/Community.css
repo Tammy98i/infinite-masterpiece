@@ -299,8 +299,7 @@
 .pa-checks { display: grid; gap: 4px; }
 .pa-checks button { display: flex; align-items: center; gap: 8px; width: 100%; }
 .pa-now, .pa-calendar-layout { display: grid; gap: 12px; }
-.pa-now { padding: 16px; border: 1px solid rgba(240, 212, 138, .35); border-radius: 20px; background: rgba(8, 14, 26, .55); }
-.pa-now > h2 { margin: 0; }
+.pa-now > h2 { margin: 0; font-size: 1rem; }
 .community-tools button { border: 1px solid rgba(255,255,255,.16); }
 .community-main > .community-lede { font-size: 1.05rem; }
 .pa-calendar-layout { grid-template-columns: minmax(0, 1fr) 280px; align-items: start; }
@@ -324,24 +323,22 @@
 .pa-hero-avatar, .pa-avatar { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.25); font-weight: 700; }
 .pa-avatar.lg { width: 84px; height: 84px; margin: 0 auto 8px; background: #f6efe0; color: #5c4514; font-size: 2rem; }
 .pa-rowhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; min-height: 44px; }
-.pa-rowhead h2 { position: relative; padding-inline-start: 12px; }
-.pa-rowhead h2::before { content: ''; position: absolute; inset-inline-start: 0; top: .2em; bottom: .2em; width: 3px; border-radius: 99px; background: #f0d48a; }
-.pa-rowhead button { color: #f0d48a; font-weight: 700; }
+.pa-rowhead h2 { margin: 0; font-size: 1rem; }
+.pa-rowhead button { color: #f0d48a; font-weight: 700; padding-inline: 0; }
 .pa-rail, .pa-grid { display: grid; gap: 12px; }
 .pa-rail { grid-auto-flow: column; grid-auto-columns: 180px; width: 100%; max-width: 100%; min-width: 0; overflow-x: auto; }
 .pa-grid { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
 .pa-thumb, .pa-course, .pa-agent { display: grid; gap: 8px; text-align: start; background: var(--panel); border: 1px solid rgba(255,255,255,.12); border-radius: 16px; overflow: hidden; padding: 0 0 12px; }
-.pa-thumb img, .pa-course img, .pa-fallback, .pa-agent-art { width: 100%; height: 110px; object-fit: cover; background: #102033; }
-.pa-agent-art { display: grid; place-items: center; color: #fff; font-weight: 700; }
+.pa-thumb img, .pa-course img, .pa-fallback { width: 100%; height: 88px; object-fit: cover; background: #102033; }
 .pa-thumb span, .pa-course strong, .pa-course em { padding: 0 12px; }
 .pa-path { padding: 14px; }
 .pa-path span, .pa-path em { padding: 0; }
 .pa-course strong { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .pa-course em, .pa-composer, .pa-note { color: rgba(224, 237, 255, .78); font-style: normal; }
-.pa-agent { padding: 0 0 14px; }
-.pa-agent h3, .pa-agent p { padding: 0 12px; margin: 0; }
+.pa-agent { padding: 14px; gap: 6px; }
+.pa-agent h3, .pa-agent p { margin: 0; }
 .pa-agent button, .pa-partners button, .pa-contact form button, .pa-month .pa-rowhead button {
-  margin: 0 12px; min-height: 44px; border: 0; border-radius: 12px; background: #f0d48a; color: #1a1204; font-weight: 700;
+  min-height: 44px; border: 0; border-radius: 12px; background: #f0d48a; color: #1a1204; font-weight: 700;
 }
 .pa-composer { color: #5c6b7c; width: 100%; }
 .pa-post header { display: flex; gap: 8px; align-items: center; }
@@ -349,7 +346,7 @@
 .pa-event { width: 100%; display: grid; grid-template-columns: auto 1fr auto auto; gap: 10px; align-items: center; border-bottom: 1px solid rgba(255,255,255,.1); }
 .pa-month .pa-rowhead { justify-content: center; }
 .pa-weekdays, .pa-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
-.pa-days span, .pa-weekdays span { min-height: 76px; border-radius: 12px; background: rgba(255,255,255,.06); display: grid; align-content: start; justify-items: center; gap: 4px; padding: 8px 4px 6px; text-align: center; }
+.pa-days span, .pa-weekdays span { min-height: 52px; border-radius: 10px; background: rgba(255,255,255,.04); display: grid; align-content: center; justify-items: center; gap: 2px; padding: 6px 2px; text-align: center; }
 .pa-days .has-event small { max-width: 100%; line-height: 1.25; }
 .pa-days .is-today { outline: 2px solid #b79043; }
 .pa-days .has-event { background: rgba(240, 212, 138, .16); }
@@ -363,8 +360,7 @@
 .pa-board b { width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: rgba(240, 212, 138, .2); color: #f0d48a; }
 .pa-board i { display: block; height: 8px; border-radius: 99px; background: #b79043; grid-column: 2; }
 .pa-board em { grid-column: 3; grid-row: 1; }
-.pa-partner-hero, .pa-contact-hero { background: linear-gradient(120deg, #b79043, #f0d48a); color: #1a1204; }
-.pa-partner-hero h2, .pa-partner-hero p, .pa-contact-hero h2, .pa-contact-hero p { color: #1a1204; }
+.pa-partner-hero, .pa-contact-hero { background: var(--panel); color: var(--ink); }
 .pa-link { direction: ltr; text-align: left; background: rgba(5, 10, 20, .45); border-radius: 10px; padding: 10px; }
 .pa-stars { display: flex; gap: 8px; }
 .pa-stars button { width: 44px; font-size: 1.4rem; justify-content: center; }
@@ -376,7 +372,7 @@
   .pa-home { grid-template-columns: 1fr; }
 }
 
-.vod-app.sky-readable .community-page :is(.pa-hero, .pa-hero h2, .pa-hero p, .pa-hero button, .pa-partner-hero, .pa-partner-hero h2, .pa-partner-hero p, .pa-contact-hero, .pa-contact-hero h2, .pa-contact-hero p, .pa-agent button, .pa-partners button, .pa-contact form button, .pa-tabs button[aria-pressed='true'], .pa-month .pa-rowhead button) {
+.vod-app.sky-readable .community-page :is(.pa-agent button, .pa-partners button, .pa-contact form button, .pa-tabs button[aria-pressed='true'], .pa-month .pa-rowhead button) {
   color: #1a1204;
   background-color: transparent;
 }
@@ -386,10 +382,10 @@
 }
 .vod-app.sky-readable .community-page .pa-rowhead button { background: transparent; color: #f0d48a; }
 
-.community-search input { border-color: rgba(240, 212, 138, .45); min-height: 52px; }
+.community-search input { min-height: 48px; }
 .pa-thumb span, .pa-person span { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .pa-person span { text-align: center; }
-.pa-thumb:hover, .pa-course:hover, .pa-agent:hover, .pa-person:hover, .pa-card:hover { border-color: rgba(240, 212, 138, .55); }
+.pa-thumb:hover, .pa-course:hover, .pa-agent:hover, .pa-person:hover { border-color: rgba(240, 212, 138, .55); }
 .pa-contact-cards a:hover { border: 1px solid rgba(240, 212, 138, .55); }
 .community-post { display: grid; gap: 4px; }
 .pa-steps article b, .pa-stats b { color: #f0d48a; font-size: 1.3rem; }
