@@ -63,9 +63,9 @@
 .community-channels,
 .community-nav-slot { display: grid; gap: 4px; }
 .pa-continue, .pa-quiz { display: grid; gap: 4px; width: 100%; text-align: start; }
-.pa-continue i { display: block; height: 8px; border-radius: 99px; background: #2f89fc; margin-top: 8px; }
+.pa-continue i { display: block; height: 8px; border-radius: 99px; background: #b79043; margin-top: 8px; }
 .pa-person { display: grid; justify-items: center; gap: 6px; width: 96px; padding: 8px; background: #fff; border: 1px solid #e6ebf2; border-radius: 16px; }
-.pa-person img, .pa-person b { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; display: grid; place-items: center; background: #e7f2ff; }
+.pa-person img, .pa-person b { width: 64px; height: 64px; border-radius: 50%; object-fit: cover; display: grid; place-items: center; background: #f6efe0; }
 
 .community-channels {
   padding-top: 8px;
@@ -194,23 +194,30 @@
 .community-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 .community-page :focus-visible { outline: 2px solid var(--gold-ink); outline-offset: 2px; }
 
-@media (max-width: 980px) {
-  .community-layout { grid-template-columns: 1fr; }
+@media (max-width: 1100px) {
+  .community-layout, .pa-home { grid-template-columns: 1fr; }
   .community-side { position: static; }
+  .pa-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .pa-days span, .pa-weekdays span { min-height: 56px; }
 }
 
 @media (max-width: 760px) {
   .community-rail-toggle {
     display: inline-flex; align-items: center; position: fixed; z-index: 8; top: 12px; inset-inline-start: 12px;
-    background: #fff; border: 1px solid var(--line); color: var(--ink); font-weight: 700;
+    background: #f0d48a; border: 0; color: #1a1204; font-weight: 700; min-height: 44px;
   }
   .community-rail {
-    position: fixed; inset-block: 0; inset-inline-start: 0; transform: translateX(110%);
+    position: fixed; inset-block: 0; inset-inline-start: 0; width: min(280px, 86vw); transform: translateX(110%);
     box-shadow: -8px 0 24px rgba(0,0,0,.12);
   }
   .community-page.is-rail-open .community-rail { transform: none; }
-  .community-scrim { display: block; position: fixed; inset: 0; z-index: 5; border: 0; background: rgba(16, 22, 32, .4); }
-  .community-main { padding: 68px 14px 32px; }
+  .community-scrim { display: block; position: fixed; inset: 0; z-index: 5; border: 0; background: rgba(16, 22, 32, .4); min-height: 100vh; }
+  .community-main { padding: 72px 14px 36px; }
+  .pa-grid, .pa-contact-cards, .pa-metrics, .pa-steps, .pa-stats { grid-template-columns: 1fr; }
+  .pa-event { grid-template-columns: auto 1fr; }
+  .pa-days span, .pa-weekdays span { min-height: 44px; font-size: .8rem; }
+  .pa-days .has-event small { display: none; }
+  .community-nav button, .community-channel, .community-account { min-height: 44px; }
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -240,12 +247,12 @@
 .pa-card li.is-done { color: #1a7f37; }
 .pa-progress-label, .pa-points { font-size: 1.4rem; font-weight: 700; margin: 0; }
 .pa-bar { height: 8px; border-radius: 99px; background: #e8eef6; overflow: hidden; }
-.pa-bar span { display: block; height: 100%; background: #2f89fc; }
-.pa-hero { display: flex; justify-content: space-between; gap: 16px; padding: 22px; border-radius: 18px; color: #fff; background: linear-gradient(120deg, #2f89fc, #67d2ff); }
-.pa-hero h2, .pa-hero p, .pa-hero button { color: #fff; }
-.pa-hero button { border: 1px solid #fff; border-radius: 999px; background: transparent; min-height: 40px; padding: 0 14px; }
+.pa-bar span { display: block; height: 100%; background: #b79043; }
+.pa-hero { display: flex; justify-content: space-between; gap: 16px; padding: 22px; border-radius: 18px; color: #1a1204; background: linear-gradient(120deg, #b79043, #f0d48a); }
+.pa-hero h2, .pa-hero p, .pa-hero button { color: #1a1204; }
+.pa-hero button { border: 1px solid #1a1204; border-radius: 999px; background: transparent; min-height: 44px; padding: 0 14px; }
 .pa-hero-avatar, .pa-avatar { width: 54px; height: 54px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.25); font-weight: 700; }
-.pa-avatar.lg { width: 84px; height: 84px; margin: 0 auto 8px; background: #e7f2ff; color: #1d4e89; font-size: 2rem; }
+.pa-avatar.lg { width: 84px; height: 84px; margin: 0 auto 8px; background: #f6efe0; color: #5c4514; font-size: 2rem; }
 .pa-rowhead { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
 .pa-rail, .pa-grid { display: grid; gap: 12px; }
 .pa-rail { grid-auto-flow: column; grid-auto-columns: 180px; overflow: auto; }
@@ -258,7 +265,7 @@
 .pa-agent { padding: 0 0 14px; }
 .pa-agent h3, .pa-agent p { padding: 0 12px; margin: 0; }
 .pa-agent button, .pa-partners button, .pa-contact form button, .pa-month .pa-rowhead button {
-  margin: 0 12px; min-height: 40px; border: 0; border-radius: 10px; background: #2f89fc; color: #fff; font-weight: 700;
+  margin: 0 12px; min-height: 44px; border: 0; border-radius: 12px; background: #f0d48a; color: #1a1204; font-weight: 700;
 }
 .pa-composer { color: #5c6b7c; width: 100%; }
 .pa-post header { display: flex; gap: 8px; align-items: center; }
@@ -267,19 +274,19 @@
 .pa-month .pa-rowhead { justify-content: center; }
 .pa-weekdays, .pa-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
 .pa-days span, .pa-weekdays span { min-height: 72px; border-radius: 12px; background: #f7f9fc; display: grid; align-content: start; justify-items: center; padding-top: 8px; }
-.pa-days .is-today { outline: 2px solid #2f89fc; }
-.pa-days .has-event small { color: #1d4e89; font-size: .7rem; }
+.pa-days .is-today { outline: 2px solid #b79043; }
+.pa-days .has-event small { color: #5c4514; font-size: .7rem; }
 .pa-profile { text-align: center; }
 .pa-stats, .pa-steps, .pa-metrics, .pa-contact-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
 .pa-stats div, .pa-steps article, .pa-metrics article, .pa-contact-cards article { background: #f7f9fc; border-radius: 14px; padding: 12px; }
 .pa-tabs { display: flex; gap: 8px; margin-bottom: 12px; }
-.pa-tabs button[aria-pressed='true'] { background: #2f89fc; color: #fff; }
+.pa-tabs button[aria-pressed='true'] { background: #f0d48a; color: #1a1204; }
 .pa-board { list-style: none; margin: 0; padding: 0; display: grid; gap: 8px; }
 .pa-board li { display: grid; grid-template-columns: 28px 1fr 70px; gap: 8px; align-items: center; }
-.pa-board i { display: block; height: 8px; border-radius: 99px; background: #2f89fc; grid-column: 2; }
+.pa-board i { display: block; height: 8px; border-radius: 99px; background: #b79043; grid-column: 2; }
 .pa-board em { grid-column: 3; grid-row: 1; }
-.pa-partner-hero, .pa-contact-hero { background: linear-gradient(120deg, #2f89fc, #7ad0ff); color: #fff; }
-.pa-partner-hero h2, .pa-partner-hero p, .pa-contact-hero h2, .pa-contact-hero p { color: #fff; }
+.pa-partner-hero, .pa-contact-hero { background: linear-gradient(120deg, #b79043, #f0d48a); color: #1a1204; }
+.pa-partner-hero h2, .pa-partner-hero p, .pa-contact-hero h2, .pa-contact-hero p { color: #1a1204; }
 .pa-link { direction: ltr; text-align: left; background: #f7f9fc; border-radius: 10px; padding: 10px; }
 .pa-stars { display: flex; gap: 4px; }
 .pa-stars button[aria-pressed='true'] { color: #e2b203; }
@@ -289,8 +296,12 @@
   .pa-home { grid-template-columns: 1fr; }
 }
 
-.vod-app.sky-readable .community-page :is(.pa-hero, .pa-hero h2, .pa-hero p, .pa-hero button, .pa-partner-hero, .pa-partner-hero h2, .pa-partner-hero p, .pa-contact-hero, .pa-contact-hero h2, .pa-contact-hero p, .pa-agent button, .pa-partners button, .pa-contact form button, .pa-tabs button[aria-pressed='true']) {
-  color: #fff;
+.vod-app.sky-readable .community-page :is(.pa-hero, .pa-hero h2, .pa-hero p, .pa-hero button, .pa-partner-hero, .pa-partner-hero h2, .pa-partner-hero p, .pa-contact-hero, .pa-contact-hero h2, .pa-contact-hero p, .pa-agent button, .pa-partners button, .pa-contact form button, .pa-tabs button[aria-pressed='true'], .pa-month .pa-rowhead button) {
+  color: #1a1204;
+  background-color: transparent;
+}
+.vod-app.sky-readable .community-page :is(.pa-agent button, .pa-partners button, .pa-contact form button, .pa-tabs button[aria-pressed='true'], .pa-month .pa-rowhead button) {
+  background: #f0d48a;
 }
 
 .vod-app.sky-readable .community-page .community-publish,
