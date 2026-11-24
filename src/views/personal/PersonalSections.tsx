@@ -32,17 +32,17 @@ export const AREAS: Array<{ id: AreaId; label: string }> = [
 ];
 
 export const AREA_NOTES: Record<AreaId, string> = {
-  home: 'ממשיכים מההרצאה האחרונה, רואים את המפגש הקרוב, ונכנסים לשיחה.',
-  feed: 'השיחה של החברים. אפשר לפרסם, להגיב ולשמור.',
-  calendar: 'המפגשים שנקבעו לפוד מופיעים על היום עצמו.',
-  recordings: 'מפגשים שהתקיימו, והצפייה האחרונה בספרייה.',
-  courses: 'ההרצאות הפתוחות לפי המסלול.',
-  shorts: 'הדרכות קצרות, עד עשר דקות.',
-  club: 'המסלול הפעיל והמה שנכלל בו.',
-  agents: 'הסוכנים ייפתחו בהמשך. בינתיים פונים לצוות.',
-  hall: 'הדירוג לפי פוסטים שפורסמו וצפייה אמיתית.',
-  partners: 'קישור אישי לשיתוף. ספירת הקרדיט תיפתח בהמשך.',
-  contact: 'וואטסאפ, שאלות נפוצות, ומייל לצוות.',
+  home: 'כאן רואים מה לעשות עכשיו, ואחר כך את ההרצאות והאנשים.',
+  feed: 'כאן כותבים לקהילה, מגיבים, ושומרים פוסט אצלכם.',
+  calendar: 'יום עם טקסט הוא מפגש. המסגרת הזהובה היא היום.',
+  recordings: 'מפגשים שכבר היו, וההרצאות שראיתם בספרייה.',
+  courses: 'כל ההרצאות שפתוחות במסלול שלכם. לחצו על הרצאה כדי להיכנס.',
+  shorts: 'הדרכות קצרות. כל אחת נמשכת עד עשר דקות.',
+  club: 'המסלול שלכם, עד מתי הוא בתוקף, ואיך משנים אותו.',
+  agents: 'העזרה האוטומטית עדיין לא פעילה. בינתיים כותבים לצוות.',
+  hall: 'מי פרסם יותר בקהילה. המספר עולה מצפייה ומפוסטים.',
+  partners: 'קישור שאפשר לשלוח לחבר. הספירה של הנרשמים תיפתח אחר כך.',
+  contact: 'שלוש דרכים לפנות: וואטסאפ, שאלות נפוצות, או מייל.',
 };
 
 export const NAV_GROUPS: Array<{ label: string; ids: AreaId[] }> = [
@@ -159,7 +159,8 @@ export function HomeDesk({
   return (
     <div className="pa-home">
       <div className="pa-stream">
-        <div className="pa-now">
+        <section className="pa-now" aria-label="מה עושים עכשיו">
+          <h2>מה עושים עכשיו</h2>
           {continueItem ? (
             <button type="button" className="pa-card pa-continue" onClick={() => onWatch(continueItem.course.id, continueItem.episode.id)}>
               <span>המשך צפייה</span>
@@ -193,9 +194,9 @@ export function HomeDesk({
               <button type="button" onClick={onOpenFeed}>לדיון</button>
             </article>
           ) : (
-            <button type="button" className="pa-card" onClick={onOpenFeed}>שתפו את הפוסט הראשון בקהילה</button>
+            <button type="button" className="pa-card" onClick={onOpenFeed}>כתבו את ההודעה הראשונה בקהילה</button>
           )}
-        </div>
+        </section>
         <ShelfRow title="ההרצאות שלי" action="להיסטוריה" onAction={() => onOpenView('history')} empty="ההרצאות שצפיתם יופיעו כאן." emptyAction="מצאו הרצאה" onEmpty={onOpenCourses}>
           {mine.slice(0, 8).map((course) => (
             <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
@@ -292,7 +293,7 @@ export function HomeDesk({
           <div className="pa-checks">
             {checks.map((item) => (
               <button key={item.label} type="button" className={item.done ? 'is-done' : ''} onClick={() => onOpenProfile(item.field)}>
-                <span className="pa-check" aria-hidden="true" />
+                <span className="pa-check" aria-hidden="true">{item.done ? '✓' : ''}</span>
                 {item.label}
               </button>
             ))}
@@ -300,8 +301,8 @@ export function HomeDesk({
         </section>
         <section className="pa-card">
           <h2>הפעילות שלך</h2>
-          <p className="pa-points">{activity.points}</p>
-          <p>{levelFor(activity.points).name} · {activity.watches} צפיות · {activity.posts} פוסטים</p>
+          <p className="pa-points">{activity.watches}</p>
+          <p>{activity.watches === 0 && activity.posts === 0 ? 'עוד אין צפייה. הרצאה אחת מתחילה את הספירה.' : `צפיתם ${activity.watches} פעמים וכתבתם ${activity.posts} הודעות. הדרגה: ${levelFor(activity.points).name}.`}</p>
         </section>
       </aside>
     </div>
@@ -329,7 +330,7 @@ export function CourseShelf({ title, courses, onOpen }: { title: string; courses
   return (
     <section className="pa-shelf">
       <div className="pa-rowhead"><h2>{title}</h2><span>{shown.length} פריטים</span></div>
-      <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="חיפוש לפי שם" aria-label="חיפוש" />
+      <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="הקלידו שם של הרצאה" aria-label="חיפוש הרצאה" />
       {query.trim() && shown.length === 0 ? (
         <div className="pa-empty">
           <p className="pa-note">אין תוצאות עבור «{query.trim()}».</p>
@@ -389,7 +390,7 @@ export function MonthBoard({ sessions }: { sessions: ClubSession[] }) {
           </span>
         ))}
       </div>
-      {marked.size === 0 ? <p className="pa-note">אין מפגש מתוזמן בחודש הזה.</p> : null}
+      <p className="pa-note">{marked.size === 0 ? 'אין מפגש בחודש הזה.' : 'יום עם טקסט הוא מפגש. המסגרת הזהובה היא היום.'}</p>
     </section>
   );
 }

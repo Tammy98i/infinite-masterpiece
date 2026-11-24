@@ -296,7 +296,7 @@ export function CommunityView() {
           setView('search');
         }}>
           <label className="community-sr" htmlFor="area-search">חיפוש באזור האישי</label>
-          <input id="area-search" type="search" value={areaQuery} onChange={(event) => setAreaQuery(event.target.value)} placeholder="הרצאה, מרצה או פוסט" />
+          <input id="area-search" type="search" value={areaQuery} onChange={(event) => setAreaQuery(event.target.value)} placeholder="הקלידו הרצאה, שם של מרצה, או מילה מהשיחה" />
         </form>
         {areaQuery.trim() ? (
           <AreaSearch
@@ -385,7 +385,7 @@ export function CommunityView() {
                   <label className="community-sr" htmlFor={composerId}>מה תרצו לשתף</label>
                   <div className="community-compose-row">
                     <div className="community-initial" aria-hidden="true">{initial}</div>
-                    <textarea id={composerId} value={body} onChange={(event) => setBody(event.target.value)} placeholder="מה תרצו לשתף?" />
+                    <textarea id={composerId} value={body} onChange={(event) => setBody(event.target.value)} placeholder="כתבו כאן הודעה לקהילה" />
                   </div>
                   {showLecture ? (
                     <label className="community-lecture">
@@ -409,7 +409,7 @@ export function CommunityView() {
                       </label>
                       <button type="button" aria-pressed={showLecture} onClick={() => setShowLecture((value) => !value)}>קישור להרצאה</button>
                     </div>
-                    <button type="submit" className="community-publish" disabled={pending}>{pending ? 'מפרסם…' : 'פרסום'}</button>
+                    <button type="submit" className="community-publish" disabled={pending}>{pending ? 'שולח…' : 'שליחת ההודעה'}</button>
                   </div>
                 </form>
               ) : null}
@@ -516,10 +516,10 @@ const PostCard: FC<{
       {post.lectureTitle ? <div className="community-lecture-chip">הרצאה · {post.lectureTitle}</div> : null}
       <div className="community-tools">
         {post.canEdit ? <button type="button" onClick={() => { setEditBody(post.body); setEditing(true); }}>עריכה</button> : null}
-        <button type="button" aria-pressed={post.hearted} onClick={() => void onAct(() => communityApi.react(post.id))}>♡ {post.hearts}</button>
-        <button type="button" aria-expanded={open} onClick={onToggle}>תגובות {post.replies.length}</button>
-        <button type="button" aria-pressed={post.saved} onClick={() => void onAct(() => communityApi.bookmark(post.id))}>{post.saved ? 'שמור אצלי' : 'שמירה'}</button>
-        <button type="button" aria-pressed={post.reported} onClick={() => !post.reported && void onAct(() => communityApi.report(post.id))}>{post.reported ? 'הדיווח נשלח' : 'דיווח'}</button>
+        <button type="button" aria-pressed={post.hearted} onClick={() => void onAct(() => communityApi.react(post.id))}>{post.hearted ? 'אהבתי' : 'לסמן אהבתי'} {post.hearts}</button>
+        <button type="button" aria-expanded={open} onClick={onToggle}>{open ? 'סגירת תגובות' : 'פתיחת תגובות'} {post.replies.length}</button>
+        <button type="button" aria-pressed={post.saved} onClick={() => void onAct(() => communityApi.bookmark(post.id))}>{post.saved ? 'נשמר אצלי' : 'לשמור אצלי'}</button>
+        <button type="button" aria-pressed={post.reported} onClick={() => !post.reported && void onAct(() => communityApi.report(post.id))}>{post.reported ? 'הדיווח נשלח לצוות' : 'דיווח לצוות'}</button>
         {isAdmin ? (
           <>
             <button type="button" onClick={() => void onAct(() => communityApi.pin(post.id, !post.pinned))}>{post.pinned ? 'שחרור' : 'נעיצה'}</button>
