@@ -69,7 +69,7 @@ function AreaSearch({
       ) : null}
       {lessons.length > 0 ? (
         <section>
-          <h2>הרצאות</h2>
+          <div className="pa-rowhead"><h2>הרצאות</h2></div>
           {lessons.map((course) => (
             <button key={course.id} type="button" className="pa-linkrow" onClick={() => onOpenCourse(course.id)}>{course.title}</button>
           ))}
@@ -77,7 +77,7 @@ function AreaSearch({
       ) : null}
       {people.length > 0 ? (
         <section>
-          <h2>מרצים</h2>
+          <div className="pa-rowhead"><h2>מרצים</h2></div>
           {people.map((person) => (
             <button key={person.id} type="button" className="pa-linkrow" onClick={() => onOpenInstructor(person.id)}>{person.name}</button>
           ))}
@@ -85,7 +85,7 @@ function AreaSearch({
       ) : null}
       {notes.length > 0 ? (
         <section>
-          <h2>קהילה</h2>
+          <div className="pa-rowhead"><h2>מהשיחה</h2></div>
           {notes.map((post) => (
             <button key={post.id} type="button" className="pa-linkrow" onClick={onOpenFeed}>{post.author.firstName}: {post.body}</button>
           ))}
@@ -369,8 +369,8 @@ export function CommunityView() {
             onFind={() => setArea('courses')}
           />
         ) : null}
-        {area === 'courses' ? <CourseShelf title="קורסים ושיעורים" courses={lessons} onOpen={(courseId) => setView('course', { courseId })} /> : null}
-        {area === 'shorts' ? <CourseShelf title="הדרכות קצרות" courses={shorts} onOpen={(courseId) => setView('course', { courseId })} /> : null}
+        {area === 'courses' ? <CourseShelf title="כל ההרצאות" noun="הרצאה" courses={lessons} onOpen={(courseId) => setView('course', { courseId })} /> : null}
+        {area === 'shorts' ? <CourseShelf title="כל ההדרכות" noun="הדרכה" courses={shorts} onOpen={(courseId) => setView('course', { courseId })} /> : null}
         {area === 'club' ? <ClubCard plan={user.subscriptionPlan} trialEndsAt={user.trialEndsAt} /> : null}
         {area === 'agents' ? <AgentGrid onContact={() => setArea('contact')} /> : null}
         {area === 'hall' && home ? <HallOfFame user={user} posts={home.posts} watches={getWatchHistory().length} /> : null}
@@ -397,7 +397,7 @@ export function CommunityView() {
                   <div className="community-actions">
                     <div className="community-tools">
                       <label className="community-file">
-                        תמונה
+                        הוספת תמונה
                         <input className="community-sr" type="file" accept="image/*" onChange={(event) => {
                           const file = event.target.files?.[0];
                           event.target.value = '';
@@ -407,14 +407,14 @@ export function CommunityView() {
                           });
                         }} />
                       </label>
-                      <button type="button" aria-pressed={showLecture} onClick={() => setShowLecture((value) => !value)}>קישור להרצאה</button>
+                      <button type="button" aria-pressed={showLecture} onClick={() => setShowLecture((value) => !value)}>{showLecture ? 'הסתרת שם ההרצאה' : 'הוספת שם הרצאה'}</button>
                     </div>
                     <button type="submit" className="community-publish" disabled={pending}>{pending ? 'שולח…' : 'שליחת ההודעה'}</button>
                   </div>
                 </form>
               ) : null}
 
-              {home.posts.length === 0 ? <p className="community-empty">עדיין אין כאן פוסטים. הראשון פותח את השיחה.</p> : null}
+              {home.posts.length === 0 ? <p className="community-empty">עדיין אין הודעות. הראשונה פותחת את השיחה.</p> : null}
               {home.me?.muted ? <p className="community-note">הפרסום הושתק על ידי הצוות.</p> : null}
               {home.posts.map((post) => (
                 <PostCard
@@ -443,7 +443,7 @@ export function CommunityView() {
                 <p className="community-rule">אם משהו לא מתאים, לוחצים «דיווח לצוות».</p>
               </div>
               <div>
-                <h2>כאן עכשיו</h2>
+                <h2>מי כתב לאחרונה</h2>
                 {home.people.map((person) => (
                   <div className="community-person" key={`${person.firstName}-${person.badge}`}>
                     <div className="community-initial" aria-hidden="true">{person.initial}</div>
@@ -543,8 +543,8 @@ const PostCard: FC<{
             });
           }}>
             <label className="community-sr" htmlFor={replyId}>תגובה</label>
-            <textarea id={replyId} value={draft} onChange={(event) => onDraft(event.target.value)} placeholder="תגובה" />
-            <button type="submit" className="community-publish">שליחה</button>
+            <textarea id={replyId} value={draft} onChange={(event) => onDraft(event.target.value)} placeholder="כתבו תגובה" />
+            <button type="submit" className="community-publish">שליחת תגובה</button>
           </form>
         </div>
       ) : null}

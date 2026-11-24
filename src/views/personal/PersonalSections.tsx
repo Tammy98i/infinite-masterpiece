@@ -324,13 +324,14 @@ function ShelfRow({ title, action, onAction, empty, emptyAction, onEmpty, childr
   );
 }
 
-export function CourseShelf({ title, courses, onOpen }: { title: string; courses: Course[]; onOpen: (id: string) => void }) {
+export function CourseShelf({ title, courses, noun, onOpen }: { title: string; courses: Course[]; noun: string; onOpen: (id: string) => void }) {
   const [query, setQuery] = useState('');
   const shown = courses.filter((course) => course.title.includes(query.trim()));
+  const count = shown.length === 1 ? `${noun} אחת` : `${shown.length} ${noun === 'הרצאה' ? 'הרצאות' : 'הדרכות'}`;
   return (
     <section className="pa-shelf">
-      <div className="pa-rowhead"><h2>{title}</h2><span>{shown.length} פריטים</span></div>
-      <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="הקלידו שם של הרצאה" aria-label="חיפוש הרצאה" />
+      <div className="pa-rowhead"><h2>{title}</h2><span>{count}</span></div>
+      <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={`הקלידו שם של ${noun}`} aria-label={`חיפוש ${noun}`} />
       {query.trim() && shown.length === 0 ? (
         <div className="pa-empty">
           <p className="pa-note">אין תוצאות עבור «{query.trim()}».</p>
@@ -342,7 +343,7 @@ export function CourseShelf({ title, courses, onOpen }: { title: string; courses
           <button key={course.id} type="button" className="pa-course" onClick={() => onOpen(course.id)}>
             {course.coverImage ? <img src={course.coverImage} alt="" /> : <span className="pa-fallback" />}
             <strong>{course.title}</strong>
-            <em>{course.level}</em>
+            <em>{course.subtitle || course.level}</em>
           </button>
         ))}
       </div>
@@ -416,7 +417,7 @@ export function EventList({
   return (
     <div className="pa-events">
       <section className="pa-card">
-        <h2>מפגשים קרובים</h2>
+        <div className="pa-rowhead"><h2>מפגשים קרובים</h2></div>
         {upcoming.length === 0 ? (
           <div className="pa-empty">
             <p className="pa-note">אין מפגש קרוב בלוח.</p>
@@ -435,7 +436,7 @@ export function EventList({
         })}
       </section>
       <section className="pa-card">
-        <h2>מפגשים שהתקיימו</h2>
+        <div className="pa-rowhead"><h2>מפגשים שהתקיימו</h2></div>
         {past.length === 0 ? <p className="pa-note">אחרי שמפגש מתקיים, הוא מופיע כאן. ההקלטה עצמה תתווסף כשהיא מוכנה.</p> : past.map((session) => {
           const parts = jerusalemParts(session.startsAt);
           return (
@@ -448,7 +449,7 @@ export function EventList({
         })}
       </section>
       <section>
-        <h2>צפייה אחרונה בספרייה</h2>
+        <div className="pa-rowhead"><h2>מה ראיתם לאחרונה</h2></div>
         {watched.length === 0 ? (
           <div className="pa-empty">
             <p className="pa-note">עוד אין צפייה שמורה.</p>

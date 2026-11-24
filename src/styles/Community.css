@@ -333,7 +333,10 @@
 .pa-thumb, .pa-course, .pa-agent { display: grid; gap: 8px; text-align: start; background: var(--panel); border: 1px solid rgba(255,255,255,.12); border-radius: 16px; overflow: hidden; padding: 0 0 12px; }
 .pa-thumb img, .pa-course img, .pa-fallback, .pa-agent-art { width: 100%; height: 110px; object-fit: cover; background: #102033; }
 .pa-agent-art { display: grid; place-items: center; color: #fff; font-weight: 700; }
-.pa-thumb span, .pa-course strong, .pa-course em { padding: 0 10px; }
+.pa-thumb span, .pa-course strong, .pa-course em { padding: 0 12px; }
+.pa-path { padding: 14px; }
+.pa-path span, .pa-path em { padding: 0; }
+.pa-course strong { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
 .pa-course em, .pa-composer, .pa-note { color: rgba(224, 237, 255, .78); font-style: normal; }
 .pa-agent { padding: 0 0 14px; }
 .pa-agent h3, .pa-agent p { padding: 0 12px; margin: 0; }
