@@ -280,20 +280,26 @@ export function HomeDesk({
             <input value={lectureTitle} onChange={(event) => setLectureTitle(event.target.value)} placeholder="שם הרצאה, אם רוצים" aria-label="שם הרצאה" />
           </div>
           {imageUrl ? <img className="community-photo" src={imageUrl} alt="" /> : null}
-          {sendNote ? <p className="pa-note" role="status">{sendNote}</p> : null}
+          {sendNote ? <p className="pa-note" role="alert">{sendNote}</p> : null}
           {featured ? (
             <article className="pa-post">
               <header><span className="community-initial" aria-hidden="true">{featured.author.firstName.trim().charAt(0)}</span><strong>{featured.author.firstName}</strong></header>
               <p>{featured.body}</p>
               <div className="pa-post-tools">
-                <button type="button" aria-pressed={featured.hearted} onClick={() => void onReact(featured.id)}>אהבתי {featured.hearts}</button>
+                <button type="button" aria-pressed={featured.hearted} onClick={() => void onReact(featured.id).catch((err: unknown) => setSendNote(err instanceof Error ? err.message : 'הפעולה נכשלה'))}>אהבתי {featured.hearts}</button>
                 <span>תגובות {featured.replies.length}</span>
                 <button type="button" onClick={onOpenFeed}>לשיחה</button>
               </div>
               <form className="pa-compose-line" onSubmit={(event) => {
                 event.preventDefault();
-                if (replyText.trim().length < 2) return;
-                void onReply(featured.id, replyText.trim()).then(() => setReplyText(''));
+                if (replyText.trim().length < 2) {
+                  setSendNote('כתבו משפט אחד');
+                  return;
+                }
+                void onReply(featured.id, replyText.trim()).then(() => {
+                  setReplyText('');
+                  setSendNote('');
+                }).catch((err: unknown) => setSendNote(err instanceof Error ? err.message : 'הפעולה נכשלה'));
               }}>
                 <label className="community-sr" htmlFor="pa-home-reply">תגובה</label>
                 <input id="pa-home-reply" value={replyText} onChange={(event) => setReplyText(event.target.value)} placeholder="כתבו תגובה" />
