@@ -1,5 +1,5 @@
 ﻿import React, { useCallback, useEffect, useRef, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { Lock, Maximize, Minimize, Pause, Play, Volume2, VolumeX } from 'lucide-react';
 import { DirBack } from '../components/DirArrow';
@@ -39,6 +39,7 @@ export const WatchView: React.FC = () => {
     isGuest,
   } = useApp();
   const { muteMedia } = useA11yPrefs();
+  const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const jumpTo = Number(searchParams.get('t'));
   const jumped = useRef('');
@@ -446,11 +447,16 @@ export const WatchView: React.FC = () => {
               טעימה
             </span>
           ) : null}
-          {!isGuest && user.email ? (
-            <span className="hidden sm:inline text-[11px] text-white/45 truncate max-w-[200px]" dir="ltr">
-              {user.email}
-            </span>
+          {!isGuest && user.name ? (
+            <span className="hidden sm:inline text-[11px] text-[#dfc47d] truncate max-w-[180px]">{user.name}</span>
           ) : null}
+        </button>
+        <button
+          type="button"
+          onClick={() => navigate('/library/community/home')}
+          className="shrink-0 min-h-11 px-3 rounded-full border border-[#dfc47d]/50 text-sm text-[#dfc47d] cursor-pointer"
+        >
+          לאזור האישי
         </button>
 
 
@@ -458,7 +464,7 @@ export const WatchView: React.FC = () => {
 
       <aside
         id="watch-episodes"
-        className={`drawer-dock-start absolute top-0 bottom-0 start-0 z-30 flex flex-col w-[min(100%,280px)] bg-black/90 border-e border-white/10 transition-transform duration-300 ${
+        className={`drawer-dock-start absolute top-0 bottom-0 start-0 z-30 flex flex-col w-[min(100%,280px)] bg-[#050a14]/95 border-e border-[#dfc47d]/30 transition-transform duration-300 ${
           showEpisodes ? 'translate-x-0' : 'is-closed'
         }`}
         aria-label="פרקים"
@@ -573,10 +579,10 @@ export const WatchView: React.FC = () => {
           <button
             type="button"
             onClick={togglePlay}
-            className="justify-self-end sm:justify-self-center w-12 h-12 rounded-full bg-white text-black flex items-center justify-center cursor-pointer"
+            className="justify-self-end sm:justify-self-center w-12 h-12 rounded-full bg-[#dfc47d] text-[#050a14] flex items-center justify-center cursor-pointer"
             aria-label={isPlaying ? 'השהיה' : 'הפעלה'}
           >
-            {isPlaying ? <Pause className="w-4 h-4 fill-black" data-icon="play" /> : <Play className="w-4 h-4 fill-black ml-0.5" data-icon="play" />}
+            {isPlaying ? <Pause className="w-4 h-4 fill-[#050a14]" data-icon="play" /> : <Play className="w-4 h-4 fill-[#050a14] ml-0.5" data-icon="play" />}
           </button>
 
         <div className="col-span-2 sm:col-span-1 sm:col-start-3 sm:row-start-1 justify-self-center sm:justify-self-end flex items-center gap-2">
