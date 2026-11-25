@@ -347,7 +347,8 @@
 .pa-actions strong { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .community-tools button { border: 1px solid rgba(255,255,255,.16); }
 .community-main > .community-lede { font-size: 1.05rem; }
-.pa-calendar-layout { grid-template-columns: minmax(0, 1fr) 280px; align-items: start; }
+.pa-calendar-layout { grid-template-columns: minmax(0, 1fr); align-items: start; width: 100%; }
+.pa-month { width: 100%; }
 .pa-pod { display: grid; gap: 4px; text-align: start; border-color: rgba(240, 212, 138, .45); }
 .pa-pod strong { font-size: 1.2rem; }
 .pa-chips { display: flex; flex-wrap: wrap; gap: 8px; }
