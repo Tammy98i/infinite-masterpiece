@@ -41,6 +41,7 @@ export const WatchView: React.FC = () => {
   const { muteMedia } = useA11yPrefs();
   const [searchParams] = useSearchParams();
   const jumpTo = Number(searchParams.get('t'));
+  const jumped = useRef('');
 
   const course = courses.find((c) => c.id === selectedCourseId);
   const episodeIndex = course?.episodes.findIndex((e) => e.id === selectedEpisodeId) ?? -1;
@@ -135,18 +136,17 @@ export const WatchView: React.FC = () => {
       setPreviewEnded(true);
       return;
     }
-    if (Number.isFinite(jumpTo) && jumpTo > 0) {
+    const jumpKey = `${episode?.id || ''}:${jumpTo}`;
+    if (Number.isFinite(jumpTo) && jumpTo > 0 && jumped.current !== jumpKey) {
       video.currentTime = previewing ? Math.min(jumpTo, PREVIEW_SECONDS - 1) : jumpTo;
-    } else if (savedProg && savedProg.currentTime > 5 && !savedProg.completed) {
+      jumped.current = jumpKey;
+    } else if (!(Number.isFinite(jumpTo) && jumpTo > 0) && savedProg && savedProg.currentTime > 5 && !savedProg.completed) {
       const startAt = previewing ? Math.min(savedProg.currentTime, PREVIEW_SECONDS - 1) : savedProg.currentTime;
       video.currentTime = startAt;
     }
     setShowEndOverlay(false);
-    for (const track of Array.from(video.textTracks) as TextTrack[]) {
-      track.mode = captionsOn ? 'showing' : 'hidden';
-    }
     void video.play().catch(() => setIsPlaying(false));
-  }, [episode?.id, locked, previewing, playbackUrl, captionsOn, jumpTo]);
+  }, [episode?.id, locked, previewing, playbackUrl, jumpTo]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -171,7 +171,7 @@ export const WatchView: React.FC = () => {
     for (const track of Array.from(video.textTracks) as TextTrack[]) {
       track.mode = captionsOn ? 'showing' : 'hidden';
     }
-  }, [captionsOn]);
+  }, [captionsOn, playbackUrl]);
 
   useEffect(() => {
     const onFs = () => setIsFullscreen(Boolean(document.fullscreenElement));
