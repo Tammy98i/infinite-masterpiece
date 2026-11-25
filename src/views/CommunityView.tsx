@@ -183,14 +183,14 @@ export function CommunityView() {
         </button>
         <nav className="community-nav" aria-label="האזור האישי">
           {PRIMARY.map((id) => (
-            <button key={id} type="button" aria-current={area === id ? 'page' : undefined} onClick={() => { setArea(id); closeRail(); }}>
+            <button key={id} type="button" aria-current={area === id ? 'page' : undefined} onClick={() => { setArea(id); setMoreOpen(false); closeRail(); }}>
               {railLabel(id)}
             </button>
           ))}
-          <button type="button" aria-expanded={moreOpen || MORE.includes(area)} onClick={() => setMoreOpen((value) => !value)}>עוד</button>
-          {moreOpen || MORE.includes(area) ? MORE.map((id) => (
+          <button type="button" aria-expanded={moreOpen} onClick={() => setMoreOpen((value) => !value)}>עוד</button>
+          {moreOpen ? MORE.map((id) => (
             <span key={id} className="community-nav-slot">
-              <button type="button" aria-current={area === id ? 'page' : undefined} onClick={() => { setArea(id); closeRail(); }}>
+              <button type="button" aria-current={area === id ? 'page' : undefined} onClick={() => { setArea(id); setMoreOpen(true); closeRail(); }}>
                 {railLabel(id)}
               </button>
               {id === 'calendar' && assignedPod ? (
