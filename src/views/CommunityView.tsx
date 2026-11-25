@@ -339,10 +339,10 @@ export function CommunityView() {
                 <strong>{getContinueWatchingList()[0]?.course.title}</strong>
               </button>
             ) : null}
-            <CourseShelf title="כל ההרצאות" noun="הרצאה" courses={lessons} query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} />
+            <CourseShelf title="כל ההרצאות" noun="הרצאה" courses={lessons} categories={categories} query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} />
           </>
         ) : null}
-        {area === 'shorts' ? <CourseShelf title="" noun="הדרכה" courses={shorts} video query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} /> : null}
+        {area === 'shorts' ? <CourseShelf title="" noun="הדרכה" courses={shorts} categories={categories} video query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} /> : null}
         {area === 'club' ? <ClubCard plan={user.subscriptionPlan} trialEndsAt={user.trialEndsAt} /> : null}
         {area === 'agents' ? <AgentGrid onContact={() => setArea('contact')} /> : null}
         {area === 'hall' && home ? <HallOfFame user={user} posts={home.posts} watches={getWatchHistory().length} /> : null}

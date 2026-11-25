@@ -320,7 +320,10 @@
 .pa-pod { display: grid; gap: 4px; text-align: start; border-color: rgba(240, 212, 138, .45); }
 .pa-pod strong { font-size: 1.2rem; }
 .pa-chips { display: flex; flex-wrap: wrap; gap: 8px; }
-.pa-chips button { width: auto; border: 1px solid rgba(240, 212, 138, .4); border-radius: 999px; }
+.pa-chips button { width: auto; border: 1px solid rgba(223, 196, 125, .4); border-radius: 999px; color: #e0edff; }
+.pa-chips button[aria-pressed='true'] { background: #b79043; color: #050a14; }
+.pa-month-list { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 6px; }
+.pa-month-list li { color: #e0edff; }
 .pa-empty { display: grid; justify-items: start; gap: 8px; }
 .pa-club .community-publish { margin-top: 8px; }
 .pa-empty button { min-height: 44px; border: 0; border-radius: 12px; background: #f0d48a; color: #1a1204; font-weight: 700; }

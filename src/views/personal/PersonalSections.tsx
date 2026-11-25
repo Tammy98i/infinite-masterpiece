@@ -466,15 +466,24 @@ export function AreaTop({ initial, avatar, query, onQuery, onBoard }: { initial:
   );
 }
 
-export function CourseShelf({ title, courses, noun, onOpen, query = '', onQuery, video = false }: { title: string; courses: Course[]; noun: string; onOpen: (id: string) => void; query?: string; onQuery?: (value: string) => void; video?: boolean }) {
+export function CourseShelf({ title, courses, noun, onOpen, query = '', onQuery, video = false, categories = [] }: { title: string; courses: Course[]; noun: string; onOpen: (id: string) => void; query?: string; onQuery?: (value: string) => void; video?: boolean; categories?: Array<{ id: string; name: string }> }) {
   const [local, setLocal] = useState('');
+  const [categoryId, setCategoryId] = useState('');
   const term = onQuery ? query : local;
   const setTerm = onQuery || setLocal;
-  const shown = courses.filter((course) => course.title.includes(term.trim()));
+  const shown = courses.filter((course) => course.title.includes(term.trim()) && (!categoryId || course.categoryId === categoryId));
   const count = shown.length === 1 ? `${noun} אחת` : `${shown.length} ${noun === 'הרצאה' ? 'הרצאות' : 'הדרכות'}`;
   return (
     <section className={video ? 'pa-shelf pa-videos' : 'pa-shelf'}>
       <div className="pa-rowhead">{title ? <h2>{title}</h2> : null}<span>{count}</span></div>
+      {categories.length > 0 ? (
+        <div className="pa-chips">
+          <button type="button" aria-pressed={!categoryId} onClick={() => setCategoryId('')}>הכל</button>
+          {categories.map((category) => (
+            <button key={category.id} type="button" aria-pressed={categoryId === category.id} onClick={() => setCategoryId(category.id)}>{category.name}</button>
+          ))}
+        </div>
+      ) : null}
       {onQuery ? null : <input value={term} onChange={(event) => setTerm(event.target.value)} placeholder={`הקלידו שם של ${noun}`} aria-label={`חיפוש ${noun}`} />}
       {term.trim() && shown.length === 0 ? (
         <div className="pa-empty">
@@ -539,7 +548,14 @@ export function MonthBoard({ sessions }: { sessions: ClubSession[] }) {
           </span>
         ))}
       </div>
-      {marked.size === 0 ? <p className="pa-note">אין מפגש בחודש הזה.</p> : null}
+      {marked.size === 0 ? <p className="pa-note">אין מפגש בחודש הזה.</p> : (
+        <ul className="pa-month-list">
+          {[...marked.entries()].map(([day, session]) => {
+            const parts = jerusalemParts(session.startsAt);
+            return <li key={day}>{day}.{month + 1} · {parts?.time} · {session.title}</li>;
+          })}
+        </ul>
+      )}
     </section>
   );
 }
@@ -554,14 +570,22 @@ export function EventList({
   onOpenCalendar: () => void;
 }) {
   const now = Date.now();
+  const [scope, setScope] = useState<'all' | 'soon' | 'past'>('all');
   const upcoming = sessions.filter((session) => new Date(session.startsAt).getTime() >= now);
   const past = sessions.filter((session) => new Date(session.startsAt).getTime() < now);
+  const showSoon = scope !== 'past';
+  const showPast = scope !== 'soon';
   return (
     <div className="pa-events">
+      <div className="pa-chips">
+        <button type="button" aria-pressed={scope === 'all'} onClick={() => setScope('all')}>הכל</button>
+        <button type="button" aria-pressed={scope === 'soon'} onClick={() => setScope('soon')}>קרובים</button>
+        <button type="button" aria-pressed={scope === 'past'} onClick={() => setScope('past')}>שעברו</button>
+      </div>
       <section className="pa-card">
         <h2>המפגשים</h2>
         {upcoming.length === 0 && past.length === 0 ? <p className="pa-note">עדיין אין מפגש בלוח.</p> : null}
-        {upcoming.map((session) => {
+        {showSoon ? upcoming.map((session) => {
           const parts = jerusalemParts(session.startsAt);
           return (
             <button key={session.startsAt} type="button" className="pa-event pa-meet" onClick={onOpenSession}>
@@ -569,8 +593,8 @@ export function EventList({
               <span><strong>{session.title}</strong><em>{parts ? `${parts.day}.${parts.month + 1} · ${parts.time}` : 'מפגש קרוב'}</em></span>
             </button>
           );
-        })}
-        {past.map((session) => {
+        }) : null}
+        {showPast ? past.map((session) => {
           const parts = jerusalemParts(session.startsAt);
           return (
             <article key={session.startsAt} className="pa-course pa-recording">
@@ -579,7 +603,7 @@ export function EventList({
               <em>ההקלטה תתווסף כשהיא מוכנה</em>
             </article>
           );
-        })}
+        }) : null}
         <button type="button" className="community-publish" onClick={onOpenCalendar}>ללוח</button>
       </section>
     </div>
