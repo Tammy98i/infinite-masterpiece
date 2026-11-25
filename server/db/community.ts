@@ -313,6 +313,7 @@ export function getCommunityHome(db: DatabaseSync, user: AuthUser | null, reques
       hidden: row.status === 'hidden',
       createdAt: row.created_at,
       canEdit: row.author_id === user.id && withinEditWindow(row.created_at),
+      mine: row.author_id === user.id,
       author: authorFrom(row),
       hearts: hearts.get(row.id) || 0,
       hearted: mineHearts.has(row.id),

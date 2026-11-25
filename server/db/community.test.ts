@@ -110,6 +110,8 @@ test('edit stays open for fifteen minutes, then a mute and the report queue take
   const admin = user({ id: 'admin', role: 'admin', subscriptionPlan: 'annual', name: 'תמי אלון' });
   const id = createCommunityPost(db, paid, { channel: 'talk', body: 'טיוטה ראשונה' });
   assert.equal(getCommunityHome(db, paid, 'talk').posts[0].canEdit, true);
+  assert.equal(getCommunityHome(db, paid, 'talk').posts[0].mine, true);
+  assert.equal(getCommunityHome(db, admin, 'talk').posts[0].mine, false);
   editCommunityPost(db, paid, id, 'טקסט אחרי עריכה');
   assert.equal(getCommunityHome(db, paid, 'talk').posts[0].body, 'טקסט אחרי עריכה');
   db.prepare(`UPDATE community_posts SET created_at = datetime('now', '-20 minutes') WHERE id = ?`).run(id);

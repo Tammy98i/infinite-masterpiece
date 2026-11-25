@@ -26,6 +26,7 @@ export type CommunityPost = {
   hidden: boolean;
   createdAt: string;
   canEdit: boolean;
+  mine?: boolean;
   author: CommunityAuthor;
   hearts: number;
   hearted: boolean;

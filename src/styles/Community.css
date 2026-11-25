@@ -480,6 +480,8 @@
 .pa-card-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
 .pa-card-row .pa-cover img, .pa-card-row .pa-fallback { height: 112px; }
 .pa-compose-line { display: flex; align-items: center; gap: 8px; }
+.pa-compose-extra { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.pa-file { display: inline-flex; align-items: center; min-height: 40px; border: 1px solid rgba(223, 196, 125, .28); border-radius: 999px; padding: 0 12px; color: #dfc47d; }
 .pa-feed-card .pa-composer, .pa-compose-line input { flex: 1; text-align: start; border-radius: 999px; background: rgba(5, 10, 20, .55); color: #e0edff; border: 1px solid rgba(223, 196, 125, .28); }
 .pa-pills { display: flex; gap: 6px; }
 .pa-pills span, .pa-pills button { min-height: 32px; border-radius: 999px; padding: 0 10px; background: rgba(5, 10, 20, .45); color: #e0edff; }

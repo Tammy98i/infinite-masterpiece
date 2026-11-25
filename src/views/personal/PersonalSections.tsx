@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { DEFAULT_WEBINAR_CONFIG } from '../../constants/webinar';
+import { uploadFile } from '../../api/upload';
 import type { CommunityPost } from '../../api/community';
 import type { Category, Course, Instructor, LearningPath, UserProfile, WatchProgress } from '../../types';
 
@@ -109,6 +110,8 @@ export function HomeDesk({
   savedIds = [],
   onToggleSave,
   onPublish,
+  onReact,
+  onReply,
 }: {
   user: UserProfile;
   posts: CommunityPost[];
@@ -140,7 +143,9 @@ export function HomeDesk({
   onWatch: (courseId: string, episodeId: string) => void;
   savedIds: string[];
   onToggleSave: (courseId: string) => void;
-  onPublish: (text: string) => Promise<void>;
+  onPublish: (input: { body: string; lectureTitle?: string; imageUrl?: string }) => Promise<void>;
+  onReact: (postId: string) => Promise<void>;
+  onReply: (postId: string, text: string) => Promise<void>;
 }) {
   const checks = [
     { field: 'profile-name', label: 'שם מלא', done: Boolean(user.name && user.name !== 'אורח/ת') },
@@ -154,8 +159,10 @@ export function HomeDesk({
   const [feedScope, setFeedScope] = useState<'all' | 'mine'>('all');
   const [sending, setSending] = useState(false);
   const [sendNote, setSendNote] = useState('');
-  const firstName = user.name.split(' ')[0] || '';
-  const shownPosts = posts.filter((post) => feedScope === 'all' || post.author.firstName === firstName);
+  const [lectureTitle, setLectureTitle] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [replyText, setReplyText] = useState('');
+  const shownPosts = posts.filter((post) => feedScope === 'all' || post.mine);
   const featured = shownPosts[0];
   const portrait = user.avatar && !user.avatar.includes('images.unsplash.com') ? user.avatar : '';
   const [now, setNow] = useState(() => Date.now());
@@ -244,8 +251,10 @@ export function HomeDesk({
             }
             setSending(true);
             setSendNote('');
-            void onPublish(draft.trim()).then(() => {
+            void onPublish({ body: draft.trim(), lectureTitle: lectureTitle.trim(), imageUrl }).then(() => {
               setDraft('');
+              setLectureTitle('');
+              setImageUrl('');
               setFeedScope('all');
             }).catch((err: unknown) => {
               setSendNote(err instanceof Error ? err.message : 'השליחה נכשלה');
@@ -256,12 +265,40 @@ export function HomeDesk({
             <input id="pa-home-post" value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="כתבו כאן הודעה לקהילה" />
             <button type="submit" className="community-publish" disabled={sending}>{sending ? 'שולח…' : 'שליחה'}</button>
           </form>
+          <div className="pa-compose-extra">
+            <label className="pa-file">
+              תמונה
+              <input className="community-sr" type="file" accept="image/*" onChange={(event) => {
+                const file = event.target.files?.[0];
+                event.target.value = '';
+                if (!file) return;
+                void uploadFile(file, 'image').then(setImageUrl).catch((err: unknown) => {
+                  setSendNote(err instanceof Error ? err.message : 'העלאה נכשלה');
+                });
+              }} />
+            </label>
+            <input value={lectureTitle} onChange={(event) => setLectureTitle(event.target.value)} placeholder="שם הרצאה, אם רוצים" aria-label="שם הרצאה" />
+          </div>
+          {imageUrl ? <img className="community-photo" src={imageUrl} alt="" /> : null}
           {sendNote ? <p className="pa-note" role="status">{sendNote}</p> : null}
           {featured ? (
             <article className="pa-post">
               <header><span className="community-initial" aria-hidden="true">{featured.author.firstName.trim().charAt(0)}</span><strong>{featured.author.firstName}</strong></header>
               <p>{featured.body}</p>
-              <div className="pa-post-tools"><span>אהבתי {featured.hearts}</span><span>תגובות {featured.replies.length}</span><button type="button" onClick={onOpenFeed}>שמירה</button></div>
+              <div className="pa-post-tools">
+                <button type="button" aria-pressed={featured.hearted} onClick={() => void onReact(featured.id)}>אהבתי {featured.hearts}</button>
+                <span>תגובות {featured.replies.length}</span>
+                <button type="button" onClick={onOpenFeed}>לשיחה</button>
+              </div>
+              <form className="pa-compose-line" onSubmit={(event) => {
+                event.preventDefault();
+                if (replyText.trim().length < 2) return;
+                void onReply(featured.id, replyText.trim()).then(() => setReplyText(''));
+              }}>
+                <label className="community-sr" htmlFor="pa-home-reply">תגובה</label>
+                <input id="pa-home-reply" value={replyText} onChange={(event) => setReplyText(event.target.value)} placeholder="כתבו תגובה" />
+                <button type="submit" className="community-publish">תגובה</button>
+              </form>
             </article>
           ) : <p className="pa-note">כתבו את ההודעה הראשונה.</p>}
         </section>

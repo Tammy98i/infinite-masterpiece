@@ -4,6 +4,7 @@ import { podsApi } from '../api/pods';
 import { communityApi, type CommunityHome, type CommunityPost } from '../api/community';
 import { uploadFile } from '../api/upload';
 import { useApp } from '../context/AppContext';
+import { useMyListToggle } from '../utils/useMyListToggle';
 import {
   AREAS,
   AREA_NOTES,
@@ -57,7 +58,8 @@ function Badge({ value }: { value: string }) {
 }
 
 export function CommunityView() {
-  const { setView, logout, toggleMyList, user, courses, categories, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory, getMyLectures, getRecommendedForUser } = useApp();
+  const { setView, logout, user, courses, categories, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory, getMyLectures, getRecommendedForUser } = useApp();
+  const toggleSaved = useMyListToggle();
   const navigate = useNavigate();
   const composerId = useId();
   const [channel, setChannel] = useState('talk');
@@ -298,9 +300,17 @@ export function CommunityView() {
             onOpenSession={() => navigate('/pod')}
             onWatch={(courseId, episodeId) => setView('watch', { courseId, episodeId })}
             savedIds={myList}
-            onToggleSave={toggleMyList}
-            onPublish={async (text) => {
-              await communityApi.post({ channel, body: text });
+            onToggleSave={toggleSaved}
+            onPublish={async (input) => {
+              await communityApi.post({ channel, body: input.body, lectureTitle: input.lectureTitle, imageUrl: input.imageUrl });
+              await refresh();
+            }}
+            onReact={async (postId) => {
+              await communityApi.react(postId);
+              await refresh();
+            }}
+            onReply={async (postId, text) => {
+              await communityApi.reply(postId, text);
               await refresh();
             }}
           />
@@ -318,7 +328,20 @@ export function CommunityView() {
             onOpenCalendar={() => setArea('calendar')}
           />
         ) : null}
-        {area === 'courses' ? <CourseShelf title="כל ההרצאות" noun="הרצאה" courses={lessons} query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} /> : null}
+        {area === 'courses' ? (
+          <>
+            {getContinueWatchingList()[0] ? (
+              <button type="button" className="pa-card pa-continue" onClick={() => {
+                const item = getContinueWatchingList()[0];
+                if (item) setView('watch', { courseId: item.course.id, episodeId: item.episode.id });
+              }}>
+                <span>המשך צפייה</span>
+                <strong>{getContinueWatchingList()[0]?.course.title}</strong>
+              </button>
+            ) : null}
+            <CourseShelf title="כל ההרצאות" noun="הרצאה" courses={lessons} query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} />
+          </>
+        ) : null}
         {area === 'shorts' ? <CourseShelf title="" noun="הדרכה" courses={shorts} video query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} /> : null}
         {area === 'club' ? <ClubCard plan={user.subscriptionPlan} trialEndsAt={user.trialEndsAt} /> : null}
         {area === 'agents' ? <AgentGrid onContact={() => setArea('contact')} /> : null}
