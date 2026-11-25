@@ -511,7 +511,7 @@
 .pa-top input::placeholder { color: rgba(224, 237, 255, .62); }
 .pa-wa { width: 40px; height: 40px; border-radius: 50%; background: #dfc47d; color: #050a14; display: grid; place-items: center; text-decoration: none; font-weight: 700; flex: none; }
 .pa-board-btn { min-height: 40px; border-radius: 999px; background: rgba(8, 14, 26, .92); border: 1px solid rgba(223, 196, 125, .28); color: #e0edff; font-weight: 700; display: inline-flex; align-items: center; padding: 0 14px; }
-.pa-dash { direction: ltr; grid-template-columns: minmax(0, 1fr) 292px; }
+.pa-dash { direction: rtl; grid-template-columns: minmax(0, 1fr) 292px; }
 .pa-stream, .pa-context { direction: rtl; }
 .pa-now { display: grid; grid-template-columns: minmax(140px, 220px) minmax(0, 1fr); gap: 16px; align-items: center; padding: 8px; border: 1px solid rgba(223, 196, 125, .28); border-radius: 22px; background: rgba(8, 14, 26, .72); }
 .pa-now-cover { padding: 0; border: 0; border-radius: 16px; overflow: hidden; background: #101a35; min-height: 120px; }
