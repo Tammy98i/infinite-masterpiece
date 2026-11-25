@@ -253,11 +253,65 @@
 .pa-member strong, .pa-member span { display: block; }
 .pa-member span { color: rgba(224, 237, 255, .7); font-size: .78rem; overflow: hidden; text-overflow: ellipsis; }
 .pa-learning, .pa-agent-note { display: grid; gap: 12px; }
-.pa-filter-toggle { display: none; }
+.pa-catpick { position: relative; justify-self: start; }
+.pa-catpick > button {
+  min-height: 44px;
+  padding: 0 18px;
+  border: 1px solid rgba(223, 196, 125, .45);
+  border-radius: 999px;
+  background: #b79043;
+  color: #050a14;
+  font-weight: 700;
+}
+.pa-catpick > button::after {
+  content: '';
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-inline-start: 10px;
+  border: 5px solid transparent;
+  border-top-color: currentColor;
+  border-bottom-width: 0;
+  transform: translateY(1px);
+}
+.pa-catpick:has([aria-expanded='true']) > button::after {
+  border-top-color: transparent;
+  border-bottom-width: 5px;
+  border-bottom-color: currentColor;
+  transform: translateY(-1px);
+}
+.pa-catpick ul {
+  position: absolute;
+  inset-inline-start: 0;
+  top: calc(100% + 6px);
+  z-index: 8;
+  margin: 0;
+  padding: 8px;
+  list-style: none;
+  display: grid;
+  gap: 4px;
+  min-width: min(100vw - 48px, 280px);
+  max-height: 280px;
+  overflow: auto;
+  background: rgba(8, 14, 26, .96);
+  border: 1px solid rgba(223, 196, 125, .4);
+  border-radius: 16px;
+  box-shadow: 0 16px 32px rgba(0, 0, 0, .35);
+}
+.pa-catpick li { margin: 0; padding: 0; min-height: 0; }
+.pa-catpick li button {
+  width: 100%;
+  min-height: 44px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 12px;
+  background: transparent;
+  color: #e0edff;
+  text-align: start;
+  font-weight: 600;
+}
+.pa-catpick li button[aria-selected='true'] { background: #b79043; color: #050a14; }
 @media (max-width: 760px) {
-  .pa-filter-toggle { display: inline-flex; }
-  .pa-shelf .pa-chips { display: none; }
-  .pa-shelf.is-filtered .pa-chips { display: flex; }
   .pa-grid { grid-template-columns: 1fr; }
 }
 
@@ -652,6 +706,20 @@
 .community-page .community-publish,
 .community-page .pa-reward,
 .community-page .pa-reward :is(strong, span, em),
-.community-page .pa-pills .is-on {
+.community-page .pa-pills .is-on,
+.community-page .pa-catpick > button,
+.community-page .pa-catpick li button[aria-selected='true'] {
   color: #050a14 !important;
+}
+.vod-app.sky-readable .community-page .pa-catpick > button {
+  background: #b79043;
+  color: #050a14;
+}
+.vod-app.sky-readable .community-page .pa-catpick li button {
+  color: #e0edff;
+  background: transparent;
+}
+.vod-app.sky-readable .community-page .pa-catpick li button[aria-selected='true'] {
+  background: #b79043;
+  color: #050a14;
 }
