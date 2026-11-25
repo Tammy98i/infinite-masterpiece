@@ -56,10 +56,12 @@ function parseClock(value: string) {
   return Number(match[1]) * 60 + Number(match[2]);
 }
 
-function areaFromPath(pathname: string): AreaId | null {
+function areaFromPath(pathname: string): 'feed' | 'home' | null {
   const parts = pathname.replace(/\/+$/, '').split('/').filter(Boolean);
   if (parts[0] !== 'library' || parts[1] !== 'community') return null;
-  return parts[2] === 'feed' ? 'feed' : null;
+  if (parts[2] === 'home') return 'home';
+  if (!parts[2] || parts[2] === 'feed') return 'feed';
+  return null;
 }
 
 const SIDE_NAV: Array<{ id: AreaId; label: string }> = [
@@ -96,7 +98,7 @@ export function CommunityView() {
   const [error, setError] = useState('');
   const [pending, setPending] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [area, setAreaState] = useState<AreaId>(() => (areaFromPath(window.location.pathname) === 'feed' ? 'feed' : 'home'));
+  const [area, setAreaState] = useState<AreaId>(() => areaFromPath(window.location.pathname) || 'home');
   const [composeOpen, setComposeOpen] = useState(false);
   const [lectureId, setLectureId] = useState('');
   const [lectureAt, setLectureAt] = useState('');
@@ -146,14 +148,17 @@ export function CommunityView() {
   }, [home, setView]);
 
   useEffect(() => {
-    if (areaFromPath(location.pathname) === 'feed') setAreaState('feed');
+    const next = areaFromPath(location.pathname);
+    if (next === 'feed') setAreaState('feed');
+    if (next === 'home') setAreaState((current) => (current === 'feed' ? 'home' : current));
   }, [location.pathname]);
 
   const setArea = (next: AreaId) => {
     setAreaState(next);
-    const onFeed = location.pathname.replace(/\/+$/, '').endsWith('/community/feed');
-    if (next === 'feed' && !onFeed) navigate('/library/community/feed');
-    if (next !== 'feed' && onFeed) navigate('/library/community');
+    const current = location.pathname.replace(/\/+$/, '');
+    if (next === 'feed' && current !== '/library/community') navigate('/library/community');
+    if (next === 'home' && current !== '/library/community/home') navigate('/library/community/home');
+    if (next !== 'feed' && next !== 'home' && (current === '/library/community' || current.endsWith('/community/feed'))) navigate('/library/community/home');
   };
 
   useEffect(() => {
