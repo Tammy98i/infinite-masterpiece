@@ -12,6 +12,7 @@
   max-width: 100%;
   min-width: 0;
   display: flex;
+  flex-direction: row-reverse;
   overflow-x: clip;
   color: var(--ink);
   background: transparent;
@@ -282,8 +283,8 @@
   .community-dock button { justify-content: center; text-align: center; min-height: 56px; color: #e0edff; background: transparent; }
   .community-dock button[aria-current='page'] { background: transparent; color: #dfc47d; border-inline-start: 0; box-shadow: inset 0 -3px 0 #b79043; }
   .community-rail {
-    position: fixed; inset-block: 0; left: 0; right: auto; width: min(280px, 86vw); transform: translateX(-110%);
-    box-shadow: -8px 0 24px rgba(0,0,0,.12);
+    position: fixed; inset-block: 0; right: 0; left: auto; width: min(280px, 86vw); transform: translateX(110%);
+    box-shadow: 8px 0 24px rgba(0,0,0,.12);
   }
   .community-page.is-rail-open .community-rail { transform: none; }
   .community-page.is-rail-open .community-dock { display: none; }
@@ -493,7 +494,7 @@
 .community-page :is(.pa-card, .pa-course, .community-card, .pa-thumb, .pa-agent) { border-color: rgba(223, 196, 125, .28); box-shadow: none; background: rgba(8, 14, 26, .92); }
 .pa-dash { display: grid; grid-template-columns: minmax(0, 1fr) minmax(240px, 300px); gap: 16px; align-items: start; }
 .community-rail, .community-main, .pa-stream, .pa-context, .community-nav button { direction: rtl; }
-.pa-top { direction: ltr; }
+.pa-top { direction: ltr; flex-direction: row-reverse; }
 .pa-top input { direction: rtl; text-align: right; }
 .community-rail { width: 232px; background: rgba(5, 10, 20, .92); height: 100vh; max-height: 100vh; overflow: hidden; }
 .community-nav { flex: 1 1 auto; min-height: min-content; overflow: auto; }
