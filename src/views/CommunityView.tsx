@@ -57,7 +57,7 @@ function Badge({ value }: { value: string }) {
 }
 
 export function CommunityView() {
-  const { setView, logout, user, courses, categories, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory, getMyLectures, getRecommendedForUser } = useApp();
+  const { setView, logout, toggleMyList, user, courses, categories, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory, getMyLectures, getRecommendedForUser } = useApp();
   const navigate = useNavigate();
   const composerId = useId();
   const [channel, setChannel] = useState('talk');
@@ -238,7 +238,7 @@ export function CommunityView() {
       </nav>
 
       <main className="community-main" id="community-main">
-        <AreaTop initial={initial} query={areaQuery} onQuery={setAreaQuery} onBoard={() => setArea('feed')} />
+        <AreaTop initial={initial} avatar={user.avatar && !user.avatar.includes('images.unsplash.com') ? user.avatar : ''} query={areaQuery} onQuery={setAreaQuery} onBoard={() => setArea('feed')} />
         {term && area !== 'courses' && area !== 'shorts' ? (
           <div className="community-card pa-search-hits">
             {lessonHits.map((course) => (
@@ -297,6 +297,12 @@ export function CommunityView() {
             onOpenCalendar={() => setArea('calendar')}
             onOpenSession={() => navigate('/pod')}
             onWatch={(courseId, episodeId) => setView('watch', { courseId, episodeId })}
+            savedIds={myList}
+            onToggleSave={toggleMyList}
+            onPublish={async (text) => {
+              await communityApi.post({ channel, body: text });
+              await refresh();
+            }}
           />
         ) : null}
         {area === 'calendar' ? (

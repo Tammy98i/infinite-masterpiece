@@ -467,8 +467,8 @@
 .pa-board-btn { min-height: 40px; border-radius: 999px; background: #fff; border: 1px solid rgba(183, 144, 67, .35); color: #1a1204; font-weight: 700; display: inline-flex; align-items: center; padding: 0 14px; }
 .pa-dash { direction: ltr; grid-template-columns: minmax(0, 1fr) 292px; }
 .pa-stream, .pa-context { direction: rtl; }
-.pa-event-hero { position: relative; min-height: 248px; border-radius: 24px; padding: 22px 24px; color: #faf7f2; background: radial-gradient(42% 80% at 72% 48%, rgba(240, 212, 138, .55), transparent 42%), radial-gradient(80% 140% at 78% 40%, #3d3420, #101a35 58%); display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; overflow: hidden; }
-.pa-event-hero::after { content: '∞'; position: absolute; left: 38%; top: 18%; font-size: 9rem; color: rgba(240, 212, 138, .28); line-height: 1; pointer-events: none; }
+.pa-event-hero { position: relative; min-height: 248px; border-radius: 24px; padding: 22px 24px; color: #faf7f2; background: linear-gradient(100deg, rgba(16, 26, 53, .82), rgba(16, 26, 53, .28)), url('/library/hero-stage.jpg') center/cover; display: flex; justify-content: space-between; align-items: flex-end; gap: 16px; overflow: hidden; }
+.pa-event-hero::after { content: '∞'; position: absolute; left: 34%; top: 16%; font-size: 8rem; color: rgba(240, 212, 138, .55); line-height: 1; pointer-events: none; text-shadow: 0 0 24px rgba(240, 212, 138, .45); }
 .pa-hero-copy { position: relative; z-index: 1; display: grid; gap: 8px; justify-items: start; max-width: 28rem; }
 .pa-event-hero span { background: rgba(255,255,255,.16); color: #faf7f2; border-radius: 999px; padding: 4px 10px; font-size: .8rem; }
 .pa-event-hero h2 { color: #fff; margin: 0; font-size: 1.7rem; }
@@ -497,7 +497,12 @@
 .pa-reward, .community-page .community-publish { background: #f0d48a; color: #1a1204; border-radius: 999px; font-weight: 700; }
 .pa-context .pa-profile > button { background: #fff; color: #1a1204; border: 1px solid rgba(183, 144, 67, .45); border-radius: 999px; width: 100%; font-weight: 700; }
 .pa-rowhead button { background: transparent; color: #8a6420; min-height: 32px; font-weight: 700; }
-.pa-card-row .pa-course { border-radius: 18px; box-shadow: 0 10px 24px rgba(23, 23, 23, .06); }
+.pa-card-row .pa-course { position: relative; border-radius: 18px; box-shadow: 0 10px 24px rgba(23, 23, 23, .06); padding-bottom: 36px; }
+.pa-course-open { display: grid; gap: 8px; width: 100%; background: transparent; text-align: start; padding: 0; }
+.pa-pin { position: absolute; inset-inline-start: 8px; bottom: 6px; min-height: 28px; background: transparent; color: #8a6420; font-weight: 700; }
+.pa-pin[aria-pressed='true'] { color: #1a1204; }
+.pa-face { object-fit: cover; padding: 0; }
+.community-page :is(.pa-month, .pa-shelf, .community-card) { border-radius: 18px; }
 .pa-card-row .pa-cover img { height: 128px; object-fit: cover; }
 .pa-reward { display: grid; gap: 2px; padding: 14px; text-align: center; margin-top: 8px; flex: none; background: linear-gradient(180deg, #f0d48a, #b79043); }
 .pa-reward strong, .pa-reward span, .pa-reward em { color: #1a1204; }
