@@ -188,7 +188,8 @@ export function CommunityView() {
       </button>
       <aside id="community-rail" className="community-rail" aria-label="ניווט האזור האישי">
         <button type="button" className="community-brand" onClick={() => { setArea('home'); closeRail(); }}>
-          <span>האזור האישי</span>
+          <span className="community-mark" aria-hidden="true">∞</span>
+          <span className="community-word">Infinite<br />Masterpiece</span>
         </button>
         <nav className="community-nav" aria-label="האזור האישי">
           {SIDE_NAV.map((item) => (
@@ -233,8 +234,8 @@ export function CommunityView() {
       </nav>
 
       <main className="community-main" id="community-main">
-        <AreaTop initial={initial} query={areaQuery} onQuery={setAreaQuery} />
-        <h1>{railLabel(area) || 'ראשי'}</h1>
+        <AreaTop initial={initial} query={areaQuery} onQuery={setAreaQuery} onBoard={() => setArea('feed')} />
+        {area !== 'home' ? <h1>{railLabel(area) || 'ראשי'}</h1> : null}
         {area !== 'home' ? <p className="community-lede">{AREA_NOTES[area]}</p> : null}
         {error ? <p className="community-error" role="alert">{error}</p> : null}
 

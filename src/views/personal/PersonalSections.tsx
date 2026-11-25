@@ -164,21 +164,28 @@ export function HomeDesk({
     <div className="pa-dash">
       <div className="pa-stream">
         <section className="pa-event-hero">
-          <span>המפגש הבא</span>
-          {upcoming && session && when ? (
-            <>
-              <h2>{session.title}</h2>
-              <p>{when.day}.{when.month + 1} · {when.time}{pod ? ` · ${pod.name}` : ''}</p>
-              <div className="pa-count"><b>{count.days}</b><em>ימים</em><b>{count.hours}</b><em>שעות</em><b>{count.mins}</b><em>דקות</em></div>
-              <button type="button" className="community-publish" onClick={pod ? onOpenSession : onOpenCalendar}>ללוח</button>
-            </>
-          ) : (
-            <>
-              <h2>{pod ? pod.name : 'עדיין אין מפגש קרוב'}</h2>
-              <p>{pod ? `שבוע ${pod.week} מתוך 33. אין שעה חדשה בלוח.` : 'כשייקבע מפגש, הוא יופיע כאן.'}</p>
-              <button type="button" className="community-publish" onClick={onOpenCalendar}>ללוח</button>
-            </>
-          )}
+          <div>
+            <span>המפגש הבא</span>
+            {upcoming && session && when ? (
+              <>
+                <h2>{session.title}</h2>
+                <p>{when.day}.{when.month + 1} · {when.time}{pod ? ` · ${pod.name}` : ''}</p>
+              </>
+            ) : (
+              <>
+                <h2>{pod ? pod.name : 'עדיין אין מפגש קרוב'}</h2>
+                <p>{pod ? `שבוע ${pod.week} מתוך 33. אין שעה חדשה בלוח.` : 'כשייקבע מפגש, הוא יופיע כאן.'}</p>
+              </>
+            )}
+            <button type="button" className="community-publish" onClick={upcoming && pod ? onOpenSession : onOpenCalendar}>הוספה ללוח</button>
+          </div>
+          {upcoming ? (
+            <div className="pa-count" aria-label="זמן עד המפגש">
+              <span><b>{count.days}</b><em>ימים</em></span>
+              <span><b>{count.hours}</b><em>שעות</em></span>
+              <span><b>{count.mins}</b><em>דקות</em></span>
+            </div>
+          ) : null}
         </section>
         {continueItem ? (
           <button type="button" className="pa-card pa-continue" onClick={() => onWatch(continueItem.course.id, continueItem.episode.id)}>
@@ -188,8 +195,8 @@ export function HomeDesk({
         ) : null}
         <section>
           <div className="pa-rowhead"><h2>מומלץ לך</h2><button type="button" onClick={onOpenCourses}>הכל</button></div>
-          <div className="pa-grid">
-            {(recommended.length ? recommended : mine).slice(0, 3).map((course) => (
+          <div className="pa-card-row">
+            {(recommended.length ? recommended : mine).slice(0, 4).map((course) => (
               <button key={course.id} type="button" className="pa-course" onClick={() => onOpenCourse(course.id)}>
                 <span className="pa-cover">{course.coverImage ? <img src={course.coverImage} alt="" /> : <span className="pa-fallback" />}<i className="pa-play" aria-hidden="true">▶</i></span>
                 <strong>{course.title}</strong>
@@ -198,10 +205,20 @@ export function HomeDesk({
             ))}
           </div>
         </section>
-        <section className="pa-card">
-          <div className="pa-rowhead"><h2>הקהילה</h2><button type="button" onClick={onOpenFeed}>לכל השיחה</button></div>
-          {featured ? <p><strong>{featured.author.firstName}</strong> · {featured.body}</p> : <p className="pa-note">כתבו את ההודעה הראשונה.</p>}
-          <button type="button" className="community-publish" onClick={onOpenFeed}>לכתיבה</button>
+        <section className="pa-card pa-feed-card">
+          <div className="pa-rowhead">
+            <h2>הקהילה</h2>
+            <div className="pa-pills"><span className="is-on">הכל</span><button type="button" onClick={onOpenFeed}>שלי</button></div>
+            <button type="button" onClick={onOpenFeed}>לכל השיחה</button>
+          </div>
+          <button type="button" className="pa-composer" onClick={onOpenFeed}>כתבו כאן הודעה לקהילה</button>
+          {featured ? (
+            <article className="pa-post">
+              <header><span className="community-initial" aria-hidden="true">{featured.author.firstName.trim().charAt(0)}</span><strong>{featured.author.firstName}</strong></header>
+              <p>{featured.body}</p>
+              <div className="pa-post-tools"><span>אהבתי {featured.hearts}</span><span>תגובות {featured.replies.length}</span><button type="button" onClick={onOpenFeed}>שמירה</button></div>
+            </article>
+          ) : <p className="pa-note">כתבו את ההודעה הראשונה.</p>}
         </section>
         <button type="button" className="pa-fold" aria-expanded={libraryOpen} onClick={() => setLibraryOpen((value) => !value)}>{libraryOpen ? 'פחות בספרייה' : 'עוד בספרייה'}</button>
         {libraryOpen ? (
@@ -303,12 +320,19 @@ export function HomeDesk({
           <p className="pa-note">{user.city || 'האזור האישי'}</p>
           <div className="pa-bar"><span style={{ width: `${Math.round((done / checks.length) * 100)}%` }} /></div>
           <p className="pa-note">השלמת פרופיל · {done} מתוך {checks.length}</p>
+          <div className="pa-mini-stats">
+            <div><b>{posts.filter((post) => post.author.firstName && user.name.startsWith(post.author.firstName)).length}</b><span>הודעות</span></div>
+            <div><b>{user.subscriptionPlan === 'premium_88' ? '88' : user.subscriptionPlan === 'annual' ? 'שנתי' : user.subscriptionPlan === 'monthly' ? 'חודשי' : 'חבר'}</b><span>מסלול</span></div>
+          </div>
           <button type="button" onClick={() => onOpenProfile(missing[0]?.field || 'profile-name')}>עריכת פרופיל</button>
         </section>
         <section className="pa-card">
           <h2>מה חדש</h2>
           {newest.slice(0, 3).map((course) => (
-            <button key={course.id} type="button" className="pa-linkrow" onClick={() => onOpenCourse(course.id)}>{course.title}</button>
+            <button key={course.id} type="button" className="pa-news" onClick={() => onOpenCourse(course.id)}>
+              {course.coverImage ? <img src={course.coverImage} alt="" /> : <i />}
+              <span>{course.title}</span>
+            </button>
           ))}
           {newest.length === 0 ? <p className="pa-note">הרצאות חדשות יופיעו כאן.</p> : null}
         </section>
@@ -345,15 +369,16 @@ function clock(seconds: number) {
   return `${minutes}:${String(rest).padStart(2, '0')}`;
 }
 
-export function AreaTop({ initial, query, onQuery }: { initial: string; query: string; onQuery: (value: string) => void }) {
+export function AreaTop({ initial, query, onQuery, onBoard }: { initial: string; query: string; onQuery: (value: string) => void; onBoard: () => void }) {
   return (
     <div className="pa-top">
-      <span className="community-initial" aria-hidden="true">{initial}</span>
-      <a className="pa-wa" href={DEFAULT_WEBINAR_CONFIG.whatsappGroupUrl} target="_blank" rel="noreferrer">לקבוצת הוואטסאפ</a>
       <form className="pa-search" role="search" onSubmit={(event) => event.preventDefault()}>
         <label className="community-sr" htmlFor="pa-find">חיפוש באזור האישי</label>
-        <input id="pa-find" type="search" value={query} onChange={(event) => onQuery(event.target.value)} placeholder="חיפוש תכנים או הדרכות" />
+        <input id="pa-find" type="search" value={query} onChange={(event) => onQuery(event.target.value)} placeholder="חיפוש הרצאה, מפגש או מילה מהשיחה" />
       </form>
+      <a className="pa-wa" href={DEFAULT_WEBINAR_CONFIG.whatsappGroupUrl} target="_blank" rel="noreferrer">וואטסאפ</a>
+      <button type="button" className="pa-board-btn" onClick={onBoard}>לוח הקהילה</button>
+      <span className="community-initial" aria-hidden="true">{initial}</span>
     </div>
   );
 }
