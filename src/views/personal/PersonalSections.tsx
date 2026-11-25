@@ -389,18 +389,29 @@ export function CourseShelf({ title, courses, noun, onOpen, query = '', onQuery,
   const [categoryId, setCategoryId] = useState('');
   const [menuOpen, setMenuOpen] = useState(false);
   const picker = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
   const term = onQuery ? query : local;
   const setTerm = onQuery || setLocal;
   const shown = courses.filter((course) => course.title.includes(term.trim()) && (!categoryId || course.categoryId === categoryId));
   const count = shown.length === 1 ? `${noun} אחת` : `${shown.length} ${noun === 'הרצאה' ? 'הרצאות' : 'הדרכות'}`;
   const selectedName = categories.find((category) => category.id === categoryId)?.name || 'כל הנושאים';
+  const closeMenu = (restoreFocus = false) => {
+    setMenuOpen(false);
+    if (restoreFocus) trigger.current?.focus();
+  };
+  const chooseCategory = (id: string) => {
+    setCategoryId(id);
+    closeMenu(true);
+  };
   useEffect(() => {
     if (!menuOpen) return;
     const close = (event: MouseEvent) => {
       if (!picker.current?.contains(event.target as Node)) setMenuOpen(false);
     };
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenuOpen(false);
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      closeMenu(true);
     };
     document.addEventListener('mousedown', close);
     document.addEventListener('keydown', onKey);
@@ -415,6 +426,7 @@ export function CourseShelf({ title, courses, noun, onOpen, query = '', onQuery,
       {showFilters && categories.length > 0 ? (
         <div className="pa-catpick" ref={picker}>
           <button
+            ref={trigger}
             type="button"
             aria-haspopup="listbox"
             aria-expanded={menuOpen}
@@ -426,11 +438,11 @@ export function CourseShelf({ title, courses, noun, onOpen, query = '', onQuery,
           {menuOpen ? (
             <ul role="listbox" aria-label="בחירת קטגוריה">
               <li>
-                <button type="button" role="option" aria-selected={!categoryId} onClick={() => { setCategoryId(''); setMenuOpen(false); }}>כל הנושאים</button>
+                <button type="button" role="option" aria-selected={!categoryId} onClick={() => chooseCategory('')}>כל הנושאים</button>
               </li>
               {categories.map((category) => (
                 <li key={category.id}>
-                  <button type="button" role="option" aria-selected={categoryId === category.id} onClick={() => { setCategoryId(category.id); setMenuOpen(false); }}>{category.name}</button>
+                  <button type="button" role="option" aria-selected={categoryId === category.id} onClick={() => chooseCategory(category.id)}>{category.name}</button>
                 </li>
               ))}
             </ul>
