@@ -260,8 +260,16 @@ export function CommunityView() {
           ))}
           {assignedPod ? <button type="button" onClick={() => { closeRail(); navigate('/pod'); }}>הפוד שלי</button> : null}
         </nav>
+        <div className="pa-member">
+          {user.avatar && !user.avatar.includes('images.unsplash.com') ? <img src={user.avatar} alt="" /> : <span className="community-initial" aria-hidden="true">{initial}</span>}
+          <div>
+            <strong>{user.name}</strong>
+            <span>{user.email}</span>
+          </div>
+        </div>
         <div className="community-nav community-nav-foot">
-          <button type="button" onClick={() => { closeRail(); setView('profile'); }}>הגדרות</button>
+          <button type="button" onClick={() => { closeRail(); navigate('/library/profile#profile-name'); }}>הגדרות</button>
+          <button type="button" onClick={() => { closeRail(); navigate('/library/profile#profile-interests'); }}>תחומי עניין</button>
           <button type="button" onClick={() => { closeRail(); logout(); }}>יציאה</button>
         </div>
         <button type="button" className="pa-reward" onClick={() => { setArea('club'); closeRail(); }}>
@@ -284,7 +292,7 @@ export function CommunityView() {
       </nav>
 
       <main className="community-main" id="community-main">
-        <AreaTop initial={initial} avatar={user.avatar && !user.avatar.includes('images.unsplash.com') ? user.avatar : ''} query={areaQuery} onQuery={setAreaQuery} onBoard={() => setArea('feed')} />
+        <AreaTop initial={initial} name={user.name || 'חשבון'} avatar={user.avatar && !user.avatar.includes('images.unsplash.com') ? user.avatar : ''} query={areaQuery} onQuery={setAreaQuery} onBoard={() => setArea('feed')} onProfile={() => navigate('/library/profile#profile-name')} />
         {term && area !== 'courses' && area !== 'shorts' ? (
           <div className="community-card pa-search-hits">
             {lessonHits.map((course) => (
@@ -370,26 +378,37 @@ export function CommunityView() {
             sessions={podSession ? [podSession] : []}
             onOpenSession={() => navigate('/pod')}
             onOpenCalendar={() => setArea('calendar')}
+            suggestion={lessons[0] ? { title: lessons[0].title, onOpen: () => setView('course', { courseId: lessons[0].id }) } : null}
           />
         ) : null}
         {area === 'courses' ? (
-          <>
-            {getContinueWatchingList()[0] ? (
-              <button type="button" className="pa-card pa-continue" onClick={() => {
-                const item = getContinueWatchingList()[0];
-                if (item) setView('watch', { courseId: item.course.id, episodeId: item.episode.id });
-              }}>
-                <span>המשך צפייה</span>
-                <strong>{getContinueWatchingList()[0]?.course.title}</strong>
-              </button>
-            ) : null}
-            <CourseShelf title="כל ההרצאות" noun="הרצאה" courses={lessons} categories={categories} query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} />
-          </>
+          <div className="pa-learning">
+            <section className="pa-card">
+              <h2>בתהליך</h2>
+              {getContinueWatchingList()[0] ? (
+                <button type="button" className="pa-linkrow" onClick={() => {
+                  const item = getContinueWatchingList()[0];
+                  if (item) setView('watch', { courseId: item.course.id, episodeId: item.episode.id });
+                }}>
+                  <strong>{getContinueWatchingList()[0]?.course.title}</strong>
+                  <span>המשך צפייה</span>
+                </button>
+              ) : <p className="pa-note">עוד אין שיעור באמצע. ההרצאה הראשונה תחכה כאן.</p>}
+            </section>
+            <section className="pa-card">
+              <h2>שמרתי להמשך</h2>
+              {courses.filter((course) => myList.includes(course.id)).slice(0, 4).map((course) => (
+                <button key={course.id} type="button" className="pa-linkrow" onClick={() => setView('course', { courseId: course.id })}>{course.title}</button>
+              ))}
+              {myList.length === 0 ? <p className="pa-note">עוד לא שמרתם הרצאה.</p> : null}
+            </section>
+            <CourseShelf title="כל ההרצאות הפתוחות" noun="הרצאה" courses={lessons} categories={categories} query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} />
+          </div>
         ) : null}
-        {area === 'shorts' ? <CourseShelf title="" noun="הדרכה" courses={shorts} categories={categories} video query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} /> : null}
+        {area === 'shorts' ? <CourseShelf title="הדרכות" noun="הדרכה" courses={shorts} video showFilters={false} onOpen={(courseId) => setView('course', { courseId })} /> : null}
         {area === 'club' ? <ClubCard plan={user.subscriptionPlan} trialEndsAt={user.trialEndsAt} /> : null}
         {area === 'agents' ? <AgentGrid onContact={() => setArea('contact')} /> : null}
-        {area === 'hall' && home ? <HallOfFame user={user} posts={home.posts} watches={getWatchHistory().length} /> : null}
+        {area === 'hall' && home ? <HallOfFame user={user} posts={home.posts} watches={getWatchHistory().length} onWrite={() => setArea('feed')} /> : null}
         {area === 'partners' ? <Partners userId={user.id} /> : null}
         {area === 'contact' ? <ContactDesk /> : null}
 

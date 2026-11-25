@@ -239,6 +239,26 @@
 .community-rail-toggle, .community-scrim { display: none; }
 .community-sr { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); border: 0; }
 .community-page :focus-visible { outline: 2px solid var(--gold-ink); outline-offset: 2px; }
+.community-page button, .community-page a { cursor: pointer; }
+.community-page button, .community-page a { transition: background-color .2s ease, color .2s ease, border-color .2s ease; }
+.community-nav button:hover, .pa-linkrow:hover, .pa-lesson-open:hover { background: rgba(223, 196, 125, .1); }
+.community-main h1 { margin: 0 0 6px; font-size: clamp(1.6rem, 3vw, 2.1rem); line-height: 1.25; }
+.community-lede { max-width: 42rem; margin-top: 0; }
+.pa-who { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 8px 0 12px; border-radius: 999px; background: rgba(8, 14, 26, .92); border: 1px solid rgba(223, 196, 125, .28); color: #e0edff; }
+.pa-who img, .pa-who .community-initial { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
+.pa-who strong { max-width: 9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.pa-member { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px; align-items: center; margin-top: 8px; padding: 10px; border: 1px solid rgba(223, 196, 125, .28); border-radius: 16px; background: rgba(8, 14, 26, .72); }
+.pa-member img, .pa-member .community-initial { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
+.pa-member strong, .pa-member span { display: block; }
+.pa-member span { color: rgba(224, 237, 255, .7); font-size: .78rem; overflow: hidden; text-overflow: ellipsis; }
+.pa-learning, .pa-agent-note { display: grid; gap: 12px; }
+.pa-filter-toggle { display: none; }
+@media (max-width: 760px) {
+  .pa-filter-toggle { display: inline-flex; }
+  .pa-shelf .pa-chips { display: none; }
+  .pa-shelf.is-filtered .pa-chips { display: flex; }
+  .pa-grid { grid-template-columns: 1fr; }
+}
 
 @media (max-width: 1100px) {
   .community-layout, .pa-home, .pa-calendar-layout { grid-template-columns: 1fr; }
