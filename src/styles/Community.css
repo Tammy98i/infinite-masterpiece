@@ -247,7 +247,7 @@
 .pa-who { display: flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 8px 0 12px; border-radius: 999px; background: rgba(8, 14, 26, .92); border: 1px solid rgba(223, 196, 125, .28); color: #e0edff; }
 .pa-who img, .pa-who .community-initial { width: 32px; height: 32px; border-radius: 50%; object-fit: cover; }
 .pa-who strong { max-width: 9rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.pa-member { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px; align-items: center; margin-top: 8px; padding: 10px; border: 1px solid rgba(223, 196, 125, .28); border-radius: 16px; background: rgba(8, 14, 26, .72); }
+.pa-member { display: grid; grid-template-columns: 44px minmax(0, 1fr); gap: 10px; align-items: center; margin: 0 0 12px; padding: 10px; width: 100%; border: 1px solid rgba(223, 196, 125, .28); border-radius: 16px; background: rgba(8, 14, 26, .72); color: #e0edff; text-align: start; }
 .pa-member img, .pa-member .community-initial { width: 44px; height: 44px; border-radius: 50%; object-fit: cover; }
 .pa-member strong, .pa-member span { display: block; }
 .pa-member span { color: rgba(224, 237, 255, .7); font-size: .78rem; overflow: hidden; text-overflow: ellipsis; }

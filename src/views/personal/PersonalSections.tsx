@@ -369,15 +369,13 @@ function clock(seconds: number) {
   return `${minutes}:${String(rest).padStart(2, '0')}`;
 }
 
-export function AreaTop({ initial, name, avatar, query, onQuery, onBoard, onProfile }: { initial: string; name: string; avatar?: string; query: string; onQuery: (value: string) => void; onBoard: () => void; onProfile: () => void }) {
+export function AreaTop({ initial, name, avatar, query, onQuery, onProfile }: { initial: string; name: string; avatar?: string; query: string; onQuery: (value: string) => void; onProfile: () => void }) {
   return (
     <div className="pa-top">
       <form className="pa-search" role="search" onSubmit={(event) => event.preventDefault()}>
         <label className="community-sr" htmlFor="pa-find">חיפוש באזור האישי</label>
         <input id="pa-find" type="search" value={query} onChange={(event) => onQuery(event.target.value)} placeholder="חיפוש הרצאה, מפגש או מילה מהשיחה" />
       </form>
-      <a className="pa-wa" href={DEFAULT_WEBINAR_CONFIG.whatsappGroupUrl} target="_blank" rel="noreferrer" aria-label="הצטרפות לקבוצת הוואטסאפ">ו</a>
-      <button type="button" className="pa-board-btn" onClick={onBoard}>הקהילה</button>
       <button type="button" className="pa-who" onClick={onProfile}>
         {avatar ? <img src={avatar} alt="" /> : <span className="community-initial" aria-hidden="true">{initial}</span>}
         <strong>{name}</strong>

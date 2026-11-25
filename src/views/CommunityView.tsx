@@ -248,9 +248,12 @@ export function CommunityView() {
         תפריט
       </button>
       <aside id="community-rail" className="community-rail" aria-label="ניווט האזור האישי">
-        <button type="button" className="community-brand" onClick={() => { setArea('home'); closeRail(); }}>
-          <span className="community-mark" aria-hidden="true">∞</span>
-          <span className="community-word">Infinite<br />Masterpiece</span>
+        <button type="button" className="pa-member pa-member-brand" onClick={() => { closeRail(); navigate('/library/profile#profile-name'); }}>
+          {user.avatar && !user.avatar.includes('images.unsplash.com') ? <img src={user.avatar} alt="" /> : <span className="community-initial" aria-hidden="true">{initial}</span>}
+          <span>
+            <strong>{user.name}</strong>
+            <span>{user.email}</span>
+          </span>
         </button>
         <nav className="community-nav" aria-label="האזור האישי">
           {SIDE_NAV.map((item) => (
@@ -260,13 +263,6 @@ export function CommunityView() {
           ))}
           {assignedPod ? <button type="button" onClick={() => { closeRail(); navigate('/pod'); }}>הפוד שלי</button> : null}
         </nav>
-        <div className="pa-member">
-          {user.avatar && !user.avatar.includes('images.unsplash.com') ? <img src={user.avatar} alt="" /> : <span className="community-initial" aria-hidden="true">{initial}</span>}
-          <div>
-            <strong>{user.name}</strong>
-            <span>{user.email}</span>
-          </div>
-        </div>
         <div className="community-nav community-nav-foot">
           <button type="button" onClick={() => { closeRail(); navigate('/library/profile#profile-name'); }}>הגדרות</button>
           <button type="button" onClick={() => { closeRail(); navigate('/library/profile#profile-interests'); }}>תחומי עניין</button>
@@ -292,7 +288,7 @@ export function CommunityView() {
       </nav>
 
       <main className="community-main" id="community-main">
-        <AreaTop initial={initial} name={user.name || 'חשבון'} avatar={user.avatar && !user.avatar.includes('images.unsplash.com') ? user.avatar : ''} query={areaQuery} onQuery={setAreaQuery} onBoard={() => setArea('feed')} onProfile={() => navigate('/library/profile#profile-name')} />
+        <AreaTop initial={initial} name={user.name || 'חשבון'} avatar={user.avatar && !user.avatar.includes('images.unsplash.com') ? user.avatar : ''} query={areaQuery} onQuery={setAreaQuery} onProfile={() => navigate('/library/profile#profile-name')} />
         {term && area !== 'courses' && area !== 'shorts' ? (
           <div className="community-card pa-search-hits">
             {lessonHits.map((course) => (
