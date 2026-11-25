@@ -200,10 +200,12 @@ export function getCommunityHome(db: DatabaseSync, user: AuthUser | null, reques
     label: channel.label,
     canPost: !muted && canPostInChannel(user, channel.id),
   }));
-  const channel: CommunityChannelId =
-    requested && isChannel(requested) && canSeeChannel(user, requested) ? requested : 'talk';
+  const specific: CommunityChannelId | null =
+    requested && requested !== 'all' && isChannel(requested) && canSeeChannel(user, requested) ? requested : null;
+  const channel = specific || 'all';
+  const scope = specific ? [specific] : channels.map((item) => item.id);
 
-  const params: Array<string | number> = [channel, user.id, user.role === 'admin' ? 1 : 0];
+  const params: Array<string | number> = [...scope, user.id, user.role === 'admin' ? 1 : 0];
   let older = '';
   if (cursor) {
     const [createdAt, id] = cursor.split('|');
@@ -218,7 +220,7 @@ export function getCommunityHome(db: DatabaseSync, user: AuthUser | null, reques
               u.id as author_id, u.full_name, u.role, u.subscription_plan, u.is_founder, u.avatar
        FROM community_posts p
        JOIN users u ON u.id = p.author_id
-       WHERE p.channel = ?
+       WHERE ${scope.length ? `p.channel IN (${scope.map(() => '?').join(',')})` : '0'}
          AND (p.status = 'visible' OR p.author_id = ? OR ? = 1)
          ${older}
        ORDER BY p.pinned DESC, p.created_at DESC, p.id DESC

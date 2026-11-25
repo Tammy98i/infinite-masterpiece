@@ -62,7 +62,7 @@ export function CommunityView() {
   const toggleSaved = useMyListToggle();
   const navigate = useNavigate();
   const composerId = useId();
-  const [channel, setChannel] = useState('talk');
+  const [channel, setChannel] = useState('all');
   const [home, setHome] = useState<CommunityHome | null>(null);
   const [body, setBody] = useState('');
   const [lecture, setLecture] = useState('');
@@ -154,7 +154,7 @@ export function CommunityView() {
     setPending(true);
     setError('');
     try {
-      await communityApi.post({ channel, body, lectureTitle: lecture, imageUrl });
+      await communityApi.post({ channel: channel === 'all' ? 'talk' : channel, body, lectureTitle: lecture, imageUrl });
       setBody('');
       setLecture('');
       setImageUrl('');
@@ -178,7 +178,9 @@ export function CommunityView() {
   };
 
   const open = home?.access === 'open';
-  const current = home?.channels.find((item) => item.id === channel);
+  const current = channel === 'all'
+    ? { id: 'all', label: 'הכל', canPost: Boolean(home?.channels.find((item) => item.id === 'talk')?.canPost) }
+    : home?.channels.find((item) => item.id === channel);
   const initial = home?.me?.initial || user.name.trim().charAt(0) || 'ח';
 
   const closeRail = () => setMenuOpen(false);
@@ -215,19 +217,8 @@ export function CommunityView() {
           <em>למועדון</em>
         </button>
         {area === 'feed' && home && open ? (
-          <div className="community-channels" aria-label="ערוצים">
-            <h2>ערוצים</h2>
-            {home.channels.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className="community-channel"
-                aria-current={item.id === channel ? 'page' : undefined}
-                onClick={() => { setChannel(item.id); closeRail(); }}
-              >
-                {item.label}
-              </button>
-            ))}
+          <div className="community-channels" aria-label="הקהילה">
+            <h2>הכל</h2>
           </div>
         ) : null}
       </aside>
@@ -302,7 +293,7 @@ export function CommunityView() {
             savedIds={myList}
             onToggleSave={toggleSaved}
             onPublish={async (input) => {
-              await communityApi.post({ channel, body: input.body, lectureTitle: input.lectureTitle, imageUrl: input.imageUrl });
+              await communityApi.post({ channel: channel === 'all' ? 'talk' : channel, body: input.body, lectureTitle: input.lectureTitle, imageUrl: input.imageUrl });
               await refresh();
             }}
             onReact={async (postId) => {
