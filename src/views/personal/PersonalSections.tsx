@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { DEFAULT_WEBINAR_CONFIG } from '../../constants/webinar';
 import type { CommunityPost } from '../../api/community';
@@ -387,24 +387,67 @@ export function AreaTop({ initial, name, avatar, query, onQuery, onProfile }: { 
 export function CourseShelf({ title, courses, noun, onOpen, query = '', onQuery, video = false, categories = [], showFilters = true }: { title: string; courses: Course[]; noun: string; onOpen: (id: string) => void; query?: string; onQuery?: (value: string) => void; video?: boolean; categories?: Array<{ id: string; name: string }>; showFilters?: boolean }) {
   const [local, setLocal] = useState('');
   const [categoryId, setCategoryId] = useState('');
-  const [filtersOpen, setFiltersOpen] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
+  const picker = useRef<HTMLDivElement>(null);
+  const trigger = useRef<HTMLButtonElement>(null);
   const term = onQuery ? query : local;
   const setTerm = onQuery || setLocal;
   const shown = courses.filter((course) => course.title.includes(term.trim()) && (!categoryId || course.categoryId === categoryId));
   const count = shown.length === 1 ? `${noun} אחת` : `${shown.length} ${noun === 'הרצאה' ? 'הרצאות' : 'הדרכות'}`;
+  const selectedName = categories.find((category) => category.id === categoryId)?.name || 'כל הנושאים';
+  const closeMenu = (restoreFocus = false) => {
+    setMenuOpen(false);
+    if (restoreFocus) trigger.current?.focus();
+  };
+  const chooseCategory = (id: string) => {
+    setCategoryId(id);
+    closeMenu(true);
+  };
+  useEffect(() => {
+    if (!menuOpen) return;
+    const close = (event: MouseEvent) => {
+      if (!picker.current?.contains(event.target as Node)) setMenuOpen(false);
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key !== 'Escape') return;
+      event.preventDefault();
+      closeMenu(true);
+    };
+    document.addEventListener('mousedown', close);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', close);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [menuOpen]);
   return (
-    <section className={`${video ? 'pa-shelf pa-videos' : 'pa-shelf'}${filtersOpen ? ' is-filtered' : ''}`}>
+    <section className={video ? 'pa-shelf pa-videos' : 'pa-shelf'}>
       <div className="pa-rowhead">{title ? <h2>{title}</h2> : null}<span>{count}</span></div>
       {showFilters && categories.length > 0 ? (
-        <>
-          <button type="button" className="pa-filter-toggle" aria-expanded={filtersOpen} onClick={() => setFiltersOpen((value) => !value)}>{filtersOpen ? 'סגירת הסינון' : 'סינון'}</button>
-          <div className="pa-chips">
-            <button type="button" aria-pressed={!categoryId} onClick={() => setCategoryId('')}>כל הנושאים</button>
-            {categories.map((category) => (
-              <button key={category.id} type="button" aria-pressed={categoryId === category.id} onClick={() => setCategoryId(category.id)}>{category.name}</button>
-            ))}
-          </div>
-        </>
+        <div className="pa-catpick" ref={picker}>
+          <button
+            ref={trigger}
+            type="button"
+            aria-haspopup="listbox"
+            aria-expanded={menuOpen}
+            aria-label={`בחירת קטגוריה, נבחר: ${selectedName}`}
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            {selectedName}
+          </button>
+          {menuOpen ? (
+            <ul role="listbox" aria-label="בחירת קטגוריה">
+              <li>
+                <button type="button" role="option" aria-selected={!categoryId} onClick={() => chooseCategory('')}>כל הנושאים</button>
+              </li>
+              {categories.map((category) => (
+                <li key={category.id}>
+                  <button type="button" role="option" aria-selected={categoryId === category.id} onClick={() => chooseCategory(category.id)}>{category.name}</button>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
       ) : null}
       {onQuery ? null : <input value={term} onChange={(event) => setTerm(event.target.value)} placeholder={`הקלידו שם של ${noun}`} aria-label={`חיפוש ${noun}`} />}
       {term.trim() && shown.length === 0 ? (
