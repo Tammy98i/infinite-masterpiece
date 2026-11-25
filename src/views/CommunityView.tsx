@@ -224,8 +224,8 @@ export function CommunityView() {
       </aside>
       {menuOpen ? <button type="button" className="community-scrim" aria-label="סגירת התפריט" onClick={closeRail} /> : null}
       <nav className="community-dock" aria-label="ניווט מהיר">
-        <button type="button" aria-current={area === 'home' ? 'page' : undefined} onClick={() => setArea('home')}>ראשי</button>
-        <button type="button" aria-current={area === 'courses' ? 'page' : undefined} onClick={() => setArea('courses')}>הרצאות</button>
+        <button type="button" aria-current={area === 'home' ? 'page' : undefined} onClick={() => setArea('home')}>הבית שלי</button>
+        <button type="button" aria-current={area === 'courses' ? 'page' : undefined} onClick={() => setArea('courses')}>הלמידה שלי</button>
         <button type="button" aria-current={area === 'feed' ? 'page' : undefined} onClick={() => setArea('feed')}>קהילה</button>
         <button type="button" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>עוד</button>
       </nav>
@@ -246,7 +246,7 @@ export function CommunityView() {
             {lessonHits.length + peopleHits.length + postHits.length === 0 ? <p className="pa-note">אין תוצאות עבור «{term}».</p> : null}
           </div>
         ) : null}
-        {area !== 'home' ? <h1>{railLabel(area) || 'ראשי'}</h1> : null}
+        {area !== 'home' ? <h1>{area === 'courses' ? 'הלמידה שלי' : railLabel(area) || 'ראשי'}</h1> : null}
         {area !== 'home' ? <p className="community-lede">{AREA_NOTES[area]}</p> : null}
         {error ? <p className="community-error" role="alert">{error}</p> : null}
 

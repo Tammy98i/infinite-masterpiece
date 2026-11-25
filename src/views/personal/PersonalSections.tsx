@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { DEFAULT_WEBINAR_CONFIG } from '../../constants/webinar';
-import { uploadFile } from '../../api/upload';
 import type { CommunityPost } from '../../api/community';
 import type { Category, Course, Instructor, LearningPath, UserProfile, WatchProgress } from '../../types';
 
@@ -109,9 +108,6 @@ export function HomeDesk({
   onWatch,
   savedIds = [],
   onToggleSave,
-  onPublish,
-  onReact,
-  onReply,
 }: {
   user: UserProfile;
   posts: CommunityPost[];
@@ -155,15 +151,7 @@ export function HomeDesk({
   ];
   const missing = checks.filter((item) => !item.done);
   const [libraryOpen, setLibraryOpen] = useState(false);
-  const [draft, setDraft] = useState('');
-  const [feedScope, setFeedScope] = useState<'all' | 'mine'>('all');
-  const [sending, setSending] = useState(false);
-  const [sendNote, setSendNote] = useState('');
-  const [lectureTitle, setLectureTitle] = useState('');
-  const [imageUrl, setImageUrl] = useState('');
-  const [replyText, setReplyText] = useState('');
-  const shownPosts = posts.filter((post) => feedScope === 'all' || post.mine);
-  const featured = shownPosts[0];
+  const featured = posts[0];
   const portrait = user.avatar && !user.avatar.includes('images.unsplash.com') ? user.avatar : '';
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
@@ -173,140 +161,78 @@ export function HomeDesk({
   }, [session?.startsAt]);
   const when = session ? jerusalemParts(session.startsAt) : null;
   const upcoming = Boolean(session && when && new Date(session.startsAt).getTime() > now);
-  const done = checks.length - missing.length;
   const names = new Map<string, number>();
   posts.forEach((post) => {
     const name = post.author.firstName || 'חבר';
     names.set(name, (names.get(name) || 0) + 1);
   });
   const board = [...names.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'he')).slice(0, 5);
-  const remain = upcoming && session ? Math.max(0, new Date(session.startsAt).getTime() - now) : 0;
-  const count = {
-    days: Math.floor(remain / 86400000),
-    hours: Math.floor((remain % 86400000) / 3600000),
-    mins: Math.floor((remain % 3600000) / 60000),
+  const resume = continueItem
+    ? continueItem.course.episodes.find((episode) => episode.id === continueItem.episode.id) || continueItem.course.episodes[0]
+    : undefined;
+  const starter = continueItem ? null : (recommended.length ? recommended : newest).find((course) => course.episodes[0]);
+  const focus = continueItem?.course || starter || null;
+  const focusEpisode = resume || starter?.episodes[0];
+  const teacher = instructors.find((person) => person.id === focus?.instructorId)?.name || '';
+  const focusMinutes = focusEpisode ? Math.max(1, Math.round((focusEpisode.duration || 0) / 60)) : 0;
+  const missingAction: Record<string, string> = {
+    'profile-name': 'הוספת שם',
+    'profile-avatar': 'הוספת תמונה',
+    'profile-city': 'הוספת עיר',
+    'profile-interests': 'בחירת תחומי עניין',
   };
+  const nextMissing = missing[0];
   return (
     <div className="pa-dash">
       <div className="pa-stream">
-        <section className="pa-event-hero">
-          <div className="pa-hero-copy">
-            <span>המפגש הבא</span>
-            {upcoming && session && when ? (
-              <>
-                <h2>{session.title}</h2>
-                <p>{when.day}.{when.month + 1} · {when.time}{pod ? ` · ${pod.name}` : ''}</p>
-              </>
-            ) : (
-              <>
-                <h2>{pod ? pod.name : 'עדיין אין מפגש קרוב'}</h2>
-                <p>{pod ? `שבוע ${pod.week} מתוך 33. אין שעה חדשה בלוח.` : 'כשייקבע מפגש, הוא יופיע כאן.'}</p>
-              </>
-            )}
-            <button type="button" className="community-publish" onClick={upcoming && pod ? onOpenSession : onOpenCalendar}>{upcoming && pod ? 'למפגש' : 'ללוח'}</button>
-          </div>
-          {upcoming ? (
-            <div className="pa-count" aria-label="זמן עד המפגש">
-              <span><b>{count.days}</b><em>ימים</em></span>
-              <span><b>{count.hours}</b><em>שעות</em></span>
-              <span><b>{count.mins}</b><em>דקות</em></span>
-            </div>
-          ) : null}
+        <section className="pa-now" aria-label="מה אפשר לעשות עכשיו">
+          {focus && focusEpisode ? (
+            <>
+              <span>{continueItem ? 'המשך צפייה' : 'הרצאת פתיחה'}</span>
+              <h2>{focus.title}</h2>
+              <p>{[continueItem ? continueItem.episode.title : '', teacher, focusMinutes ? `${focusMinutes} דקות` : ''].filter(Boolean).join(' · ')}</p>
+              <button type="button" className="community-publish" onClick={() => onWatch(focus.id, focusEpisode.id)}>{continueItem ? 'המשך צפייה' : 'לצפייה'}</button>
+            </>
+          ) : (
+            <>
+              <h2>עדיין אין הרצאה פתוחה</h2>
+              <button type="button" className="community-publish" onClick={onOpenCourses}>כל הקורסים</button>
+            </>
+          )}
         </section>
-        {continueItem ? (
-          <button type="button" className="pa-card pa-continue" onClick={() => onWatch(continueItem.course.id, continueItem.episode.id)}>
-            <span>המשך צפייה</span>
-            <strong>{continueItem.course.title}</strong>
-          </button>
-        ) : null}
+        <div className="pa-updates">
+          {upcoming && session && when ? (
+            <p className="pa-update"><span>{session.title} · {when.day}.{when.month + 1} · {when.time}</span><button type="button" onClick={pod ? onOpenSession : onOpenCalendar}>הרשמה</button></p>
+          ) : <p className="pa-note">אין מפגש מתוכנן.</p>}
+          {featured ? (
+            <p className="pa-update"><span>{featured.author.firstName}: {featured.body}</span><button type="button" onClick={onOpenFeed}>לקהילה</button></p>
+          ) : <p className="pa-note">עדיין אין עדכון מהקהילה.</p>}
+        </div>
         <section>
           <div className="pa-rowhead"><h2>מומלץ לך</h2><button type="button" onClick={onOpenCourses}>כל הקורסים</button></div>
-          <div className="pa-card-row">
-            {(recommended.length ? recommended : mine).slice(0, 4).map((course) => (
-              <article key={course.id} className="pa-course">
-                <button type="button" className="pa-course-open" onClick={() => onOpenCourse(course.id)}>
-                  <span className="pa-cover">{course.coverImage ? <img src={course.coverImage} alt="" /> : <span className="pa-fallback" />}<i className="pa-play" aria-hidden="true">▶</i></span>
-                  <strong>{course.title}</strong>
-                  <em>{(course.episodes || []).length} שיעורים · {Math.max(1, Math.round((course.episodes || []).reduce((sum, episode) => sum + (episode.duration || 0), 0) / 60))} דק׳</em>
-                </button>
-                <button type="button" className="pa-pin" aria-pressed={savedIds.includes(course.id)} onClick={() => onToggleSave(course.id)}>{savedIds.includes(course.id) ? 'נשמר' : 'שמירה'}</button>
-              </article>
-            ))}
+          <div className="pa-lessons">
+            {(recommended.length ? recommended : mine).slice(0, 4).map((course) => {
+              const minutes = Math.max(1, Math.round((course.episodes || []).reduce((sum, episode) => sum + (episode.duration || 0), 0) / 60));
+              const name = instructors.find((person) => person.id === course.instructorId)?.name;
+              return (
+                <article key={course.id} className="pa-lesson">
+                  <button type="button" className="pa-lesson-open" onClick={() => onOpenCourse(course.id)}>
+                    {course.coverImage ? <img src={course.coverImage} alt="" /> : <span className="pa-fallback" />}
+                    <span><strong>{course.title}</strong><em>{[name, `${minutes} דקות`].filter(Boolean).join(' · ')}</em></span>
+                  </button>
+                  <button type="button" className="pa-pin" aria-pressed={savedIds.includes(course.id)} onClick={() => onToggleSave(course.id)}>{savedIds.includes(course.id) ? 'נשמר' : 'שמירה'}</button>
+                </article>
+              );
+            })}
           </div>
         </section>
-        <section className="pa-card pa-feed-card">
-          <div className="pa-rowhead">
-            <h2>הקהילה</h2>
-            <div className="pa-pills">
-              <button type="button" className={feedScope === 'all' ? 'is-on' : ''} aria-pressed={feedScope === 'all'} onClick={() => setFeedScope('all')}>כל ההודעות</button>
-              <button type="button" className={feedScope === 'mine' ? 'is-on' : ''} aria-pressed={feedScope === 'mine'} onClick={() => setFeedScope('mine')}>שלי</button>
-            </div>
-            <button type="button" onClick={onOpenFeed}>לכל השיחה</button>
+        <section className="pa-account">
+          {portrait ? <img className="pa-avatar pa-face" src={portrait} alt="" /> : <div className="pa-avatar" aria-hidden="true">{user.name.trim().charAt(0) || 'ח'}</div>}
+          <div>
+            <strong>{user.name.split(' ')[0] || 'חשבון'}</strong>
+            {nextMissing ? <p className="pa-note">חסר: {nextMissing.label}</p> : <p className="pa-note">הפרופיל מלא</p>}
           </div>
-          <form className="pa-compose-line" onSubmit={(event) => {
-            event.preventDefault();
-            if (draft.trim().length < 2) {
-              setSendNote('כתבו משפט אחד');
-              return;
-            }
-            setSending(true);
-            setSendNote('');
-            void onPublish({ body: draft.trim(), lectureTitle: lectureTitle.trim(), imageUrl }).then(() => {
-              setDraft('');
-              setLectureTitle('');
-              setImageUrl('');
-              setFeedScope('all');
-            }).catch((err: unknown) => {
-              setSendNote(err instanceof Error ? err.message : 'השליחה נכשלה');
-            }).finally(() => setSending(false));
-          }}>
-            {portrait ? <img className="community-initial pa-face" src={portrait} alt="" /> : <span className="community-initial" aria-hidden="true">{user.name.trim().charAt(0) || 'ח'}</span>}
-            <label className="community-sr" htmlFor="pa-home-post">הודעה לקהילה</label>
-            <input id="pa-home-post" value={draft} onChange={(event) => setDraft(event.target.value)} placeholder="כתבו כאן הודעה לקהילה" />
-            <button type="submit" className="community-publish" disabled={sending}>{sending ? 'שולח…' : 'שליחה'}</button>
-          </form>
-          <div className="pa-compose-extra">
-            <label className="pa-file">
-              תמונה
-              <input className="community-sr" type="file" accept="image/*" onChange={(event) => {
-                const file = event.target.files?.[0];
-                event.target.value = '';
-                if (!file) return;
-                void uploadFile(file, 'image').then(setImageUrl).catch((err: unknown) => {
-                  setSendNote(err instanceof Error ? err.message : 'העלאה נכשלה');
-                });
-              }} />
-            </label>
-            <input value={lectureTitle} onChange={(event) => setLectureTitle(event.target.value)} placeholder="שם הרצאה, אם רוצים" aria-label="שם הרצאה" />
-          </div>
-          {imageUrl ? <img className="community-photo" src={imageUrl} alt="" /> : null}
-          {sendNote ? <p className="pa-note" role="alert">{sendNote}</p> : null}
-          {featured ? (
-            <article className="pa-post">
-              <header><span className="community-initial" aria-hidden="true">{featured.author.firstName.trim().charAt(0)}</span><strong>{featured.author.firstName}</strong></header>
-              <p>{featured.body}</p>
-              <div className="pa-post-tools">
-                <button type="button" aria-pressed={featured.hearted} onClick={() => void onReact(featured.id).catch((err: unknown) => setSendNote(err instanceof Error ? err.message : 'הפעולה נכשלה'))}>אהבתי {featured.hearts}</button>
-                <span>תגובות {featured.replies.length}</span>
-                <button type="button" onClick={onOpenFeed}>לשיחה</button>
-              </div>
-              <form className="pa-compose-line" onSubmit={(event) => {
-                event.preventDefault();
-                if (replyText.trim().length < 2) {
-                  setSendNote('כתבו משפט אחד');
-                  return;
-                }
-                void onReply(featured.id, replyText.trim()).then(() => {
-                  setReplyText('');
-                  setSendNote('');
-                }).catch((err: unknown) => setSendNote(err instanceof Error ? err.message : 'הפעולה נכשלה'));
-              }}>
-                <label className="community-sr" htmlFor="pa-home-reply">תגובה</label>
-                <input id="pa-home-reply" value={replyText} onChange={(event) => setReplyText(event.target.value)} placeholder="כתבו תגובה" />
-                <button type="submit" className="community-publish">תגובה</button>
-              </form>
-            </article>
-          ) : <p className="pa-note">כתבו את ההודעה הראשונה.</p>}
+          <button type="button" onClick={() => onOpenProfile(nextMissing?.field || 'profile-name')}>{nextMissing ? missingAction[nextMissing.field] : 'לפרופיל'}</button>
         </section>
         <button type="button" className="pa-fold" aria-expanded={libraryOpen} onClick={() => setLibraryOpen((value) => !value)}>{libraryOpen ? 'פחות בספרייה' : 'עוד בספרייה'}</button>
         {libraryOpen ? (
@@ -394,18 +320,6 @@ export function HomeDesk({
         ) : null}
       </div>
       <aside className="pa-context">
-        <section className="pa-card pa-profile">
-          {portrait ? <img className="pa-avatar lg pa-face" src={portrait} alt="" /> : <div className="pa-avatar lg" aria-hidden="true">{user.name.trim().charAt(0) || 'ח'}</div>}
-          <h2>{user.name.split(' ')[0] || 'חשבון'}</h2>
-          <p className="pa-note">{user.city || 'האזור האישי'}</p>
-          <div className="pa-bar"><span style={{ width: `${Math.round((done / checks.length) * 100)}%` }} /></div>
-          <p className="pa-note">השלמת פרופיל · {done} מתוך {checks.length}</p>
-          <div className="pa-mini-stats">
-            <div><b>{posts.filter((post) => post.mine).length}</b><span>הודעות</span></div>
-            <div><b>{user.subscriptionPlan === 'premium_88' ? '88' : user.subscriptionPlan === 'annual' ? 'שנתי' : user.subscriptionPlan === 'monthly' ? 'חודשי' : 'חבר'}</b><span>מסלול</span></div>
-          </div>
-          <button type="button" className="pa-edit" onClick={() => onOpenProfile(missing[0]?.field || 'profile-name')}>עריכת פרופיל</button>
-        </section>
         <section className="pa-card">
           <h2>מה חדש</h2>
           {newest.slice(0, 3).map((course) => (
