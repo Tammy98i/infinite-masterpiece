@@ -95,6 +95,7 @@ export function HomeDesk({
   pod,
   watches,
   onOpenFeed,
+  onOpenHall,
   onOpenCourse,
   onOpenCourses,
   onOpenCategory,
@@ -123,6 +124,7 @@ export function HomeDesk({
   pod: AssignedPod | null;
   watches: number;
   onOpenFeed: () => void;
+  onOpenHall: () => void;
   onOpenCourse: (id: string) => void;
   onOpenCourses: () => void;
   onOpenCategory: (id: string) => void;
@@ -145,39 +147,65 @@ export function HomeDesk({
   const featured = posts[0];
   const when = session ? jerusalemParts(session.startsAt) : null;
   const upcoming = Boolean(session && when && new Date(session.startsAt).getTime() >= Date.now());
+  const done = checks.length - missing.length;
+  const names = new Map<string, number>();
+  posts.forEach((post) => {
+    const name = post.author.firstName || 'חבר';
+    names.set(name, (names.get(name) || 0) + 1);
+  });
+  const board = [...names.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'he')).slice(0, 5);
+  const remain = upcoming && session ? Math.max(0, new Date(session.startsAt).getTime() - Date.now()) : 0;
+  const count = {
+    days: Math.floor(remain / 86400000),
+    hours: Math.floor((remain % 86400000) / 3600000),
+    mins: Math.floor((remain % 3600000) / 60000),
+  };
   return (
-    <div className="pa-home">
+    <div className="pa-dash">
       <div className="pa-stream">
-        <section className="pa-now" aria-label="מה עושים עכשיו">
-          <h2>מה עושים עכשיו</h2>
-          <div className="pa-actions">
-            {continueItem ? (
-              <button type="button" onClick={() => onWatch(continueItem.course.id, continueItem.episode.id)}>
-                <span>המשך צפייה</span>
-                <strong>{continueItem.course.title}</strong>
+        <section className="pa-event-hero">
+          <span>המפגש הבא</span>
+          {upcoming && session && when ? (
+            <>
+              <h2>{session.title}</h2>
+              <p>{when.day}.{when.month + 1} · {when.time}{pod ? ` · ${pod.name}` : ''}</p>
+              <div className="pa-count"><b>{count.days}</b><em>ימים</em><b>{count.hours}</b><em>שעות</em><b>{count.mins}</b><em>דקות</em></div>
+              <button type="button" className="community-publish" onClick={pod ? onOpenSession : onOpenCalendar}>ללוח</button>
+            </>
+          ) : (
+            <>
+              <h2>{pod ? pod.name : 'עדיין אין מפגש קרוב'}</h2>
+              <p>{pod ? `שבוע ${pod.week} מתוך 33. אין שעה חדשה בלוח.` : 'כשייקבע מפגש, הוא יופיע כאן.'}</p>
+              <button type="button" className="community-publish" onClick={onOpenCalendar}>ללוח</button>
+            </>
+          )}
+        </section>
+        {continueItem ? (
+          <button type="button" className="pa-card pa-continue" onClick={() => onWatch(continueItem.course.id, continueItem.episode.id)}>
+            <span>המשך צפייה</span>
+            <strong>{continueItem.course.title}</strong>
+          </button>
+        ) : null}
+        <section>
+          <div className="pa-rowhead"><h2>מומלץ לך</h2><button type="button" onClick={onOpenCourses}>הכל</button></div>
+          <div className="pa-grid">
+            {(recommended.length ? recommended : mine).slice(0, 3).map((course) => (
+              <button key={course.id} type="button" className="pa-course" onClick={() => onOpenCourse(course.id)}>
+                <span className="pa-cover">{course.coverImage ? <img src={course.coverImage} alt="" /> : <span className="pa-fallback" />}<i className="pa-play" aria-hidden="true">▶</i></span>
+                <strong>{course.title}</strong>
+                <em>{course.subtitle || course.level}</em>
               </button>
-            ) : (
-              <button type="button" onClick={() => onOpenView('quiz')}>
-                <span>מה מתאים לי</span>
-                <strong>שאלון קצר להרצאה הראשונה</strong>
-              </button>
-            )}
-            {pod ? (
-              <button type="button" onClick={onOpenSession}>
-                <span>הפוד שלי</span>
-                <strong>{pod.name} · שבוע {pod.week} מתוך 33</strong>
-              </button>
-            ) : null}
-            <button type="button" onClick={upcoming && session ? onOpenSession : onOpenCalendar}>
-              <span>המפגש הבא</span>
-              <strong>{upcoming && session && when ? `${session.title} · ${when.day}.${when.month + 1} ${when.time}` : 'עדיין לא נקבע'}</strong>
-            </button>
-            <button type="button" onClick={onOpenFeed}>
-              <span>הקהילה</span>
-              <strong>{featured ? `${featured.author.firstName} · הודעה חדשה` : 'כתבו את ההודעה הראשונה'}</strong>
-            </button>
+            ))}
           </div>
         </section>
+        <section className="pa-card">
+          <div className="pa-rowhead"><h2>הקהילה</h2><button type="button" onClick={onOpenFeed}>לכל השיחה</button></div>
+          {featured ? <p><strong>{featured.author.firstName}</strong> · {featured.body}</p> : <p className="pa-note">כתבו את ההודעה הראשונה.</p>}
+          <button type="button" className="community-publish" onClick={onOpenFeed}>לכתיבה</button>
+        </section>
+        <button type="button" className="pa-fold" aria-expanded={libraryOpen} onClick={() => setLibraryOpen((value) => !value)}>{libraryOpen ? 'פחות בספרייה' : 'עוד בספרייה'}</button>
+        {libraryOpen ? (
+        <>
         <ShelfRow title="ההרצאות שלי" action="כל ההרצאות שלי" onAction={onOpenCourses} empty="ההרצאות שצפיתם יופיעו כאן." emptyAction="מצאו הרצאה" onEmpty={onOpenCourses}>
           {mine.slice(0, 4).map((course) => (
             <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
@@ -202,9 +230,6 @@ export function HomeDesk({
             </button>
           ))}
         </ShelfRow>
-        <button type="button" className="pa-fold" aria-expanded={libraryOpen} onClick={() => setLibraryOpen((value) => !value)}>{libraryOpen ? 'פחות בספרייה' : 'עוד בספרייה'}</button>
-        {libraryOpen ? (
-        <>
         <ShelfRow title="חדשים" action="לקורסים" onAction={onOpenCourses} empty="הרצאות חדשות יופיעו כאן." emptyAction="לקורסים" onEmpty={onOpenCourses}>
           {newest.slice(0, 4).map((course) => (
             <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
@@ -271,21 +296,29 @@ export function HomeDesk({
         </>
         ) : null}
       </div>
-      {missing.length > 0 ? (
-      <aside className="pa-widgets">
+      <aside className="pa-context">
+        <section className="pa-card pa-profile">
+          <div className="pa-avatar lg" aria-hidden="true">{user.name.trim().charAt(0) || 'ח'}</div>
+          <h2>{user.name.split(' ')[0] || 'חשבון'}</h2>
+          <p className="pa-note">{user.city || 'האזור האישי'}</p>
+          <div className="pa-bar"><span style={{ width: `${Math.round((done / checks.length) * 100)}%` }} /></div>
+          <p className="pa-note">השלמת פרופיל · {done} מתוך {checks.length}</p>
+          <button type="button" onClick={() => onOpenProfile(missing[0]?.field || 'profile-name')}>עריכת פרופיל</button>
+        </section>
         <section className="pa-card">
-          <h2>להשלים בפרופיל</h2>
-          <div className="pa-checks">
-            {missing.map((item) => (
-              <button key={item.label} type="button" onClick={() => onOpenProfile(item.field)}>
-                <span className="pa-check" aria-hidden="true" />
-                {item.label}
-              </button>
-            ))}
-          </div>
+          <h2>מה חדש</h2>
+          {newest.slice(0, 3).map((course) => (
+            <button key={course.id} type="button" className="pa-linkrow" onClick={() => onOpenCourse(course.id)}>{course.title}</button>
+          ))}
+          {newest.length === 0 ? <p className="pa-note">הרצאות חדשות יופיעו כאן.</p> : null}
+        </section>
+        <section className="pa-card">
+          <div className="pa-rowhead"><h2>היכל</h2><button type="button" onClick={onOpenHall}>הכל</button></div>
+          {board.length === 0 ? <p className="pa-note">עוד אין הודעות לדירוג.</p> : board.map(([name, count], index) => (
+            <p key={name} className="pa-rankline"><b>{index + 1}</b><span>{name}</span><em>{count === 1 ? 'הודעה אחת' : `${count} הודעות`}</em></p>
+          ))}
         </section>
       </aside>
-      ) : null}
     </div>
   );
 }

@@ -35,13 +35,21 @@ function relativeTime(value: string) {
   return `לפני ${Math.round(hours / 24)} ימים`;
 }
 
-const PRIMARY: AreaId[] = ['home', 'courses', 'feed'];
-const MORE: AreaId[] = ['shorts', 'recordings', 'calendar', 'club', 'hall', 'partners', 'agents', 'contact'];
+const SIDE_NAV: Array<{ id: AreaId; label: string }> = [
+  { id: 'home', label: 'ראשי' },
+  { id: 'courses', label: 'הקורסים שלי' },
+  { id: 'calendar', label: 'אירועים ומפגשים' },
+  { id: 'recordings', label: 'הקלטות' },
+  { id: 'shorts', label: 'הדרכות' },
+  { id: 'agents', label: 'סוכני AI' },
+  { id: 'feed', label: 'הקהילה' },
+  { id: 'hall', label: 'היכל התהילה' },
+  { id: 'partners', label: 'תוכנית שותפים' },
+  { id: 'contact', label: 'צור קשר' },
+];
 
 function railLabel(id: AreaId) {
-  if (id === 'courses') return 'הרצאות';
-  if (id === 'feed') return 'קהילה';
-  return AREAS.find((item) => item.id === id)?.label || '';
+  return SIDE_NAV.find((item) => item.id === id)?.label || AREAS.find((item) => item.id === id)?.label || '';
 }
 
 function Badge({ value }: { value: string }) {
@@ -49,7 +57,7 @@ function Badge({ value }: { value: string }) {
 }
 
 export function CommunityView() {
-  const { setView, user, courses, categories, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory, getMyLectures, getRecommendedForUser } = useApp();
+  const { setView, logout, user, courses, categories, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory, getMyLectures, getRecommendedForUser } = useApp();
   const navigate = useNavigate();
   const composerId = useId();
   const [channel, setChannel] = useState('talk');
@@ -63,7 +71,6 @@ export function CommunityView() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [area, setArea] = useState<AreaId>('home');
   const [areaQuery, setAreaQuery] = useState('');
-  const [moreOpen, setMoreOpen] = useState(false);
   const [assignedPod, setAssignedPod] = useState<AssignedPod | null>(null);
   const [podSession, setPodSession] = useState<ClubSession | null>(null);
   const shorts = courses.filter((course) => course.isShort);
@@ -184,23 +191,22 @@ export function CommunityView() {
           <span>האזור האישי</span>
         </button>
         <nav className="community-nav" aria-label="האזור האישי">
-          {PRIMARY.map((id) => (
-            <button key={id} type="button" aria-current={area === id ? 'page' : undefined} onClick={() => { setArea(id); setMoreOpen(false); closeRail(); }}>
-              {railLabel(id)}
+          {SIDE_NAV.map((item) => (
+            <button key={item.id} type="button" aria-current={area === item.id ? 'page' : undefined} onClick={() => { setArea(item.id); closeRail(); }}>
+              {item.label}
             </button>
           ))}
-          <button type="button" aria-expanded={moreOpen} onClick={() => setMoreOpen((value) => !value)}>עוד</button>
-          {moreOpen ? MORE.map((id) => (
-            <span key={id} className="community-nav-slot">
-              <button type="button" aria-current={area === id ? 'page' : undefined} onClick={() => { setArea(id); setMoreOpen(true); closeRail(); }}>
-                {railLabel(id)}
-              </button>
-              {id === 'calendar' && assignedPod ? (
-                <button type="button" onClick={() => { closeRail(); navigate('/pod'); }}>הפוד שלי</button>
-              ) : null}
-            </span>
-          )) : null}
+          {assignedPod ? <button type="button" onClick={() => { closeRail(); navigate('/pod'); }}>הפוד שלי</button> : null}
         </nav>
+        <div className="community-nav community-nav-foot">
+          <button type="button" onClick={() => { closeRail(); setView('profile'); }}>הגדרות</button>
+          <button type="button" onClick={() => { closeRail(); logout(); }}>יציאה</button>
+        </div>
+        <button type="button" className="pa-reward" onClick={() => { setArea('club'); closeRail(); }}>
+          <span>המסלול שלך</span>
+          <strong>{user.subscriptionPlan === 'premium_88' ? 'נבחרת 88' : user.subscriptionPlan === 'annual' ? 'מנוי שנתי' : user.subscriptionPlan === 'monthly' ? 'מנוי חודשי' : 'חבר'}</strong>
+          <em>למועדון</em>
+        </button>
         {area === 'feed' && home && open ? (
           <div className="community-channels" aria-label="ערוצים">
             <h2>ערוצים</h2>
@@ -217,10 +223,6 @@ export function CommunityView() {
             ))}
           </div>
         ) : null}
-        <button type="button" className="community-account" onClick={() => { closeRail(); setView('profile'); }}>
-          <span className="community-initial" aria-hidden="true">{initial}</span>
-          <span>{home?.me?.firstName || user.name.split(' ')[0] || 'חשבון'}</span>
-        </button>
       </aside>
       {menuOpen ? <button type="button" className="community-scrim" aria-label="סגירת התפריט" onClick={closeRail} /> : null}
       <nav className="community-dock" aria-label="ניווט מהיר">
@@ -265,6 +267,7 @@ export function CommunityView() {
             pod={assignedPod}
             watches={getWatchHistory().length}
             onOpenFeed={() => setArea('feed')}
+            onOpenHall={() => setArea('hall')}
             onOpenCourse={(courseId) => courseId && setView('course', { courseId })}
             onOpenCourses={() => setArea('courses')}
             onOpenCategory={(categoryId) => setView('category', { categoryId })}
