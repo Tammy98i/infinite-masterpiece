@@ -140,9 +140,9 @@ export function HomeDesk({
     { field: 'profile-city', label: 'עיר', done: Boolean(user.city) },
     { field: 'profile-interests', label: 'תחומי עניין', done: user.interests.length > 0 },
   ];
-  const done = checks.filter((item) => item.done).length;
+  const missing = checks.filter((item) => !item.done);
+  const [libraryOpen, setLibraryOpen] = useState(false);
   const featured = posts[0];
-  const activity = memberActivity(user, posts, watches);
   const when = session ? jerusalemParts(session.startsAt) : null;
   const upcoming = Boolean(session && when && new Date(session.startsAt).getTime() >= Date.now());
   return (
@@ -174,11 +174,11 @@ export function HomeDesk({
             </button>
             <button type="button" onClick={onOpenFeed}>
               <span>הקהילה</span>
-              <strong>{featured ? featured.body : 'כתבו את ההודעה הראשונה'}</strong>
+              <strong>{featured ? `${featured.author.firstName} · הודעה חדשה` : 'כתבו את ההודעה הראשונה'}</strong>
             </button>
           </div>
         </section>
-        <ShelfRow title="ההרצאות שלי" action="להיסטוריה" onAction={() => onOpenView('history')} empty="ההרצאות שצפיתם יופיעו כאן." emptyAction="מצאו הרצאה" onEmpty={onOpenCourses}>
+        <ShelfRow title="ההרצאות שלי" action="כל ההרצאות שלי" onAction={onOpenCourses} empty="ההרצאות שצפיתם יופיעו כאן." emptyAction="מצאו הרצאה" onEmpty={onOpenCourses}>
           {mine.slice(0, 4).map((course) => (
             <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
               {course.coverImage ? <img src={course.coverImage} alt="" /> : null}
@@ -186,7 +186,7 @@ export function HomeDesk({
             </button>
           ))}
         </ShelfRow>
-        <ShelfRow title="מומלץ" action="מה מתאים לי" onAction={() => onOpenView('quiz')} empty="סמנו תחומי עניין כדי לקבל המלצה." emptyAction="לתחומי עניין" onEmpty={() => onOpenProfile('profile-interests')}>
+        <ShelfRow title="מומלץ לך" action="עוד המלצות" onAction={onOpenCourses} empty="סמנו תחומי עניין כדי לקבל המלצה." emptyAction="לתחומי עניין" onEmpty={() => onOpenProfile('profile-interests')}>
           {recommended.slice(0, 4).map((course) => (
             <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
               {course.coverImage ? <img src={course.coverImage} alt="" /> : null}
@@ -194,6 +194,17 @@ export function HomeDesk({
             </button>
           ))}
         </ShelfRow>
+        <ShelfRow title="מרצים" action="כל המרצים" onAction={() => onOpenView('instructors')} empty="רשימת המרצים תתעדכן כאן." emptyAction="לכל המרצים" onEmpty={() => onOpenView('instructors')}>
+          {instructors.slice(0, 4).map((instructor) => (
+            <button key={instructor.id} type="button" className="pa-person" onClick={() => onOpenInstructor(instructor.id)}>
+              {instructor.avatarUrl ? <img src={instructor.avatarUrl} alt="" /> : <b>{instructor.name.trim().charAt(0)}</b>}
+              <span>{instructor.name}</span>
+            </button>
+          ))}
+        </ShelfRow>
+        <button type="button" className="pa-fold" aria-expanded={libraryOpen} onClick={() => setLibraryOpen((value) => !value)}>{libraryOpen ? 'פחות בספרייה' : 'עוד בספרייה'}</button>
+        {libraryOpen ? (
+        <>
         <ShelfRow title="חדשים" action="לקורסים" onAction={onOpenCourses} empty="הרצאות חדשות יופיעו כאן." emptyAction="לקורסים" onEmpty={onOpenCourses}>
           {newest.slice(0, 4).map((course) => (
             <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
@@ -257,32 +268,24 @@ export function HomeDesk({
             </button>
           ))}
         </ShelfRow>
-        <ShelfRow title="מומחים ומרצים" action="לכל המרצים" onAction={() => onOpenView('instructors')} empty="רשימת המרצים תתעדכן כאן." emptyAction="לכל המרצים" onEmpty={() => onOpenView('instructors')}>
-          {instructors.slice(0, 8).map((instructor) => (
-            <button key={instructor.id} type="button" className="pa-person" onClick={() => onOpenInstructor(instructor.id)}>
-              {instructor.avatarUrl ? <img src={instructor.avatarUrl} alt="" /> : <b>{instructor.name.trim().charAt(0)}</b>}
-              <span>{instructor.name}</span>
-            </button>
-          ))}
-        </ShelfRow>
+        </>
+        ) : null}
       </div>
+      {missing.length > 0 ? (
       <aside className="pa-widgets">
         <section className="pa-card">
-          <h2>השלמת הפרופיל {done}/{checks.length}</h2>
+          <h2>להשלים בפרופיל</h2>
           <div className="pa-checks">
-            {checks.map((item) => (
-              <button key={item.label} type="button" className={item.done ? 'is-done' : ''} onClick={() => onOpenProfile(item.field)}>
-                <span className="pa-check" aria-hidden="true">{item.done ? '✓' : ''}</span>
+            {missing.map((item) => (
+              <button key={item.label} type="button" onClick={() => onOpenProfile(item.field)}>
+                <span className="pa-check" aria-hidden="true" />
                 {item.label}
               </button>
             ))}
           </div>
         </section>
-        <section className="pa-card">
-          <h2>הפעילות שלך</h2>
-          <p>{activity.watches === 0 && activity.posts === 0 ? 'עוד אין צפייה. הרצאה אחת מתחילה את הספירה.' : `${activity.watches} צפיות · ${activity.posts} הודעות`}</p>
-        </section>
       </aside>
+      ) : null}
     </div>
   );
 }
@@ -348,10 +351,10 @@ export function MonthBoard({ sessions }: { sessions: ClubSession[] }) {
   const count = new Date(year, month + 1, 0).getDate();
   const label = cursor.toLocaleDateString('he-IL', { month: 'long', year: 'numeric', timeZone: 'Asia/Jerusalem' });
   const cells = [...Array(first).fill(null), ...Array.from({ length: count }, (_, index) => index + 1)];
-  const marked = new Map<number, string>();
+  const marked = new Map<number, ClubSession>();
   sessions.forEach((session) => {
     const parts = jerusalemParts(session.startsAt);
-    if (parts && parts.year === year && parts.month === month) marked.set(parts.day, `${parts.time} ${session.title}`);
+    if (parts && parts.year === year && parts.month === month) marked.set(parts.day, session);
   });
   return (
     <section className="pa-card pa-month" aria-label="לוח חודשי">
@@ -365,29 +368,25 @@ export function MonthBoard({ sessions }: { sessions: ClubSession[] }) {
         {cells.map((day, index) => (
           <span key={index} className={`${day === today.day && month === today.month && year === today.year ? 'is-today' : ''} ${day && marked.has(day) ? 'has-event' : ''}`}>
             {day || ''}
-            {day && marked.has(day) ? <small>{marked.get(day)}</small> : null}
           </span>
         ))}
       </div>
-      <p className="pa-note">{marked.size === 0 ? 'אין מפגש בחודש הזה.' : 'יום עם טקסט הוא מפגש. המסגרת הזהובה היא היום.'}</p>
+      {marked.size === 0 ? <p className="pa-note">אין מפגש בחודש הזה.</p> : [...marked.entries()].map(([day, session]) => {
+        const parts = jerusalemParts(session.startsAt);
+        return <p key={day} className="pa-note">{day}.{month + 1} · {parts?.time} · {session.title}</p>;
+      })}
     </section>
   );
 }
 
 export function EventList({
   sessions,
-  watched,
   onOpenSession,
   onOpenCalendar,
-  onOpenCourse,
-  onFind,
 }: {
   sessions: ClubSession[];
-  watched: Array<{ course: Course; episode: { id: string; title: string } }>;
   onOpenSession: () => void;
   onOpenCalendar: () => void;
-  onOpenCourse: (id: string) => void;
-  onFind: () => void;
 }) {
   const now = Date.now();
   const upcoming = sessions.filter((session) => new Date(session.startsAt).getTime() >= now);
@@ -412,24 +411,6 @@ export function EventList({
           );
         })}
         <button type="button" className="community-publish" onClick={onOpenCalendar}>ללוח</button>
-      </section>
-      <section>
-        <div className="pa-rowhead"><h2>מה ראיתם לאחרונה</h2></div>
-        {watched.length === 0 ? (
-          <div className="pa-empty">
-            <p className="pa-note">עוד אין צפייה שמורה.</p>
-            <button type="button" onClick={onFind}>מצאו הרצאה</button>
-          </div>
-        ) : (
-          <div className="pa-rail">
-            {watched.slice(0, 6).map((item) => (
-              <button key={`${item.course.id}-${item.episode.id}`} type="button" className="pa-thumb" onClick={() => onOpenCourse(item.course.id)}>
-                {item.course.coverImage ? <img src={item.course.coverImage} alt="" /> : null}
-                <span>{item.episode.title}</span>
-              </button>
-            ))}
-          </div>
-        )}
       </section>
     </div>
   );
@@ -533,7 +514,7 @@ export function ContactDesk() {
         </div>
         <label htmlFor="pa-note">מה תרצו לספר לנו</label>
         <textarea id="pa-note" value={note} onChange={(event) => setNote(event.target.value)} placeholder="ספרו מה עבד ומה לשפר" />
-        <button type="submit">שליחת משוב</button>
+        <button type="submit">פתיחת המייל</button>
         {sent ? <p>חלון המייל נפתח עם המשוב.</p> : null}
       </form>
     </div>

@@ -4,11 +4,9 @@ import { podsApi } from '../api/pods';
 import { communityApi, type CommunityHome, type CommunityPost } from '../api/community';
 import { uploadFile } from '../api/upload';
 import { useApp } from '../context/AppContext';
-import type { Course, Instructor } from '../types';
 import {
   AREAS,
   AREA_NOTES,
-  NAV_GROUPS,
   AgentGrid,
   type ClubSession,
   ClubCard,
@@ -36,63 +34,13 @@ function relativeTime(value: string) {
   return `לפני ${Math.round(hours / 24)} ימים`;
 }
 
-function AreaSearch({
-  term,
-  courses,
-  instructors,
-  posts,
-  onOpenCourse,
-  onOpenInstructor,
-  onOpenFeed,
-  onLibrary,
-}: {
-  term: string;
-  courses: Course[];
-  instructors: Instructor[];
-  posts: CommunityPost[];
-  onOpenCourse: (id: string) => void;
-  onOpenInstructor: (id: string) => void;
-  onOpenFeed: () => void;
-  onLibrary: () => void;
-}) {
-  const lessons = courses.filter((course) => `${course.title} ${course.subtitle || ''}`.includes(term)).slice(0, 5);
-  const people = instructors.filter((person) => person.name.includes(term) && person.showInLibrary !== false).slice(0, 4);
-  const notes = posts.filter((post) => `${post.body} ${post.author.firstName}`.includes(term)).slice(0, 4);
-  const empty = lessons.length + people.length + notes.length === 0;
-  return (
-    <div className="community-card community-search-results">
-      {empty ? (
-        <div className="pa-empty">
-          <p className="pa-note">אין תוצאות עבור «{term}».</p>
-          <button type="button" onClick={onLibrary}>חיפוש בכל הספרייה</button>
-        </div>
-      ) : null}
-      {lessons.length > 0 ? (
-        <section>
-          <div className="pa-rowhead"><h2>הרצאות</h2></div>
-          {lessons.map((course) => (
-            <button key={course.id} type="button" className="pa-linkrow" onClick={() => onOpenCourse(course.id)}>{course.title}</button>
-          ))}
-        </section>
-      ) : null}
-      {people.length > 0 ? (
-        <section>
-          <div className="pa-rowhead"><h2>מרצים</h2></div>
-          {people.map((person) => (
-            <button key={person.id} type="button" className="pa-linkrow" onClick={() => onOpenInstructor(person.id)}>{person.name}</button>
-          ))}
-        </section>
-      ) : null}
-      {notes.length > 0 ? (
-        <section>
-          <div className="pa-rowhead"><h2>מהשיחה</h2></div>
-          {notes.map((post) => (
-            <button key={post.id} type="button" className="pa-linkrow" onClick={onOpenFeed}>{post.author.firstName}: {post.body}</button>
-          ))}
-        </section>
-      ) : null}
-    </div>
-  );
+const PRIMARY: AreaId[] = ['home', 'courses', 'feed'];
+const MORE: AreaId[] = ['shorts', 'recordings', 'calendar', 'club', 'hall', 'partners', 'agents', 'contact'];
+
+function railLabel(id: AreaId) {
+  if (id === 'courses') return 'הרצאות';
+  if (id === 'feed') return 'קהילה';
+  return AREAS.find((item) => item.id === id)?.label || '';
 }
 
 function Badge({ value }: { value: string }) {
@@ -100,7 +48,7 @@ function Badge({ value }: { value: string }) {
 }
 
 export function CommunityView() {
-  const { setView, setSearchQuery, user, courses, categories, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory, getMyLectures, getRecommendedForUser } = useApp();
+  const { setView, user, courses, categories, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory, getMyLectures, getRecommendedForUser } = useApp();
   const navigate = useNavigate();
   const composerId = useId();
   const [channel, setChannel] = useState('talk');
@@ -113,7 +61,7 @@ export function CommunityView() {
   const [pending, setPending] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [area, setArea] = useState<AreaId>('home');
-  const [areaQuery, setAreaQuery] = useState('');
+  const [moreOpen, setMoreOpen] = useState(false);
   const [assignedPod, setAssignedPod] = useState<AssignedPod | null>(null);
   const [podSession, setPodSession] = useState<ClubSession | null>(null);
   const shorts = courses.filter((course) => course.isShort);
@@ -230,30 +178,26 @@ export function CommunityView() {
         תפריט
       </button>
       <aside id="community-rail" className="community-rail" aria-label="ניווט האזור האישי">
-        <button type="button" className="community-brand" onClick={() => setView('home')}>
-          <span className="community-mark" aria-hidden="true">∞</span>
-          <span>Infinite Masterpiece</span>
+        <button type="button" className="community-brand" onClick={() => { setArea('home'); closeRail(); }}>
+          <span>האזור האישי</span>
         </button>
         <nav className="community-nav" aria-label="האזור האישי">
-          {NAV_GROUPS.map((group) => (
-            <div key={group.label} className="community-nav-group">
-              <p className="community-nav-label">{group.label}</p>
-              {group.ids.map((id) => {
-                const item = AREAS.find((entry) => entry.id === id);
-                if (!item) return null;
-                return (
-                  <span key={item.id} className="community-nav-slot">
-                    <button type="button" aria-current={area === item.id ? 'page' : undefined} onClick={() => { setArea(item.id); closeRail(); }}>
-                      {item.label}
-                    </button>
-                    {item.id === 'calendar' && assignedPod ? (
-                      <button type="button" onClick={() => { closeRail(); navigate('/pod'); }}>הפוד שלי</button>
-                    ) : null}
-                  </span>
-                );
-              })}
-            </div>
+          {PRIMARY.map((id) => (
+            <button key={id} type="button" aria-current={area === id ? 'page' : undefined} onClick={() => { setArea(id); closeRail(); }}>
+              {railLabel(id)}
+            </button>
           ))}
+          <button type="button" aria-expanded={moreOpen || MORE.includes(area)} onClick={() => setMoreOpen((value) => !value)}>עוד</button>
+          {moreOpen || MORE.includes(area) ? MORE.map((id) => (
+            <span key={id} className="community-nav-slot">
+              <button type="button" aria-current={area === id ? 'page' : undefined} onClick={() => { setArea(id); closeRail(); }}>
+                {railLabel(id)}
+              </button>
+              {id === 'calendar' && assignedPod ? (
+                <button type="button" onClick={() => { closeRail(); navigate('/pod'); }}>הפוד שלי</button>
+              ) : null}
+            </span>
+          )) : null}
         </nav>
         {area === 'feed' && home && open ? (
           <div className="community-channels" aria-label="ערוצים">
@@ -279,36 +223,14 @@ export function CommunityView() {
       {menuOpen ? <button type="button" className="community-scrim" aria-label="סגירת התפריט" onClick={closeRail} /> : null}
       <nav className="community-dock" aria-label="ניווט מהיר">
         <button type="button" aria-current={area === 'home' ? 'page' : undefined} onClick={() => setArea('home')}>ראשי</button>
-        <button type="button" aria-current={area === 'courses' ? 'page' : undefined} onClick={() => setArea('courses')}>קורסים</button>
+        <button type="button" aria-current={area === 'courses' ? 'page' : undefined} onClick={() => setArea('courses')}>הרצאות</button>
         <button type="button" aria-current={area === 'feed' ? 'page' : undefined} onClick={() => setArea('feed')}>קהילה</button>
         <button type="button" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>עוד</button>
       </nav>
 
       <main className="community-main" id="community-main">
-        <h1>{AREAS.find((item) => item.id === area)?.label || 'הבית'}</h1>
-        <p className="community-lede">{AREA_NOTES[area]}</p>
-        <form className="community-search" role="search" onSubmit={(event) => {
-          event.preventDefault();
-          const term = areaQuery.trim();
-          if (!term) return;
-          setSearchQuery(term);
-          setView('search');
-        }}>
-          <label className="community-sr" htmlFor="area-search">חיפוש באזור האישי</label>
-          <input id="area-search" type="search" value={areaQuery} onChange={(event) => setAreaQuery(event.target.value)} placeholder="הקלידו הרצאה, שם של מרצה, או מילה מהשיחה" />
-        </form>
-        {areaQuery.trim() ? (
-          <AreaSearch
-            term={areaQuery.trim()}
-            courses={courses}
-            instructors={instructors}
-            posts={home?.access === 'open' ? home.posts : []}
-            onOpenCourse={(courseId) => setView('course', { courseId })}
-            onOpenInstructor={(instructorId) => setView('instructor', { instructorId })}
-            onOpenFeed={() => setArea('feed')}
-            onLibrary={() => { setSearchQuery(areaQuery.trim()); setView('search'); }}
-          />
-        ) : null}
+        <h1>{railLabel(area) || 'ראשי'}</h1>
+        {area !== 'home' ? <p className="community-lede">{AREA_NOTES[area]}</p> : null}
         {error ? <p className="community-error" role="alert">{error}</p> : null}
 
         {!home ? <p className="community-note">טוענים את הקהילה…</p> : null}
@@ -361,11 +283,8 @@ export function CommunityView() {
         {area === 'recordings' ? (
           <EventList
             sessions={podSession ? [podSession] : []}
-            watched={getWatchHistory()}
             onOpenSession={() => navigate('/pod')}
             onOpenCalendar={() => setArea('calendar')}
-            onOpenCourse={(courseId) => setView('course', { courseId })}
-            onFind={() => setArea('courses')}
           />
         ) : null}
         {area === 'courses' ? <CourseShelf title="כל ההרצאות" noun="הרצאה" courses={lessons} onOpen={(courseId) => setView('course', { courseId })} /> : null}
@@ -498,13 +417,16 @@ const PostCard: FC<{
         <button type="button" aria-pressed={post.hearted} onClick={() => void onAct(() => communityApi.react(post.id))}>אהבתי {post.hearts}</button>
         <button type="button" aria-expanded={open} onClick={onToggle}>תגובות {post.replies.length}</button>
         <button type="button" aria-pressed={post.saved} onClick={() => void onAct(() => communityApi.bookmark(post.id))}>{post.saved ? 'נשמר' : 'שמירה'}</button>
-        <button type="button" aria-pressed={post.reported} onClick={() => !post.reported && void onAct(() => communityApi.report(post.id))}>{post.reported ? 'דווח' : 'דיווח'}</button>
-        {isAdmin ? (
-          <>
-            <button type="button" onClick={() => void onAct(() => communityApi.pin(post.id, !post.pinned))}>{post.pinned ? 'שחרור' : 'נעיצה'}</button>
-            <button type="button" onClick={() => void onAct(() => communityApi.hide(post.id, !post.hidden))}>{post.hidden ? 'החזרה' : 'הסתרה'}</button>
-          </>
-        ) : null}
+        <details className="community-more">
+          <summary>עוד</summary>
+          <button type="button" aria-pressed={post.reported} onClick={() => !post.reported && void onAct(() => communityApi.report(post.id))}>{post.reported ? 'דווח' : 'דיווח'}</button>
+          {isAdmin ? (
+            <>
+              <button type="button" onClick={() => void onAct(() => communityApi.pin(post.id, !post.pinned))}>{post.pinned ? 'שחרור' : 'נעיצה'}</button>
+              <button type="button" onClick={() => void onAct(() => communityApi.hide(post.id, !post.hidden))}>{post.hidden ? 'החזרה' : 'הסתרה'}</button>
+            </>
+          ) : null}
+        </details>
       </div>
       {open ? (
         <div className="community-replies">

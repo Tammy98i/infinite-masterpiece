@@ -303,6 +303,11 @@
 .pa-plain { list-style: none; margin: 0 0 12px; padding: 0; display: grid; gap: 10px; }
 .pa-plain li { display: grid; gap: 2px; }
 .pa-actions { display: grid; gap: 8px; }
+.pa-fold { color: #f0d48a; font-weight: 700; background: transparent; min-height: 44px; }
+.community-more { position: relative; }
+.community-more summary { min-height: 44px; cursor: pointer; list-style: none; }
+.community-more summary::-webkit-details-marker { display: none; }
+.community-more[open] { display: grid; }
 .pa-actions button { width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 48px; border: 1px solid rgba(255,255,255,.12); border-radius: 12px; background: var(--panel); }
 .pa-actions span { color: #f0d48a; flex: none; font-weight: 700; }
 .pa-actions strong { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -397,7 +402,7 @@
 .pa-steps article b, .pa-stats b { color: #f0d48a; font-size: 1.3rem; }
 .community-nav button { border-radius: 12px; }
 
-.vod-app.sky-readable .community-page :is(.pa-stats b, .pa-steps b, .pa-board b, .pa-points, .pa-progress-label, .pa-actions span) { color: #f0d48a; }
+.vod-app.sky-readable .community-page :is(.pa-stats b, .pa-steps b, .pa-board b, .pa-points, .pa-progress-label, .pa-actions span, .pa-fold) { color: #f0d48a; background: transparent; }
 
 .vod-app.sky-readable .community-page .community-publish,
 .vod-app.sky-readable .community-page .community-days .is-today,
