@@ -74,7 +74,7 @@ export function jerusalemParts(value: string) {
 }
 
 export function memberActivity(user: UserProfile, posts: CommunityPost[], watches: number) {
-  const mine = posts.filter((post) => post.author.firstName && user.name.startsWith(post.author.firstName)).length;
+  const mine = posts.filter((post) => post.mine).length;
   return { posts: mine, watches };
 }
 
@@ -203,7 +203,7 @@ export function HomeDesk({
                 <p>{pod ? `שבוע ${pod.week} מתוך 33. אין שעה חדשה בלוח.` : 'כשייקבע מפגש, הוא יופיע כאן.'}</p>
               </>
             )}
-            <button type="button" className="community-publish" onClick={upcoming && pod ? onOpenSession : onOpenCalendar}>הוספה ללוח</button>
+            <button type="button" className="community-publish" onClick={upcoming && pod ? onOpenSession : onOpenCalendar}>{upcoming && pod ? 'למפגש' : 'ללוח'}</button>
           </div>
           {upcoming ? (
             <div className="pa-count" aria-label="זמן עד המפגש">
@@ -220,7 +220,7 @@ export function HomeDesk({
           </button>
         ) : null}
         <section>
-          <div className="pa-rowhead"><h2>מומלץ לך</h2><button type="button" onClick={onOpenCourses}>הכל</button></div>
+          <div className="pa-rowhead"><h2>מומלץ לך</h2><button type="button" onClick={onOpenCourses}>כל הקורסים</button></div>
           <div className="pa-card-row">
             {(recommended.length ? recommended : mine).slice(0, 4).map((course) => (
               <article key={course.id} className="pa-course">
@@ -238,7 +238,7 @@ export function HomeDesk({
           <div className="pa-rowhead">
             <h2>הקהילה</h2>
             <div className="pa-pills">
-              <button type="button" className={feedScope === 'all' ? 'is-on' : ''} aria-pressed={feedScope === 'all'} onClick={() => setFeedScope('all')}>הכל</button>
+              <button type="button" className={feedScope === 'all' ? 'is-on' : ''} aria-pressed={feedScope === 'all'} onClick={() => setFeedScope('all')}>כל ההודעות</button>
               <button type="button" className={feedScope === 'mine' ? 'is-on' : ''} aria-pressed={feedScope === 'mine'} onClick={() => setFeedScope('mine')}>שלי</button>
             </div>
             <button type="button" onClick={onOpenFeed}>לכל השיחה</button>
@@ -313,14 +313,6 @@ export function HomeDesk({
         <>
         <ShelfRow title="ההרצאות שלי" action="כל ההרצאות שלי" onAction={onOpenCourses} empty="ההרצאות שצפיתם יופיעו כאן." emptyAction="מצאו הרצאה" onEmpty={onOpenCourses}>
           {mine.slice(0, 4).map((course) => (
-            <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
-              {course.coverImage ? <img src={course.coverImage} alt="" /> : null}
-              <span>{course.title}</span>
-            </button>
-          ))}
-        </ShelfRow>
-        <ShelfRow title="מומלץ לך" action="עוד המלצות" onAction={onOpenCourses} empty="סמנו תחומי עניין כדי לקבל המלצה." emptyAction="לתחומי עניין" onEmpty={() => onOpenProfile('profile-interests')}>
-          {recommended.slice(0, 4).map((course) => (
             <button key={course.id} type="button" className="pa-thumb" onClick={() => onOpenCourse(course.id)}>
               {course.coverImage ? <img src={course.coverImage} alt="" /> : null}
               <span>{course.title}</span>
@@ -409,7 +401,7 @@ export function HomeDesk({
           <div className="pa-bar"><span style={{ width: `${Math.round((done / checks.length) * 100)}%` }} /></div>
           <p className="pa-note">השלמת פרופיל · {done} מתוך {checks.length}</p>
           <div className="pa-mini-stats">
-            <div><b>{posts.filter((post) => post.author.firstName && user.name.startsWith(post.author.firstName)).length}</b><span>הודעות</span></div>
+            <div><b>{posts.filter((post) => post.mine).length}</b><span>הודעות</span></div>
             <div><b>{user.subscriptionPlan === 'premium_88' ? '88' : user.subscriptionPlan === 'annual' ? 'שנתי' : user.subscriptionPlan === 'monthly' ? 'חודשי' : 'חבר'}</b><span>מסלול</span></div>
           </div>
           <button type="button" className="pa-edit" onClick={() => onOpenProfile(missing[0]?.field || 'profile-name')}>עריכת פרופיל</button>
@@ -426,7 +418,7 @@ export function HomeDesk({
           {newest.length === 0 ? <p className="pa-note">הרצאות חדשות יופיעו כאן.</p> : null}
         </section>
         <section className="pa-card">
-          <div className="pa-rowhead"><h2>היכל</h2><button type="button" onClick={onOpenHall}>הכל</button></div>
+          <div className="pa-rowhead"><h2>היכל</h2><button type="button" onClick={onOpenHall}>להיכל</button></div>
           {board.length === 0 ? <p className="pa-note">עוד אין הודעות לדירוג.</p> : board.map(([name, count], index) => (
             <p key={name} className="pa-rankline"><b>{index + 1}</b><span>{name}</span><em>{count === 1 ? 'הודעה אחת' : `${count} הודעות`}</em></p>
           ))}
@@ -484,7 +476,7 @@ export function CourseShelf({ title, courses, noun, onOpen, query = '', onQuery,
       <div className="pa-rowhead">{title ? <h2>{title}</h2> : null}<span>{count}</span></div>
       {categories.length > 0 ? (
         <div className="pa-chips">
-          <button type="button" aria-pressed={!categoryId} onClick={() => setCategoryId('')}>הכל</button>
+          <button type="button" aria-pressed={!categoryId} onClick={() => setCategoryId('')}>כל הנושאים</button>
           {categories.map((category) => (
             <button key={category.id} type="button" aria-pressed={categoryId === category.id} onClick={() => setCategoryId(category.id)}>{category.name}</button>
           ))}
@@ -584,7 +576,7 @@ export function EventList({
   return (
     <div className="pa-events">
       <div className="pa-chips">
-        <button type="button" aria-pressed={scope === 'all'} onClick={() => setScope('all')}>הכל</button>
+        <button type="button" aria-pressed={scope === 'all'} onClick={() => setScope('all')}>כל המפגשים</button>
         <button type="button" aria-pressed={scope === 'soon'} onClick={() => setScope('soon')}>קרובים</button>
         <button type="button" aria-pressed={scope === 'past'} onClick={() => setScope('past')}>שעברו</button>
       </div>
@@ -604,7 +596,7 @@ export function EventList({
           const parts = jerusalemParts(session.startsAt);
           return (
             <article key={session.startsAt} className="pa-course pa-recording">
-              <span className="pa-cover"><span className="pa-fallback" /><i className="pa-play" aria-hidden="true">▶</i>{parts ? <b className="pa-time">{parts.day}.{parts.month + 1}</b> : null}</span>
+              <span className="pa-cover"><span className="pa-fallback" />{parts ? <b className="pa-time">{parts.day}.{parts.month + 1}</b> : null}</span>
               <strong>{session.title}</strong>
               <em>ההקלטה תתווסף כשהיא מוכנה</em>
             </article>
