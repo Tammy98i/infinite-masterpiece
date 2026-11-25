@@ -416,7 +416,9 @@ export function CourseShelf({ title, courses, noun, onOpen, query = '', onQuery,
         </div>
       ) : null}
       <div className="pa-grid">
-        {shown.map((course) => (
+        {shown.map((course) => {
+          const minutes = Math.max(1, Math.round(course.episodes.reduce((sum, episode) => sum + (episode.duration || 0), 0) / 60));
+          return (
           <button key={course.id} type="button" className="pa-course" onClick={() => onOpen(course.id)}>
             <span className="pa-cover">
               {course.coverImage ? <img src={course.coverImage} alt="" /> : <span className="pa-fallback" />}
@@ -424,9 +426,10 @@ export function CourseShelf({ title, courses, noun, onOpen, query = '', onQuery,
               {video && clock(course.episodes.reduce((sum, episode) => sum + (episode.duration || 0), 0)) ? <b className="pa-time">{clock(course.episodes.reduce((sum, episode) => sum + (episode.duration || 0), 0))}</b> : null}
             </span>
             <strong>{course.title}</strong>
-            <em>{course.subtitle || course.level}</em>
+            <em>{[course.subtitle || course.level, `${minutes} דקות`].filter(Boolean).join(' · ')}</em>
           </button>
-        ))}
+          );
+        })}
       </div>
     </section>
   );
@@ -484,7 +487,7 @@ export function MonthBoard({ sessions }: { sessions: ClubSession[] }) {
         <ul className="pa-month-list">
           {[...marked.entries()].map(([day, session]) => {
             const parts = jerusalemParts(session.startsAt);
-            return <li key={day}>{day}.{month + 1} · {parts?.time} · {session.title}</li>;
+            return <li key={day}><b>{day}.{month + 1}</b><span>{parts?.time}</span><strong>{session.title}</strong></li>;
           })}
         </ul>
       ) : null}
@@ -536,8 +539,8 @@ export function EventList({
         {showPast ? past.map((session) => {
           const parts = jerusalemParts(session.startsAt);
           return (
-            <article key={session.startsAt} className="pa-course pa-recording">
-              <span className="pa-cover"><span className="pa-fallback" />{parts ? <b className="pa-time">{parts.day}.{parts.month + 1}</b> : null}</span>
+            <article key={session.startsAt} className="pa-rec-row">
+              <b>{parts ? `${parts.day}.${parts.month + 1}` : ''}</b>
               <strong>{session.title}</strong>
               <em>ההקלטה תתווסף כשהיא מוכנה</em>
             </article>
@@ -661,10 +664,6 @@ export function Partners({ userId }: { userId: string }) {
         <article><b>2</b><p>חבר נרשם דרכו</p></article>
         <article><b>3</b><p>הספירה תופיע כאן</p></article>
       </div>
-      <div className="pa-metrics">
-        <article><span>נרשמו דרככם</span><b>—</b><em>הספירה תיפתח</em></article>
-        <article><span>ממתינים</span><b>—</b></article>
-      </div>
     </div>
   );
 }
@@ -676,12 +675,6 @@ export function ContactDesk() {
   const [hint, setHint] = useState('');
   return (
     <div className="pa-contact">
-      <section className="pa-hero">
-        <div>
-          <h2>צור קשר ותמיכה</h2>
-          <p>אנחנו כאן לכל שאלה.</p>
-        </div>
-      </section>
       <div className="pa-contact-cards">
         <a href={DEFAULT_WEBINAR_CONFIG.whatsappGroupUrl} target="_blank" rel="noreferrer"><b>הצטרפות לקבוצת הוואטסאפ</b><span>נפתחת קבוצת הקהילה, לא שיחה פרטית</span></a>
         <a href="/#faq"><b>שאלות נפוצות</b><span>נפתח בעמוד השאלות</span></a>
@@ -706,7 +699,7 @@ export function ContactDesk() {
         </div>
         <label htmlFor="pa-note">מה תרצו לספר לנו</label>
         <textarea id="pa-note" value={note} onChange={(event) => setNote(event.target.value)} placeholder="מה תרצו לספר לנו" />
-        <button type="submit">פתיחת המייל</button>
+        <button type="submit" className="community-publish">פתיחת המייל</button>
         {hint ? <p role="alert">{hint}</p> : null}
         {sent ? <p>חלון המייל נפתח עם המשוב.</p> : null}
       </form>
