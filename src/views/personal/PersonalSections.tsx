@@ -188,7 +188,7 @@ export function HomeDesk({
         <section className="pa-now" aria-label="מה אפשר לעשות עכשיו">
           {focus && focusEpisode ? (
             <>
-              <button type="button" className="pa-now-cover" onClick={() => onWatch(focus.id, focusEpisode.id)}>
+              <button type="button" className="pa-now-cover" aria-label={`${continueItem ? 'המשך צפייה' : 'לצפייה'}: ${focus.title}`} onClick={() => onWatch(focus.id, focusEpisode.id)}>
                 {focus.coverImage ? <img src={focus.coverImage} alt="" /> : <span className="pa-fallback" />}
               </button>
               <div>
