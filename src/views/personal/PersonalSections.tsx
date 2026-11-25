@@ -188,10 +188,15 @@ export function HomeDesk({
         <section className="pa-now" aria-label="מה אפשר לעשות עכשיו">
           {focus && focusEpisode ? (
             <>
-              <span>{continueItem ? 'המשך צפייה' : 'הרצאת פתיחה'}</span>
-              <h2>{focus.title}</h2>
-              <p>{[continueItem ? continueItem.episode.title : '', teacher, focusMinutes ? `${focusMinutes} דקות` : ''].filter(Boolean).join(' · ')}</p>
-              <button type="button" className="community-publish" onClick={() => onWatch(focus.id, focusEpisode.id)}>{continueItem ? 'המשך צפייה' : 'לצפייה'}</button>
+              <button type="button" className="pa-now-cover" onClick={() => onWatch(focus.id, focusEpisode.id)}>
+                {focus.coverImage ? <img src={focus.coverImage} alt="" /> : <span className="pa-fallback" />}
+              </button>
+              <div>
+                <span>{continueItem ? 'המשך צפייה' : 'הרצאת פתיחה'}</span>
+                <h2>{focus.title}</h2>
+                <p>{[continueItem ? continueItem.episode.title : '', teacher, focusMinutes ? `${focusMinutes} דקות` : ''].filter(Boolean).join(' · ')}</p>
+                <button type="button" className="community-publish" onClick={() => onWatch(focus.id, focusEpisode.id)}>{continueItem ? 'המשך צפייה' : 'לצפייה'}</button>
+              </div>
             </>
           ) : (
             <>
@@ -471,7 +476,7 @@ export function MonthBoard({ sessions }: { sessions: ClubSession[] }) {
         {cells.map((day, index) => (
           <span key={index} className={`${day === today.day && month === today.month && year === today.year ? 'is-today' : ''} ${day && marked.has(day) ? 'has-event' : ''}`}>
             {day ? (day === today.day && month === today.month && year === today.year ? <i className="pa-today">{day}</i> : day) : ''}
-            {day && marked.has(day) ? <em className="pa-chip">{jerusalemParts(marked.get(day)!.startsAt)?.time} {marked.get(day)!.title}</em> : null}
+            {day && marked.has(day) ? <i className="pa-dot" aria-hidden="true" /> : null}
           </span>
         ))}
       </div>

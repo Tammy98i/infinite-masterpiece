@@ -500,10 +500,24 @@
 .pa-board-btn { min-height: 40px; border-radius: 999px; background: rgba(8, 14, 26, .92); border: 1px solid rgba(223, 196, 125, .28); color: #e0edff; font-weight: 700; display: inline-flex; align-items: center; padding: 0 14px; }
 .pa-dash { direction: ltr; grid-template-columns: minmax(0, 1fr) 292px; }
 .pa-stream, .pa-context { direction: rtl; }
-.pa-now { display: grid; gap: 8px; justify-items: start; padding: 4px 0 8px; }
-.pa-now > span { color: #dfc47d; }
-.pa-now h2 { margin: 0; font-size: 1.55rem; line-height: 1.35; }
+.pa-now { display: grid; grid-template-columns: minmax(140px, 220px) minmax(0, 1fr); gap: 16px; align-items: center; padding: 8px; border: 1px solid rgba(223, 196, 125, .28); border-radius: 22px; background: rgba(8, 14, 26, .72); }
+.pa-now-cover { padding: 0; border: 0; border-radius: 16px; overflow: hidden; background: #101a35; min-height: 120px; }
+.pa-now-cover img, .pa-now-cover .pa-fallback { width: 100%; height: 140px; object-fit: cover; display: block; }
+.pa-now > div { display: grid; gap: 8px; justify-items: start; }
+.pa-now span { color: #dfc47d; }
+.pa-now h2 { margin: 0; font-size: clamp(1.35rem, 2.4vw, 1.8rem); line-height: 1.3; }
 .pa-now p { margin: 0; color: rgba(224, 237, 255, .78); }
+.pa-dot { width: 6px; height: 6px; border-radius: 50%; background: #dfc47d; display: block; margin: 4px auto 0; }
+.pa-course, .pa-thumb, .pa-agent, .pa-lesson { transition: border-color .2s ease; }
+.pa-course:hover, .pa-thumb:hover, .pa-agent:hover, .pa-lesson:hover { border-color: rgba(223, 196, 125, .7); }
+.pa-contact-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.pa-contact-cards a { display: grid; gap: 6px; min-height: 92px; padding: 14px; border-radius: 16px; text-decoration: none; }
+.pa-contact-cards b { color: #e0edff; }
+.pa-hall, .pa-partners, .pa-contact, .pa-club, .pa-learning { width: min(100%, 880px); }
+@media (max-width: 700px) {
+  .pa-now { grid-template-columns: 1fr; }
+  .pa-contact-cards { grid-template-columns: 1fr; }
+}
 .pa-updates { display: grid; gap: 4px; }
 .pa-update { display: flex; gap: 12px; align-items: baseline; justify-content: space-between; margin: 0; }
 .pa-update span { min-width: 0; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
