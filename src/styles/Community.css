@@ -250,7 +250,7 @@
     background: #fbf7f0;
     border-top: 1px solid rgba(183, 144, 67, .35);
   }
-  .community-dock button { justify-content: center; text-align: center; min-height: 56px; }
+  .community-dock button { justify-content: center; text-align: center; min-height: 56px; color: #1a1204; background: transparent; }
   .community-rail {
     position: fixed; inset-block: 0; left: 0; right: auto; width: min(280px, 86vw); transform: translateX(-110%);
     box-shadow: -8px 0 24px rgba(0,0,0,.12);
@@ -420,8 +420,9 @@
 .pa-chip { display: block; margin-top: 4px; background: rgba(240, 212, 138, .16); color: #f0d48a; border-radius: 8px; font-size: .72rem; font-style: normal; line-height: 1.35; padding: 4px 6px; }
 .pa-cal-nav { background: transparent !important; color: #f0d48a !important; }
 .pa-agent-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
-.pa-agent { background: rgba(8, 14, 26, .92); border: 1px solid rgba(223, 196, 125, .28); min-height: 180px; align-content: start; }
-.pa-agent em { color: #f0d48a; font-style: normal; font-size: .8rem; }
+.pa-agent { background: #ffffff; border: 1px solid rgba(183, 144, 67, .35); min-height: 180px; align-content: start; color: #171717; }
+.pa-agent em, .pa-agent p, .pa-agent h3 { color: #171717; }
+.pa-agent em { color: #4a433c; font-style: normal; font-size: .8rem; }
 .pa-agent button { margin-top: auto; }
 .pa-hall-board, .pa-recording { min-width: 0; }
 .pa-recording { max-width: 280px; }

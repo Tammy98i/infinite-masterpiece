@@ -180,6 +180,10 @@ export function CommunityView() {
   const initial = home?.me?.initial || user.name.trim().charAt(0) || 'ח';
 
   const closeRail = () => setMenuOpen(false);
+  const term = areaQuery.trim();
+  const lessonHits = term && area !== 'courses' && area !== 'shorts' ? courses.filter((course) => course.title.includes(term)).slice(0, 5) : [];
+  const peopleHits = term && area !== 'courses' && area !== 'shorts' ? instructors.filter((person) => person.name.includes(term) && person.showInLibrary !== false).slice(0, 4) : [];
+  const postHits = term && area !== 'courses' && area !== 'shorts' && home?.access === 'open' ? home.posts.filter((post) => `${post.body} ${post.author.firstName}`.includes(term)).slice(0, 4) : [];
 
   return (
     <div className={`community-page${menuOpen ? ' is-rail-open' : ''}`}>
@@ -235,6 +239,20 @@ export function CommunityView() {
 
       <main className="community-main" id="community-main">
         <AreaTop initial={initial} query={areaQuery} onQuery={setAreaQuery} onBoard={() => setArea('feed')} />
+        {term && area !== 'courses' && area !== 'shorts' ? (
+          <div className="community-card pa-search-hits">
+            {lessonHits.map((course) => (
+              <button key={course.id} type="button" className="pa-linkrow" onClick={() => setView('course', { courseId: course.id })}>{course.title}</button>
+            ))}
+            {peopleHits.map((person) => (
+              <button key={person.id} type="button" className="pa-linkrow" onClick={() => setView('instructor', { instructorId: person.id })}>{person.name}</button>
+            ))}
+            {postHits.map((post) => (
+              <button key={post.id} type="button" className="pa-linkrow" onClick={() => setArea('feed')}>{post.author.firstName}: {post.body}</button>
+            ))}
+            {lessonHits.length + peopleHits.length + postHits.length === 0 ? <p className="pa-note">אין תוצאות עבור «{term}».</p> : null}
+          </div>
+        ) : null}
         {area !== 'home' ? <h1>{railLabel(area) || 'ראשי'}</h1> : null}
         {area !== 'home' ? <p className="community-lede">{AREA_NOTES[area]}</p> : null}
         {error ? <p className="community-error" role="alert">{error}</p> : null}
