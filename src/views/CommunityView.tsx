@@ -35,17 +35,17 @@ function relativeTime(value: string) {
   return `לפני ${Math.round(hours / 24)} ימים`;
 }
 
-const SIDE_NAV: Array<{ id: AreaId; label: string }> = [
-  { id: 'home', label: 'ראשי' },
-  { id: 'courses', label: 'הקורסים שלי' },
-  { id: 'calendar', label: 'אירועים ומפגשים' },
-  { id: 'recordings', label: 'הקלטות' },
-  { id: 'shorts', label: 'הדרכות' },
-  { id: 'agents', label: 'סוכני AI' },
-  { id: 'feed', label: 'הקהילה' },
-  { id: 'hall', label: 'היכל התהילה' },
-  { id: 'partners', label: 'תוכנית שותפים' },
-  { id: 'contact', label: 'צור קשר' },
+const SIDE_NAV: Array<{ id: AreaId; label: string; icon: string }> = [
+  { id: 'home', label: 'ראשי', icon: '⌂' },
+  { id: 'courses', label: 'הקורסים שלי', icon: '▤' },
+  { id: 'calendar', label: 'אירועים ומפגשים', icon: '▣' },
+  { id: 'recordings', label: 'הקלטות', icon: '▶' },
+  { id: 'shorts', label: 'הדרכות', icon: '✧' },
+  { id: 'agents', label: 'סוכני AI', icon: '✶' },
+  { id: 'feed', label: 'הקהילה', icon: '◉' },
+  { id: 'hall', label: 'היכל התהילה', icon: '★' },
+  { id: 'partners', label: 'תוכנית שותפים', icon: '◆' },
+  { id: 'contact', label: 'צור קשר', icon: '✉' },
 ];
 
 function railLabel(id: AreaId) {
@@ -198,7 +198,7 @@ export function CommunityView() {
         <nav className="community-nav" aria-label="האזור האישי">
           {SIDE_NAV.map((item) => (
             <button key={item.id} type="button" aria-current={area === item.id ? 'page' : undefined} onClick={() => { setArea(item.id); closeRail(); }}>
-              {item.label}
+              <i aria-hidden="true">{item.icon}</i>{item.label}
             </button>
           ))}
           {assignedPod ? <button type="button" onClick={() => { closeRail(); navigate('/pod'); }}>הפוד שלי</button> : null}

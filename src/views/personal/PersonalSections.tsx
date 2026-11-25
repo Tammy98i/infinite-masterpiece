@@ -164,7 +164,7 @@ export function HomeDesk({
     <div className="pa-dash">
       <div className="pa-stream">
         <section className="pa-event-hero">
-          <div>
+          <div className="pa-hero-copy">
             <span>המפגש הבא</span>
             {upcoming && session && when ? (
               <>
@@ -200,7 +200,7 @@ export function HomeDesk({
               <button key={course.id} type="button" className="pa-course" onClick={() => onOpenCourse(course.id)}>
                 <span className="pa-cover">{course.coverImage ? <img src={course.coverImage} alt="" /> : <span className="pa-fallback" />}<i className="pa-play" aria-hidden="true">▶</i></span>
                 <strong>{course.title}</strong>
-                <em>{course.subtitle || course.level}</em>
+                <em>{course.episodes.length} שיעורים · {Math.max(1, Math.round(course.episodes.reduce((sum, episode) => sum + (episode.duration || 0), 0) / 60))} דק׳</em>
               </button>
             ))}
           </div>
@@ -211,7 +211,11 @@ export function HomeDesk({
             <div className="pa-pills"><span className="is-on">הכל</span><button type="button" onClick={onOpenFeed}>שלי</button></div>
             <button type="button" onClick={onOpenFeed}>לכל השיחה</button>
           </div>
-          <button type="button" className="pa-composer" onClick={onOpenFeed}>כתבו כאן הודעה לקהילה</button>
+          <div className="pa-compose-line">
+            <span className="community-initial" aria-hidden="true">{user.name.trim().charAt(0) || 'ח'}</span>
+            <button type="button" className="pa-composer" onClick={onOpenFeed}>כתבו כאן הודעה לקהילה</button>
+            <button type="button" className="community-publish" onClick={onOpenFeed}>שליחה</button>
+          </div>
           {featured ? (
             <article className="pa-post">
               <header><span className="community-initial" aria-hidden="true">{featured.author.firstName.trim().charAt(0)}</span><strong>{featured.author.firstName}</strong></header>
@@ -332,6 +336,7 @@ export function HomeDesk({
             <button key={course.id} type="button" className="pa-news" onClick={() => onOpenCourse(course.id)}>
               {course.coverImage ? <img src={course.coverImage} alt="" /> : <i />}
               <span>{course.title}</span>
+              <b aria-hidden="true">‹</b>
             </button>
           ))}
           {newest.length === 0 ? <p className="pa-note">הרצאות חדשות יופיעו כאן.</p> : null}
