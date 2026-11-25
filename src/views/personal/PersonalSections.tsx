@@ -328,7 +328,7 @@ export function HomeDesk({
             <div><b>{posts.filter((post) => post.author.firstName && user.name.startsWith(post.author.firstName)).length}</b><span>הודעות</span></div>
             <div><b>{user.subscriptionPlan === 'premium_88' ? '88' : user.subscriptionPlan === 'annual' ? 'שנתי' : user.subscriptionPlan === 'monthly' ? 'חודשי' : 'חבר'}</b><span>מסלול</span></div>
           </div>
-          <button type="button" onClick={() => onOpenProfile(missing[0]?.field || 'profile-name')}>עריכת פרופיל</button>
+          <button type="button" className="pa-edit" onClick={() => onOpenProfile(missing[0]?.field || 'profile-name')}>עריכת פרופיל</button>
         </section>
         <section className="pa-card">
           <h2>מה חדש</h2>
@@ -381,7 +381,7 @@ export function AreaTop({ initial, query, onQuery, onBoard }: { initial: string;
         <label className="community-sr" htmlFor="pa-find">חיפוש באזור האישי</label>
         <input id="pa-find" type="search" value={query} onChange={(event) => onQuery(event.target.value)} placeholder="חיפוש הרצאה, מפגש או מילה מהשיחה" />
       </form>
-      <a className="pa-wa" href={DEFAULT_WEBINAR_CONFIG.whatsappGroupUrl} target="_blank" rel="noreferrer">וואטסאפ</a>
+      <a className="pa-wa" href={DEFAULT_WEBINAR_CONFIG.whatsappGroupUrl} target="_blank" rel="noreferrer" aria-label="וואטסאפ">ו</a>
       <button type="button" className="pa-board-btn" onClick={onBoard}>לוח הקהילה</button>
       <span className="community-initial" aria-hidden="true">{initial}</span>
     </div>
