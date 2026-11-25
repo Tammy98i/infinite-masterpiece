@@ -1,4 +1,4 @@
-import { useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import { Link } from 'react-router-dom';
 import { DEFAULT_WEBINAR_CONFIG } from '../../constants/webinar';
 import type { CommunityPost } from '../../api/community';
@@ -158,8 +158,14 @@ export function HomeDesk({
   const shownPosts = posts.filter((post) => feedScope === 'all' || post.author.firstName === firstName);
   const featured = shownPosts[0];
   const portrait = user.avatar && !user.avatar.includes('images.unsplash.com') ? user.avatar : '';
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    if (!session?.startsAt) return undefined;
+    const timer = window.setInterval(() => setNow(Date.now()), 30000);
+    return () => window.clearInterval(timer);
+  }, [session?.startsAt]);
   const when = session ? jerusalemParts(session.startsAt) : null;
-  const upcoming = Boolean(session && when && new Date(session.startsAt).getTime() >= Date.now());
+  const upcoming = Boolean(session && when && new Date(session.startsAt).getTime() > now);
   const done = checks.length - missing.length;
   const names = new Map<string, number>();
   posts.forEach((post) => {
@@ -167,7 +173,7 @@ export function HomeDesk({
     names.set(name, (names.get(name) || 0) + 1);
   });
   const board = [...names.entries()].sort((a, b) => b[1] - a[1] || a[0].localeCompare(b[0], 'he')).slice(0, 5);
-  const remain = upcoming && session ? Math.max(0, new Date(session.startsAt).getTime() - Date.now()) : 0;
+  const remain = upcoming && session ? Math.max(0, new Date(session.startsAt).getTime() - now) : 0;
   const count = {
     days: Math.floor(remain / 86400000),
     hours: Math.floor((remain % 86400000) / 3600000),

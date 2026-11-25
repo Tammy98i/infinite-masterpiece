@@ -452,7 +452,8 @@
 .pa-top { direction: ltr; }
 .pa-top input { direction: rtl; text-align: right; }
 .community-rail { width: 232px; background: #fbf7f0; height: 100vh; max-height: 100vh; overflow: hidden; }
-.community-nav { min-height: 0; overflow: auto; }
+.community-nav { flex: 1 1 auto; min-height: min-content; overflow: auto; }
+.community-rail { overflow-y: auto; }
 .community-brand { display: grid; justify-items: center; text-align: center; gap: 4px; margin-bottom: 8px; }
 .community-word { font-size: .72rem; letter-spacing: .14em; text-transform: uppercase; color: #1a1204; font-weight: 700; line-height: 1.3; }
 .community-nav button { border-radius: 12px; min-height: 42px; color: #1a1204; display: flex; align-items: center; gap: 10px; }
