@@ -1,5 +1,5 @@
 import { useEffect, useId, useState, type FC } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { podsApi } from '../api/pods';
 import { communityApi, type CommunityHome, type CommunityPost } from '../api/community';
 import { uploadFile } from '../api/upload';
@@ -33,7 +33,33 @@ function relativeTime(value: string) {
   if (minutes < 60) return `לפני ${minutes} דק׳`;
   const hours = Math.round(minutes / 60);
   if (hours < 24) return `לפני ${hours} שע׳`;
-  return `לפני ${Math.round(hours / 24)} ימים`;
+  const days = Math.round(hours / 24);
+  if (days <= 1) return 'אתמול';
+  return `לפני ${days} ימים`;
+}
+
+function replyLabel(count: number) {
+  if (count <= 0) return 'הוספת תגובה';
+  if (count === 1) return 'תגובה אחת';
+  return `${count} תגובות`;
+}
+
+function clockLabel(seconds: number) {
+  const minutes = Math.floor(seconds / 60);
+  const rest = seconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(rest).padStart(2, '0')}`;
+}
+
+function parseClock(value: string) {
+  const match = value.trim().match(/^(\d{1,3}):(\d{2})$/);
+  if (!match) return 0;
+  return Number(match[1]) * 60 + Number(match[2]);
+}
+
+function areaFromPath(pathname: string): AreaId | null {
+  const parts = pathname.replace(/\/+$/, '').split('/').filter(Boolean);
+  if (parts[0] !== 'library' || parts[1] !== 'community') return null;
+  return parts[2] === 'feed' ? 'feed' : null;
 }
 
 const SIDE_NAV: Array<{ id: AreaId; label: string }> = [
@@ -61,17 +87,20 @@ export function CommunityView() {
   const { setView, logout, user, courses, categories, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory, getMyLectures, getRecommendedForUser } = useApp();
   const toggleSaved = useMyListToggle();
   const navigate = useNavigate();
+  const location = useLocation();
   const composerId = useId();
   const [channel, setChannel] = useState('all');
   const [home, setHome] = useState<CommunityHome | null>(null);
   const [body, setBody] = useState('');
-  const [lecture, setLecture] = useState('');
-  const [showLecture, setShowLecture] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [error, setError] = useState('');
   const [pending, setPending] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [area, setArea] = useState<AreaId>('home');
+  const [area, setAreaState] = useState<AreaId>(() => (areaFromPath(window.location.pathname) === 'feed' ? 'feed' : 'home'));
+  const [composeOpen, setComposeOpen] = useState(false);
+  const [lectureId, setLectureId] = useState('');
+  const [lectureAt, setLectureAt] = useState('');
+  const [savedOnly, setSavedOnly] = useState(false);
   const [areaQuery, setAreaQuery] = useState('');
   const [assignedPod, setAssignedPod] = useState<AssignedPod | null>(null);
   const [podSession, setPodSession] = useState<ClubSession | null>(null);
@@ -117,6 +146,17 @@ export function CommunityView() {
   }, [home, setView]);
 
   useEffect(() => {
+    if (areaFromPath(location.pathname) === 'feed') setAreaState('feed');
+  }, [location.pathname]);
+
+  const setArea = (next: AreaId) => {
+    setAreaState(next);
+    const onFeed = location.pathname.replace(/\/+$/, '').endsWith('/community/feed');
+    if (next === 'feed' && !onFeed) navigate('/library/community/feed');
+    if (next !== 'feed' && onFeed) navigate('/library/community');
+  };
+
+  useEffect(() => {
     let cancelled = false;
     podsApi.me().then((state) => {
       if (cancelled) return;
@@ -154,11 +194,19 @@ export function CommunityView() {
     setPending(true);
     setError('');
     try {
-      await communityApi.post({ channel: channel === 'all' ? 'talk' : channel, body, lectureTitle: lecture, imageUrl });
+      const picked = courses.find((course) => course.id === lectureId);
+      await communityApi.post({
+        channel: channel === 'all' ? 'talk' : channel,
+        body,
+        lectureTitle: picked?.title || '',
+        imageUrl,
+        lectureSeconds: picked ? parseClock(lectureAt) : 0,
+      });
       setBody('');
-      setLecture('');
+      setLectureId('');
+      setLectureAt('');
       setImageUrl('');
-      setShowLecture(false);
+      setComposeOpen(false);
       await refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'הפרסום נכשל');
@@ -247,7 +295,7 @@ export function CommunityView() {
           </div>
         ) : null}
         {area !== 'home' ? <h1>{area === 'courses' ? 'הלמידה שלי' : railLabel(area) || 'ראשי'}</h1> : null}
-        {area !== 'home' ? <p className="community-lede">{AREA_NOTES[area]}</p> : null}
+        {area !== 'home' && area !== 'feed' ? <p className="community-lede">{AREA_NOTES[area]}</p> : null}
         {error ? <p className="community-error" role="alert">{error}</p> : null}
 
         {!home ? <p className="community-note">טוענים את הקהילה…</p> : null}
@@ -342,44 +390,74 @@ export function CommunityView() {
 
         {area === 'feed' && home && open ? (
             <section className="community-feed" aria-label="פיד">
-              {current?.canPost ? (
-                <form className="community-card community-composer" onSubmit={(event) => { event.preventDefault(); void publish(); }}>
+              {current?.canPost && !composeOpen ? (
+                <button type="button" className="community-prompt" onClick={() => setComposeOpen(true)}>יש לך שאלה או תובנה לשתף?</button>
+              ) : null}
+              {current?.canPost && composeOpen ? (
+                <form className="community-card community-composer" onSubmit={(event) => { event.preventDefault(); if (body.trim().length >= 2) void publish(); }}>
                   <label className="community-sr" htmlFor={composerId}>מה תרצו לשתף</label>
-                  <div className="community-compose-row">
-                    <div className="community-initial" aria-hidden="true">{initial}</div>
-                    <textarea id={composerId} value={body} onChange={(event) => setBody(event.target.value)} placeholder="כתבו כאן הודעה לקהילה" />
-                  </div>
-                  {showLecture ? (
-                    <label className="community-lecture">
-                      <span className="community-sr">שם ההרצאה</span>
-                      <input value={lecture} onChange={(event) => setLecture(event.target.value)} placeholder="שם ההרצאה" />
-                    </label>
-                  ) : null}
+                  <textarea id={composerId} value={body} onChange={(event) => setBody(event.target.value)} placeholder="יש לך שאלה או תובנה לשתף?" />
                   {imageUrl ? <img className="community-photo" src={imageUrl} alt="" /> : null}
-                  <p className="community-note">בכבוד, בלי פרסום. אם משהו לא מתאים, לוחצים דיווח.</p>
-                  <div className="community-actions">
-                    <div className="community-tools">
-                      <label className="community-file">
-                        הוספת תמונה
-                        <input className="community-sr" type="file" accept="image/*" onChange={(event) => {
-                          const file = event.target.files?.[0];
-                          event.target.value = '';
-                          if (!file) return;
-                          void uploadFile(file, 'image').then(setImageUrl).catch((err: unknown) => {
-                            setError(err instanceof Error ? err.message : 'העלאה נכשלה');
-                          });
-                        }} />
+                  <div className="community-attach">
+                    <label className="community-file">
+                      צירוף תמונה
+                      <input className="community-sr" type="file" accept="image/*" onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        event.target.value = '';
+                        if (!file) return;
+                        void uploadFile(file, 'image').then(setImageUrl).catch((err: unknown) => {
+                          setError(err instanceof Error ? err.message : 'העלאה נכשלה');
+                        });
+                      }} />
+                    </label>
+                    <label>
+                      צירוף הרצאה
+                      <select value={lectureId} onChange={(event) => setLectureId(event.target.value)}>
+                        <option value="">בחרו הרצאה</option>
+                        {lessons.map((course) => <option key={course.id} value={course.id}>{course.title}</option>)}
+                      </select>
+                    </label>
+                    {lectureId ? (
+                      <label>
+                        זמן בדוגמה
+                        <input value={lectureAt} onChange={(event) => setLectureAt(event.target.value)} placeholder="04:00" inputMode="numeric" aria-label="זמן בדוגמה" />
                       </label>
-                      <button type="button" aria-pressed={showLecture} onClick={() => setShowLecture((value) => !value)}>{showLecture ? 'הסתרת שם ההרצאה' : 'הוספת שם הרצאה'}</button>
-                    </div>
-                    <button type="submit" className="community-publish" disabled={pending}>{pending ? 'שולח…' : 'שליחת ההודעה'}</button>
+                    ) : null}
+                  </div>
+                  <div className="community-actions">
+                    <button type="button" onClick={() => setComposeOpen(false)}>סגירה</button>
+                    <button type="submit" className="community-publish" disabled={pending || body.trim().length < 2}>{pending ? 'שולח…' : 'פרסום בקהילה'}</button>
                   </div>
                 </form>
               ) : null}
 
-              {home.posts.length === 0 ? <p className="community-empty">עדיין אין הודעות. הראשונה פותחת את השיחה.</p> : null}
               {home.me?.muted ? <p className="community-note">הפרסום הושתק על ידי הצוות.</p> : null}
-              {home.posts.map((post) => (
+              {(savedOnly ? [] : home.posts.filter((post) => post.pinned)).map((post) => (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  week
+                  isAdmin={Boolean(home.me?.isAdmin)}
+                  open={Boolean(openReplies[post.id])}
+                  draft={replyDraft[post.id] || ''}
+                  onToggle={() => setOpenReplies((current) => ({ ...current, [post.id]: !current[post.id] }))}
+                  onDraft={(value) => setReplyDraft((current) => ({ ...current, [post.id]: value }))}
+                  onAct={act}
+                  onExample={(seconds) => {
+                    const course = lessons.find((item) => item.title === post.lectureTitle) || lessons.find((item) => post.lectureTitle && (item.title.includes(post.lectureTitle) || post.lectureTitle.includes(item.title)));
+                    const episode = course?.episodes[0];
+                    if (course && episode) navigate(`/library/watch/${encodeURIComponent(course.id)}/${encodeURIComponent(episode.id)}?t=${seconds}`);
+                  }}
+                />
+              ))}
+              <div className="pa-rowhead">
+                <h2>{savedOnly ? 'השמורים שלי' : 'פוסטים אחרונים'}</h2>
+                <button type="button" aria-pressed={savedOnly} onClick={() => setSavedOnly((value) => !value)}>{savedOnly ? 'לכל הפוסטים' : 'השמורים שלי'}</button>
+              </div>
+              {(savedOnly ? home.posts.filter((post) => post.saved) : home.posts.filter((post) => !post.pinned)).length === 0 ? (
+                <p className="community-empty">{savedOnly ? 'עוד לא שמרתם פוסט.' : 'עדיין אין הודעות. הראשונה פותחת את השיחה.'}</p>
+              ) : null}
+              {(savedOnly ? home.posts.filter((post) => post.saved) : home.posts.filter((post) => !post.pinned)).map((post) => (
                 <PostCard
                   key={post.id}
                   post={post}
@@ -389,6 +467,11 @@ export function CommunityView() {
                   onToggle={() => setOpenReplies((current) => ({ ...current, [post.id]: !current[post.id] }))}
                   onDraft={(value) => setReplyDraft((current) => ({ ...current, [post.id]: value }))}
                   onAct={act}
+                  onExample={(seconds) => {
+                    const course = lessons.find((item) => item.title === post.lectureTitle) || lessons.find((item) => post.lectureTitle && (item.title.includes(post.lectureTitle) || post.lectureTitle.includes(item.title)));
+                    const episode = course?.episodes[0];
+                    if (course && episode) navigate(`/library/watch/${encodeURIComponent(course.id)}/${encodeURIComponent(episode.id)}?t=${seconds}`);
+                  }}
                 />
               ))}
               {home.nextCursor ? (
@@ -406,27 +489,32 @@ export function CommunityView() {
 
 const PostCard: FC<{
   post: CommunityPost;
+  week?: boolean;
   isAdmin: boolean;
   open: boolean;
   draft: string;
   onToggle: () => void;
   onDraft: (value: string) => void;
   onAct: (work: () => Promise<unknown>) => Promise<void>;
+  onExample: (seconds: number) => void;
 }> = ({
   post,
+  week = false,
   isAdmin,
   open,
   draft,
   onToggle,
   onDraft,
   onAct,
+  onExample,
 }) => {
   const replyId = useId();
   const editId = useId();
   const [editing, setEditing] = useState(false);
   const [editBody, setEditBody] = useState(post.body);
   return (
-    <article className="community-card community-post">
+    <article className={`community-card community-post${week ? ' is-week' : ''}`}>
+      {week ? <p className="community-kicker">דיון השבוע · {post.author.firstName}{post.author.badge ? ` · ${post.author.badge}` : ''}</p> : null}
       <div className="community-post-head">
         <div className="community-initial" aria-hidden="true">{post.author.initial}</div>
         <div>
@@ -456,12 +544,16 @@ const PostCard: FC<{
         </form>
       ) : <p>{post.body}</p>}
       {post.imageUrl ? <img className="community-photo" src={post.imageUrl} alt="" /> : null}
-      {post.lectureTitle ? <div className="community-lecture-chip">הרצאה · {post.lectureTitle}</div> : null}
+      {post.lectureTitle && post.lectureSeconds ? (
+        <button type="button" className="community-example" onClick={() => onExample(post.lectureSeconds || 0)}>
+          {week ? `לצפייה בדוגמה · ${clockLabel(post.lectureSeconds)}` : `${post.lectureTitle} · ${clockLabel(post.lectureSeconds)}`}
+        </button>
+      ) : post.lectureTitle ? <div className="community-lecture-chip">הרצאה · {post.lectureTitle}</div> : null}
       <div className="community-tools">
-        {post.canEdit ? <button type="button" onClick={() => { setEditBody(post.body); setEditing(true); }}>עריכה</button> : null}
-        <button type="button" aria-pressed={post.hearted} onClick={() => void onAct(() => communityApi.react(post.id))}>אהבתי {post.hearts}</button>
-        <button type="button" aria-expanded={open} onClick={onToggle}>תגובות {post.replies.length}</button>
-        <button type="button" aria-pressed={post.saved} onClick={() => void onAct(() => communityApi.bookmark(post.id))}>{post.saved ? 'נשמר' : 'שמירה'}</button>
+        {post.canEdit ? <button type="button" className="is-quiet" onClick={() => { setEditBody(post.body); setEditing(true); }}>עריכה</button> : null}
+        <button type="button" className="community-reply-cta" aria-expanded={open} onClick={onToggle}>{replyLabel(post.replies.length)}</button>
+        <button type="button" className="is-quiet" aria-pressed={post.hearted} onClick={() => void onAct(() => communityApi.react(post.id))}>אהבתי {post.hearts}</button>
+        <button type="button" className="is-quiet" aria-pressed={post.saved} onClick={() => void onAct(() => communityApi.bookmark(post.id))}>{post.saved ? 'נשמר' : 'שמירה'}</button>
         <details className="community-more">
           <summary>עוד</summary>
           <button type="button" aria-pressed={post.reported} onClick={() => !post.reported && void onAct(() => communityApi.report(post.id))}>{post.reported ? 'דווח' : 'דיווח'}</button>

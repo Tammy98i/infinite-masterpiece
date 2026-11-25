@@ -96,6 +96,12 @@ function cleanImage(value: unknown) {
   return url;
 }
 
+function cleanSeconds(value: unknown) {
+  const seconds = Number(value);
+  if (!Number.isFinite(seconds) || seconds <= 0) return 0;
+  return Math.min(Math.floor(seconds), 8 * 3600);
+}
+
 export function initializeCommunitySchema(db: DatabaseSync) {
   db.exec(`
     CREATE TABLE IF NOT EXISTS community_posts (
@@ -158,6 +164,12 @@ export function initializeCommunitySchema(db: DatabaseSync) {
   if (!reportColumns.has('status')) {
     db.exec(`ALTER TABLE community_reports ADD COLUMN status TEXT NOT NULL DEFAULT 'open'`);
   }
+  const postColumns = new Set(
+    (db.prepare(`PRAGMA table_info(community_posts)`).all() as Array<{ name: string }>).map((column) => column.name)
+  );
+  if (!postColumns.has('lecture_seconds')) {
+    db.exec(`ALTER TABLE community_posts ADD COLUMN lecture_seconds INTEGER NOT NULL DEFAULT 0`);
+  }
 }
 
 type AuthorRow = {
@@ -216,7 +228,7 @@ export function getCommunityHome(db: DatabaseSync, user: AuthUser | null, reques
   }
   const rows = db
     .prepare(
-      `SELECT p.id, p.channel, p.body, p.lecture_title, p.image_url, p.status, p.pinned, p.created_at,
+      `SELECT p.id, p.channel, p.body, p.lecture_title, p.lecture_seconds, p.image_url, p.status, p.pinned, p.created_at,
               u.id as author_id, u.full_name, u.role, u.subscription_plan, u.is_founder, u.avatar
        FROM community_posts p
        JOIN users u ON u.id = p.author_id
@@ -231,6 +243,7 @@ export function getCommunityHome(db: DatabaseSync, user: AuthUser | null, reques
       author_id: string;
       body: string;
       lecture_title: string;
+      lecture_seconds: number;
       image_url: string;
       status: string;
       pinned: number;
@@ -310,6 +323,7 @@ export function getCommunityHome(db: DatabaseSync, user: AuthUser | null, reques
       channel: row.channel,
       body: row.body,
       lectureTitle: row.lecture_title,
+      lectureSeconds: Number(row.lecture_seconds) || 0,
       imageUrl: row.image_url,
       pinned: Boolean(row.pinned),
       hidden: row.status === 'hidden',
@@ -348,7 +362,7 @@ function assertRate(db: DatabaseSync, table: 'community_posts' | 'community_repl
 export function createCommunityPost(
   db: DatabaseSync,
   user: AuthUser,
-  input: { channel?: string; body?: unknown; lectureTitle?: unknown; imageUrl?: unknown }
+  input: { channel?: string; body?: unknown; lectureTitle?: unknown; imageUrl?: unknown; lectureSeconds?: unknown }
 ) {
   if (!canEnterCommunity(user)) fail('הקהילה נפתחת עם מנוי הספרייה', 403);
   if (isMuted(db, user.id)) fail('הפרסום הושתק על ידי הצוות', 403);
@@ -357,9 +371,9 @@ export function createCommunityPost(
   assertRate(db, 'community_posts', user.id, 8);
   const id = randomUUID();
   db.prepare(
-    `INSERT INTO community_posts (id, channel, author_id, body, lecture_title, image_url, created_at)
-     VALUES (?, ?, ?, ?, ?, ?, datetime('now'))`
-  ).run(id, channel, user.id, cleanBody(input.body), cleanLecture(input.lectureTitle), cleanImage(input.imageUrl));
+    `INSERT INTO community_posts (id, channel, author_id, body, lecture_title, image_url, lecture_seconds, created_at)
+     VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))`
+  ).run(id, channel, user.id, cleanBody(input.body), cleanLecture(input.lectureTitle), cleanImage(input.imageUrl), cleanSeconds(input.lectureSeconds));
   return id;
 }
 
@@ -558,7 +572,24 @@ export function seedDemoCommunity(db: DatabaseSync) {
   db.prepare(`INSERT INTO site_settings (key, value) VALUES (?, '1')`).run(SEED_KEY);
 }
 
+const WEEK_KEY = 'community_week_discussion';
+
+export function pinWeekDiscussion(db: DatabaseSync) {
+  if (db.prepare(`SELECT value FROM site_settings WHERE key = ?`).get(WEEK_KEY)) return;
+  db.prepare(
+    `UPDATE community_posts SET body = ?, lecture_title = ?, lecture_seconds = ?, pinned = 1 WHERE id = ?`
+  ).run(
+    'בדקה הרביעית אני מראה איך לפתוח סיפור. איך הייתם פותחים את הסיפור של העסק שלכם?',
+    'מחזון למערכת',
+    240,
+    'community-demo-story'
+  );
+  db.prepare(`UPDATE community_posts SET pinned = 0 WHERE id = ?`).run('community-demo-welcome');
+  db.prepare(`INSERT INTO site_settings (key, value) VALUES (?, '1')`).run(WEEK_KEY);
+}
+
 export function initializeCommunity(db: DatabaseSync) {
   initializeCommunitySchema(db);
   seedDemoCommunity(db);
+  pinWeekDiscussion(db);
 }

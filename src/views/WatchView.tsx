@@ -1,4 +1,5 @@
 ﻿import React, { useCallback, useEffect, useRef, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { Lock, Maximize, Minimize, Pause, Play, Volume2, VolumeX } from 'lucide-react';
 import { DirBack } from '../components/DirArrow';
@@ -38,6 +39,8 @@ export const WatchView: React.FC = () => {
     isGuest,
   } = useApp();
   const { muteMedia } = useA11yPrefs();
+  const [searchParams] = useSearchParams();
+  const jumpTo = Number(searchParams.get('t'));
 
   const course = courses.find((c) => c.id === selectedCourseId);
   const episodeIndex = course?.episodes.findIndex((e) => e.id === selectedEpisodeId) ?? -1;
@@ -132,7 +135,9 @@ export const WatchView: React.FC = () => {
       setPreviewEnded(true);
       return;
     }
-    if (savedProg && savedProg.currentTime > 5 && !savedProg.completed) {
+    if (Number.isFinite(jumpTo) && jumpTo > 0) {
+      video.currentTime = previewing ? Math.min(jumpTo, PREVIEW_SECONDS - 1) : jumpTo;
+    } else if (savedProg && savedProg.currentTime > 5 && !savedProg.completed) {
       const startAt = previewing ? Math.min(savedProg.currentTime, PREVIEW_SECONDS - 1) : savedProg.currentTime;
       video.currentTime = startAt;
     }
@@ -141,7 +146,7 @@ export const WatchView: React.FC = () => {
       track.mode = captionsOn ? 'showing' : 'hidden';
     }
     void video.play().catch(() => setIsPlaying(false));
-  }, [episode?.id, locked, previewing, playbackUrl, captionsOn]);
+  }, [episode?.id, locked, previewing, playbackUrl, captionsOn, jumpTo]);
 
   useEffect(() => {
     const video = videoRef.current;
