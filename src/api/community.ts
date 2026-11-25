@@ -21,11 +21,13 @@ export type CommunityPost = {
   channel: string;
   body: string;
   lectureTitle: string;
+  lectureSeconds?: number;
   imageUrl: string;
   pinned: boolean;
   hidden: boolean;
   createdAt: string;
   canEdit: boolean;
+  mine?: boolean;
   author: CommunityAuthor;
   hearts: number;
   hearted: boolean;
@@ -80,7 +82,7 @@ export const communityApi = {
       method: 'POST',
       body: JSON.stringify({ userId, muted }),
     }),
-  post: (input: { channel: string; body: string; lectureTitle?: string; imageUrl?: string }) =>
+  post: (input: { channel: string; body: string; lectureTitle?: string; imageUrl?: string; lectureSeconds?: number }) =>
     apiRequest<{ id: string }>('/api/community/posts', { method: 'POST', body: JSON.stringify(input) }),
   reply: (postId: string, body: string) =>
     apiRequest<{ id: string }>(`/api/community/posts/${postId}/replies`, {

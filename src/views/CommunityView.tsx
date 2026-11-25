@@ -1,16 +1,16 @@
 import { useEffect, useId, useState, type FC } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { podsApi } from '../api/pods';
 import { communityApi, type CommunityHome, type CommunityPost } from '../api/community';
 import { uploadFile } from '../api/upload';
 import { useApp } from '../context/AppContext';
-import type { Course, Instructor } from '../types';
+import { useMyListToggle } from '../utils/useMyListToggle';
 import {
   AREAS,
   AREA_NOTES,
-  NAV_GROUPS,
   AgentGrid,
   type ClubSession,
+  AreaTop,
   ClubCard,
   ContactDesk,
   CourseShelf,
@@ -33,66 +33,52 @@ function relativeTime(value: string) {
   if (minutes < 60) return `לפני ${minutes} דק׳`;
   const hours = Math.round(minutes / 60);
   if (hours < 24) return `לפני ${hours} שע׳`;
-  return `לפני ${Math.round(hours / 24)} ימים`;
+  const days = Math.round(hours / 24);
+  if (days <= 1) return 'אתמול';
+  return `לפני ${days} ימים`;
 }
 
-function AreaSearch({
-  term,
-  courses,
-  instructors,
-  posts,
-  onOpenCourse,
-  onOpenInstructor,
-  onOpenFeed,
-  onLibrary,
-}: {
-  term: string;
-  courses: Course[];
-  instructors: Instructor[];
-  posts: CommunityPost[];
-  onOpenCourse: (id: string) => void;
-  onOpenInstructor: (id: string) => void;
-  onOpenFeed: () => void;
-  onLibrary: () => void;
-}) {
-  const lessons = courses.filter((course) => `${course.title} ${course.subtitle || ''}`.includes(term)).slice(0, 5);
-  const people = instructors.filter((person) => person.name.includes(term) && person.showInLibrary !== false).slice(0, 4);
-  const notes = posts.filter((post) => `${post.body} ${post.author.firstName}`.includes(term)).slice(0, 4);
-  const empty = lessons.length + people.length + notes.length === 0;
-  return (
-    <div className="community-card community-search-results">
-      {empty ? (
-        <div className="pa-empty">
-          <p className="pa-note">אין תוצאות עבור «{term}».</p>
-          <button type="button" onClick={onLibrary}>חיפוש בכל הספרייה</button>
-        </div>
-      ) : null}
-      {lessons.length > 0 ? (
-        <section>
-          <div className="pa-rowhead"><h2>הרצאות</h2></div>
-          {lessons.map((course) => (
-            <button key={course.id} type="button" className="pa-linkrow" onClick={() => onOpenCourse(course.id)}>{course.title}</button>
-          ))}
-        </section>
-      ) : null}
-      {people.length > 0 ? (
-        <section>
-          <div className="pa-rowhead"><h2>מרצים</h2></div>
-          {people.map((person) => (
-            <button key={person.id} type="button" className="pa-linkrow" onClick={() => onOpenInstructor(person.id)}>{person.name}</button>
-          ))}
-        </section>
-      ) : null}
-      {notes.length > 0 ? (
-        <section>
-          <div className="pa-rowhead"><h2>מהשיחה</h2></div>
-          {notes.map((post) => (
-            <button key={post.id} type="button" className="pa-linkrow" onClick={onOpenFeed}>{post.author.firstName}: {post.body}</button>
-          ))}
-        </section>
-      ) : null}
-    </div>
-  );
+function replyLabel(count: number) {
+  if (count <= 0) return 'הוספת תגובה';
+  if (count === 1) return 'תגובה אחת';
+  return `${count} תגובות`;
+}
+
+function clockLabel(seconds: number) {
+  const minutes = Math.floor(seconds / 60);
+  const rest = seconds % 60;
+  return `${String(minutes).padStart(2, '0')}:${String(rest).padStart(2, '0')}`;
+}
+
+function parseClock(value: string) {
+  const match = value.trim().match(/^(\d{1,3}):(\d{2})$/);
+  if (!match) return 0;
+  return Number(match[1]) * 60 + Number(match[2]);
+}
+
+function areaFromPath(pathname: string): 'feed' | 'home' | null {
+  const parts = pathname.replace(/\/+$/, '').split('/').filter(Boolean);
+  if (parts[0] !== 'library' || parts[1] !== 'community') return null;
+  if (parts[2] === 'home') return 'home';
+  if (!parts[2] || parts[2] === 'feed') return 'feed';
+  return null;
+}
+
+const SIDE_NAV: Array<{ id: AreaId; label: string }> = [
+  { id: 'home', label: 'ראשי' },
+  { id: 'courses', label: 'הקורסים שלי' },
+  { id: 'calendar', label: 'אירועים ומפגשים' },
+  { id: 'recordings', label: 'הקלטות' },
+  { id: 'shorts', label: 'הדרכות' },
+  { id: 'agents', label: 'סוכני AI' },
+  { id: 'feed', label: 'הקהילה' },
+  { id: 'hall', label: 'היכל התהילה' },
+  { id: 'partners', label: 'תוכנית שותפים' },
+  { id: 'contact', label: 'צור קשר' },
+];
+
+function railLabel(id: AreaId) {
+  return SIDE_NAV.find((item) => item.id === id)?.label || AREAS.find((item) => item.id === id)?.label || '';
 }
 
 function Badge({ value }: { value: string }) {
@@ -100,19 +86,23 @@ function Badge({ value }: { value: string }) {
 }
 
 export function CommunityView() {
-  const { setView, setSearchQuery, user, courses, categories, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory, getMyLectures, getRecommendedForUser } = useApp();
+  const { setView, logout, user, courses, categories, myList, learningPaths, instructors, getContinueWatchingList, getWatchHistory, getMyLectures, getRecommendedForUser } = useApp();
+  const toggleSaved = useMyListToggle();
   const navigate = useNavigate();
+  const location = useLocation();
   const composerId = useId();
-  const [channel, setChannel] = useState('talk');
+  const [channel, setChannel] = useState('all');
   const [home, setHome] = useState<CommunityHome | null>(null);
   const [body, setBody] = useState('');
-  const [lecture, setLecture] = useState('');
-  const [showLecture, setShowLecture] = useState(false);
   const [imageUrl, setImageUrl] = useState('');
   const [error, setError] = useState('');
   const [pending, setPending] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [area, setArea] = useState<AreaId>('home');
+  const [area, setAreaState] = useState<AreaId>(() => areaFromPath(window.location.pathname) || 'home');
+  const [composeOpen, setComposeOpen] = useState(false);
+  const [lectureId, setLectureId] = useState('');
+  const [lectureAt, setLectureAt] = useState('');
+  const [savedOnly, setSavedOnly] = useState(false);
   const [areaQuery, setAreaQuery] = useState('');
   const [assignedPod, setAssignedPod] = useState<AssignedPod | null>(null);
   const [podSession, setPodSession] = useState<ClubSession | null>(null);
@@ -158,6 +148,20 @@ export function CommunityView() {
   }, [home, setView]);
 
   useEffect(() => {
+    const next = areaFromPath(location.pathname);
+    if (next === 'feed') setAreaState('feed');
+    if (next === 'home') setAreaState((current) => (current === 'feed' ? 'home' : current));
+  }, [location.pathname]);
+
+  const setArea = (next: AreaId) => {
+    setAreaState(next);
+    const current = location.pathname.replace(/\/+$/, '');
+    if (next === 'feed' && current !== '/library/community') navigate('/library/community');
+    if (next === 'home' && current !== '/library/community/home') navigate('/library/community/home');
+    if (next !== 'feed' && next !== 'home' && (current === '/library/community' || current.endsWith('/community/feed'))) navigate('/library/community/home');
+  };
+
+  useEffect(() => {
     let cancelled = false;
     podsApi.me().then((state) => {
       if (cancelled) return;
@@ -195,11 +199,19 @@ export function CommunityView() {
     setPending(true);
     setError('');
     try {
-      await communityApi.post({ channel, body, lectureTitle: lecture, imageUrl });
+      const picked = courses.find((course) => course.id === lectureId);
+      await communityApi.post({
+        channel: channel === 'all' ? 'talk' : channel,
+        body,
+        lectureTitle: picked?.title || '',
+        imageUrl,
+        lectureSeconds: picked ? parseClock(lectureAt) : 0,
+      });
       setBody('');
-      setLecture('');
+      setLectureId('');
+      setLectureAt('');
       setImageUrl('');
-      setShowLecture(false);
+      setComposeOpen(false);
       await refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : 'הפרסום נכשל');
@@ -219,10 +231,16 @@ export function CommunityView() {
   };
 
   const open = home?.access === 'open';
-  const current = home?.channels.find((item) => item.id === channel);
+  const current = channel === 'all'
+    ? { id: 'all', label: 'הכל', canPost: Boolean(home?.channels.find((item) => item.id === 'talk')?.canPost) }
+    : home?.channels.find((item) => item.id === channel);
   const initial = home?.me?.initial || user.name.trim().charAt(0) || 'ח';
 
   const closeRail = () => setMenuOpen(false);
+  const term = areaQuery.trim();
+  const lessonHits = term && area !== 'courses' && area !== 'shorts' ? courses.filter((course) => course.title.includes(term)).slice(0, 5) : [];
+  const peopleHits = term && area !== 'courses' && area !== 'shorts' ? instructors.filter((person) => person.name.includes(term) && person.showInLibrary !== false).slice(0, 4) : [];
+  const postHits = term && area !== 'courses' && area !== 'shorts' && home?.access === 'open' ? home.posts.filter((post) => `${post.body} ${post.author.firstName}`.includes(term)).slice(0, 4) : [];
 
   return (
     <div className={`community-page${menuOpen ? ' is-rail-open' : ''}`}>
@@ -230,85 +248,63 @@ export function CommunityView() {
         תפריט
       </button>
       <aside id="community-rail" className="community-rail" aria-label="ניווט האזור האישי">
-        <button type="button" className="community-brand" onClick={() => setView('home')}>
-          <span className="community-mark" aria-hidden="true">∞</span>
-          <span>Infinite Masterpiece</span>
+        <button type="button" className="pa-member pa-member-brand" onClick={() => { closeRail(); navigate('/library/profile#profile-name'); }}>
+          {user.avatar && !user.avatar.includes('images.unsplash.com') ? <img src={user.avatar} alt="" /> : <span className="community-initial" aria-hidden="true">{initial}</span>}
+          <span>
+            <strong>{user.name}</strong>
+            <span>{user.email}</span>
+          </span>
         </button>
         <nav className="community-nav" aria-label="האזור האישי">
-          {NAV_GROUPS.map((group) => (
-            <div key={group.label} className="community-nav-group">
-              <p className="community-nav-label">{group.label}</p>
-              {group.ids.map((id) => {
-                const item = AREAS.find((entry) => entry.id === id);
-                if (!item) return null;
-                return (
-                  <span key={item.id} className="community-nav-slot">
-                    <button type="button" aria-current={area === item.id ? 'page' : undefined} onClick={() => { setArea(item.id); closeRail(); }}>
-                      {item.label}
-                    </button>
-                    {item.id === 'calendar' && assignedPod ? (
-                      <button type="button" onClick={() => { closeRail(); navigate('/pod'); }}>הפוד שלי</button>
-                    ) : null}
-                  </span>
-                );
-              })}
-            </div>
+          {SIDE_NAV.map((item) => (
+            <button key={item.id} type="button" aria-current={area === item.id ? 'page' : undefined} onClick={() => { setArea(item.id); closeRail(); }}>
+              {item.label}
+            </button>
           ))}
+          {assignedPod ? <button type="button" onClick={() => { closeRail(); navigate('/pod'); }}>הפוד שלי</button> : null}
         </nav>
+        <div className="community-nav community-nav-foot">
+          <button type="button" onClick={() => { closeRail(); navigate('/library/profile#profile-name'); }}>הגדרות</button>
+          <button type="button" onClick={() => { closeRail(); navigate('/library/profile#profile-interests'); }}>תחומי עניין</button>
+          <button type="button" onClick={() => { closeRail(); logout(); }}>יציאה</button>
+        </div>
+        <button type="button" className="pa-reward" onClick={() => { setArea('club'); closeRail(); }}>
+          <span>המסלול שלך</span>
+          <strong>{user.subscriptionPlan === 'premium_88' ? 'נבחרת 88' : user.subscriptionPlan === 'annual' ? 'מנוי שנתי' : user.subscriptionPlan === 'monthly' ? 'מנוי חודשי' : 'חבר'}</strong>
+          <em>למועדון</em>
+        </button>
         {area === 'feed' && home && open ? (
-          <div className="community-channels" aria-label="ערוצים">
-            <h2>ערוצים</h2>
-            {home.channels.map((item) => (
-              <button
-                key={item.id}
-                type="button"
-                className="community-channel"
-                aria-current={item.id === channel ? 'page' : undefined}
-                onClick={() => { setChannel(item.id); closeRail(); }}
-              >
-                {item.label}
-              </button>
-            ))}
+          <div className="community-channels" aria-label="הקהילה">
+            <h2>הכל</h2>
           </div>
         ) : null}
-        <button type="button" className="community-account" onClick={() => { closeRail(); setView('profile'); }}>
-          <span className="community-initial" aria-hidden="true">{initial}</span>
-          <span>{home?.me?.firstName || user.name.split(' ')[0] || 'חשבון'}</span>
-        </button>
       </aside>
       {menuOpen ? <button type="button" className="community-scrim" aria-label="סגירת התפריט" onClick={closeRail} /> : null}
       <nav className="community-dock" aria-label="ניווט מהיר">
-        <button type="button" aria-current={area === 'home' ? 'page' : undefined} onClick={() => setArea('home')}>ראשי</button>
-        <button type="button" aria-current={area === 'courses' ? 'page' : undefined} onClick={() => setArea('courses')}>קורסים</button>
+        <button type="button" aria-current={area === 'home' ? 'page' : undefined} onClick={() => setArea('home')}>הבית שלי</button>
+        <button type="button" aria-current={area === 'courses' ? 'page' : undefined} onClick={() => setArea('courses')}>הלמידה שלי</button>
         <button type="button" aria-current={area === 'feed' ? 'page' : undefined} onClick={() => setArea('feed')}>קהילה</button>
         <button type="button" aria-expanded={menuOpen} onClick={() => setMenuOpen(true)}>עוד</button>
       </nav>
 
       <main className="community-main" id="community-main">
-        <h1>{AREAS.find((item) => item.id === area)?.label || 'הבית'}</h1>
-        <p className="community-lede">{AREA_NOTES[area]}</p>
-        <form className="community-search" role="search" onSubmit={(event) => {
-          event.preventDefault();
-          const term = areaQuery.trim();
-          if (!term) return;
-          setSearchQuery(term);
-          setView('search');
-        }}>
-          <label className="community-sr" htmlFor="area-search">חיפוש באזור האישי</label>
-          <input id="area-search" type="search" value={areaQuery} onChange={(event) => setAreaQuery(event.target.value)} placeholder="הקלידו הרצאה, שם של מרצה, או מילה מהשיחה" />
-        </form>
-        {areaQuery.trim() ? (
-          <AreaSearch
-            term={areaQuery.trim()}
-            courses={courses}
-            instructors={instructors}
-            posts={home?.access === 'open' ? home.posts : []}
-            onOpenCourse={(courseId) => setView('course', { courseId })}
-            onOpenInstructor={(instructorId) => setView('instructor', { instructorId })}
-            onOpenFeed={() => setArea('feed')}
-            onLibrary={() => { setSearchQuery(areaQuery.trim()); setView('search'); }}
-          />
+        <AreaTop initial={initial} name={user.name || 'חשבון'} avatar={user.avatar && !user.avatar.includes('images.unsplash.com') ? user.avatar : ''} query={areaQuery} onQuery={setAreaQuery} onProfile={() => navigate('/library/profile#profile-name')} />
+        {term && area !== 'courses' && area !== 'shorts' ? (
+          <div className="community-card pa-search-hits">
+            {lessonHits.map((course) => (
+              <button key={course.id} type="button" className="pa-linkrow" onClick={() => setView('course', { courseId: course.id })}>{course.title}</button>
+            ))}
+            {peopleHits.map((person) => (
+              <button key={person.id} type="button" className="pa-linkrow" onClick={() => setView('instructor', { instructorId: person.id })}>{person.name}</button>
+            ))}
+            {postHits.map((post) => (
+              <button key={post.id} type="button" className="pa-linkrow" onClick={() => setArea('feed')}>{post.author.firstName}: {post.body}</button>
+            ))}
+            {lessonHits.length + peopleHits.length + postHits.length === 0 ? <p className="pa-note">אין תוצאות עבור «{term}».</p> : null}
+          </div>
         ) : null}
+        {area !== 'home' ? <h1>{area === 'courses' ? 'הלמידה שלי' : railLabel(area) || 'ראשי'}</h1> : null}
+        {area !== 'home' && area !== 'feed' ? <p className="community-lede">{AREA_NOTES[area]}</p> : null}
         {error ? <p className="community-error" role="alert">{error}</p> : null}
 
         {!home ? <p className="community-note">טוענים את הקהילה…</p> : null}
@@ -340,6 +336,7 @@ export function CommunityView() {
             pod={assignedPod}
             watches={getWatchHistory().length}
             onOpenFeed={() => setArea('feed')}
+            onOpenHall={() => setArea('hall')}
             onOpenCourse={(courseId) => courseId && setView('course', { courseId })}
             onOpenCourses={() => setArea('courses')}
             onOpenCategory={(categoryId) => setView('category', { categoryId })}
@@ -350,6 +347,20 @@ export function CommunityView() {
             onOpenCalendar={() => setArea('calendar')}
             onOpenSession={() => navigate('/pod')}
             onWatch={(courseId, episodeId) => setView('watch', { courseId, episodeId })}
+            savedIds={myList}
+            onToggleSave={toggleSaved}
+            onPublish={async (input) => {
+              await communityApi.post({ channel: channel === 'all' ? 'talk' : channel, body: input.body, lectureTitle: input.lectureTitle, imageUrl: input.imageUrl });
+              await refresh();
+            }}
+            onReact={async (postId) => {
+              await communityApi.react(postId);
+              await refresh();
+            }}
+            onReply={async (postId, text) => {
+              await communityApi.reply(postId, text);
+              await refresh();
+            }}
           />
         ) : null}
         {area === 'calendar' ? (
@@ -361,61 +372,112 @@ export function CommunityView() {
         {area === 'recordings' ? (
           <EventList
             sessions={podSession ? [podSession] : []}
-            watched={getWatchHistory()}
             onOpenSession={() => navigate('/pod')}
             onOpenCalendar={() => setArea('calendar')}
-            onOpenCourse={(courseId) => setView('course', { courseId })}
-            onFind={() => setArea('courses')}
+            suggestion={lessons[0] ? { title: lessons[0].title, onOpen: () => setView('course', { courseId: lessons[0].id }) } : null}
           />
         ) : null}
-        {area === 'courses' ? <CourseShelf title="כל ההרצאות" noun="הרצאה" courses={lessons} onOpen={(courseId) => setView('course', { courseId })} /> : null}
-        {area === 'shorts' ? <CourseShelf title="כל ההדרכות" noun="הדרכה" courses={shorts} onOpen={(courseId) => setView('course', { courseId })} /> : null}
+        {area === 'courses' ? (
+          <div className="pa-learning">
+            <section className="pa-card">
+              <h2>בתהליך</h2>
+              {getContinueWatchingList()[0] ? (
+                <button type="button" className="pa-linkrow" onClick={() => {
+                  const item = getContinueWatchingList()[0];
+                  if (item) setView('watch', { courseId: item.course.id, episodeId: item.episode.id });
+                }}>
+                  <strong>{getContinueWatchingList()[0]?.course.title}</strong>
+                  <span>המשך צפייה</span>
+                </button>
+              ) : <p className="pa-note">עוד אין שיעור באמצע. ההרצאה הראשונה תחכה כאן.</p>}
+            </section>
+            <section className="pa-card">
+              <h2>שמרתי להמשך</h2>
+              {courses.filter((course) => myList.includes(course.id)).slice(0, 4).map((course) => (
+                <button key={course.id} type="button" className="pa-linkrow" onClick={() => setView('course', { courseId: course.id })}>{course.title}</button>
+              ))}
+              {myList.length === 0 ? <p className="pa-note">עוד לא שמרתם הרצאה.</p> : null}
+            </section>
+            <CourseShelf title="כל ההרצאות הפתוחות" noun="הרצאה" courses={lessons} categories={categories} query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} />
+          </div>
+        ) : null}
+        {area === 'shorts' ? <CourseShelf title="הדרכות" noun="הדרכה" courses={shorts} video showFilters={false} query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} /> : null}
         {area === 'club' ? <ClubCard plan={user.subscriptionPlan} trialEndsAt={user.trialEndsAt} /> : null}
         {area === 'agents' ? <AgentGrid onContact={() => setArea('contact')} /> : null}
-        {area === 'hall' && home ? <HallOfFame user={user} posts={home.posts} watches={getWatchHistory().length} /> : null}
+        {area === 'hall' && home ? <HallOfFame user={user} posts={home.posts} watches={getWatchHistory().length} onWrite={() => setArea('feed')} /> : null}
         {area === 'partners' ? <Partners userId={user.id} /> : null}
         {area === 'contact' ? <ContactDesk /> : null}
 
         {area === 'feed' && home && open ? (
             <section className="community-feed" aria-label="פיד">
-              {current?.canPost ? (
-                <form className="community-card community-composer" onSubmit={(event) => { event.preventDefault(); void publish(); }}>
+              {current?.canPost && !composeOpen ? (
+                <button type="button" className="community-prompt" onClick={() => setComposeOpen(true)}>יש לך שאלה או תובנה לשתף?</button>
+              ) : null}
+              {current?.canPost && composeOpen ? (
+                <form className="community-card community-composer" onSubmit={(event) => { event.preventDefault(); if (body.trim().length >= 2) void publish(); }}>
                   <label className="community-sr" htmlFor={composerId}>מה תרצו לשתף</label>
-                  <div className="community-compose-row">
-                    <div className="community-initial" aria-hidden="true">{initial}</div>
-                    <textarea id={composerId} value={body} onChange={(event) => setBody(event.target.value)} placeholder="כתבו כאן הודעה לקהילה" />
-                  </div>
-                  {showLecture ? (
-                    <label className="community-lecture">
-                      <span className="community-sr">שם ההרצאה</span>
-                      <input value={lecture} onChange={(event) => setLecture(event.target.value)} placeholder="שם ההרצאה" />
-                    </label>
-                  ) : null}
+                  <textarea id={composerId} value={body} onChange={(event) => setBody(event.target.value)} placeholder="יש לך שאלה או תובנה לשתף?" />
                   {imageUrl ? <img className="community-photo" src={imageUrl} alt="" /> : null}
-                  <p className="community-note">בכבוד, בלי פרסום. אם משהו לא מתאים, לוחצים דיווח.</p>
-                  <div className="community-actions">
-                    <div className="community-tools">
-                      <label className="community-file">
-                        הוספת תמונה
-                        <input className="community-sr" type="file" accept="image/*" onChange={(event) => {
-                          const file = event.target.files?.[0];
-                          event.target.value = '';
-                          if (!file) return;
-                          void uploadFile(file, 'image').then(setImageUrl).catch((err: unknown) => {
-                            setError(err instanceof Error ? err.message : 'העלאה נכשלה');
-                          });
-                        }} />
+                  <div className="community-attach">
+                    <label className="community-file">
+                      צירוף תמונה
+                      <input className="community-sr" type="file" accept="image/*" onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        event.target.value = '';
+                        if (!file) return;
+                        void uploadFile(file, 'image').then(setImageUrl).catch((err: unknown) => {
+                          setError(err instanceof Error ? err.message : 'העלאה נכשלה');
+                        });
+                      }} />
+                    </label>
+                    <label>
+                      צירוף הרצאה
+                      <select value={lectureId} onChange={(event) => setLectureId(event.target.value)}>
+                        <option value="">בחרו הרצאה</option>
+                        {lessons.map((course) => <option key={course.id} value={course.id}>{course.title}</option>)}
+                      </select>
+                    </label>
+                    {lectureId ? (
+                      <label>
+                        זמן בדוגמה
+                        <input value={lectureAt} onChange={(event) => setLectureAt(event.target.value)} placeholder="04:00" inputMode="numeric" aria-label="זמן בדוגמה" />
                       </label>
-                      <button type="button" aria-pressed={showLecture} onClick={() => setShowLecture((value) => !value)}>{showLecture ? 'הסתרת שם ההרצאה' : 'הוספת שם הרצאה'}</button>
-                    </div>
-                    <button type="submit" className="community-publish" disabled={pending}>{pending ? 'שולח…' : 'שליחת ההודעה'}</button>
+                    ) : null}
+                  </div>
+                  <div className="community-actions">
+                    <button type="button" onClick={() => setComposeOpen(false)}>סגירה</button>
+                    <button type="submit" className="community-publish" disabled={pending || body.trim().length < 2}>{pending ? 'שולח…' : 'פרסום בקהילה'}</button>
                   </div>
                 </form>
               ) : null}
 
-              {home.posts.length === 0 ? <p className="community-empty">עדיין אין הודעות. הראשונה פותחת את השיחה.</p> : null}
               {home.me?.muted ? <p className="community-note">הפרסום הושתק על ידי הצוות.</p> : null}
-              {home.posts.map((post) => (
+              {(savedOnly ? [] : home.posts.filter((post) => post.pinned)).map((post) => (
+                <PostCard
+                  key={post.id}
+                  post={post}
+                  week
+                  isAdmin={Boolean(home.me?.isAdmin)}
+                  open={Boolean(openReplies[post.id])}
+                  draft={replyDraft[post.id] || ''}
+                  onToggle={() => setOpenReplies((current) => ({ ...current, [post.id]: !current[post.id] }))}
+                  onDraft={(value) => setReplyDraft((current) => ({ ...current, [post.id]: value }))}
+                  onAct={act}
+                  onExample={(seconds) => {
+                    const course = lessons.find((item) => item.title === post.lectureTitle) || lessons.find((item) => post.lectureTitle && (item.title.includes(post.lectureTitle) || post.lectureTitle.includes(item.title)));
+                    const episode = course?.episodes[0];
+                    if (course && episode) navigate(`/library/watch/${encodeURIComponent(course.id)}/${encodeURIComponent(episode.id)}?t=${seconds}`);
+                  }}
+                />
+              ))}
+              <div className="pa-rowhead">
+                <h2>{savedOnly ? 'השמורים שלי' : 'פוסטים אחרונים'}</h2>
+                <button type="button" aria-pressed={savedOnly} onClick={() => setSavedOnly((value) => !value)}>{savedOnly ? 'לכל הפוסטים' : 'השמורים שלי'}</button>
+              </div>
+              {(savedOnly ? home.posts.filter((post) => post.saved) : home.posts.filter((post) => !post.pinned)).length === 0 ? (
+                <p className="community-empty">{savedOnly ? 'עוד לא שמרתם פוסט.' : 'עדיין אין הודעות. הראשונה פותחת את השיחה.'}</p>
+              ) : null}
+              {(savedOnly ? home.posts.filter((post) => post.saved) : home.posts.filter((post) => !post.pinned)).map((post) => (
                 <PostCard
                   key={post.id}
                   post={post}
@@ -425,6 +487,11 @@ export function CommunityView() {
                   onToggle={() => setOpenReplies((current) => ({ ...current, [post.id]: !current[post.id] }))}
                   onDraft={(value) => setReplyDraft((current) => ({ ...current, [post.id]: value }))}
                   onAct={act}
+                  onExample={(seconds) => {
+                    const course = lessons.find((item) => item.title === post.lectureTitle) || lessons.find((item) => post.lectureTitle && (item.title.includes(post.lectureTitle) || post.lectureTitle.includes(item.title)));
+                    const episode = course?.episodes[0];
+                    if (course && episode) navigate(`/library/watch/${encodeURIComponent(course.id)}/${encodeURIComponent(episode.id)}?t=${seconds}`);
+                  }}
                 />
               ))}
               {home.nextCursor ? (
@@ -442,27 +509,32 @@ export function CommunityView() {
 
 const PostCard: FC<{
   post: CommunityPost;
+  week?: boolean;
   isAdmin: boolean;
   open: boolean;
   draft: string;
   onToggle: () => void;
   onDraft: (value: string) => void;
   onAct: (work: () => Promise<unknown>) => Promise<void>;
+  onExample: (seconds: number) => void;
 }> = ({
   post,
+  week = false,
   isAdmin,
   open,
   draft,
   onToggle,
   onDraft,
   onAct,
+  onExample,
 }) => {
   const replyId = useId();
   const editId = useId();
   const [editing, setEditing] = useState(false);
   const [editBody, setEditBody] = useState(post.body);
   return (
-    <article className="community-card community-post">
+    <article className={`community-card community-post${week ? ' is-week' : ''}`}>
+      {week ? <p className="community-kicker">דיון השבוע · {post.author.firstName}{post.author.badge ? ` · ${post.author.badge}` : ''}</p> : null}
       <div className="community-post-head">
         <div className="community-initial" aria-hidden="true">{post.author.initial}</div>
         <div>
@@ -492,19 +564,26 @@ const PostCard: FC<{
         </form>
       ) : <p>{post.body}</p>}
       {post.imageUrl ? <img className="community-photo" src={post.imageUrl} alt="" /> : null}
-      {post.lectureTitle ? <div className="community-lecture-chip">הרצאה · {post.lectureTitle}</div> : null}
+      {post.lectureTitle && post.lectureSeconds ? (
+        <button type="button" className="community-example" onClick={() => onExample(post.lectureSeconds || 0)}>
+          {week ? `לצפייה בדוגמה · ${clockLabel(post.lectureSeconds)}` : `${post.lectureTitle} · ${clockLabel(post.lectureSeconds)}`}
+        </button>
+      ) : post.lectureTitle ? <div className="community-lecture-chip">הרצאה · {post.lectureTitle}</div> : null}
       <div className="community-tools">
-        {post.canEdit ? <button type="button" onClick={() => { setEditBody(post.body); setEditing(true); }}>עריכה</button> : null}
-        <button type="button" aria-pressed={post.hearted} onClick={() => void onAct(() => communityApi.react(post.id))}>אהבתי {post.hearts}</button>
-        <button type="button" aria-expanded={open} onClick={onToggle}>תגובות {post.replies.length}</button>
-        <button type="button" aria-pressed={post.saved} onClick={() => void onAct(() => communityApi.bookmark(post.id))}>{post.saved ? 'נשמר' : 'שמירה'}</button>
-        <button type="button" aria-pressed={post.reported} onClick={() => !post.reported && void onAct(() => communityApi.report(post.id))}>{post.reported ? 'דווח' : 'דיווח'}</button>
-        {isAdmin ? (
-          <>
-            <button type="button" onClick={() => void onAct(() => communityApi.pin(post.id, !post.pinned))}>{post.pinned ? 'שחרור' : 'נעיצה'}</button>
-            <button type="button" onClick={() => void onAct(() => communityApi.hide(post.id, !post.hidden))}>{post.hidden ? 'החזרה' : 'הסתרה'}</button>
-          </>
-        ) : null}
+        {post.canEdit ? <button type="button" className="is-quiet" onClick={() => { setEditBody(post.body); setEditing(true); }}>עריכה</button> : null}
+        <button type="button" className="community-reply-cta" aria-expanded={open} onClick={onToggle}>{replyLabel(post.replies.length)}</button>
+        <button type="button" className="is-quiet" aria-pressed={post.hearted} onClick={() => void onAct(() => communityApi.react(post.id))}>אהבתי {post.hearts}</button>
+        <button type="button" className="is-quiet" aria-pressed={post.saved} onClick={() => void onAct(() => communityApi.bookmark(post.id))}>{post.saved ? 'נשמר' : 'שמירה'}</button>
+        <details className="community-more">
+          <summary>עוד</summary>
+          <button type="button" aria-pressed={post.reported} onClick={() => !post.reported && void onAct(() => communityApi.report(post.id))}>{post.reported ? 'דווח' : 'דיווח'}</button>
+          {isAdmin ? (
+            <>
+              <button type="button" onClick={() => void onAct(() => communityApi.pin(post.id, !post.pinned))}>{post.pinned ? 'שחרור' : 'נעיצה'}</button>
+              <button type="button" onClick={() => void onAct(() => communityApi.hide(post.id, !post.hidden))}>{post.hidden ? 'החזרה' : 'הסתרה'}</button>
+            </>
+          ) : null}
+        </details>
       </div>
       {open ? (
         <div className="community-replies">

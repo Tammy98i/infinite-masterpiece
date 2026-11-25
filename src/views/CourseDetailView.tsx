@@ -422,7 +422,7 @@ export const CourseDetailView: React.FC = () => {
           <div className="library-course-veil-d absolute inset-0" />
         </div>
 
-        <div className="library-back-bar px-4 sm:px-8">
+        <div className="library-back-bar px-4 sm:px-8 flex flex-wrap items-center gap-3">
           <button
             type="button"
             onClick={() => setView('home')}
@@ -431,6 +431,14 @@ export const CourseDetailView: React.FC = () => {
             <DirBack />
             חזור
           </button>
+          <button
+            type="button"
+            onClick={() => navigate('/library/community/home')}
+            className="inline-flex items-center min-h-11 px-3 rounded-full border border-[#dfc47d]/50 text-sm text-[#dfc47d] cursor-pointer"
+          >
+            לאזור האישי
+          </button>
+          {!isGuest && user.name ? <span className="text-sm text-[#dfc47d]">{user.name}</span> : null}
         </div>
         <div className="library-billboard-body max-w-[1360px] mx-auto px-4 sm:px-8 text-start">
           <h1 className="text-4xl sm:text-6xl lg:text-[4.5rem] font-bold text-white leading-[1.05] tracking-tight mb-4 max-w-4xl">

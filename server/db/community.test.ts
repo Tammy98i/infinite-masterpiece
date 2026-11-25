@@ -69,6 +69,7 @@ test('only paying members enter, and channels follow the plan', () => {
   assert.equal(canEnterCommunity(user({ id: 'teacher', role: 'instructor', subscriptionPlan: 'none', name: 'מיכל רז' })), true);
   assert.equal(getCommunityHome(db, free).access, 'locked');
   const home = getCommunityHome(db, paid);
+  assert.equal(home.channel, 'all');
   assert.deepEqual(home.channels.map((channel) => channel.id), ['board', 'talk', 'library']);
   assert.equal(home.channels.find((channel) => channel.id === 'board')?.canPost, false);
   assert.deepEqual(getCommunityHome(db, member88).channels.map((channel) => channel.id), ['board', 'talk', 'library', 'premium88']);
@@ -110,6 +111,8 @@ test('edit stays open for fifteen minutes, then a mute and the report queue take
   const admin = user({ id: 'admin', role: 'admin', subscriptionPlan: 'annual', name: 'תמי אלון' });
   const id = createCommunityPost(db, paid, { channel: 'talk', body: 'טיוטה ראשונה' });
   assert.equal(getCommunityHome(db, paid, 'talk').posts[0].canEdit, true);
+  assert.equal(getCommunityHome(db, paid, 'talk').posts[0].mine, true);
+  assert.equal(getCommunityHome(db, admin, 'talk').posts[0].mine, false);
   editCommunityPost(db, paid, id, 'טקסט אחרי עריכה');
   assert.equal(getCommunityHome(db, paid, 'talk').posts[0].body, 'טקסט אחרי עריכה');
   db.prepare(`UPDATE community_posts SET created_at = datetime('now', '-20 minutes') WHERE id = ?`).run(id);
