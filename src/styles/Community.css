@@ -543,6 +543,29 @@
 .community-page :is(h1, h2, h3, .pa-course strong, .pa-rankline span, .community-nav button) {
   color: #e0edff;
 }
+.community-main > h1 { letter-spacing: 0; margin-bottom: 4px; }
+.community-page :is(.community-card, .community-composer, .community-post, .pa-month, .pa-shelf) {
+  border-radius: 18px;
+}
+.pa-shelf { display: grid; gap: 14px; }
+.pa-grid .pa-course img, .pa-videos .pa-cover img, .pa-videos .pa-fallback { height: 148px; }
+.pa-days span { background: rgba(5, 10, 20, .45); border: 1px solid rgba(223, 196, 125, .16); }
+.pa-weekdays span { color: #dfc47d; background: transparent; }
+.pa-steps article, .pa-metrics article, .pa-contact-cards a, .pa-stats div {
+  background: rgba(5, 10, 20, .45);
+  border: 1px solid rgba(223, 196, 125, .28);
+}
+.pa-stars button[aria-pressed='true'] { color: #dfc47d; }
+.community-tools button, .community-channel {
+  border: 1px solid rgba(223, 196, 125, .28);
+  border-radius: 999px;
+}
+.community-post, .community-composer { padding: 18px; }
+.pa-board li { border-bottom: 1px solid rgba(223, 196, 125, .16); }
+.pa-link { border: 1px solid rgba(223, 196, 125, .28); color: #dfc47d; }
+.pa-event { border: 0; border-radius: 14px; background: rgba(5, 10, 20, .35); padding: 10px 12px; }
+.community-page .pa-month .pa-cal-nav { background: transparent !important; color: #dfc47d !important; }
+
 .community-page .community-nav button[aria-current='page'],
 .community-page .community-publish,
 .community-page .pa-reward,
