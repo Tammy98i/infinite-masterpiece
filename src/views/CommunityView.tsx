@@ -405,7 +405,7 @@ export function CommunityView() {
             <CourseShelf title="כל ההרצאות הפתוחות" noun="הרצאה" courses={lessons} categories={categories} query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} />
           </div>
         ) : null}
-        {area === 'shorts' ? <CourseShelf title="הדרכות" noun="הדרכה" courses={shorts} video showFilters={false} onOpen={(courseId) => setView('course', { courseId })} /> : null}
+        {area === 'shorts' ? <CourseShelf title="הדרכות" noun="הדרכה" courses={shorts} video showFilters={false} query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} /> : null}
         {area === 'club' ? <ClubCard plan={user.subscriptionPlan} trialEndsAt={user.trialEndsAt} /> : null}
         {area === 'agents' ? <AgentGrid onContact={() => setArea('contact')} /> : null}
         {area === 'hall' && home ? <HallOfFame user={user} posts={home.posts} watches={getWatchHistory().length} onWrite={() => setArea('feed')} /> : null}
