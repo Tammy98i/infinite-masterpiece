@@ -271,6 +271,7 @@
   .community-rail { transition: none; }
 }
 
+.vod-app.sky-readable .community-page .pa-hero :is(h2, p) { color: #1a1204; }
 .vod-app.sky-readable .community-page :is(h1, h2, h3, h4, p, li, label, button, span) {
   color: #e0edff;
   text-shadow: none;
@@ -359,7 +360,7 @@
 .pa-weekdays, .pa-days { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
 .pa-days span, .pa-weekdays span { min-height: 52px; border-radius: 10px; background: rgba(255,255,255,.04); display: grid; align-content: center; justify-items: center; gap: 2px; padding: 6px 2px; text-align: center; }
 .pa-days .has-event small { max-width: 100%; line-height: 1.25; }
-.pa-days .is-today { outline: 2px solid #b79043; }
+.pa-days .is-today { outline: none; }
 .pa-days .has-event { background: rgba(240, 212, 138, .16); }
 .pa-profile { text-align: center; }
 .pa-stats, .pa-steps, .pa-metrics, .pa-contact-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
@@ -403,6 +404,44 @@
 .community-nav button { border-radius: 12px; }
 
 .vod-app.sky-readable .community-page :is(.pa-stats b, .pa-steps b, .pa-board b, .pa-points, .pa-progress-label, .pa-actions span, .pa-fold) { color: #f0d48a; background: transparent; }
+
+.pa-top { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
+.pa-top .pa-search { flex: 1; min-width: 0; }
+.pa-top input { min-height: 42px; border-radius: 999px; }
+.pa-wa { display: inline-flex; align-items: center; min-height: 34px; padding: 0 12px; border-radius: 999px; background: rgba(240, 212, 138, .16); color: #f0d48a; text-decoration: none; font-size: .85rem; font-weight: 700; white-space: nowrap; }
+.pa-cover { position: relative; display: block; }
+.pa-cover img, .pa-cover .pa-fallback { height: 120px; }
+.pa-play { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); width: 36px; height: 36px; border-radius: 50%; background: #f0d48a; color: #1a1204; display: grid; place-items: center; font-style: normal; font-size: .75rem; }
+.pa-time { position: absolute; top: 8px; inset-inline-start: 8px; background: rgba(5, 10, 20, .72); color: #f0d48a; border-radius: 8px; font-size: .75rem; padding: 2px 6px; }
+.pa-days span { min-height: 78px; align-content: start; justify-items: stretch; text-align: start; padding: 6px; }
+.pa-days .pa-today { width: 24px; height: 24px; border-radius: 50%; background: #f0d48a; color: #1a1204; display: inline-grid; place-items: center; font-style: normal; font-weight: 700; }
+.pa-chip { display: block; margin-top: 4px; background: rgba(240, 212, 138, .16); color: #f0d48a; border-radius: 8px; font-size: .72rem; font-style: normal; line-height: 1.35; padding: 4px 6px; }
+.pa-cal-nav { background: transparent !important; color: #f0d48a !important; }
+.pa-agent-grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.pa-agent { background: rgba(8, 14, 26, .92); border: 1px solid rgba(223, 196, 125, .28); min-height: 180px; align-content: start; }
+.pa-agent em { color: #f0d48a; font-style: normal; font-size: .8rem; }
+.pa-agent button { margin-top: auto; }
+.pa-hall-board, .pa-recording { min-width: 0; }
+.pa-recording { max-width: 280px; }
+.pa-meet { border: 1px solid rgba(255,255,255,.12); border-radius: 16px; background: var(--panel); padding: 12px; }
+.pa-board li { grid-template-rows: auto auto; }
+.pa-board span { grid-column: 2; grid-row: 1; }
+.pa-board i { grid-column: 2; grid-row: 2; width: auto; }
+.pa-metrics em { color: rgba(224, 237, 255, .78); font-style: normal; }
+.pa-hero { border: 1px solid rgba(223, 196, 125, .28); }
+
+@media (max-width: 900px) {
+  .pa-agent-grid { grid-template-columns: 1fr; }
+  .pa-top { flex-wrap: wrap; }
+}
+
+.vod-app.sky-readable .community-page .pa-wa,
+.vod-app.sky-readable .community-page .pa-chip,
+.vod-app.sky-readable .community-page .pa-time,
+.vod-app.sky-readable .community-page .pa-cal-nav { color: #f0d48a; background: rgba(240, 212, 138, .16); }
+.vod-app.sky-readable .community-page .pa-today,
+.vod-app.sky-readable .community-page .pa-play { background: #f0d48a; color: #1a1204; }
+.vod-app.sky-readable .community-page .pa-cal-nav { background: transparent; }
 
 .vod-app.sky-readable .community-page .community-publish,
 .vod-app.sky-readable .community-page .community-days .is-today,

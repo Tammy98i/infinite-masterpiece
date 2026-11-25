@@ -9,6 +9,7 @@ import {
   AREA_NOTES,
   AgentGrid,
   type ClubSession,
+  AreaTop,
   ClubCard,
   ContactDesk,
   CourseShelf,
@@ -61,6 +62,7 @@ export function CommunityView() {
   const [pending, setPending] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [area, setArea] = useState<AreaId>('home');
+  const [areaQuery, setAreaQuery] = useState('');
   const [moreOpen, setMoreOpen] = useState(false);
   const [assignedPod, setAssignedPod] = useState<AssignedPod | null>(null);
   const [podSession, setPodSession] = useState<ClubSession | null>(null);
@@ -229,6 +231,7 @@ export function CommunityView() {
       </nav>
 
       <main className="community-main" id="community-main">
+        <AreaTop initial={initial} query={areaQuery} onQuery={setAreaQuery} />
         <h1>{railLabel(area) || 'ראשי'}</h1>
         {area !== 'home' ? <p className="community-lede">{AREA_NOTES[area]}</p> : null}
         {error ? <p className="community-error" role="alert">{error}</p> : null}
@@ -287,8 +290,8 @@ export function CommunityView() {
             onOpenCalendar={() => setArea('calendar')}
           />
         ) : null}
-        {area === 'courses' ? <CourseShelf title="כל ההרצאות" noun="הרצאה" courses={lessons} onOpen={(courseId) => setView('course', { courseId })} /> : null}
-        {area === 'shorts' ? <CourseShelf title="כל ההדרכות" noun="הדרכה" courses={shorts} onOpen={(courseId) => setView('course', { courseId })} /> : null}
+        {area === 'courses' ? <CourseShelf title="כל ההרצאות" noun="הרצאה" courses={lessons} query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} /> : null}
+        {area === 'shorts' ? <CourseShelf title="" noun="הדרכה" courses={shorts} video query={areaQuery} onQuery={setAreaQuery} onOpen={(courseId) => setView('course', { courseId })} /> : null}
         {area === 'club' ? <ClubCard plan={user.subscriptionPlan} trialEndsAt={user.trialEndsAt} /> : null}
         {area === 'agents' ? <AgentGrid onContact={() => setArea('contact')} /> : null}
         {area === 'hall' && home ? <HallOfFame user={user} posts={home.posts} watches={getWatchHistory().length} /> : null}

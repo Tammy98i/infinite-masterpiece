@@ -34,15 +34,15 @@ export const AREAS: Array<{ id: AreaId; label: string }> = [
 export const AREA_NOTES: Record<AreaId, string> = {
   home: 'כאן רואים מה לעשות עכשיו, ואחר כך את ההרצאות והאנשים.',
   feed: 'כאן כותבים לקהילה, מגיבים, ושומרים פוסט אצלכם.',
-  calendar: 'יום עם טקסט הוא מפגש. המסגרת הזהובה היא היום.',
-  recordings: 'מפגשים שכבר היו, וההרצאות שראיתם בספרייה.',
+  calendar: 'היום בעיגול זהב. מפגש מסומן בתוך היום.',
+  recordings: 'מפגשים שהתקיימו, וההקלטה כשהיא מוכנה.',
   courses: 'כל ההרצאות שפתוחות במסלול שלכם. לחצו על הרצאה כדי להיכנס.',
-  shorts: 'הדרכות קצרות. כל אחת נמשכת עד עשר דקות.',
-  club: 'המסלול שלכם, עד מתי הוא בתוקף, ואיך משנים אותו.',
-  agents: 'העזרה האוטומטית עדיין לא פעילה. בינתיים כותבים לצוות.',
-  hall: 'מי פרסם יותר בקהילה. המספר עולה מצפייה ומפוסטים.',
-  partners: 'קישור שאפשר לשלוח לחבר. הספירה של הנרשמים תיפתח אחר כך.',
-  contact: 'שלוש דרכים לפנות: וואטסאפ, שאלות נפוצות, או מייל.',
+  shorts: 'כל אחת נמשכת עד עשר דקות.',
+  club: 'המסלול הפעיל פותח את הספרייה ואת הקהילה.',
+  agents: 'העזרה האוטומטית עדיין לא פעילה. הכפתור פונה לצוות.',
+  hall: 'המקום לפי הודעות בקהילה.',
+  partners: 'שולחים קישור לחבר. הספירה תיפתח אחר כך.',
+  contact: 'אנחנו כאן לכל שאלה.',
 };
 
 export const NAV_GROUPS: Array<{ label: string; ids: AreaId[] }> = [
@@ -305,24 +305,50 @@ function ShelfRow({ title, action, onAction, empty, emptyAction, onEmpty, childr
   );
 }
 
-export function CourseShelf({ title, courses, noun, onOpen }: { title: string; courses: Course[]; noun: string; onOpen: (id: string) => void }) {
-  const [query, setQuery] = useState('');
-  const shown = courses.filter((course) => course.title.includes(query.trim()));
+function clock(seconds: number) {
+  if (!seconds) return '';
+  const minutes = Math.floor(seconds / 60);
+  const rest = seconds % 60;
+  return `${minutes}:${String(rest).padStart(2, '0')}`;
+}
+
+export function AreaTop({ initial, query, onQuery }: { initial: string; query: string; onQuery: (value: string) => void }) {
+  return (
+    <div className="pa-top">
+      <span className="community-initial" aria-hidden="true">{initial}</span>
+      <a className="pa-wa" href={DEFAULT_WEBINAR_CONFIG.whatsappGroupUrl} target="_blank" rel="noreferrer">לקבוצת הוואטסאפ</a>
+      <form className="pa-search" role="search" onSubmit={(event) => event.preventDefault()}>
+        <label className="community-sr" htmlFor="pa-find">חיפוש באזור האישי</label>
+        <input id="pa-find" type="search" value={query} onChange={(event) => onQuery(event.target.value)} placeholder="חיפוש תכנים או הדרכות" />
+      </form>
+    </div>
+  );
+}
+
+export function CourseShelf({ title, courses, noun, onOpen, query = '', onQuery, video = false }: { title: string; courses: Course[]; noun: string; onOpen: (id: string) => void; query?: string; onQuery?: (value: string) => void; video?: boolean }) {
+  const [local, setLocal] = useState('');
+  const term = onQuery ? query : local;
+  const setTerm = onQuery || setLocal;
+  const shown = courses.filter((course) => course.title.includes(term.trim()));
   const count = shown.length === 1 ? `${noun} אחת` : `${shown.length} ${noun === 'הרצאה' ? 'הרצאות' : 'הדרכות'}`;
   return (
-    <section className="pa-shelf">
-      <div className="pa-rowhead"><h2>{title}</h2><span>{count}</span></div>
-      <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder={`הקלידו שם של ${noun}`} aria-label={`חיפוש ${noun}`} />
-      {query.trim() && shown.length === 0 ? (
+    <section className={video ? 'pa-shelf pa-videos' : 'pa-shelf'}>
+      <div className="pa-rowhead">{title ? <h2>{title}</h2> : null}<span>{count}</span></div>
+      {onQuery ? null : <input value={term} onChange={(event) => setTerm(event.target.value)} placeholder={`הקלידו שם של ${noun}`} aria-label={`חיפוש ${noun}`} />}
+      {term.trim() && shown.length === 0 ? (
         <div className="pa-empty">
-          <p className="pa-note">אין תוצאות עבור «{query.trim()}».</p>
-          <button type="button" onClick={() => setQuery('')}>נקו את החיפוש</button>
+          <p className="pa-note">אין תוצאות עבור «{term.trim()}».</p>
+          <button type="button" onClick={() => setTerm('')}>נקו את החיפוש</button>
         </div>
       ) : null}
       <div className="pa-grid">
         {shown.map((course) => (
           <button key={course.id} type="button" className="pa-course" onClick={() => onOpen(course.id)}>
-            {course.coverImage ? <img src={course.coverImage} alt="" /> : <span className="pa-fallback" />}
+            <span className="pa-cover">
+              {course.coverImage ? <img src={course.coverImage} alt="" /> : <span className="pa-fallback" />}
+              {video ? <i className="pa-play" aria-hidden="true">▶</i> : null}
+              {video && clock(course.episodes.reduce((sum, episode) => sum + (episode.duration || 0), 0)) ? <b className="pa-time">{clock(course.episodes.reduce((sum, episode) => sum + (episode.duration || 0), 0))}</b> : null}
+            </span>
             <strong>{course.title}</strong>
             <em>{course.subtitle || course.level}</em>
           </button>
@@ -359,22 +385,20 @@ export function MonthBoard({ sessions }: { sessions: ClubSession[] }) {
   return (
     <section className="pa-card pa-month" aria-label="לוח חודשי">
       <div className="pa-rowhead">
-        <button type="button" onClick={() => setCursor(new Date(year, month - 1, 1))}>החודש הקודם</button>
+        <button type="button" className="pa-cal-nav" onClick={() => setCursor(new Date(year, month - 1, 1))}>החודש הקודם</button>
         <h2>{label}</h2>
-        <button type="button" onClick={() => setCursor(new Date(year, month + 1, 1))}>החודש הבא</button>
+        <button type="button" className="pa-cal-nav" onClick={() => setCursor(new Date(year, month + 1, 1))}>החודש הבא</button>
       </div>
       <div className="pa-weekdays">{['א', 'ב', 'ג', 'ד', 'ה', 'ו', 'ש'].map((day) => <span key={day}>{day}</span>)}</div>
       <div className="pa-days">
         {cells.map((day, index) => (
           <span key={index} className={`${day === today.day && month === today.month && year === today.year ? 'is-today' : ''} ${day && marked.has(day) ? 'has-event' : ''}`}>
-            {day || ''}
+            {day ? (day === today.day && month === today.month && year === today.year ? <i className="pa-today">{day}</i> : day) : ''}
+            {day && marked.has(day) ? <em className="pa-chip">{jerusalemParts(marked.get(day)!.startsAt)?.time} {marked.get(day)!.title}</em> : null}
           </span>
         ))}
       </div>
-      {marked.size === 0 ? <p className="pa-note">אין מפגש בחודש הזה.</p> : [...marked.entries()].map(([day, session]) => {
-        const parts = jerusalemParts(session.startsAt);
-        return <p key={day} className="pa-note">{day}.{month + 1} · {parts?.time} · {session.title}</p>;
-      })}
+      {marked.size === 0 ? <p className="pa-note">אין מפגש בחודש הזה.</p> : null}
     </section>
   );
 }
@@ -399,7 +423,8 @@ export function EventList({
         {upcoming.map((session) => {
           const parts = jerusalemParts(session.startsAt);
           return (
-            <button key={session.startsAt} type="button" className="pa-event" onClick={onOpenSession}>
+            <button key={session.startsAt} type="button" className="pa-event pa-meet" onClick={onOpenSession}>
+              <span className="community-initial" aria-hidden="true">{session.title.trim().charAt(0)}</span>
               <span><strong>{session.title}</strong><em>{parts ? `${parts.day}.${parts.month + 1} · ${parts.time}` : 'מפגש קרוב'}</em></span>
             </button>
           );
@@ -407,7 +432,11 @@ export function EventList({
         {past.map((session) => {
           const parts = jerusalemParts(session.startsAt);
           return (
-            <p key={session.startsAt} className="pa-note">{session.title}{parts ? ` · ${parts.day}.${parts.month + 1}` : ''} · ההקלטה תתווסף כשהיא מוכנה</p>
+            <article key={session.startsAt} className="pa-course pa-recording">
+              <span className="pa-cover"><span className="pa-fallback" /><i className="pa-play" aria-hidden="true">▶</i>{parts ? <b className="pa-time">{parts.day}.{parts.month + 1}</b> : null}</span>
+              <strong>{session.title}</strong>
+              <em>ההקלטה תתווסף כשהיא מוכנה</em>
+            </article>
           );
         })}
         <button type="button" className="community-publish" onClick={onOpenCalendar}>ללוח</button>
@@ -418,14 +447,16 @@ export function EventList({
 
 export function AgentGrid({ onContact }: { onContact: () => void }) {
   return (
-    <section className="pa-card">
-      <ul className="pa-plain">
-        {AGENTS.map((item) => (
-          <li key={item.name}><strong>{item.name}</strong><span>{item.text}</span></li>
-        ))}
-      </ul>
-      <button type="button" className="community-publish" onClick={onContact}>פנייה לצוות</button>
-    </section>
+    <div className="pa-agent-grid">
+      {AGENTS.map((item) => (
+        <article key={item.name} className="pa-agent">
+          <em>{item.tone}</em>
+          <h3>{item.name}</h3>
+          <p>{item.text}</p>
+          <button type="button" onClick={onContact}>פנייה לצוות</button>
+        </article>
+      ))}
+    </div>
   );
 }
 
@@ -453,24 +484,38 @@ export function HallOfFame({ user, posts, watches }: { user: UserProfile; posts:
       .sort((a, b) => b.count - a.count || a.name.localeCompare(b.name, 'he'));
   }, [posts, range, user.name]);
   const place = rows.findIndex((row) => row.name === (user.name.split(' ')[0] || 'אתם')) + 1;
+  const peak = Math.max(1, ...rows.map((row) => row.count));
   return (
-    <section className="pa-card">
-      <p>{place ? `המקום שלכם: ${place}. ${activity.watches} צפיות, ${activity.posts} הודעות.` : 'עוד אין רשימה.'}</p>
-      <div className="pa-tabs">
-          {([['all', 'כל הזמנים'], ['month', 'חודשי'], ['week', 'שבועי']] as const).map(([id, label]) => (
-            <button key={id} type="button" aria-pressed={range === id} onClick={() => setRange(id)}>{label}</button>
-          ))}
+    <div className="pa-hall">
+      <section className="pa-card pa-profile">
+        <div className="pa-avatar lg" aria-hidden="true">{(user.name.trim().charAt(0) || 'ח')}</div>
+        <h2>{user.name.split(' ')[0] || 'אתם'}</h2>
+        <p className="pa-note">המקום לפי הודעות בקהילה</p>
+        <div className="pa-stats">
+          <div>המקום שלכם<b>{place || '—'}</b></div>
+          <div>הודעות<b>{activity.posts}</b></div>
         </div>
-        <ol className="pa-board">
-          {rows.map((row, index) => (
-            <li key={row.name}>
-              <b>{index + 1}</b>
-              <span>{row.name}</span>
-              <em>{row.count === 1 ? 'הודעה אחת' : `${row.count} הודעות`}</em>
-            </li>
-          ))}
-        </ol>
-    </section>
+      </section>
+      <div className="pa-hall-board">
+        <section className="pa-card">
+          <div className="pa-tabs">
+            {([['all', 'כל הזמנים'], ['month', 'חודשי'], ['week', 'שבועי']] as const).map(([id, label]) => (
+              <button key={id} type="button" aria-pressed={range === id} onClick={() => setRange(id)}>{label}</button>
+            ))}
+          </div>
+          <ol className="pa-board">
+            {rows.map((row, index) => (
+              <li key={row.name}>
+                <b>{index + 1}</b>
+                <span>{row.name}</span>
+                <i style={{ width: `${Math.max(8, Math.round((row.count / peak) * 100))}%` }} />
+                <em>{row.count === 1 ? 'הודעה אחת' : `${row.count} הודעות`}</em>
+              </li>
+            ))}
+          </ol>
+        </section>
+      </div>
+    </div>
   );
 }
 
@@ -478,13 +523,29 @@ export function Partners({ userId }: { userId: string }) {
   const link = `${window.location.origin}/library?ref=${userId.slice(0, 8)}`;
   const [copied, setCopied] = useState(false);
   return (
-    <section className="pa-card">
-      <p>העתיקו את הקישור ושלחו לחבר. כשהספירה תיפתח, תראו כאן כמה אנשים נרשמו דרככם.</p>
-      <p className="pa-link">{link}</p>
-      <button type="button" className="community-publish" onClick={() => { void navigator.clipboard.writeText(link).then(() => setCopied(true)); }}>
-        {copied ? 'הקישור הועתק' : 'העתיקו את הקישור'}
-      </button>
-    </section>
+    <div className="pa-partners">
+      <section className="pa-hero">
+        <div>
+          <h2>תוכנית שותפים</h2>
+          <p>שולחים קישור לחבר. הספירה תיפתח אחר כך.</p>
+        </div>
+      </section>
+      <section className="pa-card">
+        <p className="pa-link">{link}</p>
+        <button type="button" onClick={() => { void navigator.clipboard.writeText(link).then(() => setCopied(true)); }}>
+          {copied ? 'הקישור הועתק' : 'העתיקו את הקישור'}
+        </button>
+      </section>
+      <div className="pa-steps">
+        <article><b>1</b><p>מעתיקים את הקישור</p></article>
+        <article><b>2</b><p>חבר נרשם דרכו</p></article>
+        <article><b>3</b><p>הספירה תופיע כאן</p></article>
+      </div>
+      <div className="pa-metrics">
+        <article><span>נרשמו דרככם</span><b>—</b><em>הספירה תיפתח</em></article>
+        <article><span>ממתינים</span><b>—</b></article>
+      </div>
+    </div>
   );
 }
 
@@ -492,29 +553,40 @@ export function ContactDesk() {
   const [stars, setStars] = useState(0);
   const [note, setNote] = useState('');
   const [sent, setSent] = useState(false);
+  const [hint, setHint] = useState('');
   return (
     <div className="pa-contact">
+      <section className="pa-hero">
+        <div>
+          <h2>צור קשר ותמיכה</h2>
+          <p>אנחנו כאן לכל שאלה.</p>
+        </div>
+      </section>
       <div className="pa-contact-cards">
-        <a href={DEFAULT_WEBINAR_CONFIG.whatsappGroupUrl} target="_blank" rel="noreferrer"><b>קהילת הוואטסאפ</b><span>הצטרפות לקבוצה הרשמית</span></a>
-        <a href="/#faq"><b>מרכז הידע</b><span>שאלות נפוצות</span></a>
-        <a href="mailto:support@infinitemasterpiece.local"><b>תמיכה במייל</b><span>support@infinitemasterpiece.local</span></a>
+        <a href={DEFAULT_WEBINAR_CONFIG.whatsappGroupUrl} target="_blank" rel="noreferrer"><b>וואטסאפ</b><span>נפתח בוואטסאפ</span></a>
+        <a href="/#faq"><b>שאלות נפוצות</b><span>נפתח בעמוד השאלות</span></a>
+        <a href="mailto:support@infinitemasterpiece.local"><b>מייל</b><span>נפתח המייל</span></a>
       </div>
       <form className="pa-card" onSubmit={(event) => {
         event.preventDefault();
-        if (note.trim().length < 2) return;
+        if (note.trim().length < 2) {
+          setHint('כתבו משפט אחד');
+          return;
+        }
+        setHint('');
         window.location.href = `mailto:support@infinitemasterpiece.local?subject=${encodeURIComponent(`פנייה · ${stars} כוכבים`)}&body=${encodeURIComponent(note.trim())}`;
         setSent(true);
       }}>
         <h2>שלחו לנו משוב</h2>
-        <p>בחרו כוכבים, מ־1 עד 5, וכתבו מה לשפר.</p>
         <div className="pa-stars" role="group" aria-label="דירוג מ־1 עד 5">
           {[1, 2, 3, 4, 5].map((value) => (
             <button key={value} type="button" aria-pressed={stars >= value} aria-label={`${value} כוכבים`} onClick={() => setStars(value)}>★</button>
           ))}
         </div>
         <label htmlFor="pa-note">מה תרצו לספר לנו</label>
-        <textarea id="pa-note" value={note} onChange={(event) => setNote(event.target.value)} placeholder="ספרו מה עבד ומה לשפר" />
+        <textarea id="pa-note" value={note} onChange={(event) => setNote(event.target.value)} placeholder="מה תרצו לספר לנו" />
         <button type="submit">פתיחת המייל</button>
+        {hint ? <p role="alert">{hint}</p> : null}
         {sent ? <p>חלון המייל נפתח עם המשוב.</p> : null}
       </form>
     </div>
@@ -531,12 +603,19 @@ export function ClubCard({ plan, trialEndsAt }: { plan: string; trialEndsAt?: st
   };
   const active = plan === 'monthly' || plan === 'annual' || plan === 'premium_88';
   return (
-    <section className="pa-card pa-club">
-      <h2>ניהול מנוי</h2>
-      <p>המסלול הפעיל: {labels[plan] || plan}</p>
-      {plan === 'free_trial' && trialEndsAt ? <p>בתוקף עד {trialEndsAt}</p> : null}
-      {active ? <p>המנוי פעיל. שינוי התוכנית נפתח בעמוד המסלולים.</p> : <p>בחירת מסלול פותחת את הספרייה ואת הקהילה.</p>}
-      <Link to="/pricing" className="community-publish">שינוי תוכנית</Link>
-    </section>
+    <div className="pa-club">
+      <section className="pa-hero">
+        <div>
+          <h2>המועדון</h2>
+          <p>{active ? 'המסלול הפעיל פותח את הספרייה ואת הקהילה.' : 'בחירת מסלול פותחת את הספרייה ואת הקהילה.'}</p>
+        </div>
+      </section>
+      <section className="pa-card">
+        <p className="pa-note">המסלול הפעיל</p>
+        <h2>{labels[plan] || plan}</h2>
+        {plan === 'free_trial' && trialEndsAt ? <p>בתוקף עד {trialEndsAt}</p> : null}
+        <Link to="/pricing" className="community-publish">שינוי תוכנית</Link>
+      </section>
+    </div>
   );
 }
